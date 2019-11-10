@@ -1,0 +1,30 @@
+<h1 id="tableLabel">Demo</h1>
+
+<p *ngIf="!userPrompt"><em>Loading...</em></p>
+
+<div *ngIf="userPrompt">
+  <p>{{ userPrompt.Question }}</p>
+  <div *ngIf="userPrompt.Answers[0]">
+    <input type="radio" id="answer_0" name="question">{{userPrompt.Answers[0]}}<input />
+  </div>
+
+  <div *ngIf="userPrompt.Answers[1]">
+    <input type="radio" id="answer_1" name="question">{{userPrompt.Answers[1]}}<input />
+  </div>
+
+  <div *ngIf="userPrompt.Answers[2]">
+    <input type="radio" id="answer_2" name="question">{{userPrompt.Answers[2]}}<input />
+  </div>
+
+  <div *ngIf="userPrompt.Answers[3]">
+    <input type="radio" id="answer_3" name="question">{{userPrompt.Answers[3]}}<input />
+  </div>
+
+  <div *ngIf="userPrompt.Answers[4]">
+    <input type="radio" id="answer_4" name="question">{{userPrompt.Answers[4]}}<input />
+  </div>
+
+  <div *ngIf="userPrompt.Answers[5]">
+    <input type="radio" id="answer_5" name="question">{{userPrompt.Answers[5]}}<input />
+  </div>
+</div>
