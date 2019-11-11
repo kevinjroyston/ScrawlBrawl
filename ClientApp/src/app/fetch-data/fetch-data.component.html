@@ -1,30 +1,20 @@
-<h1 id="tableLabel">Demo</h1>
-
-<p *ngIf="!userPrompt"><em>Loading...</em></p>
-
-<div *ngIf="userPrompt">
-  <p>{{ userPrompt.Question }}</p>
-  <div *ngIf="userPrompt.Answers[0]">
-    <input type="radio" id="answer_0" name="question">{{userPrompt.Answers[0]}}<input />
+<div class="LoadingText" *ngIf="!userPrompt"><em>Loading...</em></div>
+<form *ngIf="userPrompt" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)">
+  <div class="Title" *ngIf="userPrompt.title" >{{ userPrompt.title }}</div>
+  <div class="Description" *ngIf="userPrompt.description">{{ userPrompt.description }}</div>
+  <div *ngIf="userPrompt.subPrompts" >
+    <div *ngFor="let subPrompt of userPrompt.subPrompts; let j = index" formArrayName="subForms">
+      <div [formGroupName]="j">
+        <div class="Prompt" *ngIf="subPrompt.prompt">{{subPrompt.prompt}}</div>
+        <div *ngIf="subPrompt.answers">
+          <div *ngFor="let answer of subPrompt.answers; let i = index">
+            <input type="radio" formControlName="radioAnswer" value="{{i}}">{{answer}}
+          </div>
+        </div>
+        <input type="text" class="ShortAnswer" formControlName="shortAnswer" *ngIf="subPrompt.shortAnswer">
+        <input type="file" class="Drawing" formControlName="drawing" *ngIf="subPrompt.drawing">
+      </div>
+    </div>
   </div>
-
-  <div *ngIf="userPrompt.Answers[1]">
-    <input type="radio" id="answer_1" name="question">{{userPrompt.Answers[1]}}<input />
-  </div>
-
-  <div *ngIf="userPrompt.Answers[2]">
-    <input type="radio" id="answer_2" name="question">{{userPrompt.Answers[2]}}<input />
-  </div>
-
-  <div *ngIf="userPrompt.Answers[3]">
-    <input type="radio" id="answer_3" name="question">{{userPrompt.Answers[3]}}<input />
-  </div>
-
-  <div *ngIf="userPrompt.Answers[4]">
-    <input type="radio" id="answer_4" name="question">{{userPrompt.Answers[4]}}<input />
-  </div>
-
-  <div *ngIf="userPrompt.Answers[5]">
-    <input type="radio" id="answer_5" name="question">{{userPrompt.Answers[5]}}<input />
-  </div>
-</div>
+  <button class="button" type="submit" *ngIf ="userPrompt.submitButton">Submit</button>
+</form>

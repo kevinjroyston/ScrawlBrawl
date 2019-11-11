@@ -21,6 +21,7 @@ namespace RoystonGame
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddControllers().AddNewtonsoftJson();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {

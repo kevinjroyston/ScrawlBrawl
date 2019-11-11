@@ -4,7 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using RoystonGame.DataModels;
+using Newtonsoft.Json;
+using RoystonGame.DataModels.Responses;
 
 namespace RoystonGame.Controllers
 {
@@ -20,13 +21,26 @@ namespace RoystonGame.Controllers
         }
 
         [HttpGet]
-        public UserPrompt Get()
+        public IActionResult Get()
         {
-            return new UserPrompt
+            // TODO handle IDs for real
+            // TODO scramble radio button answer order
+            return new JsonResult(new UserPrompt
             {
-                Question = "This is only a test",
-                Answers = new string[] { "A", "B", "C", "D" }
-            };
+                Title = "Trivia Time!",
+                Description = "Select the answer(s) below which best answer the question. Careful, you only have 10 seconds!",
+                RefreshTime = TimeSpan.FromSeconds(10),
+                SubmitButton = true,
+                SubPrompts = new SubPrompt[]
+                {
+                    new SubPrompt
+                    {
+                        Prompt = "What is Kevin's favorite color?",
+                        Answers = new string [] {"Red", "Blue", "Green", "Orange", "Purple", "Turquoise", "Pink"},
+                        ShortAnswer = true,
+                    }
+                },
+            });
         }
     }
 }
