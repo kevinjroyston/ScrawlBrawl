@@ -12,7 +12,7 @@
           </div>
         </div>
         <input type="text" class="ShortAnswer" formControlName="shortAnswer" *ngIf="subPrompt.shortAnswer">
-        <input type="file" class="Drawing" formControlName="drawing" *ngIf="subPrompt.drawing">
+        <canvas width="500" height="300" id="canvas" appDrawing *ngIf="subPrompt.drawing"></canvas>
       </div>
     </div>
   </div>

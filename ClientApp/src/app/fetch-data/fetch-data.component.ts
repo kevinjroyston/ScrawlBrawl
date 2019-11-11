@@ -88,3 +88,4 @@ interface SubPrompt {
     shortAnswer: boolean;
     drawing: boolean;
 }
+

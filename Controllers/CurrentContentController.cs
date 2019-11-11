@@ -38,6 +38,13 @@ namespace RoystonGame.Controllers
                         Prompt = "What is Kevin's favorite color?",
                         Answers = new string [] {"Red", "Blue", "Green", "Orange", "Purple", "Turquoise", "Pink"},
                         ShortAnswer = true,
+                        Drawing = true,
+                    },
+                    new SubPrompt
+                    {
+                        Prompt = "What is Kevin's 2nd favorite color?",
+                        Answers = new string [] {"Red", "Blue", "Green", "Orange", "Purple", "Turquoise", "Pink"},
+                        ShortAnswer = true,
                     }
                 },
             });
