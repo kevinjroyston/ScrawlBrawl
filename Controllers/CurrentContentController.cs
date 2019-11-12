@@ -29,7 +29,7 @@ namespace RoystonGame.Controllers
             {
                 Title = "Trivia Time!",
                 Description = "Select the answer(s) below which best answer the question. Careful, you only have 10 seconds!",
-                RefreshTime = TimeSpan.FromSeconds(10),
+                RefreshTimeInMs = (int)TimeSpan.FromSeconds(10).TotalMilliseconds,
                 SubmitButton = true,
                 SubPrompts = new SubPrompt[]
                 {

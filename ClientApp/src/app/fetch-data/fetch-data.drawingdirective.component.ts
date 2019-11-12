@@ -1,10 +1,33 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener, forwardRef } from '@angular/core';
+import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 
 @Directive({
-    selector: '[appDrawing]'
+    selector: '[appDrawing]',
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            multi: true,
+            useExisting: forwardRef(() => DrawingDirective),
+        }
+    ]
 })
-export class DrawingDirective {
+export class DrawingDirective implements ControlValueAccessor{
+    writeValue(obj: any): void {
+        if (obj == null) {
+            this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        }
+    }
+    registerOnChange(fn: any): void {
+        this.onChange = fn; 
+    }
+    registerOnTouched(fn: any): void {
+
+    }
+    setDisabledState?(isDisabled: boolean): void {
+
+    }
     constructor(element: ElementRef) {
+        this.element = element.nativeElement;
         this.ctx = element.nativeElement.getContext('2d');
         this.drawing = false;
     }
@@ -13,6 +36,8 @@ export class DrawingDirective {
     lastY: number;
     ctx: any;
     lineWidth: number = 10;
+    onChange;
+    element;
 
     @HostListener('mousedown', ['$event'])
     onmousedown(event) {
@@ -57,6 +82,14 @@ export class DrawingDirective {
     onmouseup() {
         // stop drawing
         this.drawing = false;
+        this.onChange(this.element.toDataURL());
+    }
+
+    @HostListener('mouseleave')
+    onmouseleave() {
+        // stop drawing
+        this.drawing = false;
+        this.onChange(this.element.toDataURL());
     }
 
     drawLine(lX, lY, cX, cY): void {
