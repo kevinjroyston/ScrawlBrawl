@@ -7,14 +7,14 @@
       <div [formGroupName]="j">
         <div class="Prompt" *ngIf="subPrompt.prompt">{{subPrompt.prompt}}</div>
         <div *ngIf="subPrompt.answers">
-          <div *ngFor="let answer of subPrompt.answers; let i = index">
+          <div class="RadioAnswer" *ngFor="let answer of subPrompt.answers; let i = index">
             <input type="radio" formControlName="radioAnswer" value="{{i}}">{{answer}}
           </div>
         </div>
         <input type="text" class="ShortAnswer" formControlName="shortAnswer" *ngIf="subPrompt.shortAnswer">
-        <canvas width="500" height="300" formControlName="drawing" appDrawing *ngIf="subPrompt.drawing"></canvas>
+        <canvas width="500" class="DrawingCanvas" height="300" formControlName="drawing" appDrawing *ngIf="subPrompt.drawing"></canvas>
       </div>
     </div>
   </div>
-  <button class="button" type="submit" *ngIf ="userPrompt.submitButton">Submit</button>
+  <button class="SubmitButton" type="submit" *ngIf ="userPrompt.submitButton">Submit</button>
 </form>

@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using RoystonGame.DataModels.Requests;
+using RoystonGame.Web.DataModels.Requests;
 
-namespace RoystonGame.Controllers
+namespace RoystonGame.Web.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -21,7 +21,7 @@ namespace RoystonGame.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] UserFormSubmitRequestDetails formData)
+        public IActionResult Post([FromBody] UserFormSubmission formData)
         {
             int x = 5 + 2;
             return new OkResult();

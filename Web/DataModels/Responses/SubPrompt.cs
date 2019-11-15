@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RoystonGame.DataModels.Responses
+namespace RoystonGame.Web.DataModels.Responses
 {
     public class SubPrompt
     {

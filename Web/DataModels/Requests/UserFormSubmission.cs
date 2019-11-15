@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace RoystonGame.DataModels.Requests
+namespace RoystonGame.Web.DataModels.Requests
 {
-    public class UserFormSubmitRequestDetails
+    public class UserFormSubmission
     {
         public Guid Id { get; set; }
 

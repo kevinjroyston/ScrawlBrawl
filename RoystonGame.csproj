@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -23,6 +23,20 @@
     <Content Remove="$(SpaRoot)**" />
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="ClientApp\angular.json" />
+    <Content Include="ClientApp\e2e\tsconfig.e2e.json" />
+    <Content Include="ClientApp\package-lock.json" />
+    <Content Include="ClientApp\package.json" />
+    <Content Include="ClientApp\src\tsconfig.app.json" />
+    <Content Include="ClientApp\src\tsconfig.server.json" />
+    <Content Include="ClientApp\src\tsconfig.spec.json" />
+    <Content Include="ClientApp\src\tslint.json" />
+    <Content Include="ClientApp\tsconfig.json" />
+    <Content Include="ClientApp\tslint.json" />
+    <Content Include="Web\wwwroot\favicon.ico" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

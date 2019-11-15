@@ -36,6 +36,7 @@ export class DrawingDirective implements ControlValueAccessor{
     lastY: number;
     ctx: any;
     lineWidth: number = 10;
+    lineColor = "#570084";
     onChange;
     element;
 
@@ -70,7 +71,7 @@ export class DrawingDirective implements ControlValueAccessor{
                 currentY = event.layerY - event.currentTarget.offsetTop;
             }
             this.drawLine(this.lastX, this.lastY, currentX, currentY);
-            this.drawCircle(event.layerX, event.layerY);
+            this.drawCircle(currentX, currentY);
 
             // set current coordinates to last one
             this.lastX = currentX;
@@ -99,7 +100,7 @@ export class DrawingDirective implements ControlValueAccessor{
         // to
         this.ctx.lineTo(cX, cY);
         // color
-        this.ctx.strokeStyle = "#4bf";
+        this.ctx.strokeStyle = this.lineColor;
         //this.ctx.lineJoin = "round";
         this.ctx.lineWidth = this.lineWidth;
         // draw it
@@ -113,10 +114,10 @@ export class DrawingDirective implements ControlValueAccessor{
         var endAngle = Math.PI * 2; // End point on circle
 
         this.ctx.moveTo(x,y);
-        this.ctx.strokeStyle = "#4bf";
+        this.ctx.strokeStyle = this.lineColor;
         this.ctx.lineWidth = 0;
         this.ctx.arc(x, y, radius, startAngle, endAngle);
-        this.ctx.fillStyle = "#4bf";
+        this.ctx.fillStyle = this.lineColor;
         this.ctx.fill();
     }
 }

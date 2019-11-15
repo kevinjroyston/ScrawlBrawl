@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RoystonGame.DataModels.Requests
+namespace RoystonGame.Web.DataModels.Requests
 {
     public class UserSubForm
     {

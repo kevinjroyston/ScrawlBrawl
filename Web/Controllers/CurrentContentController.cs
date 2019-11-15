@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using RoystonGame.DataModels.Responses;
+using RoystonGame.Web.DataModels.Responses;
 
-namespace RoystonGame.Controllers
+namespace RoystonGame.Web.Controllers
 {
     [ApiController]
     [Route("[controller]")]

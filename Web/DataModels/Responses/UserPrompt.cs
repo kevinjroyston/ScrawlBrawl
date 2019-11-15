@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RoystonGame.DataModels.Responses
+namespace RoystonGame.Web.DataModels.Responses
 {
     public class UserPrompt
     {
