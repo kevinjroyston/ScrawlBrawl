@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using RoystonGame.Game.DataModels.UserStates;
+
 namespace RoystonGame.Game.DataModels
 {
     /// <summary>
@@ -13,6 +15,11 @@ namespace RoystonGame.Game.DataModels
         public Guid UserId { get; set; } = Guid.NewGuid();
 
         public UserState UserState { get; private set; }
+
+        /// <summary>
+        /// Indicates this User is the party leader (Technically can have multiple).
+        /// </summary>
+        public bool IsPartyLeader { get; private set; } = true;
 
         public User()
         {

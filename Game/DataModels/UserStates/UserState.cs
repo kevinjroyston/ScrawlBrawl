@@ -7,23 +7,25 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RoystonGame.Game.DataModels
+namespace RoystonGame.Game.DataModels.UserStates
 {
     /// <summary>
     /// A UserState should only ever be responsible for 1 prompt / response cycle. The user can refresh the prompt several times, the user
-    /// can submit multiple invalid responses (won't clear their browser), but once
+    /// can submit multiple invalid responses (won't clear their browser).
+    /// 
+    /// A UserState FSM has many walkers. Meaning a given UserState can and usually does track several users simultaneously.
     /// </summary>
     public abstract class UserState
     {
         /// <summary>
         /// The prompt to send to the user whenever they request input.
         /// </summary>
-        private UserPrompt Prompt { get; }
+        protected UserPrompt Prompt { get; }
 
         /// <summary>
         /// The callback to call upon successful state completion.
         /// </summary>
-        private Action<User, UserStateResult, UserFormSubmission> StateCompletedCallback { get; set; }
+        protected Action<User, UserStateResult, UserFormSubmission> StateCompletedCallback { get; set; }
 
         /// <summary>
         /// Callback populated when the state is forcefully changed (timeout or external event).

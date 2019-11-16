@@ -1,5 +1,6 @@
 ﻿using RoystonGame.Game.DataModels;
 using RoystonGame.Game.DataModels.Enums;
+using RoystonGame.Game.DataModels.UserStates;
 using RoystonGame.Web.DataModels.Requests;
 using System;
 using System.Collections.Generic;
@@ -11,20 +12,20 @@ namespace RoystonGame.Game.ControlFlows
     /// <summary>
     /// On state completion, transitions users to a waiting state until a trigger occurs.
     /// </summary>
-    public class WaitForTriggerUserTransition : UserStateTransition
+    public class WaitForTrigger_UST : UserStateTransition
     {
-        Dictionary<User, bool> WaitingUsers = new Dictionary<User, bool>();
-        private WaitingUserState WaitingState { get; set; }
-        private UserState PostTriggerState { get; set; }
+        protected Dictionary<User, bool> WaitingUsers { get; private set; } = new Dictionary<User, bool>();
+        protected WaitingUserState WaitingState { get; private set; }
+        protected UserState PostTriggerState { get; private set; }
 
         /// <summary>
-        /// Initializes a new <see cref="WaitForTriggerUserTransition"/>.
+        /// Initializes a new <see cref="WaitForTrigger_UST"/>.
         /// </summary>
-        /// <param name="waitingState">The waiting state to use while waiting for the trigger. The Callback of this state will be overwritten</param>
         /// <param name="postTriggerState">The state to move users to post trigger.</param>
-        public WaitForTriggerUserTransition(WaitingUserState waitingState, UserState postTriggerState)
+        /// <param name="waitingState">The waiting state to use while waiting for the trigger. The Callback of this state will be overwritten</param>
+        public WaitForTrigger_UST(UserState postTriggerState, WaitingUserState waitingState = null)
         {
-            this.WaitingState = waitingState;
+            this.WaitingState = WaitingUserState.DefaultWaitingUserState(waitingState);
             this.PostTriggerState = postTriggerState;
         }
 
@@ -33,9 +34,12 @@ namespace RoystonGame.Game.ControlFlows
         /// </summary>
         /// <param name="user">The add to transition tracking.</param>
         /// <returns>The callback function to use to link into this transition from a UserState.</returns>
-        public void AddUserToTransition(User user)
+        public virtual void AddUsersToTransition(IEnumerable<User> users)
         {
-            this.WaitingUsers[user] = false;
+            foreach(User user in users)
+            {
+                this.WaitingUsers[user] = false;
+            }
         }
 
         /// <summary>
@@ -44,7 +48,7 @@ namespace RoystonGame.Game.ControlFlows
         /// <param name="user">The user to move into the transition.</param>
         /// <param name="stateResult">The state result of the last node (this transition doesnt care).</param>
         /// <param name="formSubmission">The user input of the last node (this transition doesnt care).</param>
-        public void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
+        public virtual void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
             user.TransitionUserState(this.WaitingState, DateTime.Now);
             this.WaitingUsers[user] = true;
@@ -53,7 +57,7 @@ namespace RoystonGame.Game.ControlFlows
         /// <summary>
         /// Move all waiting users to the PostTrigger state.
         /// </summary>
-        public void Trigger()
+        public virtual void Trigger()
         {
             // Make sure all users are ready for the transition.
             if (!this.WaitingUsers.Values.All((val)=> val))

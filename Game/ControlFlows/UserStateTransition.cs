@@ -16,8 +16,8 @@ namespace RoystonGame.Game.ControlFlows
         /// <summary>
         /// Called by a previous state when that state is completed.
         /// </summary>
-        /// <param name="user">The add to transition tracking.</param>
-        public void AddUserToTransition(User user);
+        /// <param name="users">The users to add to transition tracking.</param>
+        public void AddUsersToTransition(IEnumerable<User> users);
 
         /// <summary>
         /// The inlet to the transition.

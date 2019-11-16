@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RoystonGame.Game.DataModels
+namespace RoystonGame.Game.DataModels.Enums
 {
-    public class GameState
+    public enum GameMode
     {
+        Testing,
+        Testing123,
     }
 }
