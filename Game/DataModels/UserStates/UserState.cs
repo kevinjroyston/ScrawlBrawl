@@ -1,4 +1,5 @@
-﻿using RoystonGame.Game.DataModels.Enums;
+﻿using RoystonGame.Game.ControlFlows;
+using RoystonGame.Game.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
@@ -15,7 +16,7 @@ namespace RoystonGame.Game.DataModels.UserStates
     /// 
     /// A UserState FSM has many walkers. Meaning a given UserState can and usually does track several users simultaneously.
     /// </summary>
-    public abstract class UserState
+    public abstract class UserState : UserInlet
     {
         /// <summary>
         /// The prompt to send to the user whenever they request input.
@@ -214,6 +215,17 @@ namespace RoystonGame.Game.DataModels.UserStates
         public void ForceChangeOfUserStates(UserStateResult userStateResult)
         {
             this.ApplySpecialCallbackToAllUsersInState((User user) => this.StateCompletedCallback(user, userStateResult, null));
+        }
+
+        /// <summary>
+        /// Implements the Inlet interface so that other places can easily use GameStates, ControlFlows, or UserStates directly
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="result"></param>
+        /// <param name="userInput"></param>
+        public void Inlet(User user, UserStateResult result, UserFormSubmission userInput)
+        {
+            user.TransitionUserState(this, DateTime.Now);
         }
     }
 }

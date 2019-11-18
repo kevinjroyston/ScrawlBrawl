@@ -14,12 +14,25 @@ namespace RoystonGame.Game.DataModels
     {
         public Guid UserId { get; set; } = Guid.NewGuid();
 
+        /// <summary>
+        /// The current state of the user.
+        /// </summary>
         public UserState UserState { get; private set; }
 
         /// <summary>
         /// Indicates this User is the party leader (Technically can have multiple).
         /// </summary>
         public bool IsPartyLeader { get; private set; } = true;
+
+        /// <summary>
+        /// The name to display for the user.
+        /// </summary>
+        public string DisplayName { get; set; }
+
+        /// <summary>
+        /// The self portrait of the user.
+        /// </summary>
+        public string SelfPortrait { get; set; }
 
         public User()
         {

@@ -16,25 +16,23 @@ namespace RoystonGame.Game.ControlFlows
     {
         protected Dictionary<User, bool> WaitingUsers { get; private set; } = new Dictionary<User, bool>();
         protected WaitingUserState WaitingState { get; private set; }
-        protected UserState PostTriggerState { get; private set; }
 
         /// <summary>
         /// Initializes a new <see cref="WaitForTrigger_UST"/>.
         /// </summary>
-        /// <param name="postTriggerState">The state to move users to post trigger.</param>
+        /// <param name="outlet">The function each user will call post trigger.</param>
         /// <param name="waitingState">The waiting state to use while waiting for the trigger. The Callback of this state will be overwritten</param>
-        public WaitForTrigger_UST(UserState postTriggerState, WaitingUserState waitingState = null)
+        public WaitForTrigger_UST(Action<User, UserStateResult, UserFormSubmission> outlet = null, WaitingUserState waitingState = null) : base(outlet)
         {
-            this.WaitingState = WaitingUserState.DefaultWaitingUserState(waitingState);
-            this.PostTriggerState = postTriggerState;
+            this.WaitingState = WaitingUserState.DefaultState(waitingState);
         }
 
         /// <summary>
-        /// Called by a previous state when that state is completed.
+        /// Used when a transition requires synchronization across a set of users.
         /// </summary>
         /// <param name="user">The add to transition tracking.</param>
         /// <returns>The callback function to use to link into this transition from a UserState.</returns>
-        public virtual void AddUsersToTransition(IEnumerable<User> users)
+        public override void AddUsersToTransition(IEnumerable<User> users)
         {
             foreach(User user in users)
             {
@@ -48,8 +46,13 @@ namespace RoystonGame.Game.ControlFlows
         /// <param name="user">The user to move into the transition.</param>
         /// <param name="stateResult">The state result of the last node (this transition doesnt care).</param>
         /// <param name="formSubmission">The user input of the last node (this transition doesnt care).</param>
-        public virtual void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
+        public override void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
+            if (!this.WaitingUsers.ContainsKey(user))
+            {
+                throw new Exception("User not registered for this transition.");
+            }
+
             user.TransitionUserState(this.WaitingState, DateTime.Now);
             this.WaitingUsers[user] = true;
         }
@@ -65,11 +68,8 @@ namespace RoystonGame.Game.ControlFlows
                 throw new Exception("Trying to Trigger a transition but not all registered users are ready.");
             }
 
-            DateTime synchronizedNow = DateTime.Now;
-            this.WaitingState.SetStateCompletedCallback((User user, UserStateResult result, UserFormSubmission userInput) =>
-            {
-                user.TransitionUserState(this.PostTriggerState, synchronizedNow);
-            });
+            // Set the StateCompletedCallback at last possible moment in case this.Outlet has been changed.
+            this.WaitingState.SetStateCompletedCallback(this.Outlet);
             this.WaitingState.ForceChangeOfUserStates(UserStateResult.Success);
         }
     }

@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace RoystonGame.Game.DataModels.Enums
 {
-    public enum GameStateResult
+    public enum EndOfGameRestartType
     {
-        Success,
-        Failure,
-        Timeout
+        SamePlayers,
+        NewPlayers,
+        SameGameAndPlayers,
     }
 }

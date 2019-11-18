@@ -11,13 +11,13 @@ namespace RoystonGame.Game.DataModels.UserStates
     /// <summary>
     /// Gives the player a button they can press which will unblock the flow.
     /// </summary>
-    public class FirstPlayerReadyUpButtonUserState : UserState
+    public class PartyLeaderReadyUpButtonUserState : UserState
     {
-        public static UserState DefaultState(FirstPlayerReadyUpButtonUserState state = null) => state ?? new FirstPlayerReadyUpButtonUserState();
+        public static UserState DefaultState(PartyLeaderReadyUpButtonUserState state = null) => state ?? new PartyLeaderReadyUpButtonUserState();
 
         public static UserPrompt DefaultPrompt(UserPrompt prompt = null) => prompt ?? new UserPrompt() { Title = "You have the power!", Description = "Click submit when everybody is ready :)", RefreshTimeInMs = 5000 };
 
-        public FirstPlayerReadyUpButtonUserState(UserPrompt prompt = null) : base(null, TimeSpan.MaxValue, DefaultPrompt(prompt))
+        public PartyLeaderReadyUpButtonUserState(UserPrompt prompt = null) : base(null, TimeSpan.MaxValue, DefaultPrompt(prompt))
         {
             // Empty
         }

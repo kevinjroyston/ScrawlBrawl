@@ -1,41 +1,46 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
+using RoystonGame.Game.ControlFlows;
 using RoystonGame.Game.DataModels.Enums;
-using RoystonGame.Web.Responses;
+using RoystonGame.Game.DataModels.UserStates;
+using RoystonGame.Web.DataModels.Requests;
+using RoystonGame.Web.DataModels.Responses;
 
 namespace RoystonGame.Game.DataModels.GameStates
 {
     public class UserSignupGameState : GameState
     {
-        private ref UserSignupGameStateResult GameStateResult { get; }
-
-        /// <summary>
-        /// GameState constructor
-        /// </summary>
-        public UserState UserEntranceState { get; }
-
-        public static UserPrompt UserNamePrompt() => new UserPrompt() { Title = "Welcome to the game!", Description = "Follow the instructions below!", RefreshTimeInMs = 5000, SubPrompts = new List<SubPrompts>() { new SubPrompt() { } } };
-
-        /// <summary>
-        /// Initializes a GameState to be used in a FSM.
-        /// </summary>
-        /// <param name="stateCompletedCallback">Called back when the state completes.</param>
-        public UserSignupGameState(Action<GameStateResult> stateCompletedCallback, ref UserSignupGameStateResult userSignupGameStateResult) : base(stateCompletedCallback, TimeSpan.MaxValue)
+        public static UserPrompt UserNamePrompt() => new UserPrompt()
         {
-            this.GameStateResult = userSignupGameStateResult;
-            UserState getUserName =
-        }
+            Title = "Welcome to the game!",
+            Description = "Follow the instructions below!",
+            RefreshTimeInMs = 5000,
+            SubPrompts = new SubPrompt[]
+            {
+                new SubPrompt()
+                {
+                    Prompt = "Nickname:",
+                    ShortAnswer = true
+                },
+                new SubPrompt()
+                {
+                    Prompt = "Self Portrait:",
+                    Drawing = true
+                }
+            },
+            SubmitButton = true,
+        };
 
-        /// <summary>
-        /// Returns the entrance state for users. Game orchestrator is responsible for sending all users here. Either all at once, or one at a time depending on the use case.
-        /// </summary>
-        /// <returns>Returns the entrance state for users.</returns>
-        public override UserState GetUserEntranceState()
+        public UserSignupGameState(Action<User, UserStateResult, UserFormSubmission> userStateCompletedCallback) : base(userStateCompletedCallback)
         {
-            return this.UserEntranceState;
+            UserState entrance = new SimplePromptUserState(UserNamePrompt());
+            WaitForPartyLeader_UST transition = new WaitForPartyLeader_UST(this.UserOutlet);
+            entrance.SetStateCompletedCallback((User user, UserStateResult result, UserFormSubmission userInput) =>
+            {
+                Game.Singleton.RegisterUser(user, userInput.SubForms[0].ShortAnswer, userInput.SubForms[1].Drawing);
+                transition.Inlet(user, result, userInput);
+            });
+
+            this.Entrance = entrance;
         }
     }
 }

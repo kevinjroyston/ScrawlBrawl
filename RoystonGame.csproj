@@ -39,6 +39,10 @@
     <Content Include="Web\wwwroot\favicon.ico" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Game\DataModels\GameStates\GameStateResultObjects\" />
+  </ItemGroup>
+
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">

@@ -12,16 +12,23 @@ namespace RoystonGame.Game.ControlFlows
     /// <summary>
     /// Waits until the leader
     /// </summary>
-    public class WaitForFirstPlayerReadyUpButton_UST : WaitForAllPlayers_UST
+    public class WaitForPartyLeader_UST : WaitForAllPlayers_UST
     {
+        private UserState PartyLeaderUserState { get; }
+
         /// <summary>
         /// Initializes a new <see cref="WaitForTrigger_UST"/>.
         /// </summary>
+        /// <param name="outlet">The callback function to call when leaving a state.</param>
         /// <param name="waitingState">The waiting state to use while waiting for the trigger. The Callback of this state will be overwritten</param>
-        /// <param name="postTriggerState">The state to move users to post trigger.</param>
-        public WaitForFirstPlayerReadyUpButton_UST(UserState postTriggerState, WaitingUserState waitingState = null) : base(postTriggerState, WaitingUserState.DefaultState(waitingState))
+        public WaitForPartyLeader_UST(Action<User, UserStateResult, UserFormSubmission> outlet = null, UserState partyLeaderPrompt = null, WaitingUserState waitingState = null, Action<User, UserStateResult, UserFormSubmission> partyLeaderSubmission = null) : base(outlet, WaitingUserState.DefaultState(waitingState))
         {
-            // Empty
+            this.PartyLeaderUserState = partyLeaderPrompt ?? PartyLeaderReadyUpButtonUserState.DefaultState();
+            this.PartyLeaderUserState.SetStateCompletedCallback((User user, UserStateResult result, UserFormSubmission userInput) =>
+            {
+                partyLeaderSubmission?.Invoke(user, result, userInput);
+                base.Inlet(user, result, userInput);
+            });
         }
 
         /// <summary>
@@ -34,9 +41,7 @@ namespace RoystonGame.Game.ControlFlows
         {
             if (user.IsPartyLeader)
             {
-                UserState partyLeaderState = FirstPlayerReadyUpButtonUserState.DefaultState();
-                partyLeaderState.SetStateCompletedCallback(base.Inlet);
-                user.TransitionUserState(partyLeaderState, DateTime.Now);
+                user.TransitionUserState(this.PartyLeaderUserState, DateTime.Now);
             }
             else
             {

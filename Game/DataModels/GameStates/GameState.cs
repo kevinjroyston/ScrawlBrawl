@@ -1,4 +1,6 @@
-﻿using RoystonGame.Game.DataModels.Enums;
+﻿using RoystonGame.Game.ControlFlows;
+using RoystonGame.Game.DataModels.Enums;
+using RoystonGame.Game.DataModels.UserStates;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
@@ -16,39 +18,29 @@ namespace RoystonGame.Game.DataModels.GameStates
     /// of a custom GameState and use that for passing data around. If a GameState were to time out, the remaining thread should have no impact on anything because the orchestrator will make the
     /// final call. Your job here is simply to prompt the users appropriately, handle graphics events, and let the orchestrator know when you finish or time out.
     /// </summary>
-    public abstract class GameState
+    public abstract class GameState : UserInlet
     {
         /// <summary>
-        /// The callback to call upon state completion.
+        /// The callback to call per user upon state completion.
         /// </summary>
-        protected Action<GameStateResult> StateCompletedCallback { get; set; }
+        protected Action<User, UserStateResult, UserFormSubmission> UserOutlet { get; set; }
+
+        protected UserInlet Entrance { get; set; }
+
+        protected DateTime StateStartTime { get; private set; }
 
         #region TrackingFlags
         private bool CalledEnterState { get; set; } = false;
         private bool HaveAlreadyCalledCompletedActionCallback { get; set; } = false;
         #endregion
 
-        #region Timing
-        /// <summary>
-        /// The total time to spend in the state.
-        /// </summary>
-        private TimeSpan StateTimeoutDuration { get; }
-
-        /// <summary>
-        /// A task tracking a thread which will forcefully call StateCompletedCallback if time runs out.
-        /// </summary>
-        private Task StateTimeoutTask { get; set; }
-        #endregion
-
         /// <summary>
         /// Initializes a GameState to be used in a FSM.
         /// </summary>
-        /// <param name="stateCompletedCallback">Called back when the state completes.</param>
-        /// <param name="stateTimeoutDuration">The max duration to spend in this state.</param>
-        public GameState(Action<GameStateResult> stateCompletedCallback, TimeSpan stateTimeoutDuration)
+        /// <param name="userOutlet">Called back when the state completes.</param>
+        public GameState(Action<User, UserStateResult, UserFormSubmission> userOutlet)
         {
-            this.StateTimeoutDuration = stateTimeoutDuration;
-            this.SetStateCompletedCallback(stateCompletedCallback);
+            this.SetUserStateCompletedCallback(userOutlet);
         }
 
         // TODO, move below into the {set;}
@@ -57,10 +49,10 @@ namespace RoystonGame.Game.DataModels.GameStates
         /// Sets the state completed callback. This should be called before state is entered!
         /// </summary>
         /// <param name="stateCompletedCallback">The callback to use.</param>
-        public void SetStateCompletedCallback(Action<GameStateResult> stateCompletedCallback)
+        public void SetUserStateCompletedCallback(Action<User, UserStateResult, UserFormSubmission> userStateCompletedCallback)
         {
             // Wrap the callback function with Flag setting code.
-            this.StateCompletedCallback = (GameStateResult result) =>
+            this.UserOutlet = (User user, UserStateResult result, UserFormSubmission userInput) =>
             {
                 if (this.HaveAlreadyCalledCompletedActionCallback == true)
                 {
@@ -68,7 +60,7 @@ namespace RoystonGame.Game.DataModels.GameStates
                 }
 
                 this.HaveAlreadyCalledCompletedActionCallback = true;
-                stateCompletedCallback(result);
+                userStateCompletedCallback(user, result, userInput);
             };
         }
 
@@ -88,33 +80,20 @@ namespace RoystonGame.Game.DataModels.GameStates
                 throw new Exception("Already completed this state instance, please use a new state instance.");
             }
 
+            this.StateStartTime = DateTime.Now;
+
             // Initialize to false.
             this.HaveAlreadyCalledCompletedActionCallback = false;
-
-            // Start and track the timeout thread.
-            this.StateTimeoutTask = TimeoutFunc((int)this.StateTimeoutDuration.TotalMilliseconds);
 
             this.CalledEnterState = true;
         }
 
         /// <summary>
-        /// Returns the entrance state for users. Game orchestrator is responsible for sending all users here. Either all at once, or one at a time depending on the use case.
+        /// The entrance state for users. Game orchestrator is responsible for sending all users here. Either all at once, or one at a time depending on the use case.
         /// </summary>
-        /// <returns>Returns the entrance state for users.</returns>
-        public abstract UserState GetUserEntranceState();
-
-        /// <summary>
-        /// Timeout for the state.
-        /// </summary>
-        /// <returns>Task representing the status of the timeout thread.</returns>
-        private async Task TimeoutFunc(int millisecondsDelay)
+        public void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
-            if (millisecondsDelay > 0)
-            {
-                await Task.Delay(millisecondsDelay).ConfigureAwait(false);
-            }
-
-            this.StateCompletedCallback(GameStateResult.Timeout);
+            Entrance.Inlet(user, stateResult, formSubmission);
         }
     }
 }

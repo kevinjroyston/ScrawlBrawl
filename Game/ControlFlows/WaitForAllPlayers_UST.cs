@@ -16,7 +16,7 @@ namespace RoystonGame.Game.ControlFlows
         /// </summary>
         /// <param name="waitingState">The waiting state to use while waiting for the trigger. The Callback of this state will be overwritten</param>
         /// <param name="postTriggerState">The state to move users to post trigger.</param>
-        public WaitForAllPlayers_UST(UserState postTriggerState, WaitingUserState waitingState = null) : base(postTriggerState, WaitingUserState.DefaultWaitingUserState(waitingState))
+        public WaitForAllPlayers_UST(Action<User, UserStateResult, UserFormSubmission> outlet = null, WaitingUserState waitingState = null) : base(outlet, WaitingUserState.DefaultState(waitingState))
         {
             // Empty
         }

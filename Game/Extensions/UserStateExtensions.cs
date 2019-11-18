@@ -20,7 +20,7 @@ namespace RoystonGame.Game.Extensions
         /// <param name="userState">The user state to transition out of.</param>
         /// <param name="transitionTo">The user state to transition into.</param>
         /// <returns><paramref name="transitionTo"/> unmodified.</returns>
-        public static UserState Transition<T>(this UserState userState, UserState transitionTo) where T : UserStateTransition
+        public static UserState TransitionOne<T>(this UserState userState, UserState transitionTo, User user) where T : UserStateTransition
         {
             // Existence of constructor not checked at compile time.
             T transition = (T)Activator.CreateInstance(typeof(T), transitionTo);

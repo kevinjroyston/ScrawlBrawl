@@ -10,10 +10,12 @@ namespace RoystonGame.Game
     {
         public static Game Singleton { get; private set; }
 
-        private List<User> UsersInGame { get; } 
+        private List<User> UsersInGame { get; }
+        private List<User> UnregisteredUsers { get; }
 
         public Game()
         {
+            //TODO: move logic into Singleton getter. Make constructor private
             if (Singleton == null)
             {
                 Singleton = this;
@@ -29,6 +31,20 @@ namespace RoystonGame.Game
         public IReadOnlyList<User> GetActiveUsers()
         {
             return UsersInGame.AsReadOnly();
+        }
+
+        public void RegisterUser(User user, string displayName, string selfPortrait)
+        {
+            //todo parameter validation
+            if (!this.UnregisteredUsers.Contains(user))
+            {
+                throw new Exception("Tried to register unknown user");
+            }
+
+            user.DisplayName = displayName;
+            user.SelfPortrait = selfPortrait;
+            this.UsersInGame.Add(user);
+            this.UnregisteredUsers.Remove(user);
         }
     }
 }
