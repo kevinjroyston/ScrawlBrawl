@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace RoystonGame.Game
 {
-    public class Game
+    public class GameManager
     {
-        public static Game Singleton { get; private set; }
+        public static GameManager Singleton { get; private set; }
 
         private List<User> UsersInGame { get; }
         private List<User> UnregisteredUsers { get; }
 
-        public Game()
+        public GameManager()
         {
             //TODO: move logic into Singleton getter. Make constructor private
             if (Singleton == null)

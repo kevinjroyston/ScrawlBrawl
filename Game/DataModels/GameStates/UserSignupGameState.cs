@@ -36,7 +36,7 @@ namespace RoystonGame.Game.DataModels.GameStates
             WaitForPartyLeader_UST transition = new WaitForPartyLeader_UST(this.UserOutlet);
             entrance.SetStateCompletedCallback((User user, UserStateResult result, UserFormSubmission userInput) =>
             {
-                Game.Singleton.RegisterUser(user, userInput.SubForms[0].ShortAnswer, userInput.SubForms[1].Drawing);
+                GameManager.Singleton.RegisterUser(user, userInput.SubForms[0].ShortAnswer, userInput.SubForms[1].Drawing);
                 transition.Inlet(user, result, userInput);
             });
 

@@ -24,7 +24,7 @@ namespace RoystonGame.Game.Extensions
         {
             // Existence of constructor not checked at compile time.
             T transition = (T)Activator.CreateInstance(typeof(T), transitionTo);
-            transition.AddUsersToTransition(Game.Singleton.GetActiveUsers());
+            transition.AddUsersToTransition(GameManager.Singleton.GetActiveUsers());
             userState.SetStateCompletedCallback(transition.Inlet);
 
             return transitionTo;
