@@ -36,7 +36,7 @@ namespace RoystonGame.TV.DataModels.GameStates
             { EndOfGameRestartType.NewPlayers, "Change Players" },
         };
 
-        public EndOfGameState(Action<User, UserStateResult, UserFormSubmission> userStateCompletedCallback, Action<EndOfGameRestartType> endOfGameRestartCallback) : base(userStateCompletedCallback)
+        public EndOfGameState(Action<EndOfGameRestartType> endOfGameRestartCallback, Action < User, UserStateResult, UserFormSubmission> userStateCompletedCallback = null) : base(userStateCompletedCallback)
         {
             UserState partyLeaderPrompt = new SimplePromptUserState(ContinuePrompt());
             UserStateTransition waitForLeader = new WaitForPartyLeader(this.UserOutlet, partyLeaderPrompt, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
@@ -55,7 +55,7 @@ namespace RoystonGame.TV.DataModels.GameStates
 
             this.GameObjects = new List<GameObject>()
             {
-                new TextObject { Content = "Waiting for party leader . . . TODO: Show score here ;)" }
+                new TextObject { Content = "Waiting for party leader . . ." }
             };
         }
     }

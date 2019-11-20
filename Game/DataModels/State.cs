@@ -13,14 +13,12 @@ namespace RoystonGame.TV.DataModels
     /// <summary>
     /// A state has an inlet and outlet.
     /// </summary>
-    public interface State
+    public interface State : StateInlet, StateOutlet
     {
-        /// <summary>
-        /// Sets the state completed callback. This should be called before state is entered!
-        /// </summary>
-        /// <param name="outlet">The callback to use.</param>
-        public abstract void SetOutlet(Action<User, UserStateResult, UserFormSubmission> outlet);
+    }
 
+    public interface StateInlet
+    {
         /// <summary>
         /// The inlet to the transition.
         /// </summary>
@@ -28,5 +26,14 @@ namespace RoystonGame.TV.DataModels
         /// <param name="stateResult">The state result of the last node (this transition doesnt care).</param>
         /// <param name="formSubmission">The user input of the last node (this transition doesnt care).</param>
         public void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission);
+    }
+
+    public interface StateOutlet
+    {
+        /// <summary>
+        /// Sets the state completed callback. This should be called before state is entered!
+        /// </summary>
+        /// <param name="outlet">The callback to use.</param>
+        public abstract void SetOutlet(Action<User, UserStateResult, UserFormSubmission> outlet);
     }
 }

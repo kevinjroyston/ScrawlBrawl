@@ -23,7 +23,7 @@ namespace RoystonGame.TV.Extensions
         /// <param name="toState">The state to transition into.</param>
         /// <returns><paramref name="transitionTo"/> unmodified.</returns>
         /// <remarks>Don't assign the result of this operation to anything! The response is purely meant for chaining.</remarks>
-        public static State Transition<T>(this State A, State C) where T : UserStateTransition, new()
+        public static State Transition<T>(this StateOutlet A, State C) where T : UserStateTransition, new()
         {
             // Existence of constructor not checked at compile time.
             T B = new T();
@@ -42,7 +42,7 @@ namespace RoystonGame.TV.Extensions
         /// <param name="fromState">The state to transition out of.</param>
         /// <param name="toState">The state to transition into.</param>
         /// <returns><paramref name="transitionTo"/> unmodified.</returns>
-        public static GameState Transition<T>(this GameState A, GameState C) where T : UserStateTransition, new()
+        public static GameState Transition<T>(this StateOutlet A, GameState C) where T : UserStateTransition, new() 
         {
             // Existence of constructor not checked at compile time.
             T B = new T();

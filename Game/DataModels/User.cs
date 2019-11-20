@@ -17,7 +17,7 @@ namespace RoystonGame.TV.DataModels
         /// <summary>
         /// The current state of the user.
         /// </summary>
-        public UserState UserState { get; private set; }
+        private UserState UserState { get; set; }
 
         /// <summary>
         /// Indicates this User is the party leader (Technically can have multiple).
@@ -48,6 +48,11 @@ namespace RoystonGame.TV.DataModels
         {
             this.UserState = newState;
             this.UserState.EnterState(this, synchronizedTransitionTime);
+        }
+
+        internal void TransitionUserState(Action enterState, object now)
+        {
+            throw new NotImplementedException();
         }
     }
 }

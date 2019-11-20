@@ -1,4 +1,5 @@
-﻿using RoystonGame.Game.GameModes.Test;
+﻿using RoystonGame.TV.GameModes;
+using RoystonGame.TV.GameModes.Test;
 using RoystonGame.TV.ControlFlows;
 using RoystonGame.TV.DataModels;
 using RoystonGame.TV.DataModels.Enums;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using RoystonGame.Web.DataModels.Responses;
 
 namespace RoystonGame.TV
 {
@@ -23,7 +25,7 @@ namespace RoystonGame.TV
         #endregion
 
         #region User and Object trackers
-        private List<User> UsersInGame { get; } = new List<User>();
+        private List<User> RegisteredUsers { get; } = new List<User>();
         private List<User> UnregisteredUsers { get; } = new List<User>();
 
         private List<GameObject> AllGameObjects { get; } = new List<GameObject>();
@@ -31,14 +33,18 @@ namespace RoystonGame.TV
 
         #region GameStates
         private GameState CurrentGameState { get; set; }
-        private GameState RegistrationState { get; set; }
+
+        private GameState UserRegistration { get; set; }
+        private GameState PartyLeaderSelect { get; set; }
+        private GameState EndOfGameRestart { get; set; }
+        // TODO, use below
         private GameState IndefiniteWaitingState { get; set; }
         #endregion
 
         #region GameModes
-        private IReadOnlyDictionary<GameMode, Func<State>> GameModeMappings { get; set; } = new ReadOnlyDictionary<GameMode, Func<State>>(new Dictionary<GameMode, Func<State>>
+        private IReadOnlyDictionary<GameMode, Func<IGameMode>> GameModeMappings { get; set; } = new ReadOnlyDictionary<GameMode, Func<IGameMode>>(new Dictionary<GameMode, Func<IGameMode>>
         {
-            { GameMode.Testing, () => (State)new TestGameMode() }
+            { GameMode.Testing, () => new TestGameMode() }
         });
         #endregion
 
@@ -56,25 +62,62 @@ namespace RoystonGame.TV
 
             this.GameRunner = gameRunner;
 
-            GameState partyLeaderSelect = new SelectGameModeGameState(null, Enum.GetNames(typeof(GameMode)), PartyLeaderSelectedGameMode);
-            GameState userRegistartion = new UserSignupGameState();
-            this.CurrentGameState.Transition<NoWait>(partyLeaderSelect);
+            GameState userRegistration = new UserSignupGameState();
+            GameState partyLeaderSelect = new SelectGameModeGameState(null, Enum.GetNames(typeof(GameMode)), (int? gameMode) => SelectedGameMode(gameMode));
+            GameState endOfGameRestart = new EndOfGameState(PrepareToRestartGame);
+
+            userRegistration.Transition<NoWait>(partyLeaderSelect);
         }
 
-        public static void PartyLeaderSelectedGameMode(int? index)
+        private int? LastSelectedGameMode { get; set; } = null;
+        public static void SelectedGameMode(int? index = null, GameState specialTransitionFrom = null)
         {
-            if (!index.HasValue)
+            if (!index.HasValue && !Singleton.LastSelectedGameMode.HasValue)
             {
                 throw new Exception("Could not parse selected game mode, should have been rejected in form submit!!");
             }
+            index = index ?? Singleton.LastSelectedGameMode;
+            Singleton.LastSelectedGameMode = index;
+
+            // Slightly hacky default because it can't be passed in.
+            GameState transitionFrom = specialTransitionFrom ?? Singleton.PartyLeaderSelect;
 
             GameMode selectedMode = (GameMode)index.Value;
-            return Singleton.GameModeMappings[selectedMode]();
+            IGameMode game = Singleton.GameModeMappings[selectedMode]();
+            transitionFrom.Transition<NoWait>(game.EntranceState);
+            game.Transition<NoWait>(Singleton.EndOfGameRestart);
+        }
+
+        /// <summary>
+        /// Updates the FSM based on the type of restart.
+        /// </summary>
+        public static void PrepareToRestartGame(EndOfGameRestartType restartType)
+        {
+            // TODO make sure we are using clean/cleared instances of things
+            // TODO clear registered / unregistered. Transition unregistered to registration
+            switch (restartType)
+            {
+                case EndOfGameRestartType.NewPlayers:
+                    Singleton.EndOfGameRestart.Transition<NoWait>(Singleton.UserRegistration);
+                    foreach(User user in Singleton.UnregisteredUsers)
+                    {
+                        user.TransitionUserState(Singleton.UserRegistration.Inlet, DateTime.Now);
+                    }
+                    break;
+                case EndOfGameRestartType.SameGameAndPlayers:
+                    SelectedGameMode(specialTransitionFrom: Singleton.EndOfGameRestart);
+                    break;
+                case EndOfGameRestartType.SamePlayers:
+                    Singleton.EndOfGameRestart.Transition<NoWait>(Singleton.PartyLeaderSelect);
+                    break;
+                default:
+                    throw new Exception("Unknown restart game type");
+            }
         }
 
         public static IReadOnlyList<User> GetActiveUsers()
         {
-            return Singleton.UsersInGame.AsReadOnly();
+            return Singleton.RegisteredUsers.AsReadOnly();
         }
 
         public static void RegisterUser(User user, string displayName, string selfPortrait)
@@ -87,8 +130,22 @@ namespace RoystonGame.TV
 
             user.DisplayName = displayName;
             user.SelfPortrait = selfPortrait;
-            Singleton.UsersInGame.Add(user);
+            Singleton.RegisteredUsers.Add(user);
             Singleton.UnregisteredUsers.Remove(user);
+        }
+
+        // TODO switch to CallerIP or something
+        public static UserPrompt UserRequestingCurrentState(User user)
+        {
+            if (!Singleton.RegisteredUsers.Contains(user)
+                && !Singleton.UnregisteredUsers.Contains(user))
+            {
+                Singleton.UnregisteredUsers.Add(user);
+                // TODO: infinite waiting.
+                user.TransitionUserState(Singleton.UserRegistration.Inlet, DateTime.Now);
+            }
+            return user.UserState.UserRequestingCurrentPrompt(user);
+
         }
 
         /// <summary>
