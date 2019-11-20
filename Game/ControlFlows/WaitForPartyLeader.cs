@@ -1,30 +1,33 @@
-﻿using RoystonGame.Game.DataModels;
-using RoystonGame.Game.DataModels.Enums;
-using RoystonGame.Game.DataModels.UserStates;
+﻿using RoystonGame.TV.DataModels;
+using RoystonGame.TV.DataModels.Enums;
+using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.Web.DataModels.Requests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RoystonGame.Game.ControlFlows
+namespace RoystonGame.TV.ControlFlows
 {
     /// <summary>
     /// Waits until the leader
     /// </summary>
-    public class WaitForPartyLeader_UST : WaitForAllPlayers_UST
+    public class WaitForPartyLeader : WaitForAllPlayers
     {
         private UserState PartyLeaderUserState { get; }
 
+        // Literally only needed to satisfy the new() constraint needed by StateExtensions.cs
+        public WaitForPartyLeader() : this(null) { }
+
         /// <summary>
-        /// Initializes a new <see cref="WaitForTrigger_UST"/>.
+        /// Initializes a new <see cref="WaitForTrigger"/>.
         /// </summary>
         /// <param name="outlet">The callback function to call when leaving a state.</param>
         /// <param name="waitingState">The waiting state to use while waiting for the trigger. The Callback of this state will be overwritten</param>
-        public WaitForPartyLeader_UST(Action<User, UserStateResult, UserFormSubmission> outlet = null, UserState partyLeaderPrompt = null, WaitingUserState waitingState = null, Action<User, UserStateResult, UserFormSubmission> partyLeaderSubmission = null) : base(outlet, WaitingUserState.DefaultState(waitingState))
+        public WaitForPartyLeader(Action<User, UserStateResult, UserFormSubmission> outlet = null, UserState partyLeaderPrompt = null, WaitingUserState waitingState = null, Action<User, UserStateResult, UserFormSubmission> partyLeaderSubmission = null) : base(outlet, WaitingUserState.DefaultState(waitingState))
         {
             this.PartyLeaderUserState = partyLeaderPrompt ?? PartyLeaderReadyUpButtonUserState.DefaultState();
-            this.PartyLeaderUserState.SetStateCompletedCallback((User user, UserStateResult result, UserFormSubmission userInput) =>
+            this.PartyLeaderUserState.SetOutlet((User user, UserStateResult result, UserFormSubmission userInput) =>
             {
                 partyLeaderSubmission?.Invoke(user, result, userInput);
                 base.Inlet(user, result, userInput);

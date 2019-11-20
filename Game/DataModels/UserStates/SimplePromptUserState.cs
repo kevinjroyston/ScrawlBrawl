@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using RoystonGame.Game.DataModels.Enums;
+using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 
-namespace RoystonGame.Game.DataModels.UserStates
+namespace RoystonGame.TV.DataModels.UserStates
 {
     /// <summary>
     /// A waiting state which will display "prompt" forever until state is forcefully changed or the prompt is submitted.

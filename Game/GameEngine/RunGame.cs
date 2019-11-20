@@ -1,13 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using RoystonGame.TV.GameEngine.Rendering;
 
-namespace RoystonGame.Game.GameEngine
+namespace RoystonGame.TV.GameEngine
 {
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class RunGame : Microsoft.Xna.Framework.Game
+    public class RunGame : Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -15,7 +16,7 @@ namespace RoystonGame.Game.GameEngine
         public RunGame()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
+            Content.RootDirectory = "Game\\GameEngine\\Content";
         }
 
         /// <summary>
@@ -26,7 +27,8 @@ namespace RoystonGame.Game.GameEngine
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            // Load singleton(s)
+            GameManager singleton = new GameManager(this);
 
             base.Initialize();
         }
@@ -40,7 +42,10 @@ namespace RoystonGame.Game.GameEngine
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            foreach (GameObject gameObject in GameManager.GetAllGameObjects())
+            {
+                gameObject.LoadContent(this.Content);
+            }
         }
 
         /// <summary>
@@ -49,7 +54,10 @@ namespace RoystonGame.Game.GameEngine
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+            foreach (GameObject gameObject in GameManager.GetAllGameObjects())
+            {
+                gameObject.UnloadContent();
+            }
         }
 
         /// <summary>
@@ -62,7 +70,10 @@ namespace RoystonGame.Game.GameEngine
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            foreach (GameObject gameObject in GameManager.GetActiveGameObjects())
+            {
+                gameObject.Update(gameTime);
+            }
 
             base.Update(gameTime);
         }
@@ -75,7 +86,10 @@ namespace RoystonGame.Game.GameEngine
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            foreach (GameObject gameObject in GameManager.GetActiveGameObjects())
+            {
+                gameObject.Draw(spriteBatch);
+            }
 
             base.Draw(gameTime);
         }

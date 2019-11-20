@@ -1,11 +1,14 @@
 ﻿using System;
-using RoystonGame.Game.ControlFlows;
-using RoystonGame.Game.DataModels.Enums;
-using RoystonGame.Game.DataModels.UserStates;
+using System.Collections.Generic;
+using RoystonGame.TV.ControlFlows;
+using RoystonGame.TV.DataModels.Enums;
+using RoystonGame.TV.DataModels.UserStates;
+using RoystonGame.TV.GameEngine;
+using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 
-namespace RoystonGame.Game.DataModels.GameStates
+namespace RoystonGame.TV.DataModels.GameStates
 {
     public class SelectGameModeGameState : GameState
     {
@@ -34,13 +37,18 @@ namespace RoystonGame.Game.DataModels.GameStates
         public SelectGameModeGameState(Action<User, UserStateResult, UserFormSubmission> userStateCompletedCallback, string[] availableGameModes, Action<int?> selectedGameModeCallback) : base(userStateCompletedCallback)
         {
             UserState partyLeaderPrompt = new SimplePromptUserState(GameModePrompt(availableGameModes));
-            UserStateTransition waitForLeader = new WaitForPartyLeader_UST(this.UserOutlet, partyLeaderPrompt, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
+            UserStateTransition waitForLeader = new WaitForPartyLeader(this.UserOutlet, partyLeaderPrompt, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
             {
                 selectedGameModeCallback(userInput.SubForms[0].RadioAnswer);
             });
             waitForLeader.SetOutlet(this.UserOutlet);
 
             this.Entrance = waitForLeader;
+
+            this.GameObjects = new List<GameObject>()
+            {
+                new TextObject { Content = "Waiting for party leader . . ." }
+            };
         }
     }
 }

@@ -6,14 +6,14 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using RoystonGame.Game.GameEngine;
+using RoystonGame.TV.GameEngine;
 
 namespace RoystonGame
 {
     public class Program
     {
-        private static Task GameThread;
-        private static Task WebThread;
+        private static Task GameThread { get; set; }
+        private static Task WebThread { get; set; }
         private static RunGame GameObject;
         public static void Main(string[] args)
         {

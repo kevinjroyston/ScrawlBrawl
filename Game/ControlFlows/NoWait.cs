@@ -1,20 +1,23 @@
-﻿using RoystonGame.Game.DataModels;
-using RoystonGame.Game.DataModels.Enums;
-using RoystonGame.Game.DataModels.UserStates;
+﻿using RoystonGame.TV.DataModels;
+using RoystonGame.TV.DataModels.Enums;
+using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.Web.DataModels.Requests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RoystonGame.Game.ControlFlows
+namespace RoystonGame.TV.ControlFlows
 {
     /// <summary>
     /// On state completion, transitions users to a waiting state until a trigger occurs.
     /// </summary>
-    public class NoWait_UST : UserStateTransition
+    public class NoWait : UserStateTransition
     {
-        public NoWait_UST(Action<User, UserStateResult, UserFormSubmission> outlet) : base(outlet)
+        // Literally only needed to satisfy the new() constraint needed by StateExtensions.cs
+        public NoWait() : this(null) { }
+
+        public NoWait(Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(outlet)
         {
             // Empty
         }

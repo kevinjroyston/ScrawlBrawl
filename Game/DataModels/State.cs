@@ -1,18 +1,26 @@
-﻿using RoystonGame.Game.DataModels;
-using RoystonGame.Game.DataModels.Enums;
+﻿using RoystonGame.TV.ControlFlows;
+using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
+using RoystonGame.Web.DataModels.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace RoystonGame.Game.ControlFlows
+namespace RoystonGame.TV.DataModels
 {
     /// <summary>
-    /// Control flows, user states, or game states. Anything that can take in a user.
+    /// A state has an inlet and outlet.
     /// </summary>
-    public interface UserInlet
+    public interface State
     {
+        /// <summary>
+        /// Sets the state completed callback. This should be called before state is entered!
+        /// </summary>
+        /// <param name="outlet">The callback to use.</param>
+        public abstract void SetOutlet(Action<User, UserStateResult, UserFormSubmission> outlet);
+
         /// <summary>
         /// The inlet to the transition.
         /// </summary>

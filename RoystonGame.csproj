@@ -48,7 +48,7 @@
 
   <ItemGroup>
     <Folder Include="Game\DataModels\GameStates\GameStateResultObjects\" />
-    <MonoGameContentReference Include="Content\Content.mgcb" />
+    <MonoGameContentReference Include="Game\GameEngine\Content\Content.mgcb" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework.DesktopGL.Core">

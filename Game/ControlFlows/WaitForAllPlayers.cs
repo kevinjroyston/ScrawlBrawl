@@ -1,22 +1,25 @@
-﻿using RoystonGame.Game.DataModels;
-using RoystonGame.Game.DataModels.Enums;
-using RoystonGame.Game.DataModels.UserStates;
+﻿using RoystonGame.TV.DataModels;
+using RoystonGame.TV.DataModels.Enums;
+using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.Web.DataModels.Requests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RoystonGame.Game.ControlFlows
+namespace RoystonGame.TV.ControlFlows
 {
-    public class WaitForAllPlayers_UST : WaitForTrigger_UST
+    public class WaitForAllPlayers : WaitForTrigger
     {
+        // Literally only needed to satisfy the new() constraint needed by StateExtensions.cs
+        public WaitForAllPlayers() : this(null) { }
+
         /// <summary>
-        /// Initializes a new <see cref="WaitForTrigger_UST"/>.
+        /// Initializes a new <see cref="WaitForTrigger"/>.
         /// </summary>
         /// <param name="waitingState">The waiting state to use while waiting for the trigger. The Callback of this state will be overwritten</param>
         /// <param name="postTriggerState">The state to move users to post trigger.</param>
-        public WaitForAllPlayers_UST(Action<User, UserStateResult, UserFormSubmission> outlet = null, WaitingUserState waitingState = null) : base(outlet, WaitingUserState.DefaultState(waitingState))
+        public WaitForAllPlayers(Action<User, UserStateResult, UserFormSubmission> outlet = null, WaitingUserState waitingState = null) : base(outlet, WaitingUserState.DefaultState(waitingState))
         {
             // Empty
         }

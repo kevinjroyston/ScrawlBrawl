@@ -1,6 +1,7 @@
-﻿using RoystonGame.Game.ControlFlows;
-using RoystonGame.Game.DataModels.Enums;
-using RoystonGame.Game.DataModels.UserStates;
+﻿using RoystonGame.TV.ControlFlows;
+using RoystonGame.TV.DataModels.Enums;
+using RoystonGame.TV.DataModels.UserStates;
+using RoystonGame.TV.GameEngine;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RoystonGame.Game.DataModels.GameStates
+namespace RoystonGame.TV.DataModels.GameStates
 {
     /// <summary>
     /// Class defining a GameState. A GameState FSM only has one walker, unlike a UserState FSM which has many.
@@ -18,14 +19,14 @@ namespace RoystonGame.Game.DataModels.GameStates
     /// of a custom GameState and use that for passing data around. If a GameState were to time out, the remaining thread should have no impact on anything because the orchestrator will make the
     /// final call. Your job here is simply to prompt the users appropriately, handle graphics events, and let the orchestrator know when you finish or time out.
     /// </summary>
-    public abstract class GameState : UserInlet
+    public abstract class GameState : State
     {
         /// <summary>
         /// The callback to call per user upon state completion.
         /// </summary>
         protected Action<User, UserStateResult, UserFormSubmission> UserOutlet { get; set; }
 
-        protected UserInlet Entrance { get; set; }
+        protected State Entrance { get; set; }
 
         protected DateTime StateStartTime { get; private set; }
 
@@ -38,9 +39,9 @@ namespace RoystonGame.Game.DataModels.GameStates
         /// Initializes a GameState to be used in a FSM.
         /// </summary>
         /// <param name="userOutlet">Called back when the state completes.</param>
-        public GameState(Action<User, UserStateResult, UserFormSubmission> userOutlet)
+        public GameState(Action<User, UserStateResult, UserFormSubmission> userOutlet = null)
         {
-            this.SetUserStateCompletedCallback(userOutlet);
+            this.SetOutlet(userOutlet);
         }
 
         // TODO, move below into the {set;}
@@ -48,8 +49,8 @@ namespace RoystonGame.Game.DataModels.GameStates
         /// <summary>
         /// Sets the state completed callback. This should be called before state is entered!
         /// </summary>
-        /// <param name="stateCompletedCallback">The callback to use.</param>
-        public void SetUserStateCompletedCallback(Action<User, UserStateResult, UserFormSubmission> userStateCompletedCallback)
+        /// <param name="outlet">The callback to use.</param>
+        public void SetOutlet(Action<User, UserStateResult, UserFormSubmission> outlet)
         {
             // Wrap the callback function with Flag setting code.
             this.UserOutlet = (User user, UserStateResult result, UserFormSubmission userInput) =>
@@ -60,7 +61,7 @@ namespace RoystonGame.Game.DataModels.GameStates
                 }
 
                 this.HaveAlreadyCalledCompletedActionCallback = true;
-                userStateCompletedCallback(user, result, userInput);
+                outlet(user, result, userInput);
             };
         }
 
@@ -95,5 +96,19 @@ namespace RoystonGame.Game.DataModels.GameStates
         {
             Entrance.Inlet(user, stateResult, formSubmission);
         }
+
+        #region TVRendering
+
+        protected List<GameObject> GameObjects { get; set; }
+
+        public IEnumerable<GameObject> GetActiveGameObjects()
+        {
+            if (GameObjects == null)
+            {
+                throw new Exception("Game objects not defined for this game state!!");
+            }
+            return GameObjects;
+        }
+        #endregion
     }
 }

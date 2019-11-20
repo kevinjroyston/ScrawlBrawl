@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using RoystonGame.Game.DataModels.UserStates;
+using RoystonGame.TV.DataModels.UserStates;
 
-namespace RoystonGame.Game.DataModels
+namespace RoystonGame.TV.DataModels
 {
     /// <summary>
     /// Class representing a user instance.

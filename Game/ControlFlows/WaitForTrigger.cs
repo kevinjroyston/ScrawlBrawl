@@ -1,28 +1,31 @@
-﻿using RoystonGame.Game.DataModels;
-using RoystonGame.Game.DataModels.Enums;
-using RoystonGame.Game.DataModels.UserStates;
+﻿using RoystonGame.TV.DataModels;
+using RoystonGame.TV.DataModels.Enums;
+using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.Web.DataModels.Requests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RoystonGame.Game.ControlFlows
+namespace RoystonGame.TV.ControlFlows
 {
     /// <summary>
     /// On state completion, transitions users to a waiting state until a trigger occurs.
     /// </summary>
-    public class WaitForTrigger_UST : UserStateTransition
+    public class WaitForTrigger : UserStateTransition
     {
         protected Dictionary<User, bool> WaitingUsers { get; private set; } = new Dictionary<User, bool>();
         protected WaitingUserState WaitingState { get; private set; }
 
+        // Literally only needed to satisfy the new() constraint needed by StateExtensions.cs
+        public WaitForTrigger() : this(null) { }
+
         /// <summary>
-        /// Initializes a new <see cref="WaitForTrigger_UST"/>.
+        /// Initializes a new <see cref="WaitForTrigger"/>.
         /// </summary>
         /// <param name="outlet">The function each user will call post trigger.</param>
         /// <param name="waitingState">The waiting state to use while waiting for the trigger. The Callback of this state will be overwritten</param>
-        public WaitForTrigger_UST(Action<User, UserStateResult, UserFormSubmission> outlet = null, WaitingUserState waitingState = null) : base(outlet)
+        public WaitForTrigger(Action<User, UserStateResult, UserFormSubmission> outlet = null, WaitingUserState waitingState = null) : base(outlet)
         {
             this.WaitingState = WaitingUserState.DefaultState(waitingState);
         }
@@ -69,7 +72,7 @@ namespace RoystonGame.Game.ControlFlows
             }
 
             // Set the StateCompletedCallback at last possible moment in case this.Outlet has been changed.
-            this.WaitingState.SetStateCompletedCallback(this.Outlet);
+            this.WaitingState.SetOutlet(this.Outlet);
             this.WaitingState.ForceChangeOfUserStates(UserStateResult.Success);
         }
     }

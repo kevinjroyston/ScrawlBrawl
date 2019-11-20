@@ -1,4 +1,4 @@
-﻿namespace RoystonGame.Game.DataModels.UserStates
+﻿namespace RoystonGame.TV.DataModels.UserStates
 {
     public class UserSubmission
     {

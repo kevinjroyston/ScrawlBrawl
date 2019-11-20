@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using RoystonGame.Game.ControlFlows;
-using RoystonGame.Game.DataModels.Enums;
-using RoystonGame.Game.DataModels.UserStates;
+using Microsoft.Xna.Framework;
+using RoystonGame.TV.ControlFlows;
+using RoystonGame.TV.DataModels.Enums;
+using RoystonGame.TV.DataModels.UserStates;
+using RoystonGame.TV.GameEngine;
+using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 
-namespace RoystonGame.Game.DataModels.GameStates
+namespace RoystonGame.TV.DataModels.GameStates
 {
     public class EndOfGameState : GameState
     {
@@ -36,7 +39,7 @@ namespace RoystonGame.Game.DataModels.GameStates
         public EndOfGameState(Action<User, UserStateResult, UserFormSubmission> userStateCompletedCallback, Action<EndOfGameRestartType> endOfGameRestartCallback) : base(userStateCompletedCallback)
         {
             UserState partyLeaderPrompt = new SimplePromptUserState(ContinuePrompt());
-            UserStateTransition waitForLeader = new WaitForPartyLeader_UST(this.UserOutlet, partyLeaderPrompt, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
+            UserStateTransition waitForLeader = new WaitForPartyLeader(this.UserOutlet, partyLeaderPrompt, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
             {
                 int? selectedIndex = userInput.SubForms[0].RadioAnswer;
                 if (selectedIndex == null)
@@ -49,6 +52,11 @@ namespace RoystonGame.Game.DataModels.GameStates
             waitForLeader.SetOutlet(this.UserOutlet);
 
             this.Entrance = waitForLeader;
+
+            this.GameObjects = new List<GameObject>()
+            {
+                new TextObject { Content = "Waiting for party leader . . . TODO: Show score here ;)" }
+            };
         }
     }
 }

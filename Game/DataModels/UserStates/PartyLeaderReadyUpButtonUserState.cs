@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using RoystonGame.Game.DataModels.Enums;
+using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 
-namespace RoystonGame.Game.DataModels.UserStates
+namespace RoystonGame.TV.DataModels.UserStates
 {
     /// <summary>
     /// Gives the player a button they can press which will unblock the flow.
@@ -25,7 +25,7 @@ namespace RoystonGame.Game.DataModels.UserStates
         public override bool HandleUserFormInput(User user, UserFormSubmission userInput)
         {
             // No validation needed
-            this.StateCompletedCallback(user, UserStateResult.Success, null);
+            this.Outlet(user, UserStateResult.Success, null);
             return true;
         }
     }

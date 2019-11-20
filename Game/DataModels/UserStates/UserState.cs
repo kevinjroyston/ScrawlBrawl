@@ -1,5 +1,5 @@
-﻿using RoystonGame.Game.ControlFlows;
-using RoystonGame.Game.DataModels.Enums;
+﻿using RoystonGame.TV.ControlFlows;
+using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RoystonGame.Game.DataModels.UserStates
+namespace RoystonGame.TV.DataModels.UserStates
 {
     /// <summary>
     /// A UserState should only ever be responsible for 1 prompt / response cycle. The user can refresh the prompt several times, the user
@@ -16,7 +16,7 @@ namespace RoystonGame.Game.DataModels.UserStates
     /// 
     /// A UserState FSM has many walkers. Meaning a given UserState can and usually does track several users simultaneously.
     /// </summary>
-    public abstract class UserState : UserInlet
+    public abstract class UserState : State
     {
         /// <summary>
         /// The prompt to send to the user whenever they request input.
@@ -26,7 +26,7 @@ namespace RoystonGame.Game.DataModels.UserStates
         /// <summary>
         /// The callback to call upon successful state completion.
         /// </summary>
-        protected Action<User, UserStateResult, UserFormSubmission> StateCompletedCallback { get; set; }
+        protected Action<User, UserStateResult, UserFormSubmission> Outlet { get; set; }
 
         /// <summary>
         /// Callback populated when the state is forcefully changed (timeout or external event).
@@ -54,6 +54,8 @@ namespace RoystonGame.Game.DataModels.UserStates
         /// </summary>
         private Task StateTimeoutTask { get; set; }
 
+        #endregion
+
         /// <summary>
         /// A bool per user indicating this user has already called CompletedActionCallback
         /// </summary>
@@ -64,49 +66,47 @@ namespace RoystonGame.Game.DataModels.UserStates
         /// </summary>
         private Dictionary<User, bool> CalledEnterState { get; set; } = new Dictionary<User, bool>();
 
-        #endregion
-
-        public UserState(Action<User, UserStateResult, UserFormSubmission> stateCompletedCallback, TimeSpan stateTimeoutDuration, UserPrompt prompt)
+        public UserState(Action<User, UserStateResult, UserFormSubmission> outlet, TimeSpan stateTimeoutDuration, UserPrompt prompt)
         {
             this.RefreshTimeInMs = prompt.RefreshTimeInMs;
             this.Prompt = prompt;
             this.StateTimeoutDuration = stateTimeoutDuration;
             
-            this.SetStateCompletedCallback(stateCompletedCallback);
+            this.SetOutlet(outlet);
         }
 
-   /*     /// <summary>
-        /// Copy constructor. Every user should have their own instance of each UserState.
-        /// </summary>
-        /// <param name="copyFrom">UserState to copy from</param>
-        public UserState(UserState copyFrom, Action<UserStateResult, UserFormSubmission> stateCompletedCallback)
-        {
-            // Can probably remove below 2 errors, just being safe.
-            if (copyFrom.CalledEnterState)
-            {
-                throw new Exception("The UserState you are trying to copy has already been entered once. Please use a new state instance.");
-            }
-            if (copyFrom.HaveAlreadyCalledCompletedActionCallback)
-            {
-                throw new Exception("The UserState you are trying to copy has already been completed, please use a new state instance.");
-            }
+        /*     /// <summary>
+             /// Copy constructor. Every user should have their own instance of each UserState.
+             /// </summary>
+             /// <param name="copyFrom">UserState to copy from</param>
+             public UserState(UserState copyFrom, Action<UserStateResult, UserFormSubmission> stateCompletedCallback)
+             {
+                 // Can probably remove below 2 errors, just being safe.
+                 if (copyFrom.CalledEnterState)
+                 {
+                     throw new Exception("The UserState you are trying to copy has already been entered once. Please use a new state instance.");
+                 }
+                 if (copyFrom.HaveAlreadyCalledCompletedActionCallback)
+                 {
+                     throw new Exception("The UserState you are trying to copy has already been completed, please use a new state instance.");
+                 }
 
-            this.RefreshTimeInMs = copyFrom.RefreshTimeInMs;
-            this.Prompt = copyFrom.Prompt; // Okay to use the same reference to prompt. Due to synchronization all changes to prompt should be identical.
-            this.StateTimeoutDuration = copyFrom.StateTimeoutDuration;
-            this.SetUpdateStateCompletedCallback(stateCompletedCallback);
-        }*/
+                 this.RefreshTimeInMs = copyFrom.RefreshTimeInMs;
+                 this.Prompt = copyFrom.Prompt; // Okay to use the same reference to prompt. Due to synchronization all changes to prompt should be identical.
+                 this.StateTimeoutDuration = copyFrom.StateTimeoutDuration;
+                 this.SetUpdateStateCompletedCallback(stateCompletedCallback);
+             }*/
 
         // TODO. move below inside the {set;}
 
         /// <summary>
         /// Sets the state completed callback. This should be called before state is entered!
         /// </summary>
-        /// <param name="stateCompletedCallback">The callback to use.</param>
-        public void SetStateCompletedCallback(Action<User, UserStateResult, UserFormSubmission> stateCompletedCallback)
+        /// <param name="outlet">The callback to use.</param>
+        public void SetOutlet(Action<User, UserStateResult, UserFormSubmission> outlet)
         {
             // Wrap the callback function with Flag setting code.
-            this.StateCompletedCallback = (User user, UserStateResult result, UserFormSubmission input) =>
+            this.Outlet = (User user, UserStateResult result, UserFormSubmission input) =>
             {
                 if (this.HaveAlreadyCalledCompletedActionCallback[user] == true)
                 {
@@ -114,7 +114,7 @@ namespace RoystonGame.Game.DataModels.UserStates
                 }
 
                 this.HaveAlreadyCalledCompletedActionCallback[user] = true;
-                stateCompletedCallback(user, result, input);
+                outlet(user, result, input);
             };
         }
 
@@ -171,7 +171,7 @@ namespace RoystonGame.Game.DataModels.UserStates
                 await Task.Delay(millisecondsDelay).ConfigureAwait(false);
             }
 
-            this.ApplySpecialCallbackToAllUsersInState((User user) => this.StateCompletedCallback(user, UserStateResult.Timeout, null));
+            this.ApplySpecialCallbackToAllUsersInState((User user) => this.Outlet(user, UserStateResult.Timeout, null));
         }
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace RoystonGame.Game.DataModels.UserStates
         /// </summary>
         public void ForceChangeOfUserStates(UserStateResult userStateResult)
         {
-            this.ApplySpecialCallbackToAllUsersInState((User user) => this.StateCompletedCallback(user, userStateResult, null));
+            this.ApplySpecialCallbackToAllUsersInState((User user) => this.Outlet(user, userStateResult, null));
         }
 
         /// <summary>
