@@ -24,7 +24,7 @@ namespace RoystonGame.TV.DataModels.UserStates
         public override bool HandleUserFormInput(User user, UserFormSubmission userInput)
         {
             // TODO validate userInput
-            this.StateCompletedCallback(user, UserStateResult.Success, userInput);
+            this.Outlet(user, UserStateResult.Success, userInput);
             return true;
         }
     }

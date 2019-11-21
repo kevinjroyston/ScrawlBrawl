@@ -35,10 +35,14 @@ namespace RoystonGame.TV.DataModels.GameStates
             SubmitButton = true,
         };
 
-        public UserSignupGameState(Action<User, UserStateResult, UserFormSubmission> userStateCompletedCallback = null) : base(userStateCompletedCallback)
+        public UserSignupGameState(Action<User, UserStateResult, UserFormSubmission> userStateCompletedCallback = null, Action lobbyClosedCallback = null) : base(userStateCompletedCallback)
         {
             UserState entrance = new SimplePromptUserState(UserNamePrompt());
-            WaitForPartyLeader transition = new WaitForPartyLeader(this.UserOutlet);
+            WaitForPartyLeader transition = new WaitForPartyLeader(this.UserOutlet, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
+            {
+                lobbyClosedCallback?.Invoke();
+            });
+
             entrance.SetOutlet((User user, UserStateResult result, UserFormSubmission userInput) =>
             {
                 GameManager.RegisterUser(user, userInput.SubForms[0].ShortAnswer, userInput.SubForms[1].Drawing);

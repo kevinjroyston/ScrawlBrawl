@@ -8,7 +8,7 @@ namespace RoystonGame.TV.GameEngine.Rendering
 {
     public class TextObject : GameObject
     {
-        public string SpriteFontName { get; set; } = "DefaultFont.spritefont";
+        public string SpriteFontName { get; set; } = "DefaultFont";
         public Color FontColor { get; set; } = Color.Black;
         public string Content { get; set; }
 

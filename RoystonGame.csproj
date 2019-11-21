@@ -1,21 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-  <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props')" />
-
+  <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props" />
+  <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.ContentPipeline.targets" />
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+    <ProjectDir>bin\$(MonoGamePlatform)\$(Platform)\$(Configuration)\</ProjectDir>
     <IsPackable>false</IsPackable>
     <SpaRoot>ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
-
-    <!-- Set this to true if you enable server-side prerendering -->
-    <BuildServerSideRenderer>false</BuildServerSideRenderer>
+    <MonoGamePlatform>WindowsGL</MonoGamePlatform>
+    <ContentRootDirectory>\TV\GameEngine\Content</ContentRootDirectory>
+    <ParentOutputDir>$(ProjectDir)$(ContentRootDirectory)\bin\$(MonoGamePlatform)</ParentOutputDir>
+    <ParentIntermediateDir>$(ProjectDir)$(ContentRootDirectory)\obj\$(MonoGamePlatform)</ParentIntermediateDir>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.0.0" />
+    <PackageReference Include="MonoGame.Content.Builder" Version="3.7.0.9" />
     <PackageReference Include="MonoGame.Framework.DesktopGL.Core" Version="3.7.0.7" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
@@ -28,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Game\GameEngine\Icon.ico" />
+    <None Remove="TV\GameEngine\Icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,21 +45,16 @@
     <Content Include="ClientApp\src\tslint.json" />
     <Content Include="ClientApp\tsconfig.json" />
     <Content Include="ClientApp\tslint.json" />
-    <Content Include="Game\GameEngine\Icon.ico" />
+    <Content Include="TV\GameEngine\Icon.ico" />
     <Content Include="Web\wwwroot\favicon.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Game\DataModels\GameStates\GameStateResultObjects\" />
-    <MonoGameContentReference Include="Game\GameEngine\Content\Content.mgcb" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="MonoGame.Framework.DesktopGL.Core">
-      <!--<HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>-->
-    </Reference>
+    <Folder Include="TV\DataModels\GameStates\GameStateResultObjects\" />
+    <MonoGameContentReference Include="TV\GameEngine\Content\Content.mgcb" />
   </ItemGroup>
   <PropertyGroup>
-    <ApplicationIcon>Game\GameEngine\Icon.ico</ApplicationIcon>
+    <ApplicationIcon>TV\GameEngine\Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
@@ -86,5 +84,4 @@
       </ResolvedFileToPublish>
     </ItemGroup>
   </Target>
-  <!--<Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />-->
 </Project>

@@ -17,12 +17,12 @@ namespace RoystonGame.TV.DataModels
         /// <summary>
         /// The current state of the user.
         /// </summary>
-        private UserState UserState { get; set; }
+        public UserState UserState { get; private set; }
 
         /// <summary>
         /// Indicates this User is the party leader (Technically can have multiple).
         /// </summary>
-        public bool IsPartyLeader { get; private set; } = true;
+        public bool IsPartyLeader { get; set; }
 
         /// <summary>
         /// The name to display for the user.

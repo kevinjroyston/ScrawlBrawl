@@ -14,6 +14,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using RoystonGame.Web.DataModels.Responses;
+using System.Net;
+using RoystonGame.TV.DataModels.UserStates;
 
 namespace RoystonGame.TV
 {
@@ -25,8 +27,8 @@ namespace RoystonGame.TV
         #endregion
 
         #region User and Object trackers
-        private List<User> RegisteredUsers { get; } = new List<User>();
-        private List<User> UnregisteredUsers { get; } = new List<User>();
+        private Dictionary<IPAddress, User> RegisteredUsers { get; } = new Dictionary<IPAddress, User>();
+        private Dictionary<IPAddress, User> UnregisteredUsers { get; } = new Dictionary<IPAddress, User>();
 
         private List<GameObject> AllGameObjects { get; } = new List<GameObject>();
         #endregion
@@ -37,8 +39,7 @@ namespace RoystonGame.TV
         private GameState UserRegistration { get; set; }
         private GameState PartyLeaderSelect { get; set; }
         private GameState EndOfGameRestart { get; set; }
-        // TODO, use below
-        private GameState IndefiniteWaitingState { get; set; }
+        private UserState WaitForLobby { get; set; }
         #endregion
 
         #region GameModes
@@ -62,11 +63,18 @@ namespace RoystonGame.TV
 
             this.GameRunner = gameRunner;
 
-            GameState userRegistration = new UserSignupGameState();
-            GameState partyLeaderSelect = new SelectGameModeGameState(null, Enum.GetNames(typeof(GameMode)), (int? gameMode) => SelectedGameMode(gameMode));
-            GameState endOfGameRestart = new EndOfGameState(PrepareToRestartGame);
+            this.WaitForLobby = new WaitingUserState();
+            this.UserRegistration = new UserSignupGameState(lobbyClosedCallback: CloseLobby);
+            this.PartyLeaderSelect = new SelectGameModeGameState(null, Enum.GetNames(typeof(GameMode)), (int? gameMode) => SelectedGameMode(gameMode));
+            this.EndOfGameRestart = new EndOfGameState(PrepareToRestartGame);
 
-            userRegistration.Transition<NoWait>(partyLeaderSelect);
+            // Transitions other than NoWait will run into issues if used here but are fine in GameMode definitions.
+            this.WaitForLobby
+                .Transition<NoWait>(this.UserRegistration)
+                .Transition<NoWait>(this.PartyLeaderSelect);
+
+            // Causes any new user who enters WaitForLobby to immediately pass through, also unblocks users actively waiting there.
+            this.WaitForLobby.ForceChangeOfUserStates(UserStateResult.Success);
         }
 
         private int? LastSelectedGameMode { get; set; } = null;
@@ -93,16 +101,14 @@ namespace RoystonGame.TV
         /// </summary>
         public static void PrepareToRestartGame(EndOfGameRestartType restartType)
         {
-            // TODO make sure we are using clean/cleared instances of things
-            // TODO clear registered / unregistered. Transition unregistered to registration
             switch (restartType)
             {
                 case EndOfGameRestartType.NewPlayers:
                     Singleton.EndOfGameRestart.Transition<NoWait>(Singleton.UserRegistration);
-                    foreach(User user in Singleton.UnregisteredUsers)
-                    {
-                        user.TransitionUserState(Singleton.UserRegistration.Inlet, DateTime.Now);
-                    }
+                    Singleton.RegisteredUsers.Clear();
+
+                    // Open the floodgates for users who are stuck waiting for lobby.
+                    Singleton.WaitForLobby.ForceChangeOfUserStates(UserStateResult.Success);
                     break;
                 case EndOfGameRestartType.SameGameAndPlayers:
                     SelectedGameMode(specialTransitionFrom: Singleton.EndOfGameRestart);
@@ -115,37 +121,65 @@ namespace RoystonGame.TV
             }
         }
 
+        public static void CloseLobby()
+        {
+            // Reset the wait for lobby node
+            Singleton.WaitForLobby = new WaitingUserState();
+            Singleton.WaitForLobby.Transition<NoWait>(Singleton.UserRegistration);
+
+            // Pull all unregistered users into this waiting state.
+            foreach (User user in Singleton.UnregisteredUsers.Values)
+            {
+                user.TransitionUserState(Singleton.WaitForLobby, DateTime.Now);
+            }
+        }
+
         public static IReadOnlyList<User> GetActiveUsers()
         {
-            return Singleton.RegisteredUsers.AsReadOnly();
+            return Singleton.RegisteredUsers.Values.ToList().AsReadOnly();
         }
 
         public static void RegisterUser(User user, string displayName, string selfPortrait)
         {
             //todo parameter validation
-            if (!Singleton.UnregisteredUsers.Contains(user))
+            if (!Singleton.UnregisteredUsers.ContainsValue(user))
             {
                 throw new Exception("Tried to register unknown user");
             }
 
+            if(Singleton.RegisteredUsers.Count == 0)
+            {
+                user.IsPartyLeader = true;
+            }
+
             user.DisplayName = displayName;
             user.SelfPortrait = selfPortrait;
-            Singleton.RegisteredUsers.Add(user);
-            Singleton.UnregisteredUsers.Remove(user);
+
+            IPAddress callerIP = Singleton.UnregisteredUsers.First((kvp) => kvp.Value == user).Key;
+
+            Singleton.RegisteredUsers.Add(callerIP, user);
+            Singleton.UnregisteredUsers.Remove(callerIP);
         }
 
-        // TODO switch to CallerIP or something
-        public static UserPrompt UserRequestingCurrentState(User user)
+        /// Please don't ARP Poison me @Alex and force me to beef up User authentication here. lol
+        public static UserPrompt UserRequestingCurrentState(IPAddress callerIP)
         {
-            if (!Singleton.RegisteredUsers.Contains(user)
-                && !Singleton.UnregisteredUsers.Contains(user))
+            User user;
+            if (Singleton.UnregisteredUsers.ContainsKey(callerIP))
             {
-                Singleton.UnregisteredUsers.Add(user);
-                // TODO: infinite waiting.
-                user.TransitionUserState(Singleton.UserRegistration.Inlet, DateTime.Now);
+                user = Singleton.UnregisteredUsers[callerIP];
+            }
+            else if (Singleton.RegisteredUsers.ContainsKey(callerIP))
+            {
+                user = Singleton.RegisteredUsers[callerIP];
+            }
+            else
+            {
+                user = new User();
+                Singleton.UnregisteredUsers.Add(callerIP, user);
+                user.TransitionUserState(Singleton.WaitForLobby, DateTime.Now);
             }
             return user.UserState.UserRequestingCurrentPrompt(user);
-
         }
 
         /// <summary>
