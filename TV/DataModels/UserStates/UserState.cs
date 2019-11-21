@@ -37,12 +37,12 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// <summary>
         /// The user should be making a request for state at StateTimeout+Constants.BufferTimeSpan in order to transition to the new state.
         /// </summary>
-        private DateTime DontRefreshLaterThan { get; set; }
+        private DateTime? DontRefreshLaterThan { get; set; }
 
         /// <summary>
         /// The total time to spend in the state.
         /// </summary>
-        private TimeSpan StateTimeoutDuration { get; }
+        private TimeSpan? StateTimeoutDuration { get; }
 
         /// <summary>
         /// The default value to return for RefreshTimeInMs unless StateTimeout is sooner.
@@ -66,7 +66,7 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// </summary>
         private Dictionary<User, bool> CalledEnterState { get; set; } = new Dictionary<User, bool>();
 
-        public UserState(Action<User, UserStateResult, UserFormSubmission> outlet, TimeSpan stateTimeoutDuration, UserPrompt prompt)
+        public UserState(Action<User, UserStateResult, UserFormSubmission> outlet, TimeSpan? stateTimeoutDuration, UserPrompt prompt)
         {
             this.RefreshTimeInMs = prompt.RefreshTimeInMs;
             this.Prompt = prompt;
@@ -108,7 +108,7 @@ namespace RoystonGame.TV.DataModels.UserStates
             // Wrap the callback function with Flag setting code.
             this.Outlet = (User user, UserStateResult result, UserFormSubmission input) =>
             {
-                if (this.HaveAlreadyCalledCompletedActionCallback[user] == true)
+                if (this.HaveAlreadyCalledCompletedActionCallback.ContainsKey(user) && this.HaveAlreadyCalledCompletedActionCallback[user] == true)
                 {
                     return;
                 }
@@ -124,12 +124,12 @@ namespace RoystonGame.TV.DataModels.UserStates
         public virtual void EnterState(User user, DateTime userStartTime)
         {
             // If the user already entered this state once fail.
-            if (this.CalledEnterState[user])
+            if (this.CalledEnterState.ContainsKey(user) && this.CalledEnterState[user])
             {
                 throw new Exception("This UserState has already been entered once. Please use a new state instance.");
             }
             // If the user has already completed this state fail.
-            if (this.HaveAlreadyCalledCompletedActionCallback[user])
+            if (this.HaveAlreadyCalledCompletedActionCallback.ContainsKey(user) && this.HaveAlreadyCalledCompletedActionCallback[user])
             {
                 throw new Exception("Already completed this state instance, please use a new state instance.");
             }
@@ -147,14 +147,17 @@ namespace RoystonGame.TV.DataModels.UserStates
             // First user entering a state triggers the timers.
             if (!this.CalledEnterState.Values.Any())
             {
-                // Make sure the user is calling refresh at or before this time to ensure a quick state transition.
-                this.DontRefreshLaterThan = userStartTime.Add(this.StateTimeoutDuration).Add(Constants.DefaultBufferTime);
+                if (this.StateTimeoutDuration.HasValue)
+                {
+                    // Make sure the user is calling refresh at or before this time to ensure a quick state transition.
+                    this.DontRefreshLaterThan = userStartTime.Add(this.StateTimeoutDuration.Value).Add(Constants.DefaultBufferTime);
 
-                // Total state timeout timer duration.
-                int millisecondsDelay = (int)userStartTime.Add(this.StateTimeoutDuration).Subtract(DateTime.Now).TotalMilliseconds;
+                    // Total state timeout timer duration.
+                    int millisecondsDelay = (int)userStartTime.Add(this.StateTimeoutDuration.Value).Subtract(DateTime.Now).TotalMilliseconds;
 
-                // Start and track the timeout thread.
-                this.StateTimeoutTask = TimeoutFunc(millisecondsDelay);
+                    // Start and track the timeout thread.
+                    this.StateTimeoutTask = TimeoutFunc(millisecondsDelay);
+                }
             }
 
             this.CalledEnterState[user] = true;
@@ -204,8 +207,15 @@ namespace RoystonGame.TV.DataModels.UserStates
         public virtual UserPrompt UserRequestingCurrentPrompt(User user)
         {
             // Refresh at the normal cadence unless the DontRefreshLaterThan time is coming up.
-            this.Prompt.RefreshTimeInMs = Math.Min(this.RefreshTimeInMs, (int)this.DontRefreshLaterThan.Subtract(DateTime.Now).TotalMilliseconds);
-            this.Prompt.RefreshTimeInMs = Math.Max(this.Prompt.RefreshTimeInMs, 0);
+            if (this.DontRefreshLaterThan.HasValue)
+            {
+                this.Prompt.RefreshTimeInMs = Math.Min(this.RefreshTimeInMs, (int)this.DontRefreshLaterThan.Value.Subtract(DateTime.Now).TotalMilliseconds);
+                this.Prompt.RefreshTimeInMs = Math.Max(this.Prompt.RefreshTimeInMs, 0);
+            }
+            else
+            {
+                this.Prompt.RefreshTimeInMs = this.RefreshTimeInMs;
+            }
             return this.Prompt;
         }
 

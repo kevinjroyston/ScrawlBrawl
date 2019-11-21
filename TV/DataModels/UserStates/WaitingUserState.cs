@@ -20,7 +20,7 @@ namespace RoystonGame.TV.DataModels.UserStates
         public static WaitingUserState DefaultState(WaitingUserState state) => state ?? new WaitingUserState();
         public static UserPrompt DefaultPrompt(UserPrompt prompt) => prompt ?? new UserPrompt() { Description = "Waiting . . .", RefreshTimeInMs = 1000};
 
-        public WaitingUserState(UserPrompt prompt = null) : base(null, TimeSpan.MaxValue, DefaultPrompt(prompt))
+        public WaitingUserState(UserPrompt prompt = null) : base(null, null, DefaultPrompt(prompt))
         {
             // Empty
         }

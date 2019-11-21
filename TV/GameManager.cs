@@ -62,19 +62,22 @@ namespace RoystonGame.TV
             }
 
             this.GameRunner = gameRunner;
+        }
 
-            this.WaitForLobby = new WaitingUserState();
-            this.UserRegistration = new UserSignupGameState(lobbyClosedCallback: CloseLobby);
-            this.PartyLeaderSelect = new SelectGameModeGameState(null, Enum.GetNames(typeof(GameMode)), (int? gameMode) => SelectedGameMode(gameMode));
-            this.EndOfGameRestart = new EndOfGameState(PrepareToRestartGame);
+        public static void Initialize()
+        {
+            Singleton.WaitForLobby = new WaitingUserState();
+            Singleton.UserRegistration = new UserSignupGameState(lobbyClosedCallback: CloseLobby);
+            Singleton.PartyLeaderSelect = new SelectGameModeGameState(null, Enum.GetNames(typeof(GameMode)), (int? gameMode) => SelectedGameMode(gameMode));
+            Singleton.EndOfGameRestart = new EndOfGameState(PrepareToRestartGame);
 
             // Transitions other than NoWait will run into issues if used here but are fine in GameMode definitions.
-            this.WaitForLobby
-                .Transition<NoWait>(this.UserRegistration)
-                .Transition<NoWait>(this.PartyLeaderSelect);
+            Singleton.WaitForLobby
+                .Transition<NoWait>(Singleton.UserRegistration)
+                .Transition<NoWait>(Singleton.PartyLeaderSelect);
 
             // Causes any new user who enters WaitForLobby to immediately pass through, also unblocks users actively waiting there.
-            this.WaitForLobby.ForceChangeOfUserStates(UserStateResult.Success);
+            Singleton.WaitForLobby.ForceChangeOfUserStates(UserStateResult.Success);
         }
 
         private int? LastSelectedGameMode { get; set; } = null;
@@ -162,7 +165,7 @@ namespace RoystonGame.TV
         }
 
         /// Please don't ARP Poison me @Alex and force me to beef up User authentication here. lol
-        public static UserPrompt UserRequestingCurrentState(IPAddress callerIP)
+        public static User MapIPToUser(IPAddress callerIP)
         {
             User user;
             if (Singleton.UnregisteredUsers.ContainsKey(callerIP))
@@ -179,7 +182,7 @@ namespace RoystonGame.TV
                 Singleton.UnregisteredUsers.Add(callerIP, user);
                 user.TransitionUserState(Singleton.WaitForLobby, DateTime.Now);
             }
-            return user.UserState.UserRequestingCurrentPrompt(user);
+            return user;
         }
 
         /// <summary>
@@ -188,7 +191,7 @@ namespace RoystonGame.TV
         /// <returns>The active game objects</returns>
         public static IEnumerable<GameObject> GetActiveGameObjects()
         {
-            return Singleton.CurrentGameState.GetActiveGameObjects();
+            return Singleton?.CurrentGameState?.GetActiveGameObjects() ?? new List<GameObject>();
         }
 
         /// <summary>

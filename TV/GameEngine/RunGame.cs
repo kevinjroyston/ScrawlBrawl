@@ -15,8 +15,12 @@ namespace RoystonGame.TV.GameEngine
 
         public RunGame()
         {
+            // Load singleton(s)
+            GameManager singleton = new GameManager(this);
+
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Game\\GameEngine\\Content";
+
+            Content.RootDirectory = "Content";
         }
 
         /// <summary>
@@ -27,9 +31,7 @@ namespace RoystonGame.TV.GameEngine
         /// </summary>
         protected override void Initialize()
         {
-            // Load singleton(s)
-            GameManager singleton = new GameManager(this);
-
+            GameManager.Initialize();
             base.Initialize();
         }
 
@@ -85,12 +87,13 @@ namespace RoystonGame.TV.GameEngine
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+            spriteBatch.Begin();
 
             foreach (GameObject gameObject in GameManager.GetActiveGameObjects())
             {
                 gameObject.Draw(spriteBatch);
             }
-
+            spriteBatch.End();
             base.Draw(gameTime);
         }
     }

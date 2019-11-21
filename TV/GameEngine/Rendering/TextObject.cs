@@ -13,7 +13,7 @@ namespace RoystonGame.TV.GameEngine.Rendering
         public string Content { get; set; }
 
         // TODO: override / add extension to rectangle to define based on screen size / anchors. allow dynamic resizing!
-        public override Rectangle BoundingBox { get; set; } = new Rectangle(10, 10, 100, 100);
+        public override Rectangle BoundingBox { get; set; } = new Rectangle(10, 30, 500, 200);
 
         private SpriteFont MyFont { get; set; }
 

@@ -1,12 +1,13 @@
 
 #----------------------------- Global Properties ----------------------------#
 
-/outputDir:$(ParentOutputDir)
-/intermediateDir:$(ParentIntermediateDir)
+/outputDir:This is a useless POS
+/intermediateDir:
 /platform:Windows
 /config:
 /profile:Reach
 /compress:False
+
 
 #-------------------------------- References --------------------------------#
 

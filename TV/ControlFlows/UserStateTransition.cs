@@ -35,7 +35,7 @@ namespace RoystonGame.TV.ControlFlows
             // Wrap the callback function with Flag setting code.
             this.Outlet = (User user, UserStateResult result, UserFormSubmission input) =>
             {
-                if (this.HaveAlreadyCalledCompletedActionCallback[user] == true)
+                if (this.HaveAlreadyCalledCompletedActionCallback.ContainsKey(user) && this.HaveAlreadyCalledCompletedActionCallback[user] == true)
                 {
                     throw new Exception("Transition outlet called twice for a given user");
                 }

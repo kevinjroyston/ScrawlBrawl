@@ -52,6 +52,7 @@ namespace RoystonGame.TV.DataModels.GameStates
                 // TODO: remove hacky below implementation.
                 ((TextObject)this.GameObjects[0]).Content = Invariant($"{((TextObject)this.GameObjects[0]).Content} {userInput.SubForms[0].ShortAnswer}");
 
+                transition.AddUsersToTransition(new List<User> { user });
                 transition.Inlet(user, result, userInput);
             });
 

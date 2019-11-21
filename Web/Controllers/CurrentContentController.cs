@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RoystonGame.TV;
+using RoystonGame.TV.DataModels;
 using RoystonGame.Web.DataModels.Responses;
 
 namespace RoystonGame.Web.Controllers
@@ -26,7 +27,8 @@ namespace RoystonGame.Web.Controllers
         {
             // TODO handle IDs for real
             // TODO scramble radio button answer order
-            return new JsonResult(GameManager.UserRequestingCurrentState(this.HttpContext.Connection.RemoteIpAddress));
+            User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress);
+            return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
         }
     }
 }

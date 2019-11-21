@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using RoystonGame.TV;
+using RoystonGame.TV.DataModels;
 using RoystonGame.Web.DataModels.Requests;
 
 namespace RoystonGame.Web.Controllers
@@ -23,8 +25,9 @@ namespace RoystonGame.Web.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] UserFormSubmission formData)
         {
-            int x = 5 + 2;
-            return new OkResult();
+            User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress);
+            bool success = user.UserState.HandleUserFormInput(user, formData);
+            return success ? new OkResult() : (IActionResult)new BadRequestResult();
         }
     }
 }
