@@ -133,7 +133,7 @@ namespace RoystonGame.TV
             // Pull all unregistered users into this waiting state.
             foreach (User user in Singleton.UnregisteredUsers.Values)
             {
-                user.TransitionUserState(Singleton.WaitForLobby, DateTime.Now);
+                Singleton.WaitForLobby.Inlet(user, UserStateResult.Timeout, null);
             }
         }
 
@@ -180,7 +180,7 @@ namespace RoystonGame.TV
             {
                 user = new User();
                 Singleton.UnregisteredUsers.Add(callerIP, user);
-                user.TransitionUserState(Singleton.WaitForLobby, DateTime.Now);
+                Singleton.WaitForLobby.Inlet(user, UserStateResult.Success, null);
             }
             return user;
         }
@@ -224,7 +224,6 @@ namespace RoystonGame.TV
         public static void TransitionCurrentGameState(GameState transitionTo)
         {
             Singleton.CurrentGameState = transitionTo;
-            Singleton.CurrentGameState.EnterState();
         }
     }
 }

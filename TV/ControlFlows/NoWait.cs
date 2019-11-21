@@ -22,11 +22,6 @@ namespace RoystonGame.TV.ControlFlows
             // Empty
         }
 
-        public override void AddUsersToTransition(IEnumerable<User> users)
-        {
-            // Empty
-        }
-
         public override void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
             this.Outlet(user, stateResult, formSubmission);

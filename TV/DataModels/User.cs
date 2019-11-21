@@ -40,14 +40,12 @@ namespace RoystonGame.TV.DataModels
         }
 
         /// <summary>
-        /// Called when the user moves to a new state. The user object is responsible for tracking and changing its' state (when told by the FSM).
+        /// Called when the user moves to a new state.
         /// </summary>
         /// <param name="newState">The new user state.</param>
-        /// <param name="synchronizedTransitionTime">A shared (if applicable) datetime to perform calculations off of so all users stay in sync.</param>
-        public void TransitionUserState(UserState newState, DateTime synchronizedTransitionTime)
+        public void TransitionUserState(UserState newState)
         {
             this.UserState = newState;
-            this.UserState.EnterState(this, synchronizedTransitionTime);
         }
 
         internal void TransitionUserState(Action enterState, object now)

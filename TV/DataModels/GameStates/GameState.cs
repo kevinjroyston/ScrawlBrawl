@@ -21,18 +21,11 @@ namespace RoystonGame.TV.DataModels.GameStates
     /// </summary>
     public abstract class GameState : State
     {
-        /// <summary>
-        /// The callback to call per user upon state completion.
-        /// </summary>
-        protected Action<User, UserStateResult, UserFormSubmission> UserOutlet { get; set; }
-
         protected State Entrance { get; set; }
-
-        protected DateTime StateStartTime { get; private set; }
 
         #region TrackingFlags
         private bool CalledEnterState { get; set; } = false;
-        private bool HaveAlreadyCalledCompletedActionCallback { get; set; } = false;
+
         #endregion
 
         /// <summary>
@@ -41,50 +34,22 @@ namespace RoystonGame.TV.DataModels.GameStates
         /// <param name="userOutlet">Called back when the state completes.</param>
         public GameState(Action<User, UserStateResult, UserFormSubmission> userOutlet = null)
         {
-            this.SetOutlet(userOutlet);
-        }
-
-        // TODO, move below into the {set;}
-
-        /// <summary>
-        /// Sets the state completed callback. This should be called before state is entered!
-        /// </summary>
-        /// <param name="outlet">The callback to use.</param>
-        public void SetOutlet(Action<User, UserStateResult, UserFormSubmission> outlet)
-        {
-            // Wrap the callback function with Flag setting code.
-            this.UserOutlet = (User user, UserStateResult result, UserFormSubmission userInput) =>
+            if (userOutlet != null)
             {
-                if (this.HaveAlreadyCalledCompletedActionCallback == true)
-                {
-                    return;
-                }
-
-                this.HaveAlreadyCalledCompletedActionCallback = true;
-                outlet(user, result, userInput);
-            };
+                this.SetOutlet(userOutlet);
+            }
         }
 
         /// <summary>
         /// Called when the state is entered by the game.
         /// </summary>
-        public virtual void EnterState()
+        private void EnterState()
         {
             // If the game already entered this state once fail.
             if (this.CalledEnterState)
             {
                 throw new Exception("This GameState has already been entered once. Please use a new state instance.");
             }
-            // If the game has already completed this state fail.
-            if (this.HaveAlreadyCalledCompletedActionCallback)
-            {
-                throw new Exception("Already completed this state instance, please use a new state instance.");
-            }
-
-            this.StateStartTime = DateTime.Now;
-
-            // Initialize to false.
-            this.HaveAlreadyCalledCompletedActionCallback = false;
 
             this.CalledEnterState = true;
         }
@@ -92,8 +57,13 @@ namespace RoystonGame.TV.DataModels.GameStates
         /// <summary>
         /// The entrance state for users. Game orchestrator is responsible for sending all users here. Either all at once, or one at a time depending on the use case.
         /// </summary>
-        public void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
+        public override void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
+            if (!this.CalledEnterState)
+            {
+                EnterState();
+            }
+
             Entrance.Inlet(user, stateResult, formSubmission);
         }
 

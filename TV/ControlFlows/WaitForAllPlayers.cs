@@ -14,14 +14,21 @@ namespace RoystonGame.TV.ControlFlows
         // Literally only needed to satisfy the new() constraint needed by StateExtensions.cs
         public WaitForAllPlayers() : this(null) { }
 
+        protected Dictionary<User, bool> UsersToWaitFor { get; set; } = new Dictionary<User, bool>();
+
         /// <summary>
         /// Initializes a new <see cref="WaitForTrigger"/>.
         /// </summary>
         /// <param name="waitingState">The waiting state to use while waiting for the trigger. The Callback of this state will be overwritten</param>
         /// <param name="postTriggerState">The state to move users to post trigger.</param>
-        public WaitForAllPlayers(Action<User, UserStateResult, UserFormSubmission> outlet = null, WaitingUserState waitingState = null) : base(outlet, WaitingUserState.DefaultState(waitingState))
+        public WaitForAllPlayers(List<User> usersToWaitFor = null, Action<User, UserStateResult, UserFormSubmission> outlet = null, WaitingUserState waitingState = null) : base(outlet, WaitingUserState.DefaultState(waitingState))
         {
-            // Empty
+            usersToWaitFor ??= GameManager.GetActiveUsers().ToList();
+
+            foreach (User waitForMe in usersToWaitFor)
+            {
+                this.UsersToWaitFor.Add(waitForMe, false);
+            }
         }
 
         /// <summary>
@@ -33,8 +40,9 @@ namespace RoystonGame.TV.ControlFlows
         public override void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
             base.Inlet(user, stateResult, formSubmission);
+            this.UsersToWaitFor[user] = true;
 
-            if (this.WaitingUsers.Values.All(val => val))
+            if (this.UsersToWaitFor.Values.All(val => val))
             {
                 this.Trigger();
             }

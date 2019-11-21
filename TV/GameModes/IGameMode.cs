@@ -16,7 +16,7 @@ namespace RoystonGame.TV.GameModes
     /// <summary>
     /// A state has an inlet and outlet.
     /// </summary>
-    public interface IGameMode : StateOutlet
+    public abstract class IGameMode : StateOutlet
     {
         /// <summary>
         /// Gets the first GameState of the GameMode.

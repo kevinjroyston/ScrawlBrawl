@@ -24,11 +24,6 @@ namespace RoystonGame.TV.DataModels.UserStates
         protected UserPrompt Prompt { get; }
 
         /// <summary>
-        /// The callback to call upon successful state completion.
-        /// </summary>
-        protected Action<User, UserStateResult, UserFormSubmission> Outlet { get; set; }
-
-        /// <summary>
         /// Callback populated when the state is forcefully changed (timeout or external event).
         /// </summary>
         private Action<User> SpecialCallbackAppliedToAllUsersInState { get; set; }
@@ -57,11 +52,6 @@ namespace RoystonGame.TV.DataModels.UserStates
         #endregion
 
         /// <summary>
-        /// A bool per user indicating this user has already called CompletedActionCallback
-        /// </summary>
-        private Dictionary<User, bool> HaveAlreadyCalledCompletedActionCallback { get; set; } = new Dictionary<User, bool>();
-
-        /// <summary>
         /// A bool per user indicating this user has entered the UserState.
         /// </summary>
         private Dictionary<User, bool> CalledEnterState { get; set; } = new Dictionary<User, bool>();
@@ -72,96 +62,13 @@ namespace RoystonGame.TV.DataModels.UserStates
             this.Prompt = prompt;
             this.StateTimeoutDuration = stateTimeoutDuration;
             
-            this.SetOutlet(outlet);
+            if(outlet != null)
+            {
+                this.SetOutlet(outlet);
+            }
         }
 
-        /*     /// <summary>
-             /// Copy constructor. Every user should have their own instance of each UserState.
-             /// </summary>
-             /// <param name="copyFrom">UserState to copy from</param>
-             public UserState(UserState copyFrom, Action<UserStateResult, UserFormSubmission> stateCompletedCallback)
-             {
-                 // Can probably remove below 2 errors, just being safe.
-                 if (copyFrom.CalledEnterState)
-                 {
-                     throw new Exception("The UserState you are trying to copy has already been entered once. Please use a new state instance.");
-                 }
-                 if (copyFrom.HaveAlreadyCalledCompletedActionCallback)
-                 {
-                     throw new Exception("The UserState you are trying to copy has already been completed, please use a new state instance.");
-                 }
-
-                 this.RefreshTimeInMs = copyFrom.RefreshTimeInMs;
-                 this.Prompt = copyFrom.Prompt; // Okay to use the same reference to prompt. Due to synchronization all changes to prompt should be identical.
-                 this.StateTimeoutDuration = copyFrom.StateTimeoutDuration;
-                 this.SetUpdateStateCompletedCallback(stateCompletedCallback);
-             }*/
-
-        // TODO. move below inside the {set;}
-
-        /// <summary>
-        /// Sets the state completed callback. This should be called before state is entered!
-        /// </summary>
-        /// <param name="outlet">The callback to use.</param>
-        public void SetOutlet(Action<User, UserStateResult, UserFormSubmission> outlet)
-        {
-            // Wrap the callback function with Flag setting code.
-            this.Outlet = (User user, UserStateResult result, UserFormSubmission input) =>
-            {
-                if (this.HaveAlreadyCalledCompletedActionCallback.ContainsKey(user) && this.HaveAlreadyCalledCompletedActionCallback[user] == true)
-                {
-                    return;
-                }
-
-                this.HaveAlreadyCalledCompletedActionCallback[user] = true;
-                outlet(user, result, input);
-            };
-        }
-
-        /// <summary>
-        /// Called when the state is entered by a user.
-        /// </summary>
-        public virtual void EnterState(User user, DateTime userStartTime)
-        {
-            // If the user already entered this state once fail.
-            if (this.CalledEnterState.ContainsKey(user) && this.CalledEnterState[user])
-            {
-                throw new Exception("This UserState has already been entered once. Please use a new state instance.");
-            }
-            // If the user has already completed this state fail.
-            if (this.HaveAlreadyCalledCompletedActionCallback.ContainsKey(user) && this.HaveAlreadyCalledCompletedActionCallback[user])
-            {
-                throw new Exception("Already completed this state instance, please use a new state instance.");
-            }
-
-            // If there is a state-wide callback applied to all users, apply it immediately.
-            if (this.SpecialCallbackAppliedToAllUsersInState != null)
-            {
-                this.SpecialCallbackAppliedToAllUsersInState(user);
-                return;
-            }
-
-            // Initialize to false.
-            this.HaveAlreadyCalledCompletedActionCallback[user] = false;
-
-            // First user entering a state triggers the timers.
-            if (!this.CalledEnterState.Values.Any())
-            {
-                if (this.StateTimeoutDuration.HasValue)
-                {
-                    // Make sure the user is calling refresh at or before this time to ensure a quick state transition.
-                    this.DontRefreshLaterThan = userStartTime.Add(this.StateTimeoutDuration.Value).Add(Constants.DefaultBufferTime);
-
-                    // Total state timeout timer duration.
-                    int millisecondsDelay = (int)userStartTime.Add(this.StateTimeoutDuration.Value).Subtract(DateTime.Now).TotalMilliseconds;
-
-                    // Start and track the timeout thread.
-                    this.StateTimeoutTask = TimeoutFunc(millisecondsDelay);
-                }
-            }
-
-            this.CalledEnterState[user] = true;
-        }
+        
 
         /// <summary>
         /// Timeout for the state.
@@ -233,9 +140,39 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// <param name="user"></param>
         /// <param name="result"></param>
         /// <param name="userInput"></param>
-        public void Inlet(User user, UserStateResult result, UserFormSubmission userInput)
+        public override void Inlet(User user, UserStateResult result, UserFormSubmission userInput)
         {
-            user.TransitionUserState(this, DateTime.Now);
+            // If the user already entered this state once fail.
+            if (this.CalledEnterState.ContainsKey(user) && this.CalledEnterState[user])
+            {
+                throw new Exception("This UserState has already been entered once. Please use a new state instance.");
+            }
+
+            // If there is a state-wide callback applied to all users, apply it immediately.
+            if (this.SpecialCallbackAppliedToAllUsersInState != null)
+            {
+                this.SpecialCallbackAppliedToAllUsersInState(user);
+                return;
+            }
+
+            // First user entering a state triggers the timers.
+            if (!this.CalledEnterState.Values.Any())
+            {
+                if (this.StateTimeoutDuration.HasValue)
+                {
+                    // Make sure the user is calling refresh at or before this time to ensure a quick state transition.
+                    this.DontRefreshLaterThan = DateTime.Now.Add(this.StateTimeoutDuration.Value).Add(Constants.DefaultBufferTime);
+
+                    // Total state timeout timer duration.
+                    int millisecondsDelay = (int)this.StateTimeoutDuration.Value.TotalMilliseconds;
+
+                    // Start and track the timeout thread.
+                    this.StateTimeoutTask = TimeoutFunc(millisecondsDelay);
+                }
+            }
+
+            this.CalledEnterState[user] = true;
+            user.TransitionUserState(this);
         }
     }
 }

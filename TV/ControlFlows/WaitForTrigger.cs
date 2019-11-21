@@ -14,7 +14,6 @@ namespace RoystonGame.TV.ControlFlows
     /// </summary>
     public class WaitForTrigger : UserStateTransition
     {
-        protected Dictionary<User, bool> WaitingUsers { get; private set; } = new Dictionary<User, bool>();
         protected WaitingUserState WaitingState { get; private set; }
 
         // Literally only needed to satisfy the new() constraint needed by StateExtensions.cs
@@ -31,19 +30,6 @@ namespace RoystonGame.TV.ControlFlows
         }
 
         /// <summary>
-        /// Used when a transition requires synchronization across a set of users.
-        /// </summary>
-        /// <param name="user">The add to transition tracking.</param>
-        /// <returns>The callback function to use to link into this transition from a UserState.</returns>
-        public override void AddUsersToTransition(IEnumerable<User> users)
-        {
-            foreach(User user in users)
-            {
-                this.WaitingUsers[user] = false;
-            }
-        }
-
-        /// <summary>
         /// The inlet to the transition.
         /// </summary>
         /// <param name="user">The user to move into the transition.</param>
@@ -51,13 +37,7 @@ namespace RoystonGame.TV.ControlFlows
         /// <param name="formSubmission">The user input of the last node (this transition doesnt care).</param>
         public override void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
-            if (!this.WaitingUsers.ContainsKey(user))
-            {
-                throw new Exception("User not registered for this transition.");
-            }
-
-            user.TransitionUserState(this.WaitingState, DateTime.Now);
-            this.WaitingUsers[user] = true;
+            this.WaitingState.Inlet(user, stateResult, formSubmission);
         }
 
         /// <summary>
@@ -65,13 +45,7 @@ namespace RoystonGame.TV.ControlFlows
         /// </summary>
         public virtual void Trigger()
         {
-            // Make sure all users are ready for the transition.
-            if (!this.WaitingUsers.Values.All((val)=> val))
-            {
-                throw new Exception("Trying to Trigger a transition but not all registered users are ready.");
-            }
-
-            // Set the StateCompletedCallback at last possible moment in case this.Outlet has been changed.
+            // Set the Waiting state outlet at last possible moment in case this.Outlet has been changed.
             this.WaitingState.SetOutlet(this.Outlet);
             this.WaitingState.ForceChangeOfUserStates(UserStateResult.Success);
         }

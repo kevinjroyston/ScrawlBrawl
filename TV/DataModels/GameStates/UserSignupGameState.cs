@@ -38,7 +38,7 @@ namespace RoystonGame.TV.DataModels.GameStates
         public UserSignupGameState(Action<User, UserStateResult, UserFormSubmission> userStateCompletedCallback = null, Action lobbyClosedCallback = null) : base(userStateCompletedCallback)
         {
             UserState entrance = new SimplePromptUserState(UserNamePrompt());
-            WaitForPartyLeader transition = new WaitForPartyLeader(this.UserOutlet, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
+            WaitForPartyLeader transition = new WaitForPartyLeader(this.Outlet, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
             {
                 lobbyClosedCallback?.Invoke();
             });
@@ -52,7 +52,6 @@ namespace RoystonGame.TV.DataModels.GameStates
                 // TODO: remove hacky below implementation.
                 ((TextObject)this.GameObjects[0]).Content = Invariant($"{((TextObject)this.GameObjects[0]).Content} {userInput.SubForms[0].ShortAnswer}");
 
-                transition.AddUsersToTransition(new List<User> { user });
                 transition.Inlet(user, result, userInput);
             });
 

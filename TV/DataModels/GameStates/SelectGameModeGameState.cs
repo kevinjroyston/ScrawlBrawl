@@ -37,11 +37,10 @@ namespace RoystonGame.TV.DataModels.GameStates
         public SelectGameModeGameState(Action<User, UserStateResult, UserFormSubmission> userStateCompletedCallback, string[] availableGameModes, Action<int?> selectedGameModeCallback) : base(userStateCompletedCallback)
         {
             UserState partyLeaderPrompt = new SimplePromptUserState(GameModePrompt(availableGameModes));
-            UserStateTransition waitForLeader = new WaitForPartyLeader(this.UserOutlet, partyLeaderPrompt, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
+            UserStateTransition waitForLeader = new WaitForPartyLeader(this.Outlet, partyLeaderPrompt, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
             {
                 selectedGameModeCallback(userInput.SubForms[0].RadioAnswer);
             });
-            waitForLeader.SetOutlet(this.UserOutlet);
 
             this.Entrance = waitForLeader;
 

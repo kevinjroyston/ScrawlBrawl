@@ -39,7 +39,7 @@ namespace RoystonGame.TV.DataModels.GameStates
         public EndOfGameState(Action<EndOfGameRestartType> endOfGameRestartCallback, Action < User, UserStateResult, UserFormSubmission> userStateCompletedCallback = null) : base(userStateCompletedCallback)
         {
             UserState partyLeaderPrompt = new SimplePromptUserState(ContinuePrompt());
-            UserStateTransition waitForLeader = new WaitForPartyLeader(this.UserOutlet, partyLeaderPrompt, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
+            UserStateTransition waitForLeader = new WaitForPartyLeader(this.Outlet, partyLeaderPrompt, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
             {
                 int? selectedIndex = userInput.SubForms[0].RadioAnswer;
                 if (selectedIndex == null)
@@ -49,7 +49,6 @@ namespace RoystonGame.TV.DataModels.GameStates
                 // TODO: validate that below works.
                 endOfGameRestartCallback(RestartTypes.Keys.ToList()[selectedIndex.Value]);
             });
-            waitForLeader.SetOutlet(this.UserOutlet);
 
             this.Entrance = waitForLeader;
 
