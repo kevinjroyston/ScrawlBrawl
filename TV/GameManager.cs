@@ -1,5 +1,4 @@
 ﻿using RoystonGame.TV.GameModes;
-using RoystonGame.TV.GameModes.Test;
 using RoystonGame.TV.ControlFlows;
 using RoystonGame.TV.DataModels;
 using RoystonGame.TV.DataModels.Enums;
@@ -16,6 +15,7 @@ using System.Threading.Tasks;
 using RoystonGame.Web.DataModels.Responses;
 using System.Net;
 using RoystonGame.TV.DataModels.UserStates;
+using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO;
 
 namespace RoystonGame.TV
 {
@@ -45,7 +45,7 @@ namespace RoystonGame.TV
         #region GameModes
         private IReadOnlyDictionary<GameMode, Func<IGameMode>> GameModeMappings { get; set; } = new ReadOnlyDictionary<GameMode, Func<IGameMode>>(new Dictionary<GameMode, Func<IGameMode>>
         {
-            { GameMode.Testing, () => new TestGameMode() }
+            { GameMode.OOTTINLTOO, () => new OneOfTheseThingsIsNotLikeTheOtherOneGameMode() }
         });
         #endregion
 
@@ -73,8 +73,8 @@ namespace RoystonGame.TV
 
             // Transitions other than NoWait will run into issues if used here but are fine in GameMode definitions.
             Singleton.WaitForLobby
-                .Transition<NoWait>(Singleton.UserRegistration)
-                .Transition<NoWait>(Singleton.PartyLeaderSelect);
+                .Transition(Singleton.UserRegistration)
+                .Transition(Singleton.PartyLeaderSelect);
 
             // Causes any new user who enters WaitForLobby to immediately pass through, also unblocks users actively waiting there.
             Singleton.WaitForLobby.ForceChangeOfUserStates(UserStateResult.Success);
@@ -95,8 +95,8 @@ namespace RoystonGame.TV
 
             GameMode selectedMode = (GameMode)index.Value;
             IGameMode game = Singleton.GameModeMappings[selectedMode]();
-            transitionFrom.Transition<NoWait>(game.EntranceState);
-            game.Transition<NoWait>(Singleton.EndOfGameRestart);
+            transitionFrom.Transition(game.EntranceState);
+            game.Transition(Singleton.EndOfGameRestart);
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace RoystonGame.TV
             switch (restartType)
             {
                 case EndOfGameRestartType.NewPlayers:
-                    Singleton.EndOfGameRestart.Transition<NoWait>(Singleton.UserRegistration);
+                    Singleton.EndOfGameRestart.Transition(Singleton.UserRegistration);
                     Singleton.RegisteredUsers.Clear();
 
                     // Open the floodgates for users who are stuck waiting for lobby.
@@ -117,7 +117,7 @@ namespace RoystonGame.TV
                     SelectedGameMode(specialTransitionFrom: Singleton.EndOfGameRestart);
                     break;
                 case EndOfGameRestartType.SamePlayers:
-                    Singleton.EndOfGameRestart.Transition<NoWait>(Singleton.PartyLeaderSelect);
+                    Singleton.EndOfGameRestart.Transition(Singleton.PartyLeaderSelect);
                     break;
                 default:
                     throw new Exception("Unknown restart game type");
@@ -128,7 +128,7 @@ namespace RoystonGame.TV
         {
             // Reset the wait for lobby node
             Singleton.WaitForLobby = new WaitingUserState();
-            Singleton.WaitForLobby.Transition<NoWait>(Singleton.UserRegistration);
+            Singleton.WaitForLobby.Transition(Singleton.UserRegistration);
 
             // Pull all unregistered users into this waiting state.
             foreach (User user in Singleton.UnregisteredUsers.Values)
@@ -207,11 +207,15 @@ namespace RoystonGame.TV
         {
             if (Singleton.AllGameObjects.Contains(gameObject))
             {
-                throw new Exception("Registered gameobject twice");
+                // Hacky fix. TODO remove
+                gameObject.LoadContent(Singleton.GameRunner.Content, Singleton.GameRunner.GraphicsDevice);
+
+                return;
+                //throw new Exception("Registered gameobject twice");
             }
 
             Singleton.AllGameObjects.Add(gameObject);
-            gameObject.LoadContent(Singleton.GameRunner.Content);
+            gameObject.LoadContent(Singleton.GameRunner.Content, Singleton.GameRunner.GraphicsDevice);
         }
 
         /// <summary>

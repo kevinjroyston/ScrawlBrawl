@@ -35,5 +35,11 @@ namespace RoystonGame.TV.Extensions
             // Return C for easy chaining. Careful with references.
             return C;
         }
+
+        public static State Transition(this StateOutlet A, State B)
+        {
+            A.SetOutlet(B.Inlet);
+            return B;
+        }
     }
 }

@@ -24,6 +24,11 @@ namespace RoystonGame.TV.DataModels.UserStates
 
         public override bool HandleUserFormInput(User user, UserFormSubmission userInput)
         {
+            if(!base.HandleUserFormInput(user, userInput))
+            {
+                return false;
+            }
+
             // No validation needed
             this.Outlet(user, UserStateResult.Success, null);
             return true;

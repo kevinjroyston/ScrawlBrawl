@@ -14,16 +14,21 @@ namespace RoystonGame.TV.DataModels.UserStates
     public class SimplePromptUserState : UserState
     {
         public static UserPrompt DefaultPrompt(UserPrompt prompt) => prompt ?? new UserPrompt() { Description = "Waiting . . .", RefreshTimeInMs = 1000 };
-
-        public SimplePromptUserState(UserPrompt prompt = null, TimeSpan? maxPromptDuration = null)
+        private Action<User, UserFormSubmission> FormSubmitCallback { get; set; }
+        public SimplePromptUserState(UserPrompt prompt = null, TimeSpan? maxPromptDuration = null, Action<User, UserFormSubmission> formSubmitCallback = null)
             : base(null, maxPromptDuration, DefaultPrompt(prompt))
         {
-            // Empty
+            this.FormSubmitCallback = formSubmitCallback;
         }
 
         public override bool HandleUserFormInput(User user, UserFormSubmission userInput)
         {
-            // TODO validate userInput
+            if (!base.HandleUserFormInput(user, userInput))
+            {
+                return false;
+            }
+
+            this.FormSubmitCallback?.Invoke(user, userInput);
             this.Outlet(user, UserStateResult.Success, userInput);
             return true;
         }

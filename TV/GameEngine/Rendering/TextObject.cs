@@ -22,7 +22,7 @@ namespace RoystonGame.TV.GameEngine.Rendering
             spriteBatch.DrawString(this.MyFont, this.Content, this.BoundingBox, this.FontColor);
         }
 
-        public override void LoadContent(ContentManager content)
+        public override void LoadContent(ContentManager content, GraphicsDevice graphics)
         {
             this.MyFont = content.Load<SpriteFont>(this.SpriteFontName);
         }

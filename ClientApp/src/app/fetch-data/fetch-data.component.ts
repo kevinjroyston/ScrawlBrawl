@@ -77,10 +77,18 @@ export class FetchDataComponent
       }
 
       var body = JSON.stringify(userSubmitData);
-      console.warn('Submitting response', body);
-      this.http.post(this.baseUrl +"FormSubmit", body, httpOptions).subscribe((data) => { });
-      this.userForm.reset();
-      this.fetchUserPrompt();
+        console.warn('Submitting response', body);
+        var response;
+        this.http.post(this.baseUrl + "FormSubmit", body, httpOptions).subscribe(
+            data => {
+                console.log("POST Request is successful ", data);
+                this.userForm.reset();
+                this.fetchUserPrompt();
+            },
+            error => {
+                console.log("Error", error);
+                this.fetchUserPrompt();
+            });
     }
 
     createSubForm(): FormGroup {

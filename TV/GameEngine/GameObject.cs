@@ -16,7 +16,7 @@ namespace RoystonGame.TV.GameEngine
         }
 
         //Current implementation will result in this being called several times in some cases. Working under the assumption that content loading of the same asset is memoized.
-        public abstract void LoadContent(ContentManager content);
+        public abstract void LoadContent(ContentManager content, GraphicsDevice graphics);
         public abstract void UnloadContent();
         public abstract void Update(GameTime gameTime);
 

@@ -10,7 +10,6 @@ namespace RoystonGame.TV.DataModels.Enums
     /// </summary>
     public enum GameMode
     {
-        Testing,
-        Testing123,
+        OOTTINLTOO,
     }
 }

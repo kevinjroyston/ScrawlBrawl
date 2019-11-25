@@ -29,6 +29,39 @@ namespace RoystonGame.Web.Controllers
             // TODO scramble radio button answer order
             User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress);
             return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
+            /* //Test response
+            return new JsonResult(new UserPrompt
+            {
+                Title = "This is a title",
+                Description = "This is a description",
+                RefreshTimeInMs = 1000,
+                SubPrompts = new SubPrompt[]
+                {
+                    new SubPrompt
+                    {
+                        Prompt = "This is a sub prompt which only asks for a short answer",
+                        ShortAnswer = true,
+                    },
+                    new SubPrompt
+                    {
+                        Prompt = "This is a sub prompt that asks for radio button answers",
+                        Answers = new string[] {"This is an answer", "another answer", "the best answer", "all of the above"}
+                    },
+                    new SubPrompt
+                    {
+                        Prompt = "This is a sub prompt that asks for a drawing",
+                        Drawing = true,
+                    },
+                    new SubPrompt
+                    {
+                        Prompt = "This is a sub prompt that asks for all 3 types",
+                        ShortAnswer= true,
+                        Drawing = true,
+                        Answers = new string[] {"This is an answer", "another answer", "the best answer", "all of the above"}
+                    },
+                },
+               SubmitButton = true
+            });*/
         }
     }
 }

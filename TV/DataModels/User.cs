@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
 using RoystonGame.TV.DataModels.UserStates;
+
+using static System.FormattableString;
 
 namespace RoystonGame.TV.DataModels
 {
@@ -34,6 +37,8 @@ namespace RoystonGame.TV.DataModels
         /// </summary>
         public string SelfPortrait { get; set; }
 
+        public int Score { get; set; }
+
         public User()
         {
             // Empty
@@ -46,11 +51,6 @@ namespace RoystonGame.TV.DataModels
         public void TransitionUserState(UserState newState)
         {
             this.UserState = newState;
-        }
-
-        internal void TransitionUserState(Action enterState, object now)
-        {
-            throw new NotImplementedException();
         }
     }
 }

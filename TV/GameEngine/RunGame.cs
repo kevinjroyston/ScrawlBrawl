@@ -20,6 +20,7 @@ namespace RoystonGame.TV.GameEngine
 
             graphics = new GraphicsDeviceManager(this);
 
+
             Content.RootDirectory = "Content";
         }
 
@@ -46,7 +47,7 @@ namespace RoystonGame.TV.GameEngine
 
             foreach (GameObject gameObject in GameManager.GetAllGameObjects())
             {
-                gameObject.LoadContent(this.Content);
+                gameObject.LoadContent(this.Content, GraphicsDevice);
             }
         }
 

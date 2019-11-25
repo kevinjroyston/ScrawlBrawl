@@ -8,7 +8,7 @@ using RoystonGame.Web.DataModels.Responses;
 namespace RoystonGame.TV.DataModels.UserStates
 {
     /// <summary>
-    /// A waiting state which will display "prompt" forever until state is forcefully changed.
+    /// A waiting state which will display "prompt" until state is forcefully changed occurs.
     /// </summary>
     public class WaitingUserState : UserState
     {
@@ -20,15 +20,14 @@ namespace RoystonGame.TV.DataModels.UserStates
         public static WaitingUserState DefaultState(WaitingUserState state) => state ?? new WaitingUserState();
         public static UserPrompt DefaultPrompt(UserPrompt prompt) => prompt ?? new UserPrompt() { Description = "Waiting . . .", RefreshTimeInMs = 1000};
 
-        public WaitingUserState(UserPrompt prompt = null) : base(null, null, DefaultPrompt(prompt))
+        public WaitingUserState(UserPrompt prompt = null, TimeSpan? maxWaitTime = null) : base(null, maxWaitTime, DefaultPrompt(prompt))
         {
             // Empty
         }
 
         public override bool HandleUserFormInput(User user, UserFormSubmission userInput)
         {
-            // If one of you triggers this im going to bop you on the head.
-            throw new Exception("User should not be inputting while waiting");
+            return false;
         }
     }
 }

@@ -52,6 +52,7 @@ namespace RoystonGame.TV.DataModels.GameStates
             }
 
             this.CalledEnterState = true;
+            GameManager.TransitionCurrentGameState(this);
         }
 
         /// <summary>
@@ -64,6 +65,10 @@ namespace RoystonGame.TV.DataModels.GameStates
                 EnterState();
             }
 
+            if (Entrance == null)
+            {
+                throw new Exception("Entrance of gamestate has not been set!!");
+            }
             Entrance.Inlet(user, stateResult, formSubmission);
         }
 

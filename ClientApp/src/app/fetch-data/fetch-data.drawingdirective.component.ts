@@ -30,6 +30,20 @@ export class DrawingDirective implements ControlValueAccessor{
         this.element = element.nativeElement;
         this.ctx = element.nativeElement.getContext('2d');
         this.drawing = false;
+        /*this.mc = new Hammer.Manager(this.element, {
+            touchAction: 'all',
+            inputClass: Hammer.Input,
+            recognizers: [
+                [Hammer.Pan, {
+                    direction: Hammer.DIRECTION_ALL,
+                    threshold: 0,
+                }]
+            ]
+        });
+
+        this.mc.on('panstart', this.onmousedown);
+        this.mc.on('panmove', this.onmousemove);
+        this.mc.on('panend', this.onmouseup);*/
     }
     drawing:boolean;
     lastX:number;
@@ -41,13 +55,21 @@ export class DrawingDirective implements ControlValueAccessor{
     element;
 
     @HostListener('mousedown', ['$event'])
+    @HostListener('touchstart', ['$event'])
     onmousedown(event) {
-        if (event.offsetX !== undefined) {
-            this.lastX = event.offsetX;
-            this.lastY = event.offsetY;
+        console.log("down/start");
+        event.preventDefault();
+        if (event.changedTouches) {                      // only for touch
+            this.lastX = event.changedTouches[0].clientX;
+            this.lastY = event.changedTouches[0].clientY;
         } else {
-            this.lastX = event.layerX - event.currentTarget.offsetLeft;
-            this.lastY = event.layerY - event.currentTarget.offsetTop;
+            if (event.offsetX !== undefined) {
+                this.lastX = event.offsetX;
+                this.lastY = event.offsetY;
+            } else {
+                this.lastX = event.layerX - event.currentTarget.offsetLeft;
+                this.lastY = event.layerY - event.currentTarget.offsetTop;
+            }
         }
 
         // begins new line
@@ -58,12 +80,18 @@ export class DrawingDirective implements ControlValueAccessor{
     }
 
     @HostListener('mousemove', ['$event'])
+    @HostListener('touchmove', ['$event'])
     onmousemove(event) {
+        console.log("move");
+        event.preventDefault();
         if (this.drawing) {
             // get current mouse position
             var currentX;
             var currentY;
-            if (event.offsetX !== undefined) {
+            if (event.changedTouches) {                      // only for touch
+                currentX = event.changedTouches[0].clientX;
+                currentY = event.changedTouches[0].clientY;
+            }else if (event.offsetX !== undefined) {
                 currentX = event.offsetX;
                 currentY = event.offsetY;
             } else {
@@ -80,7 +108,10 @@ export class DrawingDirective implements ControlValueAccessor{
     }
 
     @HostListener('mouseup')
+    @HostListener('touchend')
     onmouseup() {
+        console.log("up/end");
+        event.preventDefault();
         // stop drawing
         this.drawing = false;
         this.onChange(this.element.toDataURL());
@@ -88,6 +119,8 @@ export class DrawingDirective implements ControlValueAccessor{
 
     @HostListener('mouseleave')
     onmouseleave() {
+        console.log("mouseleave");
+        event.preventDefault();
         // stop drawing
         this.drawing = false;
         this.onChange(this.element.toDataURL());

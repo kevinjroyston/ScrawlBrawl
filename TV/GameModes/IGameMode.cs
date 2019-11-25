@@ -21,6 +21,6 @@ namespace RoystonGame.TV.GameModes
         /// <summary>
         /// Gets the first GameState of the GameMode.
         /// </summary>
-        public GameState EntranceState { get; }
+        public GameState EntranceState { get; protected set; }
     }
 }

@@ -4,9 +4,12 @@ using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+using static System.FormattableString;
 
 namespace RoystonGame.TV.DataModels.UserStates
 {
@@ -105,7 +108,29 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// </summary>
         /// <param name="userInput">Validates the users form input and decides what UserStateResult to return to StatecompletedCallback.</param>
         /// <returns>True if the user input was accepted, false if there was an issue.</returns>
-        public abstract bool HandleUserFormInput(User user, UserFormSubmission userInput);
+        public virtual bool HandleUserFormInput(User user, UserFormSubmission userInput)
+        {
+            if (userInput.Id != Prompt.Id)
+            {
+                return false;
+            }
+
+            int i = 0;
+            foreach (SubPrompt prompt in Prompt?.SubPrompts ?? new SubPrompt[0])
+            {
+                if ((userInput.SubForms.Count() <= i)
+                    ||(prompt.Drawing && userInput.SubForms[i].Drawing == null)
+                    ||(prompt.ShortAnswer && string.IsNullOrWhiteSpace(userInput.SubForms[i].ShortAnswer))
+                    ||(prompt.Answers != null && prompt.Answers.Length>0 && (!userInput.SubForms[i].RadioAnswer.HasValue || userInput.SubForms[i].RadioAnswer.Value<0 || userInput.SubForms[i].RadioAnswer.Value >= prompt.Answers.Length)))
+                {
+                    return false;
+                }
+
+                i++;
+            }
+
+            return true;
+        }
 
         /// <summary>
         /// Return the prompt with the updated refresh time.
@@ -142,6 +167,8 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// <param name="userInput"></param>
         public override void Inlet(User user, UserStateResult result, UserFormSubmission userInput)
         {
+            Debug.WriteLine(Invariant($"|||USER CALLED INLET|||{user.DisplayName}|{this.GetType()}|{this.StateId}"));
+
             // If the user already entered this state once fail.
             if (this.CalledEnterState.ContainsKey(user) && this.CalledEnterState[user])
             {

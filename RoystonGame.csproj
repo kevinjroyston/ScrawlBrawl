@@ -20,8 +20,12 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Compile Remove="TV\DataModels\GameStates\GameStateResultObjects\**" />
     <Content Remove="$(SpaRoot)**" />
+    <Content Remove="TV\DataModels\GameStates\GameStateResultObjects\**" />
+    <EmbeddedResource Remove="TV\DataModels\GameStates\GameStateResultObjects\**" />
     <None Remove="$(SpaRoot)**" />
+    <None Remove="TV\DataModels\GameStates\GameStateResultObjects\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
@@ -45,8 +49,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="TV\DataModels\GameStates\GameStateResultObjects\" />
-    <MonoGameContentReference Include="TV\GameEngine\Content\Content.mgcb" ContentOutputDir="TEST"/>
+    <MonoGameContentReference Include="TV\GameEngine\Content\Content.mgcb" ContentOutputDir="TEST" />
   </ItemGroup>
   <PropertyGroup>
     <ApplicationIcon>TV\GameEngine\Icon.ico</ApplicationIcon>
