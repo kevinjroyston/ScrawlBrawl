@@ -13,11 +13,11 @@ namespace RoystonGame.TV.DataModels.UserStates
     /// </summary>
     public class PartyLeaderReadyUpButtonUserState : UserState
     {
-        public static UserState DefaultState(PartyLeaderReadyUpButtonUserState state = null) => state ?? new PartyLeaderReadyUpButtonUserState();
+        public static UserState DefaultState() => new PartyLeaderReadyUpButtonUserState();
 
-        public static UserPrompt DefaultPrompt(UserPrompt prompt = null) => prompt ?? new UserPrompt() { Title = "You have the power!", Description = "Click submit when everybody is ready :)", RefreshTimeInMs = 5000, SubmitButton = true };
+        public static UserPrompt DefaultPrompt() => new UserPrompt() { Title = "You have the power!", Description = "Click submit when everybody is ready :)", RefreshTimeInMs = 5000, SubmitButton = true };
 
-        public PartyLeaderReadyUpButtonUserState(UserPrompt prompt = null) : base(null, null, DefaultPrompt(prompt))
+        public PartyLeaderReadyUpButtonUserState(UserPrompt prompt = null) : base(null, null, prompt ?? DefaultPrompt())
         {
             // Empty
         }

@@ -10,6 +10,11 @@ using RoystonGame.Web.DataModels.Responses;
 
 using static System.FormattableString;
 
+using Connector = System.Action<
+    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Enums.UserStateResult,
+    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+
 namespace RoystonGame.TV.DataModels.GameStates
 {
     public class UserSignupGameState : GameState
@@ -35,7 +40,7 @@ namespace RoystonGame.TV.DataModels.GameStates
             SubmitButton = true,
         };
 
-        public UserSignupGameState(Action<User, UserStateResult, UserFormSubmission> userStateCompletedCallback = null, Action lobbyClosedCallback = null) : base(userStateCompletedCallback)
+        public UserSignupGameState(Connector userStateCompletedCallback = null, Action lobbyClosedCallback = null) : base(userStateCompletedCallback)
         {
             UserState entrance = new SimplePromptUserState(UserNamePrompt());
             WaitForPartyLeader transition = new WaitForPartyLeader(this.Outlet, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>

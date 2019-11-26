@@ -11,6 +11,11 @@ using System.Threading.Tasks;
 
 using static System.FormattableString;
 
+using Connector = System.Action<
+    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Enums.UserStateResult,
+    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+
 namespace RoystonGame.TV.DataModels.UserStates
 {
     /// <summary>
@@ -22,9 +27,29 @@ namespace RoystonGame.TV.DataModels.UserStates
     public abstract class UserState : State
     {
         /// <summary>
-        /// The prompt to send to the user whenever they request input.
+        /// The callback to use in order to get the prompt for each user.
         /// </summary>
-        protected UserPrompt Prompt { get; }
+        private Func<User, UserPrompt> PromptGenerator { get; }
+
+        /// <summary>
+        /// A mapping of previously served user prompts, to be reused on future requests.
+        /// </summary>
+        private Dictionary<User, UserPrompt> Prompts { get; } = new Dictionary<User, UserPrompt>();
+
+        /// <summary>
+        /// Gets the prompt for a given user. Creating a new prompt using <see cref="PromptGenerator"/> if this is the first time.
+        /// </summary>
+        /// <param name="user">The user to get the prompt for.</param>
+        /// <returns>The prompt to give to the specified user.</returns>
+        protected UserPrompt GetUserPrompt(User user)
+        {
+            if (!this.Prompts.ContainsKey(user))
+            {
+                this.Prompts[user] = PromptGenerator(user);
+            }
+
+            return this.Prompts[user];
+        }
 
         /// <summary>
         /// Callback populated when the state is forcefully changed (timeout or external event).
@@ -59,10 +84,16 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// </summary>
         private Dictionary<User, bool> CalledEnterState { get; set; } = new Dictionary<User, bool>();
 
-        public UserState(Action<User, UserStateResult, UserFormSubmission> outlet, TimeSpan? stateTimeoutDuration, UserPrompt prompt)
+        /// <summary>
+        /// Creates a new user state.
+        /// </summary>
+        /// <param name="outlet">The default callback function to use for all callers. <see cref="SetOutlet"/> for user specific outlet configuring.</param>
+        /// <param name="stateTimeoutDuration">The maximum amount of time to spend in this userstate.</param>
+        /// <param name="promptGenerator">A function to be called the first time a user requests a prompt.</param>
+        public UserState(Connector outlet, TimeSpan? stateTimeoutDuration, Func<User, UserPrompt> promptGenerator)
         {
             this.RefreshTimeInMs = prompt.RefreshTimeInMs;
-            this.Prompt = prompt;
+            this.PromptGenerator = promptGenerator;
             this.StateTimeoutDuration = stateTimeoutDuration;
             
             if(outlet != null)
@@ -104,7 +135,7 @@ namespace RoystonGame.TV.DataModels.UserStates
         }
 
         /// <summary>
-        /// Handles the Users form input.
+        /// This implementation validates user input, and should be overridden (with a call to base.HandlerUserFormInput)
         /// </summary>
         /// <param name="userInput">Validates the users form input and decides what UserStateResult to return to StatecompletedCallback.</param>
         /// <returns>True if the user input was accepted, false if there was an issue.</returns>
@@ -129,6 +160,7 @@ namespace RoystonGame.TV.DataModels.UserStates
                 i++;
             }
 
+            // As this is an abstract class this function serves only to validate the user input rather than initiate flows.
             return true;
         }
 

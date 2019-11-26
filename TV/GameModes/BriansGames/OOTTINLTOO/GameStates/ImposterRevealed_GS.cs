@@ -16,6 +16,11 @@ using System.Threading.Tasks;
 
 using static System.FormattableString;
 
+using Connector = System.Action<
+    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Enums.UserStateResult,
+    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+
 namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 {
     public class ImposterRevealed_GS : GameState
@@ -27,7 +32,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             SubmitButton = true
         };
 
-        public ImposterRevealed_GS(ChallengeTracker challenge, Action<User, UserStateResult, UserFormSubmission> outlet = null, TimeSpan? maxWaitTime = null) : base(outlet)
+        public ImposterRevealed_GS(ChallengeTracker challenge, Connector outlet = null, TimeSpan? maxWaitTime = null) : base(outlet)
         {
             UserState partyLeaderState = new SimplePromptUserState(PartyLeaderSkipButton(), maxPromptDuration: maxWaitTime);
             WaitingUserState waitingState = new WaitingUserState(maxWaitTime: maxWaitTime);

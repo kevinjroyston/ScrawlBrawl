@@ -10,6 +10,11 @@ using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 
+using Connector = System.Action<
+    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Enums.UserStateResult,
+    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+
 namespace RoystonGame.TV.DataModels.GameStates
 {
     public class EndOfGameState : GameState
@@ -36,7 +41,7 @@ namespace RoystonGame.TV.DataModels.GameStates
             { EndOfGameRestartType.NewPlayers, "Change Players" },
         };
 
-        public EndOfGameState(Action<EndOfGameRestartType> endOfGameRestartCallback, Action < User, UserStateResult, UserFormSubmission> userStateCompletedCallback = null) : base(userStateCompletedCallback)
+        public EndOfGameState(Action<EndOfGameRestartType> endOfGameRestartCallback, Connector outlet = null) : base(outlet)
         {
             UserState partyLeaderPrompt = new SimplePromptUserState(ContinuePrompt());
             UserStateTransition waitForLeader = new WaitForPartyLeader(this.Outlet, partyLeaderPrompt, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>

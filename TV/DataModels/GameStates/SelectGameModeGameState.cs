@@ -8,6 +8,11 @@ using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 
+using Connector = System.Action<
+    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Enums.UserStateResult,
+    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+
 namespace RoystonGame.TV.DataModels.GameStates
 {
     public class SelectGameModeGameState : GameState
@@ -34,7 +39,7 @@ namespace RoystonGame.TV.DataModels.GameStates
         /// Initializes a GameState to be used in a FSM.
         /// </summary>
         /// <param name="userStateCompletedCallback">Called back when the state completes.</param>
-        public SelectGameModeGameState(Action<User, UserStateResult, UserFormSubmission> userStateCompletedCallback, string[] availableGameModes, Action<int?> selectedGameModeCallback) : base(userStateCompletedCallback)
+        public SelectGameModeGameState(Connector userStateCompletedCallback, string[] availableGameModes, Action<int?> selectedGameModeCallback) : base(userStateCompletedCallback)
         {
             UserState partyLeaderPrompt = new SimplePromptUserState(GameModePrompt(availableGameModes));
             UserStateTransition waitForLeader = new WaitForPartyLeader(this.Outlet, partyLeaderPrompt, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>

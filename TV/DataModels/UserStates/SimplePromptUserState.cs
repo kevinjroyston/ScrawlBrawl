@@ -6,6 +6,11 @@ using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 
+using Connector = System.Action<
+    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Enums.UserStateResult,
+    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+
 namespace RoystonGame.TV.DataModels.UserStates
 {
     /// <summary>
@@ -13,10 +18,10 @@ namespace RoystonGame.TV.DataModels.UserStates
     /// </summary>
     public class SimplePromptUserState : UserState
     {
-        public static UserPrompt DefaultPrompt(UserPrompt prompt) => prompt ?? new UserPrompt() { Description = "Waiting . . .", RefreshTimeInMs = 1000 };
+        public static UserPrompt DefaultPrompt() => new UserPrompt() { Description = "Waiting . . .", RefreshTimeInMs = 1000 };
         private Action<User, UserFormSubmission> FormSubmitCallback { get; set; }
-        public SimplePromptUserState(UserPrompt prompt = null, Action<User, UserStateResult, UserFormSubmission> outlet = null, TimeSpan? maxPromptDuration = null, Action<User, UserFormSubmission> formSubmitCallback = null)
-            : base(outlet, maxPromptDuration, DefaultPrompt(prompt))
+        public SimplePromptUserState(UserPrompt prompt = null, Connector outlet = null, TimeSpan? maxPromptDuration = null, Action<User, UserFormSubmission> formSubmitCallback = null)
+            : base(outlet, maxPromptDuration, prompt ?? DefaultPrompt())
         {
             this.FormSubmitCallback = formSubmitCallback;
         }

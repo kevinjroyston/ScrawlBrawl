@@ -7,6 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Connector = System.Action<
+    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Enums.UserStateResult,
+    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+
 namespace RoystonGame.TV.ControlFlows
 {
     public class WaitForAllPlayers : WaitForTrigger
@@ -22,7 +27,11 @@ namespace RoystonGame.TV.ControlFlows
         /// <param name="usersToWaitFor">Users to wait for, null indicates to use all currently registered users upon first caller.</param>
         /// <param name="waitingState">The waiting state to use while waiting for the trigger. The Callback of this state will be overwritten</param>
         /// <param name="outlet">The state to move users to post trigger.</param>
-        public WaitForAllPlayers(List<User> usersToWaitFor = null, Action<User, UserStateResult, UserFormSubmission> outlet = null, WaitingUserState waitingState = null) : base(outlet, WaitingUserState.DefaultState(waitingState))
+        public WaitForAllPlayers(
+            List<User> usersToWaitFor = null,
+            Connector outlet = null,
+            WaitingUserState waitingState = null)
+            : base(outlet, waitingState ?? WaitingUserState.DefaultState())
         {
             if(usersToWaitFor == null)
             {
@@ -41,7 +50,7 @@ namespace RoystonGame.TV.ControlFlows
 
             foreach (User waitForMe in usersToWaitFor)
             {
-                this.UsersToWaitFor.Add(waitForMe, false);
+                this.UsersToWaitFor[waitForMe] = false;
             }
         }
 

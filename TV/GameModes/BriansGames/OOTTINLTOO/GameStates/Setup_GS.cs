@@ -18,6 +18,11 @@ using System.Threading.Tasks;
 
 using static System.FormattableString;
 
+using Connector = System.Action<
+    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Enums.UserStateResult,
+    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+
 namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 {
     public class Setup_GS : GameState
@@ -39,7 +44,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             });
         }
 
-        private UserState GetWordsUserState(Action<User, UserStateResult, UserFormSubmission> outlet = null)
+        private UserState GetWordsUserState(Connector outlet = null)
         {
             return new SimplePromptUserState(new UserPrompt()
             {
@@ -83,7 +88,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
         /// <param name="user">The user to build a chain for.</param>
         /// <param name="outlet">The state to link the end of the chain to.</param>
         /// <returns>A list of user states designed for a given user.</returns>
-        private List<UserState> GetDrawingsUserStateChain(User user, Action<User, UserStateResult, UserFormSubmission> outlet)
+        private List<UserState> GetDrawingsUserStateChain(User user, Connector outlet)
         {
             List<UserState> stateChain = new List<UserState>();
             List<ChallengeTracker> challenges = this.SubChallenges.OrderBy(_ => rand.Next()).ToList();
@@ -124,7 +129,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             return stateChain;
         }
 
-        public Setup_GS(List<ChallengeTracker> challengeTrackers, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(outlet)
+        public Setup_GS(List<ChallengeTracker> challengeTrackers, Connector outlet = null) : base(outlet)
         {
             this.SubChallenges = challengeTrackers;
             int numDrawingsPerPrompt = 6;

@@ -7,6 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Connector = System.Action<
+    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Enums.UserStateResult,
+    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+
 namespace RoystonGame.TV.ControlFlows
 {
     /// <summary>
@@ -14,7 +19,7 @@ namespace RoystonGame.TV.ControlFlows
     /// </summary>
     public abstract class UserStateTransition : State
     {
-        public UserStateTransition(Action<User, UserStateResult, UserFormSubmission> outlet = null)
+        public UserStateTransition(Connector outlet = null)
         {
             if (outlet != null)
             {

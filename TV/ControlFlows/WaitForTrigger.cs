@@ -7,6 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Connector = System.Action<
+    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Enums.UserStateResult,
+    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+
 namespace RoystonGame.TV.ControlFlows
 {
     /// <summary>
@@ -24,9 +29,9 @@ namespace RoystonGame.TV.ControlFlows
         /// </summary>
         /// <param name="outlet">The function each user will call post trigger.</param>
         /// <param name="waitingState">The waiting state to use while waiting for the trigger. The Callback of this state will be overwritten</param>
-        public WaitForTrigger(Action<User, UserStateResult, UserFormSubmission> outlet = null, WaitingUserState waitingState = null) : base(outlet)
+        public WaitForTrigger(Connector outlet = null, WaitingUserState waitingState = null) : base(outlet)
         {
-            this.WaitingState = WaitingUserState.DefaultState(waitingState);
+            this.WaitingState = waitingState ?? WaitingUserState.DefaultState();
         }
 
         /// <summary>

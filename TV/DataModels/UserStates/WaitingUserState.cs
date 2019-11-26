@@ -17,10 +17,10 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// </summary>
         /// <param name="state">To be returned, or overriden with default if null.</param>
         /// <returns>The default waiting user state if none provided.</returns>
-        public static WaitingUserState DefaultState(WaitingUserState state) => state ?? new WaitingUserState();
-        public static UserPrompt DefaultPrompt(UserPrompt prompt) => prompt ?? new UserPrompt() { Description = "Waiting . . .", RefreshTimeInMs = 1000};
+        public static WaitingUserState DefaultState() => new WaitingUserState();
+        public static UserPrompt DefaultPrompt() => new UserPrompt() { Description = "Waiting . . .", RefreshTimeInMs = 1000};
 
-        public WaitingUserState(UserPrompt prompt = null, TimeSpan? maxWaitTime = null) : base(null, maxWaitTime, DefaultPrompt(prompt))
+        public WaitingUserState(UserPrompt prompt = null, TimeSpan? maxWaitTime = null) : base(null, maxWaitTime, prompt ?? DefaultPrompt())
         {
             // Empty
         }

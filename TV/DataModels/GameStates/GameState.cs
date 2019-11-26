@@ -10,6 +10,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Connector = System.Action<
+    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Enums.UserStateResult,
+    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+
 namespace RoystonGame.TV.DataModels.GameStates
 {
     /// <summary>
@@ -32,7 +37,7 @@ namespace RoystonGame.TV.DataModels.GameStates
         /// Initializes a GameState to be used in a FSM.
         /// </summary>
         /// <param name="userOutlet">Called back when the state completes.</param>
-        public GameState(Action<User, UserStateResult, UserFormSubmission> userOutlet = null)
+        public GameState(Connector userOutlet = null)
         {
             if (userOutlet != null)
             {

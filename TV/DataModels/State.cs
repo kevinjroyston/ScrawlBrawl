@@ -9,6 +9,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Connector = System.Action<
+    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Enums.UserStateResult,
+    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+
 using static System.FormattableString;
 
 namespace RoystonGame.TV.DataModels
@@ -47,10 +52,10 @@ namespace RoystonGame.TV.DataModels
         /// <summary>
         /// A set of overrides per user for outlet.
         /// </summary>
-        private Dictionary<User, Action<User, UserStateResult, UserFormSubmission>> UserOutletOverrides { get; set; } = new Dictionary<User, Action<User, UserStateResult, UserFormSubmission>>();
+        private Dictionary<User, Connector> UserOutletOverrides { get; set; } = new Dictionary<User, Connector>();
 
         private Action StateEndingCallback { get; set; }
-        private Action<User, UserStateResult, UserFormSubmission> InternalOutlet { get; set; }
+        private Connector InternalOutlet { get; set; }
         bool FirstUser = true;
         // This needs to be wrapped so that "Outlet" can be passed as an action prior to InternalOutlet being defined
         protected void Outlet(User user, UserStateResult result, UserFormSubmission input)
@@ -74,19 +79,17 @@ namespace RoystonGame.TV.DataModels
         /// <summary>
         /// Sets up <paramref name="stateEnding"/> to be called just prior to the first user leaving this state.
         /// </summary>
-        /// <param name="stateEnding">The action to call upon leaving this state.</param>
+        /// <param name="stateEnding">The action to call immediately prior to leaving this state.</param>
         public void SetStateEndingCallback(Action stateEnding)
         {
             this.StateEndingCallback = stateEnding;
         }
 
-        // TODO. move below inside the {set;}
-
         /// <summary>
         /// Sets the state completed callback. This should be called before state is entered!
         /// </summary>
         /// <param name="outlet">The callback to use.</param>
-        public void SetOutlet(Action<User, UserStateResult, UserFormSubmission> outlet, List<User> specificUsers = null)
+        public void SetOutlet(Connector outlet, List<User> specificUsers = null)
         {
             if (outlet == null)
             {
@@ -95,9 +98,9 @@ namespace RoystonGame.TV.DataModels
 
             Debug.WriteLine(Invariant($"|||STATE SETUP|||{this.StateId}|{this.GetType()}|{(specificUsers == null ? "all users" : string.Join(", ", specificUsers.Select(user=>user.DisplayName)))}"));
 
-            // An outlet should only ever be called once per user. Ignore extra calls (most likely a timeout thread).
             Action<User,UserStateResult,UserFormSubmission> internalOutlet = (User user, UserStateResult result, UserFormSubmission input) =>
             {
+                // An outlet should only ever be called once per user. Ignore extra calls (most likely a timeout thread).
                 if (this.HaveAlreadyCalledOutlet.ContainsKey(user) && this.HaveAlreadyCalledOutlet[user] == true)
                 {
                     return;

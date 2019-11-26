@@ -11,6 +11,11 @@ using RoystonGame.Web.DataModels.Responses;
 
 using static System.FormattableString;
 
+using Connector = System.Action<
+    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Enums.UserStateResult,
+    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+
 namespace RoystonGame.TV.DataModels.GameStates
 {
     public class ScoreBoardGameState: GameState
@@ -22,7 +27,7 @@ namespace RoystonGame.TV.DataModels.GameStates
             SubmitButton = true
         };
 
-        public ScoreBoardGameState(Action<User, UserStateResult, UserFormSubmission> outlet=null, TimeSpan? maxWaitTime = null) : base(outlet)
+        public ScoreBoardGameState(Connector outlet=null, TimeSpan? maxWaitTime = null) : base(outlet)
         {
             UserState partyLeaderState = new SimplePromptUserState(PartyLeaderSkipButton(), maxPromptDuration: maxWaitTime);
             WaitingUserState waitingState = new WaitingUserState(maxWaitTime: maxWaitTime);
