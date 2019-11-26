@@ -51,6 +51,10 @@
   <ItemGroup>
     <MonoGameContentReference Include="TV\GameEngine\Content\Content.mgcb" ContentOutputDir="TEST" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="TV\GameModes\KevinsGames\" />
+  </ItemGroup>
   <PropertyGroup>
     <ApplicationIcon>TV\GameEngine\Icon.ico</ApplicationIcon>
   </PropertyGroup>

@@ -25,7 +25,15 @@ namespace RoystonGame.Web.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] UserFormSubmission formData)
         {
+            if (!GameManager.Singleton.GameStarted)
+            {
+                return new BadRequestResult();
+            }
             User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress);
+            if (user == null)
+            {
+                return new BadRequestResult();
+            }
             bool success = user.UserState.HandleUserFormInput(user, formData);
             return success ? new OkResult() : (IActionResult)new BadRequestResult();
         }

@@ -60,8 +60,8 @@ export class DrawingDirective implements ControlValueAccessor{
         console.log("down/start");
         event.preventDefault();
         if (event.changedTouches) {                      // only for touch
-            this.lastX = event.changedTouches[0].clientX;
-            this.lastY = event.changedTouches[0].clientY;
+            this.lastX = event.changedTouches[0].pageX - this.element.offsetLeft - this.element.clientLeft;
+            this.lastY = event.changedTouches[0].pageY - this.element.offsetTop - this.element.clientTop;
         } else {
             if (event.offsetX !== undefined) {
                 this.lastX = event.offsetX;
@@ -89,8 +89,8 @@ export class DrawingDirective implements ControlValueAccessor{
             var currentX;
             var currentY;
             if (event.changedTouches) {                      // only for touch
-                currentX = event.changedTouches[0].clientX;
-                currentY = event.changedTouches[0].clientY;
+                currentX = event.changedTouches[0].pageX - this.element.offsetLeft - this.element.clientLeft;
+                currentY = event.changedTouches[0].pageY - this.element.offsetTop - this.element.clientTop;
             }else if (event.offsetX !== undefined) {
                 currentX = event.offsetX;
                 currentY = event.offsetY;

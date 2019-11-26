@@ -1,0 +1,5 @@
+input[type='radio'] {
+  height: 45px;
+  width: 45px;
+  vertical-align: middle;
+}

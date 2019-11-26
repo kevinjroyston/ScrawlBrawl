@@ -16,9 +16,11 @@ namespace RoystonGame.TV.GameEngine.Rendering
         public Texture2D Background { get; private set; }
         public override Rectangle BoundingBox { get; set; } = new Rectangle(0, 0, 100, 100);
         private string UserDrawing { get; set; }
-        public UserDrawingObject(string userDrawing) : base()
+        private Color BackgroundColor { get; set; }
+        public UserDrawingObject(string userDrawing, Color? backgroundColor = null) : base()
         {
             this.UserDrawing = userDrawing;
+            this.BackgroundColor = backgroundColor ?? Color.White;
 
             // hacky fix.
             GameManager.RegisterGameObject(this);
@@ -28,7 +30,7 @@ namespace RoystonGame.TV.GameEngine.Rendering
         {
             if (this.Content == null)
                 return;
-            spriteBatch.Draw(this.Background, this.BoundingBox, Color.White);
+            spriteBatch.Draw(this.Background, this.BoundingBox, this.BackgroundColor);
             spriteBatch.Draw(this.Content, this.BoundingBox, Color.White);
         }
 

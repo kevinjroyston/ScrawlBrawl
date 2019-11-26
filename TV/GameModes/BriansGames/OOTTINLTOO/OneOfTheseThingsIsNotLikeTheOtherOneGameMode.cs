@@ -20,6 +20,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO
         private GameState Setup { get; set; }
         private List<GameState> Gameplay { get; set; } = new List<GameState>();
         private List<GameState> Scoreboards { get; set; } = new List<GameState>();
+        private List<GameState> Reveals { get; set; } = new List<GameState>();
         private Random rand { get; } = new Random();
         public OneOfTheseThingsIsNotLikeTheOtherOneGameMode()
         {
@@ -33,8 +34,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO
                     {
                         this.Scoreboards.Last()?.Transition(this.Gameplay.Last());
                     }
+                    this.Reveals.Add(new ImposterRevealed_GS(challenge));
                     this.Scoreboards.Add(new ScoreBoardGameState(null, null));
-                    this.Gameplay.Last().Transition(this.Scoreboards.Last());
+                    this.Gameplay.Last().Transition(this.Reveals.Last());
+                    this.Reveals.Last().Transition(this.Scoreboards.Last());
                 }
                 Setup.Transition(this.Gameplay[0]);
                 this.Scoreboards.Last().SetOutlet(this.Outlet);

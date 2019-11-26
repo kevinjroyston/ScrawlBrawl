@@ -25,9 +25,17 @@ namespace RoystonGame.Web.Controllers
         [HttpGet]
         public IActionResult Get()
         {
+            if (!GameManager.Singleton.GameStarted)
+            {
+                return new BadRequestResult();
+            }
             // TODO handle IDs for real
             // TODO scramble radio button answer order
             User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress);
+            if (user == null)
+            {
+                return new BadRequestResult();
+            }
             return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
             /* //Test response
             return new JsonResult(new UserPrompt
