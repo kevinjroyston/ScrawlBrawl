@@ -9,6 +9,7 @@ using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.DataModels;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using RoystonGame.WordLists;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 {
     public class Setup_GS: GameState
     {
-        private UserState GetWordsUserState()
+        private UserState GetWordsUserState(Action<User, UserStateResult, UserFormSubmission> outlet = null)
         {
             return new SimplePromptUserState(new UserPrompt()
             {
@@ -31,7 +32,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 {
                     new SubPrompt
                     {
-                        Prompt = "The drawing prompt to show all users.",
+                        Prompt = Invariant($"The drawing prompt to show all users. Suggestions: '{string.Join("', '",RandomLineFromFile.GetRandomLines(FileNames.Nouns, 3))}'"),
                         ShortAnswer = true,
                     },
                     new SubPrompt
@@ -42,6 +43,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 },
                 SubmitButton = true
             },
+            outlet,
             formSubmitCallback: (User user, UserFormSubmission input) =>
             {
                 this.SubChallenges.Add(new ChallengeTracker
@@ -107,8 +109,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
         public Setup_GS(List<ChallengeTracker> challengeTrackers, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(outlet)
         {
             this.SubChallenges = challengeTrackers;
-            UserState getWords = GetWordsUserState();
             bool promptsAssigned = false;
+            WaitForTrigger waitForTrigger = new WaitForTrigger();
+            waitForTrigger.Transition(GetWordsUserState());
             UserStateTransition waitForAllDrawings = new WaitForAllPlayers(null, this.Outlet, null);
             UserStateTransition waitForAllPrompts = new WaitForAllPlayers(null, outlet: (User user, UserStateResult result, UserFormSubmission input)=>
             {
@@ -120,8 +123,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 GetDrawingsUserStateChain(user, waitForAllDrawings.Inlet)[0].Inlet(user, result, input);
             });
 
-            this.Entrance = getWords;
-            getWords.SetOutlet(waitForAllPrompts.Inlet);
+            foreach (User user in GameManager.GetActiveUsers())
+            {
+                waitForTrigger.SetOutlet(GetWordsUserState(waitForAllPrompts.Inlet).Inlet, new List<User> { user });
+            }
+
+            this.Entrance = waitForTrigger;
+            waitForTrigger.Trigger();
 
             this.GameObjects = new List<GameObject>()
             {

@@ -16,6 +16,7 @@ using RoystonGame.Web.DataModels.Responses;
 using System.Net;
 using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO;
+using RoystonGame.WordLists;
 
 namespace RoystonGame.TV
 {

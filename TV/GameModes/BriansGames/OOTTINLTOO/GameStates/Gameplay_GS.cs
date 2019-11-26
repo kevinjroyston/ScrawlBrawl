@@ -76,7 +76,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             int x =0, y = 0;
             int imageWidth = 200;
             int imageHeight = 200;
-            int imagesPerRow = 4;
+            int imagesPerRow = 3;
             int buffer = 25;
             int yBuffer = 125;
             foreach ((string id, (User owner, string userDrawing)) in this.SubChallenge.IdToDrawingMapping)

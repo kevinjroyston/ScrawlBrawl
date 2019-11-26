@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <None Remove="TV\GameEngine\Icon.ico" />
+    <None Remove="WordLists\nouns.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +47,9 @@
     <Content Include="ClientApp\tslint.json" />
     <Content Include="TV\GameEngine\Icon.ico" />
     <Content Include="Web\wwwroot\favicon.ico" />
+    <Content Include="WordLists\nouns.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

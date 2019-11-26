@@ -32,7 +32,7 @@ namespace RoystonGame.Web.Controllers
             // TODO handle IDs for real
             // TODO scramble radio button answer order
             User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress);
-            if (user == null)
+            if (user?.UserState == null)
             {
                 return new BadRequestResult();
             }

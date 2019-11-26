@@ -24,7 +24,7 @@ namespace RoystonGame.TV.DataModels.GameStates
 
         public ScoreBoardGameState(Action<User, UserStateResult, UserFormSubmission> outlet=null, TimeSpan? maxWaitTime = null) : base(outlet)
         {
-            UserState partyLeaderState = new SimplePromptUserState(PartyLeaderSkipButton(), maxWaitTime);
+            UserState partyLeaderState = new SimplePromptUserState(PartyLeaderSkipButton(), maxPromptDuration: maxWaitTime);
             WaitingUserState waitingState = new WaitingUserState(maxWaitTime: maxWaitTime);
 
             UserStateTransition waitForLeader = new WaitForPartyLeader(
