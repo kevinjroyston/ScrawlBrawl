@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -14,26 +15,44 @@ namespace RoystonGame
     {
         private static Task GameThread { get; set; }
         private static Task WebThread { get; set; }
-        private static RunGame GameObject;
+        private static RunGame GameObject { get; set; }
         public static void Main(string[] args)
         {
-            GameThread = RunGame();
-            WebThread = RunWebServer(args);
-            Task.WaitAny(GameThread, WebThread);
+            CancellationTokenSource cancellation = new CancellationTokenSource();
+            try
+            {
+                GameThread = RunGame(cancellation.Token);
+                WebThread = RunWebServer(args, cancellation.Token);
+                Task.WaitAny(GameThread, WebThread);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            finally
+            {
+                GameObject.Exit();
+                GameObject.Dispose();
+                cancellation.Cancel();
+            }
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();
 
-        public static async Task RunGame()
+        public static async Task RunGame(CancellationToken cancellationToken)
         {
-            GameObject = new RunGame();
-            await Task.Run(() => GameObject.Run());
+            cancellationToken.ThrowIfCancellationRequested();
+            await Task.Run(() =>
+            {
+                GameObject = new RunGame();
+                GameObject.Run();
+            }, cancellationToken);
         }
-        public static async Task RunWebServer(string[] args)
+        public static async Task RunWebServer(string[] args, CancellationToken cancellationToken)
         {
-            await Task.Run(() => CreateWebHostBuilder(args).Build().Run());
+            await CreateWebHostBuilder(args).Build().RunAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

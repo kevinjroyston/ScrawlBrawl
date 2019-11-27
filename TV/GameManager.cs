@@ -46,15 +46,12 @@ namespace RoystonGame.TV
         #region GameModes
         private IReadOnlyDictionary<GameMode, Func<IGameMode>> GameModeMappings { get; set; } = new ReadOnlyDictionary<GameMode, Func<IGameMode>>(new Dictionary<GameMode, Func<IGameMode>>
         {
-            { GameMode.OOTTINLTOO, () => new OneOfTheseThingsIsNotLikeTheOtherOneGameMode() }
+            { GameMode.ImposterSyndrome, () => new OneOfTheseThingsIsNotLikeTheOtherOneGameMode() }
         });
         #endregion
 
-        public bool GameStarted { get; set; } = false;
-
         public GameManager(RunGame gameRunner)
         {
-            //TODO: move logic into Singleton getter. Make constructor private
             if (Singleton == null)
             {
                 Singleton = this;
@@ -81,7 +78,6 @@ namespace RoystonGame.TV
 
             // Causes any new user who enters WaitForLobby to immediately pass through, also unblocks users actively waiting there.
             Singleton.WaitForLobby.ForceChangeOfUserStates(UserStateResult.Success);
-            Singleton.GameStarted = true;
         }
 
         private int? LastSelectedGameMode { get; set; } = null;
@@ -112,6 +108,10 @@ namespace RoystonGame.TV
             {
                 case EndOfGameRestartType.NewPlayers:
                     Singleton.EndOfGameRestart.Transition(Singleton.UserRegistration);
+                    foreach((IPAddress address, User user) in Singleton.RegisteredUsers)
+                    {
+                        Singleton.UnregisteredUsers.Add(address, user);
+                    }
                     Singleton.RegisteredUsers.Clear();
 
                     Singleton.UserRegistration = new UserSignupGameState(lobbyClosedCallback: CloseLobby);
@@ -122,8 +122,9 @@ namespace RoystonGame.TV
                     Singleton.WaitForLobby.ForceChangeOfUserStates(UserStateResult.Success);
                     break;
                 case EndOfGameRestartType.SameGameAndPlayers:
-                    SelectedGameMode(specialTransitionFrom: Singleton.EndOfGameRestart);
+                    GameState previousEndOfGameRestart = Singleton.EndOfGameRestart;
                     Singleton.EndOfGameRestart = new EndOfGameState(PrepareToRestartGame);
+                    SelectedGameMode(specialTransitionFrom: previousEndOfGameRestart);
                     foreach (User user in Singleton.RegisteredUsers.Values)
                     {
                         user.Score = 0;
@@ -135,6 +136,10 @@ namespace RoystonGame.TV
                     Singleton.EndOfGameRestart.Transition(Singleton.PartyLeaderSelect);
 
                     Singleton.EndOfGameRestart = new EndOfGameState(PrepareToRestartGame);
+                    foreach (User user in Singleton.RegisteredUsers.Values)
+                    {
+                        user.Score = 0;
+                    }
                     break;
                 default:
                     throw new Exception("Unknown restart game type");
@@ -167,7 +172,7 @@ namespace RoystonGame.TV
                 throw new Exception("Tried to register unknown user");
             }
 
-            if(Singleton.RegisteredUsers.Count == 0)
+            if (Singleton.RegisteredUsers.Count == 0)
             {
                 user.IsPartyLeader = true;
             }
@@ -181,32 +186,36 @@ namespace RoystonGame.TV
             Singleton.UnregisteredUsers.Remove(callerIP);
         }
 
+        object UserIPLookupLock { get; set; } = new object();
+
         /// Please don't ARP Poison me @Alex and force me to beef up User authentication here. lol
         public static User MapIPToUser(IPAddress callerIP)
         {
-            try
+            lock (Singleton.UserIPLookupLock)
             {
-
-                User user;
-                if (Singleton.UnregisteredUsers.ContainsKey(callerIP))
+                try
                 {
-                    user = Singleton.UnregisteredUsers[callerIP];
+                    User user;
+                    if (Singleton.UnregisteredUsers.ContainsKey(callerIP))
+                    {
+                        user = Singleton.UnregisteredUsers[callerIP];
+                    }
+                    else if (Singleton.RegisteredUsers.ContainsKey(callerIP))
+                    {
+                        user = Singleton.RegisteredUsers[callerIP];
+                    }
+                    else
+                    {
+                        user = new User();
+                        Singleton.UnregisteredUsers.Add(callerIP, user);
+                        Singleton.WaitForLobby.Inlet(user, UserStateResult.Success, null);
+                    }
+                    return user;
                 }
-                else if (Singleton.RegisteredUsers.ContainsKey(callerIP))
+                catch
                 {
-                    user = Singleton.RegisteredUsers[callerIP];
+                    return null;
                 }
-                else
-                {
-                    user = new User();
-                    Singleton.UnregisteredUsers.Add(callerIP, user);
-                    Singleton.WaitForLobby.Inlet(user, UserStateResult.Success, null);
-                }
-                return user;
-            }
-            catch
-            {
-                return null;
             }
         }
 

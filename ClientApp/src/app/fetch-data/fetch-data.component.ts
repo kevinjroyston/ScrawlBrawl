@@ -43,6 +43,11 @@ export class FetchDataComponent
           this.refreshUserPromptTimer(this.userPrompt.refreshTimeInMs);
           return;
           }
+
+        // Clear whatever was in the old form.
+        if (this.userForm) {
+            this.userForm.reset();
+        }
         // Store the new user prompt and populate the corresponding formControls
         this.userPrompt = result;
         let subFormCount: number = 0;
@@ -82,7 +87,6 @@ export class FetchDataComponent
         this.http.post(this.baseUrl + "FormSubmit", body, httpOptions).subscribe(
             data => {
                 console.log("POST Request is successful ", data);
-                this.userForm.reset();
                 this.fetchUserPrompt();
             },
             error => {

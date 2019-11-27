@@ -39,6 +39,12 @@ namespace RoystonGame.TV.DataModels
 
         public int Score { get; set; }
 
+        /// <summary>
+        /// Lock used for ensuring only one User form submission is being processed at a time.
+        /// </summary>
+        public object LockObject { get; set; } = new object();
+
+
         public User()
         {
             // Empty

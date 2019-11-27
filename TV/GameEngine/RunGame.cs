@@ -34,6 +34,13 @@ namespace RoystonGame.TV.GameEngine
         {
             GameManager.Initialize();
             base.Initialize();
+
+            Window.AllowAltF4 = true;
+            Window.AllowUserResizing = true;
+            graphics.PreferredBackBufferWidth = 1860;// GraphicsDevice.DisplayMode.Width - 100;
+            graphics.PreferredBackBufferHeight = 1050;// GraphicsDevice.DisplayMode.Height - 100;
+            //graphics.IsFullScreen = false;
+            graphics.ApplyChanges();
         }
 
         /// <summary>
@@ -61,6 +68,9 @@ namespace RoystonGame.TV.GameEngine
             {
                 gameObject.UnloadContent();
             }
+
+            GraphicsDevice.Dispose();
+            graphics.Dispose();
         }
 
         /// <summary>

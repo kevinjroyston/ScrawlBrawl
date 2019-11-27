@@ -10,6 +10,6 @@ namespace RoystonGame.TV.DataModels.Enums
     /// </summary>
     public enum GameMode
     {
-        OOTTINLTOO,
+        ImposterSyndrome,
     }
 }

@@ -74,11 +74,19 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 
             this.GameObjects = new List<GameObject>();
             int x =0, y = 0;
-            int imageWidth = 200;
-            int imageHeight = 200;
-            int imagesPerRow = 3;
+            /*// Plays 18
+            int imageWidth = 300;
+            int imageHeight = 300;
+            int imagesPerRow = 6;
+            int buffer = 10;
+            int yBuffer = 50;*/
+
+            // Plays 8
+            int imageWidth = 400;
+            int imageHeight = 400;
+            int imagesPerRow = 4;
             int buffer = 25;
-            int yBuffer = 125;
+            int yBuffer = 75;
             foreach ((string id, (User owner, string userDrawing)) in this.SubChallenge.IdToDrawingMapping)
             {
                 this.GameObjects.Add(new UserDrawingObject(userDrawing)
@@ -108,19 +116,19 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             }
             foreach (User user in this.SubChallenge.UsersWhoConfusedWhichUsers.Keys)
             {
-                user.Score -= 10 * this.SubChallenge.UsersWhoConfusedWhichUsers[user].Count;
+                user.Score -= 50 * this.SubChallenge.UsersWhoConfusedWhichUsers[user].Where(val => val != user).ToList().Count;
             }
 
             // If EVERYBODY figures out the diff, the owner loses some points but not as many.
             if (this.SubChallenge.UsersWhoFoundOOO.Where(user => user != this.SubChallenge.Owner).Count() == (GameManager.GetActiveUsers().Count-1))
             {
-                this.SubChallenge.Owner.Score -= TotalPointsToAward / 4;
+                this.SubChallenge.Owner.Score -= TotalPointsToAward / 2;
             }
 
             // If the owner couldnt find the diff, they lose a bunch of points.
             if (!this.SubChallenge.UsersWhoFoundOOO.Contains(this.SubChallenge.Owner))
             {
-                this.SubChallenge.Owner.Score -= TotalPointsToAward / 2;
+                this.SubChallenge.Owner.Score -= TotalPointsToAward;
             }
         }
     }

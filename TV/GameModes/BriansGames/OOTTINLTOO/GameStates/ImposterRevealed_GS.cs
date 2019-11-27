@@ -41,11 +41,19 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 
             this.GameObjects = new List<GameObject>();
             int x = 0, y = 0;
-            int imageWidth = 200;
-            int imageHeight = 200;
+            /*// Plays 18
+            int imageWidth = 300;
+            int imageHeight = 300;
+            int imagesPerRow = 6;
+            int buffer = 10;
+            int yBuffer = 50;*/
+
+            // Plays 8
+            int imageWidth = 400;
+            int imageHeight = 400;
             int imagesPerRow = 4;
             int buffer = 25;
-            int yBuffer = 125;
+            int yBuffer = 75;
             foreach ((User owner, string userDrawing) in challenge.IdToDrawingMapping.Values)
             {
                 this.GameObjects.Add(new UserDrawingObject(userDrawing, owner == challenge.OddOneOut ? Color.Salmon : Color.White)

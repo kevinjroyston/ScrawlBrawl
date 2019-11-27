@@ -12,6 +12,7 @@ using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.WordLists;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,8 +20,25 @@ using static System.FormattableString;
 
 namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 {
-    public class Setup_GS: GameState
+    public class Setup_GS : GameState
     {
+        private UserState GetPartyLeaderChooseNumberOfDrawingsState()
+        {
+            return new SimplePromptUserState(new UserPrompt()
+            {
+                Title = "Game Options",
+                SubPrompts = new SubPrompt[]
+                {
+                    new SubPrompt
+                    {
+                        Prompt = "Max drawing prompts per player",
+                        ShortAnswer = true
+                    }
+                },
+                SubmitButton = true
+            });
+        }
+
         private UserState GetWordsUserState(Action<User, UserStateResult, UserFormSubmission> outlet = null)
         {
             return new SimplePromptUserState(new UserPrompt()
@@ -32,7 +50,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 {
                     new SubPrompt
                     {
-                        Prompt = Invariant($"The drawing prompt to show all users. Suggestions: '{string.Join("', '",RandomLineFromFile.GetRandomLines(FileNames.Nouns, 3))}'"),
+                        Prompt = Invariant($"The drawing prompt to show all users. Suggestions: '{string.Join("', '",RandomLineFromFile.GetRandomLines(FileNames.Nouns, 5))}'"),
                         ShortAnswer = true,
                     },
                     new SubPrompt
@@ -71,7 +89,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             List<ChallengeTracker> challenges = this.SubChallenges.OrderBy(_ => rand.Next()).ToList();
             foreach(ChallengeTracker challenge in challenges)
             {
-                if (challenge.Owner == user)
+                if (challenge.Owner == user || !challenge.UserSubmittedDrawings.ContainsKey(user))
                 {
                     continue;
                 }
@@ -93,7 +111,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 },
                 formSubmitCallback: (User user, UserFormSubmission input) =>
                 {
-                    challenge.UserSubmittedDrawings.Add(user, input.SubForms[0].Drawing);
+                    challenge.UserSubmittedDrawings[user] = input.SubForms[0].Drawing;
                 }));
             }
 
@@ -109,27 +127,29 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
         public Setup_GS(List<ChallengeTracker> challengeTrackers, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(outlet)
         {
             this.SubChallenges = challengeTrackers;
-            bool promptsAssigned = false;
-            WaitForTrigger waitForTrigger = new WaitForTrigger();
-            waitForTrigger.Transition(GetWordsUserState());
-            UserStateTransition waitForAllDrawings = new WaitForAllPlayers(null, this.Outlet, null);
-            UserStateTransition waitForAllPrompts = new WaitForAllPlayers(null, outlet: (User user, UserStateResult result, UserFormSubmission input)=>
-            {
-                if (!promptsAssigned)
+            int numDrawingsPerPrompt = 6;
+
+            WaitForPartyLeader setNumPrompts = new WaitForPartyLeader(
+                null,
+                partyLeaderPrompt: GetPartyLeaderChooseNumberOfDrawingsState(),
+                partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission input) =>
                 {
-                    promptsAssigned = true;
-                    this.AssignPrompts();
-                }
+                    numDrawingsPerPrompt = Int32.Parse(input.SubForms[0].ShortAnswer);
+                });
+
+            UserStateTransition waitForAllDrawings = new WaitForAllPlayers(null, this.Outlet, null);
+            UserStateTransition waitForAllPrompts = new WaitForAllPlayers(null, outlet: (User user, UserStateResult result, UserFormSubmission input) =>
+            {
                 GetDrawingsUserStateChain(user, waitForAllDrawings.Inlet)[0].Inlet(user, result, input);
             });
+            waitForAllPrompts.SetStateEndingCallback(() => this.AssignPrompts(numDrawingsPerPrompt));
 
             foreach (User user in GameManager.GetActiveUsers())
             {
-                waitForTrigger.SetOutlet(GetWordsUserState(waitForAllPrompts.Inlet).Inlet, new List<User> { user });
+                setNumPrompts.SetOutlet(GetWordsUserState(waitForAllPrompts.Inlet).Inlet, new List<User> { user });
             }
 
-            this.Entrance = waitForTrigger;
-            waitForTrigger.Trigger();
+            this.Entrance = setNumPrompts;
 
             this.GameObjects = new List<GameObject>()
             {
@@ -137,14 +157,75 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             };
         }
 
-        private void AssignPrompts()
+        /// <summary>
+        /// This method of assigning prompts is not the most efficient but the next best algorithm I could find for getting a 
+        /// good solution was even more inefficient. All the efficient algorithms gave suboptimal solutions.
+        /// </summary>
+        /// <param name="maxDrawingsPerPrompt">The max drawings to allow per prompt (will only be less than this value if there arent enough users).</param>
+        private void AssignPrompts(int maxDrawingsPerPrompt = 6)
         {
+            Stopwatch stopwatch = Stopwatch.StartNew();
             List<ChallengeTracker> randomizedOrderChallenges = this.SubChallenges.OrderBy(_ => rand.Next()).ToList();
-            for(int i = 1; i<randomizedOrderChallenges.Count; i++)
+            IReadOnlyList<User> users = GameManager.GetActiveUsers();
+            if (users.Count - 1 > maxDrawingsPerPrompt)
             {
-                randomizedOrderChallenges[i - 1].OddOneOut = randomizedOrderChallenges[i].Owner;
+                for (int i = 0; i < randomizedOrderChallenges.Count; i++)
+                {
+                    for (int j = 1; j <= maxDrawingsPerPrompt; j++)
+                    {
+                        randomizedOrderChallenges[i].UserSubmittedDrawings.Add(
+                            randomizedOrderChallenges[(i + j) % randomizedOrderChallenges.Count].Owner,
+                            string.Empty);
+                    }
+                }
+
+                // Make 100 attempts at valid swaps
+                for (int i = 0; i < 100; i++)
+                {
+                    int rand1a = rand.Next(0, randomizedOrderChallenges.Count);
+                    int rand1b = rand.Next(0, randomizedOrderChallenges[0].UserSubmittedDrawings.Count);
+
+                    int rand2a = rand.Next(0, randomizedOrderChallenges.Count);
+                    int rand2b = rand.Next(0, randomizedOrderChallenges[0].UserSubmittedDrawings.Count);
+
+                    User user1 = randomizedOrderChallenges[rand1a].UserSubmittedDrawings.Keys.ToList()[rand1b];
+                    User user2 = randomizedOrderChallenges[rand2a].UserSubmittedDrawings.Keys.ToList()[rand2b];
+
+                    // Determines if a swap is valid
+                    if ((randomizedOrderChallenges[rand1a].Owner != user2 && !randomizedOrderChallenges[rand1a].UserSubmittedDrawings.ContainsKey(user2))
+                        &&(randomizedOrderChallenges[rand2a].Owner != user1 && !randomizedOrderChallenges[rand2a].UserSubmittedDrawings.ContainsKey(user1)))
+                    {
+                        randomizedOrderChallenges[rand1a].UserSubmittedDrawings.Remove(user1);
+                        randomizedOrderChallenges[rand2a].UserSubmittedDrawings.Remove(user2);
+                        randomizedOrderChallenges[rand1a].UserSubmittedDrawings.Add(user2, string.Empty);
+                        randomizedOrderChallenges[rand2a].UserSubmittedDrawings.Add(user1, string.Empty);
+                    }
+                }
             }
-            randomizedOrderChallenges.Last().OddOneOut = randomizedOrderChallenges[0].Owner;
+            else
+            {
+                foreach (ChallengeTracker challenge in randomizedOrderChallenges)
+                {
+                    foreach (User user in users)
+                    {
+                        // Owner of a prompt shouldnt be prompted to draw it
+                        if (user != challenge.Owner)
+                        {
+                            // Add it to the dictionary indicating this user should be prompted for a drawing.
+                            challenge.UserSubmittedDrawings.Add(user, string.Empty);
+                        }
+                    }
+                }
+            }
+
+            // Assign odd one outs randomly
+            foreach (ChallengeTracker challenge in randomizedOrderChallenges)
+            {
+                List<User> usersGivenPrompt = challenge.UserSubmittedDrawings.Keys.ToList();
+                challenge.OddOneOut = usersGivenPrompt[rand.Next(0, usersGivenPrompt.Count)];
+            }
+
+            Debug.WriteLine(Invariant($"Assigned user prompts in ({stopwatch.ElapsedMilliseconds} ms)"), "Timing");
         }
     }
 }

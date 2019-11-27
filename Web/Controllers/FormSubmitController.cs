@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -25,16 +26,26 @@ namespace RoystonGame.Web.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] UserFormSubmission formData)
         {
-            if (!GameManager.Singleton.GameStarted)
-            {
-                return new BadRequestResult();
-            }
             User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress);
-            if (user == null)
+            if (user?.UserState == null)
             {
                 return new BadRequestResult();
             }
-            bool success = user.UserState.HandleUserFormInput(user, formData);
+
+            // Make sure HandleUserFormInput is never called concurrently for the same user.
+            bool success;
+            try
+            {
+                lock (user.LockObject)
+                {
+                    success = user.UserState.HandleUserFormInput(user, formData);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Write(ex.ToString());
+                success = false;
+            }
             return success ? new OkResult() : (IActionResult)new BadRequestResult();
         }
     }
