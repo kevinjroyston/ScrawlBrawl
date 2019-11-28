@@ -21,19 +21,36 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
     public class Gameplay_GS : GameState
     {
         private Random rand { get; } = new Random();
-        private static UserPrompt PickADrawing(ChallengeTracker challenge, string[] choices) => new UserPrompt
-        {
-            Title = "Find the imposter!",
-            Description = Invariant($"'{challenge.Owner.DisplayName}' created this prompt."),
-            SubPrompts = new SubPrompt[]
+        private static Func<User, UserPrompt> PickADrawing(ChallengeTracker challenge, List<string> choices) => (User user) => {
+            List<string> detailedChoices = choices.Select(val => (challenge.IdToDrawingMapping[val].Item1 == user) ? Invariant($"{val} - You drew this") : val).ToList();
+            string description;
+            if (challenge.UserSubmittedDrawings.ContainsKey(user))
             {
-                new SubPrompt
+                description = Invariant($"'{challenge.Owner.DisplayName}' created this prompt. Your prompt was '{(challenge.OddOneOut == user ? challenge.DeceptionPrompt : challenge.RealPrompt)}'");
+            }
+            else if (challenge.Owner == user)
+            {
+                description = Invariant($"You created this prompt. Prompt: '{challenge.RealPrompt}', Imposter: '{challenge.DeceptionPrompt}'");
+            }
+            else
+            {
+                description = Invariant($"'{challenge.Owner.DisplayName}' created this prompt.\nYou didn't draw anything for this prompt.");
+            }
+
+            return new UserPrompt
+            {
+                Title = "Find the imposter!",
+                Description = description,
+                SubPrompts = new SubPrompt[]
                 {
-                    Prompt = $"Which drawing is the fake?",
-                    Answers = choices
-                }
-            },
-            SubmitButton = true,
+                    new SubPrompt
+                    {
+                        Prompt = $"Which drawing is the fake?",
+                        Answers = detailedChoices.ToArray()
+                    }
+                },
+                SubmitButton = true,
+            };
         };
 
         private ChallengeTracker SubChallenge { get; set; }
@@ -48,10 +65,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             }
 
             SimplePromptUserState pickDrawing = new SimplePromptUserState(
-                PickADrawing(challengeTracker, challengeTracker.IdToDrawingMapping.Keys.ToArray()),
+                PickADrawing(challengeTracker, challengeTracker.IdToDrawingMapping.Keys.ToList()),
                 formSubmitCallback:(User user, UserFormSubmission submission) =>
                 {
-                    User authorOfDrawing = challengeTracker.IdToDrawingMapping.Values.ToArray()[submission.SubForms[0].RadioAnswer ?? -1  ].Item1;
+                    User authorOfDrawing = challengeTracker.IdToDrawingMapping.Values.ToArray()[submission.SubForms[0].RadioAnswer ?? -1].Item1;
                     if (authorOfDrawing == challengeTracker.OddOneOut)
                     {
                         challengeTracker.UsersWhoFoundOOO.Add(user);

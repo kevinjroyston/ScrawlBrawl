@@ -17,7 +17,7 @@ namespace RoystonGame.TV.DataModels.GameStates
 {
     public class SelectGameModeGameState : GameState
     {
-        private static UserPrompt GameModePrompt(string[] availableGameModes) => new UserPrompt()
+        private static Func<User, UserPrompt> GameModePrompt(string[] availableGameModes) => (User user) => new UserPrompt()
         { 
             Title = "Which game would you like to play",
             Description = "This is no democracy, you have all the power :)",
@@ -32,8 +32,6 @@ namespace RoystonGame.TV.DataModels.GameStates
             },
             SubmitButton = true
         };
-
-        private string[] AvailableGameModes { get; }
 
         /// <summary>
         /// Initializes a GameState to be used in a FSM.

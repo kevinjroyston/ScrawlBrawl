@@ -25,7 +25,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 {
     public class ImposterRevealed_GS : GameState
     {
-        private static UserPrompt PartyLeaderSkipButton() => new UserPrompt()
+        private static UserPrompt PartyLeaderSkipButton(User user) => new UserPrompt()
         {
             Title = "Skip Reveal",
             RefreshTimeInMs = 1000,
@@ -34,7 +34,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 
         public ImposterRevealed_GS(ChallengeTracker challenge, Connector outlet = null, TimeSpan? maxWaitTime = null) : base(outlet)
         {
-            UserState partyLeaderState = new SimplePromptUserState(PartyLeaderSkipButton(), maxPromptDuration: maxWaitTime);
+            UserState partyLeaderState = new SimplePromptUserState(PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
             WaitingUserState waitingState = new WaitingUserState(maxWaitTime: maxWaitTime);
 
             UserStateTransition waitForLeader = new WaitForPartyLeader(

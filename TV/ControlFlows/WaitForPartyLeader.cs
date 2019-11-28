@@ -29,7 +29,7 @@ namespace RoystonGame.TV.ControlFlows
         /// </summary>
         /// <param name="outlet">The callback function to call when leaving a state.</param>
         /// <param name="waitingState">The waiting state to use while waiting for the trigger. The Callback of this state will be overwritten</param>
-        public WaitForPartyLeader(Connector outlet = null, UserState partyLeaderPrompt = null, WaitingUserState waitingState = null, Connector partyLeaderSubmission = null) : base(null, outlet, WaitingUserState.DefaultState(waitingState))
+        public WaitForPartyLeader(Connector outlet = null, UserState partyLeaderPrompt = null, WaitingUserState waitingState = null, Connector partyLeaderSubmission = null) : base(null, outlet, waitingState ?? WaitingUserState.DefaultState())
         {
             this.PartyLeaderUserState = partyLeaderPrompt ?? PartyLeaderReadyUpButtonUserState.DefaultState();
             this.PartyLeaderUserState.SetOutlet((User user, UserStateResult result, UserFormSubmission userInput) =>

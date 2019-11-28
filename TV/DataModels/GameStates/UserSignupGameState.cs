@@ -19,7 +19,7 @@ namespace RoystonGame.TV.DataModels.GameStates
 {
     public class UserSignupGameState : GameState
     {
-        public static UserPrompt UserNamePrompt() => new UserPrompt()
+        public static UserPrompt UserNamePrompt(User user) => new UserPrompt()
         {
             Title = "Welcome to the game!",
             Description = "Follow the instructions below!",
@@ -42,7 +42,7 @@ namespace RoystonGame.TV.DataModels.GameStates
 
         public UserSignupGameState(Connector userStateCompletedCallback = null, Action lobbyClosedCallback = null) : base(userStateCompletedCallback)
         {
-            UserState entrance = new SimplePromptUserState(UserNamePrompt());
+            UserState entrance = new SimplePromptUserState(UserNamePrompt);
             WaitForPartyLeader transition = new WaitForPartyLeader(this.Outlet, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
             {
                 lobbyClosedCallback?.Invoke();

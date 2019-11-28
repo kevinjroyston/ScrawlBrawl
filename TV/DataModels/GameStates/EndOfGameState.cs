@@ -19,7 +19,7 @@ namespace RoystonGame.TV.DataModels.GameStates
 {
     public class EndOfGameState : GameState
     {
-        public UserPrompt ContinuePrompt() => new UserPrompt()
+        public UserPrompt ContinuePrompt(User user) => new UserPrompt()
         {
             Title = "What shall we do next?",
             RefreshTimeInMs = 5000,
@@ -43,7 +43,7 @@ namespace RoystonGame.TV.DataModels.GameStates
 
         public EndOfGameState(Action<EndOfGameRestartType> endOfGameRestartCallback, Connector outlet = null) : base(outlet)
         {
-            UserState partyLeaderPrompt = new SimplePromptUserState(ContinuePrompt());
+            UserState partyLeaderPrompt = new SimplePromptUserState(ContinuePrompt);
             UserStateTransition waitForLeader = new WaitForPartyLeader(this.Outlet, partyLeaderPrompt, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
             {
                 int? selectedIndex = userInput.SubForms[0].RadioAnswer;

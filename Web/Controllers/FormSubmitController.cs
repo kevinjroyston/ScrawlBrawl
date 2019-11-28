@@ -34,18 +34,18 @@ namespace RoystonGame.Web.Controllers
 
             // Make sure HandleUserFormInput is never called concurrently for the same user.
             bool success;
-            try
-            {
+            //try
+            //{
                 lock (user.LockObject)
                 {
                     success = user.UserState.HandleUserFormInput(user, formData);
                 }
-            }
+            /*}
             catch (Exception ex)
             {
                 Debug.Write(ex.ToString());
                 success = false;
-            }
+            }*/
             return success ? new OkResult() : (IActionResult)new BadRequestResult();
         }
     }

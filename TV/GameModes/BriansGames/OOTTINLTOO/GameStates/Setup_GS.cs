@@ -29,7 +29,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
     {
         private UserState GetPartyLeaderChooseNumberOfDrawingsState()
         {
-            return new SimplePromptUserState(new UserPrompt()
+            return new SimplePromptUserState((User user)=> new UserPrompt()
             {
                 Title = "Game Options",
                 SubPrompts = new SubPrompt[]
@@ -46,7 +46,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 
         private UserState GetWordsUserState(Connector outlet = null)
         {
-            return new SimplePromptUserState(new UserPrompt()
+            return new SimplePromptUserState((User user) => new UserPrompt()
             {
                 Title = "Game setup",
                 Description = "In the boxes below, enter two drawing prompts such that only you will be able to tell the drawings apart.",
@@ -99,7 +99,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     continue;
                 }
 
-                stateChain.Add(new SimplePromptUserState(new UserPrompt()
+                stateChain.Add(new SimplePromptUserState((User user)=> new UserPrompt()
                 {
                     Title = "Time to draw!",
                     Description = "Draw the prompt below. Careful, if you aren't the odd one out and people think you are, you will lose points for being a terrible artist.",

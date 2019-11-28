@@ -34,18 +34,28 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// <summary>
         /// A mapping of previously served user prompts, to be reused on future requests.
         /// </summary>
-        private Dictionary<User, UserPrompt> Prompts { get; } = new Dictionary<User, UserPrompt>();
+        private Dictionary<User, UserPromptHolder> Prompts { get; } = new Dictionary<User, UserPromptHolder>();
 
+        // TODO. I dont think the below class is needed, just dont track original RefreshTimeInMs
+        protected class UserPromptHolder
+        {
+            public UserPrompt Prompt { get; set; }
+            public int RefreshTimeInMs { get; set; }
+        }
         /// <summary>
         /// Gets the prompt for a given user. Creating a new prompt using <see cref="PromptGenerator"/> if this is the first time.
         /// </summary>
         /// <param name="user">The user to get the prompt for.</param>
         /// <returns>The prompt to give to the specified user.</returns>
-        protected UserPrompt GetUserPrompt(User user)
+        protected UserPromptHolder GetUserPromptHolder(User user)
         {
             if (!this.Prompts.ContainsKey(user))
             {
-                this.Prompts[user] = PromptGenerator(user);
+                this.Prompts[user] = new UserPromptHolder
+                {
+                    Prompt = PromptGenerator(user)
+                };
+                this.Prompts[user].RefreshTimeInMs = this.Prompts[user].Prompt.RefreshTimeInMs;
             }
 
             return this.Prompts[user];
@@ -68,11 +78,6 @@ namespace RoystonGame.TV.DataModels.UserStates
         private TimeSpan? StateTimeoutDuration { get; }
 
         /// <summary>
-        /// The default value to return for RefreshTimeInMs unless StateTimeout is sooner.
-        /// </summary>
-        private int RefreshTimeInMs { get; }
-
-        /// <summary>
         /// A task tracking a thread which will forcefully call StateCompletedCallback if time runs out.
         /// </summary>
         private Task StateTimeoutTask { get; set; }
@@ -92,7 +97,11 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// <param name="promptGenerator">A function to be called the first time a user requests a prompt.</param>
         public UserState(Connector outlet, TimeSpan? stateTimeoutDuration, Func<User, UserPrompt> promptGenerator)
         {
-            this.RefreshTimeInMs = prompt.RefreshTimeInMs;
+            if (promptGenerator == null)
+            {
+                throw new Exception("Prompt generator cannot be null");
+            }
+
             this.PromptGenerator = promptGenerator;
             this.StateTimeoutDuration = stateTimeoutDuration;
             
@@ -141,16 +150,18 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// <returns>True if the user input was accepted, false if there was an issue.</returns>
         public virtual bool HandleUserFormInput(User user, UserFormSubmission userInput)
         {
-            if (userInput.Id != Prompt.Id)
+            UserPrompt userPrompt = GetUserPromptHolder(user).Prompt;
+
+            if (userInput.Id != userPrompt.Id)
             {
                 return false;
             }
 
             int i = 0;
-            foreach (SubPrompt prompt in Prompt?.SubPrompts ?? new SubPrompt[0])
+            foreach (SubPrompt prompt in userPrompt?.SubPrompts ?? new SubPrompt[0])
             {
                 if ((userInput.SubForms.Count() <= i)
-                    ||(prompt.Drawing && userInput.SubForms[i].Drawing == null)
+                    ||(prompt.Drawing && string.IsNullOrWhiteSpace(userInput.SubForms[i].Drawing))
                     ||(prompt.ShortAnswer && string.IsNullOrWhiteSpace(userInput.SubForms[i].ShortAnswer))
                     ||(prompt.Answers != null && prompt.Answers.Length>0 && (!userInput.SubForms[i].RadioAnswer.HasValue || userInput.SubForms[i].RadioAnswer.Value<0 || userInput.SubForms[i].RadioAnswer.Value >= prompt.Answers.Length)))
                 {
@@ -170,17 +181,19 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// <returns>The prompt corresponding to this state.</returns>
         public virtual UserPrompt UserRequestingCurrentPrompt(User user)
         {
+            UserPromptHolder userPrompt = GetUserPromptHolder(user);
+
             // Refresh at the normal cadence unless the DontRefreshLaterThan time is coming up.
             if (this.DontRefreshLaterThan.HasValue)
             {
-                this.Prompt.RefreshTimeInMs = Math.Min(this.RefreshTimeInMs, (int)this.DontRefreshLaterThan.Value.Subtract(DateTime.Now).TotalMilliseconds);
-                this.Prompt.RefreshTimeInMs = Math.Max(this.Prompt.RefreshTimeInMs, 0);
+                userPrompt.Prompt.RefreshTimeInMs = Math.Min(userPrompt.RefreshTimeInMs, (int)this.DontRefreshLaterThan.Value.Subtract(DateTime.Now).TotalMilliseconds);
+                userPrompt.Prompt.RefreshTimeInMs = Math.Max(userPrompt.Prompt.RefreshTimeInMs, 0);
             }
             else
             {
-                this.Prompt.RefreshTimeInMs = this.RefreshTimeInMs;
+                userPrompt.Prompt.RefreshTimeInMs = userPrompt.RefreshTimeInMs;
             }
-            return this.Prompt;
+            return userPrompt.Prompt;
         }
 
         /// <summary>

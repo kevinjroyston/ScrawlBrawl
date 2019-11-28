@@ -20,7 +20,7 @@ namespace RoystonGame.TV.DataModels.GameStates
 {
     public class ScoreBoardGameState: GameState
     {
-        private static UserPrompt PartyLeaderSkipButton() => new UserPrompt()
+        private static UserPrompt PartyLeaderSkipButton(User user) => new UserPrompt()
         {
             Title = "Skip Scoreboard",
             RefreshTimeInMs = 1000,
@@ -29,7 +29,7 @@ namespace RoystonGame.TV.DataModels.GameStates
 
         public ScoreBoardGameState(Connector outlet=null, TimeSpan? maxWaitTime = null) : base(outlet)
         {
-            UserState partyLeaderState = new SimplePromptUserState(PartyLeaderSkipButton(), maxPromptDuration: maxWaitTime);
+            UserState partyLeaderState = new SimplePromptUserState(PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
             WaitingUserState waitingState = new WaitingUserState(maxWaitTime: maxWaitTime);
 
             UserStateTransition waitForLeader = new WaitForPartyLeader(
