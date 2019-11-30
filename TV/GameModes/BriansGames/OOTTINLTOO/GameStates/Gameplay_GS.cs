@@ -113,7 +113,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 this.GameObjects.Add(new TextObject
                 {
                     Content = Invariant($"{id}"),
-                    BoundingBox = new Rectangle(x * (imageWidth + buffer), imageHeight + y * (imageHeight + yBuffer), imageWidth, yBuffer - buffer)
+                    BoundingBox = new Rectangle(x * (imageWidth + buffer), imageHeight + y * (imageHeight + yBuffer), imageWidth, yBuffer)
                 });
                 x ++;
                 if (x >= imagesPerRow)

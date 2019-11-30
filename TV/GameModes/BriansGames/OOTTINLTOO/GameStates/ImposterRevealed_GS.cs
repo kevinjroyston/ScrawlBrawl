@@ -69,7 +69,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 this.GameObjects.Add(new DynamicTextObject
                 {
                     Content = ()=>Invariant($"{((owner == challenge.OddOneOut) ? challenge.UsersWhoFoundOOO.Count :(challenge.UsersWhoConfusedWhichUsers.ContainsKey(owner) ? challenge.UsersWhoConfusedWhichUsers[owner].Count : 0))}"),
-                    BoundingBox = new Rectangle(x * (imageWidth + buffer), imageHeight + y * (imageHeight + yBuffer), imageWidth, yBuffer - buffer)
+                    BoundingBox = new Rectangle(x * (imageWidth + buffer), imageHeight + y * (imageHeight + yBuffer), imageWidth, yBuffer)
                 });
 
                 x++;
