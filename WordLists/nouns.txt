@@ -9,11 +9,9 @@ abbreviation
 abdomen
 abnormality
 abolishment
-abortion
 abrogation
 absence
 abundance
-abuse
 academics
 academy
 accelerant
@@ -61,7 +59,6 @@ adrenalin
 adrenaline
 adult
 adulthood
-advance
 advancement
 advantage
 advent
@@ -70,8 +67,6 @@ adviser
 advocacy
 advocate
 affect
-affidavit
-affiliate
 affinity
 afoul
 afterlife
@@ -81,7 +76,6 @@ age
 agenda
 agent
 aggradation
-aggression
 aglet
 agony
 agriculture
@@ -99,7 +93,6 @@ airmail
 airman
 airship
 airspace
-alb
 albatross
 album
 alcove
@@ -162,13 +155,11 @@ android
 anesthesiologist
 anesthesiology
 angel
-angina
 angiosperm
 angora
 angstrom
 anguish
 anime
-anise
 ankle
 anklet
 anniversary
@@ -186,28 +177,24 @@ anterior
 anthropology
 antibody
 anticipation
-anticodon
 antigen
 antique
 antiquity
 antler
-antling
 anybody
 anyone
 anything
 anywhere
 ape
-aperitif
 apology
 app
 appeal
-appellation
 appendix
 appetiser
 appetite
 appetizer
 applause
-applewood
+applesause
 appreciation
 apprehension
 approach
@@ -258,9 +245,6 @@ aside
 asparagus
 asphalt
 aspic
-ass
-assassination
-assault
 assembly
 assertion
 assessment
@@ -313,7 +297,6 @@ award
 awe
 axis
 azimuth
-babe
 baboon
 babushka
 bachelor
@@ -454,10 +437,7 @@ bicycle
 bid
 bidder
 bidding
-bidet
 bifocals
-bijou
-bikini
 bill
 billboard
 billing
@@ -518,8 +498,6 @@ body
 bog
 bolero
 bolt
-bomber
-bombing
 bond
 bonding
 bondsman
@@ -538,13 +516,9 @@ boom
 boon
 boost
 booster
-bootee
-bootie
-booty
 bore
 borrower
 borrowing
-bosom
 boss
 botany
 bother
@@ -578,7 +552,6 @@ brain
 bran
 brand
 brandy
-brassiere
 bratwurst
 breadcrumb
 breadfruit
@@ -847,7 +820,6 @@ chasuble
 chateau
 chatter
 chauffeur
-chauvinist
 check
 checkbook
 checking
@@ -860,13 +832,11 @@ cheetah
 chef
 chem
 chemical
-chemotaxis
 cheque
 chestnut
 chick
 chicory
 chief
-chiffonier
 childbirth
 chili
 chill
@@ -882,7 +852,6 @@ chive
 chives
 choice
 choir
-choker
 cholesterol
 choosing
 chop
@@ -894,16 +863,13 @@ chorus
 chow
 chowder
 chrome
-chromolithograph
 chronicle
 chronograph
 chronometer
 chrysalis
-chub
 chuck
 chug
 churn
-chutney
 cicada
 cilantro
 cinder
@@ -914,7 +880,6 @@ circuit
 circulation
 circumference
 circumstance
-cirrhosis
 cirrus
 citizen
 citizenship
@@ -991,10 +956,6 @@ coconut
 cod
 code
 codepage
-codling
-codon
-codpiece
-coevolution
 cofactor
 coffin
 cohesion
@@ -1330,15 +1291,12 @@ cutting
 cyclamen
 cycle
 cyclone
-cyclooxygenase
 cygnet
 cylinder
 cymbal
 cynic
 cyst
-cytokine
 cytoplasm
-daddy
 daffodil
 dagger
 dahlia
@@ -1371,7 +1329,6 @@ deadline
 deal
 dealing
 dearest
-deathwatch
 debate
 debris
 debtor
@@ -1454,7 +1411,6 @@ deviance
 deviation
 devil
 dew
-dhow
 diabetes
 diadem
 diagnosis
@@ -1462,19 +1418,14 @@ diagram
 dial
 dialect
 dialogue
-diam
 diaper
 diaphragm
 diarist
 diary
-dibble
-dick
-dickey
 dictaphone
 dictator
 diction
 dictionary
-die
 diesel
 diet
 differential
@@ -1501,13 +1452,11 @@ diplomacy
 dipstick
 directive
 directory
-dirndl
 disability
 disadvantage
 disagreement
 disappointment
 disarmament
-discharge
 discipline
 disclaimer
 disclosure
@@ -1542,7 +1491,6 @@ distortion
 distributor
 district
 divalent
-divan
 diver
 diversity
 divide
@@ -1564,8 +1512,6 @@ dogwood
 doing
 dollar
 dollop
-dolman
-dolor
 dolphin
 domain
 dome
@@ -1653,7 +1599,6 @@ dynamics
 dynamite
 dynamo
 dynasty
-dysfunction
 e-book
 e-mail
 e-reader
@@ -1681,9 +1626,7 @@ economy
 ecosystem
 ectoderm
 ectodermal
-ecumenist
 eddy
-edger
 edible
 editing
 edition
@@ -1697,9 +1640,7 @@ efficacy
 egghead
 eggplant
 ego
-eicosanoid
 ejector
-elderberry
 electricity
 electrocardiogram
 electronics
@@ -1784,11 +1725,9 @@ equity
 equivalent
 era
 eraser
-erection
 erosion
 escalator
 escape
-escort
 espadrille
 espalier
 essay
@@ -1802,8 +1741,6 @@ ethernet
 ethics
 ethnicity
 ethyl
-euphonium
-eurocentrism
 evaluation
 evaluator
 evaporation
@@ -2021,7 +1958,6 @@ flute
 flytrap
 foal
 foam
-fob
 focus
 folder
 folk
@@ -2058,7 +1994,6 @@ formamide
 format
 formation
 former
-formicarium
 formula
 fort
 forte
@@ -2074,7 +2009,6 @@ foxglove
 fraction
 fragrance
 framework
-fratricide
 fraud
 fraudster
 freak
@@ -2101,8 +2035,6 @@ frosting
 frown
 frustration
 fry
-fuck
-fugato
 fulfillment
 full
 fun
@@ -2113,7 +2045,6 @@ funding
 fundraising
 fur
 furnace
-furry
 fusarium
 futon
 future
@@ -2123,7 +2054,6 @@ gaffer
 gain
 gaiters
 gale
-gall-bladder
 gallery
 galley
 gallon
@@ -2134,7 +2064,6 @@ gamebird
 gaming
 gamma-ray
 gander
-gang
 gap
 garage
 garb
@@ -2173,7 +2102,6 @@ generosity
 genetics
 genie
 genius
-genocide
 genre
 gentleman
 geography
@@ -2183,7 +2111,6 @@ geranium
 gerbil
 gesture
 geyser
-gherkin
 giant
 gift
 gig
@@ -2195,7 +2122,6 @@ ginseng
 girdle
 git
 glacier
-gladiolus
 glance
 gland
 glasses
@@ -2317,11 +2243,9 @@ guy
 gym
 gymnast
 gymnastics
-gynaecology
 gyro
 habit
 habitat
-hacienda
 hacksaw
 hackwork
 hail
@@ -2433,7 +2357,6 @@ heroine
 heron
 herring
 hesitation
-heterosexual
 hexagon
 heyday
 hiccups
@@ -2463,11 +2386,8 @@ holder
 homeland
 homeownership
 hometown
-homicide
 homogenate
 homonym
-homosexual
-homosexuality
 honesty
 honeybee
 honeydew
@@ -2501,8 +2421,6 @@ housewife
 housework
 hovel
 hovercraft
-howard
-howitzer
 hub
 hubcap
 hubris
@@ -2528,9 +2446,6 @@ hurt
 husband
 hut
 hutch
-hyacinth
-hybridisation
-hybridization
 hydraulics
 hydrocarb
 hydrocarbon
@@ -2678,7 +2593,6 @@ intent
 intentionality
 interchange
 interconnection
-intercourse
 interface
 interferometer
 interior
@@ -2725,7 +2639,6 @@ jackfruit
 jade
 jaguar
 jailhouse
-jalapeÃ±o
 jasmine
 jaw
 jazz
@@ -2830,9 +2743,7 @@ lad
 ladle
 lag
 lamb
-lambkin
 lament
-lanai
 landform
 landing
 landmine
@@ -2840,11 +2751,9 @@ landscape
 lane
 lantern
 lap
-laparoscope
 lapdog
 laptop
 larch
-lard
 larder
 lark
 larva
@@ -2901,8 +2810,6 @@ lens
 lentil
 leopard
 leprosy
-leptocephalus
-lesbian
 lesson
 lever
 leverage
@@ -2910,7 +2817,6 @@ leveret
 liability
 liar
 liberty
-libido
 licence
 license
 licensing
@@ -3010,7 +2916,6 @@ luncheonette
 lunchmeat
 lung
 lunge
-lust
 lute
 luxury
 lychee
@@ -3116,7 +3021,6 @@ mast
 master
 masterpiece
 mastication
-mastoid
 mat
 matchmaker
 mate
@@ -3166,7 +3070,6 @@ mercury
 meridian
 meringue
 merit
-mesenchyme
 mess
 messenger
 messy
@@ -3250,7 +3153,6 @@ moat
 mob
 mobile
 mobility
-mobster
 moccasins
 mocha
 mochi
@@ -3266,7 +3168,6 @@ molding
 mole
 molecule
 monastery
-monasticism
 monger
 monitor
 monitoring
@@ -3490,8 +3391,6 @@ opening
 opera
 operating
 operator
-ophthalmologist
-opium
 opossum
 opponent
 opportunist
@@ -3522,7 +3421,6 @@ original
 originality
 ornament
 osmosis
-osprey
 ostrich
 other
 otter
@@ -3590,7 +3488,6 @@ pancreas
 panda
 panel
 panic
-pannier
 panpipe
 pansy
 panther
@@ -3600,8 +3497,6 @@ pantology
 pantry
 pants
 pantsuit
-panty
-pantyhose
 papa
 papaya
 paperback
@@ -3894,7 +3789,6 @@ posterior
 postfix
 potential
 pottery
-potty
 pouch
 poultry
 pound
@@ -3999,7 +3893,6 @@ prosecution
 prosecutor
 prospect
 prosperity
-prostacyclin
 prostanoid
 prostrate
 protein
@@ -4102,7 +3995,6 @@ rally
 ram
 rambler
 ramen
-ramie
 ranch
 rancher
 randomisation
@@ -4110,7 +4002,6 @@ randomization
 ranger
 rank
 rap
-rape
 raspberry
 ratepayer
 rating
@@ -4172,7 +4063,6 @@ regime
 regionalism
 register
 registration
-registry
 regulation
 regulator
 rehospitalisation
@@ -4247,8 +4137,6 @@ retrospective
 retrospectivity
 return
 reunion
-revascularisation
-revascularization
 reveal
 revelation
 revenant
@@ -4301,7 +4189,6 @@ rooster
 rope
 rosemary
 roster
-rostrum
 rotation
 round
 roundabout
@@ -4445,7 +4332,6 @@ seaweed
 second
 secrecy
 secret
-secretariat
 secretion
 section
 sectional
@@ -4496,8 +4382,6 @@ settlement
 settler
 severity
 sewer
-sex
-sexuality
 shack
 shackle
 shadow
@@ -4584,8 +4468,6 @@ similarity
 simple
 simplicity
 simplification
-simvastatin
-sin
 singing
 singular
 sinuosity
@@ -5015,7 +4897,6 @@ take-out
 takeover
 talent
 talking
-tam-o'-shanter
 tamale
 tambour
 tambourine
@@ -5081,7 +4962,6 @@ terminology
 termite
 terrace
 terracotta
-terrapin
 terrarium
 terror
 terrorism
@@ -5111,8 +4991,6 @@ thigh
 thinking
 thirst
 thistle
-thong
-thongs
 thorn
 thousand
 threat
@@ -5266,7 +5144,6 @@ trooper
 trophy
 trout
 trove
-trowel
 trumpet
 trunk
 trust
