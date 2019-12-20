@@ -20,6 +20,21 @@ namespace RoystonGame.Web.DataModels.Responses
         public string[] Answers { get; set; }
 
         /// <summary>
+        /// A list of html enabled strings. DO NOT ALLOW USER INPUT
+        /// </summary>
+        public string[] ListHtmlEnabledStrings { get; set; }
+
+        /// <summary>
+        /// Indicates the color that should be used for drawing
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// Indicates a color picker tool should be rendered.
+        /// </summary>
+        public bool ColorPicker { get; set; }
+
+        /// <summary>
         /// Indicates a text box should be rendered.
         /// </summary>
         public bool ShortAnswer { get; set; }

@@ -11,5 +11,6 @@ namespace RoystonGame.TV.DataModels.Enums
     public enum GameMode
     {
         ImposterSyndrome,
+        TwoToneDrawing,
     }
 }

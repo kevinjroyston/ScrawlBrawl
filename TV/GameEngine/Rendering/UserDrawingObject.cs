@@ -28,9 +28,10 @@ namespace RoystonGame.TV.GameEngine.Rendering
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            spriteBatch.Draw(this.Background, this.BoundingBox, this.BackgroundColor);
+
             if (this.Content == null)
                 return;
-            spriteBatch.Draw(this.Background, this.BoundingBox, this.BackgroundColor);
             spriteBatch.Draw(this.Content, this.BoundingBox, Color.White);
         }
 

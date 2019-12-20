@@ -17,6 +17,7 @@ using System.Net;
 using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO;
 using RoystonGame.WordLists;
+using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing;
 
 namespace RoystonGame.TV
 {
@@ -46,7 +47,8 @@ namespace RoystonGame.TV
         #region GameModes
         private IReadOnlyDictionary<GameMode, Func<IGameMode>> GameModeMappings { get; set; } = new ReadOnlyDictionary<GameMode, Func<IGameMode>>(new Dictionary<GameMode, Func<IGameMode>>
         {
-            { GameMode.ImposterSyndrome, () => new OneOfTheseThingsIsNotLikeTheOtherOneGameMode() }
+            { GameMode.ImposterSyndrome, () => new OneOfTheseThingsIsNotLikeTheOtherOneGameMode() },
+            { GameMode.TwoToneDrawing, () => new TwoToneDrawingGameMode() }
         });
         #endregion
 

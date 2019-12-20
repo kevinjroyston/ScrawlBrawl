@@ -148,11 +148,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 GetDrawingsUserStateChain(user, waitForAllDrawings.Inlet)[0].Inlet(user, result, input);
             });
             waitForAllPrompts.SetStateEndingCallback(() => this.AssignPrompts(numDrawingsPerPrompt));
-
-            foreach (User user in GameManager.GetActiveUsers())
-            {
-                setNumPrompts.SetOutlet(GetWordsUserState(waitForAllPrompts.Inlet).Inlet, new List<User> { user });
-            }
+            setNumPrompts.SetOutlet(GetWordsUserState(waitForAllPrompts.Inlet).Inlet);
 
             this.Entrance = setNumPrompts;
 

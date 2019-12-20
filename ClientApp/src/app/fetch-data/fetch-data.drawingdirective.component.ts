@@ -1,6 +1,7 @@
-import { Directive, ElementRef, HostListener, forwardRef } from '@angular/core';
+import { Directive, ElementRef, HostListener, forwardRef, Input } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 
+declare var angular: any;
 @Directive({
     selector: '[appDrawing]',
     providers: [
@@ -50,7 +51,8 @@ export class DrawingDirective implements ControlValueAccessor{
     lastY: number;
     ctx: any;
     lineWidth: number = 10;
-    lineColor = "#570084";
+    @Input() lineColor: string;
+    defaultLineColor: string = "rgba(87,0,132,255)";
     onChange;
     element;
 
@@ -133,11 +135,18 @@ export class DrawingDirective implements ControlValueAccessor{
         // to
         this.ctx.lineTo(cX, cY);
         // color
-        this.ctx.strokeStyle = this.lineColor;
+        this.ctx.strokeStyle = this.getColor();
         //this.ctx.lineJoin = "round";
         this.ctx.lineWidth = this.lineWidth;
         // draw it
         this.ctx.stroke();
+    }
+
+    getColor(): string {
+        if (this.lineColor && this.lineColor != "") {
+            return this.lineColor;
+        }
+        return this.defaultLineColor;
     }
 
     drawCircle(x, y): void {
@@ -146,11 +155,11 @@ export class DrawingDirective implements ControlValueAccessor{
         var startAngle = 0; // Starting point on circle
         var endAngle = Math.PI * 2; // End point on circle
 
-        this.ctx.moveTo(x,y);
-        this.ctx.strokeStyle = this.lineColor;
+        this.ctx.moveTo(x, y);
+        this.ctx.strokeStyle = this.getColor();
         this.ctx.lineWidth = 0;
         this.ctx.arc(x, y, radius, startAngle, endAngle);
-        this.ctx.fillStyle = this.lineColor;
+        this.ctx.fillStyle = this.getColor();
         this.ctx.fill();
     }
 }

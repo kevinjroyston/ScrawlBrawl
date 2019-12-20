@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { DrawingDirective } from './fetch-data/fetch-data.drawingdirective.component';
+import { ColorPickerModule } from 'ngx-color-picker';
 
 @NgModule({
   declarations: [
@@ -18,12 +19,16 @@ import { DrawingDirective } from './fetch-data/fetch-data.drawingdirective.compo
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+    ColorPickerModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forRoot([
       { path: '', component: FetchDataComponent, pathMatch: 'full' },
     ])
+  ],
+  exports: [
+    ColorPickerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

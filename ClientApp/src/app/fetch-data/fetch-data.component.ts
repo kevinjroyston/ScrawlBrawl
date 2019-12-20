@@ -100,6 +100,7 @@ export class FetchDataComponent
             id: '',
             radioAnswer: '',
             shortAnswer: '',
+            color: '',
             drawing: '',
         });
     }
@@ -124,6 +125,8 @@ interface SubPrompt {
     id: string;
     prompt: string;
     answers: string[];
+    color: string;
+    colorPicker: boolean;
     shortAnswer: boolean;
     drawing: boolean;
 }
