@@ -163,6 +163,7 @@ namespace RoystonGame.TV.DataModels.UserStates
                 if ((userInput.SubForms.Count() <= i)
                     ||(prompt.Drawing && string.IsNullOrWhiteSpace(userInput.SubForms[i].Drawing))
                     ||(prompt.ShortAnswer && string.IsNullOrWhiteSpace(userInput.SubForms[i].ShortAnswer))
+                    ||(prompt.ColorPicker && string.IsNullOrWhiteSpace(userInput.SubForms[i].Color))
                     ||(prompt.Answers != null && prompt.Answers.Length>0 && (!userInput.SubForms[i].RadioAnswer.HasValue || userInput.SubForms[i].RadioAnswer.Value<0 || userInput.SubForms[i].RadioAnswer.Value >= prompt.Answers.Length)))
                 {
                     return false;

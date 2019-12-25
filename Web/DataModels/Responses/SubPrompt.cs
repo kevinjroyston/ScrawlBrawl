@@ -15,14 +15,14 @@ namespace RoystonGame.Web.DataModels.Responses
         public string Prompt { get; set; }
 
         /// <summary>
-        /// The radio answers to choose from, if applicable
-        /// </summary>
-        public string[] Answers { get; set; }
-
-        /// <summary>
         /// A list of html enabled strings. DO NOT ALLOW USER INPUT
         /// </summary>
         public string[] ListHtmlEnabledStrings { get; set; }
+
+        /// <summary>
+        /// The radio answers to choose from, if applicable
+        /// </summary>
+        public string[] Answers { get; set; }
 
         /// <summary>
         /// Indicates the color that should be used for drawing

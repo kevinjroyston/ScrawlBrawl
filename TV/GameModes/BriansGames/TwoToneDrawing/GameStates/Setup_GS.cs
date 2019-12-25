@@ -29,6 +29,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
     {
         private int ColorsPerDrawing { get; set; }
         private int DrawingsPerPlayer { get; set; }
+        private bool ShowColors { get; set; }
         private UserState GetPartyLeaderChooseNumberOfDrawingsState()
         {
             return new SimplePromptUserState((User user) => new UserPrompt()
@@ -46,6 +47,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     {
                         Prompt = "Number of drawings per player",
                         ShortAnswer = true
+                    },
+                    new SubPrompt
+                    {
+                        Prompt = "Show other colors",
+                        Answers = new string[]{"No", "Yes"}
                     }
                 },
                 SubmitButton = true
@@ -54,6 +60,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             {
                 ColorsPerDrawing = Convert.ToInt32(userInput.SubForms[0].ShortAnswer);
                 DrawingsPerPlayer = Convert.ToInt32(userInput.SubForms[1].ShortAnswer);
+                ShowColors = userInput.SubForms[2].RadioAnswer == 1;
             });
         }
 
@@ -73,7 +80,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 {
                     subPrompts.Add(new SubPrompt()
                     {
-                        Prompt = Invariant($"Color # {i + 1}"),
+                        Prompt = Invariant($"Color # {i + 1}{(i==0 ? " - This will be drawn above all other colors" : i == ColorsPerDrawing-1 ? " - This will be drawn below all other colors" : string.Empty)}"),
                         ColorPicker = true
                     });
                 }
@@ -129,7 +136,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     {
                         new SubPrompt
                         {
-                            Prompt = Invariant($"Your prompt:\"{challenge.Prompt}\""),
+                            Prompt = Invariant($"Your prompt:\"{challenge.Prompt}\""), 
+                            ListHtmlEnabledStrings = this.ShowColors ? challenge.Colors.Select(val=> val == challenge.UserSubmittedDrawings[user].Color ? Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>This is your color.") : Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>")).ToArray() : null,
                             Color = challenge.UserSubmittedDrawings[user].Color,
                             Drawing = true,
                         },

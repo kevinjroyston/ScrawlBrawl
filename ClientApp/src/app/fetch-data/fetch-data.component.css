@@ -3,3 +3,12 @@ input[type='radio'] {
   width: 45px;
   vertical-align: middle;
 }
+
+.color-box {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  background-color: #ccc;
+  position: relative;
+  top: 5px;
+}

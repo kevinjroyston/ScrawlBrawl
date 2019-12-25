@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
+import { FetchDataComponent, Safe } from './fetch-data/fetch-data.component';
 import { DrawingDirective } from './fetch-data/fetch-data.drawingdirective.component';
 import { ColorPickerModule } from 'ngx-color-picker';
 
@@ -16,6 +16,7 @@ import { ColorPickerModule } from 'ngx-color-picker';
    // NavMenuComponent,
     FetchDataComponent,
     DrawingDirective,
+    Safe,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

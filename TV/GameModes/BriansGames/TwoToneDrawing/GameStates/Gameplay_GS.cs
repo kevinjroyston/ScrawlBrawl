@@ -22,7 +22,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
     {
         private Random rand { get; } = new Random();
         private static Func<User, UserPrompt> PickADrawing(ChallengeTracker challenge, List<string> choices) => (User user) => {
-            List<string> detailedChoices = choices.Select(val => (challenge.UserSubmittedDrawings[user].TeamId == val) ? Invariant($"{val} - You helped draw this") : val).ToList();
+            List<string> detailedChoices = choices.Select(val => (challenge.UserSubmittedDrawings.ContainsKey(user) && challenge.UserSubmittedDrawings[user].TeamId == val) ? Invariant($"{val} - You helped draw this") : val).ToList();
             string description;
             if (challenge.Owner == user)
             {
@@ -134,7 +134,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                         // If the user voted for the drawing with the most votes, give them 100 points
                         user.Score += 100;
                     }
-                    else if (this.SubChallenge.UserSubmittedDrawings[user].TeamId == id)
+                    else if (this.SubChallenge.UserSubmittedDrawings.ContainsKey(user) && this.SubChallenge.UserSubmittedDrawings[user].TeamId == id)
                     {
                         // If the drawing didn't get the most votes and the user voted for themselves subtract points
                         user.Score -= 1000;
@@ -143,7 +143,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 
                 if (users.Count == mostVotes)
                 {
-                    foreach(User user in this.SubChallenge.UserSubmittedDrawings.Where(kvp=> kvp.Value.TeamId == id).Select(kvp => kvp.Key))
+                    foreach(User user in this.SubChallenge.  UserSubmittedDrawings.Where(kvp=> kvp.Value.TeamId == id).Select(kvp => kvp.Key))
                     {
                         // 500 points if they helped draw the best drawing.
                         user.Score += 500;

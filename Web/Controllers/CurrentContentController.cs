@@ -25,13 +25,20 @@ namespace RoystonGame.Web.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress);
-            if (user?.UserState == null)
+            try
+            {
+                User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress);
+                if (user?.UserState == null)
+                {
+                    return new BadRequestResult();
+                }
+                return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
+            }
+            catch
             {
                 return new BadRequestResult();
             }
-            return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
-            /* //Test response
+           /* //Test response
             return new JsonResult(new UserPrompt
             {
                 Title = "This is a title",
@@ -39,6 +46,11 @@ namespace RoystonGame.Web.Controllers
                 RefreshTimeInMs = 1000,
                 SubPrompts = new SubPrompt[]
                 {
+                    new SubPrompt
+                    {
+                        Prompt = "This is a sub prompt which has numerous sub strings",
+                        ListHtmlEnabledStrings = new string[]{"String 1", "<div class=\"color-box\" style=\"background-color: rgb(100,0,0);\"></div>Test", "String 3"}
+                    },
                     new SubPrompt
                     {
                         Prompt = "This is a sub prompt which only asks for a short answer",

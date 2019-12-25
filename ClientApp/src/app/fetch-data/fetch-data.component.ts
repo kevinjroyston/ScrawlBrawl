@@ -1,13 +1,39 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ViewEncapsulation, Pipe } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { Time } from '@angular/common';
+import { DomSanitizer, SafeHtml, SafeStyle, SafeScript, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
 
+
+
+@Pipe({ name: 'safe' })
+export class Safe {
+    constructor(private _sanitizer: DomSanitizer) { }
+
+    public transform(value: string, type: string): SafeHtml | SafeStyle | SafeScript | SafeUrl | SafeResourceUrl {
+        switch (type) {
+            case 'html':
+                return this._sanitizer.bypassSecurityTrustHtml(value);
+            case 'style':
+                return this._sanitizer.bypassSecurityTrustStyle(value);
+            case 'script':
+                return this._sanitizer.bypassSecurityTrustScript(value);
+            case 'url':
+                return this._sanitizer.bypassSecurityTrustUrl(value);
+            case 'resourceUrl':
+                return this._sanitizer.bypassSecurityTrustResourceUrl(value);
+            default:
+                throw new Error(`Unable to bypass security for invalid type: ${type}`);
+        }
+    }
+}
 
 @Component({
   selector: 'app-fetch-data',
   templateUrl: './fetch-data.component.html',
-  styleUrls: ['./fetch-data.component.css']
+    styleUrls: ['./fetch-data.component.css'],
+
+    encapsulation: ViewEncapsulation.None
 })
 export class FetchDataComponent
 {
@@ -124,6 +150,7 @@ interface UserPrompt {
 interface SubPrompt {
     id: string;
     prompt: string;
+    listHtmlEnabledStrings: string[];
     answers: string[];
     color: string;
     colorPicker: boolean;

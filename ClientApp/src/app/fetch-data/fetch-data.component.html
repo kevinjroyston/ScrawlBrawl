@@ -6,12 +6,17 @@
     <div *ngFor="let subPrompt of userPrompt.subPrompts; let j = index" formArrayName="subForms">
       <div [formGroupName]="j">
         <div class="Prompt" *ngIf="subPrompt.prompt">{{subPrompt.prompt}}</div>
+        <div *ngIf="subPrompt.listHtmlEnabledStrings">
+          <div class="ListHtmlEnabledStrings" *ngFor="let iString of subPrompt.listHtmlEnabledStrings">
+            <div [innerHTML]="iString | safe: 'html'"></div>
+          </div>
+        </div>
         <div *ngIf="subPrompt.answers">
           <div class="RadioAnswer" *ngFor="let answer of subPrompt.answers; let i = index">
             <input type="radio" formControlName="radioAnswer" value="{{i}}">{{answer}}
           </div>
         </div>
-        <input formControlName="color" [(colorPicker)]="subPrompt.color" [style.background]="subPrompt.color" [readonly]="true" [cpPosition] ="'bottom'" [ngModel]="subPrompt.color" [cpOutputFormat] ="'rgba'" *ngIf="subPrompt.colorPicker">
+        <input formControlName="color" [(colorPicker)]="subPrompt.color" [style.background]="subPrompt.color" [readonly]="true" [cpPosition]="'bottom'" [ngModel]="subPrompt.color" [cpOutputFormat]="'rgba'" [cpAlphaChannel]="'disabled'" *ngIf="subPrompt.colorPicker">
         <input type="text" class="ShortAnswer" formControlName="shortAnswer" *ngIf="subPrompt.shortAnswer">
         <canvas width="350" class="DrawingCanvas" [lineColor]="subPrompt.color" height="350" formControlName="drawing" appDrawing *ngIf="subPrompt.drawing"></canvas>
       </div>

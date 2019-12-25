@@ -47,7 +47,7 @@ namespace RoystonGame.TV.DataModels.GameStates
                         List<User> scoreboard = GameManager.GetActiveUsers().OrderByDescending((user)=> user.Score).ToList();
                         string scores = string.Join("\n", scoreboard.Select(user => Invariant($"{user.DisplayName}:{user.Score}")));
 
-                        return Invariant($"This a scoreboard lol: \n{scores}");
+                        return Invariant($"Scores: \n{scores}");
                     }
                 }
             };

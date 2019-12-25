@@ -26,27 +26,34 @@ namespace RoystonGame.Web.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] UserFormSubmission formData)
         {
-            User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress);
-            if (user?.UserState == null)
+            try 
             {
-                return new BadRequestResult();
-            }
-
-            // Make sure HandleUserFormInput is never called concurrently for the same user.
-            bool success;
-            //try
-            //{
-                lock (user.LockObject)
+                User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress);
+                if (user?.UserState == null)
                 {
-                    success = user.UserState.HandleUserFormInput(user, formData);
+                    return new BadRequestResult();
                 }
-            /*}
-            catch (Exception ex)
-            {
-                Debug.Write(ex.ToString());
-                success = false;
-            }*/
-            return success ? new OkResult() : (IActionResult)new BadRequestResult();
+
+                // Make sure HandleUserFormInput is never called concurrently for the same user.
+                bool success;
+                //try
+                //{
+                    lock (user.LockObject)
+                    {
+                        success = user.UserState.HandleUserFormInput(user, formData);
+                    }
+                /*}
+                catch (Exception ex)
+                {
+                    Debug.Write(ex.ToString());
+                    success = false;
+                }*/
+                return success ? new OkResult() : (IActionResult)new BadRequestResult();
+            }
+                catch
+                {
+                    return new BadRequestResult();
+            }
         }
     }
 }
