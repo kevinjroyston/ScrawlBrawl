@@ -102,7 +102,17 @@ input {
 
 .DrawingCanvas {
   border: 5px ridge rgba(87,0,132,0.81);
+  background-color: transparent;
+  pointer-events: all;
+}
+.DrawingBackground {
+  border: 5px ridge rgba(0,0,0,0.0);
   background-color: whitesmoke;
+}
+
+.CanvasHolder {
+  background-color: transparent;
+  pointer-events:none;
 }
 
 #wrapper {

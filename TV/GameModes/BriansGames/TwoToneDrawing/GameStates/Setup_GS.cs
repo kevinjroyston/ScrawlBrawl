@@ -97,11 +97,17 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             outlet,
             formSubmitCallback: (User user, UserFormSubmission input) =>
             {
+                List<string> colors = input.SubForms.Where((subForm, index) => index > 0).Select((subForm) => subForm.Color).Reverse().ToList();
+                if (colors.Count != new HashSet<string>(colors).Count)
+                {
+                    throw new Exception("User submitted 2 identical colors");
+                }
+
                 this.SubChallenges.Add(new ChallengeTracker
                 {
                     Owner = user,
                     Prompt = input.SubForms[0].ShortAnswer,
-                    Colors = input.SubForms.Where((subForm, index) => index > 0).Select((subForm) => subForm.Color).Reverse().ToList()
+                    Colors = colors
                 });
             });
         }
@@ -120,6 +126,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
         {
             List<UserState> stateChain = new List<UserState>();
             List<ChallengeTracker> challenges = this.SubChallenges.OrderBy(_ => rand.Next()).ToList();
+            int index = 0;
             foreach (ChallengeTracker challenge in challenges)
             {
                 if (!challenge.UserSubmittedDrawings.ContainsKey(user))
@@ -127,9 +134,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     continue;
                 }
 
+                var lambdaSafeIndex = index;
                 stateChain.Add(new SimplePromptUserState((User user) => new UserPrompt()
                 {
-                    Title = "Time to draw!",
+                    Title = Invariant($"Drawing { lambdaSafeIndex + 1} of {stateChain.Count()}"),
                     Description = "Draw the prompt below. Keep in mind you are only drawing part of the picture!",
                     RefreshTimeInMs = 1000,
                     SubPrompts = new SubPrompt[]
@@ -137,9 +145,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                         new SubPrompt
                         {
                             Prompt = Invariant($"Your prompt:\"{challenge.Prompt}\""), 
-                            ListHtmlEnabledStrings = this.ShowColors ? challenge.Colors.Select(val=> val == challenge.UserSubmittedDrawings[user].Color ? Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>This is your color.") : Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>")).ToArray() : null,
-                            Color = challenge.UserSubmittedDrawings[user].Color,
-                            Drawing = true,
+                            StringList = this.ShowColors ? challenge.Colors.Select(val=> val == challenge.UserSubmittedDrawings[user].Color ? Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>This is your color.") : Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>")).ToArray() : null,
+                            Drawing = new DrawingPromptMetadata
+                            {
+                                Color = challenge.UserSubmittedDrawings[user].Color
+                            }
                         },
                     },
                     SubmitButton = true
@@ -148,6 +158,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 {
                     challenge.UserSubmittedDrawings[user].Drawing = input.SubForms[0].Drawing;
                 }));
+                index++;
             }
 
             for (int i = 1; i < stateChain.Count; i++)

@@ -25,22 +25,17 @@ namespace RoystonGame.Web.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            try
-            {
-                User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress);
-                if (user?.UserState == null)
-                {
-                    return new BadRequestResult();
-                }
-                return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
-            }
-            catch
+            User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, out bool newUser);
+            if (user?.UserState == null)
             {
                 return new BadRequestResult();
             }
-           /* //Test response
+            return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
+            /*
+            //Test response
             return new JsonResult(new UserPrompt
             {
+                Id = Guid.Empty,
                 Title = "This is a title",
                 Description = "This is a description",
                 RefreshTimeInMs = 1000,
@@ -49,7 +44,7 @@ namespace RoystonGame.Web.Controllers
                     new SubPrompt
                     {
                         Prompt = "This is a sub prompt which has numerous sub strings",
-                        ListHtmlEnabledStrings = new string[]{"String 1", "<div class=\"color-box\" style=\"background-color: rgb(100,0,0);\"></div>Test", "String 3"}
+                        StringList = new string[]{"String 1", "<div class=\"color-box\" style=\"background-color: rgb(100,0,0);\"></div>Test", "String 3"}
                     },
                     new SubPrompt
                     {
@@ -63,19 +58,27 @@ namespace RoystonGame.Web.Controllers
                     },
                     new SubPrompt
                     {
-                        Prompt = "This is a sub prompt that asks for a drawing",
-                        Drawing = true,
+                        Prompt = "This is a sub prompt with a background",
+                        Drawing = new DrawingPromptMetadata
+                        {
+                            CanvasBackground="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+                            HeightInPx=200,
+                            WidthInPx=300,
+                        }
                     },
                     new SubPrompt
                     {
-                        Prompt = "This is a sub prompt that asks for all 3 types",
-                        ShortAnswer= true,
-                        Drawing = true,
-                        Answers = new string[] {"This is an answer", "another answer", "the best answer", "all of the above"}
-                    },
+                        Prompt = "This is a sub prompt with a premade drawing",
+                        Drawing = new DrawingPromptMetadata
+                        {
+                            PremadeDrawing="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+                            HeightInPx=300,
+                            WidthInPx=200,
+                        }
+                    }
                 },
-               SubmitButton = true
-            });*/
+                SubmitButton = true
+            }) ;*/
         }
     }
 }

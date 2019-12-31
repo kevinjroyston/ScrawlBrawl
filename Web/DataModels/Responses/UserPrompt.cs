@@ -31,6 +31,8 @@ namespace RoystonGame.Web.DataModels.Responses
         /// </summary>
         public string Description { get; set; }
 
+        // TODO: Pipe useful error descriptions to user here (No html execution)
+
         /// <summary>
         /// A list of sub-prompts.
         /// </summary>

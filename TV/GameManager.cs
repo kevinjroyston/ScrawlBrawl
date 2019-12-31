@@ -190,11 +190,11 @@ namespace RoystonGame.TV
 
         object UserIPLookupLock { get; set; } = new object();
 
-        /// Please don't ARP Poison me @Alex and force me to beef up User authentication here. lol
-        public static User MapIPToUser(IPAddress callerIP)
+        public static User MapIPToUser(IPAddress callerIP, out bool newUser)
         {
             lock (Singleton.UserIPLookupLock)
             {
+                newUser = false;
                 try
                 {
                     User user;
@@ -209,6 +209,7 @@ namespace RoystonGame.TV
                     else
                     {
                         user = new User();
+                        newUser = true;
                         Singleton.UnregisteredUsers.Add(callerIP, user);
                         Singleton.WaitForLobby.Inlet(user, UserStateResult.Success, null);
                     }

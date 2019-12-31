@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using static System.FormattableString;
+
 namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
 {
     public class TwoToneDrawingGameMode : IGameMode
@@ -26,6 +28,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
             Setup = new Setup_GS(this.SubChallenges);
             Setup.SetStateEndingCallback(() =>
             {
+                int index = 0;
                 foreach (ChallengeTracker challenge in SubChallenges.OrderBy(_ => rand.Next()))
                 {
                     this.Gameplay.Add(new Gameplay_GS(challenge, null));
@@ -34,9 +37,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
                         this.Scoreboards.Last()?.Transition(this.Gameplay.Last());
                     }
                     this.VoteReveals.Add(new VoteRevealed_GS(challenge));
-                    this.Scoreboards.Add(new ScoreBoardGameState(null, null));
+                    this.Scoreboards.Add(new ScoreBoardGameState(null, null, title: Invariant($"{index+1}/{SubChallenges.Count}")));
                     this.Gameplay.Last().Transition(this.VoteReveals.Last());
                     this.VoteReveals.Last().Transition(this.Scoreboards.Last());
+                    index++;
                 }
                 Setup.Transition(this.Gameplay[0]);
                 this.Scoreboards.Last().SetOutlet(this.Outlet);

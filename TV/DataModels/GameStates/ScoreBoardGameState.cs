@@ -27,15 +27,13 @@ namespace RoystonGame.TV.DataModels.GameStates
             SubmitButton = true
         };
 
-        public ScoreBoardGameState(Connector outlet=null, TimeSpan? maxWaitTime = null) : base(outlet)
+        public ScoreBoardGameState(Connector outlet=null, TimeSpan? maxWaitTime = null, string title = "Scores:") : base(outlet)
         {
             UserState partyLeaderState = new SimplePromptUserState(PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
-            WaitingUserState waitingState = new WaitingUserState(maxWaitTime: maxWaitTime);
 
             UserStateTransition waitForLeader = new WaitForPartyLeader(
                 outlet: this.Outlet,
-                partyLeaderPrompt: partyLeaderState,
-                waitingState: waitingState);
+                partyLeaderPrompt: partyLeaderState);
 
             this.Entrance = waitForLeader;
 
@@ -45,9 +43,9 @@ namespace RoystonGame.TV.DataModels.GameStates
                     Content =  () =>
                     {
                         List<User> scoreboard = GameManager.GetActiveUsers().OrderByDescending((user)=> user.Score).ToList();
-                        string scores = string.Join("\n", scoreboard.Select(user => Invariant($"{user.DisplayName}:{user.Score}")));
+                        string scores = string.Join("\n", scoreboard.Select(user => Invariant($"{user.DisplayName}: {user.Score}")));
 
-                        return Invariant($"Scores: \n{scores}");
+                        return Invariant($"{title}\n{scores}");
                     }
                 }
             };

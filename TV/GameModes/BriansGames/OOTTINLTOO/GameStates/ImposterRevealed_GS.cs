@@ -59,16 +59,16 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             int imagesPerRow = 4;
             int buffer = 25;
             int yBuffer = 75;
-            foreach ((User owner, string userDrawing) in challenge.IdToDrawingMapping.Values)
+            foreach ((User user, string userDrawing) in challenge.IdToDrawingMapping.Values)
             {
-                this.GameObjects.Add(new UserDrawingObject(userDrawing, owner == challenge.OddOneOut ? Color.Salmon : Color.White)
+                this.GameObjects.Add(new UserDrawingObject(userDrawing, user == challenge.OddOneOut ? Color.Salmon : Color.White)
                 {
                     BoundingBox = new Rectangle(x * (imageWidth + buffer), y * (imageHeight + yBuffer), imageWidth, imageHeight)
                 });
 
                 this.GameObjects.Add(new DynamicTextObject
                 {
-                    Content = ()=>Invariant($"{((owner == challenge.OddOneOut) ? challenge.UsersWhoFoundOOO.Count :(challenge.UsersWhoConfusedWhichUsers.ContainsKey(owner) ? challenge.UsersWhoConfusedWhichUsers[owner].Count : 0))}"),
+                    Content = ()=>Invariant($"{((user == challenge.OddOneOut) ? challenge.UsersWhoFoundOOO.Count :(challenge.UsersWhoConfusedWhichUsers.ContainsKey(user) ? challenge.UsersWhoConfusedWhichUsers[user].Count : 0))}"),
                     BoundingBox = new Rectangle(x * (imageWidth + buffer), imageHeight + y * (imageHeight + yBuffer), imageWidth, yBuffer)
                 });
 

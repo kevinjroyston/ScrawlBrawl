@@ -1,14 +1,19 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RoystonGame.TV;
 using RoystonGame.TV.DataModels;
 using RoystonGame.Web.DataModels.Requests;
+
+using static System.FormattableString;
 
 namespace RoystonGame.Web.Controllers
 {
@@ -26,34 +31,78 @@ namespace RoystonGame.Web.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] UserFormSubmission formData)
         {
-            try 
+            User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, out bool newUser);
+            if (user?.UserState == null || newUser)
             {
-                User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress);
-                if (user?.UserState == null)
-                {
-                    return new BadRequestResult();
-                }
+                return new BadRequestResult();
+            }
 
-                // Make sure HandleUserFormInput is never called concurrently for the same user.
-                bool success;
-                //try
-                //{
-                    lock (user.LockObject)
+            if (!SanitizeAllStrings(formData))
+            {
+                return new BadRequestResult();
+            }
+
+            // Make sure HandleUserFormInput is never called concurrently for the same user.
+            bool success;
+            lock (user.LockObject)
+            {
+                success = user.UserState.HandleUserFormInput(user, formData);
+            }
+            return success ? new OkResult() : (IActionResult)new BadRequestResult();
+        }
+
+        /// <summary>
+        /// Recursively sanitizes all fields in an object.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        private bool SanitizeAllStrings(object obj)
+        {
+            if (obj == null)
+            {
+                return true;
+            }
+            Type objType = obj.GetType();
+            PropertyInfo[] properties = objType.GetProperties();
+            foreach (PropertyInfo property in properties)
+            {
+                object propValue = property.GetValue(obj, null);
+                if (propValue == null)
+                {
+                    continue;
+                }
+                var elems = propValue as IList;
+                if (elems != null)
+                {
+                    foreach (var item in elems)
                     {
-                        success = user.UserState.HandleUserFormInput(user, formData);
+                        if (!SanitizeAllStrings(item))
+                        {
+                            return false;
+                        }
                     }
-                /*}
-                catch (Exception ex)
+                }
+                else
                 {
-                    Debug.Write(ex.ToString());
-                    success = false;
-                }*/
-                return success ? new OkResult() : (IActionResult)new BadRequestResult();
+                    if (!SanitizeString(propValue.ToString()))
+                    {
+                        Debug.WriteLine(Invariant($"'{property.Name}' failed sanitization"));
+                        return false;
+                    }
+                }
             }
-                catch
-                {
-                    return new BadRequestResult();
-            }
+            return true;
+        }
+
+        private bool SanitizeString(string str)
+        {
+            // Linq magic
+            bool valid = str.All("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-=:;,/+()".Contains);
+            valid &= HttpUtility.HtmlEncode(str).Equals(str);
+            valid &= HttpUtility.JavaScriptStringEncode(str).Equals(str);
+            //valid &= HttpUtility.UrlEncode(str).Equals(str);
+            valid &= HttpUtility.UrlPathEncode(str).Equals(str);
+            return valid;
         }
     }
 }

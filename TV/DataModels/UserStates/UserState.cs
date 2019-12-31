@@ -161,10 +161,10 @@ namespace RoystonGame.TV.DataModels.UserStates
             foreach (SubPrompt prompt in userPrompt?.SubPrompts ?? new SubPrompt[0])
             {
                 if ((userInput.SubForms.Count() <= i)
-                    ||(prompt.Drawing && string.IsNullOrWhiteSpace(userInput.SubForms[i].Drawing))
-                    ||(prompt.ShortAnswer && string.IsNullOrWhiteSpace(userInput.SubForms[i].ShortAnswer))
-                    ||(prompt.ColorPicker && string.IsNullOrWhiteSpace(userInput.SubForms[i].Color))
-                    ||(prompt.Answers != null && prompt.Answers.Length>0 && (!userInput.SubForms[i].RadioAnswer.HasValue || userInput.SubForms[i].RadioAnswer.Value<0 || userInput.SubForms[i].RadioAnswer.Value >= prompt.Answers.Length)))
+                    ||((prompt.Drawing != null) == string.IsNullOrWhiteSpace(userInput.SubForms[i].Drawing))
+                    ||(prompt.ShortAnswer == string.IsNullOrWhiteSpace(userInput.SubForms[i].ShortAnswer))
+                    ||(prompt.ColorPicker == string.IsNullOrWhiteSpace(userInput.SubForms[i].Color))
+                    ||((prompt.Answers != null && prompt.Answers.Length>0 ) == (!userInput.SubForms[i].RadioAnswer.HasValue || userInput.SubForms[i].RadioAnswer.Value<0 || userInput.SubForms[i].RadioAnswer.Value >= prompt.Answers.Length)))
                 {
                     return false;
                 }

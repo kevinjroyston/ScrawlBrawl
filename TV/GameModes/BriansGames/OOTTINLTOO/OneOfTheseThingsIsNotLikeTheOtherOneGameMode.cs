@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using static System.FormattableString;
+
 namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO
 {
     public class OneOfTheseThingsIsNotLikeTheOtherOneGameMode : IGameMode
@@ -27,17 +29,20 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO
             Setup = new Setup_GS(this.SubChallenges);
             Setup.SetStateEndingCallback(() =>
             {
+                int index = 0;
                 foreach (ChallengeTracker challenge in SubChallenges.OrderBy(_ => rand.Next()))
                 {
                     this.Gameplay.Add(new Gameplay_GS(challenge, null));
                     if (this.Scoreboards.Count > 0)
                     {
+                        // I don't think the elvis operator is needed below.
                         this.Scoreboards.Last()?.Transition(this.Gameplay.Last());
                     }
                     this.Reveals.Add(new ImposterRevealed_GS(challenge));
-                    this.Scoreboards.Add(new ScoreBoardGameState(null, null));
+                    this.Scoreboards.Add(new ScoreBoardGameState(null, null, title: Invariant($"{index + 1}/{SubChallenges.Count}")));
                     this.Gameplay.Last().Transition(this.Reveals.Last());
                     this.Reveals.Last().Transition(this.Scoreboards.Last());
+                    index++;
                 }
                 Setup.Transition(this.Gameplay[0]);
                 this.Scoreboards.Last().SetOutlet(this.Outlet);

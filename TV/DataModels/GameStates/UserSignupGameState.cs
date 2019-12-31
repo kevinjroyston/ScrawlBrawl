@@ -34,7 +34,7 @@ namespace RoystonGame.TV.DataModels.GameStates
                 new SubPrompt()
                 {
                     Prompt = "Self Portrait:",
-                    Drawing = true
+                    Drawing = new DrawingPromptMetadata()
                 }
             },
             SubmitButton = true,

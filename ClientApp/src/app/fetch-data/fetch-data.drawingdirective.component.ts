@@ -15,7 +15,20 @@ declare var angular: any;
 export class DrawingDirective implements ControlValueAccessor{
     writeValue(obj: any): void {
         if (obj == null) {
+            console.log("Clearing canvas");
             this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+            if (this.premadeDrawing) {
+                var img = new Image;
+                var ctx = this.ctx;
+                img.onload = function () {
+                    console.log("Drawing premade drawing to canvas");
+                    ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
+                };
+                console.log("Loading premade drawing");
+                img.src = this.premadeDrawing;
+            }
+        } else {
+
         }
     }
     registerOnChange(fn: any): void {
@@ -28,23 +41,10 @@ export class DrawingDirective implements ControlValueAccessor{
 
     }
     constructor(element: ElementRef) {
+        console.log("Instantiating canvas");
         this.element = element.nativeElement;
         this.ctx = element.nativeElement.getContext('2d');
         this.drawing = false;
-        /*this.mc = new Hammer.Manager(this.element, {
-            touchAction: 'all',
-            inputClass: Hammer.Input,
-            recognizers: [
-                [Hammer.Pan, {
-                    direction: Hammer.DIRECTION_ALL,
-                    threshold: 0,
-                }]
-            ]
-        });
-
-        this.mc.on('panstart', this.onmousedown);
-        this.mc.on('panmove', this.onmousemove);
-        this.mc.on('panend', this.onmouseup);*/
     }
     drawing:boolean;
     lastX:number;
@@ -52,6 +52,7 @@ export class DrawingDirective implements ControlValueAccessor{
     ctx: any;
     lineWidth: number = 10;
     @Input() lineColor: string;
+    @Input() premadeDrawing: string;
     defaultLineColor: string = "rgba(87,0,132,255)";
     onChange;
     element;

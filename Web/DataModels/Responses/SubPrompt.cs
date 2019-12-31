@@ -15,19 +15,14 @@ namespace RoystonGame.Web.DataModels.Responses
         public string Prompt { get; set; }
 
         /// <summary>
-        /// A list of html enabled strings. DO NOT ALLOW USER INPUT
+        /// A list of strings w/o radio buttons.
         /// </summary>
-        public string[] ListHtmlEnabledStrings { get; set; }
+        public string[] StringList { get; set; }
 
         /// <summary>
         /// The radio answers to choose from, if applicable
         /// </summary>
         public string[] Answers { get; set; }
-
-        /// <summary>
-        /// Indicates the color that should be used for drawing
-        /// </summary>
-        public string Color { get; set; }
 
         /// <summary>
         /// Indicates a color picker tool should be rendered.
@@ -40,8 +35,10 @@ namespace RoystonGame.Web.DataModels.Responses
         public bool ShortAnswer { get; set; }
 
         /// <summary>
-        /// Indicates the drawing GUI should be rendered.
+        /// If this is not null a drawing will be prompted with the specified metadata.
         /// </summary>
-        public bool Drawing { get; set; }
+        public DrawingPromptMetadata Drawing { get; set; }
+
+
     }
 }

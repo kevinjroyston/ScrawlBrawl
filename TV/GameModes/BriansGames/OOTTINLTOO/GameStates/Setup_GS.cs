@@ -92,6 +92,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
         {
             List<UserState> stateChain = new List<UserState>();
             List<ChallengeTracker> challenges = this.SubChallenges.OrderBy(_ => rand.Next()).ToList();
+            int index = 0;
             foreach(ChallengeTracker challenge in challenges)
             {
                 if (challenge.Owner == user || !challenge.UserSubmittedDrawings.ContainsKey(user))
@@ -99,9 +100,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     continue;
                 }
 
+                var lambdaSafeIndex = index;
                 stateChain.Add(new SimplePromptUserState((User user)=> new UserPrompt()
                 {
-                    Title = "Time to draw!",
+                    Title = Invariant($"Drawing {lambdaSafeIndex+1} of {stateChain.Count()}"),
                     Description = "Draw the prompt below. Careful, if you aren't the odd one out and people think you are, you will lose points for being a terrible artist.",
                     RefreshTimeInMs = 1000,
                     SubPrompts = new SubPrompt[]
@@ -109,7 +111,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                         new SubPrompt
                         {
                             Prompt = Invariant($"Your prompt:\"{(challenge.OddOneOut == user ? challenge.DeceptionPrompt : challenge.RealPrompt)}\""),
-                            Drawing = true,
+                            Drawing = new DrawingPromptMetadata(),
                         },
                     },
                     SubmitButton = true
@@ -118,6 +120,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 {
                     challenge.UserSubmittedDrawings[user] = input.SubForms[0].Drawing;
                 }));
+                index++;
             }
 
             for (int i = 1; i < stateChain.Count; i++)

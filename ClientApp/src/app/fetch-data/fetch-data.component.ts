@@ -86,6 +86,11 @@ export class FetchDataComponent
         });
         // reset the timer to call again
         this.refreshUserPromptTimer(this.userPrompt.refreshTimeInMs);
+
+        // Reset the form again because you are a bad coder
+        if (this.userForm) {
+            this.userForm.reset();
+        }
       }, error => {
         console.error(error);
         this.refreshUserPromptTimer(1000);
@@ -150,11 +155,16 @@ interface UserPrompt {
 interface SubPrompt {
     id: string;
     prompt: string;
-    listHtmlEnabledStrings: string[];
+    stringList: string[];
     answers: string[];
-    color: string;
     colorPicker: boolean;
     shortAnswer: boolean;
-    drawing: boolean;
+    drawing: DrawingPromptMetadata;
 }
-
+interface DrawingPromptMetadata {
+    color: string;
+    widthInPx: number;
+    heightInPx: number;
+    premadeDrawing: string;
+    canvasBackground: string;
+}
