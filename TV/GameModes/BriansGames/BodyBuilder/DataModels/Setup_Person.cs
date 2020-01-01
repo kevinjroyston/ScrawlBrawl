@@ -28,6 +28,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels
             Head, Body, Legs
         }
         public Dictionary<DrawingType, UserDrawing> UserSubmittedDrawingsByDrawingType { get; set; } = new Dictionary<DrawingType, UserDrawing>();
-        public Dictionary<User, UserDrawing> UserSubmittedDrawingsByUser { get; set; } = new Dictionary<User, UserDrawing>()
+        public Dictionary<User, UserDrawing> UserSubmittedDrawingsByUser { get; set; } = new Dictionary<User, UserDrawing>();
     }
 }

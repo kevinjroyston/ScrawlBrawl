@@ -32,7 +32,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                     new SubPrompt
                     {
                         Prompt = "Which body part do you want to trade?",
-                        Answers = detailedChoices.ToArray()
+                        Answers = choices.ToArray()
                     }
 
                 },
@@ -41,8 +41,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         };
 
         // private List<Setup_Person> Setup_PeopleList { get; set; }
-        private List<Gameplay_Person> UnassignedPeople { get; set; } = new List<Gameplay_Person>;
-        Dictionary<User, Gameplay_Person> AssignedPeople { get; set; } = new Dictionary<User, Gameplay_Person>;
+        private List<Gameplay_Person> UnassignedPeople { get; set; } = new List<Gameplay_Person>();
+        Dictionary<User, Gameplay_Person> AssignedPeople { get; set; } = new Dictionary<User, Gameplay_Person>();
         public Gameplay_GS(List<Setup_Person> setup_PeopleList, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(outlet)
         {
             // this.Setup_PeopleList = setup_PeopleList;
