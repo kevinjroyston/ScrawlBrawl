@@ -11,6 +11,11 @@
             <div [innerHTML]="iString | safe: 'html'"></div>
           </div>
         </div>
+        <select class="Dropdown" formControlName="dropdownChoice" *ngIf="subPrompt.dropdown">
+          <option *ngFor="let dropdown of subPrompt.dropdown; let i = index" value="{{i}}">
+            {{dropdown}}
+          </option>
+        </select>
         <div *ngIf="subPrompt.answers">
           <div class="RadioAnswer" *ngFor="let answer of subPrompt.answers; let i = index">
             <input type="radio" formControlName="radioAnswer" value="{{i}}" /> <label [innerHTML]="answer | safe: 'html'"></label>
@@ -21,9 +26,9 @@
         <div class="CanvasHolder" [style]="'height:' + (subPrompt.drawing.heightInPx+15) + 'px' | safe : 'style'" *ngIf="subPrompt.drawing">
           <canvas style="position: absolute; z-index: 10" width="{{subPrompt.drawing.widthInPx-10}}" height="{{subPrompt.drawing.heightInPx-10}}" class="DrawingCanvas" [premadeDrawing]="subPrompt.drawing.premadeDrawing" [lineColor]="subPrompt.drawing.color" formControlName="drawing" appDrawing *ngIf="subPrompt.drawing"></canvas>
           <img style="position: absolute; z-index: 0" width="{{subPrompt.drawing.widthInPx}}" height="{{subPrompt.drawing.heightInPx}}" class="DrawingBackground" [src]="subPrompt.drawing.canvasBackground | safe: 'resourceUrl'" alt="Error" *ngIf="subPrompt.drawing && subPrompt.drawing.canvasBackground" />
-          <div [style]="'position: absolute; z-index: 0; width: ' + subPrompt.drawing.widthInPx + 'px; height:'+ subPrompt.drawing.heightInPx+'px' | safe: 'style'" class="DrawingBackground" *ngIf="subPrompt.drawing && !subPrompt.drawing.canvasBackground" ></div>
+          <div [style]="'position: absolute; z-index: 0; width: ' + subPrompt.drawing.widthInPx + 'px; height:'+ subPrompt.drawing.heightInPx+'px' | safe: 'style'" class="DrawingBackground" *ngIf="subPrompt.drawing && !subPrompt.drawing.canvasBackground"></div>
         </div>
-       </div>
+      </div>
     </div>
   </div>
   <br />

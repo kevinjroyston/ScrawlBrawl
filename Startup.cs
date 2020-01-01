@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RoystonGame.Web.Hubs;
+using System;
 
 namespace RoystonGame
 {
@@ -27,6 +29,7 @@ namespace RoystonGame
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,6 +47,7 @@ namespace RoystonGame
             }
 
             app.UseHttpsRedirection();
+            //TODO: are either of the below 2 needed
             app.UseStaticFiles();
             if (!env.IsDevelopment())
             {
@@ -52,11 +56,19 @@ namespace RoystonGame
 
             app.UseRouting();
 
+            // SPAs, Sockets, and Endpoints oh my!
+            app.UseWebSockets(new WebSocketOptions()
+            {
+                KeepAliveInterval = TimeSpan.FromSeconds(120),
+                ReceiveBufferSize = 4 * 1024
+            });
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapHub<UnityHub>("/signalr");
             });
 
             app.UseSpa(spa =>

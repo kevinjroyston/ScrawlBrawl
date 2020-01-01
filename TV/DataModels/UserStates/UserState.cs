@@ -3,6 +3,7 @@ using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// <summary>
         /// A mapping of previously served user prompts, to be reused on future requests.
         /// </summary>
-        private Dictionary<User, UserPromptHolder> Prompts { get; } = new Dictionary<User, UserPromptHolder>();
+        private ConcurrentDictionary<User, UserPromptHolder> Prompts { get; } = new ConcurrentDictionary<User, UserPromptHolder>();
 
         // TODO. I dont think the below class is needed, just dont track original RefreshTimeInMs
         protected class UserPromptHolder
@@ -164,7 +165,8 @@ namespace RoystonGame.TV.DataModels.UserStates
                     ||((prompt.Drawing != null) == string.IsNullOrWhiteSpace(userInput.SubForms[i].Drawing))
                     ||(prompt.ShortAnswer == string.IsNullOrWhiteSpace(userInput.SubForms[i].ShortAnswer))
                     ||(prompt.ColorPicker == string.IsNullOrWhiteSpace(userInput.SubForms[i].Color))
-                    ||((prompt.Answers != null && prompt.Answers.Length>0 ) == (!userInput.SubForms[i].RadioAnswer.HasValue || userInput.SubForms[i].RadioAnswer.Value<0 || userInput.SubForms[i].RadioAnswer.Value >= prompt.Answers.Length)))
+                    ||((prompt.Answers != null && prompt.Answers.Length>0 ) == (!userInput.SubForms[i].RadioAnswer.HasValue || userInput.SubForms[i].RadioAnswer.Value<0 || userInput.SubForms[i].RadioAnswer.Value >= prompt.Answers.Length))
+                    ||((prompt.Dropdown != null && prompt.Dropdown.Length>0 ) == (!userInput.SubForms[i].DropdownChoice.HasValue || userInput.SubForms[i].DropdownChoice.Value<0 || userInput.SubForms[i].DropdownChoice.Value >= prompt.Dropdown.Length)))
                 {
                     return false;
                 }

@@ -16,6 +16,7 @@ namespace RoystonGame.Web.DataModels.Requests
         [RegexSanitizer("^data:image\\/png;base64,[a-zA-Z0-9+/]+=*$")]
         public string Drawing { get; set; }
 
+        public int? DropdownChoice { get; set; }
         public int? RadioAnswer { get; set; }
 
         [RegexSanitizer("^rgb\\([0-9]{1,3},[0-9]{1,3},[0-9]{1,3}\\)$")]

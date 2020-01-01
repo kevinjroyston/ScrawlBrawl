@@ -20,6 +20,11 @@ namespace RoystonGame.Web.DataModels.Responses
         public string[] StringList { get; set; }
 
         /// <summary>
+        /// The dropdown choices to choose from, if applicable
+        /// </summary>
+        public string[] Dropdown { get; set; }
+
+        /// <summary>
         /// The radio answers to choose from, if applicable
         /// </summary>
         public string[] Answers { get; set; }

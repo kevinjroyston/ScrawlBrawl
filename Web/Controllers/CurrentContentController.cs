@@ -26,13 +26,13 @@ namespace RoystonGame.Web.Controllers
         public IActionResult Get()
         {
             User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, out bool newUser);
-            if (user?.UserState == null)
-            {
-                return new BadRequestResult();
-            }
-            return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
-            /*
-            //Test response
+             if (user?.UserState == null)
+             {
+                 return new BadRequestResult();
+             }
+             return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
+
+            /*//Test response
             return new JsonResult(new UserPrompt
             {
                 Id = Guid.Empty,
@@ -75,10 +75,15 @@ namespace RoystonGame.Web.Controllers
                             HeightInPx=300,
                             WidthInPx=200,
                         }
+                    },
+                    new SubPrompt
+                    {
+                        Prompt = "This is a sub prompt with a dropdown",
+                        Dropdown = new string[]{ "A", "B", "C" }
                     }
                 },
                 SubmitButton = true
-            }) ;*/
+            });*/
         }
     }
 }

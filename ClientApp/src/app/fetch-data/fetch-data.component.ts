@@ -129,6 +129,7 @@ export class FetchDataComponent
     createSubForm(): FormGroup {
         return this.formBuilder.group({
             id: '',
+            dropdownChoice: '',
             radioAnswer: '',
             shortAnswer: '',
             color: '',
@@ -156,6 +157,7 @@ interface SubPrompt {
     id: string;
     prompt: string;
     stringList: string[];
+    dropdown: string[];    
     answers: string[];
     colorPicker: boolean;
     shortAnswer: boolean;
