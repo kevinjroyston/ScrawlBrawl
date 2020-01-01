@@ -92,7 +92,7 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// <summary>
         /// Creates a new user state.
         /// </summary>
-        /// <param name="outlet">The default callback function to use for all callers. <see cref="SetOutlet"/> for user specific outlet configuring.</param>
+        /// <param name="outlet">The default outlet for all users. <see cref="SetOutlet"/> for user specific outlet configuring.</param>
         /// <param name="stateTimeoutDuration">The maximum amount of time to spend in this userstate.</param>
         /// <param name="promptGenerator">A function to be called the first time a user requests a prompt.</param>
         public UserState(Connector outlet, TimeSpan? stateTimeoutDuration, Func<User, UserPrompt> promptGenerator)

@@ -66,9 +66,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 
             SimplePromptUserState pickDrawing = new SimplePromptUserState(
                 PickADrawing(challengeTracker, challengeTracker.IdToDrawingMapping.Keys.ToList()),
-                formSubmitCallback:(User user, UserFormSubmission submission) =>
+                formSubmitListener:(User user, UserFormSubmission submission) =>
                 {
-                    User authorOfDrawing = challengeTracker.IdToDrawingMapping.Values.ToArray()[submission.SubForms[0].RadioAnswer ?? -1].Item1;
+                    User authorOfDrawing;
+                    authorOfDrawing = challengeTracker.IdToDrawingMapping.Values.ToArray()[submission.SubForms[0].RadioAnswer ?? -1].Item1;
+
                     if (authorOfDrawing == challengeTracker.OddOneOut)
                     {
                         challengeTracker.UsersWhoFoundOOO.Add(user);
@@ -81,11 +83,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                         }
                         challengeTracker.UsersWhoConfusedWhichUsers[authorOfDrawing].Add(user);
                     }
+                    return true;
                 });
             this.Entrance = pickDrawing;
 
             UserStateTransition waitForUsers = new WaitForAllPlayers(null, this.Outlet, null);
-            waitForUsers.SetStateEndingCallback(() => this.UpdateScores());
+            waitForUsers.AddStateEndingListener(() => this.UpdateScores());
             pickDrawing.SetOutlet(waitForUsers.Inlet);
             waitForUsers.SetOutlet(this.Outlet);
 

@@ -19,11 +19,19 @@ namespace RoystonGame.TV.DataModels.UserStates
     public class SimplePromptUserState : UserState
     {
         public static UserPrompt DefaultPrompt(User user) => new UserPrompt() { Description = "Waiting . . .", RefreshTimeInMs = 1000 };
-        private Action<User, UserFormSubmission> FormSubmitCallback { get; set; }
-        public SimplePromptUserState(Func<User, UserPrompt> prompt = null, Connector outlet = null, TimeSpan? maxPromptDuration = null, Action<User, UserFormSubmission> formSubmitCallback = null)
+        private List<Func<User, UserFormSubmission, bool>> FormSubmitListeners { get; set; } = new List<Func<User, UserFormSubmission, bool>>();
+        public SimplePromptUserState(Func<User, UserPrompt> prompt = null, Connector outlet = null, TimeSpan? maxPromptDuration = null, Func<User, UserFormSubmission, bool> formSubmitListener = null)
             : base(outlet, maxPromptDuration, prompt ?? DefaultPrompt)
         {
-            this.FormSubmitCallback = formSubmitCallback;
+            if (formSubmitListener!= null)
+            {
+                FormSubmitListeners.Add(formSubmitListener);
+            }
+        }
+
+        public void AddFormSubmitListener(Func<User, UserFormSubmission, bool> listener)
+        {
+            FormSubmitListeners.Add(listener);
         }
 
         public override bool HandleUserFormInput(User user, UserFormSubmission userInput)
@@ -33,7 +41,24 @@ namespace RoystonGame.TV.DataModels.UserStates
                 return false;
             }
 
-            this.FormSubmitCallback?.Invoke(user, userInput);
+            bool success = true;
+            foreach(var listener in this.FormSubmitListeners)
+            {
+                try
+                {
+                    success &= listener?.Invoke(user, userInput) ?? true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+
+            if (!success)
+            {
+                return false;
+            }
+
             this.Outlet(user, UserStateResult.Success, userInput);
             return true;
         }

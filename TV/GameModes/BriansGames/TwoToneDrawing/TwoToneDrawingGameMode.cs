@@ -26,7 +26,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
         public TwoToneDrawingGameMode()
         {
             Setup = new Setup_GS(this.SubChallenges);
-            Setup.SetStateEndingCallback(() =>
+            Setup.AddStateEndingListener(() =>
             {
                 int index = 0;
                 foreach (ChallengeTracker challenge in SubChallenges.OrderBy(_ => rand.Next()))

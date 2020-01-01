@@ -54,7 +54,7 @@ namespace RoystonGame.TV.DataModels
         /// </summary>
         private Dictionary<User, Connector> UserOutletOverrides { get; set; } = new Dictionary<User, Connector>();
 
-        private Action StateEndingCallback { get; set; }
+        private List<Action> StateEndingListeners { get; set; } = new List<Action>();
         private Connector InternalOutlet { get; set; }
         bool FirstUser = true;
         // This needs to be wrapped so that "Outlet" can be passed as an action prior to InternalOutlet being defined
@@ -63,7 +63,10 @@ namespace RoystonGame.TV.DataModels
             if (this.FirstUser)
             {
                 this.FirstUser = false;
-                this.StateEndingCallback?.Invoke();
+                foreach(var listener in this.StateEndingListeners)
+                {
+                    listener?.Invoke();
+                }
             }
 
             if (this.UserOutletOverrides.ContainsKey(user))
@@ -80,13 +83,13 @@ namespace RoystonGame.TV.DataModels
         /// Sets up <paramref name="stateEnding"/> to be called just prior to the first user leaving this state.
         /// </summary>
         /// <param name="stateEnding">The action to call immediately prior to leaving this state.</param>
-        public void SetStateEndingCallback(Action stateEnding)
+        public void AddStateEndingListener(Action listener)
         {
-            this.StateEndingCallback = stateEnding;
+            this.StateEndingListeners.Add(listener);
         }
 
         /// <summary>
-        /// Sets the state completed callback. This should be called before state is entered!
+        /// Sets the outlet. This should be called before state is entered!
         /// </summary>
         /// <param name="outlet">The callback to use.</param>
         public void SetOutlet(Connector outlet, List<User> specificUsers = null)

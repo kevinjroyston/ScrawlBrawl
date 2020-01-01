@@ -67,7 +67,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 SubmitButton = true
             },
             outlet,
-            formSubmitCallback: (User user, UserFormSubmission input) =>
+            formSubmitListener: (User user, UserFormSubmission input) =>
             {
                 this.SubChallenges.Add(new ChallengeTracker
                 {
@@ -75,6 +75,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     RealPrompt = input.SubForms[0].ShortAnswer,
                     DeceptionPrompt = input.SubForms[1].ShortAnswer,
                 });
+                return true;
             });
         }
 
@@ -116,9 +117,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     },
                     SubmitButton = true
                 },
-                formSubmitCallback: (User user, UserFormSubmission input) =>
+                formSubmitListener: (User user, UserFormSubmission input) =>
                 {
                     challenge.UserSubmittedDrawings[user] = input.SubForms[0].Drawing;
+                    return true;
                 }));
                 index++;
             }
@@ -150,7 +152,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             {
                 GetDrawingsUserStateChain(user, waitForAllDrawings.Inlet)[0].Inlet(user, result, input);
             });
-            waitForAllPrompts.SetStateEndingCallback(() => this.AssignPrompts(numDrawingsPerPrompt));
+            waitForAllPrompts.AddStateEndingListener(() => this.AssignPrompts(numDrawingsPerPrompt));
             setNumPrompts.SetOutlet(GetWordsUserState(waitForAllPrompts.Inlet).Inlet);
 
             this.Entrance = setNumPrompts;

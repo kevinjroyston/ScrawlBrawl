@@ -28,7 +28,7 @@ namespace RoystonGame.TV.ControlFlows
         /// Initializes a new <see cref="WaitForTrigger"/>.
         /// </summary>
         /// <param name="outlet">The function each user will call post trigger.</param>
-        /// <param name="waitingState">The waiting state to use while waiting for the trigger. The Callback of this state will be overwritten</param>
+        /// <param name="waitingState">The waiting state to use while waiting for the trigger. The outlet of this state will be overwritten</param>
         public WaitForTrigger(Connector outlet = null, WaitingUserState waitingState = null) : base(outlet)
         {
             this.WaitingState = waitingState ?? WaitingUserState.DefaultState();

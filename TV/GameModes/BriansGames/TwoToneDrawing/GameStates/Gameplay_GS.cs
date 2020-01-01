@@ -67,14 +67,15 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 
             SimplePromptUserState pickDrawing = new SimplePromptUserState(
                 PickADrawing(challengeTracker, challengeTracker.TeamIdToDrawingMapping.Keys.ToList()),
-                formSubmitCallback: (User user, UserFormSubmission submission) =>
+                formSubmitListener: (User user, UserFormSubmission submission) =>
                 {
                     challengeTracker.TeamIdToUsersWhoVotedMapping.Values.ToArray()[submission.SubForms[0].RadioAnswer ?? -1].Add(user);
+                    return true;
                 });
             this.Entrance = pickDrawing;
 
             UserStateTransition waitForUsers = new WaitForAllPlayers(null, this.Outlet, null);
-            waitForUsers.SetStateEndingCallback(() => this.UpdateScores());
+            waitForUsers.AddStateEndingListener(() => this.UpdateScores());
             pickDrawing.SetOutlet(waitForUsers.Inlet);
             waitForUsers.SetOutlet(this.Outlet);
 

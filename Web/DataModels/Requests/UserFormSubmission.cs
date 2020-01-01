@@ -6,6 +6,7 @@ namespace RoystonGame.Web.DataModels.Requests
 {
     public class UserFormSubmission
     {
+        [RegexSanitizer("^([0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12})$")]
         public Guid Id { get; set; }
 
         public UserSubForm[] SubForms { get; set; }

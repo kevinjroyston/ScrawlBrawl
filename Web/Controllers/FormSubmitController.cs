@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
@@ -84,7 +85,26 @@ namespace RoystonGame.Web.Controllers
                 }
                 else
                 {
-                    if (!SanitizeString(propValue.ToString()))
+                    object[] attrs = property.GetCustomAttributes(true);
+                    string regex = null;
+                    foreach (object attr in attrs)
+                    {
+                        RegexSanitizerAttribute regexAttr = attr as RegexSanitizerAttribute;
+                        if (regexAttr != null)
+                        {
+                            regex = regexAttr.RegexPattern;
+                        }
+                    }
+
+                    // If regex attribute present use that instead.
+                    if (!string.IsNullOrWhiteSpace(regex))
+                    {
+                        if(!Regex.IsMatch(propValue.ToString(), regex))
+                        {
+                            return false;
+                        }
+                    }
+                    else if (!SanitizeString(propValue.ToString()))
                     {
                         Debug.WriteLine(Invariant($"'{property.Name}' failed sanitization"));
                         return false;
@@ -96,12 +116,12 @@ namespace RoystonGame.Web.Controllers
 
         private bool SanitizeString(string str)
         {
-            // Linq magic
-            bool valid = str.All("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-=:;,/+()".Contains);
+            // first line is overly strict, last 4 should be more than sufficient and slightly less restrictive. Might as well default to overly secure.
+            bool valid = str.All(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".Contains);
             valid &= HttpUtility.HtmlEncode(str).Equals(str);
             valid &= HttpUtility.JavaScriptStringEncode(str).Equals(str);
             //valid &= HttpUtility.UrlEncode(str).Equals(str);
-            valid &= HttpUtility.UrlPathEncode(str).Equals(str);
+            //valid &= HttpUtility.UrlPathEncode(str).Equals(str);
             return valid;
         }
     }

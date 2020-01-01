@@ -56,11 +56,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 },
                 SubmitButton = true
             },
-            formSubmitCallback: (User user, UserFormSubmission userInput) =>
+            formSubmitListener: (User user, UserFormSubmission userInput) =>
             {
                 ColorsPerDrawing = Convert.ToInt32(userInput.SubForms[0].ShortAnswer);
                 DrawingsPerPlayer = Convert.ToInt32(userInput.SubForms[1].ShortAnswer);
                 ShowColors = userInput.SubForms[2].RadioAnswer == 1;
+                return true;
             });
         }
 
@@ -95,12 +96,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 };
             },
             outlet,
-            formSubmitCallback: (User user, UserFormSubmission input) =>
+            formSubmitListener: (User user, UserFormSubmission input) =>
             {
                 List<string> colors = input.SubForms.Where((subForm, index) => index > 0).Select((subForm) => subForm.Color).Reverse().ToList();
                 if (colors.Count != new HashSet<string>(colors).Count)
                 {
-                    throw new Exception("User submitted 2 identical colors");
+                    return false;
                 }
 
                 this.SubChallenges.Add(new ChallengeTracker
@@ -109,6 +110,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     Prompt = input.SubForms[0].ShortAnswer,
                     Colors = colors
                 });
+                return true;
             });
         }
 
@@ -154,9 +156,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     },
                     SubmitButton = true
                 },
-                formSubmitCallback: (User user, UserFormSubmission input) =>
+                formSubmitListener: (User user, UserFormSubmission input) =>
                 {
                     challenge.UserSubmittedDrawings[user].Drawing = input.SubForms[0].Drawing;
+                    return true;
                 }));
                 index++;
             }
@@ -185,7 +188,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 GetDrawingsUserStateChain(user, waitForAllDrawings.Inlet)[0].Inlet(user, result, input);
             });
             // Just before users call the line above, call AssignPrompts
-            waitForAllPrompts.SetStateEndingCallback(() => this.AssignPrompts());
+            waitForAllPrompts.AddStateEndingListener(() => this.AssignPrompts());
             setNumPrompts.SetOutlet(GetChallengesUserState(waitForAllPrompts.Inlet).Inlet);
 
             this.Entrance = setNumPrompts;

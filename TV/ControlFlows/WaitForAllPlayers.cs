@@ -25,7 +25,7 @@ namespace RoystonGame.TV.ControlFlows
         /// Initializes a new <see cref="WaitForTrigger"/>.
         /// </summary>
         /// <param name="usersToWaitFor">Users to wait for, null indicates to use all currently registered users upon first caller.</param>
-        /// <param name="waitingState">The waiting state to use while waiting for the trigger. The Callback of this state will be overwritten</param>
+        /// <param name="waitingState">The waiting state to use while waiting for the trigger. The outlet of this state will be overwritten</param>
         /// <param name="outlet">The state to move users to post trigger.</param>
         public WaitForAllPlayers(
             List<User> usersToWaitFor = null,
