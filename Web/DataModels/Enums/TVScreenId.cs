@@ -7,6 +7,7 @@ namespace RoystonGame.Web.DataModels.Enums
 {
     public enum TVScreenId
     {
+        Unknown,
         WaitForLobbyToStart,
         WaitForPartyLeader,
         WaitForUserInputs,

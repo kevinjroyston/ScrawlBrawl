@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-
 using RoystonGame.TV.DataModels.UserStates;
 
 using static System.FormattableString;
@@ -20,6 +20,7 @@ namespace RoystonGame.TV.DataModels
         /// <summary>
         /// The current state of the user.
         /// </summary>
+        [JsonIgnore]
         public UserState UserState { get; private set; }
 
         /// <summary>

@@ -7,8 +7,10 @@ using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameEngine;
 using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.DataModels;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using RoystonGame.Web.DataModels.UnityObjects;
 using RoystonGame.WordLists;
 using System;
 using System.Collections.Generic;
@@ -160,6 +162,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             this.GameObjects = new List<GameObject>()
             {
                 new TextObject { Content = "Complete all the prompts on your devices." }
+            };
+
+            this.UnityView = new UnityView
+            {
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
+                UnityImages = new List<UnityImage>(),
+                Instructions = new StaticAccessor<string> { Value = "Complete all the prompts on your devices." },
             };
         }
 

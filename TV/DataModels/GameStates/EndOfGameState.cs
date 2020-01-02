@@ -7,9 +7,10 @@ using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.GameEngine;
 using RoystonGame.TV.GameEngine.Rendering;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
-
+using RoystonGame.Web.DataModels.UnityObjects;
 using Connector = System.Action<
     RoystonGame.TV.DataModels.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
@@ -60,6 +61,12 @@ namespace RoystonGame.TV.DataModels.GameStates
             this.GameObjects = new List<GameObject>()
             {
                 new TextObject { Content = "Waiting for party leader . . ." }
+            };
+
+            this.UnityView = new UnityView
+            {
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForPartyLeader },
+                Instructions = new StaticAccessor<string> { Value = "Waiting for party leader . . ." },
             };
         }
     }

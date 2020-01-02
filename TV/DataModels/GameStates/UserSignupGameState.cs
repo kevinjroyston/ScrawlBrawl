@@ -5,9 +5,10 @@ using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.GameEngine;
 using RoystonGame.TV.GameEngine.Rendering;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
-
+using RoystonGame.Web.DataModels.UnityObjects;
 using static System.FormattableString;
 
 using Connector = System.Action<
@@ -65,6 +66,14 @@ namespace RoystonGame.TV.DataModels.GameStates
             this.GameObjects = new List<GameObject>()
             {
                 new TextObject { Content = "Waiting for players :). Joined so far: " }
+            };
+
+            this.UnityView = new UnityView
+            {
+                // A user registering SHOULD trigger the UnityView to get pushed to clients.
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForLobbyToStart },
+                Title = new StaticAccessor<string> { Value = "Join the lobby!" },
+                Instructions = new StaticAccessor<string> { Value = "Players joined so far:" },
             };
         }
     }

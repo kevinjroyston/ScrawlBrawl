@@ -18,6 +18,8 @@ using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO;
 using RoystonGame.WordLists;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing;
+using RoystonGame.Web.DataModels.Enums;
+using RoystonGame.Web.DataModels.UnityObjects;
 
 namespace RoystonGame.TV
 {
@@ -66,8 +68,19 @@ namespace RoystonGame.TV
             this.GameRunner = gameRunner;
         }
 
+        bool Initialized { get; set; } = false;
+        object InitLock { get; set; } = new Object();
         public static void Initialize()
         {
+            lock (Singleton.InitLock)
+            {
+                if (Singleton.Initialized)
+                {
+                    return;
+                }
+                Singleton.Initialized = true;
+            }
+
             Singleton.WaitForLobby = new WaitingUserState();
             Singleton.UserRegistration = new UserSignupGameState(lobbyClosedCallback: CloseLobby);
             Singleton.PartyLeaderSelect = new SelectGameModeGameState(null, Enum.GetNames(typeof(GameMode)), (int? gameMode) => SelectedGameMode(gameMode));
@@ -229,6 +242,15 @@ namespace RoystonGame.TV
         public static IEnumerable<GameObject> GetActiveGameObjects()
         {
             return Singleton?.CurrentGameState?.GetActiveGameObjects() ?? new List<GameObject>();
+        }
+
+        /// <summary>
+        /// Returns the unity view that needs to be potentially sent to the clients.
+        /// </summary>
+        /// <returns>The active unity view</returns>
+        public static UnityView GetActiveUnityView()
+        {
+            return Singleton?.CurrentGameState?.GetActiveUnityView();
         }
 
         /// <summary>

@@ -7,8 +7,10 @@ using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.GameEngine;
 using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.DataModels;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +47,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             this.Entrance = waitForLeader;
 
             this.GameObjects = new List<GameObject>();
+            this.UnityView = new UnityView
+            {
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
+                UnityImages = new List<UnityImage>(),
+                Title = new StaticAccessor<string> { Value = "Reveal!" },
+            };
             int x = 0, y = 0;
             /*// Plays 18
             int imageWidth = 300;
@@ -61,6 +69,16 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             int yBuffer = 75;
             foreach ((User user, string userDrawing) in challenge.IdToDrawingMapping.Values)
             {
+                Func<string> footer = () =>Invariant($"{((user == challenge.OddOneOut) ? challenge.UsersWhoFoundOOO.Count : (challenge.UsersWhoConfusedWhichUsers.ContainsKey(user) ? challenge.UsersWhoConfusedWhichUsers[user].Count : 0))}");
+                this.UnityView.UnityImages.Add(new UnityImage
+                {
+                    Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string> { userDrawing } },
+                    // TODO: show which users voted here.
+                    //RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = new List<User> { owner } }
+                    Footer = new DynamicAccessor<string> { DynamicBacker = footer },
+                    BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = user == challenge.OddOneOut ? new List<int> { 250, 128, 114} : new List<int> { 255, 255, 255 } }
+                });
+
                 this.GameObjects.Add(new UserDrawingObject(userDrawing, user == challenge.OddOneOut ? Color.Salmon : Color.White)
                 {
                     BoundingBox = new Rectangle(x * (imageWidth + buffer), y * (imageHeight + yBuffer), imageWidth, imageHeight)
@@ -68,7 +86,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 
                 this.GameObjects.Add(new DynamicTextObject
                 {
-                    Content = ()=>Invariant($"{((user == challenge.OddOneOut) ? challenge.UsersWhoFoundOOO.Count :(challenge.UsersWhoConfusedWhichUsers.ContainsKey(user) ? challenge.UsersWhoConfusedWhichUsers[user].Count : 0))}"),
+                    Content = footer,
                     BoundingBox = new Rectangle(x * (imageWidth + buffer), imageHeight + y * (imageHeight + yBuffer), imageWidth, yBuffer)
                 });
 

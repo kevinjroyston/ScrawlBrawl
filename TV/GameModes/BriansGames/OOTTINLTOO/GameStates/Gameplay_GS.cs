@@ -7,8 +7,10 @@ using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.GameEngine;
 using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.DataModels;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,6 +95,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             waitForUsers.SetOutlet(this.Outlet);
 
             this.GameObjects = new List<GameObject>();
+            this.UnityView = new UnityView
+            {
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
+                UnityImages = new List<UnityImage>(),
+                Title = new StaticAccessor<string> { Value = "Find the imposter!" },
+            };
+
             int x =0, y = 0;
             /*// Plays 18
             int imageWidth = 300;
@@ -109,6 +118,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             int yBuffer = 75;
             foreach ((string id, (User owner, string userDrawing)) in this.SubChallenge.IdToDrawingMapping)
             {
+                this.UnityView.UnityImages.Add(new UnityImage
+                {
+                    Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string> { userDrawing } },
+                    //RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = new List<User> { owner } }
+                    Footer = new StaticAccessor<string> { Value = id }
+                });
+
                 this.GameObjects.Add(new UserDrawingObject(userDrawing)
                 {
                     BoundingBox = new Rectangle(x * (imageWidth + buffer), y * (imageHeight + yBuffer), imageWidth, imageHeight)

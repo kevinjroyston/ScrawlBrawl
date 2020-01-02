@@ -2,8 +2,10 @@
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.GameEngine;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,6 +82,7 @@ namespace RoystonGame.TV.DataModels.GameStates
         #region TVRendering
 
         protected List<GameObject> GameObjects { get; set; }
+        protected UnityView UnityView { get; set; }
 
         public IEnumerable<GameObject> GetActiveGameObjects()
         {
@@ -88,6 +91,15 @@ namespace RoystonGame.TV.DataModels.GameStates
                 throw new Exception("Game objects not defined for this game state!!");
             }
             return GameObjects;
+        }
+
+        public UnityView GetActiveUnityView()
+        {
+            if (UnityView == null)
+            {
+                throw new Exception("Unity View not defined for this game state!!");
+            }
+            return UnityView;
         }
         #endregion
     }

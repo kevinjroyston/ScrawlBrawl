@@ -6,9 +6,10 @@ using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.GameEngine;
 using RoystonGame.TV.GameEngine.Rendering;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
-
+using RoystonGame.Web.DataModels.UnityObjects;
 using static System.FormattableString;
 
 using Connector = System.Action<
@@ -48,6 +49,13 @@ namespace RoystonGame.TV.DataModels.GameStates
                         return Invariant($"{title}\n{scores}");
                     }
                 }
+            };
+
+            this.UnityView = new UnityView
+            {
+                // TVScreenId.Scoreboard indicates to the unity client to look at the user scores and render a scoreboard.
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.Scoreboard },
+                Title = new StaticAccessor<string> { Value = title },
             };
         }
     }
