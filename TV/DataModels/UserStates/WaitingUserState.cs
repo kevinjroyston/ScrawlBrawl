@@ -25,8 +25,9 @@ namespace RoystonGame.TV.DataModels.UserStates
             // Empty
         }
 
-        public override bool HandleUserFormInput(User user, UserFormSubmission userInput)
+        public override bool HandleUserFormInput(User user, UserFormSubmission userInput, out string error)
         {
+            error = "You shouldn't be submitting right now. Go away >:(";
             return false;
         }
     }

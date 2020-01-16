@@ -18,6 +18,11 @@ namespace RoystonGame.TV.DataModels
         public Guid UserId { get; set; } = Guid.NewGuid();
 
         /// <summary>
+        /// The lobby id the user is a part of.
+        /// </summary>
+        public Guid LobbyId { get; set; }
+
+        /// <summary>
         /// The current state of the user.
         /// </summary>
         [JsonIgnore]

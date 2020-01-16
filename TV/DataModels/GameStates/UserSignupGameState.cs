@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using RoystonGame.TV.ControlFlows;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.UserStates;
@@ -52,12 +53,6 @@ namespace RoystonGame.TV.DataModels.GameStates
             entrance.SetOutlet((User user, UserStateResult result, UserFormSubmission userInput) =>
             {
                 GameManager.RegisterUser(user, userInput.SubForms[0].ShortAnswer, userInput.SubForms[1].Drawing);
-                // TODO: this.GameObjects.Add(new TextObject + ImageObject)
-                // TODO: vertical/horizontal alignment group. Depends on anchor/resizing code
-
-                // TODO: remove hacky below implementation.
-                ((TextObject)this.GameObjects[0]).Content = Invariant($"{((TextObject)this.GameObjects[0]).Content} {userInput.SubForms[0].ShortAnswer}");
-
                 transition.Inlet(user, result, userInput);
             });
 
@@ -65,15 +60,26 @@ namespace RoystonGame.TV.DataModels.GameStates
 
             this.GameObjects = new List<GameObject>()
             {
-                new TextObject { Content = "Waiting for players :). Joined so far: " }
+                new DynamicTextObject { Content = () => Invariant($"Waiting for players :). Joined so far: {string.Join(", ", GameManager.GetActiveUsers().Select(usr=>usr.DisplayName))}") }
             };
 
+            // I have created a monstrosity.
             this.UnityView = new UnityView
             {
-                // A user registering SHOULD trigger the UnityView to get pushed to clients.
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForLobbyToStart },
                 Title = new StaticAccessor<string> { Value = "Join the lobby!" },
                 Instructions = new StaticAccessor<string> { Value = "Players joined so far:" },
+                UnityImages = new DynamicAccessor<IReadOnlyList<UnityImage>>
+                {
+                    DynamicBacker = () => GameManager.GetActiveUsers().Select(usr =>
+                        new UnityImage
+                        {
+                            Title = new StaticAccessor<string> { Value = usr.DisplayName },
+                            Base64Pngs = new StaticAccessor<IReadOnlyList<string>> {
+                                Value = new List<string> { usr.SelfPortrait }
+                            }
+                        }).ToList()
+                }
             };
         }
     }

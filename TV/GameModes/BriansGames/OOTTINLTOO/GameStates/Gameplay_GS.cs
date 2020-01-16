@@ -12,6 +12,7 @@ using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -63,7 +64,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             foreach(var kvp in challengeTracker.UserSubmittedDrawings.OrderBy(_ => rand.Next()))
             {
                 i++;
-                challengeTracker.IdToDrawingMapping.Add(i.ToString(),(kvp.Key, kvp.Value));
+                challengeTracker.IdToDrawingMapping[i.ToString()] = (kvp.Key, kvp.Value);
             }
 
             SimplePromptUserState pickDrawing = new SimplePromptUserState(
@@ -79,13 +80,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     }
                     else
                     {
-                        if (!challengeTracker.UsersWhoConfusedWhichUsers.ContainsKey(authorOfDrawing))
+                        challengeTracker.UsersWhoConfusedWhichUsers.AddOrUpdate(authorOfDrawing, _ => new ConcurrentBag<User> { user }, (key, currentBag) =>
                         {
-                            challengeTracker.UsersWhoConfusedWhichUsers.Add(authorOfDrawing, new List<User>());
-                        }
-                        challengeTracker.UsersWhoConfusedWhichUsers[authorOfDrawing].Add(user);
+                            currentBag.Add(user);
+                            return currentBag;
+                        });
                     }
-                    return true;
+                    return (true, string.Empty);
                 });
             this.Entrance = pickDrawing;
 
@@ -95,12 +96,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             waitForUsers.SetOutlet(this.Outlet);
 
             this.GameObjects = new List<GameObject>();
-            this.UnityView = new UnityView
-            {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
-                UnityImages = new List<UnityImage>(),
-                Title = new StaticAccessor<string> { Value = "Find the imposter!" },
-            };
+            var unityImages = new List<UnityImage>();
 
             int x =0, y = 0;
             /*// Plays 18
@@ -118,7 +114,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             int yBuffer = 75;
             foreach ((string id, (User owner, string userDrawing)) in this.SubChallenge.IdToDrawingMapping)
             {
-                this.UnityView.UnityImages.Add(new UnityImage
+                unityImages.Add(new UnityImage
                 {
                     Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string> { userDrawing } },
                     //RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = new List<User> { owner } }
@@ -141,6 +137,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     y++;
                 }
             }
+
+            this.UnityView = new UnityView
+            {
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
+                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages },
+                Title = new StaticAccessor<string> { Value = "Find the imposter!" },
+            };
         }
 
         int TotalPointsToAward { get; } = 100 * (GameManager.GetActiveUsers().Count);

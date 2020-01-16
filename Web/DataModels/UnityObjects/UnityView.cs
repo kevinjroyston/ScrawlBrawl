@@ -13,18 +13,31 @@ namespace RoystonGame.Web.DataModels.UnityObjects
     {
         public bool Refresh()
         {
-            bool modified = false;
+            // First Refresh is always dirty.
+            bool modified = this.Dirty;
+            this.Dirty = false;
+
             modified |= this.Options?.Refresh() ?? false;
             modified |= this.ScreenId?.Refresh() ?? false;
-            modified |= this.Users?.Refresh() ?? false;
+           // modified |= this.Users?.Refresh() ?? false;
             modified |= this.Title?.Refresh() ?? false;
             modified |= this.Instructions?.Refresh() ?? false;
-            modified |= this.UnityImages?.Any(image => image?.Refresh() ?? false) ?? false;
+            // TODO: below 2 lines might be causing excess updates
+            modified |= this.UnityImages?.Refresh() ?? false;
+            modified |= this.UnityImages?.Value?.Any(image => image?.Refresh() ?? false) ?? false;
             return modified;
         }
-        public Guid Id { get; } = Guid.NewGuid();
+
+        /// <summary>
+        /// Tracks the first notification of a given UnityView;
+        /// </summary>
+        public bool Dirty { get; set; } = true;
+
         public UnityViewOptions Options { get; set; }
-        public List<UnityImage> UnityImages { get; set; } = new List<UnityImage>();
+
+        [JsonIgnore]
+        public IAccessor<IReadOnlyList<UnityImage>> UnityImages { private get; set; }
+        public IReadOnlyList<UnityImage> _UnityImages { get => UnityImages?.Value; }
 
 
         [JsonIgnore]
@@ -32,9 +45,10 @@ namespace RoystonGame.Web.DataModels.UnityObjects
         public TVScreenId? _ScreenId { get => ScreenId?.Value; }
 
 
+        /* // Disabled, relevant user information will be passed in via UnityImages list.
         [JsonIgnore]
         public IAccessor<IReadOnlyList<User>> Users { private get; set; } = new DynamicAccessor<IReadOnlyList<User>> { DynamicBacker = () => GameManager.GetActiveUsers() };
-        public IReadOnlyList<User> _Users { get => Users?.Value; }
+        public IReadOnlyList<User> _Users { get => Users?.Value; }*/
 
         [JsonIgnore]
         public IAccessor<string> Title { private get; set; }

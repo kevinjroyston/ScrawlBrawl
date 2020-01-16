@@ -7,9 +7,12 @@ using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.GameEngine;
 using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using RoystonGame.Web.DataModels.UnityObjects;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -56,13 +59,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             SubChallenge = challengeTracker;
             foreach (var kvp in challengeTracker.UserSubmittedDrawings.OrderBy(_ => rand.Next()))
             {
-                if (!challengeTracker.TeamIdToDrawingMapping.ContainsKey(kvp.Value.TeamId))
-                {
-                    challengeTracker.TeamIdToDrawingMapping.Add(kvp.Value.TeamId, new Dictionary<string, string>());
-                    challengeTracker.TeamIdToUsersWhoVotedMapping.Add(kvp.Value.TeamId, new List<User>());
-                }
-
-                challengeTracker.TeamIdToDrawingMapping[kvp.Value.TeamId][kvp.Value.Color] = kvp.Value.Drawing;
+                challengeTracker.TeamIdToDrawingMapping.AddOrUpdate(kvp.Value.TeamId, _ => new ConcurrentDictionary<string, string>(new Dictionary<string, string> { { kvp.Value.Color, kvp.Value.Drawing } }),
+                    (key, currentDictionary) =>
+                    {
+                        currentDictionary[kvp.Value.Color] = kvp.Value.Drawing;
+                        return currentDictionary;
+                    });
+                challengeTracker.TeamIdToUsersWhoVotedMapping.GetOrAdd(kvp.Value.TeamId, _ => new ConcurrentBag<User>());
             }
 
             SimplePromptUserState pickDrawing = new SimplePromptUserState(
@@ -70,7 +73,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 formSubmitListener: (User user, UserFormSubmission submission) =>
                 {
                     challengeTracker.TeamIdToUsersWhoVotedMapping.Values.ToArray()[submission.SubForms[0].RadioAnswer ?? -1].Add(user);
-                    return true;
+                    return (true, string.Empty);
                 });
             this.Entrance = pickDrawing;
 
@@ -80,6 +83,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             waitForUsers.SetOutlet(this.Outlet);
 
             this.GameObjects = new List<GameObject>();
+            var unityImages = new List<UnityImage>();
             int x = 0, y = 0;
             /*// Plays 18
             int imageWidth = 300;
@@ -94,7 +98,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             int imagesPerRow = 4;
             int buffer = 25;
             int yBuffer = 75;
-            foreach ((string id, Dictionary<string, string> colorMap) in this.SubChallenge.TeamIdToDrawingMapping)
+            foreach ((string id, ConcurrentDictionary<string, string> colorMap) in this.SubChallenge.TeamIdToDrawingMapping)
             {
                 // This draws the background, since all the user drawings need to have transparent backgrounds.
                 this.GameObjects.Add(new UserDrawingObject(null)
@@ -113,6 +117,14 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     Content = Invariant($"{id}"),
                     BoundingBox = new Rectangle(x * (imageWidth + buffer), imageHeight + y * (imageHeight + yBuffer), imageWidth, yBuffer)
                 });
+
+                unityImages.Add(new UnityImage
+                {
+                    Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = this.SubChallenge.Colors.Select(color => colorMap[color]).ToList() },
+                    Footer = new StaticAccessor<string> { Value = id.ToString() },
+                    BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = new List<int> { 255, 255, 255 } }
+                });
+
                 x++;
                 if (x >= imagesPerRow)
                 {
@@ -120,13 +132,19 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     y++;
                 }
             }
+            this.UnityView = new UnityView
+            {
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
+                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages },
+                Title = new StaticAccessor<string> { Value = "Behold!" },
+            };
         }
 
         int TotalPointsToAward { get; } = 100 * (GameManager.GetActiveUsers().Count);
         private void UpdateScores()
         {
             int mostVotes = this.SubChallenge.TeamIdToUsersWhoVotedMapping.Max((kvp) => kvp.Value.Count);
-            foreach ((string id, List<User> users) in this.SubChallenge.TeamIdToUsersWhoVotedMapping)
+            foreach ((string id, ConcurrentBag<User> users) in this.SubChallenge.TeamIdToUsersWhoVotedMapping)
             {
                 foreach (User user in users)
                 {

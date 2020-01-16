@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RoystonGame.TV;
 using RoystonGame.TV.DataModels;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Responses;
 
 namespace RoystonGame.Web.Controllers
@@ -26,11 +27,21 @@ namespace RoystonGame.Web.Controllers
         public IActionResult Get()
         {
             User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, out bool newUser);
-             if (user?.UserState == null)
-             {
-                 return new BadRequestResult();
-             }
-             return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
+            if (user?.UserState == null)
+            {
+                return new BadRequestResult();
+            }
+
+            try
+            {
+                return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
+            }
+            catch(Exception e)
+            {
+                // If this is reached, the game state is likely corrupted and the lobby will need to be restarted or the user evicted.
+                GameManager.ReportGameError(ErrorType.GetContent, user, e);
+                return new BadRequestResult();
+            }
 
             /*//Test response
             return new JsonResult(new UserPrompt

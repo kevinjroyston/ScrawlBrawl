@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RoystonGame.TV;
 using RoystonGame.TV.DataModels;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 
 using static System.FormattableString;
@@ -32,35 +33,54 @@ namespace RoystonGame.Web.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] UserFormSubmission formData)
         {
+            string error = string.Empty;
             User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, out bool newUser);
             if (user?.UserState == null || newUser)
             {
-                return new BadRequestResult();
+                return BadRequest("Error finding user object, try again.");
             }
 
-            if (!SanitizeAllStrings(formData))
+            if (!SanitizeAllStrings(formData, out error))
             {
-                return new BadRequestResult();
+                return BadRequest(error);
             }
 
             // Make sure HandleUserFormInput is never called concurrently for the same user.
             bool success;
-            lock (user.LockObject)
+            try
             {
-                success = user.UserState.HandleUserFormInput(user, formData);
+                lock (user.LockObject)
+                {
+                    success = user.UserState.HandleUserFormInput(user, formData, out error);
+                }
             }
-            return success ? new OkResult() : (IActionResult)new BadRequestResult();
+            catch (Exception e)
+            {
+                error = "An unexpected error occurred, refresh and try again :(";
+                success = false;
+
+                // Let GameManager know so it can determine whether or not to abandon the lobby.
+                GameManager.ReportGameError(ErrorType.UserSubmit, user, e);
+            }
+            return success ? new OkResult() : BadRequest(error);
+        }
+
+        private IActionResult BadRequest(string err)
+        {
+            return new BadRequestObjectResult(err);
         }
 
         /// <summary>
         /// Recursively sanitizes all fields in an object.
         /// </summary>
         /// <param name="obj"></param>
-        /// <returns></returns>
-        private bool SanitizeAllStrings(object obj)
+        /// <param name="error">Error to be returned to user.</param>
+        /// <returns>True if the inputs are safe</returns>
+        private bool SanitizeAllStrings(object obj, out string error)
         {
             if (obj == null)
             {
+                error = string.Empty;
                 return true;
             }
             Type objType = obj.GetType();
@@ -77,7 +97,7 @@ namespace RoystonGame.Web.Controllers
                 {
                     foreach (var item in elems)
                     {
-                        if (!SanitizeAllStrings(item))
+                        if (!SanitizeAllStrings(item, out error))
                         {
                             return false;
                         }
@@ -101,16 +121,19 @@ namespace RoystonGame.Web.Controllers
                     {
                         if(!Regex.IsMatch(propValue.ToString(), regex))
                         {
+                            error = Invariant($"Invalid characters present in input field: '{property.Name}'");
                             return false;
                         }
                     }
                     else if (!SanitizeString(propValue.ToString()))
                     {
                         Debug.WriteLine(Invariant($"'{property.Name}' failed sanitization"));
+                        error = Invariant($"Only alphanumeric characters allowed in input field: '{property.Name}'");
                         return false;
                     }
                 }
             }
+            error = string.Empty;
             return true;
         }
 

@@ -123,6 +123,9 @@ export class FetchDataComponent
             error => {
                 console.log("Error", error);
                 this.fetchUserPrompt();
+                if (error && error.error) {
+                    this.userPrompt.error = error.error;
+                }
             });
     }
 
@@ -152,6 +155,7 @@ interface UserPrompt {
     title: string;
     description: string;
     subPrompts: SubPrompt[];
+    error: string;
 }
 interface SubPrompt {
     id: string;

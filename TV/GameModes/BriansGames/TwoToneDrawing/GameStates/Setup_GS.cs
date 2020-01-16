@@ -7,8 +7,10 @@ using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameEngine;
 using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using RoystonGame.Web.DataModels.UnityObjects;
 using RoystonGame.WordLists;
 using System;
 using System.Collections.Generic;
@@ -58,10 +60,17 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             },
             formSubmitListener: (User user, UserFormSubmission userInput) =>
             {
-                ColorsPerDrawing = Convert.ToInt32(userInput.SubForms[0].ShortAnswer);
-                DrawingsPerPlayer = Convert.ToInt32(userInput.SubForms[1].ShortAnswer);
-                ShowColors = userInput.SubForms[2].RadioAnswer == 1;
-                return true;
+                try
+                {
+                    ColorsPerDrawing = Convert.ToInt32(userInput.SubForms[0].ShortAnswer);
+                    DrawingsPerPlayer = Convert.ToInt32(userInput.SubForms[1].ShortAnswer);
+                    ShowColors = userInput.SubForms[2].RadioAnswer == 1;
+                }
+                catch
+                {
+                    return (false, "Please enter only numeric characters");
+                }
+                return (true, string.Empty);
             });
         }
 
@@ -101,7 +110,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 List<string> colors = input.SubForms.Where((subForm, index) => index > 0).Select((subForm) => subForm.Color).Reverse().ToList();
                 if (colors.Count != new HashSet<string>(colors).Count)
                 {
-                    return false;
+                    return (true, "Server doesn't handle identical colors well, change one slightly.");
                 }
 
                 this.SubChallenges.Add(new ChallengeTracker
@@ -110,7 +119,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     Prompt = input.SubForms[0].ShortAnswer,
                     Colors = colors
                 });
-                return true;
+                return (true, string.Empty);
             });
         }
 
@@ -159,7 +168,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 formSubmitListener: (User user, UserFormSubmission input) =>
                 {
                     challenge.UserSubmittedDrawings[user].Drawing = input.SubForms[0].Drawing;
-                    return true;
+                    return (true, string.Empty);
                 }));
                 index++;
             }
@@ -196,6 +205,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             this.GameObjects = new List<GameObject>()
             {
                 new TextObject { Content = "Complete all the prompts on your devices." }
+            };
+
+            this.UnityView = new UnityView
+            {
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
+                Instructions = new StaticAccessor<string> { Value = "Complete all the prompts on your devices." },
             };
         }
 

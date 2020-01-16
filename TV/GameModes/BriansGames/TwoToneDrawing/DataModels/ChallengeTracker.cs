@@ -1,5 +1,6 @@
 ﻿using RoystonGame.TV.DataModels;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,9 +29,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels
         /// <summary>
         /// TeamId -> Color -> Drawing
         /// </summary>
-        public Dictionary<string, Dictionary<string, string>> TeamIdToDrawingMapping { get; set; } = new Dictionary<string, Dictionary<string, string>>();
+        public ConcurrentDictionary<string, ConcurrentDictionary<string, string>> TeamIdToDrawingMapping { get; set; } = new ConcurrentDictionary<string, ConcurrentDictionary<string, string>>();
 
-        public Dictionary<string, List<User>> TeamIdToUsersWhoVotedMapping { get; set; } = new Dictionary<string, List<User>>();
+        public ConcurrentDictionary<string, ConcurrentBag<User>> TeamIdToUsersWhoVotedMapping { get; set; } = new ConcurrentDictionary<string, ConcurrentBag<User>>();
         #endregion
     }
 }

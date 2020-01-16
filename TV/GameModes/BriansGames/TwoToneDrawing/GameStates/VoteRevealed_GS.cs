@@ -7,9 +7,12 @@ using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.GameEngine;
 using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using RoystonGame.Web.DataModels.UnityObjects;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,6 +48,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             this.Entrance = waitForLeader;
 
             this.GameObjects = new List<GameObject>();
+            var unityImages = new List<UnityImage>();
             int x = 0, y = 0;
             /*// Plays 18
             int imageWidth = 300;
@@ -59,12 +63,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             int imagesPerRow = 4;
             int buffer = 25;
             int yBuffer = 75;
-
-            int mostVotes = challenge.TeamIdToUsersWhoVotedMapping.Max((kvp) => kvp.Value.Count);
-            foreach ((string id, Dictionary<string, string> colorMap) in challenge.TeamIdToDrawingMapping)
+            foreach ((string id, ConcurrentDictionary<string, string> colorMap) in challenge.TeamIdToDrawingMapping)
             {
                 // This draws the background, since all the user drawings need to have transparent backgrounds.
-                this.GameObjects.Add(new UserDrawingObject(null, challenge.TeamIdToUsersWhoVotedMapping[id].Count == mostVotes ? Color.LightSeaGreen : Color.White)
+                this.GameObjects.Add(new UserDrawingObject(null, Color.White)
                 {
                     BoundingBox = new Rectangle(x * (imageWidth + buffer), y * (imageHeight + yBuffer), imageWidth, imageHeight)
                 });
@@ -82,6 +84,17 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     Content = () => Invariant($"{challenge.TeamIdToUsersWhoVotedMapping[id].Count}"),
                     BoundingBox = new Rectangle(x * (imageWidth + buffer), imageHeight + y * (imageHeight + yBuffer), imageWidth, yBuffer)
                 });
+
+                unityImages.Add(new UnityImage
+                {
+                    Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = challenge.Colors.Select(color => colorMap[color]).ToList() },
+                    RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = challenge.UserSubmittedDrawings.Where(kvp => kvp.Value.TeamId == id).Select(kvp => kvp.Key).ToList() },
+                    Footer = new StaticAccessor<string> { Value = id.ToString() },
+                    VoteCount = new DynamicAccessor<int?> { DynamicBacker = () => challenge.TeamIdToUsersWhoVotedMapping?[id]?.Count },
+                    BackgroundColor = new DynamicAccessor<IReadOnlyList<int>> { DynamicBacker = () => challenge.TeamIdToUsersWhoVotedMapping[id].Count == challenge.TeamIdToUsersWhoVotedMapping.Max((kvp)=> kvp.Value.Count) ? new List<int> { 32, 178, 170 } : new List<int> { 255, 255, 255 } }
+                });
+
+
                 x++;
                 if (x >= imagesPerRow)
                 {
@@ -89,6 +102,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     y++;
                 }
             }
+            this.UnityView = new UnityView
+            {
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
+                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages },
+                Title = new StaticAccessor<string> { Value = "Voting results!" },
+            };
         }
     }
 }

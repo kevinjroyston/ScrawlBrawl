@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
 using RoystonGame.TV;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,6 @@ namespace RoystonGame.Web.Hubs
     {
         private Timer _timer;
         private IHubContext<UnityHub> UnityHubNotifier { get; }
-        private Guid? LastViewId { get; set; }
 
         /// <summary>
         /// Class which runs on a background thread constantly sending updates to connected unity game clients.
@@ -30,8 +30,9 @@ namespace RoystonGame.Web.Hubs
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
+            // TODO: increase tick-rate ?
             _timer = new Timer(DoWork, null, TimeSpan.Zero,
-                TimeSpan.FromSeconds(5));
+                TimeSpan.FromSeconds(1));
 
             return Task.CompletedTask;
         }
@@ -41,23 +42,27 @@ namespace RoystonGame.Web.Hubs
         /// </summary>
         private void DoWork(object _)
         {
-            // Gets the Unity view of the active GameState.
-            UnityView view = GameManager.GetActiveUnityView();
-
-            // Refresh will re-fetch all dynamic values. Returning true if they changed from last fetch.
-            bool needToRefresh = view?.Refresh() ?? false;
-
-            // If this view has a different Id than our last stored Id we need to update (this is relevant if the View has no DynamicAccessors)
-            needToRefresh |= view?.Id != LastViewId;
-
-            // Store the last view id.
-            LastViewId = view?.Id;
-
-            // Check if we need to send data over the wire.
-            if (needToRefresh)
+            try
             {
-                // Push updates to all clients.
-                UnityHubNotifier.Clients.All.SendAsync("UpdateState", view);
+                // TODO: group by lobby id.
+
+                // Gets the Unity view of the active GameState.
+                UnityView view = GameManager.GetActiveUnityView();
+
+                // Refresh will re-fetch all dynamic values. Returning true if they changed from last fetch.
+                bool needToRefresh = view?.Refresh() ?? false;
+
+                // Check if we need to send data over the wire.
+                if (needToRefresh)
+                {
+                    // Push updates to all clients.
+                    UnityHubNotifier.Clients.All.SendAsync("UpdateState", view);
+                }
+            }
+            catch(Exception e)
+            {
+                // TODO: lobby id logic here.
+                GameManager.ReportGameError(ErrorType.UnityClient, null, e);
             }
         }
 

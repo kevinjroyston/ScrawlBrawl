@@ -46,6 +46,7 @@ namespace RoystonGame.Web.DataModels.UnityObjects
         public IAccessor<IReadOnlyList<User>> RelevantUsers { private get; set; }
         public IReadOnlyList<User> _RelevantUsers { get => RelevantUsers?.Value; }
 
+        // TODO: add some validation to this setter.
         [JsonIgnore]
         public IAccessor<IReadOnlyList<int>> BackgroundColor { private get; set; }
         public IReadOnlyList<int> _BackgroundColor { get => BackgroundColor?.Value; }

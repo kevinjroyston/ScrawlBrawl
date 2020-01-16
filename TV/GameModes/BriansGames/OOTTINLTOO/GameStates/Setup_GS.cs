@@ -77,7 +77,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     RealPrompt = input.SubForms[0].ShortAnswer,
                     DeceptionPrompt = input.SubForms[1].ShortAnswer,
                 });
-                return true;
+                return (true, string.Empty);
             });
         }
 
@@ -122,7 +122,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 formSubmitListener: (User user, UserFormSubmission input) =>
                 {
                     challenge.UserSubmittedDrawings[user] = input.SubForms[0].Drawing;
-                    return true;
+                    return (true, string.Empty);
                 }));
                 index++;
             }
@@ -167,7 +167,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             this.UnityView = new UnityView
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
-                UnityImages = new List<UnityImage>(),
                 Instructions = new StaticAccessor<string> { Value = "Complete all the prompts on your devices." },
             };
         }

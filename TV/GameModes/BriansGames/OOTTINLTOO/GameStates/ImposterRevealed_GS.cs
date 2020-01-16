@@ -47,12 +47,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             this.Entrance = waitForLeader;
 
             this.GameObjects = new List<GameObject>();
-            this.UnityView = new UnityView
-            {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
-                UnityImages = new List<UnityImage>(),
-                Title = new StaticAccessor<string> { Value = "Reveal!" },
-            };
+            var unityImages = new List<UnityImage>();
             int x = 0, y = 0;
             /*// Plays 18
             int imageWidth = 300;
@@ -70,7 +65,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             foreach ((User user, string userDrawing) in challenge.IdToDrawingMapping.Values)
             {
                 Func<string> footer = () =>Invariant($"{((user == challenge.OddOneOut) ? challenge.UsersWhoFoundOOO.Count : (challenge.UsersWhoConfusedWhichUsers.ContainsKey(user) ? challenge.UsersWhoConfusedWhichUsers[user].Count : 0))}");
-                this.UnityView.UnityImages.Add(new UnityImage
+                unityImages.Add(new UnityImage
                 {
                     Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string> { userDrawing } },
                     // TODO: show which users voted here.
@@ -97,6 +92,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     y++;
                 }
             }
+            this.UnityView = new UnityView
+            {
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
+                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages },
+                Title = new StaticAccessor<string> { Value = "Reveal!" },
+            };
         }
     }
 }

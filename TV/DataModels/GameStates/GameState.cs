@@ -82,7 +82,7 @@ namespace RoystonGame.TV.DataModels.GameStates
         #region TVRendering
 
         protected List<GameObject> GameObjects { get; set; }
-        protected UnityView UnityView { get; set; }
+        protected UnityView UnityView { get; set; } = new UnityView { ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.NoUnityViewConfigured } };
 
         public IEnumerable<GameObject> GetActiveGameObjects()
         {

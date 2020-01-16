@@ -22,9 +22,9 @@ namespace RoystonGame.TV.DataModels.UserStates
             // Empty
         }
 
-        public override bool HandleUserFormInput(User user, UserFormSubmission userInput)
+        public override bool HandleUserFormInput(User user, UserFormSubmission userInput, out string error)
         {
-            if(!base.HandleUserFormInput(user, userInput))
+            if(!base.HandleUserFormInput(user, userInput, out error))
             {
                 return false;
             }

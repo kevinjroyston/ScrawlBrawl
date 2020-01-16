@@ -20,6 +20,7 @@ using RoystonGame.WordLists;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.UnityObjects;
+using System.Collections.Concurrent;
 
 namespace RoystonGame.TV
 {
@@ -31,8 +32,8 @@ namespace RoystonGame.TV
         #endregion
 
         #region User and Object trackers
-        private Dictionary<IPAddress, User> RegisteredUsers { get; } = new Dictionary<IPAddress, User>();
-        private Dictionary<IPAddress, User> UnregisteredUsers { get; } = new Dictionary<IPAddress, User>();
+        private ConcurrentDictionary<IPAddress, User> RegisteredUsers { get; } = new ConcurrentDictionary<IPAddress, User>();
+        private ConcurrentDictionary<IPAddress, User> UnregisteredUsers { get; } = new ConcurrentDictionary<IPAddress, User>();
 
         private List<GameObject> AllGameObjects { get; } = new List<GameObject>();
         #endregion
@@ -52,6 +53,14 @@ namespace RoystonGame.TV
             { GameMode.ImposterSyndrome, () => new OneOfTheseThingsIsNotLikeTheOtherOneGameMode() },
             { GameMode.TwoToneDrawing, () => new TwoToneDrawingGameMode() }
         });
+
+        internal static void ReportGameError(ErrorType type, User user, Exception error)
+        {
+            // Log error to console (TODO redirect to file on release builds).
+            Console.Error.WriteLine(error);
+
+            // TODO: restart lobbies or evict users based on error type and volume.
+        }
         #endregion
 
         public GameManager(RunGame gameRunner)
@@ -123,10 +132,6 @@ namespace RoystonGame.TV
             {
                 case EndOfGameRestartType.NewPlayers:
                     Singleton.EndOfGameRestart.Transition(Singleton.UserRegistration);
-                    foreach((IPAddress address, User user) in Singleton.RegisteredUsers)
-                    {
-                        Singleton.UnregisteredUsers.Add(address, user);
-                    }
                     Singleton.RegisteredUsers.Clear();
 
                     Singleton.UserRegistration = new UserSignupGameState(lobbyClosedCallback: CloseLobby);
@@ -181,8 +186,8 @@ namespace RoystonGame.TV
 
         public static void RegisterUser(User user, string displayName, string selfPortrait)
         {
-            //todo parameter validation
-            if (!Singleton.UnregisteredUsers.ContainsValue(user))
+            IPAddress callerIP = Singleton.UnregisteredUsers.FirstOrDefault((kvp) => kvp.Value == user).Key;
+            if (callerIP == null)
             {
                 throw new Exception("Tried to register unknown user");
             }
@@ -195,43 +200,45 @@ namespace RoystonGame.TV
             user.DisplayName = displayName;
             user.SelfPortrait = selfPortrait;
 
-            IPAddress callerIP = Singleton.UnregisteredUsers.First((kvp) => kvp.Value == user).Key;
-
-            Singleton.RegisteredUsers.Add(callerIP, user);
-            Singleton.UnregisteredUsers.Remove(callerIP);
+            if(!Singleton.UnregisteredUsers.TryRemove(callerIP, out User usr)
+                || usr.UserId != user.UserId
+                || !Singleton.RegisteredUsers.TryAdd(callerIP, user))
+            {
+                throw new Exception("Unexpected error occurred while registering user. Refresh and try again");
+            }
         }
-
-        object UserIPLookupLock { get; set; } = new object();
 
         public static User MapIPToUser(IPAddress callerIP, out bool newUser)
         {
-            lock (Singleton.UserIPLookupLock)
+            newUser = false;
+            try
             {
-                newUser = false;
-                try
+                if (Singleton.UnregisteredUsers.ContainsKey(callerIP))
                 {
-                    User user;
-                    if (Singleton.UnregisteredUsers.ContainsKey(callerIP))
-                    {
-                        user = Singleton.UnregisteredUsers[callerIP];
-                    }
-                    else if (Singleton.RegisteredUsers.ContainsKey(callerIP))
-                    {
-                        user = Singleton.RegisteredUsers[callerIP];
-                    }
-                    else
-                    {
-                        user = new User();
-                        newUser = true;
-                        Singleton.UnregisteredUsers.Add(callerIP, user);
-                        Singleton.WaitForLobby.Inlet(user, UserStateResult.Success, null);
-                    }
-                    return user;
+                    return Singleton.UnregisteredUsers[callerIP];
                 }
-                catch
+                else if (Singleton.RegisteredUsers.ContainsKey(callerIP))
+                {
+                    return Singleton.RegisteredUsers[callerIP];
+                }
+
+                User user = new User();
+                if(Singleton.UnregisteredUsers.TryAdd(callerIP, user))
+                {
+                    newUser = true;
+                    Singleton.WaitForLobby.Inlet(user, UserStateResult.Success, null);
+                }
+                else
                 {
                     return null;
                 }
+                return user;
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+                newUser = false;
+                return null;
             }
         }
 

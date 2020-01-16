@@ -19,8 +19,8 @@ namespace RoystonGame.TV.DataModels.UserStates
     public class SimplePromptUserState : UserState
     {
         public static UserPrompt DefaultPrompt(User user) => new UserPrompt() { Description = "Waiting . . .", RefreshTimeInMs = 1000 };
-        private List<Func<User, UserFormSubmission, bool>> FormSubmitListeners { get; set; } = new List<Func<User, UserFormSubmission, bool>>();
-        public SimplePromptUserState(Func<User, UserPrompt> prompt = null, Connector outlet = null, TimeSpan? maxPromptDuration = null, Func<User, UserFormSubmission, bool> formSubmitListener = null)
+        private List<Func<User, UserFormSubmission, (bool, string)>> FormSubmitListeners { get; set; } = new List<Func<User, UserFormSubmission, (bool, string)>>();
+        public SimplePromptUserState(Func<User, UserPrompt> prompt = null, Connector outlet = null, TimeSpan? maxPromptDuration = null, Func<User, UserFormSubmission, (bool, string)> formSubmitListener = null)
             : base(outlet, maxPromptDuration, prompt ?? DefaultPrompt)
         {
             if (formSubmitListener!= null)
@@ -29,14 +29,14 @@ namespace RoystonGame.TV.DataModels.UserStates
             }
         }
 
-        public void AddFormSubmitListener(Func<User, UserFormSubmission, bool> listener)
+        public void AddFormSubmitListener(Func<User, UserFormSubmission, (bool, string)> listener)
         {
             FormSubmitListeners.Add(listener);
         }
 
-        public override bool HandleUserFormInput(User user, UserFormSubmission userInput)
+        public override bool HandleUserFormInput(User user, UserFormSubmission userInput, out string error)
         {
-            if (!base.HandleUserFormInput(user, userInput))
+            if (!base.HandleUserFormInput(user, userInput, out error))
             {
                 return false;
             }
@@ -46,10 +46,13 @@ namespace RoystonGame.TV.DataModels.UserStates
             {
                 try
                 {
-                    success &= listener?.Invoke(user, userInput) ?? true;
+                    var successTuple = listener?.Invoke(user, userInput) ?? null;
+                    error = !string.IsNullOrWhiteSpace(error) ? error : (successTuple?.Item2 ?? string.Empty);
+                    success &= successTuple?.Item1 ?? true;
                 }
                 catch
                 {
+                    error = "Something went wrong.";
                     return false;
                 }
             }

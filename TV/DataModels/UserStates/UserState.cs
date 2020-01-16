@@ -149,12 +149,13 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// </summary>
         /// <param name="userInput">Validates the users form input and decides what UserStateResult to return to StatecompletedCallback.</param>
         /// <returns>True if the user input was accepted, false if there was an issue.</returns>
-        public virtual bool HandleUserFormInput(User user, UserFormSubmission userInput)
+        public virtual bool HandleUserFormInput(User user, UserFormSubmission userInput, out string error)
         {
             UserPrompt userPrompt = GetUserPromptHolder(user).Prompt;
 
             if (userInput.Id != userPrompt.Id)
             {
+                error = "Outdated form submitted, try again or try refreshing the page.";
                 return false;
             }
 
@@ -168,6 +169,7 @@ namespace RoystonGame.TV.DataModels.UserStates
                     ||((prompt.Answers != null && prompt.Answers.Length>0 ) == (!userInput.SubForms[i].RadioAnswer.HasValue || userInput.SubForms[i].RadioAnswer.Value<0 || userInput.SubForms[i].RadioAnswer.Value >= prompt.Answers.Length))
                     ||((prompt.Dropdown != null && prompt.Dropdown.Length>0 ) == (!userInput.SubForms[i].DropdownChoice.HasValue || userInput.SubForms[i].DropdownChoice.Value<0 || userInput.SubForms[i].DropdownChoice.Value >= prompt.Dropdown.Length)))
                 {
+                    error = "Not all form fields have been filled out";
                     return false;
                 }
 
@@ -175,6 +177,7 @@ namespace RoystonGame.TV.DataModels.UserStates
             }
 
             // As this is an abstract class this function serves only to validate the user input rather than initiate flows.
+            error = string.Empty;
             return true;
         }
 

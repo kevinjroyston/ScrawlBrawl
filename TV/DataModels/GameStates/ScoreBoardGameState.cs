@@ -53,9 +53,21 @@ namespace RoystonGame.TV.DataModels.GameStates
 
             this.UnityView = new UnityView
             {
-                // TVScreenId.Scoreboard indicates to the unity client to look at the user scores and render a scoreboard.
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.Scoreboard },
                 Title = new StaticAccessor<string> { Value = title },
+                UnityImages = new DynamicAccessor<IReadOnlyList<UnityImage>>
+                {
+                    DynamicBacker = () => GameManager.GetActiveUsers().OrderByDescending(usr => usr.Score).Select(usr =>
+                        new UnityImage
+                        {
+                            Title = new StaticAccessor<string> { Value = usr.DisplayName },
+                            Base64Pngs = new StaticAccessor<IReadOnlyList<string>>
+                            {
+                                Value = new List<string> { usr.SelfPortrait }
+                            },
+                            VoteCount = new StaticAccessor<int?> { Value = usr.Score },
+                        }).ToList()
+                }
             };
         }
     }
