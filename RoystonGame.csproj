@@ -31,7 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="TV\GameEngine\Icon.ico" />
     <None Remove="WordLists\nouns.txt" />
   </ItemGroup>
 
@@ -46,7 +45,6 @@
     <Content Include="ClientApp\src\tslint.json" />
     <Content Include="ClientApp\tsconfig.json" />
     <Content Include="ClientApp\tslint.json" />
-    <Content Include="TV\GameEngine\Icon.ico" />
     <Content Include="Web\wwwroot\favicon.ico" />
     <Content Include="WordLists\nouns.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -54,15 +52,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <MonoGameContentReference Include="TV\GameEngine\Content\Content.mgcb" ContentOutputDir="TEST" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="TV\GameModes\KevinsGames\" />
   </ItemGroup>
-  <PropertyGroup>
-    <ApplicationIcon>TV\GameEngine\Icon.ico</ApplicationIcon>
-  </PropertyGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->

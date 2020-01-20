@@ -98,12 +98,7 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// <param name="promptGenerator">A function to be called the first time a user requests a prompt.</param>
         public UserState(Connector outlet, TimeSpan? stateTimeoutDuration, Func<User, UserPrompt> promptGenerator)
         {
-            if (promptGenerator == null)
-            {
-                throw new Exception("Prompt generator cannot be null");
-            }
-
-            this.PromptGenerator = promptGenerator;
+            this.PromptGenerator = promptGenerator ?? throw new Exception("Prompt generator cannot be null");
             this.StateTimeoutDuration = stateTimeoutDuration;
             
             if(outlet != null)

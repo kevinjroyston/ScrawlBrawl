@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using RoystonGame.TV;
-using RoystonGame.TV.GameEngine;
 using RoystonGame.Web.DataModels.Enums;
+using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +14,39 @@ namespace RoystonGame.Web.Hubs
     /// </summary>
     public class UnityHub : Hub
     {
+        // TODO: this class needs some work.
         public override async Task OnConnectedAsync()
         {
             Console.WriteLine("Client connected via SignalR");
-            // TODO: lobby id logic here?
-            await Clients.All.SendAsync("UpdateState", GameManager.GetActiveUnityView());
+            await Task.Yield();
+        }
+        public void JoinRoom(string lobbyFriendlyName)
+        {
+            try
+            {
+                Lobby lobby = GameManager.GetLobby(lobbyFriendlyName);
+                if (lobby != null)
+                {
+                    LeaveAllGroups();
+                    Groups.AddToGroupAsync(Context.ConnectionId, lobby.LobbyId.ToString());
+
+                    UnityView view = lobby.GetActiveUnityView();
+                    Clients.Caller.SendAsync("UpdateState", view);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+            }
+        }
+        private void LeaveAllGroups()
+        {
+            List<Task> tasks = new List<Task>();
+            foreach(Lobby lobby in GameManager.GetLobbies())
+            {
+                tasks.Add(Groups.RemoveFromGroupAsync(Context.ConnectionId, lobby.LobbyId.ToString()));
+            }
+            Task.WaitAll(tasks.ToArray());
         }
     }
 }

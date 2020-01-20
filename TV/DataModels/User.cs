@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using RoystonGame.TV.DataModels.UserStates;
@@ -20,7 +21,8 @@ namespace RoystonGame.TV.DataModels
         /// <summary>
         /// The lobby id the user is a part of.
         /// </summary>
-        public Guid LobbyId { get; set; }
+        [JsonIgnore]
+        public Guid? LobbyId { get; set; }
 
         /// <summary>
         /// The current state of the user.
@@ -48,12 +50,16 @@ namespace RoystonGame.TV.DataModels
         /// <summary>
         /// Lock used for ensuring only one User form submission is being processed at a time.
         /// </summary>
+        [JsonIgnore]
         public object LockObject { get; set; } = new object();
 
+        [JsonIgnore]
+        public IPAddress IP { get; }
 
-        public User()
+
+        public User(IPAddress address)
         {
-            // Empty
+            IP = address;
         }
 
         /// <summary>

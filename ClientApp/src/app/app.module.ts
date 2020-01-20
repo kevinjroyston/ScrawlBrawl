@@ -13,7 +13,7 @@ import { ColorPickerModule } from 'ngx-color-picker';
 @NgModule({
   declarations: [
     AppComponent,
-   // NavMenuComponent,
+    NavMenuComponent,
     FetchDataComponent,
     DrawingDirective,
     Safe,

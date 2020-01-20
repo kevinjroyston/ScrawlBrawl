@@ -4,8 +4,6 @@ using RoystonGame.TV.DataModels;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.GameStates;
 using RoystonGame.TV.DataModels.UserStates;
-using RoystonGame.TV.GameEngine;
-using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.DataModels;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
@@ -57,7 +55,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
         };
 
         private ChallengeTracker SubChallenge { get; set; }
-        public Gameplay_GS(ChallengeTracker challengeTracker, Action<User,UserStateResult,UserFormSubmission> outlet = null) : base(outlet)
+        public Gameplay_GS(Lobby lobby, ChallengeTracker challengeTracker, Action<User,UserStateResult,UserFormSubmission> outlet = null) : base(lobby, outlet)
         {
             SubChallenge = challengeTracker;
             int i = 0;
@@ -90,28 +88,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 });
             this.Entrance = pickDrawing;
 
-            UserStateTransition waitForUsers = new WaitForAllPlayers(null, this.Outlet, null);
+            UserStateTransition waitForUsers = new WaitForAllPlayers(this.Lobby, null, this.Outlet, null);
             waitForUsers.AddStateEndingListener(() => this.UpdateScores());
             pickDrawing.SetOutlet(waitForUsers.Inlet);
             waitForUsers.SetOutlet(this.Outlet);
 
-            this.GameObjects = new List<GameObject>();
             var unityImages = new List<UnityImage>();
-
-            int x =0, y = 0;
-            /*// Plays 18
-            int imageWidth = 300;
-            int imageHeight = 300;
-            int imagesPerRow = 6;
-            int buffer = 10;
-            int yBuffer = 50;*/
-
-            // Plays 8
-            int imageWidth = 400;
-            int imageHeight = 400;
-            int imagesPerRow = 4;
-            int buffer = 25;
-            int yBuffer = 75;
             foreach ((string id, (User owner, string userDrawing)) in this.SubChallenge.IdToDrawingMapping)
             {
                 unityImages.Add(new UnityImage
@@ -120,22 +102,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     //RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = new List<User> { owner } }
                     Footer = new StaticAccessor<string> { Value = id }
                 });
-
-                this.GameObjects.Add(new UserDrawingObject(userDrawing)
-                {
-                    BoundingBox = new Rectangle(x * (imageWidth + buffer), y * (imageHeight + yBuffer), imageWidth, imageHeight)
-                });
-                this.GameObjects.Add(new TextObject
-                {
-                    Content = Invariant($"{id}"),
-                    BoundingBox = new Rectangle(x * (imageWidth + buffer), imageHeight + y * (imageHeight + yBuffer), imageWidth, yBuffer)
-                });
-                x ++;
-                if (x >= imagesPerRow)
-                {
-                    x = 0;
-                    y++;
-                }
             }
 
             this.UnityView = new UnityView
@@ -146,7 +112,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             };
         }
 
-        int TotalPointsToAward { get; } = 100 * (GameManager.GetActiveUsers().Count);
+        int TotalPointsToAward { get { return 100 * (this.Lobby.GetActiveUsers().Count); } }
         private void UpdateScores()
         {
             foreach (User user in this.SubChallenge.UsersWhoFoundOOO)
@@ -159,7 +125,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             }
 
             // If EVERYBODY figures out the diff, the owner loses some points but not as many.
-            if (this.SubChallenge.UsersWhoFoundOOO.Where(user => user != this.SubChallenge.Owner).Count() == (GameManager.GetActiveUsers().Count-1))
+            if (this.SubChallenge.UsersWhoFoundOOO.Where(user => user != this.SubChallenge.Owner).Count() == (this.Lobby.GetActiveUsers().Count-1))
             {
                 this.SubChallenge.Owner.Score -= TotalPointsToAward / 2;
             }

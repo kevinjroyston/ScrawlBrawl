@@ -5,8 +5,6 @@ using Microsoft.Xna.Framework;
 using RoystonGame.TV.ControlFlows;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.UserStates;
-using RoystonGame.TV.GameEngine;
-using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
@@ -42,26 +40,25 @@ namespace RoystonGame.TV.DataModels.GameStates
             { EndOfGameRestartType.NewPlayers, "Change Players" },
         };
 
-        public EndOfGameState(Action<EndOfGameRestartType> endOfGameRestartCallback, Connector outlet = null) : base(outlet)
+        public EndOfGameState(Lobby lobby, Action<EndOfGameRestartType> endOfGameRestartCallback, Connector outlet = null) : base(lobby, outlet)
         {
-            UserState partyLeaderPrompt = new SimplePromptUserState(ContinuePrompt);
-            UserStateTransition waitForLeader = new WaitForPartyLeader(this.Outlet, partyLeaderPrompt, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
-            {
-                int? selectedIndex = userInput.SubForms[0].RadioAnswer;
-                if (selectedIndex == null)
+            UserState partyLeaderPrompt = new SimplePromptUserState(prompt: ContinuePrompt);
+            UserStateTransition waitForLeader = new WaitForPartyLeader(
+                lobby: this.Lobby,
+                outlet: this.Outlet,
+                partyLeaderPrompt: partyLeaderPrompt,
+                partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
                 {
-                    throw new Exception("Should have been caught in user input validation");
-                }
-                // TODO: validate that below works.
-                endOfGameRestartCallback(RestartTypes.Keys.ToList()[selectedIndex.Value]);
-            });
+                    int? selectedIndex = userInput.SubForms[0].RadioAnswer;
+                    if (selectedIndex == null)
+                    {
+                        throw new Exception("Should have been caught in user input validation");
+                    }
+                    // TODO: validate that below works.
+                    endOfGameRestartCallback(RestartTypes.Keys.ToList()[selectedIndex.Value]);
+                });
 
             this.Entrance = waitForLeader;
-
-            this.GameObjects = new List<GameObject>()
-            {
-                new TextObject { Content = "Waiting for party leader . . ." }
-            };
 
             this.UnityView = new UnityView
             {

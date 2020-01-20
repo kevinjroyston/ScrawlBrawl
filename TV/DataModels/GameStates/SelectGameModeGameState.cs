@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using RoystonGame.TV.ControlFlows;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.UserStates;
-using RoystonGame.TV.GameEngine;
-using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
@@ -38,20 +36,15 @@ namespace RoystonGame.TV.DataModels.GameStates
         /// Initializes a GameState to be used in a FSM.
         /// </summary>
         /// <param name="userStateCompletedCallback">Called back when the state completes.</param>
-        public SelectGameModeGameState(Connector outlet, string[] availableGameModes, Action<int?> selectedGameModeCallback) : base(outlet)
+        public SelectGameModeGameState(Lobby lobby, Connector outlet, string[] availableGameModes, Action<int?> selectedGameModeCallback) : base(lobby, outlet)
         {
-            UserState partyLeaderPrompt = new SimplePromptUserState(GameModePrompt(availableGameModes));
-            UserStateTransition waitForLeader = new WaitForPartyLeader(this.Outlet, partyLeaderPrompt, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
+            UserState partyLeaderPrompt = new SimplePromptUserState(prompt: GameModePrompt(availableGameModes));
+            UserStateTransition waitForLeader = new WaitForPartyLeader(this.Lobby, this.Outlet, partyLeaderPrompt, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
             {
                 selectedGameModeCallback(userInput.SubForms[0].RadioAnswer);
             });
 
             this.Entrance = waitForLeader;
-
-            this.GameObjects = new List<GameObject>()
-            {
-                new TextObject { Content = "Waiting for party leader . . ." }
-            };
 
             this.UnityView = new UnityView
             {

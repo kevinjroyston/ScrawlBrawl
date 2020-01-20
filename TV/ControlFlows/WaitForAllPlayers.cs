@@ -4,6 +4,7 @@ using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.Web.DataModels.Requests;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,10 +17,9 @@ namespace RoystonGame.TV.ControlFlows
 {
     public class WaitForAllPlayers : WaitForTrigger
     {
-        // Literally only needed to satisfy the new() constraint needed by StateExtensions.cs
-        public WaitForAllPlayers() : this(null) { }
-
         protected Dictionary<User, bool> UsersToWaitFor { get; set; } = new Dictionary<User, bool>();
+
+        private Lobby Lobby { get; }
 
         /// <summary>
         /// Initializes a new <see cref="WaitForTrigger"/>.
@@ -28,11 +28,14 @@ namespace RoystonGame.TV.ControlFlows
         /// <param name="waitingState">The waiting state to use while waiting for the trigger. The outlet of this state will be overwritten</param>
         /// <param name="outlet">The state to move users to post trigger.</param>
         public WaitForAllPlayers(
+            Lobby lobby,
             List<User> usersToWaitFor = null,
             Connector outlet = null,
             WaitingUserState waitingState = null)
             : base(outlet, waitingState ?? WaitingUserState.DefaultState())
         {
+            Debug.Assert(lobby != null);
+            this.Lobby = lobby;
             if(usersToWaitFor == null)
             {
                 return;
@@ -46,7 +49,7 @@ namespace RoystonGame.TV.ControlFlows
         /// </summary>
         public void SetUsersToWaitFor(List<User> usersToWaitFor = null)
         {
-            usersToWaitFor ??= GameManager.GetActiveUsers().ToList();
+            usersToWaitFor ??= this.Lobby.GetActiveUsers().ToList();
 
             foreach (User waitForMe in usersToWaitFor)
             {

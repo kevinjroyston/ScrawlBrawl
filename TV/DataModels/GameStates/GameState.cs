@@ -1,7 +1,6 @@
 ﻿using RoystonGame.TV.ControlFlows;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.UserStates;
-using RoystonGame.TV.GameEngine;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
@@ -29,6 +28,7 @@ namespace RoystonGame.TV.DataModels.GameStates
     public abstract class GameState : State
     {
         protected State Entrance { get; set; }
+        protected Lobby Lobby { get; }
 
         #region TrackingFlags
         private bool CalledEnterState { get; set; } = false;
@@ -38,9 +38,11 @@ namespace RoystonGame.TV.DataModels.GameStates
         /// <summary>
         /// Initializes a GameState to be used in a FSM.
         /// </summary>
+        /// <param name="lobby">The lobby this gamestate belongs to.</param>
         /// <param name="userOutlet">Called back when the state completes.</param>
-        public GameState(Connector userOutlet = null)
+        public GameState(Lobby lobby, Connector userOutlet = null)
         {
+            Lobby = lobby;
             if (userOutlet != null)
             {
                 this.SetOutlet(userOutlet);
@@ -59,7 +61,7 @@ namespace RoystonGame.TV.DataModels.GameStates
             }
 
             this.CalledEnterState = true;
-            GameManager.TransitionCurrentGameState(this);
+            this.Lobby.TransitionCurrentGameState(this);
         }
 
         /// <summary>
@@ -80,18 +82,7 @@ namespace RoystonGame.TV.DataModels.GameStates
         }
 
         #region TVRendering
-
-        protected List<GameObject> GameObjects { get; set; }
         protected UnityView UnityView { get; set; } = new UnityView { ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.NoUnityViewConfigured } };
-
-        public IEnumerable<GameObject> GetActiveGameObjects()
-        {
-            if (GameObjects == null)
-            {
-                throw new Exception("Game objects not defined for this game state!!");
-            }
-            return GameObjects;
-        }
 
         public UnityView GetActiveUnityView()
         {

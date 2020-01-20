@@ -4,8 +4,6 @@ using System.Linq;
 using RoystonGame.TV.ControlFlows;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.UserStates;
-using RoystonGame.TV.GameEngine;
-using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
@@ -28,28 +26,16 @@ namespace RoystonGame.TV.DataModels.GameStates
             SubmitButton = true
         };
 
-        public ScoreBoardGameState(Connector outlet=null, TimeSpan? maxWaitTime = null, string title = "Scores:") : base(outlet)
+        public ScoreBoardGameState(Lobby lobby, Connector outlet=null, TimeSpan? maxWaitTime = null, string title = "Scores:") : base(lobby, outlet)
         {
-            UserState partyLeaderState = new SimplePromptUserState(PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
+            UserState partyLeaderState = new SimplePromptUserState(prompt: PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
 
             UserStateTransition waitForLeader = new WaitForPartyLeader(
+                lobby: this.Lobby,
                 outlet: this.Outlet,
                 partyLeaderPrompt: partyLeaderState);
 
             this.Entrance = waitForLeader;
-
-            this.GameObjects = new List<GameObject>()
-            {
-                new DynamicTextObject { 
-                    Content =  () =>
-                    {
-                        List<User> scoreboard = GameManager.GetActiveUsers().OrderByDescending((user)=> user.Score).ToList();
-                        string scores = string.Join("\n", scoreboard.Select(user => Invariant($"{user.DisplayName}: {user.Score}")));
-
-                        return Invariant($"{title}\n{scores}");
-                    }
-                }
-            };
 
             this.UnityView = new UnityView
             {
@@ -57,7 +43,7 @@ namespace RoystonGame.TV.DataModels.GameStates
                 Title = new StaticAccessor<string> { Value = title },
                 UnityImages = new DynamicAccessor<IReadOnlyList<UnityImage>>
                 {
-                    DynamicBacker = () => GameManager.GetActiveUsers().OrderByDescending(usr => usr.Score).Select(usr =>
+                    DynamicBacker = () => this.Lobby.GetActiveUsers().OrderByDescending(usr => usr.Score).Select(usr =>
                         new UnityImage
                         {
                             Title = new StaticAccessor<string> { Value = usr.DisplayName },

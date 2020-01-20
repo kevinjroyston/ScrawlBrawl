@@ -1,204 +1,155 @@
-﻿using RoystonGame.TV.GameModes;
-using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels;
+﻿using RoystonGame.TV.DataModels;
 using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.DataModels.GameStates;
-using RoystonGame.TV.Extensions;
-using RoystonGame.TV.GameEngine;
-using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.Web.DataModels.Requests;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using RoystonGame.Web.DataModels.Responses;
 using System.Net;
 using RoystonGame.TV.DataModels.UserStates;
-using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO;
-using RoystonGame.WordLists;
-using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System.Collections.Concurrent;
+using RoystonGame.Web.DataModels;
 
 namespace RoystonGame.TV
 {
     public class GameManager
     {
         #region References
-        public static GameManager Singleton { get; set; }
-        private RunGame GameRunner { get; }
+        private static GameManager _internalSingleton;
+        public static GameManager Singleton
+        {
+            get
+            {
+                if (_internalSingleton == null)
+                {
+                    _internalSingleton = new GameManager();
+                }
+                return _internalSingleton;
+            }
+        }
         #endregion
 
         #region User and Object trackers
         private ConcurrentDictionary<IPAddress, User> RegisteredUsers { get; } = new ConcurrentDictionary<IPAddress, User>();
         private ConcurrentDictionary<IPAddress, User> UnregisteredUsers { get; } = new ConcurrentDictionary<IPAddress, User>();
+        private ConcurrentDictionary<Guid, Lobby> LobbyIdToLobbies { get; } = new ConcurrentDictionary<Guid, Lobby>();
+        private ConcurrentDictionary<string, Lobby> LobbyCodeToLobbies { get; } = new ConcurrentDictionary<string, Lobby>();
 
-        private List<GameObject> AllGameObjects { get; } = new List<GameObject>();
+        /// <summary>
+        /// Hacky fix for passing this info to GameNotifier thread.
+        /// </summary>
+        public ConcurrentBag<Guid> AbandonedLobbyIds { get; } = new ConcurrentBag<Guid>();
         #endregion
 
-        #region GameStates
-        private GameState CurrentGameState { get; set; }
-
-        private GameState UserRegistration { get; set; }
-        private GameState PartyLeaderSelect { get; set; }
-        private GameState EndOfGameRestart { get; set; }
-        private UserState WaitForLobby { get; set; }
-        #endregion
-
-        #region GameModes
-        private IReadOnlyDictionary<GameMode, Func<IGameMode>> GameModeMappings { get; set; } = new ReadOnlyDictionary<GameMode, Func<IGameMode>>(new Dictionary<GameMode, Func<IGameMode>>
+        #region States
+        private UserState UserRegistration { get; set; } = new SimplePromptUserState(
+            prompt: UserNamePrompt,
+            outlet: (User user, UserStateResult result, UserFormSubmission userInput) =>
+            {
+                GetLobby(user.LobbyId.Value).Inlet(user, result, userInput);
+            },
+            // Outlet won't be called until the below returns true
+            formSubmitListener: (User user, UserFormSubmission userInput) =>
+            {
+                return RegisterUser(userInput.SubForms[1].ShortAnswer, user, userInput.SubForms[0].ShortAnswer, userInput.SubForms[2].Drawing);
+            });
+        public static UserPrompt UserNamePrompt(User user) => new UserPrompt()
         {
-            { GameMode.ImposterSyndrome, () => new OneOfTheseThingsIsNotLikeTheOtherOneGameMode() },
-            { GameMode.TwoToneDrawing, () => new TwoToneDrawingGameMode() }
-        });
+            Title = "Welcome to the game!",
+            Description = "Fill in the information below!",
+            RefreshTimeInMs = 5000,
+            SubPrompts = new SubPrompt[]
+            {
+                new SubPrompt()
+                {
+                    Prompt = "Nickname:",
+                    ShortAnswer = true
+                },
+                new SubPrompt()
+                {
+                    Prompt = "Lobby Code:",
+                    ShortAnswer = true
+                },
+                new SubPrompt()
+                {
+                    Prompt = "Self Portrait:",
+                    Drawing = new DrawingPromptMetadata()
+                }
+            },
+            SubmitButton = true,
+        };
+        #endregion
 
-        internal static void ReportGameError(ErrorType type, User user, Exception error)
+        internal static void ReportGameError(ErrorType type, Guid? lobbyId = null, User user = null, Exception error = null)
         {
             // Log error to console (TODO redirect to file on release builds).
             Console.Error.WriteLine(error);
+            if (lobbyId.HasValue)
+            {
+                Lobby lobby = GetLobby(lobbyId.Value);
+                Singleton.LobbyCodeToLobbies.TryRemove(lobby.LobbyCode, out Lobby _);
+                Singleton.LobbyIdToLobbies.TryRemove(lobby.LobbyId, out Lobby _);
 
+                lobby.UnregisterAllUsers();
+                Singleton.AbandonedLobbyIds.Add(lobby.LobbyId);
+            }
             // TODO: restart lobbies or evict users based on error type and volume.
         }
-        #endregion
 
-        public GameManager(RunGame gameRunner)
+        private GameManager()
         {
-            if (Singleton == null)
-            {
-                Singleton = this;
-            }
-            else
+            if (_internalSingleton != null)
             {
                 throw new Exception("Tried to instantiate a second instance of GameManager.cs");
             }
-
-            this.GameRunner = gameRunner;
         }
 
-        bool Initialized { get; set; } = false;
-        object InitLock { get; set; } = new Object();
-        public static void Initialize()
+        public static void UnregisterUser(User user)
         {
-            lock (Singleton.InitLock)
+            if (Singleton.RegisteredUsers.ContainsKey(user.IP))
             {
-                if (Singleton.Initialized)
-                {
-                    return;
-                }
-                Singleton.Initialized = true;
-            }
-
-            Singleton.WaitForLobby = new WaitingUserState();
-            Singleton.UserRegistration = new UserSignupGameState(lobbyClosedCallback: CloseLobby);
-            Singleton.PartyLeaderSelect = new SelectGameModeGameState(null, Enum.GetNames(typeof(GameMode)), (int? gameMode) => SelectedGameMode(gameMode));
-            Singleton.EndOfGameRestart = new EndOfGameState(PrepareToRestartGame);
-
-            // Transitions other than NoWait will run into issues if used here but are fine in GameMode definitions.
-            Singleton.WaitForLobby
-                .Transition(Singleton.UserRegistration)
-                .Transition(Singleton.PartyLeaderSelect);
-
-            // Causes any new user who enters WaitForLobby to immediately pass through, also unblocks users actively waiting there.
-            Singleton.WaitForLobby.ForceChangeOfUserStates(UserStateResult.Success);
-        }
-
-        private int? LastSelectedGameMode { get; set; } = null;
-        public static void SelectedGameMode(int? index = null, GameState specialTransitionFrom = null)
-        {
-            if (!index.HasValue && !Singleton.LastSelectedGameMode.HasValue)
-            {
-                throw new Exception("Could not parse selected game mode, should have been rejected in form submit!!");
-            }
-            index = index ?? Singleton.LastSelectedGameMode;
-            Singleton.LastSelectedGameMode = index;
-
-            // Slightly hacky default because it can't be passed in.
-            GameState transitionFrom = specialTransitionFrom ?? Singleton.PartyLeaderSelect;
-
-            GameMode selectedMode = (GameMode)index.Value;
-            IGameMode game = Singleton.GameModeMappings[selectedMode]();
-            transitionFrom.Transition(game.EntranceState);
-            game.Transition(Singleton.EndOfGameRestart);
-        }
-
-        /// <summary>
-        /// Updates the FSM based on the type of restart.
-        /// </summary>
-        public static void PrepareToRestartGame(EndOfGameRestartType restartType)
-        {
-            switch (restartType)
-            {
-                case EndOfGameRestartType.NewPlayers:
-                    Singleton.EndOfGameRestart.Transition(Singleton.UserRegistration);
-                    Singleton.RegisteredUsers.Clear();
-
-                    Singleton.UserRegistration = new UserSignupGameState(lobbyClosedCallback: CloseLobby);
-                    Singleton.PartyLeaderSelect = new SelectGameModeGameState(null, Enum.GetNames(typeof(GameMode)), (int? gameMode) => SelectedGameMode(gameMode));
-                    Singleton.EndOfGameRestart = new EndOfGameState(PrepareToRestartGame);
-
-                    // Open the floodgates for users who are stuck waiting for lobby.
-                    Singleton.WaitForLobby.ForceChangeOfUserStates(UserStateResult.Success);
-                    break;
-                case EndOfGameRestartType.SameGameAndPlayers:
-                    GameState previousEndOfGameRestart = Singleton.EndOfGameRestart;
-                    Singleton.EndOfGameRestart = new EndOfGameState(PrepareToRestartGame);
-                    SelectedGameMode(specialTransitionFrom: previousEndOfGameRestart);
-                    foreach (User user in Singleton.RegisteredUsers.Values)
-                    {
-                        user.Score = 0;
-                    }
-                    break;
-                case EndOfGameRestartType.SamePlayers:
-                    Singleton.UserRegistration = new UserSignupGameState(lobbyClosedCallback: CloseLobby);
-                    Singleton.PartyLeaderSelect = new SelectGameModeGameState(null, Enum.GetNames(typeof(GameMode)), (int? gameMode) => SelectedGameMode(gameMode));
-                    Singleton.EndOfGameRestart.Transition(Singleton.PartyLeaderSelect);
-
-                    Singleton.EndOfGameRestart = new EndOfGameState(PrepareToRestartGame);
-                    foreach (User user in Singleton.RegisteredUsers.Values)
-                    {
-                        user.Score = 0;
-                    }
-                    break;
-                default:
-                    throw new Exception("Unknown restart game type");
+                Singleton.RegisteredUsers.Remove(user.IP, out User _);
             }
         }
 
-        public static void CloseLobby()
-        {
-            // Reset the wait for lobby node
-            Singleton.WaitForLobby = new WaitingUserState();
-            Singleton.WaitForLobby.Transition(Singleton.UserRegistration);
-
-            // Pull all unregistered users into this waiting state.
-            foreach (User user in Singleton.UnregisteredUsers.Values)
-            {
-                Singleton.WaitForLobby.Inlet(user, UserStateResult.Timeout, null);
-            }
-        }
-
-        public static IReadOnlyList<User> GetActiveUsers()
-        {
-            return Singleton.RegisteredUsers.Values.ToList().AsReadOnly();
-        }
-
-        public static void RegisterUser(User user, string displayName, string selfPortrait)
+        public static (bool, string) RegisterUser(string lobbyCode, User user, string displayName, string selfPortrait)
         {
             IPAddress callerIP = Singleton.UnregisteredUsers.FirstOrDefault((kvp) => kvp.Value == user).Key;
             if (callerIP == null)
             {
-                throw new Exception("Tried to register unknown user");
-            }
-
-            if (Singleton.RegisteredUsers.Count == 0)
-            {
-                user.IsPartyLeader = true;
+                return (false, "Can't register unknown user. Refresh the page.");
             }
 
             user.DisplayName = displayName;
             user.SelfPortrait = selfPortrait;
+
+            string errorMsg = "Lobby not found";
+
+            // TODO: move to a different lobby creation model.
+            // TODO: add way to leave a lobby.
+            if (!Singleton.LobbyCodeToLobbies.ContainsKey(lobbyCode))
+            {
+                Lobby newLobby = new Lobby(lobbyCode);
+
+                if (!Singleton.LobbyCodeToLobbies.TryAdd(lobbyCode, newLobby)
+                    || !Singleton.LobbyIdToLobbies.TryAdd(newLobby.LobbyId, newLobby))
+                {
+                    bool success = Singleton.LobbyCodeToLobbies.TryRemove(lobbyCode, out Lobby _);
+                    success &= Singleton.LobbyIdToLobbies.TryRemove(newLobby.LobbyId, out Lobby _);
+                    if (!success)
+                    {
+                        throw new Exception("Lobby lists corrupted");
+                    }
+                    return (false, "Unexpected error occurred while creating lobby. Refresh and try again.");
+                }
+            }
+
+            if(!Singleton.LobbyCodeToLobbies[lobbyCode].TryAddUser(user, out errorMsg))
+            {
+                return (false, errorMsg);
+            }
 
             if(!Singleton.UnregisteredUsers.TryRemove(callerIP, out User usr)
                 || usr.UserId != user.UserId
@@ -206,6 +157,7 @@ namespace RoystonGame.TV
             {
                 throw new Exception("Unexpected error occurred while registering user. Refresh and try again");
             }
+            return (true, string.Empty);
         }
 
         public static User MapIPToUser(IPAddress callerIP, out bool newUser)
@@ -222,11 +174,11 @@ namespace RoystonGame.TV
                     return Singleton.RegisteredUsers[callerIP];
                 }
 
-                User user = new User();
+                User user = new User(callerIP);
                 if(Singleton.UnregisteredUsers.TryAdd(callerIP, user))
                 {
                     newUser = true;
-                    Singleton.WaitForLobby.Inlet(user, UserStateResult.Success, null);
+                    Singleton.UserRegistration.Inlet(user, UserStateResult.Success, null);
                 }
                 else
                 {
@@ -242,58 +194,19 @@ namespace RoystonGame.TV
             }
         }
 
-        /// <summary>
-        /// Returns the GameObjects that are currently active for the given GameState.
-        /// </summary>
-        /// <returns>The active game objects</returns>
-        public static IEnumerable<GameObject> GetActiveGameObjects()
+        public static List<Lobby> GetLobbies()
         {
-            return Singleton?.CurrentGameState?.GetActiveGameObjects() ?? new List<GameObject>();
+            return Singleton.LobbyCodeToLobbies.Values.ToList();
         }
 
-        /// <summary>
-        /// Returns the unity view that needs to be potentially sent to the clients.
-        /// </summary>
-        /// <returns>The active unity view</returns>
-        public static UnityView GetActiveUnityView()
+        public static Lobby GetLobby(Guid lobbyId)
         {
-            return Singleton?.CurrentGameState?.GetActiveUnityView();
+            return Singleton.LobbyIdToLobbies.GetValueOrDefault(lobbyId);
         }
 
-        /// <summary>
-        /// Returns all GameObjects.
-        /// </summary>
-        /// <returns>All game objects.</returns>
-        public static IEnumerable<GameObject> GetAllGameObjects()
+        public static Lobby GetLobby(string friendlyName)
         {
-            return Singleton.AllGameObjects.AsReadOnly();
-        }
-
-        public static void RegisterGameObject(GameObject gameObject)
-        {
-            if (Singleton.AllGameObjects.Contains(gameObject))
-            {
-                // Hacky fix. TODO remove
-                gameObject.LoadContent(Singleton.GameRunner.Content, Singleton.GameRunner.GraphicsDevice);
-
-                return;
-                //throw new Exception("Registered gameobject twice");
-            }
-
-            Singleton.AllGameObjects.Add(gameObject);
-            gameObject.LoadContent(Singleton.GameRunner.Content, Singleton.GameRunner.GraphicsDevice);
-        }
-
-        /// <summary>
-        /// Transition to a new game state. A transition happens when the first user exits the game state. The other users presumably will be
-        /// configured to follow suit (but wont call this function).
-        /// </summary>
-        /// <param name="transitionTo">The GameState to treat as the current state.</param>
-        /// <remarks>This function is not responsible for moving users, users are individually responsible for traversing their FSMs. And the constructor of the FSMs
-        /// is responsible for adding proper UserStateTransitions to synchronize leaving game states.</remarks>
-        public static void TransitionCurrentGameState(GameState transitionTo)
-        {
-            Singleton.CurrentGameState = transitionTo;
+            return Singleton.LobbyCodeToLobbies.GetValueOrDefault(friendlyName);
         }
     }
 }

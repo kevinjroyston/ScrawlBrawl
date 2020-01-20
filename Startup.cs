@@ -28,7 +28,12 @@ namespace RoystonGame
             {
                 configuration.RootPath = "ClientApp/dist";
             });
-            services.AddSignalR();
+            services.AddSignalR(hubOptions =>
+            {
+                hubOptions.EnableDetailedErrors = true;
+                hubOptions.KeepAliveInterval = TimeSpan.FromSeconds(10);
+                //hubOptions.ClientTimeoutInterval = TimeSpan.FromMinutes(1);
+            });
             services.AddHostedService<GameNotifier>();
         }
 
@@ -68,7 +73,10 @@ namespace RoystonGame
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
-                endpoints.MapHub<UnityHub>("/signalr");
+                endpoints.MapHub<UnityHub>("/signalr", options =>
+                {
+                    options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling; // you may also need this
+                });
             });
 
             app.UseSpa(spa =>

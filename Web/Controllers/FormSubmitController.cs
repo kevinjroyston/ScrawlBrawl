@@ -60,7 +60,7 @@ namespace RoystonGame.Web.Controllers
                 success = false;
 
                 // Let GameManager know so it can determine whether or not to abandon the lobby.
-                GameManager.ReportGameError(ErrorType.UserSubmit, user, e);
+                GameManager.ReportGameError(ErrorType.UserSubmit, user?.LobbyId, user, e);
             }
             return success ? new OkResult() : BadRequest(error);
         }

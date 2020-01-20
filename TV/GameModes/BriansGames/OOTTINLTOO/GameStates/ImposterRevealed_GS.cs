@@ -4,8 +4,6 @@ using RoystonGame.TV.DataModels;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.GameStates;
 using RoystonGame.TV.DataModels.UserStates;
-using RoystonGame.TV.GameEngine;
-using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.DataModels;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
@@ -34,34 +32,20 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             SubmitButton = true
         };
 
-        public ImposterRevealed_GS(ChallengeTracker challenge, Connector outlet = null, TimeSpan? maxWaitTime = null) : base(outlet)
+        public ImposterRevealed_GS(Lobby lobby, ChallengeTracker challenge, Connector outlet = null, TimeSpan? maxWaitTime = null) : base(lobby, outlet)
         {
             UserState partyLeaderState = new SimplePromptUserState(PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
             WaitingUserState waitingState = new WaitingUserState(maxWaitTime: maxWaitTime);
 
             UserStateTransition waitForLeader = new WaitForPartyLeader(
+                lobby: this.Lobby,
                 outlet: this.Outlet,
                 partyLeaderPrompt: partyLeaderState,
                 waitingState: waitingState);
 
             this.Entrance = waitForLeader;
 
-            this.GameObjects = new List<GameObject>();
             var unityImages = new List<UnityImage>();
-            int x = 0, y = 0;
-            /*// Plays 18
-            int imageWidth = 300;
-            int imageHeight = 300;
-            int imagesPerRow = 6;
-            int buffer = 10;
-            int yBuffer = 50;*/
-
-            // Plays 8
-            int imageWidth = 400;
-            int imageHeight = 400;
-            int imagesPerRow = 4;
-            int buffer = 25;
-            int yBuffer = 75;
             foreach ((User user, string userDrawing) in challenge.IdToDrawingMapping.Values)
             {
                 Func<string> footer = () =>Invariant($"{((user == challenge.OddOneOut) ? challenge.UsersWhoFoundOOO.Count : (challenge.UsersWhoConfusedWhichUsers.ContainsKey(user) ? challenge.UsersWhoConfusedWhichUsers[user].Count : 0))}");
@@ -73,24 +57,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     Footer = new DynamicAccessor<string> { DynamicBacker = footer },
                     BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = user == challenge.OddOneOut ? new List<int> { 250, 128, 114} : new List<int> { 255, 255, 255 } }
                 });
-
-                this.GameObjects.Add(new UserDrawingObject(userDrawing, user == challenge.OddOneOut ? Color.Salmon : Color.White)
-                {
-                    BoundingBox = new Rectangle(x * (imageWidth + buffer), y * (imageHeight + yBuffer), imageWidth, imageHeight)
-                });
-
-                this.GameObjects.Add(new DynamicTextObject
-                {
-                    Content = footer,
-                    BoundingBox = new Rectangle(x * (imageWidth + buffer), imageHeight + y * (imageHeight + yBuffer), imageWidth, yBuffer)
-                });
-
-                x++;
-                if (x >= imagesPerRow)
-                {
-                    x = 0;
-                    y++;
-                }
             }
             this.UnityView = new UnityView
             {

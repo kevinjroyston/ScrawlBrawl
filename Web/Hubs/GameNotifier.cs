@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
 using RoystonGame.TV;
+using RoystonGame.Web.DataModels;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System;
@@ -42,27 +43,32 @@ namespace RoystonGame.Web.Hubs
         /// </summary>
         private void DoWork(object _)
         {
-            try
+            while(GameManager.Singleton.AbandonedLobbyIds.TryTake(out Guid lobbyId))
             {
-                // TODO: group by lobby id.
-
-                // Gets the Unity view of the active GameState.
-                UnityView view = GameManager.GetActiveUnityView();
-
-                // Refresh will re-fetch all dynamic values. Returning true if they changed from last fetch.
-                bool needToRefresh = view?.Refresh() ?? false;
-
-                // Check if we need to send data over the wire.
-                if (needToRefresh)
-                {
-                    // Push updates to all clients.
-                    UnityHubNotifier.Clients.All.SendAsync("UpdateState", view);
-                }
+                UnityHubNotifier.Clients.Group(lobbyId.ToString()).SendAsync("LobbyClose");
             }
-            catch(Exception e)
+
+            foreach(Lobby lobby in GameManager.GetLobbies())
             {
-                // TODO: lobby id logic here.
-                GameManager.ReportGameError(ErrorType.UnityClient, null, e);
+                try
+                {
+                    // Gets the Unity view of the active GameState.
+                    UnityView view = lobby.GetActiveUnityView();
+
+                    // Refresh will re-fetch all dynamic values. Returning true if they changed from last fetch.
+                    bool needToRefresh = view?.Refresh() ?? false;
+
+                    // Check if we need to send data over the wire.
+                    if (needToRefresh)
+                    {
+                        // Push updates to all clients.
+                        UnityHubNotifier.Clients.Group(lobby.LobbyId.ToString()).SendAsync("UpdateState", view);
+                    }
+                }
+                catch (Exception e)
+                {
+                    GameManager.ReportGameError(ErrorType.UnityClient, lobby.LobbyId, null, e);
+                }
             }
         }
 

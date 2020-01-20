@@ -21,15 +21,12 @@ namespace RoystonGame.TV.ControlFlows
     {
         private UserState PartyLeaderUserState { get; }
 
-        // Literally only needed to satisfy the new() constraint needed by StateExtensions.cs
-        public WaitForPartyLeader() : this(null) { }
-
         /// <summary>
         /// Initializes a new <see cref="WaitForTrigger"/>.
         /// </summary>
         /// <param name="outlet">The function to call in order to leave a state.</param>
         /// <param name="waitingState">The waiting state to use while waiting for the trigger. The outlet of this state will be overwritten</param>
-        public WaitForPartyLeader(Connector outlet = null, UserState partyLeaderPrompt = null, WaitingUserState waitingState = null, Connector partyLeaderSubmission = null) : base(null, outlet, waitingState ?? WaitingUserState.DefaultState())
+        public WaitForPartyLeader(Lobby lobby, Connector outlet = null, UserState partyLeaderPrompt = null, WaitingUserState waitingState = null, Connector partyLeaderSubmission = null) : base(lobby, null, outlet, waitingState ?? WaitingUserState.DefaultState())
         {
             this.PartyLeaderUserState = partyLeaderPrompt ?? PartyLeaderReadyUpButtonUserState.DefaultState();
             this.PartyLeaderUserState.SetOutlet((User user, UserStateResult result, UserFormSubmission userInput) =>

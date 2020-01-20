@@ -1,3 +1,133 @@
+/* You can add global styles to this file, and also import other style files */
+
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: #7B77F5;
+  color: #210F4C;
+  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
+.SubmitButton {
+  color: rgb(61, 49, 173);
+  font-size: 23px;
+  line-height: 23px;
+  padding: 6px;
+  border-radius: 10px;
+  font-weight: normal;
+  text-decoration: none;
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+  background-image: linear-gradient(45deg, rgb(122, 96, 196) 0%, rgb(188, 209, 249) 50%, rgb(25, 52, 117) 100%);
+  box-shadow: rgb(0, 0, 0) 5px 5px 15px 5px;
+  border: 5px ridge rgba(87, 0, 132, 0.81);
+  display: inline-block;
+  align-content: center;
+}
+
+  .SubmitButton:hover {
+    background: #5F4EA4;
+  }
+
+  .SubmitButton:active {
+    background: #362C5D;
+  }
+
+input.text {
+  padding: 3px;
+}
+
+input {
+  background-color: whitesmoke;
+  border: 2px solid #570084;
+}
+
+.Title {
+  font-size: 27px;
+  letter-spacing: -0.4px;
+  word-spacing: -0.8px;
+  font-weight: 700;
+  text-decoration: underline solid rgb(68, 68, 68);
+  font-style: normal;
+  font-variant: small-caps;
+  text-transform: none;
+}
+
+.Error {
+  color: red;
+}
+
+.Description {
+  font-size: 21px;
+  letter-spacing: 0.4px;
+  word-spacing: -0.2px;
+  font-weight: 400;
+  text-decoration: none solid rgb(68, 68, 68);
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+}
+
+.Prompt {
+  font-size: 17px;
+  letter-spacing: -0.2px;
+  word-spacing: 0.2px;
+  font-weight: 700;
+  text-decoration: none solid rgb(68, 68, 68);
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+}
+
+.ShortAnswer {
+  font-size: 14px;
+  letter-spacing: -0.2px;
+  word-spacing: -1.4px;
+  font-weight: 400;
+  text-decoration: none solid rgb(68, 68, 68);
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+}
+
+.RadioAnswer {
+  font-size: 30px;
+  letter-spacing: -0.2px;
+  word-spacing: -1.4px;
+  font-weight: 400;
+  text-decoration: none solid rgb(68, 68, 68);
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+}
+
+.DrawingCanvas {
+  border: 5px ridge rgba(87,0,132,0.81);
+  background-color: transparent;
+  pointer-events: all;
+}
+
+.DrawingBackground {
+  border: 5px ridge rgba(0,0,0,0.0);
+  background-color: whitesmoke;
+}
+
+.CanvasHolder {
+  background-color: transparent;
+  pointer-events: none;
+}
+
+#wrapper {
+  width: 980px;
+  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #38147C;
+}
+
+
 input[type='radio'] {
   height: 45px;
   width: 45px;
@@ -12,3 +142,5 @@ input[type='radio'] {
   position: relative;
   top: 5px;
 }
+
+

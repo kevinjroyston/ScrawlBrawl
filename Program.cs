@@ -7,23 +7,22 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using RoystonGame.TV.GameEngine;
+using RoystonGame.TV;
 
 namespace RoystonGame
 {
     public class Program
     {
-        private static Task GameThread { get; set; }
-        private static Task WebThread { get; set; }
-        private static RunGame GameObject { get; set; }
         public static void Main(string[] args)
         {
             CancellationTokenSource cancellation = new CancellationTokenSource();
             try
             {
-                GameThread = RunGame(cancellation.Token);
-                WebThread = RunWebServer(args, cancellation.Token);
-                Task.WaitAny(GameThread, WebThread);
+                WebHost.CreateDefaultBuilder(args)
+                    .UseStartup<Startup>()
+                    .Build()
+                    .RunAsync(cancellation.Token)
+                    .Wait();
             }
             catch(Exception ex)
             {
@@ -31,28 +30,18 @@ namespace RoystonGame
             }
             finally
             {
-                GameObject.Exit();
-                GameObject.Dispose();
                 cancellation.Cancel();
+                cancellation.Dispose();
             }
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
-
-        public static async Task RunGame(CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            await Task.Run(() =>
-            {
-                GameObject = new RunGame();
-                GameObject.Run();
-            }, cancellationToken);
-        }
         public static async Task RunWebServer(string[] args, CancellationToken cancellationToken)
         {
-            await CreateWebHostBuilder(args).Build().RunAsync(cancellationToken).ConfigureAwait(false);
+            await WebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>()
+                .Build()
+                .RunAsync(cancellationToken)
+                .ConfigureAwait(false);
         }
     }
 }

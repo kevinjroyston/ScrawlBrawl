@@ -23,21 +23,21 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
         private List<GameState> Scoreboards { get; set; } = new List<GameState>();
         private List<GameState> VoteReveals { get; set; } = new List<GameState>();
         private Random rand { get; } = new Random();
-        public TwoToneDrawingGameMode()
+        public TwoToneDrawingGameMode(Lobby lobby)
         {
-            Setup = new Setup_GS(this.SubChallenges);
+            Setup = new Setup_GS(lobby, this.SubChallenges);
             Setup.AddStateEndingListener(() =>
             {
                 int index = 0;
                 foreach (ChallengeTracker challenge in SubChallenges.OrderBy(_ => rand.Next()))
                 {
-                    this.Gameplay.Add(new Gameplay_GS(challenge, null));
+                    this.Gameplay.Add(new Gameplay_GS(lobby, challenge, null));
                     if (this.Scoreboards.Count > 0)
                     {
                         this.Scoreboards.Last()?.Transition(this.Gameplay.Last());
                     }
-                    this.VoteReveals.Add(new VoteRevealed_GS(challenge));
-                    this.Scoreboards.Add(new ScoreBoardGameState(null, null, title: Invariant($"{index+1}/{SubChallenges.Count}")));
+                    this.VoteReveals.Add(new VoteRevealed_GS(lobby, challenge));
+                    this.Scoreboards.Add(new ScoreBoardGameState(lobby, null, null, title: Invariant($"{index+1}/{SubChallenges.Count}")));
                     this.Gameplay.Last().Transition(this.VoteReveals.Last());
                     this.VoteReveals.Last().Transition(this.Scoreboards.Last());
                     index++;

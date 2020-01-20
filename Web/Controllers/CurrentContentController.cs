@@ -39,7 +39,7 @@ namespace RoystonGame.Web.Controllers
             catch(Exception e)
             {
                 // If this is reached, the game state is likely corrupted and the lobby will need to be restarted or the user evicted.
-                GameManager.ReportGameError(ErrorType.GetContent, user, e);
+                GameManager.ReportGameError(ErrorType.GetContent, user?.LobbyId, user, e);
                 return new BadRequestResult();
             }
 

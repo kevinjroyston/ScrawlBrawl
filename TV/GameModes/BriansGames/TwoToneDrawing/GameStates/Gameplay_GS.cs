@@ -4,8 +4,6 @@ using RoystonGame.TV.DataModels;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.GameStates;
 using RoystonGame.TV.DataModels.UserStates;
-using RoystonGame.TV.GameEngine;
-using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
@@ -54,7 +52,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
         };
 
         private ChallengeTracker SubChallenge { get; set; }
-        public Gameplay_GS(ChallengeTracker challengeTracker, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(outlet)
+        public Gameplay_GS(Lobby lobby, ChallengeTracker challengeTracker, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(lobby, outlet)
         {
             SubChallenge = challengeTracker;
             foreach (var kvp in challengeTracker.UserSubmittedDrawings.OrderBy(_ => rand.Next()))
@@ -69,7 +67,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             }
 
             SimplePromptUserState pickDrawing = new SimplePromptUserState(
-                PickADrawing(challengeTracker, challengeTracker.TeamIdToDrawingMapping.Keys.ToList()),
+                prompt: PickADrawing(challengeTracker, challengeTracker.TeamIdToDrawingMapping.Keys.ToList()),
                 formSubmitListener: (User user, UserFormSubmission submission) =>
                 {
                     challengeTracker.TeamIdToUsersWhoVotedMapping.Values.ToArray()[submission.SubForms[0].RadioAnswer ?? -1].Add(user);
@@ -77,60 +75,20 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 });
             this.Entrance = pickDrawing;
 
-            UserStateTransition waitForUsers = new WaitForAllPlayers(null, this.Outlet, null);
+            UserStateTransition waitForUsers = new WaitForAllPlayers(lobby: this.Lobby, outlet: this.Outlet);
             waitForUsers.AddStateEndingListener(() => this.UpdateScores());
             pickDrawing.SetOutlet(waitForUsers.Inlet);
             waitForUsers.SetOutlet(this.Outlet);
 
-            this.GameObjects = new List<GameObject>();
             var unityImages = new List<UnityImage>();
-            int x = 0, y = 0;
-            /*// Plays 18
-            int imageWidth = 300;
-            int imageHeight = 300;
-            int imagesPerRow = 6;
-            int buffer = 10;
-            int yBuffer = 50;*/
-
-            // Plays 8
-            int imageWidth = 400;
-            int imageHeight = 400;
-            int imagesPerRow = 4;
-            int buffer = 25;
-            int yBuffer = 75;
             foreach ((string id, ConcurrentDictionary<string, string> colorMap) in this.SubChallenge.TeamIdToDrawingMapping)
             {
-                // This draws the background, since all the user drawings need to have transparent backgrounds.
-                this.GameObjects.Add(new UserDrawingObject(null)
-                {
-                    BoundingBox = new Rectangle(x * (imageWidth + buffer), y * (imageHeight + yBuffer), imageWidth, imageHeight)
-                });
-                foreach (string colorOrder in this.SubChallenge.Colors)
-                {
-                    this.GameObjects.Add(new UserDrawingObject(colorMap[colorOrder], Color.Transparent)
-                    {
-                        BoundingBox = new Rectangle(x * (imageWidth + buffer), y * (imageHeight + yBuffer), imageWidth, imageHeight)
-                    });
-                }
-                this.GameObjects.Add(new TextObject
-                {
-                    Content = Invariant($"{id}"),
-                    BoundingBox = new Rectangle(x * (imageWidth + buffer), imageHeight + y * (imageHeight + yBuffer), imageWidth, yBuffer)
-                });
-
                 unityImages.Add(new UnityImage
                 {
                     Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = this.SubChallenge.Colors.Select(color => colorMap[color]).ToList() },
                     Footer = new StaticAccessor<string> { Value = id.ToString() },
                     BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = new List<int> { 255, 255, 255 } }
                 });
-
-                x++;
-                if (x >= imagesPerRow)
-                {
-                    x = 0;
-                    y++;
-                }
             }
             this.UnityView = new UnityView
             {
@@ -140,7 +98,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             };
         }
 
-        int TotalPointsToAward { get; } = 100 * (GameManager.GetActiveUsers().Count);
         private void UpdateScores()
         {
             int mostVotes = this.SubChallenge.TeamIdToUsersWhoVotedMapping.Max((kvp) => kvp.Value.Count);

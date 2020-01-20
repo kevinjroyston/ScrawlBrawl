@@ -21,9 +21,6 @@ namespace RoystonGame.TV.ControlFlows
     {
         protected WaitingUserState WaitingState { get; private set; }
 
-        // Literally only needed to satisfy the new() constraint needed by StateExtensions.cs
-        public WaitForTrigger() : this(null) { }
-
         /// <summary>
         /// Initializes a new <see cref="WaitForTrigger"/>.
         /// </summary>

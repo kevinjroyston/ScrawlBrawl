@@ -4,8 +4,6 @@ using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.GameStates;
 using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.Extensions;
-using RoystonGame.TV.GameEngine;
-using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
@@ -34,93 +32,95 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
         private bool ShowColors { get; set; }
         private UserState GetPartyLeaderChooseNumberOfDrawingsState()
         {
-            return new SimplePromptUserState((User user) => new UserPrompt()
-            {
-                Title = "Game Options",
-                Description = Invariant($"Configure options, there are {GameManager.GetActiveUsers().Count} players total."),
-                SubPrompts = new SubPrompt[]
+            return new SimplePromptUserState(
+                prompt: (User user) => new UserPrompt()
                 {
-                    new SubPrompt
+                    Title = "Game Options",
+                    Description = Invariant($"Configure options, there are {this.Lobby.GetActiveUsers().Count} players total."),
+                    SubPrompts = new SubPrompt[]
                     {
-                        Prompt = "Number of colors per drawing",
-                        ShortAnswer = true
+                        new SubPrompt
+                        {
+                            Prompt = "Number of colors per drawing",
+                            ShortAnswer = true
+                        },
+                        new SubPrompt
+                        {
+                            Prompt = "Number of drawings per player",
+                            ShortAnswer = true
+                        },
+                        new SubPrompt
+                        {
+                            Prompt = "Show other colors",
+                            Answers = new string[]{"No", "Yes"}
+                        }
                     },
-                    new SubPrompt
-                    {
-                        Prompt = "Number of drawings per player",
-                        ShortAnswer = true
-                    },
-                    new SubPrompt
-                    {
-                        Prompt = "Show other colors",
-                        Answers = new string[]{"No", "Yes"}
-                    }
+                    SubmitButton = true
                 },
-                SubmitButton = true
-            },
-            formSubmitListener: (User user, UserFormSubmission userInput) =>
-            {
-                try
+                formSubmitListener: (User user, UserFormSubmission userInput) =>
                 {
-                    ColorsPerDrawing = Convert.ToInt32(userInput.SubForms[0].ShortAnswer);
-                    DrawingsPerPlayer = Convert.ToInt32(userInput.SubForms[1].ShortAnswer);
-                    ShowColors = userInput.SubForms[2].RadioAnswer == 1;
-                }
-                catch
-                {
-                    return (false, "Please enter only numeric characters");
-                }
-                return (true, string.Empty);
-            });
+                    try
+                    {
+                        ColorsPerDrawing = Convert.ToInt32(userInput.SubForms[0].ShortAnswer);
+                        DrawingsPerPlayer = Convert.ToInt32(userInput.SubForms[1].ShortAnswer);
+                        ShowColors = userInput.SubForms[2].RadioAnswer == 1;
+                    }
+                    catch
+                    {
+                        return (false, "Please enter only numeric characters");
+                    }
+                    return (true, string.Empty);
+                });
         }
 
         private UserState GetChallengesUserState(Connector outlet = null)
         {
-            return new SimplePromptUserState((User user) =>
-            {
-                List<SubPrompt> subPrompts = new List<SubPrompt>()
+            return new SimplePromptUserState(
+                prompt: (User user) =>
                 {
-                    new SubPrompt
+                    List<SubPrompt> subPrompts = new List<SubPrompt>()
                     {
-                        Prompt = Invariant($"The drawing prompt. Suggestions: '{string.Join("', '",RandomLineFromFile.GetRandomLines(FileNames.Nouns, 5))}'"),
-                        ShortAnswer = true,
-                    },
-                };
-                for(int i = 0; i < ColorsPerDrawing; i++)
+                        new SubPrompt
+                        {
+                            Prompt = Invariant($"The drawing prompt. Suggestions: '{string.Join("', '",RandomLineFromFile.GetRandomLines(FileNames.Nouns, 5))}'"),
+                            ShortAnswer = true,
+                        },
+                    };
+                    for(int i = 0; i < ColorsPerDrawing; i++)
+                    {
+                        subPrompts.Add(new SubPrompt()
+                        {
+                            Prompt = Invariant($"Color # {i + 1}{(i==0 ? " - This will be drawn above all other colors" : i == ColorsPerDrawing-1 ? " - This will be drawn below all other colors" : string.Empty)}"),
+                            ColorPicker = true
+                        });
+                    }
+
+                    return new UserPrompt()
+                    {
+                        Title = "Game setup",
+                        Description = "In the boxes below, enter a drawing prompt and the colors which will be given to different players.",
+                        RefreshTimeInMs = 1000,
+                        SubPrompts = subPrompts.ToArray(),
+                        SubmitButton = true
+                    };
+                },
+                outlet: outlet,
+                formSubmitListener: (User user, UserFormSubmission input) =>
                 {
-                    subPrompts.Add(new SubPrompt()
+                    List<string> colors = input.SubForms.Where((subForm, index) => index > 0).Select((subForm) => subForm.Color).Reverse().ToList();
+                    if (colors.Count != new HashSet<string>(colors).Count)
                     {
-                        Prompt = Invariant($"Color # {i + 1}{(i==0 ? " - This will be drawn above all other colors" : i == ColorsPerDrawing-1 ? " - This will be drawn below all other colors" : string.Empty)}"),
-                        ColorPicker = true
+                        return (true, "Server doesn't handle identical colors well, change one slightly.");
+                    }
+
+                    this.SubChallenges.Add(new ChallengeTracker
+                    {
+                        Owner = user,
+                        Prompt = input.SubForms[0].ShortAnswer,
+                        Colors = colors
                     });
-                }
-
-                return new UserPrompt()
-                {
-                    Title = "Game setup",
-                    Description = "In the boxes below, enter a drawing prompt and the colors which will be given to different players.",
-                    RefreshTimeInMs = 1000,
-                    SubPrompts = subPrompts.ToArray(),
-                    SubmitButton = true
-                };
-            },
-            outlet,
-            formSubmitListener: (User user, UserFormSubmission input) =>
-            {
-                List<string> colors = input.SubForms.Where((subForm, index) => index > 0).Select((subForm) => subForm.Color).Reverse().ToList();
-                if (colors.Count != new HashSet<string>(colors).Count)
-                {
-                    return (true, "Server doesn't handle identical colors well, change one slightly.");
-                }
-
-                this.SubChallenges.Add(new ChallengeTracker
-                {
-                    Owner = user,
-                    Prompt = input.SubForms[0].ShortAnswer,
-                    Colors = colors
+                    return (true, string.Empty);
                 });
-                return (true, string.Empty);
-            });
         }
 
         private List<ChallengeTracker> SubChallenges { get; set; }
@@ -146,30 +146,31 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 }
 
                 var lambdaSafeIndex = index;
-                stateChain.Add(new SimplePromptUserState((User user) => new UserPrompt()
-                {
-                    Title = Invariant($"Drawing { lambdaSafeIndex + 1} of {stateChain.Count()}"),
-                    Description = "Draw the prompt below. Keep in mind you are only drawing part of the picture!",
-                    RefreshTimeInMs = 1000,
-                    SubPrompts = new SubPrompt[]
+                stateChain.Add(new SimplePromptUserState(
+                    prompt: (User user) => new UserPrompt()
                     {
-                        new SubPrompt
+                        Title = Invariant($"Drawing { lambdaSafeIndex + 1} of {stateChain.Count()}"),
+                        Description = "Draw the prompt below. Keep in mind you are only drawing part of the picture!",
+                        RefreshTimeInMs = 1000,
+                        SubPrompts = new SubPrompt[]
                         {
-                            Prompt = Invariant($"Your prompt:\"{challenge.Prompt}\""), 
-                            StringList = this.ShowColors ? challenge.Colors.Select(val=> val == challenge.UserSubmittedDrawings[user].Color ? Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>This is your color.") : Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>")).ToArray() : null,
-                            Drawing = new DrawingPromptMetadata
+                            new SubPrompt
                             {
-                                Color = challenge.UserSubmittedDrawings[user].Color
-                            }
+                                Prompt = Invariant($"Your prompt:\"{challenge.Prompt}\""), 
+                                StringList = this.ShowColors ? challenge.Colors.Select(val=> val == challenge.UserSubmittedDrawings[user].Color ? Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>This is your color.") : Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>")).ToArray() : null,
+                                Drawing = new DrawingPromptMetadata
+                                {
+                                    Color = challenge.UserSubmittedDrawings[user].Color
+                                }
+                            },
                         },
+                        SubmitButton = true
                     },
-                    SubmitButton = true
-                },
-                formSubmitListener: (User user, UserFormSubmission input) =>
-                {
-                    challenge.UserSubmittedDrawings[user].Drawing = input.SubForms[0].Drawing;
-                    return (true, string.Empty);
-                }));
+                    formSubmitListener: (User user, UserFormSubmission input) =>
+                    {
+                        challenge.UserSubmittedDrawings[user].Drawing = input.SubForms[0].Drawing;
+                        return (true, string.Empty);
+                    }));
                 index++;
             }
 
@@ -182,30 +183,28 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             return stateChain;
         }
 
-        public Setup_GS(List<ChallengeTracker> challengeTrackers, Connector outlet = null) : base(outlet)
+        public Setup_GS(Lobby lobby, List<ChallengeTracker> challengeTrackers, Connector outlet = null) : base(lobby, outlet)
         {
             this.SubChallenges = challengeTrackers;
 
             WaitForPartyLeader setNumPrompts = new WaitForPartyLeader(
-                null,
+                lobby: this.Lobby,
+                outlet: null,
                 partyLeaderPrompt: GetPartyLeaderChooseNumberOfDrawingsState());
 
-            UserStateTransition waitForAllDrawings = new WaitForAllPlayers(null, this.Outlet, null);
-            UserStateTransition waitForAllPrompts = new WaitForAllPlayers(null, outlet: (User user, UserStateResult result, UserFormSubmission input) =>
-            {
-                // This call doesn't actually happen until after all prompts are submitted
-                GetDrawingsUserStateChain(user, waitForAllDrawings.Inlet)[0].Inlet(user, result, input);
-            });
+            UserStateTransition waitForAllDrawings = new WaitForAllPlayers(lobby: this.Lobby, outlet:this.Outlet);
+            UserStateTransition waitForAllPrompts = new WaitForAllPlayers(
+                lobby: this.Lobby,
+                outlet: (User user, UserStateResult result, UserFormSubmission input) =>
+                {
+                    // This call doesn't actually happen until after all prompts are submitted
+                    GetDrawingsUserStateChain(user, waitForAllDrawings.Inlet)[0].Inlet(user, result, input);
+                });
             // Just before users call the line above, call AssignPrompts
             waitForAllPrompts.AddStateEndingListener(() => this.AssignPrompts());
             setNumPrompts.SetOutlet(GetChallengesUserState(waitForAllPrompts.Inlet).Inlet);
 
             this.Entrance = setNumPrompts;
-
-            this.GameObjects = new List<GameObject>()
-            {
-                new TextObject { Content = "Complete all the prompts on your devices." }
-            };
 
             this.UnityView = new UnityView
             {
@@ -222,7 +221,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             List<ChallengeTracker> randomizedOrderChallenges = this.SubChallenges.OrderBy(_ => rand.Next()).ToList();
-            IReadOnlyList<User> users = GameManager.GetActiveUsers();
+            IReadOnlyList<User> users = this.Lobby.GetActiveUsers();
             for (int i = 0; i < randomizedOrderChallenges.Count; i++)
             {
                 for (int j = 0; j < ((int)Math.Min(DrawingsPerPlayer, users.Count) / ColorsPerDrawing) * ColorsPerDrawing; j++)

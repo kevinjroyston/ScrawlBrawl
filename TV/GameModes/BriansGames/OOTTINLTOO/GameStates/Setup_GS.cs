@@ -4,8 +4,6 @@ using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.GameStates;
 using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.Extensions;
-using RoystonGame.TV.GameEngine;
-using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.DataModels;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
@@ -31,54 +29,56 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
     {
         private UserState GetPartyLeaderChooseNumberOfDrawingsState()
         {
-            return new SimplePromptUserState((User user)=> new UserPrompt()
-            {
-                Title = "Game Options",
-                SubPrompts = new SubPrompt[]
+            return new SimplePromptUserState(
+                prompt: (User user)=> new UserPrompt()
                 {
-                    new SubPrompt
+                    Title = "Game Options",
+                    SubPrompts = new SubPrompt[]
                     {
-                        Prompt = "Max drawing prompts per player",
-                        ShortAnswer = true
-                    }
-                },
-                SubmitButton = true
-            });
+                        new SubPrompt
+                        {
+                            Prompt = "Max drawing prompts per player",
+                            ShortAnswer = true
+                        }
+                    },
+                    SubmitButton = true
+                });
         }
 
         private UserState GetWordsUserState(Connector outlet = null)
         {
-            return new SimplePromptUserState((User user) => new UserPrompt()
-            {
-                Title = "Game setup",
-                Description = "In the boxes below, enter two drawing prompts such that only you will be able to tell the drawings apart.",
-                RefreshTimeInMs = 1000,
-                SubPrompts = new SubPrompt[]
+            return new SimplePromptUserState(
+                prompt: (User user) => new UserPrompt()
                 {
-                    new SubPrompt
+                    Title = "Game setup",
+                    Description = "In the boxes below, enter two drawing prompts such that only you will be able to tell the drawings apart.",
+                    RefreshTimeInMs = 1000,
+                    SubPrompts = new SubPrompt[]
                     {
-                        Prompt = Invariant($"The drawing prompt to show all users. Suggestions: '{string.Join("', '",RandomLineFromFile.GetRandomLines(FileNames.Nouns, 5))}'"),
-                        ShortAnswer = true,
+                        new SubPrompt
+                        {
+                            Prompt = Invariant($"The drawing prompt to show all users. Suggestions: '{string.Join("', '",RandomLineFromFile.GetRandomLines(FileNames.Nouns, 5))}'"),
+                            ShortAnswer = true,
+                        },
+                        new SubPrompt
+                        {
+                            Prompt = "The drawing prompt to show to imposter",
+                            ShortAnswer = true,
+                        }
                     },
-                    new SubPrompt
-                    {
-                        Prompt = "The drawing prompt to show to imposter",
-                        ShortAnswer = true,
-                    }
+                    SubmitButton = true
                 },
-                SubmitButton = true
-            },
-            outlet,
-            formSubmitListener: (User user, UserFormSubmission input) =>
-            {
-                this.SubChallenges.Add(new ChallengeTracker
+                outlet: outlet,
+                formSubmitListener: (User user, UserFormSubmission input) =>
                 {
-                    Owner = user,
-                    RealPrompt = input.SubForms[0].ShortAnswer,
-                    DeceptionPrompt = input.SubForms[1].ShortAnswer,
+                    this.SubChallenges.Add(new ChallengeTracker
+                    {
+                        Owner = user,
+                        RealPrompt = input.SubForms[0].ShortAnswer,
+                        DeceptionPrompt = input.SubForms[1].ShortAnswer,
+                    });
+                    return (true, string.Empty);
                 });
-                return (true, string.Empty);
-            });
         }
 
         private List<ChallengeTracker> SubChallenges { get; set; }
@@ -104,26 +104,27 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 }
 
                 var lambdaSafeIndex = index;
-                stateChain.Add(new SimplePromptUserState((User user)=> new UserPrompt()
-                {
-                    Title = Invariant($"Drawing {lambdaSafeIndex+1} of {stateChain.Count()}"),
-                    Description = "Draw the prompt below. Careful, if you aren't the odd one out and people think you are, you will lose points for being a terrible artist.",
-                    RefreshTimeInMs = 1000,
-                    SubPrompts = new SubPrompt[]
+                stateChain.Add(new SimplePromptUserState(
+                    prompt: (User user)=> new UserPrompt()
                     {
-                        new SubPrompt
+                        Title = Invariant($"Drawing {lambdaSafeIndex+1} of {stateChain.Count()}"),
+                        Description = "Draw the prompt below. Careful, if you aren't the odd one out and people think you are, you will lose points for being a terrible artist.",
+                        RefreshTimeInMs = 1000,
+                        SubPrompts = new SubPrompt[]
                         {
-                            Prompt = Invariant($"Your prompt:\"{(challenge.OddOneOut == user ? challenge.DeceptionPrompt : challenge.RealPrompt)}\""),
-                            Drawing = new DrawingPromptMetadata(),
+                            new SubPrompt
+                            {
+                                Prompt = Invariant($"Your prompt:\"{(challenge.OddOneOut == user ? challenge.DeceptionPrompt : challenge.RealPrompt)}\""),
+                                Drawing = new DrawingPromptMetadata(),
+                            },
                         },
+                        SubmitButton = true
                     },
-                    SubmitButton = true
-                },
-                formSubmitListener: (User user, UserFormSubmission input) =>
-                {
-                    challenge.UserSubmittedDrawings[user] = input.SubForms[0].Drawing;
-                    return (true, string.Empty);
-                }));
+                    formSubmitListener: (User user, UserFormSubmission input) =>
+                    {
+                        challenge.UserSubmittedDrawings[user] = input.SubForms[0].Drawing;
+                        return (true, string.Empty);
+                    }));
                 index++;
             }
 
@@ -136,7 +137,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             return stateChain;
         }
 
-        public Setup_GS(List<ChallengeTracker> challengeTrackers, Connector outlet = null) : base(outlet)
+        public Setup_GS(Lobby lobby, List<ChallengeTracker> challengeTrackers, Connector outlet = null) : base(lobby, outlet)
         {
             this.SubChallenges = challengeTrackers;
             int numDrawingsPerPrompt = 6;
@@ -149,8 +150,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     numDrawingsPerPrompt = Int32.Parse(input.SubForms[0].ShortAnswer);
                 });
 
-            UserStateTransition waitForAllDrawings = new WaitForAllPlayers(null, this.Outlet, null);
-            UserStateTransition waitForAllPrompts = new WaitForAllPlayers(null, outlet: (User user, UserStateResult result, UserFormSubmission input) =>
+            UserStateTransition waitForAllDrawings = new WaitForAllPlayers(this.Lobby, null, this.Outlet, null);
+            UserStateTransition waitForAllPrompts = new WaitForAllPlayers(this.Lobby, null, outlet: (User user, UserStateResult result, UserFormSubmission input) =>
             {
                 GetDrawingsUserStateChain(user, waitForAllDrawings.Inlet)[0].Inlet(user, result, input);
             });
@@ -158,11 +159,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             setNumPrompts.SetOutlet(GetWordsUserState(waitForAllPrompts.Inlet).Inlet);
 
             this.Entrance = setNumPrompts;
-
-            this.GameObjects = new List<GameObject>()
-            {
-                new TextObject { Content = "Complete all the prompts on your devices." }
-            };
 
             this.UnityView = new UnityView
             {
@@ -180,7 +176,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             List<ChallengeTracker> randomizedOrderChallenges = this.SubChallenges.OrderBy(_ => rand.Next()).ToList();
-            IReadOnlyList<User> users = GameManager.GetActiveUsers();
+            IReadOnlyList<User> users = this.Lobby.GetActiveUsers();
             if (users.Count - 1 > maxDrawingsPerPrompt)
             {
                 for (int i = 0; i < randomizedOrderChallenges.Count; i++)
