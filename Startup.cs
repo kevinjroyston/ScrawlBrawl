@@ -34,6 +34,13 @@ namespace RoystonGame
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddSignalR(hubOptions =>
+            {
+                hubOptions.EnableDetailedErrors = true;
+                hubOptions.KeepAliveInterval = TimeSpan.FromSeconds(10);
+                //hubOptions.ClientTimeoutInterval = TimeSpan.FromMinutes(1);
+            });
+
             services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
                     .AddAzureAD(options => Configuration.Bind("AzureAd", options));
 
@@ -56,12 +63,6 @@ namespace RoystonGame
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist";
-            });
-            services.AddSignalR(hubOptions =>
-            {
-                hubOptions.EnableDetailedErrors = true;
-                hubOptions.KeepAliveInterval = TimeSpan.FromSeconds(10);
-                //hubOptions.ClientTimeoutInterval = TimeSpan.FromMinutes(1);
             });
             services.AddHostedService<GameNotifier>();
         }
