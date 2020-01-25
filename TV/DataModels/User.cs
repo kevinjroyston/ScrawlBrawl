@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using RoystonGame.TV.DataModels.UserStates;
-
-using static System.FormattableString;
 
 namespace RoystonGame.TV.DataModels
 {

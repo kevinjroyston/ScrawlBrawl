@@ -1,21 +1,15 @@
-﻿using Microsoft.Xna.Framework;
-using RoystonGame.TV.ControlFlows;
+﻿using RoystonGame.TV.ControlFlows;
 using RoystonGame.TV.DataModels;
-using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.GameStates;
 using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels;
 using RoystonGame.Web.DataModels.Enums;
-using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-
-using static System.FormattableString;
 
 using Connector = System.Action<
     RoystonGame.TV.DataModels.User,

@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using KellermanSoftware.CompareNetObjects;
-using RoystonGame.TV.Extensions;
 
 namespace RoystonGame.Web.DataModels.UnityObjects
 {

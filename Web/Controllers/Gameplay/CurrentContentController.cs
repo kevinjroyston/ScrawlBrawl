@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using RoystonGame.TV;
 using RoystonGame.TV.DataModels;
 using RoystonGame.Web.DataModels.Enums;
-using RoystonGame.Web.DataModels.Responses;
 
 namespace RoystonGame.Web.Controllers
 {

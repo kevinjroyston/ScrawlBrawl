@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace RoystonGame.Web.DataModels.Responses
+﻿namespace RoystonGame.Web.DataModels.Responses
 {
     /// <summary>
     /// Class containing metadata about a drawing prompt.

@@ -1,7 +1,6 @@
 ﻿using RoystonGame.TV.DataModels;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.GameStates;
-using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO;
@@ -13,8 +12,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace RoystonGame.TV
 {
@@ -22,6 +19,9 @@ namespace RoystonGame.TV
     {
         public Guid LobbyId { get; } = Guid.NewGuid();
         public string LobbyCode { get; }
+        public User Owner { get; }
+
+        public DateTime CreationTime { get; } = DateTime.Now;
         private ConcurrentBag<User> UsersInLobby { get; } = new ConcurrentBag<User>();
         #region GameStates
         private GameState CurrentGameState { get; set; }

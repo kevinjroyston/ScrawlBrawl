@@ -8,9 +8,7 @@ using RoystonGame.Web.DataModels.Responses;
 using System.Net;
 using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.Web.DataModels.Enums;
-using RoystonGame.Web.DataModels.UnityObjects;
 using System.Collections.Concurrent;
-using RoystonGame.Web.DataModels;
 
 namespace RoystonGame.TV
 {
@@ -34,8 +32,8 @@ namespace RoystonGame.TV
         #region User and Object trackers
         private ConcurrentDictionary<IPAddress, User> RegisteredUsers { get; } = new ConcurrentDictionary<IPAddress, User>();
         private ConcurrentDictionary<IPAddress, User> UnregisteredUsers { get; } = new ConcurrentDictionary<IPAddress, User>();
-        private ConcurrentDictionary<Guid, Lobby> LobbyIdToLobbies { get; } = new ConcurrentDictionary<Guid, Lobby>();
-        private ConcurrentDictionary<string, Lobby> LobbyCodeToLobbies { get; } = new ConcurrentDictionary<string, Lobby>();
+        private ConcurrentDictionary<Guid, Lobby> LobbyIdToLobby { get; } = new ConcurrentDictionary<Guid, Lobby>();
+        private ConcurrentDictionary<string, Lobby> LobbyCodeToLobby { get; } = new ConcurrentDictionary<string, Lobby>();
 
         /// <summary>
         /// Hacky fix for passing this info to GameNotifier thread.
@@ -89,8 +87,8 @@ namespace RoystonGame.TV
             if (lobbyId.HasValue)
             {
                 Lobby lobby = GetLobby(lobbyId.Value);
-                Singleton.LobbyCodeToLobbies.TryRemove(lobby.LobbyCode, out Lobby _);
-                Singleton.LobbyIdToLobbies.TryRemove(lobby.LobbyId, out Lobby _);
+                Singleton.LobbyCodeToLobby.TryRemove(lobby.LobbyCode, out Lobby _);
+                Singleton.LobbyIdToLobby.TryRemove(lobby.LobbyId, out Lobby _);
 
                 lobby.UnregisterAllUsers();
                 Singleton.AbandonedLobbyIds.Add(lobby.LobbyId);
@@ -129,15 +127,15 @@ namespace RoystonGame.TV
 
             // TODO: move to a different lobby creation model.
             // TODO: add way to leave a lobby.
-            if (!Singleton.LobbyCodeToLobbies.ContainsKey(lobbyCode))
+            if (!Singleton.LobbyCodeToLobby.ContainsKey(lobbyCode))
             {
                 Lobby newLobby = new Lobby(lobbyCode);
 
-                if (!Singleton.LobbyCodeToLobbies.TryAdd(lobbyCode, newLobby)
-                    || !Singleton.LobbyIdToLobbies.TryAdd(newLobby.LobbyId, newLobby))
+                if (!Singleton.LobbyCodeToLobby.TryAdd(lobbyCode, newLobby)
+                    || !Singleton.LobbyIdToLobby.TryAdd(newLobby.LobbyId, newLobby))
                 {
-                    bool success = Singleton.LobbyCodeToLobbies.TryRemove(lobbyCode, out Lobby _);
-                    success &= Singleton.LobbyIdToLobbies.TryRemove(newLobby.LobbyId, out Lobby _);
+                    bool success = Singleton.LobbyCodeToLobby.TryRemove(lobbyCode, out Lobby _);
+                    success &= Singleton.LobbyIdToLobby.TryRemove(newLobby.LobbyId, out Lobby _);
                     if (!success)
                     {
                         throw new Exception("Lobby lists corrupted");
@@ -146,7 +144,7 @@ namespace RoystonGame.TV
                 }
             }
 
-            if(!Singleton.LobbyCodeToLobbies[lobbyCode].TryAddUser(user, out errorMsg))
+            if(!Singleton.LobbyCodeToLobby[lobbyCode].TryAddUser(user, out errorMsg))
             {
                 return (false, errorMsg);
             }
@@ -196,17 +194,22 @@ namespace RoystonGame.TV
 
         public static List<Lobby> GetLobbies()
         {
-            return Singleton.LobbyCodeToLobbies.Values.ToList();
+            return Singleton.LobbyCodeToLobby.Values.ToList();
         }
 
         public static Lobby GetLobby(Guid lobbyId)
         {
-            return Singleton.LobbyIdToLobbies.GetValueOrDefault(lobbyId);
+            return Singleton.LobbyIdToLobby.GetValueOrDefault(lobbyId);
         }
 
         public static Lobby GetLobby(string friendlyName)
         {
-            return Singleton.LobbyCodeToLobbies.GetValueOrDefault(friendlyName);
+            return Singleton.LobbyCodeToLobby.GetValueOrDefault(friendlyName);
         }
+
+        /*public static Lobby GetLobbyByCreator(User lobbyCreator)
+        {
+            return Singleton.LobbyOwnerToLobby.GetValueOrDefault(lobbyCreator);
+        }*/
     }
 }

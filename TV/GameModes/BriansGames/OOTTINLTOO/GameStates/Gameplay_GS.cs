@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using RoystonGame.TV.ControlFlows;
+﻿using RoystonGame.TV.ControlFlows;
 using RoystonGame.TV.DataModels;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.GameStates;
@@ -13,7 +12,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 using static System.FormattableString;
 
