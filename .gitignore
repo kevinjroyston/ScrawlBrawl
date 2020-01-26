@@ -290,3 +290,8 @@ UnityProject/[Bb]uilds/
 UnityProject/[Ll]ogs/
 
 UnityProject/out
+
+
+# VS Code
+.vscode/
+UnityProject/.vscode

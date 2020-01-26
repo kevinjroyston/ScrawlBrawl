@@ -55,24 +55,23 @@ namespace RoystonGame.TV
             });
         public static UserPrompt UserNamePrompt(User user) => new UserPrompt()
         {
-            Title = "Welcome to the game!",
-            Description = "Fill in the information below!",
+            Title = "join a game:",
             RefreshTimeInMs = 5000,
             SubPrompts = new SubPrompt[]
             {
                 new SubPrompt()
                 {
-                    Prompt = "Nickname:",
+                    Prompt = "nickname",
                     ShortAnswer = true
                 },
                 new SubPrompt()
                 {
-                    Prompt = "Lobby Code:",
+                    Prompt = "lobby code",
                     ShortAnswer = true
                 },
                 new SubPrompt()
                 {
-                    Prompt = "Self Portrait:",
+                    Prompt = "self portrait",
                     Drawing = new DrawingPromptMetadata()
                 }
             },
