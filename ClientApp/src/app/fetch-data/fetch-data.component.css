@@ -4,7 +4,7 @@
   margin: 0;
   padding: 0;
   border: 0;
-  background-color: #7B77F5;
+  background-color: #FFFFFF;
   color: #210F4C;
   font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
@@ -12,17 +12,9 @@
 .SubmitButton {
   color: rgb(61, 49, 173);
   font-size: 23px;
-  line-height: 23px;
   padding: 6px;
-  border-radius: 10px;
-  font-weight: normal;
-  text-decoration: none;
-  font-style: normal;
-  font-variant: normal;
-  text-transform: none;
-  background-image: linear-gradient(45deg, rgb(122, 96, 196) 0%, rgb(188, 209, 249) 50%, rgb(25, 52, 117) 100%);
-  box-shadow: rgb(0, 0, 0) 5px 5px 15px 5px;
-  border: 5px ridge rgba(87, 0, 132, 0.81);
+  border: 1px solid black;
+  border-radius: 4px;
   display: inline-block;
   align-content: center;
 }
@@ -41,7 +33,8 @@ input.text {
 
 input {
   background-color: whitesmoke;
-  border: 2px solid #570084;
+  border: 1px solid #DEDEDE;
+  border-radius: 4px;
 }
 
 .Title {
@@ -49,9 +42,7 @@ input {
   letter-spacing: -0.4px;
   word-spacing: -0.8px;
   font-weight: 700;
-  text-decoration: underline solid rgb(68, 68, 68);
   font-style: normal;
-  font-variant: small-caps;
   text-transform: none;
 }
 
@@ -104,7 +95,8 @@ input {
 }
 
 .DrawingCanvas {
-  border: 5px ridge rgba(87,0,132,0.81);
+  border: 1px solid #DEDEDE;
+  border-radius: 4px;
   background-color: transparent;
   pointer-events: all;
 }
