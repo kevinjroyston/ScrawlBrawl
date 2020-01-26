@@ -92,7 +92,6 @@ namespace RoystonGame.TV
                 lobby.UnregisterAllUsers();
                 Singleton.AbandonedLobbyIds.Add(lobby.LobbyId);
             }
-            // TODO: restart lobbies or evict users based on error type and volume.
         }
 
         private GameManager()

@@ -12,7 +12,8 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
     [Authorize(Policy = "Users")]
     public class LobbyManagementSubmitController
     {
-       /* public Temp()
+        /*
+        public Temp()
         {
             string errorMsg = "Lobby not found";
 

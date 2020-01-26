@@ -10,11 +10,11 @@ namespace RoystonGame.Web.Controllers
     [ApiController]
     [Route("[controller]")]
     [Authorize(Policy = "Admins")]
-    public class AdminFetchController : ControllerBase
+    public class AdminController : ControllerBase
     {
         private readonly ILogger<CurrentContentController> _logger;
 
-        public AdminFetchController(ILogger<CurrentContentController> logger)
+        public AdminController(ILogger<CurrentContentController> logger)
         {
             _logger = logger;
         }
@@ -34,7 +34,25 @@ namespace RoystonGame.Web.Controllers
                         })
                     .ToList(),
             };
-            return new JsonResult("Helllllooooo");
+            return new JsonResult(response);
+        }
+
+        [HttpPost]
+        public IActionResult Post()
+        {
+            AdminFetchResponse response = new AdminFetchResponse
+            {
+                ActiveLobbies = GameManager.GetLobbies()
+                    .Select(lobby =>
+                        new AdminFetchResponse.Lobby
+                        {
+                            LobbyCode = lobby.LobbyCode,
+                            LobbyId = lobby.LobbyId,
+                            LobbyOwner = lobby.Owner.DisplayName
+                        })
+                    .ToList(),
+            };
+            return new JsonResult(response);
         }
     }
 }
