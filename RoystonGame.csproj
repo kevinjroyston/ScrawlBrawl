@@ -42,7 +42,6 @@
 
   <ItemGroup>
     <Content Include="ClientApp\angular.json" />
-    <Content Include="ClientApp\e2e\tsconfig.e2e.json" />
     <Content Include="ClientApp\package-lock.json" />
     <Content Include="ClientApp\package.json" />
     <Content Include="ClientApp\src\tsconfig.app.json" />
@@ -51,7 +50,6 @@
     <Content Include="ClientApp\src\tslint.json" />
     <Content Include="ClientApp\tsconfig.json" />
     <Content Include="ClientApp\tslint.json" />
-    <Content Include="Web\wwwroot\favicon.ico" />
     <Content Include="WordLists\nouns.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
