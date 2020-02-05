@@ -98,14 +98,14 @@ namespace RoystonGame.TV.DataModels.UserStates
         {
             this.PromptGenerator = promptGenerator ?? throw new Exception("Prompt generator cannot be null");
             this.StateTimeoutDuration = stateTimeoutDuration;
-            
-            if(outlet != null)
+
+            if (outlet != null)
             {
                 this.SetOutlet(outlet);
             }
         }
 
-        
+
 
         /// <summary>
         /// Timeout for the state.
@@ -156,11 +156,11 @@ namespace RoystonGame.TV.DataModels.UserStates
             foreach (SubPrompt prompt in userPrompt?.SubPrompts ?? new SubPrompt[0])
             {
                 if ((userInput.SubForms.Count() <= i)
-                    ||((prompt.Drawing != null) == string.IsNullOrWhiteSpace(userInput.SubForms[i].Drawing))
-                    ||(prompt.ShortAnswer == string.IsNullOrWhiteSpace(userInput.SubForms[i].ShortAnswer))
-                    ||(prompt.ColorPicker == string.IsNullOrWhiteSpace(userInput.SubForms[i].Color))
-                    ||((prompt.Answers != null && prompt.Answers.Length>0 ) == (!userInput.SubForms[i].RadioAnswer.HasValue || userInput.SubForms[i].RadioAnswer.Value<0 || userInput.SubForms[i].RadioAnswer.Value >= prompt.Answers.Length))
-                    ||((prompt.Dropdown != null && prompt.Dropdown.Length>0 ) == (!userInput.SubForms[i].DropdownChoice.HasValue || userInput.SubForms[i].DropdownChoice.Value<0 || userInput.SubForms[i].DropdownChoice.Value >= prompt.Dropdown.Length)))
+                    || ((prompt.Drawing != null) == string.IsNullOrWhiteSpace(userInput.SubForms[i].Drawing))
+                    || (prompt.ShortAnswer == string.IsNullOrWhiteSpace(userInput.SubForms[i].ShortAnswer))
+                    || (prompt.ColorPicker == string.IsNullOrWhiteSpace(userInput.SubForms[i].Color))
+                    || ((prompt.Answers != null && prompt.Answers.Length > 0) == (!userInput.SubForms[i].RadioAnswer.HasValue || userInput.SubForms[i].RadioAnswer.Value < 0 || userInput.SubForms[i].RadioAnswer.Value >= prompt.Answers.Length))
+                    || ((prompt.Dropdown != null && prompt.Dropdown.Length > 0) == (!userInput.SubForms[i].DropdownChoice.HasValue || userInput.SubForms[i].DropdownChoice.Value < 0 || userInput.SubForms[i].DropdownChoice.Value >= prompt.Dropdown.Length)))
                 {
                     error = "Not all form fields have been filled out";
                     return false;

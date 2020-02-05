@@ -1,7 +1,9 @@
-﻿using System;
+﻿using RoystonGame.TV.DataModels.UserStates;
+using System;
 using System.Net;
 using System.Text.Json.Serialization;
-using RoystonGame.TV.DataModels.UserStates;
+
+using static System.FormattableString;
 
 namespace RoystonGame.TV.DataModels
 {
@@ -30,11 +32,12 @@ namespace RoystonGame.TV.DataModels
         /// <summary>
         /// The current state of the user.
         /// </summary>
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public UserState UserState { get; private set; }
 
         /// <summary>
-        /// Indicates this User is the party leader (Technically can have multiple).
+        /// Indicates this User is the party leader (Technically can have multiple if race condition).
         /// </summary>
         public bool IsPartyLeader { get; set; }
 
@@ -53,16 +56,30 @@ namespace RoystonGame.TV.DataModels
         /// <summary>
         /// Lock used for ensuring only one User form submission is being processed at a time.
         /// </summary>
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public object LockObject { get; set; } = new object();
 
-        [JsonIgnore]
-        public IPAddress IP { get; }
+        /// <summary>
+        /// User identifier in Debug is CallerIP + UserAgent. Or just CallerIP in production.
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public string Identifier { get; }
 
-
-        public User(IPAddress address)
+        public User (IPAddress address, string userAgent)
         {
-            IP = address;
+            Identifier = GetUserIdentifier(address, userAgent);
+        }
+
+        public static string GetUserIdentifier(IPAddress ip, string userAgent)
+        {
+            // Append the UserAgent in debug to allow for easier testing.
+#if DEBUG
+            return Invariant($"{ip}|{userAgent}");
+#else
+            return Invariant($"{ip}");
+#endif
         }
 
         /// <summary>

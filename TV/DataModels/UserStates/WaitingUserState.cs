@@ -1,6 +1,6 @@
-﻿using System;
-using RoystonGame.Web.DataModels.Requests;
+﻿using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using System;
 
 namespace RoystonGame.TV.DataModels.UserStates
 {
@@ -15,7 +15,7 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// <param name="state">To be returned, or overriden with default if null.</param>
         /// <returns>The default waiting user state if none provided.</returns>
         public static WaitingUserState DefaultState() => new WaitingUserState();
-        public static UserPrompt DefaultPrompt(User user) => new UserPrompt() { Description = "Waiting . . .", RefreshTimeInMs = 1000};
+        public static UserPrompt DefaultPrompt(User user) => new UserPrompt() { Description = "Waiting . . .", RefreshTimeInMs = 1000 };
 
         public WaitingUserState(Func<User, UserPrompt> promptGenerator = null, TimeSpan? maxWaitTime = null) : base(null, maxWaitTime, promptGenerator ?? DefaultPrompt)
         {

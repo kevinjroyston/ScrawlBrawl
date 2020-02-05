@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace RoystonGame.Web.DataModels.Responses
 {
@@ -18,7 +16,7 @@ namespace RoystonGame.Web.DataModels.Responses
         }
         public struct User
         {
-            public string UserIP { get; set; }
+            public string UserIdentifier { get; set; }
             public string DisplayName { get; set; }
             public string LobbyId { get; set; }
             public TimeSpan ActiveDuration { get; set; }

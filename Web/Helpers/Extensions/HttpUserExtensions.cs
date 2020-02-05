@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using System.Security.Principal;
-using System.Threading.Tasks;
 
 namespace RoystonGame.Web.Helpers.Extensions
 {
@@ -14,6 +11,11 @@ namespace RoystonGame.Web.Helpers.Extensions
             var claimsIdentity = (ClaimsIdentity)principal.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
             return claim.Value;
+        }
+
+        public static string GetUserAgent(this HttpRequest request)
+        {
+            return request.Headers.ContainsKey("User-Agent") ? request.Headers["User-Agent"].ToString() : string.Empty;
         }
     }
 }

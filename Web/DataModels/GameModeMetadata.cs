@@ -4,9 +4,6 @@ using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using RoystonGame.Web.DataModels.Responses;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace RoystonGame.Web.DataModels
 {
@@ -19,7 +16,8 @@ namespace RoystonGame.Web.DataModels
 
         public List<GameModeOptionResponse> Options { get; set; }
 
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public Func<Lobby, List<ConfigureLobbyRequest.GameModeOptionRequest>, IGameMode> GameModeInstantiator { get; set; }
     }
 }

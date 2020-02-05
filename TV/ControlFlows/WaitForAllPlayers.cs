@@ -15,7 +15,7 @@ namespace RoystonGame.TV.ControlFlows
 {
     public class WaitForAllPlayers : WaitForTrigger
     {
-        protected Dictionary<User, bool> UsersToWaitFor { get; set; } = new Dictionary<User, bool>();
+        protected Dictionary<User, bool> UsersToWaitFor { get; } = new Dictionary<User, bool>();
 
         private Lobby Lobby { get; }
 
@@ -34,7 +34,7 @@ namespace RoystonGame.TV.ControlFlows
         {
             Debug.Assert(lobby != null);
             this.Lobby = lobby;
-            if(usersToWaitFor == null)
+            if (usersToWaitFor == null)
             {
                 return;
             }

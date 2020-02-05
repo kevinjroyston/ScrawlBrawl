@@ -20,7 +20,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
     public class Gameplay_GS : GameState
     {
         private Random rand { get; } = new Random();
-        private static Func<User, UserPrompt> PickADrawing(ChallengeTracker challenge, List<string> choices) => (User user) => {
+        private static Func<User, UserPrompt> PickADrawing(ChallengeTracker challenge, List<string> choices) => (User user) =>
+        {
             List<string> detailedChoices = choices.Select(val => (challenge.IdToDrawingMapping[val].Item1 == user) ? Invariant($"{val} - You drew this") : val).ToList();
             string description;
             if (challenge.UserSubmittedDrawings.ContainsKey(user))
@@ -53,11 +54,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
         };
 
         private ChallengeTracker SubChallenge { get; set; }
-        public Gameplay_GS(Lobby lobby, ChallengeTracker challengeTracker, Action<User,UserStateResult,UserFormSubmission> outlet = null) : base(lobby, outlet)
+        public Gameplay_GS(Lobby lobby, ChallengeTracker challengeTracker, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(lobby, outlet)
         {
             SubChallenge = challengeTracker;
             int i = 0;
-            foreach(var kvp in challengeTracker.UserSubmittedDrawings.OrderBy(_ => rand.Next()))
+            foreach (var kvp in challengeTracker.UserSubmittedDrawings.OrderBy(_ => rand.Next()))
             {
                 i++;
                 challengeTracker.IdToDrawingMapping[i.ToString()] = (kvp.Key, kvp.Value);
@@ -65,25 +66,25 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 
             SimplePromptUserState pickDrawing = new SimplePromptUserState(
                 PickADrawing(challengeTracker, challengeTracker.IdToDrawingMapping.Keys.ToList()),
-                formSubmitListener:(User user, UserFormSubmission submission) =>
-                {
-                    User authorOfDrawing;
-                    authorOfDrawing = challengeTracker.IdToDrawingMapping.Values.ToArray()[submission.SubForms[0].RadioAnswer ?? -1].Item1;
+                formSubmitListener: (User user, UserFormSubmission submission) =>
+                 {
+                     User authorOfDrawing;
+                     authorOfDrawing = challengeTracker.IdToDrawingMapping.Values.ToArray()[submission.SubForms[0].RadioAnswer ?? -1].Item1;
 
-                    if (authorOfDrawing == challengeTracker.OddOneOut)
-                    {
-                        challengeTracker.UsersWhoFoundOOO.Add(user);
-                    }
-                    else
-                    {
-                        challengeTracker.UsersWhoConfusedWhichUsers.AddOrUpdate(authorOfDrawing, _ => new ConcurrentBag<User> { user }, (key, currentBag) =>
-                        {
-                            currentBag.Add(user);
-                            return currentBag;
-                        });
-                    }
-                    return (true, string.Empty);
-                });
+                     if (authorOfDrawing == challengeTracker.OddOneOut)
+                     {
+                         challengeTracker.UsersWhoFoundOOO.Add(user);
+                     }
+                     else
+                     {
+                         challengeTracker.UsersWhoConfusedWhichUsers.AddOrUpdate(authorOfDrawing, _ => new ConcurrentBag<User> { user }, (key, currentBag) =>
+                         {
+                             currentBag.Add(user);
+                             return currentBag;
+                         });
+                     }
+                     return (true, string.Empty);
+                 });
             this.Entrance = pickDrawing;
 
             UserStateTransition waitForUsers = new WaitForAllPlayers(this.Lobby, null, this.Outlet, null);
@@ -115,7 +116,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
         {
             foreach (User user in this.SubChallenge.UsersWhoFoundOOO)
             {
-                user.Score += TotalPointsToAward / this.SubChallenge.UsersWhoFoundOOO.Count; 
+                user.Score += TotalPointsToAward / this.SubChallenge.UsersWhoFoundOOO.Count;
             }
             foreach (User user in this.SubChallenge.UsersWhoConfusedWhichUsers.Keys)
             {
@@ -123,7 +124,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             }
 
             // If EVERYBODY figures out the diff, the owner loses some points but not as many.
-            if (this.SubChallenge.UsersWhoFoundOOO.Where(user => user != this.SubChallenge.Owner).Count() == (this.Lobby.GetActiveUsers().Count-1))
+            if (this.SubChallenge.UsersWhoFoundOOO.Where(user => user != this.SubChallenge.Owner).Count() == (this.Lobby.GetActiveUsers().Count - 1))
             {
                 this.SubChallenge.Owner.Score -= TotalPointsToAward / 2;
             }

@@ -26,24 +26,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 {
     public class Setup_GS : GameState
     {
-        private UserState GetPartyLeaderChooseNumberOfDrawingsState()
-        {
-            return new SimplePromptUserState(
-                prompt: (User user)=> new UserPrompt()
-                {
-                    Title = "Game Options",
-                    SubPrompts = new SubPrompt[]
-                    {
-                        new SubPrompt
-                        {
-                            Prompt = "Max drawing prompts per player",
-                            ShortAnswer = true
-                        }
-                    },
-                    SubmitButton = true
-                });
-        }
-
         private UserState GetWordsUserState(Connector outlet = null)
         {
             return new SimplePromptUserState(
@@ -95,7 +77,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             List<UserState> stateChain = new List<UserState>();
             List<ChallengeTracker> challenges = this.SubChallenges.OrderBy(_ => rand.Next()).ToList();
             int index = 0;
-            foreach(ChallengeTracker challenge in challenges)
+            foreach (ChallengeTracker challenge in challenges)
             {
                 if (challenge.Owner == user || !challenge.UserSubmittedDrawings.ContainsKey(user))
                 {
@@ -104,9 +86,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 
                 var lambdaSafeIndex = index;
                 stateChain.Add(new SimplePromptUserState(
-                    prompt: (User user)=> new UserPrompt()
+                    prompt: (User user) => new UserPrompt()
                     {
-                        Title = Invariant($"Drawing {lambdaSafeIndex+1} of {stateChain.Count()}"),
+                        Title = Invariant($"Drawing {lambdaSafeIndex + 1} of {stateChain.Count()}"),
                         Description = "Draw the prompt below. Careful, if you aren't the odd one out and people think you are, you will lose points for being a terrible artist.",
                         RefreshTimeInMs = 1000,
                         SubPrompts = new SubPrompt[]
@@ -136,18 +118,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             return stateChain;
         }
 
-        public Setup_GS(Lobby lobby, List<ChallengeTracker> challengeTrackers, Connector outlet = null) : base(lobby, outlet)
+        public Setup_GS(Lobby lobby, List<ChallengeTracker> challengeTrackers, int numDrawingsPerPrompt, Connector outlet = null) : base(lobby, outlet)
         {
             this.SubChallenges = challengeTrackers;
-            int numDrawingsPerPrompt = 6;
-
-            WaitForPartyLeader setNumPrompts = new WaitForPartyLeader(
-                null,
-                partyLeaderPrompt: GetPartyLeaderChooseNumberOfDrawingsState(),
-                partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission input) =>
-                {
-                    numDrawingsPerPrompt = Int32.Parse(input.SubForms[0].ShortAnswer);
-                });
 
             UserStateTransition waitForAllDrawings = new WaitForAllPlayers(this.Lobby, null, this.Outlet, null);
             UserStateTransition waitForAllPrompts = new WaitForAllPlayers(this.Lobby, null, outlet: (User user, UserStateResult result, UserFormSubmission input) =>
@@ -155,9 +128,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 GetDrawingsUserStateChain(user, waitForAllDrawings.Inlet)[0].Inlet(user, result, input);
             });
             waitForAllPrompts.AddStateEndingListener(() => this.AssignPrompts(numDrawingsPerPrompt));
-            setNumPrompts.SetOutlet(GetWordsUserState(waitForAllPrompts.Inlet).Inlet);
 
-            this.Entrance = setNumPrompts;
+            this.Entrance = waitForAllDrawings;
 
             this.UnityView = new UnityView
             {
@@ -202,7 +174,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 
                     // Determines if a swap is valid
                     if ((randomizedOrderChallenges[rand1a].Owner != user2 && !randomizedOrderChallenges[rand1a].UserSubmittedDrawings.ContainsKey(user2))
-                        &&(randomizedOrderChallenges[rand2a].Owner != user1 && !randomizedOrderChallenges[rand2a].UserSubmittedDrawings.ContainsKey(user1)))
+                        && (randomizedOrderChallenges[rand2a].Owner != user1 && !randomizedOrderChallenges[rand2a].UserSubmittedDrawings.ContainsKey(user1)))
                     {
                         randomizedOrderChallenges[rand1a].UserSubmittedDrawings.Remove(user1);
                         randomizedOrderChallenges[rand2a].UserSubmittedDrawings.Remove(user2);

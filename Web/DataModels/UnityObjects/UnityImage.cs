@@ -1,12 +1,11 @@
 ﻿using RoystonGame.TV.DataModels;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace RoystonGame.Web.DataModels.UnityObjects
 {
     public class UnityImage
     {
-        public bool Refresh() 
+        public bool Refresh()
         {
             bool modified = false;
             modified |= this.Base64Pngs?.Refresh() ?? false;
@@ -19,32 +18,39 @@ namespace RoystonGame.Web.DataModels.UnityObjects
             return modified;
         }
 
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public IAccessor<IReadOnlyList<string>> Base64Pngs { private get; set; }
         public IReadOnlyList<string> _Base64Pngs { get => Base64Pngs?.Value; }
 
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public IAccessor<string> Title { private get; set; }
         public string _Title { get => Title?.Value; }
 
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public IAccessor<string> Header { private get; set; }
         public string _Header { get => Header?.Value; }
 
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public IAccessor<string> Footer { private get; set; }
         public string _Footer { get => Footer?.Value; }
 
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public IAccessor<int?> VoteCount { private get; set; }
         public int? _VoteCount { get => VoteCount?.Value; }
 
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public IAccessor<IReadOnlyList<User>> RelevantUsers { private get; set; }
         public IReadOnlyList<User> _RelevantUsers { get => RelevantUsers?.Value; }
 
         // TODO: add some validation to this setter.
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public IAccessor<IReadOnlyList<int>> BackgroundColor { private get; set; }
         public IReadOnlyList<int> _BackgroundColor { get => BackgroundColor?.Value; }
     }

@@ -1,13 +1,10 @@
-﻿using System;
+﻿using RoystonGame.TV.ControlFlows;
+using RoystonGame.Web.DataModels.Enums;
+using RoystonGame.Web.DataModels.UnityObjects;
+using RoystonGame.Web.Helpers.Validation;
 using System.Collections.Generic;
 using System.Linq;
-using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.Web.DataModels.Enums;
-using RoystonGame.Web.DataModels.Requests;
-using RoystonGame.Web.DataModels.UnityObjects;
 using static System.FormattableString;
-
 using Connector = System.Action<
     RoystonGame.TV.DataModels.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
@@ -26,6 +23,8 @@ namespace RoystonGame.TV.DataModels.GameStates
 
         public WaitForLobbyCloseGameState(Lobby lobby, Connector outlet = null) : base(lobby, outlet)
         {
+            Arg.NotNull(lobby, nameof(lobby));
+
             WaitForTrigger transition = new WaitForTrigger(outlet: this.Outlet);
 
             this.Entrance = transition;
@@ -42,7 +41,8 @@ namespace RoystonGame.TV.DataModels.GameStates
                         new UnityImage
                         {
                             Title = new StaticAccessor<string> { Value = usr.DisplayName },
-                            Base64Pngs = new StaticAccessor<IReadOnlyList<string>> {
+                            Base64Pngs = new StaticAccessor<IReadOnlyList<string>>
+                            {
                                 Value = new List<string> { usr.SelfPortrait }
                             }
                         }).ToList()

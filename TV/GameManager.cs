@@ -1,15 +1,15 @@
 ﻿using RoystonGame.TV.DataModels;
 using RoystonGame.TV.DataModels.Enums;
+using RoystonGame.TV.DataModels.UserStates;
+using RoystonGame.Web.DataModels;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
+using RoystonGame.Web.DataModels.Responses;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using RoystonGame.Web.DataModels.Responses;
 using System.Net;
-using RoystonGame.TV.DataModels.UserStates;
-using RoystonGame.Web.DataModels.Enums;
-using System.Collections.Concurrent;
-using RoystonGame.Web.DataModels;
 
 namespace RoystonGame.TV
 {
@@ -39,7 +39,7 @@ namespace RoystonGame.TV
         #endregion
 
         #region User and Object trackers
-        private ConcurrentDictionary<IPAddress, User> Users { get; } = new ConcurrentDictionary<IPAddress, User>();
+        private ConcurrentDictionary<string, User> Users { get; } = new ConcurrentDictionary<string, User>();
         private ConcurrentDictionary<string, AuthenticatedUser> AuthenticatedUsers { get; } = new ConcurrentDictionary<string, AuthenticatedUser>();
         private ConcurrentDictionary<string, Lobby> LobbyIdToLobby { get; } = new ConcurrentDictionary<string, Lobby>();
 
@@ -54,7 +54,7 @@ namespace RoystonGame.TV
         /// States track all of the users that enter it. In order to aid in garbage collection, create a new state instance for each user.
         /// </summary>
         /// <returns>A new user registration user state.</returns>
-        public static UserState CreateUserRegistrationUserState () => new SimplePromptUserState(
+        public static UserState CreateUserRegistrationUserState() => new SimplePromptUserState(
             prompt: UserNamePrompt,
             outlet: (User user, UserStateResult result, UserFormSubmission userInput) =>
             {
@@ -106,20 +106,21 @@ namespace RoystonGame.TV
             }
         }
 
-        public static User MapIPToUser(IPAddress callerIP, out bool newUser)
+        public static User MapIPToUser(IPAddress callerIP, string userAgent, out bool newUser)
         {
             newUser = false;
+            string userIdentifier = User.GetUserIdentifier(callerIP, userAgent);
             try
             {
-                if (Singleton.Users.ContainsKey(callerIP))
+                if (Singleton.Users.ContainsKey(userIdentifier))
                 {
-                    return Singleton.Users[callerIP];
+                    return Singleton.Users[userIdentifier];
                 }
 
-                User user = new User(callerIP);
-                if(Singleton.Users.TryAdd(callerIP, user))
+                User user = new User(callerIP, userAgent);
+                if (Singleton.Users.TryAdd(userIdentifier, user))
                 {
-                    Singleton.CreateUserRegistrationUserState().Inlet(user, UserStateResult.Success, null);
+                    CreateUserRegistrationUserState().Inlet(user, UserStateResult.Success, null);
                     newUser = true;
                 }
                 else
@@ -143,9 +144,9 @@ namespace RoystonGame.TV
             {
                 if (!Singleton.AuthenticatedUsers.ContainsKey(userId))
                 {
-                    if(!Singleton.AuthenticatedUsers.TryAdd(userId, new AuthenticatedUser()
-                        {
-                            UserId = userId
+                    if (!Singleton.AuthenticatedUsers.TryAdd(userId, new AuthenticatedUser()
+                    {
+                        UserId = userId
                     }))
                     {
                         return null;
@@ -164,10 +165,18 @@ namespace RoystonGame.TV
         #region Lobby Management
         public static bool RegisterLobby(Lobby lobby)
         {
+            if (lobby == null)
+            {
+                return false;
+            }
             return Singleton.LobbyIdToLobby.TryAdd(lobby.LobbyId, lobby);
         }
         public static void DeleteLobby(Lobby lobby)
         {
+            if (lobby == null)
+            {
+                return;
+            }
             DeleteLobby(lobby.LobbyId);
         }
         public static void DeleteLobby(string lobbyId)
@@ -176,7 +185,8 @@ namespace RoystonGame.TV
             Singleton.LobbyIdToLobby.TryRemove(lobbyId, out Lobby _);
 
             lobby?.UnregisterAllUsers();
-            if (lobby?.Owner?.OwnedLobby != null) {
+            if (lobby?.Owner?.OwnedLobby != null)
+            {
                 lobby.Owner.OwnedLobby = null;
             }
             Singleton.AbandonedLobbyIds.Add(lobbyId);
@@ -204,17 +214,25 @@ namespace RoystonGame.TV
         }
         public static void UnregisterUser(User user)
         {
-            UnregisterUser(user.IP);
+            if (user == null)
+            {
+                return;
+            }
+            UnregisterUser(user.Identifier);
         }
-        public static void UnregisterUser(IPAddress callerIP)
+        public static void UnregisterUser(string userIdentifier)
         {
-            Singleton.Users.TryRemove(callerIP, out User _);
+            if (string.IsNullOrWhiteSpace(userIdentifier))
+            {
+                return;
+            }
+            Singleton.Users.TryRemove(userIdentifier, out User _);
         }
 
         private static (bool, string) RegisterUser(string lobbyId, User user, string displayName, string selfPortrait)
         {
-            IPAddress callerIP = Singleton.Users.FirstOrDefault((kvp) => kvp.Value == user).Key;
-            if (callerIP == null)
+            string userIdentifier = Singleton.Users.FirstOrDefault((kvp) => kvp.Value == user).Key;
+            if (userIdentifier == null)
             {
                 return (false, "Can't register unknown user. Refresh the page.");
             }

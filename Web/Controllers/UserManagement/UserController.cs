@@ -1,12 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RoystonGame.TV;
-using RoystonGame.Web.DataModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using RoystonGame.Web.Helpers.Extensions;
 
 namespace RoystonGame.Web.Controllers.UserManagement
 {
@@ -18,7 +12,7 @@ namespace RoystonGame.Web.Controllers.UserManagement
         [Route("Reset")]
         public IActionResult ResetUser()
         {
-            GameManager.UnregisterUser(this.HttpContext.Connection.RemoteIpAddress);
+            GameManager.UnregisterUser(TV.DataModels.User.GetUserIdentifier(this.HttpContext.Connection.RemoteIpAddress, Request.GetUserAgent()));
             return new OkResult();
         }
     }

@@ -6,6 +6,7 @@ using RoystonGame.TV.GameModes;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing;
 using RoystonGame.Web.DataModels;
+using RoystonGame.Web.DataModels.Exceptions;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using RoystonGame.Web.DataModels.Responses;
@@ -13,28 +14,33 @@ using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.Json.Serialization;
+using static System.FormattableString;
 
 namespace RoystonGame.TV
 {
     public class Lobby
     {
-        public string LobbyId { get; }
-
         /// <summary>
         /// An email address denoting what authenticated user created this lobby.
         /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public AuthenticatedUser Owner { get; }
+        private ConcurrentBag<User> UsersInLobby { get; } = new ConcurrentBag<User>();
+
+        #region Serialized fields
+        public string LobbyId { get; }
 
         /// <summary>
         /// Used for monitoring lobby age.
         /// </summary>
         public DateTime CreationTime { get; } = DateTime.Now;
-        private ConcurrentBag<User> UsersInLobby { get; } = new ConcurrentBag<User>();
 
-        public List<ConfigureLobbyRequest.GameModeOptionRequest> GameModeOptions { get; set; }
-        public int? SelectedGameMode { get; set; }
+        public List<ConfigureLobbyRequest.GameModeOptionRequest> GameModeOptions { get; private set; }
+        public int? SelectedGameMode { get; private set; }
+        #endregion
         #region GameStates
         private GameState CurrentGameState { get; set; }
         private GameState EndOfGameRestart { get; set; }
@@ -74,8 +80,23 @@ namespace RoystonGame.TV
                 {
                     new GameModeOptionResponse
                     {
-                        Description = "Drawings per prompt pair (with 1 being the imposter)",
+                        Description = "Number of colors per team",
                         ShortAnswer = true,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Max number of drawings per player (will likely be less)",
+                        ShortAnswer = true,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Number of teams per prompt",
+                        ShortAnswer = true,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Show other colors",
+                        RadioAnswers = new List<string>{"No", "Yes"},
                     },
                 }
             },
@@ -95,26 +116,80 @@ namespace RoystonGame.TV
         /// <returns>True if the lobby is accepting new users.</returns>
         public bool IsLobbyOpen()
         {
-            return (this.Game != null) && (this.SelectedGameMode.HasValue && this.UsersInLobby.Count() < GameModes[this.SelectedGameMode.Value].MaxPlayers);
+            // Either a game mode hasn't been selected, or the selected gamemode is not at its' capacity.
+            return (this.Game == null) && (!this.SelectedGameMode.HasValue || this.UsersInLobby.Count < GameModes[this.SelectedGameMode.Value].MaxPlayers);
         }
 
+        public bool ConfigureLobby(ConfigureLobbyRequest request, out string errorMsg)
+        {
+            errorMsg = string.Empty;
+            if (this.Game != null)
+            {
+                // TODO: this might need updating for replay logic.
+                errorMsg = "Cannot change configuration lobby while game is in progress!";
+                return false;
+            }
+
+            if (request?.GameMode == null || request.GameMode.Value < 0 || request.GameMode.Value >= Lobby.GameModes.Count)
+            {
+                errorMsg = "Unsupported Game Mode";
+                return false;
+            }
+
+            int activeUsers = GetActiveUsers().Count;
+            if (GameModes[request.GameMode.Value].MinPlayers > activeUsers || GameModes[request.GameMode.Value].MaxPlayers < activeUsers)
+            {
+                errorMsg = Invariant($"Selected game mode only supports ({GameModes[request.GameMode.Value].MinPlayers}) to ({GameModes[request.GameMode.Value].MaxPlayers}) players.");
+                return false;
+            }
+
+            IReadOnlyList<GameModeOptionResponse> requiredOptions = GameModes[request.GameMode.Value].Options;
+            if (request?.Options == null || request.Options.Count != requiredOptions.Count)
+            {
+                errorMsg = "Wrong number of options provided for selected game mode.";
+                return false;
+            }
+
+            for (int i = 0; i < requiredOptions.Count; i++)
+            {
+                if (requiredOptions[i].ShortAnswer == string.IsNullOrWhiteSpace(request.Options[i].ShortAnswer)
+                    || (requiredOptions[i].RadioAnswers != null && requiredOptions[i].RadioAnswers.Count > 0) == (!request.Options[i].RadioAnswer.HasValue || request.Options[i].RadioAnswer.Value < 0 || request.Options[i].RadioAnswer.Value >= requiredOptions[i].RadioAnswers.Count))
+                {
+                    errorMsg = "Did not provide valid set of options for selected game mode.";
+                    return false;
+                }
+            }
+
+            this.SelectedGameMode = request.GameMode;
+            this.GameModeOptions = request.Options;
+
+            return true;
+        }
+
+        /// <summary>
+        /// UserStates will need to be reinitialized on startup and replay. These are used to stage players in and out of IGameModes as well as show relevant information
+        /// to the TV client.
+        /// </summary>
         private void InitializeAllGameStates()
         {
             this.WaitForLobbyStart = new WaitForLobbyCloseGameState(this);
             this.EndOfGameRestart = new EndOfGameState(this, PrepareToRestartGame);
         }
 
-        public void CloseLobbyRegistration(int? selectedGameMode)
-        {
-            if (!selectedGameMode.HasValue || selectedGameMode.Value < 0 || selectedGameMode.Value >= Lobby.GameModes.Count)
-            {
-                return;
-            }
-
-            SelectedGameMode = selectedGameMode;
-        }
+        /// <summary>
+        /// Attempts to add a specified user to the lobby.
+        /// </summary>
+        /// <param name="user">User object to add.</param>
+        /// <param name="errorMsg">Error message only populated on failure.</param>
+        /// <returns>True if successfully added.</returns>
         public bool TryAddUser(User user, out string errorMsg)
         {
+            if (user == null)
+            {
+                errorMsg = "Something went wrong.";
+                return false;
+            }
+
             errorMsg = string.Empty;
             if (this.UsersInLobby.Contains(user))
             {
@@ -168,30 +243,53 @@ namespace RoystonGame.TV
             this.CurrentGameState = transitionTo;
         }
 
+        /// <summary>
+        /// Returns the list of users which are currently registered in the lobby.
+        /// </summary>
         public IReadOnlyList<User> GetActiveUsers()
         {
             return this.UsersInLobby.ToList().AsReadOnly();
         }
+
         /// <summary>
         /// Starts the game, throws if something is wrong with the configuration values.
         /// </summary>
         /// <param name="specialTransitionFrom">Where the current users are sitting (if somewhere other than WaitForLobbyStart)</param>
-        public void StartGame(GameState specialTransitionFrom = null)
+        public bool StartGame(out string errorMsg, GameState specialTransitionFrom = null)
         {
+            errorMsg = string.Empty;
             if (!this.SelectedGameMode.HasValue)
             {
-                throw new Exception("No game mode selected!");
+                errorMsg = "No game mode selected!";
+                return false;
+            }
+
+            if (GameModes[this.SelectedGameMode.Value].MaxPlayers < this.GetActiveUsers().Count
+                || GameModes[this.SelectedGameMode.Value].MinPlayers > this.GetActiveUsers().Count)
+            {
+                errorMsg = Invariant($"This game only supports ({GameModes[this.SelectedGameMode.Value].MinPlayers}) to ({GameModes[this.SelectedGameMode.Value].MaxPlayers}) players, you have ({this.GetActiveUsers().Count}).");
             }
 
             // Slightly hacky default because it can't be passed in.
             GameState transitionFrom = specialTransitionFrom ?? this.WaitForLobbyStart;
 
             GameModeMetadata gameModeMetadata = GameModes[this.SelectedGameMode.Value];
-            // TODO: catch errors below / pipe error message through. Check user count?
-            IGameMode game = gameModeMetadata.GameModeInstantiator(this, this.GameModeOptions);
+            IGameMode game;
+            try
+            {
+                game = gameModeMetadata.GameModeInstantiator(this, this.GameModeOptions);
+            }
+            catch (GameModeInstantiationException err)
+            {
+                errorMsg = err.Message;
+                return false;
+            }
+
             transitionFrom.Transition(game.EntranceState);
             game.Transition(this.EndOfGameRestart);
             this.WaitForLobbyStart.LobbyHasClosed();
+
+            return true;
         }
 
         /// <summary>
@@ -210,7 +308,11 @@ namespace RoystonGame.TV
                 case EndOfGameRestartType.SameGameAndPlayers:
                     GameState previousEndOfGameRestart = this.EndOfGameRestart;
                     this.EndOfGameRestart = new EndOfGameState(this, PrepareToRestartGame);
-                    StartGame(specialTransitionFrom: previousEndOfGameRestart);
+                    if(!StartGame(out string errorMsg, specialTransitionFrom: previousEndOfGameRestart))
+                    {
+                        throw new Exception(errorMsg);
+                    }
+
                     foreach (User user in this.UsersInLobby)
                     {
                         user.Score = 0;
@@ -231,13 +333,18 @@ namespace RoystonGame.TV
             }
         }
 
+        /// <summary>
+        /// Kicks all the users out of the lobby and puts them back in the unregistered state.
+        /// </summary>
         public void UnregisterAllUsers()
         {
-            foreach(User user in UsersInLobby)
+            foreach (User user in UsersInLobby)
             {
                 GameManager.UnregisterUser(user);
             }
             UsersInLobby.Clear();
         }
+
+        // TODO: unregister individual users manually as well as automatically. Handle it gracefully in the gamemode (don't wait for them on timeouts, also don't index OOB anywhere).
     }
 }

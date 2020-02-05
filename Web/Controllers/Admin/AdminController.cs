@@ -5,6 +5,7 @@ using RoystonGame.TV;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
@@ -25,7 +26,7 @@ namespace RoystonGame.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public static IActionResult Get()
         {
             AdminFetchResponse response = new AdminFetchResponse
             {
@@ -42,7 +43,7 @@ namespace RoystonGame.Web.Controllers
                     .Select(user =>
                         new AdminFetchResponse.User
                         {
-                            UserIP = user?.IP?.ToString(),
+                            UserIdentifier = user?.Identifier?.ToString(),
                             DisplayName = user?.DisplayName,
                             LobbyId = user?.LobbyId,
                             ActiveDuration = DateTime.Now.Subtract(user?.CreationTime ?? DateTime.Now),
@@ -54,26 +55,24 @@ namespace RoystonGame.Web.Controllers
 
         [HttpPost]
         [Route("/Delete")]
-        public IActionResult DeleteEntities(AdministrativeActionRequest input)
+        public static IActionResult DeleteEntities(AdministrativeActionRequest input)
         {
             int deletedEntries = 0;
             Exception lastException = null;
-            foreach (string userIP in input.Users)
+            foreach (string userIdentifier in input?.Users ?? new List<string>())
             {
                 try
                 {
-                    if (IPAddress.TryParse(userIP, out IPAddress userIPAddress))
-                    {
-                        GameManager.UnregisterUser(userIPAddress);
-                        deletedEntries++;
-                    }
+                    GameManager.UnregisterUser(userIdentifier);
+                    deletedEntries++;
                 }
                 catch (Exception e)
                 {
                     lastException = e;
                 }
             }
-            foreach (string lobbyId in input.Lobbies)
+
+            foreach (string lobbyId in input?.Lobbies ?? new List<string>())
             {
                 try
                 {

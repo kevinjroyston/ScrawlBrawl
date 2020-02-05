@@ -40,7 +40,7 @@ namespace RoystonGame.Web.Hubs
         private void LeaveAllGroups()
         {
             List<Task> tasks = new List<Task>();
-            foreach(Lobby lobby in GameManager.GetLobbies())
+            foreach (Lobby lobby in GameManager.GetLobbies())
             {
                 tasks.Add(Groups.RemoveFromGroupAsync(Context.ConnectionId, lobby.LobbyId));
             }

@@ -33,7 +33,7 @@ namespace RoystonGame.WordLists
         public static List<string> GetRandomLines(FileNames file, int count)
         {
             List<string> strings = new List<string>();
-            for (int i =0; i< count; i++)
+            for (int i = 0; i < count; i++)
             {
                 strings.Add(GetRandomLine(file));
             }

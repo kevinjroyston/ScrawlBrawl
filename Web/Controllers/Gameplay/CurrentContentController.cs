@@ -1,9 +1,9 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Mvc;
 using RoystonGame.TV;
 using RoystonGame.TV.DataModels;
 using RoystonGame.Web.DataModels.Enums;
+using RoystonGame.Web.Helpers.Extensions;
+using System;
 
 namespace RoystonGame.Web.Controllers
 {
@@ -14,7 +14,7 @@ namespace RoystonGame.Web.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, out bool newUser);
+            User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, Request.GetUserAgent(), out bool newUser);
             if (user?.UserState == null)
             {
                 return new BadRequestResult();
@@ -24,7 +24,7 @@ namespace RoystonGame.Web.Controllers
             {
                 return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 // If this is reached, the game state is likely corrupted and the lobby will need to be restarted or the user evicted.
                 GameManager.ReportGameError(ErrorType.GetContent, user?.LobbyId, user, e);

@@ -1,12 +1,13 @@
-﻿using System;
+﻿using KellermanSoftware.CompareNetObjects;
+using System;
 using System.Text.Json.Serialization;
-using KellermanSoftware.CompareNetObjects;
 
 namespace RoystonGame.Web.DataModels.UnityObjects
 {
     public class DynamicAccessor<T> : IAccessor<T>
     {
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public Func<T> DynamicBacker { get; set; }
 
         /// <summary>
@@ -15,7 +16,7 @@ namespace RoystonGame.Web.DataModels.UnityObjects
         /// <returns>True if the backed value changed.</returns>
         public bool Refresh()
         {
-            if(DynamicBacker == null)
+            if (DynamicBacker == null)
             {
                 return false;
             }

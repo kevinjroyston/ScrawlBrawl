@@ -28,7 +28,6 @@ namespace RoystonGame.Web.Hubs
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            // TODO: increase tick-rate ?
             _timer = new Timer(DoWork, null, TimeSpan.Zero,
                 TimeSpan.FromSeconds(1));
 
@@ -40,12 +39,12 @@ namespace RoystonGame.Web.Hubs
         /// </summary>
         private void DoWork(object _)
         {
-            while(GameManager.Singleton.AbandonedLobbyIds.TryTake(out string lobbyId))
+            while (GameManager.Singleton.AbandonedLobbyIds.TryTake(out string lobbyId))
             {
                 UnityHubNotifier.Clients.Group(lobbyId).SendAsync("LobbyClose");
             }
 
-            foreach(Lobby lobby in GameManager.GetLobbies())
+            foreach (Lobby lobby in GameManager.GetLobbies())
             {
                 try
                 {

@@ -20,7 +20,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
     public class Gameplay_GS : GameState
     {
         private Random rand { get; } = new Random();
-        private static Func<User, UserPrompt> PickADrawing(ChallengeTracker challenge, List<string> choices) => (User user) => {
+        private static Func<User, UserPrompt> PickADrawing(ChallengeTracker challenge, List<string> choices) => (User user) =>
+        {
             List<string> detailedChoices = choices.Select(val => (challenge.UserSubmittedDrawings.ContainsKey(user) && challenge.UserSubmittedDrawings[user].TeamId == val) ? Invariant($"{val} - You helped draw this") : val).ToList();
             string description;
             if (challenge.Owner == user)
@@ -33,6 +34,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             }
 
             // TODO: Rank several drawings rather than pick one.
+            // TODO: Option to randomize drawing pairings.
             return new UserPrompt
             {
                 Title = "Vote for the best drawing!",
@@ -117,7 +119,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 
                 if (users.Count == mostVotes)
                 {
-                    foreach(User user in this.SubChallenge.  UserSubmittedDrawings.Where(kvp=> kvp.Value.TeamId == id).Select(kvp => kvp.Key))
+                    foreach (User user in this.SubChallenge.UserSubmittedDrawings.Where(kvp => kvp.Value.TeamId == id).Select(kvp => kvp.Key))
                     {
                         // 500 points if they helped draw the best drawing.
                         user.Score += 500;

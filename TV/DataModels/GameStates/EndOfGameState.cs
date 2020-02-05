@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using RoystonGame.TV.ControlFlows;
+﻿using RoystonGame.TV.ControlFlows;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Connector = System.Action<
     RoystonGame.TV.DataModels.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
@@ -17,7 +17,7 @@ namespace RoystonGame.TV.DataModels.GameStates
 {
     public class EndOfGameState : GameState
     {
-        public UserPrompt ContinuePrompt(User user) => new UserPrompt()
+        public static UserPrompt ContinuePrompt(User user) => new UserPrompt()
         {
             Title = "What shall we do next?",
             RefreshTimeInMs = 5000,
@@ -53,7 +53,6 @@ namespace RoystonGame.TV.DataModels.GameStates
                     {
                         throw new Exception("Should have been caught in user input validation");
                     }
-                    // TODO: validate that below works.
                     endOfGameRestartCallback(RestartTypes.Keys.ToList()[selectedIndex.Value]);
                 });
 

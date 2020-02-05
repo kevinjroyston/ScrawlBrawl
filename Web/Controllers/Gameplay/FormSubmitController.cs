@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using RoystonGame.TV;
+using RoystonGame.TV.DataModels;
+using RoystonGame.Web.DataModels.Enums;
+using RoystonGame.Web.DataModels.Requests;
+using RoystonGame.Web.Helpers;
+using RoystonGame.Web.Helpers.Extensions;
+using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Web;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using RoystonGame.TV;
-using RoystonGame.TV.DataModels;
-using RoystonGame.Web.DataModels.Enums;
-using RoystonGame.Web.DataModels.Requests;
-using RoystonGame.Web.Helpers;
 using static System.FormattableString;
 
 namespace RoystonGame.Web.Controllers
@@ -24,7 +24,7 @@ namespace RoystonGame.Web.Controllers
         public IActionResult Post([FromBody] UserFormSubmission formData)
         {
             string error = string.Empty;
-            User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, out bool newUser);
+            User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, Request.GetUserAgent(), out bool newUser);
             if (user?.UserState == null || newUser)
             {
                 return BadRequest("Error finding user object, try again.");
@@ -55,7 +55,7 @@ namespace RoystonGame.Web.Controllers
             return success ? new OkResult() : BadRequest(error);
         }
 
-        private IActionResult BadRequest(string err)
+        private static IActionResult BadRequest(string err)
         {
             return new BadRequestObjectResult(err);
         }
@@ -109,7 +109,7 @@ namespace RoystonGame.Web.Controllers
                     // If regex attribute present use that instead.
                     if (!string.IsNullOrWhiteSpace(regex))
                     {
-                        if(!Regex.IsMatch(propValue.ToString(), regex))
+                        if (!Regex.IsMatch(propValue.ToString(), regex))
                         {
                             error = Invariant($"Invalid characters present in input field: '{property.Name}'");
                             return false;
@@ -127,12 +127,12 @@ namespace RoystonGame.Web.Controllers
             return true;
         }
 
-        private bool SanitizeString(string str)
+        private static bool SanitizeString(string str)
         {
             // first line is overly strict, last 4 should be more than sufficient and slightly less restrictive. Might as well default to overly secure.
             bool valid = str.All(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".Contains);
-            valid &= HttpUtility.HtmlEncode(str).Equals(str);
-            valid &= HttpUtility.JavaScriptStringEncode(str).Equals(str);
+            valid &= HttpUtility.HtmlEncode(str).Equals(str, StringComparison.InvariantCulture);
+            valid &= HttpUtility.JavaScriptStringEncode(str).Equals(str, StringComparison.InvariantCulture);
             //valid &= HttpUtility.UrlEncode(str).Equals(str);
             //valid &= HttpUtility.UrlPathEncode(str).Equals(str);
             return valid;

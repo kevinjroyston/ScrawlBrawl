@@ -43,14 +43,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             var unityImages = new List<UnityImage>();
             foreach ((User user, string userDrawing) in challenge.IdToDrawingMapping.Values)
             {
-                Func<string> footer = () =>Invariant($"{((user == challenge.OddOneOut) ? challenge.UsersWhoFoundOOO.Count : (challenge.UsersWhoConfusedWhichUsers.ContainsKey(user) ? challenge.UsersWhoConfusedWhichUsers[user].Count : 0))}");
+                Func<string> footer = () => Invariant($"{((user == challenge.OddOneOut) ? challenge.UsersWhoFoundOOO.Count : (challenge.UsersWhoConfusedWhichUsers.ContainsKey(user) ? challenge.UsersWhoConfusedWhichUsers[user].Count : 0))}");
                 unityImages.Add(new UnityImage
                 {
                     Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string> { userDrawing } },
-                    // TODO: show which users voted here.
                     //RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = new List<User> { owner } }
                     Footer = new DynamicAccessor<string> { DynamicBacker = footer },
-                    BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = user == challenge.OddOneOut ? new List<int> { 250, 128, 114} : new List<int> { 255, 255, 255 } }
+                    BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = user == challenge.OddOneOut ? new List<int> { 250, 128, 114 } : new List<int> { 255, 255, 255 } }
                 });
             }
             this.UnityView = new UnityView
