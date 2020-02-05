@@ -26,7 +26,7 @@ namespace RoystonGame.Web.Hubs
                 if (lobby != null)
                 {
                     LeaveAllGroups();
-                    Groups.AddToGroupAsync(Context.ConnectionId, lobby.LobbyId.ToString());
+                    Groups.AddToGroupAsync(Context.ConnectionId, lobby.LobbyId);
 
                     UnityView view = lobby.GetActiveUnityView();
                     Clients.Caller.SendAsync("UpdateState", view);
@@ -42,7 +42,7 @@ namespace RoystonGame.Web.Hubs
             List<Task> tasks = new List<Task>();
             foreach(Lobby lobby in GameManager.GetLobbies())
             {
-                tasks.Add(Groups.RemoveFromGroupAsync(Context.ConnectionId, lobby.LobbyId.ToString()));
+                tasks.Add(Groups.RemoveFromGroupAsync(Context.ConnectionId, lobby.LobbyId));
             }
             Task.WaitAll(tasks.ToArray());
         }

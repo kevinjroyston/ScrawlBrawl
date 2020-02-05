@@ -40,9 +40,9 @@ namespace RoystonGame.Web.Hubs
         /// </summary>
         private void DoWork(object _)
         {
-            while(GameManager.Singleton.AbandonedLobbyIds.TryTake(out Guid lobbyId))
+            while(GameManager.Singleton.AbandonedLobbyIds.TryTake(out string lobbyId))
             {
-                UnityHubNotifier.Clients.Group(lobbyId.ToString()).SendAsync("LobbyClose");
+                UnityHubNotifier.Clients.Group(lobbyId).SendAsync("LobbyClose");
             }
 
             foreach(Lobby lobby in GameManager.GetLobbies())
@@ -59,7 +59,7 @@ namespace RoystonGame.Web.Hubs
                     if (needToRefresh)
                     {
                         // Push updates to all clients.
-                        UnityHubNotifier.Clients.Group(lobby.LobbyId.ToString()).SendAsync("UpdateState", view);
+                        UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("UpdateState", view);
                     }
                 }
                 catch (Exception e)

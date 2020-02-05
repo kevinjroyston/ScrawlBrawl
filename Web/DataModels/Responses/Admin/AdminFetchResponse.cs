@@ -13,16 +13,17 @@ namespace RoystonGame.Web.DataModels.Responses
         public struct Lobby
         {
             public string LobbyOwner { get; set; }
-            public string LobbyCode { get; set; }
-            public Guid LobbyId { get; set; }
+            public string LobbyId { get; set; }
             public TimeSpan ActiveDuration { get; set; }
         }
-        public struct ConfigValue
+        public struct User
         {
-            public string Name { get; set; }
-            public string Value { get; set; }
+            public string UserIP { get; set; }
+            public string DisplayName { get; set; }
+            public string LobbyId { get; set; }
+            public TimeSpan ActiveDuration { get; set; }
         }
         public List<Lobby> ActiveLobbies;
-        public List<ConfigValue> CurrentConfigValues;
+        public List<User> ActiveUsers;
     }
 }

@@ -17,12 +17,16 @@ namespace RoystonGame.TV.DataModels.GameStates
 {
     public class WaitForLobbyCloseGameState : GameState
     {
-        public WaitForLobbyCloseGameState(Lobby lobby, Connector outlet = null, Action lobbyClosedCallback = null) : base(lobby, outlet)
+        public void LobbyHasClosed()
         {
-            WaitForPartyLeader transition = new WaitForPartyLeader(this.Lobby, this.Outlet, partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
-            {
-                lobbyClosedCallback?.Invoke();
-            });
+            WaitingState?.Trigger();
+        }
+
+        private WaitForTrigger WaitingState { get; }
+
+        public WaitForLobbyCloseGameState(Lobby lobby, Connector outlet = null) : base(lobby, outlet)
+        {
+            WaitForTrigger transition = new WaitForTrigger(outlet: this.Outlet);
 
             this.Entrance = transition;
 
@@ -30,7 +34,7 @@ namespace RoystonGame.TV.DataModels.GameStates
             this.UnityView = new UnityView
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForLobbyToStart },
-                Title = new StaticAccessor<string> { Value = Invariant($"Lobby code: {lobby.LobbyCode}") },
+                Title = new StaticAccessor<string> { Value = Invariant($"Lobby code: {lobby.LobbyId}") },
                 Instructions = new StaticAccessor<string> { Value = "Players joined so far:" },
                 UnityImages = new DynamicAccessor<IReadOnlyList<UnityImage>>
                 {

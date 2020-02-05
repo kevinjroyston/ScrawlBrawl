@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RoystonGame.Web.DataModels.Requests
+namespace RoystonGame.Web.Helpers
 {
     public class RegexSanitizerAttribute : Attribute
     {

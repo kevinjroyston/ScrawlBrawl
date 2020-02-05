@@ -2,8 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RoystonGame.TV;
+using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using System;
 using System.Linq;
+using System.Net;
+
+using static System.FormattableString;
 
 namespace RoystonGame.Web.Controllers
 {
@@ -28,9 +33,19 @@ namespace RoystonGame.Web.Controllers
                     .Select(lobby =>
                         new AdminFetchResponse.Lobby
                         {
-                            LobbyCode = lobby.LobbyCode,
-                            LobbyId = lobby.LobbyId,
-                            LobbyOwner = lobby.Owner.DisplayName
+                            LobbyId = lobby?.LobbyId,
+                            LobbyOwner = lobby?.Owner?.UserId,
+                            ActiveDuration = DateTime.Now.Subtract(lobby?.CreationTime ?? DateTime.Now)
+                        })
+                    .ToList(),
+                ActiveUsers = GameManager.GetUsers()
+                    .Select(user =>
+                        new AdminFetchResponse.User
+                        {
+                            UserIP = user?.IP?.ToString(),
+                            DisplayName = user?.DisplayName,
+                            LobbyId = user?.LobbyId,
+                            ActiveDuration = DateTime.Now.Subtract(user?.CreationTime ?? DateTime.Now),
                         })
                     .ToList(),
             };
@@ -38,21 +53,39 @@ namespace RoystonGame.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post()
+        [Route("/Delete")]
+        public IActionResult DeleteEntities(AdministrativeActionRequest input)
         {
-            AdminFetchResponse response = new AdminFetchResponse
+            int deletedEntries = 0;
+            Exception lastException = null;
+            foreach (string userIP in input.Users)
             {
-                ActiveLobbies = GameManager.GetLobbies()
-                    .Select(lobby =>
-                        new AdminFetchResponse.Lobby
-                        {
-                            LobbyCode = lobby.LobbyCode,
-                            LobbyId = lobby.LobbyId,
-                            LobbyOwner = lobby.Owner.DisplayName
-                        })
-                    .ToList(),
-            };
-            return new JsonResult(response);
+                try
+                {
+                    if (IPAddress.TryParse(userIP, out IPAddress userIPAddress))
+                    {
+                        GameManager.UnregisterUser(userIPAddress);
+                        deletedEntries++;
+                    }
+                }
+                catch (Exception e)
+                {
+                    lastException = e;
+                }
+            }
+            foreach (string lobbyId in input.Lobbies)
+            {
+                try
+                {
+                    GameManager.DeleteLobby(lobbyId);
+                    deletedEntries++;
+                }
+                catch (Exception e)
+                {
+                    lastException = e;
+                }
+            }
+            return new JsonResult(Invariant($"Deleted ({deletedEntries}) entries. Last exception: '{lastException}'"));
         }
     }
 }

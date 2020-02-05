@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace RoystonGame
 {
@@ -65,6 +67,9 @@ namespace RoystonGame
                 configuration.RootPath = "ClientApp/dist";
             });
             services.AddHostedService<GameNotifier>();
+
+            //services.AddDbContext<ConfigurationDbContext>(options =>
+            //    options.UseSqlServer(Configuration.GetConnectionString("ConfigurationDbContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

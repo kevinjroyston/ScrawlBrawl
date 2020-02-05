@@ -2,6 +2,7 @@
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates;
+using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,8 +19,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
         private List<GameState> Scoreboards { get; set; } = new List<GameState>();
         private List<GameState> VoteReveals { get; set; } = new List<GameState>();
         private Random rand { get; } = new Random();
-        public TwoToneDrawingGameMode(Lobby lobby)
+        public TwoToneDrawingGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
+            // TODO: use options.
             Setup = new Setup_GS(lobby, this.SubChallenges);
             Setup.AddStateEndingListener(() =>
             {

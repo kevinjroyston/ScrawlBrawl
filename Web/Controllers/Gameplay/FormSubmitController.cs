@@ -11,7 +11,7 @@ using RoystonGame.TV;
 using RoystonGame.TV.DataModels;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
-
+using RoystonGame.Web.Helpers;
 using static System.FormattableString;
 
 namespace RoystonGame.Web.Controllers
@@ -20,13 +20,6 @@ namespace RoystonGame.Web.Controllers
     [Route("[controller]")]
     public class FormSubmitController : ControllerBase
     {
-        private readonly ILogger<FormSubmitController> _logger;
-
-        public FormSubmitController(ILogger<FormSubmitController> logger)
-        {
-            _logger = logger;
-        }
-
         [HttpPost]
         public IActionResult Post([FromBody] UserFormSubmission formData)
         {

@@ -9,12 +9,13 @@ using System.Net;
 using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.Web.DataModels.Enums;
 using System.Collections.Concurrent;
+using RoystonGame.Web.DataModels;
 
 namespace RoystonGame.TV
 {
     public class GameManager
     {
-        #region References
+        #region Singleton
         private static GameManager _internalSingleton;
         public static GameManager Singleton
         {
@@ -27,26 +28,37 @@ namespace RoystonGame.TV
                 return _internalSingleton;
             }
         }
+
+        private GameManager()
+        {
+            if (_internalSingleton != null)
+            {
+                throw new Exception("Tried to instantiate a second instance of GameManager.cs");
+            }
+        }
         #endregion
 
         #region User and Object trackers
-        private ConcurrentDictionary<IPAddress, User> RegisteredUsers { get; } = new ConcurrentDictionary<IPAddress, User>();
-        private ConcurrentDictionary<IPAddress, User> UnregisteredUsers { get; } = new ConcurrentDictionary<IPAddress, User>();
-        private ConcurrentDictionary<Guid, Lobby> LobbyIdToLobby { get; } = new ConcurrentDictionary<Guid, Lobby>();
-        private ConcurrentDictionary<string, Lobby> LobbyCodeToLobby { get; } = new ConcurrentDictionary<string, Lobby>();
+        private ConcurrentDictionary<IPAddress, User> Users { get; } = new ConcurrentDictionary<IPAddress, User>();
+        private ConcurrentDictionary<string, AuthenticatedUser> AuthenticatedUsers { get; } = new ConcurrentDictionary<string, AuthenticatedUser>();
+        private ConcurrentDictionary<string, Lobby> LobbyIdToLobby { get; } = new ConcurrentDictionary<string, Lobby>();
 
         /// <summary>
         /// Hacky fix for passing this info to GameNotifier thread.
         /// </summary>
-        public ConcurrentBag<Guid> AbandonedLobbyIds { get; } = new ConcurrentBag<Guid>();
+        public ConcurrentBag<string> AbandonedLobbyIds { get; } = new ConcurrentBag<string>();
         #endregion
 
         #region States
-        private UserState UserRegistration { get; set; } = new SimplePromptUserState(
+        /// <summary>
+        /// States track all of the users that enter it. In order to aid in garbage collection, create a new state instance for each user.
+        /// </summary>
+        /// <returns>A new user registration user state.</returns>
+        public static UserState CreateUserRegistrationUserState () => new SimplePromptUserState(
             prompt: UserNamePrompt,
             outlet: (User user, UserStateResult result, UserFormSubmission userInput) =>
             {
-                GetLobby(user.LobbyId.Value).Inlet(user, result, userInput);
+                GetLobby(user.LobbyId).Inlet(user, result, userInput);
             },
             // Outlet won't be called until the below returns true
             formSubmitListener: (User user, UserFormSubmission userInput) =>
@@ -79,81 +91,19 @@ namespace RoystonGame.TV
         };
         #endregion
 
-        internal static void ReportGameError(ErrorType type, Guid? lobbyId = null, User user = null, Exception error = null)
+        public static void ReportGameError(ErrorType type, string lobbyId, User user = null, Exception error = null)
         {
             // Log error to console (TODO redirect to file on release builds).
             Console.Error.WriteLine(error);
-            if (lobbyId.HasValue)
+            if (!string.IsNullOrWhiteSpace(lobbyId))
             {
-                Lobby lobby = GetLobby(lobbyId.Value);
-                Singleton.LobbyCodeToLobby.TryRemove(lobby.LobbyCode, out Lobby _);
-                Singleton.LobbyIdToLobby.TryRemove(lobby.LobbyId, out Lobby _);
-
-                lobby.UnregisterAllUsers();
-                Singleton.AbandonedLobbyIds.Add(lobby.LobbyId);
-            }
-        }
-
-        private GameManager()
-        {
-            if (_internalSingleton != null)
-            {
-                throw new Exception("Tried to instantiate a second instance of GameManager.cs");
-            }
-        }
-
-        public static void UnregisterUser(User user)
-        {
-            if (Singleton.RegisteredUsers.ContainsKey(user.IP))
-            {
-                Singleton.RegisteredUsers.Remove(user.IP, out User _);
-            }
-        }
-
-        public static (bool, string) RegisterUser(string lobbyCode, User user, string displayName, string selfPortrait)
-        {
-            IPAddress callerIP = Singleton.UnregisteredUsers.FirstOrDefault((kvp) => kvp.Value == user).Key;
-            if (callerIP == null)
-            {
-                return (false, "Can't register unknown user. Refresh the page.");
+                DeleteLobby(lobbyId);
             }
 
-            user.DisplayName = displayName;
-            user.SelfPortrait = selfPortrait;
-
-            string errorMsg = "Lobby not found";
-
-            // TODO: move to a different lobby creation model.
-            // TODO: add way to leave a lobby.
-            if (!Singleton.LobbyCodeToLobby.ContainsKey(lobbyCode))
+            if (user != null)
             {
-                Lobby newLobby = new Lobby(lobbyCode);
-
-                if (!Singleton.LobbyCodeToLobby.TryAdd(lobbyCode, newLobby)
-                    || !Singleton.LobbyIdToLobby.TryAdd(newLobby.LobbyId, newLobby))
-                {
-                    bool success = Singleton.LobbyCodeToLobby.TryRemove(lobbyCode, out Lobby _);
-                    success &= Singleton.LobbyIdToLobby.TryRemove(newLobby.LobbyId, out Lobby _);
-                    if (!success)
-                    {
-                        throw new Exception("Lobby lists corrupted");
-                    }
-                    return (false, "Unexpected error occurred while creating lobby. Refresh and try again.");
-                }
+                UnregisterUser(user);
             }
-
-            if(!Singleton.LobbyCodeToLobby[lobbyCode].TryAddUser(user, out errorMsg))
-            {
-                return (false, errorMsg);
-            }
-
-            if(!Singleton.UnregisteredUsers.TryRemove(callerIP, out User usr)
-                || usr.UserId != user.UserId
-                || !Singleton.RegisteredUsers.TryAdd(callerIP, user))
-            {
-                throw new Exception("Unexpected error occurred while registering user. Refresh and try again");
-            }
-            return (true, string.Empty);
         }
 
         public static User MapIPToUser(IPAddress callerIP, out bool newUser)
@@ -161,20 +111,16 @@ namespace RoystonGame.TV
             newUser = false;
             try
             {
-                if (Singleton.UnregisteredUsers.ContainsKey(callerIP))
+                if (Singleton.Users.ContainsKey(callerIP))
                 {
-                    return Singleton.UnregisteredUsers[callerIP];
-                }
-                else if (Singleton.RegisteredUsers.ContainsKey(callerIP))
-                {
-                    return Singleton.RegisteredUsers[callerIP];
+                    return Singleton.Users[callerIP];
                 }
 
                 User user = new User(callerIP);
-                if(Singleton.UnregisteredUsers.TryAdd(callerIP, user))
+                if(Singleton.Users.TryAdd(callerIP, user))
                 {
+                    Singleton.CreateUserRegistrationUserState().Inlet(user, UserStateResult.Success, null);
                     newUser = true;
-                    Singleton.UserRegistration.Inlet(user, UserStateResult.Success, null);
                 }
                 else
                 {
@@ -190,24 +136,120 @@ namespace RoystonGame.TV
             }
         }
 
+
+        public static AuthenticatedUser GetAuthenticatedUser(string userId)
+        {
+            try
+            {
+                if (!Singleton.AuthenticatedUsers.ContainsKey(userId))
+                {
+                    if(!Singleton.AuthenticatedUsers.TryAdd(userId, new AuthenticatedUser()
+                        {
+                            UserId = userId
+                    }))
+                    {
+                        return null;
+                    }
+                }
+
+                return Singleton.AuthenticatedUsers[userId];
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+                return null;
+            }
+        }
+
+        #region Lobby Management
+        public static bool RegisterLobby(Lobby lobby)
+        {
+            return Singleton.LobbyIdToLobby.TryAdd(lobby.LobbyId, lobby);
+        }
+        public static void DeleteLobby(Lobby lobby)
+        {
+            DeleteLobby(lobby.LobbyId);
+        }
+        public static void DeleteLobby(string lobbyId)
+        {
+            Lobby lobby = GetLobby(lobbyId);
+            Singleton.LobbyIdToLobby.TryRemove(lobbyId, out Lobby _);
+
+            lobby?.UnregisterAllUsers();
+            if (lobby?.Owner?.OwnedLobby != null) {
+                lobby.Owner.OwnedLobby = null;
+            }
+            Singleton.AbandonedLobbyIds.Add(lobbyId);
+        }
+
         public static List<Lobby> GetLobbies()
         {
-            return Singleton.LobbyCodeToLobby.Values.ToList();
+            return Singleton.LobbyIdToLobby.Values.ToList();
         }
 
-        public static Lobby GetLobby(Guid lobbyId)
+        public static Lobby GetLobby(string lobbyId)
         {
+            if (string.IsNullOrWhiteSpace(lobbyId))
+            {
+                return null;
+            }
             return Singleton.LobbyIdToLobby.GetValueOrDefault(lobbyId);
         }
+        #endregion
 
-        public static Lobby GetLobby(string friendlyName)
+        #region User Management
+        public static List<User> GetUsers()
         {
-            return Singleton.LobbyCodeToLobby.GetValueOrDefault(friendlyName);
+            return Singleton.Users.Values.ToList();
+        }
+        public static void UnregisterUser(User user)
+        {
+            UnregisterUser(user.IP);
+        }
+        public static void UnregisterUser(IPAddress callerIP)
+        {
+            Singleton.Users.TryRemove(callerIP, out User _);
         }
 
-        /*public static Lobby GetLobbyByCreator(User lobbyCreator)
+        private static (bool, string) RegisterUser(string lobbyId, User user, string displayName, string selfPortrait)
         {
-            return Singleton.LobbyOwnerToLobby.GetValueOrDefault(lobbyCreator);
-        }*/
+            IPAddress callerIP = Singleton.Users.FirstOrDefault((kvp) => kvp.Value == user).Key;
+            if (callerIP == null)
+            {
+                return (false, "Can't register unknown user. Refresh the page.");
+            }
+            if (string.IsNullOrWhiteSpace(lobbyId))
+            {
+                return (false, "Invalid Lobby Code.");
+            }
+
+            user.DisplayName = displayName;
+            user.SelfPortrait = selfPortrait;
+
+            if (!Singleton.LobbyIdToLobby.ContainsKey(lobbyId))
+            {
+                return (false, "Lobby not found.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(user.LobbyId))
+            {
+                // If the user is supposedly already registered to a lobby, try adding them again.
+                if (!Singleton.LobbyIdToLobby[user.LobbyId].TryAddUser(user, out string errorMsg))
+                {
+                    // If that didn't work, clear them from this lobby.
+                    user.LobbyId = null;
+                    return (false, errorMsg);
+                }
+            }
+            else
+            {
+                if (!Singleton.LobbyIdToLobby[lobbyId].TryAddUser(user, out string errorMsg))
+                {
+                    return (false, errorMsg);
+                }
+            }
+            return (true, string.Empty);
+        }
+        #endregion
     }
 }

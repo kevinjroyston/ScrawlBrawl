@@ -11,13 +11,6 @@ namespace RoystonGame.Web.Controllers
     [Route("[controller]")]
     public class CurrentContentController : ControllerBase
     {
-        private readonly ILogger<CurrentContentController> _logger;
-
-        public CurrentContentController(ILogger<CurrentContentController> logger)
-        {
-            _logger = logger;
-        }
-
         [HttpGet]
         public IActionResult Get()
         {

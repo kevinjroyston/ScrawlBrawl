@@ -13,10 +13,19 @@ namespace RoystonGame.TV.DataModels
         public Guid UserId { get; set; } = Guid.NewGuid();
 
         /// <summary>
-        /// The lobby id the user is a part of.
+        /// The lobby id the user is a part of. Null indicates the user is unregistered.
         /// </summary>
-        [JsonIgnore]
-        public Guid? LobbyId { get; set; }
+        public string LobbyId { get; set; }
+
+        /// <summary>
+        /// Used for monitoring user age.
+        /// </summary>
+        public DateTime CreationTime { get; } = DateTime.Now;
+
+        /// <summary>
+        /// If populated, contains the user's authenticated username.
+        /// </summary>
+        public string AuthenticatedUserPrincipalName { get; set; }
 
         /// <summary>
         /// The current state of the user.

@@ -2,6 +2,7 @@
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.DataModels;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates;
+using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +20,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO
         private List<GameState> Scoreboards { get; set; } = new List<GameState>();
         private List<GameState> Reveals { get; set; } = new List<GameState>();
         private Random rand { get; } = new Random();
-        public OneOfTheseThingsIsNotLikeTheOtherOneGameMode(Lobby lobby)
+        public OneOfTheseThingsIsNotLikeTheOtherOneGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
+            // TODO: use options
             Setup = new Setup_GS(lobby, this.SubChallenges);
             Setup.AddStateEndingListener(() =>
             {

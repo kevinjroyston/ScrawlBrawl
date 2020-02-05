@@ -22,6 +22,7 @@ namespace RoystonGame
             catch(Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+                throw;
             }
             finally
             {
