@@ -13,7 +13,7 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize(Policy = "Users")]
+    //[Authorize(Policy = "Users")]
     public class LobbyController : ControllerBase
     {
         [HttpGet]
