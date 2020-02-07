@@ -5,6 +5,8 @@ using RoystonGame.Web.DataModels.Responses;
 using System;
 using System.Collections.Generic;
 
+using static System.FormattableString;
+
 namespace RoystonGame.Web.DataModels
 {
     public class GameModeMetadata
@@ -19,5 +21,39 @@ namespace RoystonGame.Web.DataModels
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public Func<Lobby, List<ConfigureLobbyRequest.GameModeOptionRequest>, IGameMode> GameModeInstantiator { get; set; }
+
+        public bool IsSupportedPlayerCount(int playerCount, bool ignoreMinimum = false)
+        {
+            if (!ignoreMinimum && (MinPlayers.HasValue && MinPlayers.Value > playerCount))
+            {
+                return false;
+            }
+            if (MaxPlayers.HasValue && MaxPlayers.Value < playerCount)
+            {
+                return false;
+            }
+            return true;
+        }
+        public string RestrictionsToString()
+        {
+            List<string> restrictions = new List<string>();
+
+            if (MinPlayers.HasValue)
+            {
+                restrictions.Add(Invariant($"Min: ({MinPlayers.Value})"));
+            }
+
+            if (MaxPlayers.HasValue)
+            {
+                restrictions.Add(Invariant($"Max: ({MaxPlayers.Value})"));
+            }
+
+            if (restrictions.Count == 0)
+            {
+                return "No player count restrictions";
+            }
+
+            return Invariant($"{string.Join("| ", restrictions)}");
+        }
     }
 }

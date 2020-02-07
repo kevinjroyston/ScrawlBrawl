@@ -44,6 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\lobby-management\lobby-management.component.ts" />
     <None Remove="WordLists\nouns.txt" />
   </ItemGroup>
 
@@ -64,6 +65,10 @@
 
   <ItemGroup>
     <Folder Include="TV\GameModes\KevinsGames\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\lobby-management\lobby-management.component.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

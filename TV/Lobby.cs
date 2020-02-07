@@ -117,7 +117,7 @@ namespace RoystonGame.TV
         public bool IsLobbyOpen()
         {
             // Either a game mode hasn't been selected, or the selected gamemode is not at its' capacity.
-            return (this.Game == null) && (!this.SelectedGameMode.HasValue || this.UsersInLobby.Count < GameModes[this.SelectedGameMode.Value].MaxPlayers);
+            return (this.Game == null) && (!this.SelectedGameMode.HasValue || GameModes[this.SelectedGameMode.Value].IsSupportedPlayerCount(this.UsersInLobby.Count, ignoreMinimum:true));
         }
 
         public bool ConfigureLobby(ConfigureLobbyRequest request, out string errorMsg)
@@ -136,10 +136,10 @@ namespace RoystonGame.TV
                 return false;
             }
 
-            int activeUsers = GetActiveUsers().Count;
-            if (GameModes[request.GameMode.Value].MinPlayers > activeUsers || GameModes[request.GameMode.Value].MaxPlayers < activeUsers)
+            // Don't check player minimum count when configuring, but do check on start.
+            if (!GameModes[request.GameMode.Value].IsSupportedPlayerCount(GetActiveUsers().Count, ignoreMinimum: true))
             {
-                errorMsg = Invariant($"Selected game mode only supports ({GameModes[request.GameMode.Value].MinPlayers}) to ({GameModes[request.GameMode.Value].MaxPlayers}) players.");
+                errorMsg = Invariant($"Selected game mode has following restrictions: {GameModes[request.GameMode.Value].RestrictionsToString()})");
                 return false;
             }
 
@@ -264,10 +264,10 @@ namespace RoystonGame.TV
                 return false;
             }
 
-            if (GameModes[this.SelectedGameMode.Value].MaxPlayers < this.GetActiveUsers().Count
-                || GameModes[this.SelectedGameMode.Value].MinPlayers > this.GetActiveUsers().Count)
+            if (!GameModes[this.SelectedGameMode.Value].IsSupportedPlayerCount(this.GetActiveUsers().Count))
             {
-                errorMsg = Invariant($"This game only supports ({GameModes[this.SelectedGameMode.Value].MinPlayers}) to ({GameModes[this.SelectedGameMode.Value].MaxPlayers}) players, you have ({this.GetActiveUsers().Count}).");
+                errorMsg = Invariant($"Selected game mode has following restrictions: {GameModes[this.SelectedGameMode.Value].RestrictionsToString()})");
+                return false;
             }
 
             // Slightly hacky default because it can't be passed in.
@@ -284,6 +284,8 @@ namespace RoystonGame.TV
                 errorMsg = err.Message;
                 return false;
             }
+
+            this.Game = game;
 
             transitionFrom.Transition(game.EntranceState);
             game.Transition(this.EndOfGameRestart);
