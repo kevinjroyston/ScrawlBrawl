@@ -5,6 +5,7 @@ using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing;
+using RoystonGame.TV.GameModes.KylesGames.QuestionQuest;
 using RoystonGame.Web.DataModels;
 using RoystonGame.Web.DataModels.Exceptions;
 using RoystonGame.Web.DataModels.Requests;
@@ -98,6 +99,17 @@ namespace RoystonGame.TV
                         Description = "Show other colors",
                         RadioAnswers = new List<string>{"No", "Yes"},
                     },
+                }
+            },
+            new GameModeMetadata
+            {
+                Title = "Question Quest",
+                Description = "Answer questions dude",
+                MinPlayers = 1,
+                MaxPlayers = null,
+                GameModeInstantiator = (lobby, options) => new QuestionQuestGameMode(lobby, options),
+                Options = new List<GameModeOptionResponse>
+                {
                 }
             },
         }.AsReadOnly();
@@ -350,3 +362,4 @@ namespace RoystonGame.TV
         // TODO: unregister individual users manually as well as automatically. Handle it gracefully in the gamemode (don't wait for them on timeouts, also don't index OOB anywhere).
     }
 }
+   

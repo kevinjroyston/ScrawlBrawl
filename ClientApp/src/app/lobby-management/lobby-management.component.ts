@@ -27,7 +27,7 @@ export class LobbyManagementComponent {
             })
         };
         // TODO: build these from user input and use actual classes instead of this garbage
-        var body = JSON.stringify({ "GameMode": 1, "Options": [{ "ShortAnswer": 1 }, { "ShortAnswer": 1 }, { "ShortAnswer": 1 }, { "RadioAnswer": 1 }] });
+        var body = JSON.stringify({ "GameMode": 2, "Options": [] });
         console.warn('Submitting response', body);
         this.http.post(this.baseUrl + "Lobby/Configure", body, httpOptions).subscribe(
             data => {

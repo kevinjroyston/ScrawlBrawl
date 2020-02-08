@@ -25,9 +25,9 @@ namespace RoystonGame.TV.DataModels.GameStates
         {
             Arg.NotNull(lobby, nameof(lobby));
 
-            WaitForTrigger transition = new WaitForTrigger(outlet: this.Outlet);
+            WaitingState = new WaitForTrigger(outlet: this.Outlet);
 
-            this.Entrance = transition;
+            this.Entrance = WaitingState;
 
             // I have created a monstrosity.
             this.UnityView = new UnityView
