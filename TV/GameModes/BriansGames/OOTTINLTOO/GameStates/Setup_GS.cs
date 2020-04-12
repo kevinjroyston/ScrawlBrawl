@@ -121,6 +121,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
         public Setup_GS(Lobby lobby, List<ChallengeTracker> challengeTrackers, int numDrawingsPerPrompt, Connector outlet = null) : base(lobby, outlet)
         {
             this.SubChallenges = challengeTrackers;
+            GetWordsUserState();
 
             UserStateTransition waitForAllDrawings = new WaitForAllPlayers(this.Lobby, null, this.Outlet, null);
             UserStateTransition waitForAllPrompts = new WaitForAllPlayers(this.Lobby, null, outlet: (User user, UserStateResult result, UserFormSubmission input) =>
@@ -129,7 +130,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             });
             waitForAllPrompts.AddStateEndingListener(() => this.AssignPrompts(numDrawingsPerPrompt));
 
-            this.Entrance = waitForAllDrawings;
+            this.Entrance = GetWordsUserState(waitForAllPrompts.Inlet);
 
             this.UnityView = new UnityView
             {
