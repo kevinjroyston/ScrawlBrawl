@@ -33,7 +33,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 {
                     Title = "Game setup",
                     Description = "In the boxes below, enter two drawing prompts such that only you will be able to tell the drawings apart.",
-                    RefreshTimeInMs = 1000,
                     SubPrompts = new SubPrompt[]
                     {
                         new SubPrompt
@@ -90,7 +89,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     {
                         Title = Invariant($"Drawing {lambdaSafeIndex + 1} of {stateChain.Count()}"),
                         Description = "Draw the prompt below. Careful, if you aren't the odd one out and people think you are, you will lose points for being a terrible artist.",
-                        RefreshTimeInMs = 1000,
                         SubPrompts = new SubPrompt[]
                         {
                             new SubPrompt

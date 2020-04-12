@@ -15,7 +15,7 @@ namespace RoystonGame.TV.DataModels.UserStates
     /// </summary>
     public class SimplePromptUserState : UserState
     {
-        public static UserPrompt DefaultPrompt(User user) => new UserPrompt() { Description = "Waiting . . .", RefreshTimeInMs = 1000 };
+        public static UserPrompt DefaultPrompt(User user) => new UserPrompt() { Description = "Waiting . . ." };
         private List<Func<User, UserFormSubmission, (bool, string)>> FormSubmitListeners { get; set; } = new List<Func<User, UserFormSubmission, (bool, string)>>();
         public SimplePromptUserState(Func<User, UserPrompt> prompt = null, Connector outlet = null, TimeSpan? maxPromptDuration = null, Func<User, UserFormSubmission, (bool, string)> formSubmitListener = null)
             : base(outlet, maxPromptDuration, prompt ?? DefaultPrompt)

@@ -58,7 +58,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     {
                         Title = "Game setup",
                         Description = "In the boxes below, enter a drawing prompt and the colors which will be given to different players.",
-                        RefreshTimeInMs = 1000,
                         SubPrompts = subPrompts.ToArray(),
                         SubmitButton = true
                     };
@@ -110,7 +109,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     {
                         Title = Invariant($"Drawing { lambdaSafeIndex + 1} of {stateChain.Count()}"),
                         Description = "Draw the prompt below. Keep in mind you are only drawing part of the picture!",
-                        RefreshTimeInMs = 1000,
                         SubPrompts = new SubPrompt[]
                         {
                             new SubPrompt

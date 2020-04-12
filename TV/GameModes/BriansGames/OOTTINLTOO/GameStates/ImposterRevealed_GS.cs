@@ -23,7 +23,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
         private static UserPrompt PartyLeaderSkipButton(User user) => new UserPrompt()
         {
             Title = "Skip Reveal",
-            RefreshTimeInMs = 1000,
             SubmitButton = true
         };
 

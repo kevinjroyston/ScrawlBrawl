@@ -18,7 +18,6 @@ namespace RoystonGame.TV.DataModels.GameStates
         private static UserPrompt PartyLeaderSkipButton(User user) => new UserPrompt()
         {
             Title = "Skip Scoreboard",
-            RefreshTimeInMs = 1000,
             SubmitButton = true
         };
 

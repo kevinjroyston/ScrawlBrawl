@@ -12,7 +12,7 @@ namespace RoystonGame.Web.DataModels.Responses
         /// <summary>
         /// The amount of Time before calling this endpoint again.
         /// </summary>
-        public int RefreshTimeInMs { get; set; } = 1000;
+        public int RefreshTimeInMs { get; set; } = 5000;
 
         /// <summary>
         /// Bool indicating whether to render the Submit button.
