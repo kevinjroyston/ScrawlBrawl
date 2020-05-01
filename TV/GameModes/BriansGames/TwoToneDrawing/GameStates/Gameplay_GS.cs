@@ -86,7 +86,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 unityImages.Add(new UnityImage
                 {
                     Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = this.SubChallenge.Colors.Select(color => colorMap[color]).ToList() },
-                    Footer = new StaticAccessor<string> { Value = id.ToString() },
+                    ImageIdentifier = new StaticAccessor<string> { Value = id.ToString() },
                     BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = new List<int> { 255, 255, 255 } }
                 });
             }

@@ -8,13 +8,19 @@ public class ImageHandler : MonoBehaviour
 {
     private List<Image> Images = new List<Image>();
     public GameObject SubImagePrefab;
-    public Image Background;
-    public GameObject VoteCountHolder;
-    public GameObject SubImageHolder;
-    public Text VoteCount;
+
+    public Text ImageId;
     public Text Title;
     public Text Header;
-    public Text Footer;
+
+    public Image Background;
+    public GameObject SubImageHolder;
+    public GameObject ImageIdHolder;
+
+    public GameObject FooterHolder;
+    public Text VoteCount;
+    public Text DummyVoteCount;
+
     public UnityImage UnityImage
     {
         set
@@ -32,6 +38,8 @@ public class ImageHandler : MonoBehaviour
                     {
                         var subImage = GameObject.Instantiate(SubImagePrefab);
                         subImage.transform.SetParent(SubImageHolder.transform);
+                        subImage.transform.localScale = new Vector3(1f, 1f, 1f);
+                        subImage.transform.localPosition = Vector3.zero;
                         Images.Add(subImage.GetComponent<Image>());
                     }
                     Image image = Images[i];
@@ -64,14 +72,25 @@ public class ImageHandler : MonoBehaviour
             Header.enabled = value?._Header != null;
             Header.gameObject.SetActive(!string.IsNullOrWhiteSpace(value?._Header));
 
-            Footer.text = value?._Footer ?? string.Empty;
-            Footer.enabled = value?._Footer != null;
-            Footer.gameObject.SetActive(!string.IsNullOrWhiteSpace(value?._Footer));
+            // TODO: Footer
+            //Footer.text = value?._Footer ?? string.Empty;
+            //Footer.enabled = value?._Footer != null;
+            //Footer.gameObject.SetActive(!string.IsNullOrWhiteSpace(value?._Footer));
 
+            ImageId.text = value?._ImageIdentifier ?? string.Empty;
+            ImageId.enabled = value?._ImageIdentifier != null;
+            ImageIdHolder.SetActive(!string.IsNullOrWhiteSpace(value?._ImageIdentifier));
+
+            // Janky implementation of votecount/footer. probably needs some revisiting. Good luck.
             VoteCount.text = value?._VoteCount?.ToString() ?? string.Empty;
-            VoteCountHolder.SetActive(value?._VoteCount != null);
+            VoteCount.enabled = value?._VoteCount != null;
+            DummyVoteCount.text = value?._VoteCount?.ToString() ?? string.Empty;
+            DummyVoteCount.enabled = value?._VoteCount != null;
+            DummyVoteCount.gameObject.SetActive(value?._VoteCount != null);
+            FooterHolder.gameObject.SetActive(value?._VoteCount != null);
+
             //VoteCount.enabled = value?._VoteCount != null;
-            VoteCount.gameObject.SetActive(value?._VoteCount != null);
+            //VoteCount.gameObject.SetActive(value?._VoteCount != null);
 
             // TODO: relevant users list.
         }

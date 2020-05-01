@@ -15,6 +15,7 @@ namespace RoystonGame.Web.DataModels.UnityObjects
             modified |= this.VoteCount?.Refresh() ?? false;
             modified |= this.RelevantUsers?.Refresh() ?? false;
             modified |= this.BackgroundColor?.Refresh() ?? false;
+            modified |= this.ImageIdentifier?.Refresh() ?? false;
             return modified;
         }
 
@@ -42,6 +43,11 @@ namespace RoystonGame.Web.DataModels.UnityObjects
         [System.Text.Json.Serialization.JsonIgnore]
         public IAccessor<int?> VoteCount { private get; set; }
         public int? _VoteCount { get => VoteCount?.Value; }
+
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public IAccessor<string> ImageIdentifier { private get; set; }
+        public string _ImageIdentifier { get => ImageIdentifier?.Value; }
 
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]

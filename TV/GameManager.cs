@@ -106,10 +106,10 @@ namespace RoystonGame.TV
             }
         }
 
-        public static User MapIPToUser(IPAddress callerIP, string userAgent, out bool newUser)
+        public static User MapIPToUser(IPAddress callerIP, string userAgent, string idOverride, out bool newUser)
         {
             newUser = false;
-            string userIdentifier = User.GetUserIdentifier(callerIP, userAgent);
+            string userIdentifier = User.GetUserIdentifier(callerIP, userAgent, idOverride);
             try
             {
                 if (Singleton.Users.ContainsKey(userIdentifier))

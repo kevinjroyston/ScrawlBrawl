@@ -99,7 +99,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 {
                     Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string> { userDrawing } },
                     //RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = new List<User> { owner } }
-                    Footer = new StaticAccessor<string> { Value = id }
+                    ImageIdentifier = new StaticAccessor<string> { Value = id }
                 });
             }
 
