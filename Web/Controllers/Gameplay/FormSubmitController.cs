@@ -21,10 +21,10 @@ namespace RoystonGame.Web.Controllers
     public class FormSubmitController : ControllerBase
     {
         [HttpPost]
-        public IActionResult Post([FromBody] UserFormSubmission formData)
+        public IActionResult Post([FromBody] UserFormSubmission formData, string idOverride)
         {
             string error = string.Empty;
-            User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, Request.GetUserAgent(), out bool newUser);
+            User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, Request.GetUserAgent(), idOverride, out bool newUser);
             if (user?.UserState == null || newUser)
             {
                 return BadRequest("Error finding user object, try again.");

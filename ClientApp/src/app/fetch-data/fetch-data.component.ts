@@ -1,5 +1,5 @@
 import { Component, Inject, ViewEncapsulation, Pipe } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { Time } from '@angular/common';
 import { DomSanitizer, SafeHtml, SafeStyle, SafeScript, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
@@ -44,26 +44,36 @@ export class FetchDataComponent
     private formBuilder: FormBuilder;
     private userPromptTimerId;
     private currentPromptId;
+    private userIdOverride: string;
 
     constructor(
         http: HttpClient,
         formBuilder: FormBuilder,
-        @Inject('BASE_URL') baseUrl: string)
+        @Inject('BASE_URL') baseUrl: string,
+        @Inject('userIdOverride') userIdOverride: string)
     {
       this.formBuilder = formBuilder;
       this.http = http;
       this.baseUrl = baseUrl;
+      this.userIdOverride = userIdOverride;
+
+
       this.fetchUserPrompt();
     }
 
     fetchUserPrompt(): void {
+      const httpOptions = {
+          params: {
+              idOverride: this.userIdOverride
+          }
+      };
       // poor attempt at removing race condition on submit + regular fetch cycle.
       // might actually work if my understanding of setTmeout is correct.
       if (this.userPromptTimerId) {
         clearTimeout(this.userPromptTimerId);
       }
       // fetch the current content from the server
-      this.http.get<UserPrompt>(this.baseUrl + 'currentContent').subscribe(result => {
+        this.http.get<UserPrompt>(this.baseUrl + 'currentContent', httpOptions).subscribe(result => {
         // if the current content has the same as id as the current, return
         if (this.userPrompt && this.userPrompt.id == result.id) {
           this.refreshUserPromptTimer(this.userPrompt.refreshTimeInMs);
@@ -104,7 +114,10 @@ export class FetchDataComponent
       const httpOptions = {
         headers: new HttpHeaders({
             'Content-Type': 'application/json',
-        })
+        }),          
+        params: {
+          idOverride: this.userIdOverride
+        }
       };
       // Populate IDs.
       userSubmitData.id = this.userPrompt.id;

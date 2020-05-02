@@ -12,9 +12,9 @@ namespace RoystonGame.Web.Controllers
     public class CurrentContentController : ControllerBase
     {
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(string idOverride)
         {
-            User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, Request.GetUserAgent(), out bool newUser);
+            User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, Request.GetUserAgent(), idOverride, out bool newUser);
             if (user?.UserState == null)
             {
                 return new BadRequestResult();

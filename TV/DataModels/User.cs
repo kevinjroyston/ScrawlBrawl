@@ -72,11 +72,18 @@ namespace RoystonGame.TV.DataModels
             Identifier = GetUserIdentifier(address, userAgent);
         }
 
-        public static string GetUserIdentifier(IPAddress ip, string userAgent)
+        public static string GetUserIdentifier(IPAddress ip, string userAgent, string idOverride = null)
         {
             // Append the UserAgent in debug to allow for easier testing.
 #if DEBUG
-            return Invariant($"{ip}|{userAgent}");
+            if (!string.IsNullOrWhiteSpace(idOverride))
+            {
+                return idOverride;
+            }
+            else
+            {
+                return Invariant($"{ip}|{userAgent}");
+            }
 #else
             return Invariant($"{ip}");
 #endif

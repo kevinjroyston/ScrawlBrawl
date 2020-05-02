@@ -22,7 +22,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
         private Random rand { get; } = new Random();
         public TwoToneDrawingGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-       //     ValidateOptions(lobby, gameModeOptions);
+            //ValidateOptions(lobby, gameModeOptions);
 
             Setup = new Setup_GS(lobby, this.SubChallenges, gameModeOptions);
             Setup.AddStateEndingListener(() =>
