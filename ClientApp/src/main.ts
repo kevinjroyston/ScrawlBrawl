@@ -13,7 +13,7 @@ export function getUserIdOverrideQueryParameter() {
         const [k, v] = s.split('=')
         return Object.assign(acc, { [k]: v })
     }, {})
-    return params.idOverride;
+    return params["idOverride"];
 }
 
 const providers = [

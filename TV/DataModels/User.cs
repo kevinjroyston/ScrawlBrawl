@@ -76,7 +76,7 @@ namespace RoystonGame.TV.DataModels
         {
             // Append the UserAgent in debug to allow for easier testing.
 #if DEBUG
-            if (!string.IsNullOrWhiteSpace(idOverride))
+            if ((!string.IsNullOrWhiteSpace(idOverride)) && (idOverride != "undefined"))
             {
                 return idOverride;
             }
