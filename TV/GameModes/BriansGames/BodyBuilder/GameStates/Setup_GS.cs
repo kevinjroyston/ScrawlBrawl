@@ -4,17 +4,17 @@ using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.GameStates;
 using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.Extensions;
-using RoystonGame.TV.GameEngine;
-using RoystonGame.TV.GameEngine.Rendering;
 using RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
+using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using RoystonGame.Web.DataModels.Responses;
+using RoystonGame.Web.DataModels.UnityObjects;
 using RoystonGame.WordLists;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using static RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels.Setup_Person;
 using static System.FormattableString;
 
@@ -26,37 +26,7 @@ using Connector = System.Action<
 namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 {
     public class Setup_GS : GameState
-    {/*
-        private int ColorsPerDrawing { get; set; }
-        private int DrawingsPerPlayer { get; set; }
-        private UserState GetPartyLeaderChooseNumberOfDrawingsState()
-        {
-            return new SimplePromptUserState((User user) => new UserPrompt()
-            {
-                Title = "Game Options",
-                Description = Invariant($"Configure options, there are {GameManager.GetActiveUsers().Count} players total."),
-                SubPrompts = new SubPrompt[]
-                {
-                    new SubPrompt
-                    {
-                        Prompt = "Number of colors per drawing",
-                        ShortAnswer = true
-                    },
-                    new SubPrompt
-                    {
-                        Prompt = "Number of drawings per player",
-                        ShortAnswer = true
-                    }
-                },
-                SubmitButton = true
-            },
-            formSubmitCallback: (User user, UserFormSubmission userInput) =>
-            {
-                ColorsPerDrawing = Convert.ToInt32(userInput.SubForms[0].ShortAnswer);
-                DrawingsPerPlayer = Convert.ToInt32(userInput.SubForms[1].ShortAnswer);
-            });
-        }*/
-
+    {
         private UserState GetPeoplePrompts_State(Connector outlet = null)
         {
             return new SimplePromptUserState((User user) => new UserPrompt()
@@ -80,8 +50,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 SubmitButton = true
             },
             outlet,
-            formSubmitCallback: (User user, UserFormSubmission input) =>
+            formSubmitListener: (User user, UserFormSubmission input) =>
             {
+                if(input.SubForms[0].ShortAnswer.Equals(input.SubForms[1].ShortAnswer, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return (false, "Please enter 2 distinct people");
+                }
                 this.PeopleList.Add(new Setup_Person
                 {
                     Owner = user,
@@ -92,7 +66,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                     Owner = user,
                     Prompt = input.SubForms[1].ShortAnswer
                 });
-            }) ;
+                return (true, String.Empty);
+            });
         }
 
         private List<Setup_Person> PeopleList { get; set; }
@@ -120,20 +95,20 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 {
                     Title = "Time to draw!",
                     Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",
-                    RefreshTimeInMs = 1000,
                     SubPrompts = new SubPrompt[]
                     {
                         new SubPrompt
                         {
                             Prompt = Invariant($"You are drawing the \"{person.UserSubmittedDrawingsByUser[user].Type}\" of \"{person.Prompt}\""),
-                            Drawing = true,
+                            Drawing = new DrawingPromptMetadata(),//{} add in width, height, background
                         },
                     },
                     SubmitButton = true
                 },
-                formSubmitCallback: (User user, UserFormSubmission input) =>
+                formSubmitListener: (User user, UserFormSubmission input) =>
                 {
                     person.UserSubmittedDrawingsByUser[user].Drawing = input.SubForms[0].Drawing;
+                    return (true, String.Empty);
                 }));
             }
 
@@ -146,24 +121,25 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             return stateChain;
         }
 
-        public Setup_GS(List<Setup_Person> peopleList, Connector outlet = null) : base(outlet)
+        public Setup_GS(Lobby lobby, List<Setup_Person> peopleList, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, Connector outlet = null) : base(lobby, outlet)
         {
             this.PeopleList = peopleList;
 
-            UserStateTransition waitForAllDrawings = new WaitForAllPlayers(null, this.Outlet, null);
-            UserStateTransition waitForAllPrompts = new WaitForAllPlayers(null, outlet: (User user, UserStateResult result, UserFormSubmission input) =>
+            UserStateTransition waitForAllDrawings = new WaitForAllPlayers(lobby: lobby, outlet: this.Outlet);
+            UserStateTransition waitForAllPrompts = new WaitForAllPlayers(lobby: lobby, outlet:(User user, UserStateResult result, UserFormSubmission input) =>
             {
                 // This call doesn't actually happen until after all prompts are submitted
                 GetDrawingsUserStateChain(user, waitForAllDrawings.Inlet)[0].Inlet(user, result, input);
             });
             // Just before users call the line above, call AssignPrompts
-            waitForAllPrompts.SetStateEndingCallback(() => this.AssignPrompts());
+            waitForAllPrompts.AddStateEndingListener(() => this.AssignPrompts());
 
             this.Entrance = GetPeoplePrompts_State(waitForAllPrompts.Inlet);
 
-            this.GameObjects = new List<GameObject>()
+            this.UnityView = new UnityView
             {
-                new TextObject { Content = "Complete all the prompts on your devices." }
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
+                Instructions = new StaticAccessor<string> { Value = "Complete all the prompts on your devices." },
             };
         }
 
@@ -175,7 +151,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             List<Setup_Person> randomlyOrderedPeople = this.PeopleList.OrderBy(_ => rand.Next()).ToList();
-            IReadOnlyList<User> users = GameManager.GetActiveUsers();
+            IReadOnlyList<User> users = this.Lobby.GetActiveUsers();
             for (int i = 0; i < randomlyOrderedPeople.Count; i++)
             {
                 for (int j = 0; j < 3; j++)
@@ -188,7 +164,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                     };
 
                     randomlyOrderedPeople[i].UserSubmittedDrawingsByUser.Add(
-                        temp.Owner,temp) ;
+                        temp.Owner, temp);
                     randomlyOrderedPeople[i].UserSubmittedDrawingsByDrawingType.Add(
                         temp.Type, temp);
                 }

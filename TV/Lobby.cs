@@ -3,6 +3,7 @@ using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.GameStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes;
+using RoystonGame.TV.GameModes.BriansGames.BodyBuilder;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing;
 using RoystonGame.Web.DataModels;
@@ -98,6 +99,18 @@ namespace RoystonGame.TV
                         Description = "Show other colors",
                         RadioAnswers = new List<string>{"No", "Yes"},
                     },
+                }
+            },
+            new GameModeMetadata
+            {
+                Title = "Body Builder",
+                Description = "TODO.",
+                MinPlayers = 3,
+                MaxPlayers = null,
+                GameModeInstantiator = (lobby, options) => new BodyBuilderGameMode(lobby, options),
+                Options = new List<GameModeOptionResponse>
+                {
+                   //todo
                 }
             },
         }.AsReadOnly();

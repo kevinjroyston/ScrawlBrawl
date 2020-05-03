@@ -25,7 +25,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels
         }
         public enum DrawingType
         {
-            Head, Body, Legs
+            Head, Body, Legs, None
         }
         public Dictionary<DrawingType, UserDrawing> UserSubmittedDrawingsByDrawingType { get; set; } = new Dictionary<DrawingType, UserDrawing>();
         public Dictionary<User, UserDrawing> UserSubmittedDrawingsByUser { get; set; } = new Dictionary<User, UserDrawing>();

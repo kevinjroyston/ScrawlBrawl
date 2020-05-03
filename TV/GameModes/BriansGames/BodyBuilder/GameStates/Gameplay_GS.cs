@@ -1,63 +1,144 @@
-﻿using Microsoft.Xna.Framework;
-using RoystonGame.TV.ControlFlows;
+﻿using RoystonGame.TV.ControlFlows;
 using RoystonGame.TV.DataModels;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.GameStates;
 using RoystonGame.TV.DataModels.UserStates;
-using RoystonGame.TV.GameEngine;
-using RoystonGame.TV.GameEngine.Rendering;
+using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using RoystonGame.Web.DataModels.UnityObjects;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using static RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels.Setup_Person;
 using static System.FormattableString;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 {
-    
     public class Gameplay_GS : GameState
     {
         private Random rand { get; } = new Random();
-        private static Func<User, UserPrompt> PickADrawing(Gameplay_Person gameplay_Person, List<string> choices) => (User user) => {
-            
-            return new UserPrompt
-            {
-                Title = "This is your current person",
-                SubPrompts = new SubPrompt[]
+
+        private Func<User, UserPrompt> PickADrawing()
+        {
+            return (User user) => {
+                Gameplay_Person PlayerHand = AssignedPeople[user];
+                Gameplay_Person PlayerTrade = UnassignedPeople[UsersToSeatNumber[user]];
+                return new UserPrompt
                 {
-                    new SubPrompt
+                    Title = "This is your current person", //todo: rebder person
+                    SubPrompts = new SubPrompt[]
                     {
-                        Prompt = "Which body part do you want to trade?",
-                        Answers = choices.ToArray()
-                    }
+                        new SubPrompt
+                        {
+                            Prompt = "Which body part do you want to trade?",
+                            StringList = new string[]
+                            {
+                                PlayerHand.BodyPartDrawings[DrawingType.Head].Id.ToString(),
+                                PlayerHand.BodyPartDrawings[DrawingType.Body].Id.ToString(),
+                                PlayerHand.BodyPartDrawings[DrawingType.Legs].Id.ToString()
+                            },
+                            Answers = new string[]
+                            {
+                                PlayerTrade.BodyPartDrawings[DrawingType.Head].Id.ToString(),
+                                PlayerTrade.BodyPartDrawings[DrawingType.Body].Id.ToString(),
+                                PlayerTrade.BodyPartDrawings[DrawingType.Legs].Id.ToString()
+                            },
+                        }
 
-                },
-                SubmitButton = true,
+                    },
+                    SubmitButton = true,
+                };
             };
-        };
+        }
 
-        // private List<Setup_Person> Setup_PeopleList { get; set; }
         private List<Gameplay_Person> UnassignedPeople { get; set; } = new List<Gameplay_Person>();
         Dictionary<User, Gameplay_Person> AssignedPeople { get; set; } = new Dictionary<User, Gameplay_Person>();
-        public Gameplay_GS(List<Setup_Person> setup_PeopleList, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(outlet)
+        Dictionary<User, int> UsersToSeatNumber { get; set; } = new Dictionary<User, int>();
+        public Gameplay_GS(Lobby lobby, List<Setup_Person> setup_PeopleList, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(lobby, outlet)
         {
-            // this.Setup_PeopleList = setup_PeopleList;
             this.AssignPeople(setup_PeopleList);
+            this.AssignSeats();
+            
+            this.Entrance = AddGameplayCycle();
 
+            /*UserStateTransition waitForUsers = new WaitForAllPlayers(lobby: this.Lobby, outlet: this.Outlet);
+            waitForUsers.AddStateEndingListener(() => this.UpdateScores());
+            pickDrawing.SetOutlet(waitForUsers.Inlet);
+            waitForUsers.SetOutlet(this.Outlet);
+
+            var unityImages = new List<UnityImage>();
+            foreach ((string id, ConcurrentDictionary<string, string> colorMap) in this.SubChallenge.TeamIdToDrawingMapping)
+            {
+                unityImages.Add(new UnityImage
+                {
+                    Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = this.SubChallenge.Colors.Select(color => colorMap[color]).ToList() },
+                    ImageIdentifier = new StaticAccessor<string> { Value = id.ToString() },
+                    BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = new List<int> { 255, 255, 255 } }
+                });
+            }
+            this.UnityView = new UnityView
+            {
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
+                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages },
+                Title = new StaticAccessor<string> { Value = "Behold!" },
+            };*/
+        }
+
+        private UserState AddGameplayCycle()
+        {
+            /* ask users what changes they want to make
+             * perform said changes
+             * see if anyone won
+             */
+            RotateSeats();
+            UserStateTransition waitForUsers = new WaitForAllPlayers(lobby: this.Lobby);
+            SimplePromptUserState pickDrawing = new SimplePromptUserState(
+                prompt: PickADrawing(),
+                outlet: waitForUsers.Inlet,
+                formSubmitListener: (User user, UserFormSubmission submission) =>
+                {
+                    Gameplay_Person PlayerHand = AssignedPeople[user];
+                    Gameplay_Person PlayerTrade = UnassignedPeople[UsersToSeatNumber[user]];
+                    DrawingType? answer = (DrawingType?)submission.SubForms[0].RadioAnswer;
+                    if(answer == null)
+                    {
+                        return (false, "Please enter a valid option");
+                    }
+                    if(answer != DrawingType.None)
+                    {
+                        UserDrawing temp = PlayerHand.BodyPartDrawings[answer.Value];
+                        PlayerHand.BodyPartDrawings[answer.Value] = PlayerTrade.BodyPartDrawings[answer.Value];
+                        PlayerTrade.BodyPartDrawings[answer.Value] = temp;
+                    }
+                    return (true, string.Empty);
+                });
+            waitForUsers.AddStateEndingListener(()=>
+            {
+                if(this.PlayerWon())
+                {
+                    waitForUsers.SetOutlet(this.Outlet);
+                }
+                else
+                {
+                    waitForUsers.Transition(AddGameplayCycle());
+                }
+
+            });
+            return pickDrawing;
         }
         private void AssignPeople(List<Setup_Person> setup_People)
         {
             List<UserDrawing> heads;
             List<UserDrawing> bodies;
             List<UserDrawing> legs;
-            heads = setup_People.Select(val => val.UserSubmittedDrawingsByDrawingType[DrawingType.Head]).OrderBy(_ => rand.Next()).ToList();  
+            heads = setup_People.Select(val => val.UserSubmittedDrawingsByDrawingType[DrawingType.Head]).OrderBy(_ => rand.Next()).ToList();
             bodies = setup_People.Select(val => val.UserSubmittedDrawingsByDrawingType[DrawingType.Body]).OrderBy(_ => rand.Next()).ToList();
             legs = setup_People.Select(val => val.UserSubmittedDrawingsByDrawingType[DrawingType.Legs]).OrderBy(_ => rand.Next()).ToList();
-            foreach (User user in GameManager.GetActiveUsers())
+            foreach (User user in this.Lobby.GetActiveUsers())
             {
                 Gameplay_Person temp = new Gameplay_Person
                 {
@@ -72,7 +153,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 
                 AssignedPeople.Add(user, temp);
             }
-            if(heads.Count!= GameManager.GetActiveUsers().Count)
+            if (heads.Count != this.Lobby.GetActiveUsers().Count)
             {
                 throw new Exception("Something Went Wrong While Setting Up Game");
             }
@@ -94,6 +175,38 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 
         }
 
+        private bool PlayerWon()
+        {
+            bool returnval = false;
+            foreach(User user in this.Lobby.GetActiveUsers())
+            {
+                Guid headId = AssignedPeople[user].BodyPartDrawings[DrawingType.Head].Id;
+                Guid bodyId = AssignedPeople[user].BodyPartDrawings[DrawingType.Body].Id;
+                Guid legsId = AssignedPeople[user].BodyPartDrawings[DrawingType.Legs].Id;
+                if (headId == bodyId && bodyId == legsId)
+                {
+                    returnval = true;
+                    user.Score = 100;
+                }
+            }
+            return returnval;
+        }
+
+        private void RotateSeats()
+        {
+            Gameplay_Person first = UnassignedPeople[0];
+            UnassignedPeople.RemoveAt(0);
+            UnassignedPeople.Add(first);
+        }
+        private void AssignSeats()
+        {
+            int count = 0;
+            foreach (User user in this.Lobby.GetActiveUsers().OrderBy(( user) => rand.Next()).ToList())
+            {
+                UsersToSeatNumber.Add(user, count);
+                count++;
+            }
+        }
 
     }
 }
