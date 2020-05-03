@@ -22,6 +22,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
     {
         private Random rand { get; } = new Random();
 
+        public int headWidth = 240;
+        public int headHeight = 120;
+        public int bodyWidth = 240;
+        public int bodyHeight = 240;
+        public int legWidth = 240;
+        public int legHeight = 240;
+
         private Func<User, UserPrompt> PickADrawing()
         {
             return (User user) => {
@@ -29,23 +36,29 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 Gameplay_Person PlayerTrade = UnassignedPeople[UsersToSeatNumber[user]];
                 return new UserPrompt
                 {
-                    Title = "This is your current person", //todo: rebder person
+                    Title = "This is your current person", //todo: render person
+
                     SubPrompts = new SubPrompt[]
                     {
                         new SubPrompt
                         {
-                            Prompt = "Which body part do you want to trade?",
                             StringList = new string[]
                             {
-                                PlayerHand.BodyPartDrawings[DrawingType.Head].Id.ToString(),
-                                PlayerHand.BodyPartDrawings[DrawingType.Body].Id.ToString(),
-                                PlayerHand.BodyPartDrawings[DrawingType.Legs].Id.ToString()
+                                HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Head].Drawing,headWidth,headHeight),
+                                HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Body].Drawing,bodyWidth,bodyHeight),
+                                HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Legs].Drawing,legWidth,legHeight)
                             },
+                        },
+                        new SubPrompt
+                        {
+                            Prompt = "Which body part do you want to trade?",              
                             Answers = new string[]
                             {
-                                PlayerTrade.BodyPartDrawings[DrawingType.Head].Id.ToString(),
-                                PlayerTrade.BodyPartDrawings[DrawingType.Body].Id.ToString(),
-                                PlayerTrade.BodyPartDrawings[DrawingType.Legs].Id.ToString()
+                                HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Head].Drawing,headWidth,headHeight),
+                                HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Body].Drawing,bodyWidth,bodyHeight),
+                                HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Legs].Drawing,legWidth,legHeight),
+                                "None"
+
                             },
                         }
 
@@ -53,6 +66,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                     SubmitButton = true,
                 };
             };
+        }
+
+        private string HtmlImageWrapper(string image, int width = 240, int height = 240)
+        {
+            return Invariant($"<img width=\"{width}\" height=\"{height}\" src=\"{image}\"/>");
         }
 
         private List<Gameplay_Person> UnassignedPeople { get; set; } = new List<Gameplay_Person>();
@@ -103,7 +121,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 {
                     Gameplay_Person PlayerHand = AssignedPeople[user];
                     Gameplay_Person PlayerTrade = UnassignedPeople[UsersToSeatNumber[user]];
-                    DrawingType? answer = (DrawingType?)submission.SubForms[0].RadioAnswer;
+                    DrawingType? answer = (DrawingType?)submission.SubForms[1].RadioAnswer;
                     if(answer == null)
                     {
                         return (false, "Please enter a valid option");
@@ -157,7 +175,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             {
                 throw new Exception("Something Went Wrong While Setting Up Game");
             }
-            while (!heads.Any())
+            while (heads.Any())
             {
                 Gameplay_Person temp = new Gameplay_Person
                 {
@@ -194,6 +212,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 
         private void RotateSeats()
         {
+            
             Gameplay_Person first = UnassignedPeople[0];
             UnassignedPeople.RemoveAt(0);
             UnassignedPeople.Add(first);
