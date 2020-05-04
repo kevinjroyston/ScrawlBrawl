@@ -36,7 +36,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 Gameplay_Person PlayerTrade = UnassignedPeople[UsersToSeatNumber[user]];
                 return new UserPrompt
                 {
-                    Title = "This is your current person", //todo: render person
+                    Title = "This is your current person",
 
                     SubPrompts = new SubPrompt[]
                     {
