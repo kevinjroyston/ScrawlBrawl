@@ -132,7 +132,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 });
             waitForUsers.AddStateEndingListener(()=>
             {
-                if(this.PlayerWon())
+                if (this.PlayerWon())
                 {
                     waitForUsers.SetOutlet(this.Outlet);
                 }
