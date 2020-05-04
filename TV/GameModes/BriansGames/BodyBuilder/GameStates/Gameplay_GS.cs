@@ -22,12 +22,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
     {
         private Random rand { get; } = new Random();
 
-        public int headWidth = 240;
-        public int headHeight = 120;
-        public int bodyWidth = 240;
-        public int bodyHeight = 240;
-        public int legWidth = 240;
-        public int legHeight = 240;
+        public const int headWidth = 240;
+        public const int headHeight = 120;
+        public const int bodyWidth = 240;
+        public const int bodyHeight = 240;
+        public const int legWidth = 240;
+        public const int legHeight = 240;
 
         private Func<User, UserPrompt> PickADrawing()
         {
