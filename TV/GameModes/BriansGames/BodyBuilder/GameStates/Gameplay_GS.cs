@@ -221,6 +221,5 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 count++;
             }
         }
-
     }
 }
