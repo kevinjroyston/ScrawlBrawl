@@ -26,12 +26,34 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             return (User user) => {
                 Gameplay_Person PlayerHand = AssignedPeople[user];
                 Gameplay_Person PlayerTrade = UnassignedPeople[UsersToSeatNumber[user]];
-                return new UserPrompt
+                if(PlayerHand.doneWithRound)
                 {
-                    Title = "This is your current person",
-
-                    SubPrompts = new SubPrompt[]
+                    return new UserPrompt
                     {
+                        Title = "You are done! This is your final person",
+
+                        SubPrompts = new SubPrompt[]
+                        {
+                            new SubPrompt
+                            {
+                                StringList = new string[]
+                                {
+                                    HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Head].Drawing,BodyBuilderConstants.widths[DrawingType.Head],BodyBuilderConstants.heights[DrawingType.Head]),
+                                    HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Body].Drawing,BodyBuilderConstants.widths[DrawingType.Body],BodyBuilderConstants.heights[DrawingType.Body]),
+                                    HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Legs].Drawing,BodyBuilderConstants.widths[DrawingType.Legs],BodyBuilderConstants.heights[DrawingType.Legs])
+                                },
+                            },
+                        },
+                    };
+                }
+                else
+                {
+                    return new UserPrompt
+                    {
+                        Title = "This is your current person",
+
+                        SubPrompts = new SubPrompt[]
+                                        {
                         new SubPrompt
                         {
                             StringList = new string[]
@@ -43,7 +65,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                         },
                         new SubPrompt
                         {
-                            Prompt = "Which body part do you want to trade?",              
+                            Prompt = "Which body part do you want to trade?",
                             Answers = new string[]
                             {
                                 HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Head].Drawing,BodyBuilderConstants.heights[DrawingType.Head]),
@@ -53,9 +75,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 
                             },
                         }
-                    },
-                    SubmitButton = true,
-                };
+                                        },
+                        SubmitButton = true,
+                    };
+                }           
             };
         }
 
@@ -156,6 +179,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 bodies.RemoveAt(0);
                 legs.RemoveAt(0);
 
+                temp.doneWithRound = false;
                 AssignedPeople.Add(user, temp);
             }
             if (heads.Count != this.Lobby.GetActiveUsers().Count)
@@ -175,14 +199,16 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 bodies.RemoveAt(0);
                 legs.RemoveAt(0);
 
+                temp.doneWithRound = false;
                 UnassignedPeople.Add(temp);
             }
 
         }
 
+        private int winCount = 0;
+        private int numWon = 0;
         private bool PlayerWon()
-        {
-            bool returnval = false;
+        {          
             foreach(User user in this.Lobby.GetActiveUsers())
             {
                 Guid headId = AssignedPeople[user].BodyPartDrawings[DrawingType.Head].Id;
@@ -190,11 +216,31 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 Guid legsId = AssignedPeople[user].BodyPartDrawings[DrawingType.Legs].Id;
                 if (headId == bodyId && bodyId == legsId)
                 {
-                    returnval = true;
-                    user.Score = 100;
+                    if(winCount==0)
+                    {
+                        user.Score += 1000;
+                        numWon++;
+                    }
+                    else if(winCount==1)
+                    {
+                        user.Score += 500;
+                        numWon++;
+                    }
+                    else if(winCount==2)
+                    {
+                        user.Score += 250;
+                        numWon++;
+                    }
+                    winCount++;
                 }
             }
-            return returnval;
+            if(winCount>=3 || numWon>=this.Lobby.GetActiveUsers().Count)
+            {
+                winCount = 0;
+                numWon = 0;
+                return true;
+            }
+            return false;
         }
 
         private void RotateSeats()
