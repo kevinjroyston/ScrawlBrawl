@@ -21,14 +21,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
     public class Gameplay_GS : GameState
     {
         private Random rand { get; } = new Random();
-
-        public int headWidth = 240;
-        public int headHeight = 120;
-        public int bodyWidth = 240;
-        public int bodyHeight = 240;
-        public int legWidth = 240;
-        public int legHeight = 240;
-
         private Func<User, UserPrompt> PickADrawing()
         {
             return (User user) => {
@@ -44,9 +36,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                         {
                             StringList = new string[]
                             {
-                                HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Head].Drawing,headWidth,headHeight),
-                                HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Body].Drawing,bodyWidth,bodyHeight),
-                                HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Legs].Drawing,legWidth,legHeight)
+                                HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Head].Drawing,BodyBuilderConstants.widths[DrawingType.Head],BodyBuilderConstants.heights[DrawingType.Head]),
+                                HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Body].Drawing,BodyBuilderConstants.widths[DrawingType.Body],BodyBuilderConstants.heights[DrawingType.Body]),
+                                HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Legs].Drawing,BodyBuilderConstants.widths[DrawingType.Legs],BodyBuilderConstants.heights[DrawingType.Legs])
                             },
                         },
                         new SubPrompt
@@ -54,9 +46,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                             Prompt = "Which body part do you want to trade?",              
                             Answers = new string[]
                             {
-                                HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Head].Drawing,headWidth,headHeight),
-                                HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Body].Drawing,bodyWidth,bodyHeight),
-                                HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Legs].Drawing,legWidth,legHeight),
+                                HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Head].Drawing,BodyBuilderConstants.heights[DrawingType.Head]),
+                                HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Body].Drawing,BodyBuilderConstants.widths[DrawingType.Body],BodyBuilderConstants.heights[DrawingType.Body]),
+                                HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Legs].Drawing,BodyBuilderConstants.widths[DrawingType.Legs],BodyBuilderConstants.heights[DrawingType.Legs]),
                                 "None"
 
                             },
