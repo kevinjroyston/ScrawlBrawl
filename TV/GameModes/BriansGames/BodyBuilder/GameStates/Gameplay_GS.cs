@@ -121,7 +121,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                     {
                         return (false, "Please enter a valid option");
                     }
-                    if(answer != DrawingType.None)
+                    if (answer != DrawingType.None)
                     {
                         UserDrawing temp = PlayerHand.BodyPartDrawings[answer.Value];
                         PlayerHand.BodyPartDrawings[answer.Value] = PlayerTrade.BodyPartDrawings[answer.Value];
