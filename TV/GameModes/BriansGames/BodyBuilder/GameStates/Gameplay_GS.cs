@@ -61,7 +61,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 
                             },
                         }
-
                     },
                     SubmitButton = true,
                 };
