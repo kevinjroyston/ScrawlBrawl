@@ -117,7 +117,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                     Gameplay_Person PlayerHand = AssignedPeople[user];
                     Gameplay_Person PlayerTrade = UnassignedPeople[UsersToSeatNumber[user]];
                     DrawingType? answer = (DrawingType?)submission.SubForms[1].RadioAnswer;
-                    if(answer == null)
+                    if (answer == null)
                     {
                         return (false, "Please enter a valid option");
                     }
