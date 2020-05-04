@@ -216,7 +216,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         private void AssignSeats()
         {
             int count = 0;
-            foreach (User user in this.Lobby.GetActiveUsers().OrderBy(( user) => rand.Next()).ToList())
+            foreach (User user in this.Lobby.GetActiveUsers().OrderBy(_ => rand.Next()).ToList())
             {
                 UsersToSeatNumber.Add(user, count);
                 count++;
