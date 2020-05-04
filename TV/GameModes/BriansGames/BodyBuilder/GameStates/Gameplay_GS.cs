@@ -82,12 +82,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             this.AssignSeats();
             
             this.Entrance = AddGameplayCycle();
-
-            /*UserStateTransition waitForUsers = new WaitForAllPlayers(lobby: this.Lobby, outlet: this.Outlet);
-            waitForUsers.AddStateEndingListener(() => this.UpdateScores());
-            pickDrawing.SetOutlet(waitForUsers.Inlet);
-            waitForUsers.SetOutlet(this.Outlet);
-
+            // TODO: Add unity view
+            /*
             var unityImages = new List<UnityImage>();
             foreach ((string id, ConcurrentDictionary<string, string> colorMap) in this.SubChallenge.TeamIdToDrawingMapping)
             {
