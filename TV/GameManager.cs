@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
-
 namespace RoystonGame.TV
 {
     public class GameManager
