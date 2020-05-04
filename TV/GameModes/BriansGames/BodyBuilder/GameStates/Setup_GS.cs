@@ -106,7 +106,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                                 WidthInPx = BodyBuilderConstants.widths[person.UserSubmittedDrawingsByUser[user].Type],
                                 HeightInPx = BodyBuilderConstants.heights[person.UserSubmittedDrawingsByUser[user].Type],
                                 CanvasBackground = BodyBuilderConstants.backgrounds[person.UserSubmittedDrawingsByUser[user].Type],
-                            },//{} add in width, height, background
+                            },
                         },
                     },
                     SubmitButton = true

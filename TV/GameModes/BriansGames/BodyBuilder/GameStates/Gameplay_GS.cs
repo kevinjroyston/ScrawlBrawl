@@ -28,7 +28,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 Gameplay_Person PlayerTrade = UnassignedPeople[UsersToSeatNumber[user]];
                 return new UserPrompt
                 {
-                    Title = "This is your current person", //todo: render person
+                    Title = "This is your current person",
 
                     SubPrompts = new SubPrompt[]
                     {
@@ -53,7 +53,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 
                             },
                         }
-
                     },
                     SubmitButton = true,
                 };
@@ -74,12 +73,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             this.AssignSeats();
             
             this.Entrance = AddGameplayCycle();
-
-            /*UserStateTransition waitForUsers = new WaitForAllPlayers(lobby: this.Lobby, outlet: this.Outlet);
-            waitForUsers.AddStateEndingListener(() => this.UpdateScores());
-            pickDrawing.SetOutlet(waitForUsers.Inlet);
-            waitForUsers.SetOutlet(this.Outlet);
-
+            // TODO: Add unity view
+            /*
             var unityImages = new List<UnityImage>();
             foreach ((string id, ConcurrentDictionary<string, string> colorMap) in this.SubChallenge.TeamIdToDrawingMapping)
             {
@@ -114,11 +109,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                     Gameplay_Person PlayerHand = AssignedPeople[user];
                     Gameplay_Person PlayerTrade = UnassignedPeople[UsersToSeatNumber[user]];
                     DrawingType? answer = (DrawingType?)submission.SubForms[1].RadioAnswer;
-                    if(answer == null)
+                    if (answer == null)
                     {
                         return (false, "Please enter a valid option");
                     }
-                    if(answer != DrawingType.None)
+                    if (answer != DrawingType.None)
                     {
                         UserDrawing temp = PlayerHand.BodyPartDrawings[answer.Value];
                         PlayerHand.BodyPartDrawings[answer.Value] = PlayerTrade.BodyPartDrawings[answer.Value];
@@ -128,7 +123,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 });
             waitForUsers.AddStateEndingListener(()=>
             {
-                if(this.PlayerWon())
+                if (this.PlayerWon())
                 {
                     waitForUsers.SetOutlet(this.Outlet);
                 }
@@ -212,12 +207,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         private void AssignSeats()
         {
             int count = 0;
-            foreach (User user in this.Lobby.GetActiveUsers().OrderBy(( user) => rand.Next()).ToList())
+            foreach (User user in this.Lobby.GetActiveUsers().OrderBy(_ => rand.Next()).ToList())
             {
                 UsersToSeatNumber.Add(user, count);
                 count++;
             }
         }
-
     }
 }
