@@ -10,13 +10,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
     {
         public static Dictionary<DrawingType, int> widths = new Dictionary<DrawingType, int>()
         {
-            {DrawingType.Head, 240},
-            {DrawingType.Body, 240},
-            {DrawingType.Legs, 240},
+            {DrawingType.Head, 360},
+            {DrawingType.Body, 360},
+            {DrawingType.Legs, 360},
         };
         public static Dictionary<DrawingType, int> heights = new Dictionary<DrawingType, int>()
         {
-            {DrawingType.Head, 120},
+            {DrawingType.Head, 240},
             {DrawingType.Body, 240},
             {DrawingType.Legs, 240},
         };

@@ -110,7 +110,21 @@ namespace RoystonGame.TV
                 GameModeInstantiator = (lobby, options) => new BodyBuilderGameMode(lobby, options),
                 Options = new List<GameModeOptionResponse>
                 {
-                   //todo
+                   new GameModeOptionResponse
+                    {
+                        Description = "Number of rounds",
+                        ShortAnswer = true,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Display names on screen",
+                        RadioAnswers = new List<string>{"No", "Yes"},
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Display images on screen",
+                        RadioAnswers = new List<string>{"No", "Yes"},
+                    },
                 }
             },
         }.AsReadOnly();

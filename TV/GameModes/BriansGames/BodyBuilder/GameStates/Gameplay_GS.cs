@@ -43,7 +43,16 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                                     HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Legs].Drawing,BodyBuilderConstants.widths[DrawingType.Legs],BodyBuilderConstants.heights[DrawingType.Legs])
                                 },
                             },
+                            new SubPrompt
+                            {
+                                Prompt = "Please Just select None and hit submit, this will be fixed soon",
+                                Answers = new string[]
+                                {
+                                    "None"
+                                },
+                            }
                         },
+                        SubmitButton = true,
                     };
                 }
                 else
@@ -132,6 +141,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                     Gameplay_Person PlayerHand = AssignedPeople[user];
                     Gameplay_Person PlayerTrade = UnassignedPeople[UsersToSeatNumber[user]];
                     DrawingType? answer = (DrawingType?)submission.SubForms[1].RadioAnswer;
+                    if(AssignedPeople[user].doneWithRound)
+                    {
+                        return (true, string.Empty);
+                    }
                     if (answer == null)
                     {
                         return (false, "Please enter a valid option");
@@ -208,31 +221,35 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         private int winCount = 0;
         private int numWon = 0;
         private bool PlayerWon()
-        {          
+        {
+            bool someoneFinished = false;
             foreach(User user in this.Lobby.GetActiveUsers())
             {
                 Guid headId = AssignedPeople[user].BodyPartDrawings[DrawingType.Head].Id;
                 Guid bodyId = AssignedPeople[user].BodyPartDrawings[DrawingType.Body].Id;
                 Guid legsId = AssignedPeople[user].BodyPartDrawings[DrawingType.Legs].Id;
-                if (headId == bodyId && bodyId == legsId)
+                if (headId == bodyId && bodyId == legsId && !AssignedPeople[user].doneWithRound)
                 {
+                    AssignedPeople[user].doneWithRound = true;
                     if(winCount==0)
                     {
-                        user.Score += 1000;
-                        numWon++;
+                        user.Score += 1000;  
                     }
                     else if(winCount==1)
                     {
                         user.Score += 500;
-                        numWon++;
                     }
                     else if(winCount==2)
                     {
                         user.Score += 250;
-                        numWon++;
                     }
-                    winCount++;
+                    someoneFinished = true;
+                    numWon++;
                 }
+            }
+            if(someoneFinished)
+            {
+                winCount++;
             }
             if(winCount>=3 || numWon>=this.Lobby.GetActiveUsers().Count)
             {
