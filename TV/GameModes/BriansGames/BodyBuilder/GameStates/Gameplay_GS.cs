@@ -62,29 +62,29 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                         Title = "This is your current person",
 
                         SubPrompts = new SubPrompt[]
-                                        {
-                        new SubPrompt
                         {
-                            StringList = new string[]
+                            new SubPrompt
                             {
-                                HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Head].Drawing,BodyBuilderConstants.widths[DrawingType.Head],BodyBuilderConstants.heights[DrawingType.Head]),
-                                HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Body].Drawing,BodyBuilderConstants.widths[DrawingType.Body],BodyBuilderConstants.heights[DrawingType.Body]),
-                                HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Legs].Drawing,BodyBuilderConstants.widths[DrawingType.Legs],BodyBuilderConstants.heights[DrawingType.Legs])
+                                StringList = new string[]
+                                {
+                                    HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Head].Drawing,BodyBuilderConstants.widths[DrawingType.Head],BodyBuilderConstants.heights[DrawingType.Head]),
+                                    HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Body].Drawing,BodyBuilderConstants.widths[DrawingType.Body],BodyBuilderConstants.heights[DrawingType.Body]),
+                                    HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Legs].Drawing,BodyBuilderConstants.widths[DrawingType.Legs],BodyBuilderConstants.heights[DrawingType.Legs])
+                                },
                             },
-                        },
-                        new SubPrompt
-                        {
-                            Prompt = "Which body part do you want to trade?",
-                            Answers = new string[]
+                            new SubPrompt
                             {
-                                HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Head].Drawing,BodyBuilderConstants.heights[DrawingType.Head]),
-                                HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Body].Drawing,BodyBuilderConstants.widths[DrawingType.Body],BodyBuilderConstants.heights[DrawingType.Body]),
-                                HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Legs].Drawing,BodyBuilderConstants.widths[DrawingType.Legs],BodyBuilderConstants.heights[DrawingType.Legs]),
-                                "None"
+                                Prompt = "Which body part do you want to trade?",
+                                Answers = new string[]
+                                {
+                                    HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Head].Drawing,BodyBuilderConstants.heights[DrawingType.Head]),
+                                    HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Body].Drawing,BodyBuilderConstants.widths[DrawingType.Body],BodyBuilderConstants.heights[DrawingType.Body]),
+                                    HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Legs].Drawing,BodyBuilderConstants.widths[DrawingType.Legs],BodyBuilderConstants.heights[DrawingType.Legs]),
+                                    "None"
 
-                            },
-                        }
-                                        },
+                                },
+                            }
+                        },
                         SubmitButton = true,
                     };
                 }           
@@ -99,6 +99,14 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         private List<Gameplay_Person> UnassignedPeople { get; set; } = new List<Gameplay_Person>();
         Dictionary<User, Gameplay_Person> AssignedPeople { get; set; } = new Dictionary<User, Gameplay_Person>();
         Dictionary<User, int> UsersToSeatNumber { get; set; } = new Dictionary<User, int>();
+        private int winCount { get; set; } = 0;
+        private int numWon { get; set; } = 0;
+        Dictionary<int, int> WinningScoresByPlace { get; set; } = new Dictionary<int, int>()
+        {
+            {0, 1000},
+            {1, 500},
+            {2, 250}
+        };
         public Gameplay_GS(Lobby lobby, List<Setup_Person> setup_PeopleList, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(lobby, outlet)
         {
             this.AssignPeople(setup_PeopleList);
@@ -218,8 +226,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 
         }
 
-        private int winCount = 0;
-        private int numWon = 0;
         private bool PlayerWon()
         {
             bool someoneFinished = false;
@@ -231,18 +237,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 if (headId == bodyId && bodyId == legsId && !AssignedPeople[user].doneWithRound)
                 {
                     AssignedPeople[user].doneWithRound = true;
-                    if(winCount==0)
-                    {
-                        user.Score += 1000;  
-                    }
-                    else if(winCount==1)
-                    {
-                        user.Score += 500;
-                    }
-                    else if(winCount==2)
-                    {
-                        user.Score += 250;
-                    }
+                    user.Score += WinningScoresByPlace[winCount];
                     someoneFinished = true;
                     numWon++;
                 }
@@ -251,10 +246,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             {
                 winCount++;
             }
-            if(winCount>=3 || numWon>=this.Lobby.GetActiveUsers().Count)
+            if(winCount>=WinningScoresByPlace.Count() || numWon>=this.Lobby.GetActiveUsers().Count)
             {
-                winCount = 0;
-                numWon = 0;
+                //winCount = 0;
+                //numWon = 0;
                 return true;
             }
             return false;
