@@ -49,7 +49,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
 
         public void ValidateOptions(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            if (!int.TryParse(gameModeOptions[0].ShortAnswer, out int parsedInteger))
+            if (!int.TryParse(gameModeOptions[0].ShortAnswer, out int parsedInteger)
+                || parsedInteger < 1 || parsedInteger > 30)
             {
                 throw new GameModeInstantiationException("Could not parse input as integer");
             }
