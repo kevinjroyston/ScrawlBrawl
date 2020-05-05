@@ -14,6 +14,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels
         public User Owner { get; set; }
         public Dictionary<DrawingType, UserDrawing> BodyPartDrawings { get; set; } = new Dictionary<DrawingType, UserDrawing>();
 
-        public bool doneWithRound;
+        public bool doneWithRound { get; set; }
     }
 }
