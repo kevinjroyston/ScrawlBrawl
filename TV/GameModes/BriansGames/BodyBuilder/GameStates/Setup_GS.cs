@@ -53,7 +53,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             outlet,
             formSubmitListener: (User user, UserFormSubmission input) =>
             {
-                if(input.SubForms[0].ShortAnswer.Equals(input.SubForms[1].ShortAnswer, StringComparison.InvariantCultureIgnoreCase))
+                if (input.SubForms[0].ShortAnswer.Equals(input.SubForms[1].ShortAnswer, StringComparison.InvariantCultureIgnoreCase))
                 {
                     return (false, "Please enter 2 distinct people");
                 }
@@ -73,7 +73,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 
         private List<Setup_Person> PeopleList { get; set; }
 
-        private Random rand { get; set; } = new Random();
+        private Random Rand { get; set; } = new Random();
 
         /// <summary>
         /// Returns a chain of user states which will prompt for the proper drawings, assumes this.SubChallenges is fully set up.
@@ -84,7 +84,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         private List<UserState> GetDrawingsUserStateChain(User user, Connector outlet)
         {
             List<UserState> stateChain = new List<UserState>();
-            List<Setup_Person> people = this.PeopleList.OrderBy(_ => rand.Next()).ToList();
+            List<Setup_Person> people = this.PeopleList.OrderBy(_ => Rand.Next()).ToList();
             foreach (Setup_Person person in people)
             {
                 if (!person.UserSubmittedDrawingsByUser.ContainsKey(user))
@@ -156,7 +156,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         private void AssignPrompts()
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
-            List<Setup_Person> randomlyOrderedPeople = this.PeopleList.OrderBy(_ => rand.Next()).ToList();
+            List<Setup_Person> randomlyOrderedPeople = this.PeopleList.OrderBy(_ => Rand.Next()).ToList();
             IReadOnlyList<User> users = this.Lobby.GetActiveUsers();
             for (int i = 0; i < randomlyOrderedPeople.Count; i++)
             {

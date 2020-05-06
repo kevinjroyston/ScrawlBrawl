@@ -22,10 +22,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
         private List<GameState> Gameplays { get; set; } = new List<GameState>();
 
         private List<GameState> Scoreboards { get; set; } = new List<GameState>();
-        private Random rand { get; } = new Random();
         public BodyBuilderGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            ValidateOptions(lobby, gameModeOptions);
+            ValidateOptions(gameModeOptions);
 
             int numRounds = int.Parse(gameModeOptions[0].ShortAnswer);
             Setup = new Setup_GS(lobby: lobby, peopleList: this.PeopleList, gameModeOptions: gameModeOptions);
@@ -52,7 +51,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
             this.EntranceState = Setup;
         }
 
-        public void ValidateOptions(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
+        public void ValidateOptions(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             if (!int.TryParse(gameModeOptions[0].ShortAnswer, out int parsedInteger)
                 || parsedInteger < 1 || parsedInteger > 30)

@@ -337,7 +337,7 @@ namespace RoystonGame.TV
                 case EndOfGameRestartType.SameGameAndPlayers:
                     GameState previousEndOfGameRestart = this.EndOfGameRestart;
                     this.EndOfGameRestart = new EndOfGameState(this, PrepareToRestartGame);
-                    if(!StartGame(out string errorMsg, specialTransitionFrom: previousEndOfGameRestart))
+                    if (!StartGame(out string errorMsg, specialTransitionFrom: previousEndOfGameRestart))
                     {
                         throw new Exception(errorMsg);
                     }
