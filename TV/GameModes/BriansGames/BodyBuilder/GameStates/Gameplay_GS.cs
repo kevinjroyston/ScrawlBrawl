@@ -248,8 +248,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             }
             if(winCount>=WinningScoresByPlace.Count() || numWon>=this.Lobby.GetActiveUsers().Count)
             {
-                //winCount = 0;
-                //numWon = 0;
                 return true;
             }
             return false;
