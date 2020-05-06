@@ -33,7 +33,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
             {
                 for(int i =0; i< numRounds;i++)
                 {
-                    Gameplays.Add(new Gameplay_GS(lobby: lobby, setup_PeopleList: this.PeopleList, outlet: null));
+                    Gameplays.Add(new Gameplay_GS(
+                        lobby: lobby,
+                        setup_PeopleList: this.PeopleList,
+                        displayPool: gameModeOptions[1].RadioAnswer == 1,
+                        displayNames: gameModeOptions[2].RadioAnswer == 1,
+                        outlet: null));
                     Scoreboards.Add(new ScoreBoardGameState(lobby: lobby, outlet: this.Outlet));
 
                     Gameplays[i].Transition(Scoreboards[i]);

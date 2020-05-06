@@ -98,7 +98,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 
         private List<Gameplay_Person> UnassignedPeople { get; set; } = new List<Gameplay_Person>();
         Dictionary<User, Gameplay_Person> AssignedPeople { get; set; } = new Dictionary<User, Gameplay_Person>();
-        Dictionary<User, int> UsersToSeatNumber { get; set; } = new Dictionary<User, int>();
+        private Dictionary<User, int> UsersToSeatNumber { get; set; } = new Dictionary<User, int>();
+        private List<User> OrderedUsers { get; set; } = new List<User>();
         private int winCount { get; set; } = 0;
         private int numWon { get; set; } = 0;
         Dictionary<int, int> WinningScoresByPlace { get; set; } = new Dictionary<int, int>()
@@ -107,30 +108,45 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             {1, 500},
             {2, 250}
         };
-        public Gameplay_GS(Lobby lobby, List<Setup_Person> setup_PeopleList, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(lobby, outlet)
+        public Gameplay_GS(Lobby lobby, List<Setup_Person> setup_PeopleList, bool displayPool, bool displayNames, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(lobby, outlet)
         {
             this.AssignPeople(setup_PeopleList);
             this.AssignSeats();
             
             this.Entrance = AddGameplayCycle();
-            // TODO: Add unity view
-            /*
+
             var unityImages = new List<UnityImage>();
-            foreach ((string id, ConcurrentDictionary<string, string> colorMap) in this.SubChallenge.TeamIdToDrawingMapping)
+            string instructions = null;
+            string title = null;
+            if (displayNames)
             {
-                unityImages.Add(new UnityImage
-                {
-                    Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = this.SubChallenge.Colors.Select(color => colorMap[color]).ToList() },
-                    ImageIdentifier = new StaticAccessor<string> { Value = id.ToString() },
-                    BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = new List<int> { 255, 255, 255 } }
-                });
+                instructions = String.Join("         ", setup_PeopleList.Select((Setup_Person person) => person.Prompt));
             }
+            if(displayPool)
+            {
+                title = "Here's What's in the pool";
+                for (int i = 0; i < this.UnassignedPeople.Count; i++)
+                {
+                    unityImages.Add(new UnityImage
+                    {
+                        Base64Pngs = new DynamicAccessor<IReadOnlyList<string>> { DynamicBacker = () => this.UnassignedPeople[i].GetOrderedDrawings() },
+                        BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = new List<int> { 255, 255, 255 } },
+                        SpriteGridWidth = new StaticAccessor<int?> { Value = 1 },
+                        SpriteGridHeight = new StaticAccessor<int?> { Value = 3 },
+                        Header = new StaticAccessor<string> { Value = OrderedUsers[i].DisplayName }
+                    });
+                }
+                
+            }
+
             this.UnityView = new UnityView
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
                 UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages },
-                Title = new StaticAccessor<string> { Value = "Behold!" },
-            };*/
+                Title = new StaticAccessor<string> { Value = title },
+                Instructions = new StaticAccessor<string> { Value = instructions },
+            };
+
         }
 
         private UserState AddGameplayCycle()
@@ -267,6 +283,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             int count = 0;
             foreach (User user in this.Lobby.GetActiveUsers().OrderBy(_ => rand.Next()).ToList())
             {
+                OrderedUsers.Add(user);
                 UsersToSeatNumber.Add(user, count);
                 count++;
             }

@@ -15,5 +15,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels
         public Dictionary<DrawingType, UserDrawing> BodyPartDrawings { get; set; } = new Dictionary<DrawingType, UserDrawing>();
 
         public bool doneWithRound { get; set; }
+
+        public IReadOnlyList<string> GetOrderedDrawings()
+        {
+            return new List<string> { BodyPartDrawings[DrawingType.Head].Drawing, BodyPartDrawings[DrawingType.Body].Drawing, BodyPartDrawings[DrawingType.Legs].Drawing}.AsReadOnly();
+        }
     }
 }
