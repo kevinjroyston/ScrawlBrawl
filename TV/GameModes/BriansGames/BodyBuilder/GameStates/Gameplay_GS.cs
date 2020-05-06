@@ -103,9 +103,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         private int numWon { get; set; } = 0;
         Dictionary<int, int> WinningScoresByPlace { get; set; } = new Dictionary<int, int>()
         {
-            {0, 1000},
-            {1, 500},
-            {2, 250}
+            {0, 1000},   // First Place
+            {1, 500},    // Second Place
+            {2, 250}     // Third Place
         };
         public Gameplay_GS(Lobby lobby, List<Setup_Person> setup_PeopleList, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(lobby, outlet)
         {
