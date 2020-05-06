@@ -102,9 +102,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         private int NumPlayersDoneWithRound { get; set; } = 0;
         Dictionary<int, int> WinningScoresByPlace { get; set; } = new Dictionary<int, int>()
         {
-            {0, 1000},
-            {1, 500},
-            {2, 250}
+            {0, 1000},   // First Place
+            {1, 500},    // Second Place
+            {2, 250}     // Third Place
         };
         public Gameplay_GS(Lobby lobby, List<Setup_Person> setup_PeopleList, bool displayPool, bool displayNames, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(lobby, outlet)
         {
@@ -264,8 +264,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             }
             if (CurrentFinishingPosition >= WinningScoresByPlace.Count() || NumPlayersDoneWithRound >= this.Lobby.GetActiveUsers().Count)
             {
-                //winCount = 0;
-                //numWon = 0;
                 return true;
             }
             return false;
