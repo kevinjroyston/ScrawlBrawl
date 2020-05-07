@@ -1,17 +1,15 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.AzureAD.UI;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RoystonGame.Web.Hubs;
 using System;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.AzureAD.UI;
-using Microsoft.AspNetCore.Http;
 
 namespace RoystonGame
 {
@@ -51,13 +49,17 @@ namespace RoystonGame
                 options.TokenValidationParameters.ValidateIssuer = false; // accept several tenants (here simplified)
             });
 
-            services.AddAuthorization(options => {
+            services.AddAuthorization(options =>
+            {
                 options.AddPolicy("Admins", policyBuilder => policyBuilder.RequireClaim("groups", Configuration.GetValue<string>("AzureSecurityGroup:AdminGroupObjectId")));
                 options.AddPolicy("Users", policyBuilder => policyBuilder.RequireAuthenticatedUser());
             });
 
             //services.AddControllersWithViews();
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers().AddNewtonsoftJson((options) =>
+            {
+                //options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -65,10 +67,13 @@ namespace RoystonGame
                 configuration.RootPath = "ClientApp/dist";
             });
             services.AddHostedService<GameNotifier>();
+
+            //services.AddDbContext<ConfigurationDbContext>(options =>
+            //    options.UseSqlServer(Configuration.GetConnectionString("ConfigurationDbContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 
             if (env.IsDevelopment())
@@ -83,12 +88,12 @@ namespace RoystonGame
             }
 
             app.UseHttpsRedirection();
-            //TODO: are either of the below 2 needed
-            app.UseStaticFiles();
+
+            /*app.UseStaticFiles();
             if (!env.IsDevelopment())
             {
                 app.UseSpaStaticFiles();
-            }
+            }*/
 
             app.UseRouting();
             app.UseAuthentication();

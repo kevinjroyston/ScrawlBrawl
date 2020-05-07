@@ -4,13 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
+using static System.FormattableString;
 using Connector = System.Action<
     RoystonGame.TV.DataModels.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
     RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
-
-using static System.FormattableString;
 
 namespace RoystonGame.TV.DataModels
 {
@@ -59,7 +57,7 @@ namespace RoystonGame.TV.DataModels
             if (this.FirstUser)
             {
                 this.FirstUser = false;
-                foreach(var listener in this.StateEndingListeners)
+                foreach (var listener in this.StateEndingListeners)
                 {
                     listener?.Invoke();
                 }
@@ -95,24 +93,24 @@ namespace RoystonGame.TV.DataModels
                 throw new ArgumentNullException("Outlet cannot be null");
             }
 
-            Debug.WriteLine(Invariant($"|||STATE SETUP|||{this.StateId}|{this.GetType()}|{(specificUsers == null ? "all users" : string.Join(", ", specificUsers.Select(user=>user.DisplayName)))}"));
+            Debug.WriteLine(Invariant($"|||STATE SETUP|||{this.StateId}|{this.GetType()}|{(specificUsers == null ? "all users" : string.Join(", ", specificUsers.Select(user => user.DisplayName)))}"));
 
-            Action<User,UserStateResult,UserFormSubmission> internalOutlet = (User user, UserStateResult result, UserFormSubmission input) =>
-            {
+            Action<User, UserStateResult, UserFormSubmission> internalOutlet = (User user, UserStateResult result, UserFormSubmission input) =>
+              {
                 // An outlet should only ever be called once per user. Ignore extra calls (most likely a timeout thread).
                 if (this.HaveAlreadyCalledOutlet.ContainsKey(user) && this.HaveAlreadyCalledOutlet[user] == true)
-                {
-                    return;
-                }
+                  {
+                      return;
+                  }
 
-                this.HaveAlreadyCalledOutlet[user] = true;
+                  this.HaveAlreadyCalledOutlet[user] = true;
 
-                if(outlet == null)
-                {
-                    throw new Exception(Invariant($"Outlet not defined for User '{user.DisplayName}' who is currently in state type '{user.UserState.GetType()}'"));
-                }
-                outlet(user, result, input);
-            };
+                  if (outlet == null)
+                  {
+                      throw new Exception(Invariant($"Outlet not defined for User '{user.DisplayName}' who is currently in state type '{user.UserState.GetType()}'"));
+                  }
+                  outlet(user, result, input);
+              };
 
             if (specificUsers == null)
             {
@@ -120,7 +118,7 @@ namespace RoystonGame.TV.DataModels
             }
             else
             {
-                foreach(User user in specificUsers)
+                foreach (User user in specificUsers)
                 {
                     this.UserOutletOverrides[user] = internalOutlet;
                 }

@@ -2,7 +2,7 @@
 
 namespace RoystonGame.TV
 {
-    public class Constants
+    public static class Constants
     {
         /// <summary>
         /// The default amount of time to add when trying to avoid state transition race conditions.

@@ -1,20 +1,21 @@
 ﻿using RoystonGame.TV.DataModels;
 using RoystonGame.TV.DataModels.Enums;
+using RoystonGame.TV.DataModels.UserStates;
+using RoystonGame.Web.DataModels;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
+using RoystonGame.Web.DataModels.Responses;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using RoystonGame.Web.DataModels.Responses;
 using System.Net;
-using RoystonGame.TV.DataModels.UserStates;
-using RoystonGame.Web.DataModels.Enums;
-using System.Collections.Concurrent;
 
 namespace RoystonGame.TV
 {
     public class GameManager
     {
-        #region References
+        #region Singleton
         private static GameManager _internalSingleton;
         public static GameManager Singleton
         {
@@ -27,74 +28,6 @@ namespace RoystonGame.TV
                 return _internalSingleton;
             }
         }
-        #endregion
-
-        #region User and Object trackers
-        private ConcurrentDictionary<IPAddress, User> RegisteredUsers { get; } = new ConcurrentDictionary<IPAddress, User>();
-        private ConcurrentDictionary<IPAddress, User> UnregisteredUsers { get; } = new ConcurrentDictionary<IPAddress, User>();
-        private ConcurrentDictionary<Guid, Lobby> LobbyIdToLobby { get; } = new ConcurrentDictionary<Guid, Lobby>();
-        private ConcurrentDictionary<string, Lobby> LobbyCodeToLobby { get; } = new ConcurrentDictionary<string, Lobby>();
-
-        /// <summary>
-        /// Hacky fix for passing this info to GameNotifier thread.
-        /// </summary>
-        public ConcurrentBag<Guid> AbandonedLobbyIds { get; } = new ConcurrentBag<Guid>();
-        #endregion
-
-        #region States
-        private UserState UserRegistration { get; set; } = new SimplePromptUserState(
-            prompt: UserNamePrompt,
-            outlet: (User user, UserStateResult result, UserFormSubmission userInput) =>
-            {
-                GetLobby(user.LobbyId.Value).Inlet(user, result, userInput);
-            },
-            // Outlet won't be called until the below returns true
-            formSubmitListener: (User user, UserFormSubmission userInput) =>
-            {
-                return RegisterUser(userInput.SubForms[1].ShortAnswer, user, userInput.SubForms[0].ShortAnswer, userInput.SubForms[2].Drawing);
-            });
-        public static UserPrompt UserNamePrompt(User user) => new UserPrompt()
-        {
-            Title = "Welcome to the game!",
-            Description = "Fill in the information below!",
-            RefreshTimeInMs = 5000,
-            SubPrompts = new SubPrompt[]
-            {
-                new SubPrompt()
-                {
-                    Prompt = "Nickname:",
-                    ShortAnswer = true
-                },
-                new SubPrompt()
-                {
-                    Prompt = "Lobby Code:",
-                    ShortAnswer = true
-                },
-                new SubPrompt()
-                {
-                    Prompt = "Self Portrait:",
-                    Drawing = new DrawingPromptMetadata()
-                }
-            },
-            SubmitButton = true,
-        };
-        #endregion
-
-        internal static void ReportGameError(ErrorType type, Guid? lobbyId = null, User user = null, Exception error = null)
-        {
-            // Log error to console (TODO redirect to file on release builds).
-            Console.Error.WriteLine(error);
-            if (lobbyId.HasValue)
-            {
-                Lobby lobby = GetLobby(lobbyId.Value);
-                Singleton.LobbyCodeToLobby.TryRemove(lobby.LobbyCode, out Lobby _);
-                Singleton.LobbyIdToLobby.TryRemove(lobby.LobbyId, out Lobby _);
-
-                lobby.UnregisterAllUsers();
-                Singleton.AbandonedLobbyIds.Add(lobby.LobbyId);
-            }
-            // TODO: restart lobbies or evict users based on error type and volume.
-        }
 
         private GameManager()
         {
@@ -103,80 +36,92 @@ namespace RoystonGame.TV
                 throw new Exception("Tried to instantiate a second instance of GameManager.cs");
             }
         }
+        #endregion
 
-        public static void UnregisterUser(User user)
+        #region User and Object trackers
+        private ConcurrentDictionary<string, User> Users { get; } = new ConcurrentDictionary<string, User>();
+        private ConcurrentDictionary<string, AuthenticatedUser> AuthenticatedUsers { get; } = new ConcurrentDictionary<string, AuthenticatedUser>();
+        private ConcurrentDictionary<string, Lobby> LobbyIdToLobby { get; } = new ConcurrentDictionary<string, Lobby>();
+
+        /// <summary>
+        /// Hacky fix for passing this info to GameNotifier thread.
+        /// </summary>
+        public ConcurrentBag<string> AbandonedLobbyIds { get; } = new ConcurrentBag<string>();
+        #endregion
+
+        #region States
+        /// <summary>
+        /// States track all of the users that enter it. In order to aid in garbage collection, create a new state instance for each user.
+        /// </summary>
+        /// <returns>A new user registration user state.</returns>
+        public static UserState CreateUserRegistrationUserState() => new SimplePromptUserState(
+            prompt: UserNamePrompt,
+            outlet: (User user, UserStateResult result, UserFormSubmission userInput) =>
+            {
+                GetLobby(user.LobbyId).Inlet(user, result, userInput);
+            },
+            // Outlet won't be called until the below returns true
+            formSubmitListener: (User user, UserFormSubmission userInput) =>
+            {
+                return RegisterUser(userInput.SubForms[1].ShortAnswer, user, userInput.SubForms[0].ShortAnswer, userInput.SubForms[2].Drawing);
+            });
+        public static UserPrompt UserNamePrompt(User user) => new UserPrompt()
         {
-            if (Singleton.RegisteredUsers.ContainsKey(user.IP))
+            Title = "join a game:",
+            RefreshTimeInMs = 5000,
+            SubPrompts = new SubPrompt[]
             {
-                Singleton.RegisteredUsers.Remove(user.IP, out User _);
-            }
-        }
-
-        public static (bool, string) RegisterUser(string lobbyCode, User user, string displayName, string selfPortrait)
-        {
-            IPAddress callerIP = Singleton.UnregisteredUsers.FirstOrDefault((kvp) => kvp.Value == user).Key;
-            if (callerIP == null)
-            {
-                return (false, "Can't register unknown user. Refresh the page.");
-            }
-
-            user.DisplayName = displayName;
-            user.SelfPortrait = selfPortrait;
-
-            string errorMsg = "Lobby not found";
-
-            // TODO: move to a different lobby creation model.
-            // TODO: add way to leave a lobby.
-            if (!Singleton.LobbyCodeToLobby.ContainsKey(lobbyCode))
-            {
-                Lobby newLobby = new Lobby(lobbyCode);
-
-                if (!Singleton.LobbyCodeToLobby.TryAdd(lobbyCode, newLobby)
-                    || !Singleton.LobbyIdToLobby.TryAdd(newLobby.LobbyId, newLobby))
+                new SubPrompt()
                 {
-                    bool success = Singleton.LobbyCodeToLobby.TryRemove(lobbyCode, out Lobby _);
-                    success &= Singleton.LobbyIdToLobby.TryRemove(newLobby.LobbyId, out Lobby _);
-                    if (!success)
-                    {
-                        throw new Exception("Lobby lists corrupted");
-                    }
-                    return (false, "Unexpected error occurred while creating lobby. Refresh and try again.");
+                    Prompt = "nickname",
+                    ShortAnswer = true
+                },
+                new SubPrompt()
+                {
+                    Prompt = "lobby code",
+                    ShortAnswer = true
+                },
+                new SubPrompt()
+                {
+                    Prompt = "self portrait",
+                    Drawing = new DrawingPromptMetadata()
                 }
+            },
+            SubmitButton = true,
+        };
+        #endregion
+
+        public static void ReportGameError(ErrorType type, string lobbyId, User user = null, Exception error = null)
+        {
+            // Log error to console (TODO redirect to file on release builds).
+            Console.Error.WriteLine(error);
+            if (!string.IsNullOrWhiteSpace(lobbyId))
+            {
+                DeleteLobby(lobbyId);
             }
 
-            if(!Singleton.LobbyCodeToLobby[lobbyCode].TryAddUser(user, out errorMsg))
+            if (user != null)
             {
-                return (false, errorMsg);
+                UnregisterUser(user);
             }
-
-            if(!Singleton.UnregisteredUsers.TryRemove(callerIP, out User usr)
-                || usr.UserId != user.UserId
-                || !Singleton.RegisteredUsers.TryAdd(callerIP, user))
-            {
-                throw new Exception("Unexpected error occurred while registering user. Refresh and try again");
-            }
-            return (true, string.Empty);
         }
 
-        public static User MapIPToUser(IPAddress callerIP, out bool newUser)
+        public static User MapIPToUser(IPAddress callerIP, string userAgent, string idOverride, out bool newUser)
         {
             newUser = false;
+            string userIdentifier = User.GetUserIdentifier(callerIP, userAgent, idOverride);
             try
             {
-                if (Singleton.UnregisteredUsers.ContainsKey(callerIP))
+                if (Singleton.Users.ContainsKey(userIdentifier))
                 {
-                    return Singleton.UnregisteredUsers[callerIP];
-                }
-                else if (Singleton.RegisteredUsers.ContainsKey(callerIP))
-                {
-                    return Singleton.RegisteredUsers[callerIP];
+                    return Singleton.Users[userIdentifier];
                 }
 
-                User user = new User(callerIP);
-                if(Singleton.UnregisteredUsers.TryAdd(callerIP, user))
+                User user = new User(callerIP, userAgent);
+                if (Singleton.Users.TryAdd(userIdentifier, user))
                 {
+                    CreateUserRegistrationUserState().Inlet(user, UserStateResult.Success, null);
                     newUser = true;
-                    Singleton.UserRegistration.Inlet(user, UserStateResult.Success, null);
                 }
                 else
                 {
@@ -192,24 +137,139 @@ namespace RoystonGame.TV
             }
         }
 
+
+        public static AuthenticatedUser GetAuthenticatedUser(string userId)
+        {
+            // TODO: remove this hack once auth is fixed.
+            userId = "Temp";
+            try
+            {
+                if (!Singleton.AuthenticatedUsers.ContainsKey(userId))
+                {
+                    if (!Singleton.AuthenticatedUsers.TryAdd(userId, new AuthenticatedUser()
+                    {
+                        UserId = userId
+                    }))
+                    {
+                        return null;
+                    }
+                }
+
+                return Singleton.AuthenticatedUsers[userId];
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+                return null;
+            }
+        }
+
+        #region Lobby Management
+        public static bool RegisterLobby(Lobby lobby)
+        {
+            if (lobby == null)
+            {
+                return false;
+            }
+            return Singleton.LobbyIdToLobby.TryAdd(lobby.LobbyId, lobby);
+        }
+        public static void DeleteLobby(Lobby lobby)
+        {
+            if (lobby == null)
+            {
+                return;
+            }
+            DeleteLobby(lobby.LobbyId);
+        }
+        public static void DeleteLobby(string lobbyId)
+        {
+            Lobby lobby = GetLobby(lobbyId);
+            Singleton.LobbyIdToLobby.TryRemove(lobbyId, out Lobby _);
+
+            lobby?.UnregisterAllUsers();
+            if (lobby?.Owner?.OwnedLobby != null)
+            {
+                lobby.Owner.OwnedLobby = null;
+            }
+            Singleton.AbandonedLobbyIds.Add(lobbyId);
+        }
+
         public static List<Lobby> GetLobbies()
         {
-            return Singleton.LobbyCodeToLobby.Values.ToList();
+            return Singleton.LobbyIdToLobby.Values.ToList();
         }
 
-        public static Lobby GetLobby(Guid lobbyId)
+        public static Lobby GetLobby(string lobbyId)
         {
+            if (string.IsNullOrWhiteSpace(lobbyId))
+            {
+                return null;
+            }
             return Singleton.LobbyIdToLobby.GetValueOrDefault(lobbyId);
         }
+        #endregion
 
-        public static Lobby GetLobby(string friendlyName)
+        #region User Management
+        public static List<User> GetUsers()
         {
-            return Singleton.LobbyCodeToLobby.GetValueOrDefault(friendlyName);
+            return Singleton.Users.Values.ToList();
+        }
+        public static void UnregisterUser(User user)
+        {
+            if (user == null)
+            {
+                return;
+            }
+            UnregisterUser(user.Identifier);
+        }
+        public static void UnregisterUser(string userIdentifier)
+        {
+            if (string.IsNullOrWhiteSpace(userIdentifier))
+            {
+                return;
+            }
+            Singleton.Users.TryRemove(userIdentifier, out User _);
         }
 
-        /*public static Lobby GetLobbyByCreator(User lobbyCreator)
+        private static (bool, string) RegisterUser(string lobbyId, User user, string displayName, string selfPortrait)
         {
-            return Singleton.LobbyOwnerToLobby.GetValueOrDefault(lobbyCreator);
-        }*/
+            string userIdentifier = Singleton.Users.FirstOrDefault((kvp) => kvp.Value == user).Key;
+            if (userIdentifier == null)
+            {
+                return (false, "Can't register unknown user. Refresh the page.");
+            }
+            if (string.IsNullOrWhiteSpace(lobbyId))
+            {
+                return (false, "Invalid Lobby Code.");
+            }
+
+            user.DisplayName = displayName;
+            user.SelfPortrait = selfPortrait;
+
+            if (!Singleton.LobbyIdToLobby.ContainsKey(lobbyId))
+            {
+                return (false, "Lobby not found.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(user.LobbyId))
+            {
+                // If the user is supposedly already registered to a lobby, try adding them again.
+                if (!Singleton.LobbyIdToLobby[user.LobbyId].TryAddUser(user, out string errorMsg))
+                {
+                    // If that didn't work, clear them from this lobby.
+                    user.LobbyId = null;
+                    return (false, errorMsg);
+                }
+            }
+            else
+            {
+                if (!Singleton.LobbyIdToLobby[lobbyId].TryAddUser(user, out string errorMsg))
+                {
+                    return (false, errorMsg);
+                }
+            }
+            return (true, string.Empty);
+        }
+        #endregion
     }
 }

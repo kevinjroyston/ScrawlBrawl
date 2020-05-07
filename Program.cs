@@ -1,12 +1,12 @@
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
 
 namespace RoystonGame
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
@@ -19,9 +19,10 @@ namespace RoystonGame
                     .RunAsync(cancellation.Token)
                     .Wait();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+                throw;
             }
             finally
             {

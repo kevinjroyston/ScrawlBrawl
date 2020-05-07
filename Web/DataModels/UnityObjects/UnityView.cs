@@ -1,7 +1,6 @@
 ﻿using RoystonGame.Web.DataModels.Enums;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 
 namespace RoystonGame.Web.DataModels.UnityObjects
 {
@@ -15,7 +14,7 @@ namespace RoystonGame.Web.DataModels.UnityObjects
 
             modified |= this.Options?.Refresh() ?? false;
             modified |= this.ScreenId?.Refresh() ?? false;
-           // modified |= this.Users?.Refresh() ?? false;
+            // modified |= this.Users?.Refresh() ?? false;
             modified |= this.Title?.Refresh() ?? false;
             modified |= this.Instructions?.Refresh() ?? false;
             // TODO: below 2 lines might be causing excess updates
@@ -31,12 +30,14 @@ namespace RoystonGame.Web.DataModels.UnityObjects
 
         public UnityViewOptions Options { get; set; }
 
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public IAccessor<IReadOnlyList<UnityImage>> UnityImages { private get; set; }
         public IReadOnlyList<UnityImage> _UnityImages { get => UnityImages?.Value; }
 
 
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public IAccessor<TVScreenId> ScreenId { private get; set; }
         public TVScreenId? _ScreenId { get => ScreenId?.Value; }
 
@@ -46,12 +47,14 @@ namespace RoystonGame.Web.DataModels.UnityObjects
         public IAccessor<IReadOnlyList<User>> Users { private get; set; } = new DynamicAccessor<IReadOnlyList<User>> { DynamicBacker = () => GameManager.GetActiveUsers() };
         public IReadOnlyList<User> _Users { get => Users?.Value; }*/
 
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public IAccessor<string> Title { private get; set; }
         public string _Title { get => Title?.Value; }
 
 
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public IAccessor<string> Instructions { private get; set; }
         public string _Instructions { get => Instructions?.Value; }
     }

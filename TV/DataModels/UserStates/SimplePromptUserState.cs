@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using RoystonGame.TV.DataModels.Enums;
+﻿using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
-
+using System;
+using System.Collections.Generic;
 using Connector = System.Action<
     RoystonGame.TV.DataModels.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
@@ -16,12 +15,12 @@ namespace RoystonGame.TV.DataModels.UserStates
     /// </summary>
     public class SimplePromptUserState : UserState
     {
-        public static UserPrompt DefaultPrompt(User user) => new UserPrompt() { Description = "Waiting . . .", RefreshTimeInMs = 1000 };
+        public static UserPrompt DefaultPrompt(User user) => new UserPrompt() { Description = "Waiting . . ." };
         private List<Func<User, UserFormSubmission, (bool, string)>> FormSubmitListeners { get; set; } = new List<Func<User, UserFormSubmission, (bool, string)>>();
         public SimplePromptUserState(Func<User, UserPrompt> prompt = null, Connector outlet = null, TimeSpan? maxPromptDuration = null, Func<User, UserFormSubmission, (bool, string)> formSubmitListener = null)
             : base(outlet, maxPromptDuration, prompt ?? DefaultPrompt)
         {
-            if (formSubmitListener!= null)
+            if (formSubmitListener != null)
             {
                 FormSubmitListeners.Add(formSubmitListener);
             }
@@ -40,7 +39,7 @@ namespace RoystonGame.TV.DataModels.UserStates
             }
 
             bool success = true;
-            foreach(var listener in this.FormSubmitListeners)
+            foreach (var listener in this.FormSubmitListeners)
             {
                 try
                 {

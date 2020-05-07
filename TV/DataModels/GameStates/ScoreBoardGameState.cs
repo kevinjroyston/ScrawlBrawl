@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using RoystonGame.TV.ControlFlows;
+﻿using RoystonGame.TV.ControlFlows;
 using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Connector = System.Action<
     RoystonGame.TV.DataModels.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
@@ -14,16 +13,15 @@ using Connector = System.Action<
 
 namespace RoystonGame.TV.DataModels.GameStates
 {
-    public class ScoreBoardGameState: GameState
+    public class ScoreBoardGameState : GameState
     {
         private static UserPrompt PartyLeaderSkipButton(User user) => new UserPrompt()
         {
             Title = "Skip Scoreboard",
-            RefreshTimeInMs = 1000,
             SubmitButton = true
         };
 
-        public ScoreBoardGameState(Lobby lobby, Connector outlet=null, TimeSpan? maxWaitTime = null, string title = "Scores:") : base(lobby, outlet)
+        public ScoreBoardGameState(Lobby lobby, Connector outlet = null, TimeSpan? maxWaitTime = null, string title = "Scores:") : base(lobby, outlet)
         {
             UserState partyLeaderState = new SimplePromptUserState(prompt: PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
 

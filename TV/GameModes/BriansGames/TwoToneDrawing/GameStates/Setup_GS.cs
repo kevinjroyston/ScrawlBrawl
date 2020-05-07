@@ -7,6 +7,7 @@ using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
+using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
 using RoystonGame.WordLists;
@@ -26,51 +27,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 {
     public class Setup_GS : GameState
     {
-        private int ColorsPerDrawing { get; set; }
+        private int ColorsPerTeam { get; set; }
         private int DrawingsPerPlayer { get; set; }
+        private int TeamsPerPrompt { get; set; }
         private bool ShowColors { get; set; }
-        private UserState GetPartyLeaderChooseNumberOfDrawingsState()
-        {
-            return new SimplePromptUserState(
-                prompt: (User user) => new UserPrompt()
-                {
-                    Title = "Game Options",
-                    Description = Invariant($"Configure options, there are {this.Lobby.GetActiveUsers().Count} players total."),
-                    SubPrompts = new SubPrompt[]
-                    {
-                        new SubPrompt
-                        {
-                            Prompt = "Number of colors per drawing",
-                            ShortAnswer = true
-                        },
-                        new SubPrompt
-                        {
-                            Prompt = "Number of drawings per player",
-                            ShortAnswer = true
-                        },
-                        new SubPrompt
-                        {
-                            Prompt = "Show other colors",
-                            Answers = new string[]{"No", "Yes"}
-                        }
-                    },
-                    SubmitButton = true
-                },
-                formSubmitListener: (User user, UserFormSubmission userInput) =>
-                {
-                    try
-                    {
-                        ColorsPerDrawing = Convert.ToInt32(userInput.SubForms[0].ShortAnswer);
-                        DrawingsPerPlayer = Convert.ToInt32(userInput.SubForms[1].ShortAnswer);
-                        ShowColors = userInput.SubForms[2].RadioAnswer == 1;
-                    }
-                    catch
-                    {
-                        return (false, "Please enter only numeric characters");
-                    }
-                    return (true, string.Empty);
-                });
-        }
 
         private UserState GetChallengesUserState(Connector outlet = null)
         {
@@ -85,11 +45,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                             ShortAnswer = true,
                         },
                     };
-                    for(int i = 0; i < ColorsPerDrawing; i++)
+                    for (int i = 0; i < ColorsPerTeam; i++)
                     {
                         subPrompts.Add(new SubPrompt()
                         {
-                            Prompt = Invariant($"Color # {i + 1}{(i==0 ? " - This will be drawn above all other colors" : i == ColorsPerDrawing-1 ? " - This will be drawn below all other colors" : string.Empty)}"),
+                            Prompt = Invariant($"Color # {i + 1}{(i == 0 ? " - This will be drawn above all other colors" : i == ColorsPerTeam - 1 ? " - This will be drawn below all other colors" : string.Empty)}"),
                             ColorPicker = true
                         });
                     }
@@ -98,7 +58,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     {
                         Title = "Game setup",
                         Description = "In the boxes below, enter a drawing prompt and the colors which will be given to different players.",
-                        RefreshTimeInMs = 1000,
                         SubPrompts = subPrompts.ToArray(),
                         SubmitButton = true
                     };
@@ -150,12 +109,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     {
                         Title = Invariant($"Drawing { lambdaSafeIndex + 1} of {stateChain.Count()}"),
                         Description = "Draw the prompt below. Keep in mind you are only drawing part of the picture!",
-                        RefreshTimeInMs = 1000,
                         SubPrompts = new SubPrompt[]
                         {
                             new SubPrompt
                             {
-                                Prompt = Invariant($"Your prompt:\"{challenge.Prompt}\""), 
+                                Prompt = Invariant($"Your prompt:\"{challenge.Prompt}\""),
                                 StringList = this.ShowColors ? challenge.Colors.Select(val=> val == challenge.UserSubmittedDrawings[user].Color ? Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>This is your color.") : Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>")).ToArray() : null,
                                 Drawing = new DrawingPromptMetadata
                                 {
@@ -182,16 +140,16 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             return stateChain;
         }
 
-        public Setup_GS(Lobby lobby, List<ChallengeTracker> challengeTrackers, Connector outlet = null) : base(lobby, outlet)
+        public Setup_GS(Lobby lobby, List<ChallengeTracker> challengeTrackers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, Connector outlet = null) : base(lobby, outlet)
         {
             this.SubChallenges = challengeTrackers;
 
-            WaitForPartyLeader setNumPrompts = new WaitForPartyLeader(
-                lobby: this.Lobby,
-                outlet: null,
-                partyLeaderPrompt: GetPartyLeaderChooseNumberOfDrawingsState());
+            this.ColorsPerTeam = int.Parse(gameModeOptions[0].ShortAnswer);
+            this.DrawingsPerPlayer = int.Parse(gameModeOptions[1].ShortAnswer);
+            this.TeamsPerPrompt = int.Parse(gameModeOptions[2].ShortAnswer);
+            this.ShowColors = gameModeOptions[3].RadioAnswer.Value == 1;
 
-            UserStateTransition waitForAllDrawings = new WaitForAllPlayers(lobby: this.Lobby, outlet:this.Outlet);
+            UserStateTransition waitForAllDrawings = new WaitForAllPlayers(lobby: this.Lobby, outlet: this.Outlet);
             UserStateTransition waitForAllPrompts = new WaitForAllPlayers(
                 lobby: this.Lobby,
                 outlet: (User user, UserStateResult result, UserFormSubmission input) =>
@@ -201,9 +159,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 });
             // Just before users call the line above, call AssignPrompts
             waitForAllPrompts.AddStateEndingListener(() => this.AssignPrompts());
-            setNumPrompts.SetOutlet(GetChallengesUserState(waitForAllPrompts.Inlet).Inlet);
 
-            this.Entrance = setNumPrompts;
+            this.Entrance = GetChallengesUserState(waitForAllPrompts.Inlet);
 
             this.UnityView = new UnityView
             {
@@ -219,18 +176,18 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
         private void AssignPrompts()
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
-            List<ChallengeTracker> randomizedOrderChallenges = this.SubChallenges.OrderBy(_ => rand.Next()).ToList();
             IReadOnlyList<User> users = this.Lobby.GetActiveUsers();
+            List<ChallengeTracker> randomizedOrderChallenges = this.SubChallenges.OrderBy(_ => rand.Next()).Take(DrawingsPerPlayer * users.Count / TeamsPerPrompt / ColorsPerTeam).ToList();
             for (int i = 0; i < randomizedOrderChallenges.Count; i++)
             {
-                for (int j = 0; j < ((int)Math.Min(DrawingsPerPlayer, users.Count) / ColorsPerDrawing) * ColorsPerDrawing; j++)
+                for (int j = 0; j < ColorsPerTeam * TeamsPerPrompt; j++)
                 {
                     randomizedOrderChallenges[i].UserSubmittedDrawings.Add(
                         randomizedOrderChallenges[(i + j) % randomizedOrderChallenges.Count].Owner,
                         new ChallengeTracker.UserDrawing
                         {
-                            TeamId = Invariant($"{j/ColorsPerDrawing}"),
-                            Color = randomizedOrderChallenges[i].Colors[j % ColorsPerDrawing],
+                            TeamId = Invariant($"{j / ColorsPerTeam}"),
+                            Color = randomizedOrderChallenges[i].Colors[j % ColorsPerTeam],
                         });
                 }
             }

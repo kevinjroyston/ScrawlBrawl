@@ -1,7 +1,7 @@
-﻿using System;
-using RoystonGame.TV.DataModels.Enums;
+﻿using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using System;
 
 namespace RoystonGame.TV.DataModels.UserStates
 {
@@ -21,7 +21,7 @@ namespace RoystonGame.TV.DataModels.UserStates
 
         public override bool HandleUserFormInput(User user, UserFormSubmission userInput, out string error)
         {
-            if(!base.HandleUserFormInput(user, userInput, out error))
+            if (!base.HandleUserFormInput(user, userInput, out error))
             {
                 return false;
             }

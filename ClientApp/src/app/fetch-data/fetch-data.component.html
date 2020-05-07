@@ -1,5 +1,6 @@
 <div class="LoadingText" *ngIf="!userPrompt"><em>Loading...</em></div>
-<form ng-app="myApp" *ngIf="userPrompt" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)">
+<form ng-app="myApp" style="padding:0px 20px;" *ngIf="userPrompt" [formGroup]="userForm"
+  (ngSubmit)="onSubmit(userForm.value)">
   <div class="Title" *ngIf="userPrompt.title">{{ userPrompt.title }}</div>
   <div class="Description" *ngIf="userPrompt.description">{{ userPrompt.description }}</div>
   <div *ngIf="userPrompt.subPrompts">
@@ -7,6 +8,7 @@
       <div [formGroupName]="j">
         <div class="Prompt" *ngIf="subPrompt.prompt">{{subPrompt.prompt}}</div>
         <div *ngIf="subPrompt.stringList">
+
           <div class="StringList" *ngFor="let iString of subPrompt.stringList">
             <div [innerHTML]="iString | safe: 'html'"></div>
           </div>
@@ -18,15 +20,28 @@
         </select>
         <div *ngIf="subPrompt.answers">
           <div class="RadioAnswer" *ngFor="let answer of subPrompt.answers; let i = index">
-            <input type="radio" formControlName="radioAnswer" value="{{i}}" /> <label [innerHTML]="answer | safe: 'html'"></label>
+            <input type="radio" formControlName="radioAnswer" value="{{i}}" /> <label
+              [innerHTML]="answer | safe: 'html'"></label>
           </div>
         </div>
-        <input formControlName="color" [(colorPicker)]="subPrompt.color" [style.background]="subPrompt.color" [readonly]="true" [cpPosition]="'bottom'" [ngModel]="subPrompt.color" [cpOutputFormat]="'rgba'" [cpAlphaChannel]="'disabled'" *ngIf="subPrompt.colorPicker">
+        <input formControlName="color" [(colorPicker)]="subPrompt.color" [style.background]="subPrompt.color"
+          [readonly]="true" [cpPosition]="'bottom'" [ngModel]="subPrompt.color" [cpOutputFormat]="'rgba'"
+          [cpAlphaChannel]="'disabled'" *ngIf="subPrompt.colorPicker">
         <input type="text" class="ShortAnswer" formControlName="shortAnswer" *ngIf="subPrompt.shortAnswer">
-        <div class="CanvasHolder" [style]="'height:' + (subPrompt.drawing.heightInPx+15) + 'px' | safe : 'style'" *ngIf="subPrompt.drawing">
-          <canvas style="position: absolute; z-index: 10" width="{{subPrompt.drawing.widthInPx-10}}" height="{{subPrompt.drawing.heightInPx-10}}" class="DrawingCanvas" [premadeDrawing]="subPrompt.drawing.premadeDrawing" [lineColor]="subPrompt.drawing.color" formControlName="drawing" appDrawing *ngIf="subPrompt.drawing"></canvas>
-          <img style="position: absolute; z-index: 0" width="{{subPrompt.drawing.widthInPx}}" height="{{subPrompt.drawing.heightInPx}}" class="DrawingBackground" [src]="subPrompt.drawing.canvasBackground | safe: 'resourceUrl'" alt="Error" *ngIf="subPrompt.drawing && subPrompt.drawing.canvasBackground" />
-          <div [style]="'position: absolute; z-index: 0; width: ' + subPrompt.drawing.widthInPx + 'px; height:'+ subPrompt.drawing.heightInPx+'px' | safe: 'style'" class="DrawingBackground" *ngIf="subPrompt.drawing && !subPrompt.drawing.canvasBackground"></div>
+
+        <div class="CanvasHolder" [style]="'height:' + (subPrompt.drawing.heightInPx+15) + 'px' | safe : 'style'"
+          *ngIf="subPrompt.drawing">
+          <canvas style="position: absolute; z-index: 10" width="{{subPrompt.drawing.widthInPx-1}}"
+            height="{{subPrompt.drawing.heightInPx-1}}" class="DrawingCanvas"
+            [premadeDrawing]="subPrompt.drawing.premadeDrawing" [lineColor]="subPrompt.drawing.color"
+            formControlName="drawing" appDrawing *ngIf="subPrompt.drawing"></canvas>
+          <img style="position: absolute; z-index: 0" width="{{subPrompt.drawing.widthInPx}}"
+            height="{{subPrompt.drawing.heightInPx}}" class="DrawingBackground"
+            [src]="subPrompt.drawing.canvasBackground | safe: 'resourceUrl'" alt="Error"
+            *ngIf="subPrompt.drawing && subPrompt.drawing.canvasBackground" />
+          <div
+            [style]="'position: absolute; z-index: 0; width: ' + subPrompt.drawing.widthInPx + 'px; height:'+ subPrompt.drawing.heightInPx+'px' | safe: 'style'"
+            class="DrawingBackground" *ngIf="subPrompt.drawing && !subPrompt.drawing.canvasBackground"></div>
         </div>
       </div>
     </div>

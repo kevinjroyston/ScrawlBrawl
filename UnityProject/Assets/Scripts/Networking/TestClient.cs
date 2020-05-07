@@ -31,6 +31,7 @@ public class TestClient : MonoBehaviour
     void Awake()
     {
         hubConnection = new HubConnectionBuilder()
+            //.WithUrl("http://kevdev.royston.com/signalr")
             .WithUrl("http://localhost:50403/signalr")
             .ConfigureLogging(logging =>
             {

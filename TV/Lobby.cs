@@ -5,85 +5,213 @@ using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing;
+using RoystonGame.Web.DataModels;
+using RoystonGame.Web.DataModels.Exceptions;
 using RoystonGame.Web.DataModels.Requests;
+using RoystonGame.Web.DataModels.Requests.LobbyManagement;
+using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.Json.Serialization;
+using static System.FormattableString;
 
 namespace RoystonGame.TV
 {
     public class Lobby
     {
-        public Guid LobbyId { get; } = Guid.NewGuid();
-        public string LobbyCode { get; }
-        public User Owner { get; }
-
-        public DateTime CreationTime { get; } = DateTime.Now;
+        /// <summary>
+        /// An email address denoting what authenticated user created this lobby.
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public AuthenticatedUser Owner { get; }
         private ConcurrentBag<User> UsersInLobby { get; } = new ConcurrentBag<User>();
+
+        #region Serialized fields
+        public string LobbyId { get; }
+
+        /// <summary>
+        /// Used for monitoring lobby age.
+        /// </summary>
+        public DateTime CreationTime { get; } = DateTime.Now;
+
+        public List<ConfigureLobbyRequest.GameModeOptionRequest> GameModeOptions { get; private set; }
+        public int? SelectedGameMode { get; private set; }
+        #endregion
         #region GameStates
         private GameState CurrentGameState { get; set; }
-        private GameState PartyLeaderSelect { get; set; }
         private GameState EndOfGameRestart { get; set; }
-        private GameState WaitForLobbyStart { get; set; }
+        private WaitForLobbyCloseGameState WaitForLobbyStart { get; set; }
+
+        private IGameMode Game { get; set; }
         #endregion
 
 
         #region GameModes
-        private IReadOnlyDictionary<GameMode, Func<Lobby, IGameMode>> GameModeMappings { get; set; } = new ReadOnlyDictionary<GameMode, Func<Lobby, IGameMode>>(new Dictionary<GameMode, Func<Lobby, IGameMode>>
+        public static IReadOnlyList<GameModeMetadata> GameModes { get; set; } = new List<GameModeMetadata>
         {
-            { GameMode.ImposterSyndrome, (lobby) => new OneOfTheseThingsIsNotLikeTheOtherOneGameMode(lobby) },
-            { GameMode.TwoToneDrawing, (lobby) => new TwoToneDrawingGameMode(lobby) }
-        });
+            new GameModeMetadata
+            {
+                Title = "Imposter Syndrome",
+                Description = "Come up with a difference only you'll be able to spot!",
+                MinPlayers = 3,
+                MaxPlayers = null,
+                GameModeInstantiator = (lobby, options) => new OneOfTheseThingsIsNotLikeTheOtherOneGameMode(lobby, options),
+                Options = new List<GameModeOptionResponse>
+                {
+                    new GameModeOptionResponse
+                    {
+                        Description = "Drawings per prompt pair (with 1 being the imposter)",
+                        ShortAnswer = true,
+                    },
+                }
+            },
+            new GameModeMetadata
+            {
+                Title = "Chaotic Cooperation",
+                Description = "Blindly collaborate on a drawing with unknown teammates.",
+                MinPlayers = 4,
+                MaxPlayers = null,
+                GameModeInstantiator = (lobby, options) => new TwoToneDrawingGameMode(lobby, options),
+                Options = new List<GameModeOptionResponse>
+                {
+                    new GameModeOptionResponse
+                    {
+                        Description = "Number of colors per team",
+                        ShortAnswer = true,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Max number of drawings per player (will likely be less)",
+                        ShortAnswer = true,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Number of teams per prompt",
+                        ShortAnswer = true,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Show other colors",
+                        RadioAnswers = new List<string>{"No", "Yes"},
+                    },
+                }
+            },
+        }.AsReadOnly();
         #endregion
 
-        public Lobby(string friendlyName)
+        public Lobby(string friendlyName, AuthenticatedUser owner)
         {
-            this.LobbyCode = friendlyName;
+            this.LobbyId = friendlyName;
+            this.Owner = owner;
             InitializeAllGameStates();
         }
 
+        /// <summary>
+        /// Lobby is open if there is not a game instantiated already and there is still space based on currently selected game mode.
+        /// </summary>
+        /// <returns>True if the lobby is accepting new users.</returns>
+        public bool IsLobbyOpen()
+        {
+            // Either a game mode hasn't been selected, or the selected gamemode is not at its' capacity.
+            return (this.Game == null) && (!this.SelectedGameMode.HasValue || GameModes[this.SelectedGameMode.Value].IsSupportedPlayerCount(this.UsersInLobby.Count, ignoreMinimum:true));
+        }
+
+        public bool ConfigureLobby(ConfigureLobbyRequest request, out string errorMsg)
+        {
+            errorMsg = string.Empty;
+            if (this.Game != null)
+            {
+                // TODO: this might need updating for replay logic.
+                errorMsg = "Cannot change configuration lobby while game is in progress!";
+                return false;
+            }
+
+            if (request?.GameMode == null || request.GameMode.Value < 0 || request.GameMode.Value >= Lobby.GameModes.Count)
+            {
+                errorMsg = "Unsupported Game Mode";
+                return false;
+            }
+
+            // Don't check player minimum count when configuring, but do check on start.
+            if (!GameModes[request.GameMode.Value].IsSupportedPlayerCount(GetActiveUsers().Count, ignoreMinimum: true))
+            {
+                errorMsg = Invariant($"Selected game mode has following restrictions: {GameModes[request.GameMode.Value].RestrictionsToString()})");
+                return false;
+            }
+
+            IReadOnlyList<GameModeOptionResponse> requiredOptions = GameModes[request.GameMode.Value].Options;
+            if (request?.Options == null || request.Options.Count != requiredOptions.Count)
+            {
+                errorMsg = "Wrong number of options provided for selected game mode.";
+                return false;
+            }
+
+            for (int i = 0; i < requiredOptions.Count; i++)
+            {
+                if (requiredOptions[i].ShortAnswer == string.IsNullOrWhiteSpace(request.Options[i].ShortAnswer)
+                    || (requiredOptions[i].RadioAnswers != null && requiredOptions[i].RadioAnswers.Count > 0) == (!request.Options[i].RadioAnswer.HasValue || request.Options[i].RadioAnswer.Value < 0 || request.Options[i].RadioAnswer.Value >= requiredOptions[i].RadioAnswers.Count))
+                {
+                    errorMsg = "Did not provide valid set of options for selected game mode.";
+                    return false;
+                }
+            }
+
+            this.SelectedGameMode = request.GameMode;
+            this.GameModeOptions = request.Options;
+
+            return true;
+        }
+
+        /// <summary>
+        /// UserStates will need to be reinitialized on startup and replay. These are used to stage players in and out of IGameModes as well as show relevant information
+        /// to the TV client.
+        /// </summary>
         private void InitializeAllGameStates()
         {
-            this.WaitForLobbyStart = new WaitForLobbyCloseGameState(this, lobbyClosedCallback: CloseLobby);
-            this.PartyLeaderSelect = new SelectGameModeGameState(this, null, Enum.GetNames(typeof(GameMode)), (int? gameMode) => SelectedGameMode(gameMode));
+            this.WaitForLobbyStart = new WaitForLobbyCloseGameState(this);
             this.EndOfGameRestart = new EndOfGameState(this, PrepareToRestartGame);
-
-            // Transitions other than NoWait will run into issues if used here but are fine in GameMode definitions.
-            this.WaitForLobbyStart
-                .Transition(this.PartyLeaderSelect);
         }
 
-        public void CloseLobby()
-        {
-            IsLobbyOpen = false;
-        }
-        public bool IsLobbyOpen { get; private set; } = true;
+        /// <summary>
+        /// Attempts to add a specified user to the lobby.
+        /// </summary>
+        /// <param name="user">User object to add.</param>
+        /// <param name="errorMsg">Error message only populated on failure.</param>
+        /// <returns>True if successfully added.</returns>
         public bool TryAddUser(User user, out string errorMsg)
         {
+            if (user == null)
+            {
+                errorMsg = "Something went wrong.";
+                return false;
+            }
+
             errorMsg = string.Empty;
             if (this.UsersInLobby.Contains(user))
             {
-                // Due to concurrency issues its possible for GameManager to get confused. Help it out.
+                user.LobbyId = LobbyId;
                 return true;
             }
 
-            if (IsLobbyOpen)
-            {
-                if (this.UsersInLobby.Count == 0)
-                {
-                    user.IsPartyLeader = true;
-                }
-                user.LobbyId = this.LobbyId;
-                this.UsersInLobby.Add(user);
-            }
-            else
+            if (!IsLobbyOpen())
             {
                 errorMsg = "Lobby is closed.";
+                return false;
             }
-            return IsLobbyOpen;
+
+            // TODO: default to lobby owner if possible.
+            if (this.UsersInLobby.Count == 0)
+            {
+                user.IsPartyLeader = true;
+            }
+            this.UsersInLobby.Add(user);
+            user.LobbyId = LobbyId;
+
+            return true;
         }
         public void Inlet(User user, UserStateResult result, UserFormSubmission formSubmission)
         {
@@ -115,28 +243,55 @@ namespace RoystonGame.TV
             this.CurrentGameState = transitionTo;
         }
 
+        /// <summary>
+        /// Returns the list of users which are currently registered in the lobby.
+        /// </summary>
         public IReadOnlyList<User> GetActiveUsers()
         {
             return this.UsersInLobby.ToList().AsReadOnly();
         }
 
-        private int? LastSelectedGameMode { get; set; } = null;
-        public void SelectedGameMode(int? index = null, GameState specialTransitionFrom = null)
+        /// <summary>
+        /// Starts the game, throws if something is wrong with the configuration values.
+        /// </summary>
+        /// <param name="specialTransitionFrom">Where the current users are sitting (if somewhere other than WaitForLobbyStart)</param>
+        public bool StartGame(out string errorMsg, GameState specialTransitionFrom = null)
         {
-            if (!index.HasValue && !this.LastSelectedGameMode.HasValue)
+            errorMsg = string.Empty;
+            if (!this.SelectedGameMode.HasValue)
             {
-                throw new Exception("Could not parse selected game mode, should have been rejected in form submit!!");
+                errorMsg = "No game mode selected!";
+                return false;
             }
-            index ??= this.LastSelectedGameMode;
-            this.LastSelectedGameMode = index;
+
+            if (!GameModes[this.SelectedGameMode.Value].IsSupportedPlayerCount(this.GetActiveUsers().Count))
+            {
+                errorMsg = Invariant($"Selected game mode has following restrictions: {GameModes[this.SelectedGameMode.Value].RestrictionsToString()})");
+                return false;
+            }
 
             // Slightly hacky default because it can't be passed in.
-            GameState transitionFrom = specialTransitionFrom ?? this.PartyLeaderSelect;
+            GameState transitionFrom = specialTransitionFrom ?? this.WaitForLobbyStart;
 
-            GameMode selectedMode = (GameMode)index.Value;
-            IGameMode game = this.GameModeMappings[selectedMode](this);
+            GameModeMetadata gameModeMetadata = GameModes[this.SelectedGameMode.Value];
+            IGameMode game;
+            try
+            {
+                game = gameModeMetadata.GameModeInstantiator(this, this.GameModeOptions);
+            }
+            catch (GameModeInstantiationException err)
+            {
+                errorMsg = err.Message;
+                return false;
+            }
+
+            this.Game = game;
+
             transitionFrom.Transition(game.EntranceState);
             game.Transition(this.EndOfGameRestart);
+            this.WaitForLobbyStart.LobbyHasClosed();
+
+            return true;
         }
 
         /// <summary>
@@ -144,17 +299,22 @@ namespace RoystonGame.TV
         /// </summary>
         public void PrepareToRestartGame(EndOfGameRestartType restartType)
         {
+            // TODO: figure out and decide on this whole flow.
             switch (restartType)
             {
                 case EndOfGameRestartType.NewPlayers:
                     UnregisterAllUsers();
                     InitializeAllGameStates();
-                    this.IsLobbyOpen = true;
+                    this.SelectedGameMode = null;
                     break;
                 case EndOfGameRestartType.SameGameAndPlayers:
                     GameState previousEndOfGameRestart = this.EndOfGameRestart;
                     this.EndOfGameRestart = new EndOfGameState(this, PrepareToRestartGame);
-                    SelectedGameMode(specialTransitionFrom: previousEndOfGameRestart);
+                    if(!StartGame(out string errorMsg, specialTransitionFrom: previousEndOfGameRestart))
+                    {
+                        throw new Exception(errorMsg);
+                    }
+
                     foreach (User user in this.UsersInLobby)
                     {
                         user.Score = 0;
@@ -162,8 +322,7 @@ namespace RoystonGame.TV
                     break;
                 case EndOfGameRestartType.SamePlayers:
                     this.WaitForLobbyStart = null;
-                    this.PartyLeaderSelect = new SelectGameModeGameState(this, null, Enum.GetNames(typeof(GameMode)), (int? gameMode) => SelectedGameMode(gameMode));
-                    this.EndOfGameRestart.Transition(this.PartyLeaderSelect);
+                    //this.EndOfGameRestart.Transition(this.PartyLeaderSelect);
 
                     this.EndOfGameRestart = new EndOfGameState(this, PrepareToRestartGame);
                     foreach (User user in this.UsersInLobby)
@@ -176,13 +335,18 @@ namespace RoystonGame.TV
             }
         }
 
+        /// <summary>
+        /// Kicks all the users out of the lobby and puts them back in the unregistered state.
+        /// </summary>
         public void UnregisterAllUsers()
         {
-            foreach(User user in UsersInLobby)
+            foreach (User user in UsersInLobby)
             {
                 GameManager.UnregisterUser(user);
             }
             UsersInLobby.Clear();
         }
+
+        // TODO: unregister individual users manually as well as automatically. Handle it gracefully in the gamemode (don't wait for them on timeouts, also don't index OOB anywhere).
     }
 }

@@ -2,6 +2,8 @@
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.DataModels;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates;
+using RoystonGame.Web.DataModels.Exceptions;
+using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,9 +21,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO
         private List<GameState> Scoreboards { get; set; } = new List<GameState>();
         private List<GameState> Reveals { get; set; } = new List<GameState>();
         private Random rand { get; } = new Random();
-        public OneOfTheseThingsIsNotLikeTheOtherOneGameMode(Lobby lobby)
+        public OneOfTheseThingsIsNotLikeTheOtherOneGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            Setup = new Setup_GS(lobby, this.SubChallenges);
+            ValidateOptions(lobby, gameModeOptions);
+
+            Setup = new Setup_GS(lobby, this.SubChallenges, int.Parse(gameModeOptions[0].ShortAnswer));
             Setup.AddStateEndingListener(() =>
             {
                 int index = 0;
@@ -44,6 +48,19 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO
             });
 
             this.EntranceState = Setup;
+        }
+
+        public void ValidateOptions(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
+        {
+            if (!int.TryParse(gameModeOptions[0].ShortAnswer, out int parsedInteger))
+            {
+                throw new GameModeInstantiationException("Could not parse input as integer");
+            }
+
+            if (parsedInteger < 3 || parsedInteger > lobby.GetActiveUsers().Count - 1)
+            {
+                throw new GameModeInstantiationException(Invariant($"Invalid number of drawings per prompt pair, must be between ({3}) and ({lobby.GetActiveUsers().Count - 1})"));
+            }
         }
     }
 }

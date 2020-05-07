@@ -23,7 +23,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
         private static UserPrompt PartyLeaderSkipButton(User user) => new UserPrompt()
         {
             Title = "Skip Reveal",
-            RefreshTimeInMs = 1000,
             SubmitButton = true
         };
 
@@ -48,9 +47,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 {
                     Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = challenge.Colors.Select(color => colorMap[color]).ToList() },
                     RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = challenge.UserSubmittedDrawings.Where(kvp => kvp.Value.TeamId == id).Select(kvp => kvp.Key).ToList() },
-                    Footer = new StaticAccessor<string> { Value = id.ToString() },
+                    ImageIdentifier = new StaticAccessor<string> { Value = id.ToString() },
                     VoteCount = new DynamicAccessor<int?> { DynamicBacker = () => challenge.TeamIdToUsersWhoVotedMapping?[id]?.Count },
-                    BackgroundColor = new DynamicAccessor<IReadOnlyList<int>> { DynamicBacker = () => challenge.TeamIdToUsersWhoVotedMapping[id].Count == challenge.TeamIdToUsersWhoVotedMapping.Max((kvp)=> kvp.Value.Count) ? new List<int> { 32, 178, 170 } : new List<int> { 255, 255, 255 } }
+                    BackgroundColor = new DynamicAccessor<IReadOnlyList<int>> { DynamicBacker = () => challenge.TeamIdToUsersWhoVotedMapping[id].Count == challenge.TeamIdToUsersWhoVotedMapping.Max((kvp) => kvp.Value.Count) ? new List<int> { 32, 178, 170 } : new List<int> { 255, 255, 255 } }
                 });
             }
             this.UnityView = new UnityView
