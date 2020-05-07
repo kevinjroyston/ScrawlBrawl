@@ -124,13 +124,14 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 title = "Here's What's in the pool";
                 for (int i = 0; i < roundTracker.UnassignedPeople.Count; i++)
                 {
+                    var lambdaSafeIndex = i;
                     unityImages.Add(new UnityImage
                     {
-                        Base64Pngs = new DynamicAccessor<IReadOnlyList<string>> { DynamicBacker = () => roundTracker.UnassignedPeople[i].GetOrderedDrawings() },
+                        Base64Pngs = new DynamicAccessor<IReadOnlyList<string>> { DynamicBacker = () => roundTracker.UnassignedPeople[lambdaSafeIndex].GetOrderedDrawings() },
                         BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = new List<int> { 255, 255, 255 } },
                         SpriteGridWidth = new StaticAccessor<int?> { Value = 1 },
                         SpriteGridHeight = new StaticAccessor<int?> { Value = 3 },
-                        Header = new StaticAccessor<string> { Value = roundTracker.OrderedUsers[i].DisplayName }
+                        Header = new StaticAccessor<string> { Value = roundTracker.OrderedUsers[lambdaSafeIndex].DisplayName }
                     });
                 }
                 

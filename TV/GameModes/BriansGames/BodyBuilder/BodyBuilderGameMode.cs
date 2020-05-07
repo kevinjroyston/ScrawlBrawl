@@ -36,7 +36,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                     Gameplays.Add(new Gameplay_GS(
                         lobby: lobby,
                         setup_PeopleList: this.PeopleList,
-                        roundTracker = roundTracker,
+                        roundTracker: roundTracker,
                         displayPool: gameModeOptions[1].RadioAnswer == 1,
                         displayNames: gameModeOptions[2].RadioAnswer == 1,
                         outlet: null));
@@ -45,7 +45,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                         outlet: this.Outlet));
                     DisplayPeoples.Add(new DisplayPeople_GS(
                         lobby: lobby,
-                        roundTracker = roundTracker,
+                        roundTracker: roundTracker,
                         displayType: BodyBuilderConstants.DisplayTypes.PlayerHands,
                         peopleList: this.PeopleList));
 
@@ -58,7 +58,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                     {
                         DisplayPeople_GS finalDisplay = new DisplayPeople_GS(
                             lobby: lobby,
-                            roundTracker = roundTracker,
+                            roundTracker: roundTracker,
                             displayType: BodyBuilderConstants.DisplayTypes.OriginalPeople,
                             peopleList: this.PeopleList);
 

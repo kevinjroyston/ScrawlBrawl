@@ -14,12 +14,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 {
     public class DisplayPeople_GS : GameState
     {
-        private RoundTracker roundTracker;
         public DisplayPeople_GS(Lobby lobby, RoundTracker roundTracker, BodyBuilderConstants.DisplayTypes displayType, List<Setup_Person> peopleList, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(lobby, outlet)
         {
             var unityImages = new List<UnityImage>();
             string title = null;
-            this.roundTracker = roundTracker;
             if (displayType == BodyBuilderConstants.DisplayTypes.PlayerHands)
             {
                 title = "Here's What Everyone Made";
@@ -27,7 +25,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 {          
                     unityImages.Add(new UnityImage
                     {
-                        Base64Pngs = new DynamicAccessor<IReadOnlyList<string>> { DynamicBacker = () => roundTracker.AssignedPeople[user].GetOrderedDrawings() },
+                        Base64Pngs = new StaticAccessor<IReadOnlyList<string>> {Value = roundTracker.AssignedPeople[user].GetOrderedDrawings() },
                         BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = new List<int> { 255, 255, 255 } },
                         SpriteGridWidth = new StaticAccessor<int?> { Value = 1 },
                         SpriteGridHeight = new StaticAccessor<int?> { Value = 3 },
@@ -42,7 +40,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 {
                     unityImages.Add(new UnityImage
                     {
-                        Base64Pngs = new DynamicAccessor<IReadOnlyList<string>> { DynamicBacker = () =>new List<string> 
+                        Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string> 
                         {
                             person.UserSubmittedDrawingsByDrawingType[Setup_Person.DrawingType.Head].Drawing,
                             person.UserSubmittedDrawingsByDrawingType[Setup_Person.DrawingType.Body].Drawing,

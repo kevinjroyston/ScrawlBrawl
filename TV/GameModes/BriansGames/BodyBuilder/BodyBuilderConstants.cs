@@ -6,7 +6,7 @@ using static RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels.Setup_P
 
 namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
 {
-    public class BodyBuilderConstants
+    public static class BodyBuilderConstants
     {
         public static Dictionary<DrawingType, int> widths = new Dictionary<DrawingType, int>()
         {
