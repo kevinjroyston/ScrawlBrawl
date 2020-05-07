@@ -21,11 +21,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
     public class Gameplay_GS : GameState
     {
         private Random Rand { get; } = new Random();
+        private RoundTracker roundTracker;
         private Func<User, UserPrompt> PickADrawing()
         {
             return (User user) => {
-                Gameplay_Person PlayerHand = AssignedPeople[user];
-                Gameplay_Person PlayerTrade = UnassignedPeople[UsersToSeatNumber[user]];
+                Gameplay_Person PlayerHand = roundTracker.AssignedPeople[user];
+                Gameplay_Person PlayerTrade = roundTracker.UnassignedPeople[roundTracker.UsersToSeatNumber[user]];
                 if (PlayerHand.DoneWithRound)
                 {
                     return new UserPrompt
@@ -93,11 +94,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         {
             return Invariant($"<img width=\"{width}\" height=\"{height}\" src=\"{image}\"/>");
         }
-
-        private List<Gameplay_Person> UnassignedPeople { get; set; } = new List<Gameplay_Person>();
-        Dictionary<User, Gameplay_Person> AssignedPeople { get; set; } = new Dictionary<User, Gameplay_Person>();
-        private Dictionary<User, int> UsersToSeatNumber { get; set; } = new Dictionary<User, int>();
-        private List<User> OrderedUsers { get; set; } = new List<User>();
+       
         private int CurrentFinishingPosition { get; set; } = 0;
         private int NumPlayersDoneWithRound { get; set; } = 0;
         Dictionary<int, int> WinningScoresByPlace { get; set; } = new Dictionary<int, int>()
@@ -106,11 +103,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             {1, 500},    // Second Place
             {2, 250}     // Third Place
         };
-        public Gameplay_GS(Lobby lobby, List<Setup_Person> setup_PeopleList, bool displayPool, bool displayNames, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(lobby, outlet)
+        public Gameplay_GS(Lobby lobby, List<Setup_Person> setup_PeopleList, RoundTracker roundTracker, bool displayPool, bool displayNames, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(lobby, outlet)
         {
             this.AssignPeople(setup_PeopleList);
             this.AssignSeats();
-            
+            this.roundTracker = roundTracker;
             this.Entrance = AddGameplayCycle();
 
             var unityImages = new List<UnityImage>();
@@ -125,15 +122,15 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             if (displayPool)
             {
                 title = "Here's What's in the pool";
-                for (int i = 0; i < this.UnassignedPeople.Count; i++)
+                for (int i = 0; i < roundTracker.UnassignedPeople.Count; i++)
                 {
                     unityImages.Add(new UnityImage
                     {
-                        Base64Pngs = new DynamicAccessor<IReadOnlyList<string>> { DynamicBacker = () => this.UnassignedPeople[i].GetOrderedDrawings() },
+                        Base64Pngs = new DynamicAccessor<IReadOnlyList<string>> { DynamicBacker = () => roundTracker.UnassignedPeople[i].GetOrderedDrawings() },
                         BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = new List<int> { 255, 255, 255 } },
                         SpriteGridWidth = new StaticAccessor<int?> { Value = 1 },
                         SpriteGridHeight = new StaticAccessor<int?> { Value = 3 },
-                        Header = new StaticAccessor<string> { Value = OrderedUsers[i].DisplayName }
+                        Header = new StaticAccessor<string> { Value = roundTracker.OrderedUsers[i].DisplayName }
                     });
                 }
                 
@@ -162,10 +159,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 outlet: waitForUsers.Inlet,
                 formSubmitListener: (User user, UserFormSubmission submission) =>
                 {
-                    Gameplay_Person PlayerHand = AssignedPeople[user];
-                    Gameplay_Person PlayerTrade = UnassignedPeople[UsersToSeatNumber[user]];
+                    Gameplay_Person PlayerHand = roundTracker.AssignedPeople[user];
+                    Gameplay_Person PlayerTrade = roundTracker.UnassignedPeople[roundTracker.UsersToSeatNumber[user]];
                     DrawingType? answer = (DrawingType?)submission.SubForms[1].RadioAnswer;
-                    if (AssignedPeople[user].DoneWithRound)
+                    if (roundTracker.AssignedPeople[user].DoneWithRound)
                     {
                         return (true, string.Empty);
                     }
@@ -197,6 +194,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         }
         private void AssignPeople(List<Setup_Person> setup_People)
         {
+            roundTracker.ResetRoundVariables();
             List<UserDrawing> heads;
             List<UserDrawing> bodies;
             List<UserDrawing> legs;
@@ -217,7 +215,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 legs.RemoveAt(0);
 
                 temp.DoneWithRound = false;
-                AssignedPeople.Add(user, temp);
+                roundTracker.AssignedPeople.Add(user, temp);
             }
             if (heads.Count != this.Lobby.GetActiveUsers().Count)
             {
@@ -237,7 +235,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 legs.RemoveAt(0);
 
                 temp.DoneWithRound = false;
-                UnassignedPeople.Add(temp);
+                roundTracker.UnassignedPeople.Add(temp);
             }
 
         }
@@ -247,12 +245,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             bool someoneFinished = false;
             foreach(User user in this.Lobby.GetActiveUsers())
             {
-                Guid headId = AssignedPeople[user].BodyPartDrawings[DrawingType.Head].Id;
-                Guid bodyId = AssignedPeople[user].BodyPartDrawings[DrawingType.Body].Id;
-                Guid legsId = AssignedPeople[user].BodyPartDrawings[DrawingType.Legs].Id;
-                if (headId == bodyId && bodyId == legsId && !AssignedPeople[user].DoneWithRound)
+                Guid headId = roundTracker.AssignedPeople[user].BodyPartDrawings[DrawingType.Head].Id;
+                Guid bodyId = roundTracker.AssignedPeople[user].BodyPartDrawings[DrawingType.Body].Id;
+                Guid legsId = roundTracker.AssignedPeople[user].BodyPartDrawings[DrawingType.Legs].Id;
+                if (headId == bodyId && bodyId == legsId && !roundTracker.AssignedPeople[user].DoneWithRound)
                 {
-                    AssignedPeople[user].DoneWithRound = true;
+                    roundTracker.AssignedPeople[user].DoneWithRound = true;
                     user.Score += WinningScoresByPlace[CurrentFinishingPosition];
                     someoneFinished = true;
                     NumPlayersDoneWithRound++;
@@ -272,17 +270,17 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         private void RotateSeats()
         {
             
-            Gameplay_Person first = UnassignedPeople[0];
-            UnassignedPeople.RemoveAt(0);
-            UnassignedPeople.Add(first);
+            Gameplay_Person first = roundTracker.UnassignedPeople[0];
+            roundTracker.UnassignedPeople.RemoveAt(0);
+            roundTracker.UnassignedPeople.Add(first);
         }
         private void AssignSeats()
         {
             int count = 0;
             foreach (User user in this.Lobby.GetActiveUsers().OrderBy(_ => Rand.Next()).ToList())
             {
-                OrderedUsers.Add(user);
-                UsersToSeatNumber.Add(user, count);
+                roundTracker.OrderedUsers.Add(user);
+                roundTracker.UsersToSeatNumber.Add(user, count);
                 count++;
             }
         }

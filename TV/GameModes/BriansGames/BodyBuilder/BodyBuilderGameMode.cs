@@ -20,8 +20,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
         private List<Setup_Person> PeopleList { get; set; } = new List<Setup_Person>();
         private GameState Setup { get; set; }
         private List<GameState> Gameplays { get; set; } = new List<GameState>();
-
         private List<GameState> Scoreboards { get; set; } = new List<GameState>();
+        private List<GameState> DisplayPeoples { get; set; } = new List<GameState>();
+        private RoundTracker roundTracker = new RoundTracker();
         public BodyBuilderGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             ValidateOptions(gameModeOptions);
@@ -35,16 +36,35 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                     Gameplays.Add(new Gameplay_GS(
                         lobby: lobby,
                         setup_PeopleList: this.PeopleList,
+                        roundTracker = roundTracker,
                         displayPool: gameModeOptions[1].RadioAnswer == 1,
                         displayNames: gameModeOptions[2].RadioAnswer == 1,
                         outlet: null));
-                    Scoreboards.Add(new ScoreBoardGameState(lobby: lobby, outlet: this.Outlet));
+                    Scoreboards.Add(new ScoreBoardGameState(
+                        lobby: lobby,
+                        outlet: this.Outlet));
+                    DisplayPeoples.Add(new DisplayPeople_GS(
+                        lobby: lobby,
+                        roundTracker = roundTracker,
+                        displayType: BodyBuilderConstants.DisplayTypes.PlayerHands,
+                        peopleList: this.PeopleList));
 
-                    Gameplays[i].Transition(Scoreboards[i]);
+                    Gameplays[i].Transition(DisplayPeoples[i].Transition(Scoreboards[i]));
                     if (i > 0)
                     {
                         Scoreboards[i - 1].Transition(Gameplays[i]);
                     }
+                    if (i == numRounds-1)
+                    {
+                        DisplayPeople_GS finalDisplay = new DisplayPeople_GS(
+                            lobby: lobby,
+                            roundTracker = roundTracker,
+                            displayType: BodyBuilderConstants.DisplayTypes.OriginalPeople,
+                            peopleList: this.PeopleList);
+
+                        DisplayPeoples[i].Transition(finalDisplay.Transition(Scoreboards[i]));
+                    }
+
                 }
                 Setup.Transition(this.Gameplays[0]);
             });
