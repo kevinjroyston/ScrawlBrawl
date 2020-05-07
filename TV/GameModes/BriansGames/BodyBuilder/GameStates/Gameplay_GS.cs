@@ -105,9 +105,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         };
         public Gameplay_GS(Lobby lobby, List<Setup_Person> setup_PeopleList, RoundTracker roundTracker, bool displayPool, bool displayNames, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(lobby, outlet)
         {
-            this.AssignPeople(setup_PeopleList);
-            this.AssignSeats();
             this.roundTracker = roundTracker;
+            this.AssignPeople(setup_PeopleList);
+            this.AssignSeats();       
             this.Entrance = AddGameplayCycle();
 
             var unityImages = new List<UnityImage>();
