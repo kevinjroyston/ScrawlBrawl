@@ -3,6 +3,7 @@ using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.GameStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes;
+using RoystonGame.TV.GameModes.BriansGames.BodyBuilder;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing;
 using RoystonGame.Web.DataModels;
@@ -96,6 +97,32 @@ namespace RoystonGame.TV
                     new GameModeOptionResponse
                     {
                         Description = "Show other colors",
+                        RadioAnswers = new List<string>{"No", "Yes"},
+                    },
+                }
+            },
+            new GameModeMetadata
+            {
+                Title = "Body Builder",
+                Description = "TODO.",
+                MinPlayers = 3,
+                MaxPlayers = null,
+                GameModeInstantiator = (lobby, options) => new BodyBuilderGameMode(lobby, options),
+                Options = new List<GameModeOptionResponse>
+                {
+                   new GameModeOptionResponse
+                    {
+                        Description = "Number of rounds",
+                        ShortAnswer = true,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Display names on screen",
+                        RadioAnswers = new List<string>{"No", "Yes"},
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Display images on screen",
                         RadioAnswers = new List<string>{"No", "Yes"},
                     },
                 }
@@ -310,7 +337,7 @@ namespace RoystonGame.TV
                 case EndOfGameRestartType.SameGameAndPlayers:
                     GameState previousEndOfGameRestart = this.EndOfGameRestart;
                     this.EndOfGameRestart = new EndOfGameState(this, PrepareToRestartGame);
-                    if(!StartGame(out string errorMsg, specialTransitionFrom: previousEndOfGameRestart))
+                    if (!StartGame(out string errorMsg, specialTransitionFrom: previousEndOfGameRestart))
                     {
                         throw new Exception(errorMsg);
                     }

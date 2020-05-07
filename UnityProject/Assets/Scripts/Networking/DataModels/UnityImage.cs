@@ -15,7 +15,9 @@ public class UnityImage
     }
     private List<Sprite> InternalPngSprites = null;
 
-    public List<Sprite> Textures { get; private set; } = new List<Sprite>();
+
+    public int? _SpriteGridWidth { get; set; } = 1;
+    public int? _SpriteGridHeight { get; set; } = 1;
     public string _Title { get; set; }
     public string _Header { get; set; }
     public string _Footer { get; set; }
