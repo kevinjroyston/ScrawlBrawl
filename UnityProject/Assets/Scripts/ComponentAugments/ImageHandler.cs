@@ -7,14 +7,16 @@ using UnityEngine.UI;
 public class ImageHandler : MonoBehaviour
 {
     private List<Image> Images = new List<Image>();
-    public GameObject SubImagePrefab;
+    private List<GameObject> ImageGrids = new List<GameObject>();
+    public GameObject SpriteGridPrefab;
+    public GameObject SpriteObjectPrefab;
 
     public Text ImageId;
     public Text Title;
     public Text Header;
 
     public Image Background;
-    public GameObject SubImageHolder;
+    public GameObject SpriteZone;
     public GameObject ImageIdHolder;
 
     public GameObject FooterHolder;
@@ -32,17 +34,43 @@ public class ImageHandler : MonoBehaviour
 
             if (value?.PngSprites != null)
             {
+                float aspectRatio = 1f;
+                if (value.PngSprites.Count > 0)
+                {
+                    aspectRatio = value.PngSprites[0].textureRect.width / value.PngSprites[0].textureRect.height;
+                }
+                int gridCapacity = value._SpriteGridWidth.GetValueOrDefault(1) * value._SpriteGridHeight.GetValueOrDefault(1);
+                // This instantiates 1 extra grid in some scenarios but that doesn't matter.
+                int requiredGridCount = value.PngSprites.Count / gridCapacity;
+                for (int i = 0; i <= requiredGridCount; i++)
+                {
+                    if(ImageGrids.Count <= i)
+                    {
+                        var grid = GameObject.Instantiate(SpriteGridPrefab);
+                        grid.transform.SetParent(SpriteZone.transform);
+                        grid.transform.localScale = new Vector3(1f, 1f, 1f);
+                        grid.transform.localPosition = Vector3.zero;
+                        ImageGrids.Add(grid);
+                    }
+
+                    var autoScaleScript = ImageGrids[i].GetComponent<FixedDimensionAutoScaleGridLayoutGroup>();
+                    autoScaleScript.aspectRatio = aspectRatio;
+                    autoScaleScript.fixedDimensions = new Vector2(value._SpriteGridWidth.GetValueOrDefault(1), value._SpriteGridHeight.GetValueOrDefault(1));
+                }
+
                 for (int i = 0; i < value.PngSprites.Count; i++)
                 {
                     if (Images.Count <= i)
                     {
-                        var subImage = GameObject.Instantiate(SubImagePrefab);
-                        subImage.transform.SetParent(SubImageHolder.transform);
-                        subImage.transform.localScale = new Vector3(1f, 1f, 1f);
-                        subImage.transform.localPosition = Vector3.zero;
+                        var subImage = GameObject.Instantiate(SpriteObjectPrefab);
                         Images.Add(subImage.GetComponent<Image>());
                     }
+
                     Image image = Images[i];
+                    image.transform.SetParent(ImageGrids[i / gridCapacity].transform);
+                    image.transform.localScale = new Vector3(1f, 1f, 1f);
+                    image.transform.localPosition = Vector3.zero;
+
                     Sprite sprite = value.PngSprites[i];
 
                     // Set background if we have any sub images.

@@ -7,7 +7,11 @@ public class AutoScaleGridLayoutGroup : MonoBehaviour
 {
     GridLayoutGroup gridLayoutGroup;
     RectTransform rect;
+    /// <summary>
+    /// Width / Height
+    /// </summary>
     public float aspectRatio = 1.0f;
+    bool dimensionChanged = false;
 
     void Start()
     {
@@ -22,8 +26,9 @@ public class AutoScaleGridLayoutGroup : MonoBehaviour
         if (gridLayoutGroup != null && rect?.rect != null && rect.rect.height > 0 && rect.rect.width > 0)
         {
             int cellCount = gridLayoutGroup.transform.childCount;
-            if (cellCount != oldCellCount)
+            if (cellCount != oldCellCount || dimensionChanged)
             {
+                dimensionChanged = false;
                 var newHeight = CalculateHeight(cellCount);
                 oldCellCount = cellCount;
                 gridLayoutGroup.cellSize = new Vector2(newHeight * aspectRatio - gridLayoutGroup.spacing.x, newHeight - gridLayoutGroup.spacing.y);
@@ -33,6 +38,7 @@ public class AutoScaleGridLayoutGroup : MonoBehaviour
 
     void OnRectTransformDimensionsChange()
     {
+        dimensionChanged = true;
     }
     int oldCellCount = 0;
     int columnCount = 1;

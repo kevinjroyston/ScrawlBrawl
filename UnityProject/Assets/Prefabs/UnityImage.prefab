@@ -134,8 +134,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 810, y: -158.89536}
-  m_SizeDelta: {x: 0, y: 158.89536}
+  m_AnchoredPosition: {x: 806, y: -158.19768}
+  m_SizeDelta: {x: 0, y: 158.19768}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &4775604661649532335
 CanvasRenderer:
@@ -222,7 +222,7 @@ GameObject:
   - component: {fileID: 2156734136142269824}
   - component: {fileID: 4565428827015340933}
   m_Layer: 0
-  m_Name: Img
+  m_Name: SpriteZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -304,8 +304,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 810, y: -672.65704}
-  m_SizeDelta: {x: 0, y: 158.89536}
+  m_AnchoredPosition: {x: 806, y: -669.7034}
+  m_SizeDelta: {x: 0, y: 158.19768}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8010398897049928954
 CanvasRenderer:
@@ -393,7 +393,7 @@ GameObject:
   - component: {fileID: 958200141029690279}
   - component: {fileID: 8119418885486890060}
   m_Layer: 0
-  m_Name: ImageObj
+  m_Name: UnityImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -431,13 +431,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65c498b6bef95404e92610f62cc1fe02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SubImagePrefab: {fileID: 3440341579452285512, guid: c59ffe1d461a2cf4a86865ef279026b6,
+  SpriteGridPrefab: {fileID: 502030004276576915, guid: 6de754643478e0247a4b70f54c46f606,
+    type: 3}
+  SpriteObjectPrefab: {fileID: 3440341579452285512, guid: c59ffe1d461a2cf4a86865ef279026b6,
     type: 3}
   ImageId: {fileID: 9005909003244505805}
   Title: {fileID: 4200084594949836866}
   Header: {fileID: 7233078079472361656}
   Background: {fileID: 958200141031153111}
-  SubImageHolder: {fileID: 272053788141012050}
+  SpriteZone: {fileID: 272053788141012050}
   ImageIdHolder: {fileID: 7139616067880138905}
   FooterHolder: {fileID: 3977420273987508775}
   VoteCount: {fileID: 7957746443236290024}
