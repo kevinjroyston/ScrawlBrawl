@@ -3,6 +3,7 @@ using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.GameStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes;
+using RoystonGame.TV.GameModes.BriansGames.BattleReady;
 using RoystonGame.TV.GameModes.BriansGames.BodyBuilder;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing;
@@ -132,6 +133,32 @@ namespace RoystonGame.TV
                     },
                 }
             },
+            new GameModeMetadata
+            {
+                Title = "Battle Ready",
+                Description = "TODO.",
+                MinPlayers = 3,
+                MaxPlayers = null,
+                GameModeInstantiator = (lobby, options) => new BattleReadyGameMode(lobby, options),
+                Options = new List<GameModeOptionResponse>
+                {
+                    new GameModeOptionResponse
+                    {
+                        Description = "Number of rounds",
+                        ShortAnswer = true,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Number of each body part to draw",
+                        ShortAnswer = true,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Number of prompts",
+                        ShortAnswer = true,
+                    },
+                }
+            }
         }.AsReadOnly();
         #endregion
 

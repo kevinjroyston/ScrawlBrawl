@@ -1,0 +1,13 @@
+﻿using RoystonGame.TV.DataModels;
+using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels
+{
+    public class Setup_Person : Person
+    {
+        public Dictionary<User, PeopleUserDrawing> UserSubmittedDrawingsByUser { get; set; } = new Dictionary<User, PeopleUserDrawing>();
+    }
+}
