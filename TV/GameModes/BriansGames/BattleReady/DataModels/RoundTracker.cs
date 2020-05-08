@@ -1,21 +1,22 @@
 ﻿using RoystonGame.TV.DataModels;
+using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
 using System.Collections.Generic;
-
+using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels
 {
     public class RoundTracker
     {
-        public List<Gameplay_Person> UnassignedPeople { get; set; } = new List<Gameplay_Person>();
-        public Dictionary<User, Gameplay_Person> AssignedPeople { get; set; } = new Dictionary<User, Gameplay_Person>();
-        public Dictionary<User, int> UsersToSeatNumber { get; set; } = new Dictionary<User, int>();
+        public Dictionary<User, List<PeopleUserDrawing>> UsersToAssignedBodyParts { get; set; } = new Dictionary<User, List<PeopleUserDrawing>>();
+        public Dictionary<User, string> UsersToAssignedPrompts { get; set; } = new Dictionary<User, string>();
+        public Dictionary<User, Person> UsersToBuiltPerson { get; set; } = new Dictionary<User, Person>();
         public List<User> OrderedUsers { get; set; } = new List<User>();
 
         public void ResetRoundVariables()
         {
-            UnassignedPeople = new List<Gameplay_Person>();
-            AssignedPeople = new Dictionary<User, Gameplay_Person>();
-            UsersToSeatNumber = new Dictionary<User, int>();
+            UsersToAssignedBodyParts = new Dictionary<User, List<PeopleUserDrawing>>();
+            UsersToAssignedPrompts = new Dictionary<User, string>();
+            UsersToBuiltPerson = new Dictionary<User, Person>();
             OrderedUsers = new List<User>();
         }
     }

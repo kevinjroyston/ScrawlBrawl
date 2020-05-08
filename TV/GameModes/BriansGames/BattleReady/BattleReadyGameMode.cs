@@ -1,44 +1,48 @@
-﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels;
-using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.DataModels.GameStates;
+﻿using RoystonGame.TV.DataModels.GameStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels;
 using RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates;
 using RoystonGame.Web.DataModels.Requests.LobbyManagement;
-using RoystonGame.Web.DataModels.Requests;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using RoystonGame.Web.DataModels.Exceptions;
+using RoystonGame.TV.GameModes.Common.GameStates;
+using RoystonGame.TV.GameModes.BriansGames.Common.GameStates;
+using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
 {
     public class BattleReadyGameMode : IGameMode
     {
-        private List<Setup_Person> PeopleList { get; set; } = new List<Setup_Person>();
+        private List<PeopleUserDrawing> Drawings { get; set; } = new List<PeopleUserDrawing>();
+        private List<string> Prompts { get; set; } = new List<string>();
         private GameState Setup { get; set; }
         private List<GameState> Gameplays { get; set; } = new List<GameState>();
         private List<GameState> Scoreboards { get; set; } = new List<GameState>();
         private List<GameState> DisplayPeoples { get; set; } = new List<GameState>();
+
         private RoundTracker roundTracker = new RoundTracker();
         public BattleReadyGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             ValidateOptions(gameModeOptions);
 
             int numRounds = int.Parse(gameModeOptions[0].ShortAnswer);
-            Setup = new Setup_GS(lobby: lobby, peopleList: this.PeopleList, gameModeOptions: gameModeOptions);
+            int numDrawingsPerPart = int.Parse(gameModeOptions[1].ShortAnswer);
+            int numPromptsPerPlayer = int.Parse(gameModeOptions[2].ShortAnswer);
+            Setup = new Setup_GS(
+                lobby: lobby, 
+                drawings: Drawings,
+                prompts: Prompts,
+                numDrawings: numDrawingsPerPart, 
+                numPrompts: numPromptsPerPlayer);
             int countRounds = 0;
 
             GameState CreateGameplayGamestate()
             {
                 GameState gameplay = new Gameplay_GS(
                         lobby: lobby,
-                        setup_PeopleList: this.PeopleList,
-                        roundTracker: roundTracker,
-                        displayPool: gameModeOptions[1].RadioAnswer == 1,
-                        displayNames: gameModeOptions[2].RadioAnswer == 1);
+                        drawings: Drawings,
+                        prompts: Prompts,
+                        roundTracker: roundTracker);
                 gameplay.Transition(CreateRevealAndScore);
                 return gameplay;
             }
@@ -47,9 +51,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 countRounds++;
                 GameState displayPeople = new DisplayPeople_GS(
                     lobby: lobby,
-                    roundTracker: roundTracker,
-                    displayType: BattleReadyConstants.DisplayTypes.PlayerHands,
-                    peopleList: this.PeopleList);
+                    title: "Here's What Everyone Made",
+                    peopleList: roundTracker.UnassignedPeople);
 
                 GameState scoreBoard = new ScoreBoardGameState(
                     lobby: lobby);
@@ -58,8 +61,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 {
                     GameState finalDisplay = new DisplayPeople_GS(
                         lobby: lobby,
-                        roundTracker: roundTracker,
-                        displayType: BattleReadyConstants.DisplayTypes.OriginalPeople,
+                        title: "And Here's The Original Peoeple",
                         peopleList: this.PeopleList);
                     displayPeople.Transition(finalDisplay);
                     finalDisplay.Transition(scoreBoard);
@@ -164,11 +166,21 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
 
         public void ValidateOptions(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            if (!int.TryParse(gameModeOptions[0].ShortAnswer, out int parsedInteger)
-                || parsedInteger < 1 || parsedInteger > 30)
+            if (!int.TryParse(gameModeOptions[0].ShortAnswer, out int parsedInteger1)
+                || parsedInteger1 < 1 || parsedInteger1 > 30)
             {
-                throw new GameModeInstantiationException("Must be an integer from 1-30");
+                throw new GameModeInstantiationException("Numer of rounds must be an integer from 1-30");
             }
+            if (!int.TryParse(gameModeOptions[1].ShortAnswer, out int parsedInteger2)
+               || parsedInteger2 < 1 || parsedInteger2 > 30)
+            {
+                throw new GameModeInstantiationException("Numer of drawings must be an integer from 1-30");
+            }
+            /*if (!int.TryParse(gameModeOptions[2].ShortAnswer, out int parsedInteger3)
+                || parsedInteger3 < int.Parse(gameModeOptions[1].ShortAnswer) * int.Parse(gameModeOptions[0].ShortAnswer) / 2)
+            {
+                throw new GameModeInstantiationException("There must be enough prompts for each round");
+            }*/
         }
     }
 }

@@ -5,17 +5,17 @@ using RoystonGame.TV.DataModels.GameStates;
 using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels;
+using RoystonGame.TV.GameModes.Common.ThreePartPeople;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
-using RoystonGame.WordLists;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using static RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels.Setup_Person;
+using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 using static System.FormattableString;
 
 using Connector = System.Action<
@@ -27,51 +27,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
 {
     public class Setup_GS : GameState
     {
-
-        private UserState GetPeoplePrompts_State(Connector outlet = null)
-        {
-            return new SimplePromptUserState((User user) => new UserPrompt()
-            {
-                Title = "Game setup",
-                Description = "In the boxes below, enter drawing prompts which will be given to different players.",
-                RefreshTimeInMs = 1000,
-                SubPrompts = new SubPrompt[]
-                {
-                    new SubPrompt
-                    {
-                        Prompt="Person#1",
-                        ShortAnswer=true
-                    },
-                    new SubPrompt
-                    {
-                        Prompt="Person#2",
-                        ShortAnswer=true
-                    },
-                },
-                SubmitButton = true
-            },
-            outlet,
-            formSubmitListener: (User user, UserFormSubmission input) =>
-            {
-                if (input.SubForms[0].ShortAnswer.Equals(input.SubForms[1].ShortAnswer, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return (false, "Please enter 2 distinct people");
-                }
-                this.PeopleList.Add(new Setup_Person
-                {
-                    Owner = user,
-                    Prompt = input.SubForms[0].ShortAnswer
-                });
-                this.PeopleList.Add(new Setup_Person
-                {
-                    Owner = user,
-                    Prompt = input.SubForms[1].ShortAnswer
-                });
-                return (true, String.Empty);
-            });
-        }
-
-        private List<Setup_Person> PeopleList { get; set; }
+        private List<string> Prompts { get; set; }
+        private List<PeopleUserDrawing> Drawings { get; set; }
 
         private Random Rand { get; set; } = new Random();
 
@@ -81,31 +38,41 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         /// <param name="user">The user to build a chain for.</param>
         /// <param name="outlet">The state to link the end of the chain to.</param>
         /// <returns>A list of user states designed for a given user.</returns>
-        private List<UserState> GetDrawingsUserStateChain(User user, Connector outlet)
+        private List<UserState> GetDrawingsAndPromptsUserStateChain(int numDrawings, int numPrompts, Connector outlet)
         {
             List<UserState> stateChain = new List<UserState>();
-            List<Setup_Person> people = this.PeopleList.OrderBy(_ => Rand.Next()).ToList();
-            foreach (Setup_Person person in people)
+            for (int i = 0; i< numDrawings; i++)
             {
-                if (!person.UserSubmittedDrawingsByUser.ContainsKey(user))
-                {
-                    continue;
-                }
+                PeopleUserDrawing headDrawing = new PeopleUserDrawing();
+                headDrawing.Type = DrawingType.Head;
+                Drawings.Add(headDrawing);
 
+                PeopleUserDrawing bodyDrawing = new PeopleUserDrawing();
+                bodyDrawing.Type = DrawingType.Body;
+                Drawings.Add(bodyDrawing);
+
+                PeopleUserDrawing legsDrawing = new PeopleUserDrawing();
+                legsDrawing.Type = DrawingType.Legs;
+                Drawings.Add(legsDrawing);
+            }
+            Drawings = Drawings.OrderBy(_ => Rand.Next()).ToList();
+            int drawingNumber = 1;
+            foreach(PeopleUserDrawing drawing in Drawings) //runs until all 3 values are 0
+            {
                 stateChain.Add(new SimplePromptUserState((User user) => new UserPrompt()
                 {
-                    Title = "Time to draw!",
+                    Title = Invariant($"Time to draw! Drawing \"{drawingNumber}\" of \"{numDrawings}\""),
                     Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",
                     SubPrompts = new SubPrompt[]
                     {
                         new SubPrompt
                         {
-                            Prompt = Invariant($"You are drawing the \"{person.UserSubmittedDrawingsByUser[user].Type}\" of \"{person.Prompt}\""),
+                            Prompt = Invariant($"Draw any \"{drawing.Type.ToString()}\""),
                             Drawing = new DrawingPromptMetadata()
                             {
-                                WidthInPx = BattleReadyConstants.widths[person.UserSubmittedDrawingsByUser[user].Type],
-                                HeightInPx = BattleReadyConstants.heights[person.UserSubmittedDrawingsByUser[user].Type],
-                                CanvasBackground = BattleReadyConstants.backgrounds[person.UserSubmittedDrawingsByUser[user].Type],
+                                WidthInPx = ThreePartPeopleConstants.widths[drawing.Type],
+                                HeightInPx = ThreePartPeopleConstants.heights[drawing.Type],
+                                CanvasBackground = ThreePartPeopleConstants.backgrounds[drawing.Type],
                             },
                         },
                     },
@@ -113,9 +80,35 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                 },
                 formSubmitListener: (User user, UserFormSubmission input) =>
                 {
-                    person.UserSubmittedDrawingsByUser[user].Drawing = input.SubForms[0].Drawing;
+                    drawing.Drawing = input.SubForms[0].Drawing;
                     return (true, String.Empty);
                 }));
+                drawingNumber++;
+            }
+            int  promptNumber = 1;
+            for (int i = 0; i < numPrompts; i++)
+            {
+                stateChain.Add(new SimplePromptUserState((User user) => new UserPrompt()
+                {
+                    Title = Invariant($"Now lets make some battle prompts! Prompt \"{promptNumber}\" of \"{numPrompts}\""),
+                    Description = "Examples: Who would win in a fight, Who would make the best ____, Etc.",
+                    RefreshTimeInMs = 1000,
+                    SubPrompts = new SubPrompt[]
+                    {
+                        new SubPrompt
+                        {
+                            Prompt="Prompt",
+                            ShortAnswer=true
+                        },
+                    },
+                    SubmitButton = true
+                },
+                formSubmitListener: (User user, UserFormSubmission input) =>
+                {
+                    this.Prompts.Add(input.SubForms[0].ShortAnswer);
+                    return (true, String.Empty);
+                }));
+                promptNumber++;
             }
 
             for (int i = 1; i < stateChain.Count; i++)
@@ -126,57 +119,21 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
 
             return stateChain;
         }
+     
 
-        public Setup_GS(Lobby lobby, List<Setup_Person> peopleList, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, Connector outlet = null) : base(lobby, outlet)
+        public Setup_GS(Lobby lobby, List<PeopleUserDrawing> drawings, List<string> prompts, int numDrawings, int numPrompts, Connector outlet = null) : base(lobby, outlet)
         {
-            this.PeopleList = peopleList;
-
-            UserStateTransition waitForAllDrawings = new WaitForAllPlayers(lobby: lobby, outlet: this.Outlet);
-            UserStateTransition waitForAllPrompts = new WaitForAllPlayers(lobby: lobby, outlet:(User user, UserStateResult result, UserFormSubmission input) =>
-            {
-                // This call doesn't actually happen until after all prompts are submitted
-                GetDrawingsUserStateChain(user, waitForAllDrawings.Inlet)[0].Inlet(user, result, input);
-            });
-            // Just before users call the line above, call AssignPrompts
-            waitForAllPrompts.AddStateEndingListener(() => this.AssignPrompts());
-
-            this.Entrance = GetPeoplePrompts_State(waitForAllPrompts.Inlet);
+            this.Drawings = drawings;
+            this.Prompts = prompts;
+            UserStateTransition waitForAllDrawingsAndPrompts = new WaitForAllPlayers(lobby: lobby, outlet: this.Outlet);
+            this.Entrance = GetDrawingsAndPromptsUserStateChain(numDrawings: numDrawings, numPrompts: numPrompts, outlet: waitForAllDrawingsAndPrompts.Inlet)[0];
 
             this.UnityView = new UnityView
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
-                Instructions = new StaticAccessor<string> { Value = "Complete all the prompts on your devices." },
+                Instructions = new StaticAccessor<string> { Value = "Complete all the drawings and prompts on your devices." },
             };
         }
-
-        /// <summary>
-        /// This method of assigning prompts is not the most efficient but the next best algorithm I could find for getting a 
-        /// good solution was even more inefficient. All the efficient algorithms gave suboptimal solutions.
-        /// </summary>
-        private void AssignPrompts()
-        {
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            List<Setup_Person> randomlyOrderedPeople = this.PeopleList.OrderBy(_ => Rand.Next()).ToList();
-            IReadOnlyList<User> users = this.Lobby.GetActiveUsers();
-            for (int i = 0; i < randomlyOrderedPeople.Count; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    UserDrawing temp = new UserDrawing
-                    {
-                        Type = (Setup_Person.DrawingType)j,
-                        Owner = users[(i + j + 1) % users.Count],
-                        Id = randomlyOrderedPeople[i].Id
-                    };
-
-                    randomlyOrderedPeople[i].UserSubmittedDrawingsByUser.Add(
-                        temp.Owner, temp);
-                    randomlyOrderedPeople[i].UserSubmittedDrawingsByDrawingType.Add(
-                        temp.Type, temp);
-                }
-            }
-
-            Debug.WriteLine(Invariant($"Assigned user prompts in ({stopwatch.ElapsedMilliseconds} ms)"), "Timing");
-        }
+        
     }
 }
