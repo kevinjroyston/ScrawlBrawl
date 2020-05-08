@@ -34,7 +34,7 @@ namespace RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels
             return new List<string> { BodyPartDrawings[DrawingType.Head].Drawing, BodyPartDrawings[DrawingType.Body].Drawing, BodyPartDrawings[DrawingType.Legs].Drawing }.AsReadOnly();
         }
        
-        public UnityImage GetPeronImaage()
+        public UnityImage GetPersonImaage()
         {
             
             return new UnityImage
