@@ -5,6 +5,7 @@ using RoystonGame.TV.DataModels.GameStates;
 using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels;
+using RoystonGame.TV.GameModes.Common.ThreePartPeople;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Requests.LobbyManagement;
@@ -16,6 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using static RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels.Setup_Person;
+using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 using static System.FormattableString;
 
 using Connector = System.Action<
@@ -60,12 +62,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 this.PeopleList.Add(new Setup_Person
                 {
                     Owner = user,
-                    Prompt = input.SubForms[0].ShortAnswer
+                    Name = input.SubForms[0].ShortAnswer
                 });
                 this.PeopleList.Add(new Setup_Person
                 {
                     Owner = user,
-                    Prompt = input.SubForms[1].ShortAnswer
+                    Name = input.SubForms[1].ShortAnswer
                 });
                 return (true, String.Empty);
             });
@@ -100,12 +102,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                     {
                         new SubPrompt
                         {
-                            Prompt = Invariant($"You are drawing the \"{person.UserSubmittedDrawingsByUser[user].Type}\" of \"{person.Prompt}\""),
+                            Prompt = Invariant($"You are drawing the \"{person.UserSubmittedDrawingsByUser[user].Type}\" of \"{person.Name}\""),
                             Drawing = new DrawingPromptMetadata()
                             {
-                                WidthInPx = BodyBuilderConstants.widths[person.UserSubmittedDrawingsByUser[user].Type],
-                                HeightInPx = BodyBuilderConstants.heights[person.UserSubmittedDrawingsByUser[user].Type],
-                                CanvasBackground = BodyBuilderConstants.backgrounds[person.UserSubmittedDrawingsByUser[user].Type],
+                                WidthInPx = ThreePartPeopleConstants.widths[person.UserSubmittedDrawingsByUser[user].Type],
+                                HeightInPx = ThreePartPeopleConstants.heights[person.UserSubmittedDrawingsByUser[user].Type],
+                                CanvasBackground = ThreePartPeopleConstants.backgrounds[person.UserSubmittedDrawingsByUser[user].Type],
                             },
                         },
                     },
@@ -162,7 +164,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    UserDrawing temp = new UserDrawing
+                    PeopleUserDrawing temp = new PeopleUserDrawing
                     {
                         Type = (Setup_Person.DrawingType)j,
                         Owner = users[(i + j + 1) % users.Count],
@@ -171,7 +173,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 
                     randomlyOrderedPeople[i].UserSubmittedDrawingsByUser.Add(
                         temp.Owner, temp);
-                    randomlyOrderedPeople[i].UserSubmittedDrawingsByDrawingType.Add(
+                    randomlyOrderedPeople[i].BodyPartDrawings.Add(
                         temp.Type, temp);
                 }
             }

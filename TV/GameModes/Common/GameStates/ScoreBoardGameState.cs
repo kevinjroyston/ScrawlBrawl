@@ -1,4 +1,6 @@
 ﻿using RoystonGame.TV.ControlFlows;
+using RoystonGame.TV.DataModels;
+using RoystonGame.TV.DataModels.GameStates;
 using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Responses;
@@ -11,7 +13,7 @@ using Connector = System.Action<
     RoystonGame.TV.DataModels.Enums.UserStateResult,
     RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
 
-namespace RoystonGame.TV.DataModels.GameStates
+namespace RoystonGame.TV.GameModes.Common.GameStates
 {
     public class ScoreBoardGameState : GameState
     {

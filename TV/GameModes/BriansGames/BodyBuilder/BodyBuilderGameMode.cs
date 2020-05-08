@@ -12,6 +12,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RoystonGame.Web.DataModels.Exceptions;
+using RoystonGame.TV.GameModes.BriansGames.Common.GameStates;
+using RoystonGame.TV.GameModes.Common.ThreePartPeople;
+using RoystonGame.TV.GameModes.Common.GameStates;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
 {
@@ -47,9 +50,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                 countRounds++;
                 GameState displayPeople = new DisplayPeople_GS(
                     lobby: lobby,
-                    roundTracker: roundTracker,
-                    displayType: BodyBuilderConstants.DisplayTypes.PlayerHands,
-                    peopleList: this.PeopleList);
+                    title: "Here's What Everyone Made",
+                    peopleList: roundTracker.UnassignedPeople);
 
                 GameState scoreBoard = new ScoreBoardGameState(
                     lobby: lobby);
@@ -58,8 +60,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                 {
                     GameState finalDisplay = new DisplayPeople_GS(
                         lobby: lobby,
-                        roundTracker: roundTracker,
-                        displayType: BodyBuilderConstants.DisplayTypes.OriginalPeople,
+                        title: "And Here's The Original Peoeple",
                         peopleList: this.PeopleList);
                     displayPeople.Transition(finalDisplay);
                     finalDisplay.Transition(scoreBoard);
@@ -92,7 +93,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                         GameState displayPeople = new DisplayPeople_GS(
                             lobby: lobby,
                             roundTracker: roundTracker,
-                            displayType: BodyBuilderConstants.DisplayTypes.PlayerHands,
+                            displayType: ThreePartPeopleConstants.DisplayTypes.PlayerHands,
                             peopleList: this.PeopleList);
 
                         GameState scoreBoard = new ScoreBoardGameState(
@@ -103,7 +104,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                             GameState finalDisplay = new DisplayPeople_GS(
                                 lobby: lobby,
                                 roundTracker: roundTracker,
-                                displayType: BodyBuilderConstants.DisplayTypes.OriginalPeople,
+                                displayType: ThreePartPeopleConstants.DisplayTypes.OriginalPeople,
                                 peopleList: this.PeopleList);
                             gameplay.Transition(displayPeople);
                             displayPeople.Transition(finalDisplay);
@@ -137,7 +138,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                 DisplayPeoples.Add(new DisplayPeople_GS(
                     lobby: lobby,
                     roundTracker: roundTracker,
-                    displayType: BodyBuilderConstants.DisplayTypes.PlayerHands,
+                    displayType: ThreePartPeopleConstants.DisplayTypes.PlayerHands,
                     peopleList: this.PeopleList));
 
                 Gameplays[i].Transition(DisplayPeoples[i].Transition(Scoreboards[i]));
@@ -150,7 +151,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                     DisplayPeople_GS finalDisplay = new DisplayPeople_GS(
                         lobby: lobby,
                         roundTracker: roundTracker,
-                        displayType: BodyBuilderConstants.DisplayTypes.OriginalPeople,
+                        displayType: ThreePartPeopleConstants.DisplayTypes.OriginalPeople,
                         peopleList: this.PeopleList);
 
                     DisplayPeoples[i].Transition(finalDisplay.Transition(Scoreboards[i]));
