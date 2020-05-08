@@ -1,4 +1,5 @@
 ﻿using RoystonGame.TV.DataModels;
+using System;
 
 namespace RoystonGame.TV.Extensions
 {
@@ -11,6 +12,13 @@ namespace RoystonGame.TV.Extensions
         {
             A.SetOutlet(B.Inlet);
             return B;
+        }
+        public static void Transition(this StateOutlet A, Func<State> B )
+        {
+            A.AddStateEndingListener(() =>
+            {
+                A.Transition(B());
+            });
         }
     }
 }

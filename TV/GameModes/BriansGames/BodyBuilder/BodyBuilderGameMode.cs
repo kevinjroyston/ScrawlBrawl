@@ -30,7 +30,51 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
             int numRounds = int.Parse(gameModeOptions[0].ShortAnswer);
             Setup = new Setup_GS(lobby: lobby, peopleList: this.PeopleList, gameModeOptions: gameModeOptions);
             int countRounds = 0;
-            Func<GameState, Action> getListener = null; //returns a listener function for who called it
+
+            GameState CreateGameplayGamestate()
+            {
+                GameState gameplay = new Gameplay_GS(
+                        lobby: lobby,
+                        setup_PeopleList: this.PeopleList,
+                        roundTracker: roundTracker,
+                        displayPool: gameModeOptions[1].RadioAnswer == 1,
+                        displayNames: gameModeOptions[2].RadioAnswer == 1);
+                gameplay.Transition(CreateRevealAndScore);
+                return gameplay;
+            }
+            GameState CreateRevealAndScore()
+            {
+                countRounds++;
+                GameState displayPeople = new DisplayPeople_GS(
+                    lobby: lobby,
+                    roundTracker: roundTracker,
+                    displayType: BodyBuilderConstants.DisplayTypes.PlayerHands,
+                    peopleList: this.PeopleList);
+
+                GameState scoreBoard = new ScoreBoardGameState(
+                    lobby: lobby);
+
+                if (countRounds >= numRounds)
+                {
+                    GameState finalDisplay = new DisplayPeople_GS(
+                        lobby: lobby,
+                        roundTracker: roundTracker,
+                        displayType: BodyBuilderConstants.DisplayTypes.OriginalPeople,
+                        peopleList: this.PeopleList);
+                    displayPeople.Transition(finalDisplay);
+                    finalDisplay.Transition(scoreBoard);
+                    scoreBoard.SetOutlet(this.Outlet);
+                }
+                else
+                {
+                    displayPeople.Transition(scoreBoard);
+                    scoreBoard.Transition(CreateGameplayGamestate);
+                }
+                return displayPeople;
+            }
+            Setup.Transition(CreateGameplayGamestate);
+            this.EntranceState = Setup;
+            /*Func<GameState, Action> getListener = null; //returns a listener function for who called it
             getListener = (transitionFromGS) => 
             {
                 return () =>
@@ -78,7 +122,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                 };
             };
             Setup.AddStateEndingListener(getListener(Setup));
-            this.EntranceState = Setup;
+            this.EntranceState = Setup;*/
 
             /*for(int i =0; i< numRounds;i++)
             {
