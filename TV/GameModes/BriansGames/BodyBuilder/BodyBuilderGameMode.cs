@@ -29,47 +29,94 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
 
             int numRounds = int.Parse(gameModeOptions[0].ShortAnswer);
             Setup = new Setup_GS(lobby: lobby, peopleList: this.PeopleList, gameModeOptions: gameModeOptions);
-            Setup.AddStateEndingListener(() =>
+            int countRounds = 0;
+            Func<GameState, Action> getListener = null; //returns a listener function for who called it
+            getListener = (transitionFromGS) => 
             {
-                for(int i =0; i< numRounds;i++)
+                return () =>
                 {
-                    Gameplays.Add(new Gameplay_GS(
+                    GameState gameplay = new Gameplay_GS(
                         lobby: lobby,
                         setup_PeopleList: this.PeopleList,
                         roundTracker: roundTracker,
                         displayPool: gameModeOptions[1].RadioAnswer == 1,
-                        displayNames: gameModeOptions[2].RadioAnswer == 1,
-                        outlet: null));
-                    Scoreboards.Add(new ScoreBoardGameState(
-                        lobby: lobby,
-                        outlet: this.Outlet));
-                    DisplayPeoples.Add(new DisplayPeople_GS(
-                        lobby: lobby,
-                        roundTracker: roundTracker,
-                        displayType: BodyBuilderConstants.DisplayTypes.PlayerHands,
-                        peopleList: this.PeopleList));
+                        displayNames: gameModeOptions[2].RadioAnswer == 1);
 
-                    Gameplays[i].Transition(DisplayPeoples[i].Transition(Scoreboards[i]));
-                    if (i > 0)
+                    gameplay.AddStateEndingListener(() =>
                     {
-                        Scoreboards[i - 1].Transition(Gameplays[i]);
-                    }
-                    if (i == numRounds-1)
-                    {
-                        DisplayPeople_GS finalDisplay = new DisplayPeople_GS(
+                        countRounds++;
+                        GameState displayPeople = new DisplayPeople_GS(
                             lobby: lobby,
                             roundTracker: roundTracker,
-                            displayType: BodyBuilderConstants.DisplayTypes.OriginalPeople,
+                            displayType: BodyBuilderConstants.DisplayTypes.PlayerHands,
                             peopleList: this.PeopleList);
 
-                        DisplayPeoples[i].Transition(finalDisplay.Transition(Scoreboards[i]));
-                    }
+                        GameState scoreBoard = new ScoreBoardGameState(
+                            lobby: lobby);
 
-                }
-                Setup.Transition(this.Gameplays[0]);
-            });
+                        if (countRounds >= numRounds)
+                        {
+                            GameState finalDisplay = new DisplayPeople_GS(
+                                lobby: lobby,
+                                roundTracker: roundTracker,
+                                displayType: BodyBuilderConstants.DisplayTypes.OriginalPeople,
+                                peopleList: this.PeopleList);
+                            gameplay.Transition(displayPeople);
+                            displayPeople.Transition(finalDisplay);
+                            finalDisplay.Transition(scoreBoard);
+                            scoreBoard.SetOutlet(this.Outlet);
+                        }
+                        else
+                        {
+                            gameplay.Transition(displayPeople);
+                            displayPeople.Transition(scoreBoard);
+                            scoreBoard.AddStateEndingListener(getListener(scoreBoard));
+                        }
+                    });
+
+                    transitionFromGS.Transition(gameplay);
+                };
+            };
+            Setup.AddStateEndingListener(getListener(Setup));
             this.EntranceState = Setup;
+
+            /*for(int i =0; i< numRounds;i++)
+            {
+                Gameplays.Add(new Gameplay_GS(
+                    lobby: lobby,
+                    setup_PeopleList: this.PeopleList,
+                    roundTracker: roundTracker,
+                    displayPool: gameModeOptions[1].RadioAnswer == 1,
+                    displayNames: gameModeOptions[2].RadioAnswer == 1));
+                Scoreboards.Add(new ScoreBoardGameState(
+                    lobby: lobby));
+                DisplayPeoples.Add(new DisplayPeople_GS(
+                    lobby: lobby,
+                    roundTracker: roundTracker,
+                    displayType: BodyBuilderConstants.DisplayTypes.PlayerHands,
+                    peopleList: this.PeopleList));
+
+                Gameplays[i].Transition(DisplayPeoples[i].Transition(Scoreboards[i]));
+                if (i > 0)
+                {
+                    Scoreboards[i - 1].Transition(Gameplays[i]);
+                }
+                if (i == numRounds-1)
+                {
+                    DisplayPeople_GS finalDisplay = new DisplayPeople_GS(
+                        lobby: lobby,
+                        roundTracker: roundTracker,
+                        displayType: BodyBuilderConstants.DisplayTypes.OriginalPeople,
+                        peopleList: this.PeopleList);
+
+                    DisplayPeoples[i].Transition(finalDisplay.Transition(Scoreboards[i]));
+                }
+
+            }
+            Setup.Transition(this.Gameplays[0]);*/
+
         }
+
 
         public void ValidateOptions(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {

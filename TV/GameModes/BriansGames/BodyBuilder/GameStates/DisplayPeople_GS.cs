@@ -10,8 +10,7 @@ using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 {
@@ -44,11 +43,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 {          
                     unityImages.Add(new UnityImage
                     {
-                        Base64Pngs = new StaticAccessor<IReadOnlyList<string>> {Value = roundTracker.AssignedPeople[user].GetOrderedDrawings() },
+                        Base64Pngs = new DynamicAccessor<IReadOnlyList<string>> { DynamicBacker = () => roundTracker.AssignedPeople[user].GetOrderedDrawings() },
                         BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = new List<int> { 255, 255, 255 } },
                         SpriteGridWidth = new StaticAccessor<int?> { Value = 1 },
                         SpriteGridHeight = new StaticAccessor<int?> { Value = 3 },
-                        Header = new StaticAccessor<string> { Value = user.DisplayName }
+                        Header = new DynamicAccessor<string> { DynamicBacker = () => user.DisplayName }
                     });       
                 }
             }
@@ -59,7 +58,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 {
                     unityImages.Add(new UnityImage
                     {
-                        Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string> 
+                        Base64Pngs = new DynamicAccessor<IReadOnlyList<string>> { DynamicBacker = () => new List<string> 
                         {
                             person.UserSubmittedDrawingsByDrawingType[Setup_Person.DrawingType.Head].Drawing,
                             person.UserSubmittedDrawingsByDrawingType[Setup_Person.DrawingType.Body].Drawing,
@@ -68,7 +67,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                         BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = new List<int> { 255, 255, 255 } },
                         SpriteGridWidth = new StaticAccessor<int?> { Value = 1 },
                         SpriteGridHeight = new StaticAccessor<int?> { Value = 3 },
-                        Header = new StaticAccessor<string> { Value = person.Prompt }
+                        Header = new DynamicAccessor<string> { DynamicBacker = () => person.Prompt }
                     });
                 }
             }
