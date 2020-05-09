@@ -89,7 +89,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
             if (!int.TryParse(gameModeOptions[3].ShortAnswer, out int parsedInteger2)
                 || parsedInteger2 < 1 || parsedInteger2 > 100)
             {
-                throw new GameModeInstantiationException("Must be an integer from 1-30");
+                throw new GameModeInstantiationException("Must be an integer from 1-100");
             }
         }
     }
