@@ -32,37 +32,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             return (User user) => {
                 Gameplay_Person PlayerHand = roundTracker.AssignedPeople[user];
                 Gameplay_Person PlayerTrade = roundTracker.UnassignedPeople[roundTracker.UsersToSeatNumber[user]];
-                /*if (PlayerHand.DoneWithRound)
-                {
-                    return new UserPrompt
-                    {
-                        Title = "You are done! This is your final person",
-
-                        SubPrompts = new SubPrompt[]
-                        {
-                            new SubPrompt
-                            {
-                                StringList = new string[]
-                                {
-                                    CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Head].Drawing,ThreePartPeopleConstants.widths[DrawingType.Head],ThreePartPeopleConstants.heights[DrawingType.Head]),
-                                    CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Body].Drawing,ThreePartPeopleConstants.widths[DrawingType.Body],ThreePartPeopleConstants.heights[DrawingType.Body]),
-                                    CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Legs].Drawing,ThreePartPeopleConstants.widths[DrawingType.Legs],ThreePartPeopleConstants.heights[DrawingType.Legs])
-                                },
-                            },
-                            new SubPrompt
-                            {
-                                Prompt = "Please Just select None and hit submit, this will be fixed soon",
-                                Answers = new string[]
-                                {
-                                    "None"
-                                },
-                            }
-                        },
-                        SubmitButton = true,
-                    };
-                }
-                else
-                {}*/
+                
                 return new UserPrompt
                 {
                     Title = "This is your current person",
