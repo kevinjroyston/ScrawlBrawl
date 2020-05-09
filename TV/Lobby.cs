@@ -125,6 +125,11 @@ namespace RoystonGame.TV
                         Description = "Display images on screen",
                         RadioAnswers = new List<string>{"No", "Yes"},
                     },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Number of turns for round timeout",
+                        ShortAnswer = true,
+                    },
                 }
             },
         }.AsReadOnly();

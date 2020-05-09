@@ -40,8 +40,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                         lobby: lobby,
                         setup_PeopleList: this.PeopleList,
                         roundTracker: roundTracker,
-                        displayPool: gameModeOptions[1].RadioAnswer == 1,
-                        displayNames: gameModeOptions[2].RadioAnswer == 1);
+                        displayPool: gameModeOptions[2].RadioAnswer == 1,
+                        displayNames: gameModeOptions[1].RadioAnswer == 1);
                 gameplay.Transition(CreateRevealAndScore);
                 return gameplay;
             }
@@ -51,7 +51,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                 GameState displayPeople = new DisplayPeople_GS(
                     lobby: lobby,
                     title: "Here's What Everyone Made",
-                    peopleList: roundTracker.UnassignedPeople);
+                    peopleList: roundTracker.AssignedPeople.Values.ToList());
 
                 GameState scoreBoard = new ScoreBoardGameState(
                     lobby: lobby);
@@ -60,7 +60,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                 {
                     GameState finalDisplay = new DisplayPeople_GS(
                         lobby: lobby,
-                        title: "And Here's The Original Peoeple",
+                        title: "And Here's The Original people",
                         peopleList: this.PeopleList);
                     displayPeople.Transition(finalDisplay);
                     finalDisplay.Transition(scoreBoard);
@@ -75,98 +75,18 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
             }
             Setup.Transition(CreateGameplayGamestate);
             this.EntranceState = Setup;
-            /*Func<GameState, Action> getListener = null; //returns a listener function for who called it
-            getListener = (transitionFromGS) => 
-            {
-                return () =>
-                {
-                    GameState gameplay = new Gameplay_GS(
-                        lobby: lobby,
-                        setup_PeopleList: this.PeopleList,
-                        roundTracker: roundTracker,
-                        displayPool: gameModeOptions[1].RadioAnswer == 1,
-                        displayNames: gameModeOptions[2].RadioAnswer == 1);
-
-                    gameplay.AddStateEndingListener(() =>
-                    {
-                        countRounds++;
-                        GameState displayPeople = new DisplayPeople_GS(
-                            lobby: lobby,
-                            roundTracker: roundTracker,
-                            displayType: ThreePartPeopleConstants.DisplayTypes.PlayerHands,
-                            peopleList: this.PeopleList);
-
-                        GameState scoreBoard = new ScoreBoardGameState(
-                            lobby: lobby);
-
-                        if (countRounds >= numRounds)
-                        {
-                            GameState finalDisplay = new DisplayPeople_GS(
-                                lobby: lobby,
-                                roundTracker: roundTracker,
-                                displayType: ThreePartPeopleConstants.DisplayTypes.OriginalPeople,
-                                peopleList: this.PeopleList);
-                            gameplay.Transition(displayPeople);
-                            displayPeople.Transition(finalDisplay);
-                            finalDisplay.Transition(scoreBoard);
-                            scoreBoard.SetOutlet(this.Outlet);
-                        }
-                        else
-                        {
-                            gameplay.Transition(displayPeople);
-                            displayPeople.Transition(scoreBoard);
-                            scoreBoard.AddStateEndingListener(getListener(scoreBoard));
-                        }
-                    });
-
-                    transitionFromGS.Transition(gameplay);
-                };
-            };
-            Setup.AddStateEndingListener(getListener(Setup));
-            this.EntranceState = Setup;*/
-
-            /*for(int i =0; i< numRounds;i++)
-            {
-                Gameplays.Add(new Gameplay_GS(
-                    lobby: lobby,
-                    setup_PeopleList: this.PeopleList,
-                    roundTracker: roundTracker,
-                    displayPool: gameModeOptions[1].RadioAnswer == 1,
-                    displayNames: gameModeOptions[2].RadioAnswer == 1));
-                Scoreboards.Add(new ScoreBoardGameState(
-                    lobby: lobby));
-                DisplayPeoples.Add(new DisplayPeople_GS(
-                    lobby: lobby,
-                    roundTracker: roundTracker,
-                    displayType: ThreePartPeopleConstants.DisplayTypes.PlayerHands,
-                    peopleList: this.PeopleList));
-
-                Gameplays[i].Transition(DisplayPeoples[i].Transition(Scoreboards[i]));
-                if (i > 0)
-                {
-                    Scoreboards[i - 1].Transition(Gameplays[i]);
-                }
-                if (i == numRounds-1)
-                {
-                    DisplayPeople_GS finalDisplay = new DisplayPeople_GS(
-                        lobby: lobby,
-                        roundTracker: roundTracker,
-                        displayType: ThreePartPeopleConstants.DisplayTypes.OriginalPeople,
-                        peopleList: this.PeopleList);
-
-                    DisplayPeoples[i].Transition(finalDisplay.Transition(Scoreboards[i]));
-                }
-
-            }
-            Setup.Transition(this.Gameplays[0]);*/
-
         }
 
 
         public void ValidateOptions(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            if (!int.TryParse(gameModeOptions[0].ShortAnswer, out int parsedInteger)
-                || parsedInteger < 1 || parsedInteger > 30)
+            if (!int.TryParse(gameModeOptions[0].ShortAnswer, out int parsedInteger1)
+                || parsedInteger1 < 1 || parsedInteger1 > 10)
+            {
+                throw new GameModeInstantiationException("Must be an integer from 1-30");
+            }
+            if (!int.TryParse(gameModeOptions[3].ShortAnswer, out int parsedInteger2)
+                || parsedInteger2 < 1 || parsedInteger2 > 100)
             {
                 throw new GameModeInstantiationException("Must be an integer from 1-30");
             }

@@ -20,7 +20,7 @@ namespace RoystonGame.TV.DataModels.GameStates
     /// </summary>
     public abstract class GameState : State
     {
-        protected State Entrance { get; set; }
+        protected StateInlet Entrance { get; set; }
         protected Lobby Lobby { get; }
 
         #region TrackingFlags

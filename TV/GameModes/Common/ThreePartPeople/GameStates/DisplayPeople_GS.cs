@@ -41,7 +41,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.Common.GameStates
             var unityImages = new List<UnityImage>();
             foreach(Person person in peopleList)
             {
-                unityImages.Add(person.GetPersonImaage());
+                unityImages.Add(person.GetPersonImage());
             }
         
             this.UnityView = new UnityView
