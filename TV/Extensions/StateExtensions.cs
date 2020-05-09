@@ -8,12 +8,11 @@ namespace RoystonGame.TV.Extensions
     /// </summary>
     public static class StateExtensions
     {
-        public static State Transition(this StateOutlet A, State B)
+        public static void Transition(this StateOutlet A, StateInlet B)
         {
             A.SetOutlet(B.Inlet);
-            return B;
         }
-        public static void Transition(this StateOutlet A, Func<State> B )
+        public static void Transition(this StateOutlet A, Func<StateInlet> B )
         {
             A.AddStateEndingListener(() =>
             {

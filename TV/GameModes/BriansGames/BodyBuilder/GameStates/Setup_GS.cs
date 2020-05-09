@@ -55,9 +55,19 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             outlet,
             formSubmitListener: (User user, UserFormSubmission input) =>
             {
-                if (input.SubForms[0].ShortAnswer.Equals(input.SubForms[1].ShortAnswer, StringComparison.InvariantCultureIgnoreCase))
+                string person1 = input.SubForms[0].ShortAnswer;
+                string person2 = input.SubForms[1].ShortAnswer;
+                if (person1.FuzzyEquals(person2))
                 {
                     return (false, "Please enter 2 distinct people");
+                }
+                if(PeopleList.Any(val => val.Name.FuzzyEquals(person1)))
+                {
+                    return (false, "Somebody beat you the punch on your first prompt");
+                }
+                if (PeopleList.Any(val => val.Name.FuzzyEquals(person2)))
+                {
+                    return (false, "Somebody beat you the punch on your second prompt");
                 }
                 this.PeopleList.Add(new Setup_Person
                 {
@@ -72,6 +82,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 return (true, String.Empty);
             });
         }
+
 
         private List<Setup_Person> PeopleList { get; set; }
 

@@ -15,6 +15,7 @@ namespace RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels
         /// </summary>
         public User Owner { get; set; }
         public Guid Id { get; set; } = Guid.NewGuid();
+        protected virtual string UnityImageIdentifier { get { return null; } }
         public string Name { get; set; }
         protected virtual string DisplayName { get { return Name; } }
         public Dictionary<DrawingType, PeopleUserDrawing> BodyPartDrawings { get; set; } = new Dictionary<DrawingType, PeopleUserDrawing>();
@@ -34,7 +35,7 @@ namespace RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels
             return new List<string> { BodyPartDrawings[DrawingType.Head].Drawing, BodyPartDrawings[DrawingType.Body].Drawing, BodyPartDrawings[DrawingType.Legs].Drawing }.AsReadOnly();
         }
        
-        public UnityImage GetPersonImaage()
+        public UnityImage GetPersonImage()
         {
             
             return new UnityImage
@@ -43,6 +44,7 @@ namespace RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels
                 BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = new List<int> { 255, 255, 255 } },
                 SpriteGridWidth = new StaticAccessor<int?> { Value = 1 },
                 SpriteGridHeight = new StaticAccessor<int?> { Value = 3 },
+                ImageIdentifier = new StaticAccessor<string> { Value = UnityImageIdentifier},
                 Header = new StaticAccessor<string> { Value = DisplayName }
             };
             

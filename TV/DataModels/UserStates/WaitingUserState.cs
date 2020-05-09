@@ -1,7 +1,10 @@
 ﻿using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
-
+using Connector = System.Action<
+    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Enums.UserStateResult,
+    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
 namespace RoystonGame.TV.DataModels.UserStates
 {
     /// <summary>
@@ -17,7 +20,7 @@ namespace RoystonGame.TV.DataModels.UserStates
         public static WaitingUserState DefaultState() => new WaitingUserState();
         public static UserPrompt DefaultPrompt(User user) => new UserPrompt() { Description = "Waiting . . ." };
 
-        public WaitingUserState(Func<User, UserPrompt> promptGenerator = null, TimeSpan? maxWaitTime = null) : base(null, maxWaitTime, promptGenerator ?? DefaultPrompt)
+        public WaitingUserState(Func<User, UserPrompt> promptGenerator = null, TimeSpan? maxWaitTime = null, Connector outlet = null) : base(outlet, maxWaitTime, promptGenerator ?? DefaultPrompt)
         {
             // Empty
         }

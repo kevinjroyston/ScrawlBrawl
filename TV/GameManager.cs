@@ -41,7 +41,7 @@ namespace RoystonGame.TV
         #region User and Object trackers
         private ConcurrentDictionary<string, User> Users { get; } = new ConcurrentDictionary<string, User>();
         private ConcurrentDictionary<string, AuthenticatedUser> AuthenticatedUsers { get; } = new ConcurrentDictionary<string, AuthenticatedUser>();
-        private ConcurrentDictionary<string, Lobby> LobbyIdToLobby { get; } = new ConcurrentDictionary<string, Lobby>();
+        private ConcurrentDictionary<string, Lobby> LobbyIdToLobby { get; } = new ConcurrentDictionary<string, Lobby>(StringComparer.InvariantCultureIgnoreCase);
 
         /// <summary>
         /// Hacky fix for passing this info to GameNotifier thread.
