@@ -12,6 +12,7 @@ public class AutoScaleGridLayoutGroup : MonoBehaviour
     /// </summary>
     public float aspectRatio = 1.0f;
     bool dimensionChanged = false;
+    ImageHandler scaler = null;
 
     void Start()
     {
@@ -19,10 +20,24 @@ public class AutoScaleGridLayoutGroup : MonoBehaviour
         rect = GetComponent<RectTransform>();
 
         gridLayoutGroup.cellSize = new Vector2(rect.rect.height, aspectRatio * rect.rect.height);
+        scaler = transform.GetComponentInChildren<ImageHandler>();
+        scaler?.RegisterAspectRatioListener((ar) => 
+        {
+            aspectRatio = ar; dimensionChanged = true;
+        });
     }
 
     private void Update()
     {
+        if (scaler == null)
+        {
+            scaler = transform.GetComponentInChildren<ImageHandler>();
+            scaler?.RegisterAspectRatioListener((ar) =>
+            {
+                aspectRatio = ar; dimensionChanged = true;
+            });
+
+        }
         if (gridLayoutGroup != null && rect?.rect != null && rect.rect.height > 0 && rect.rect.width > 0)
         {
             int cellCount = gridLayoutGroup.transform.childCount;

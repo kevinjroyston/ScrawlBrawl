@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -22,6 +23,8 @@ public class ImageHandler : MonoBehaviour
     public GameObject FooterHolder;
     public Text VoteCount;
     public Text DummyVoteCount;
+
+    private List<Action<float>> AspectRatioListeners = new List<Action<float>>();
 
     public UnityImage UnityImage
     {
@@ -56,6 +59,10 @@ public class ImageHandler : MonoBehaviour
                     var autoScaleScript = ImageGrids[i].GetComponent<FixedDimensionAutoScaleGridLayoutGroup>();
                     autoScaleScript.aspectRatio = aspectRatio;
                     autoScaleScript.fixedDimensions = new Vector2(value._SpriteGridWidth.GetValueOrDefault(1), value._SpriteGridHeight.GetValueOrDefault(1));
+                    if (i == 0)
+                    {
+                        CallAspectRatioListeners(((float)value._SpriteGridWidth.GetValueOrDefault(1)) / ((float)value._SpriteGridHeight.GetValueOrDefault(1)) * aspectRatio);
+                    }
                 }
 
                 for (int i = 0; i < value.PngSprites.Count; i++)
@@ -123,4 +130,31 @@ public class ImageHandler : MonoBehaviour
             // TODO: relevant users list.
         }
     }
+
+    private float lastUsedAspectRatio = 1f;
+    public void RegisterAspectRatioListener(Action<float> listener)
+    {
+        AspectRatioListeners.Add(listener);
+        listener.Invoke(lastUsedAspectRatio);
+    }
+    const float minAspectRatio = .3f;
+    const float maxAspectRatio = 3.0f;
+    private void CallAspectRatioListeners(float value)
+    {
+        if (value < minAspectRatio)
+        {
+            value = minAspectRatio;
+        }
+        else if (value > maxAspectRatio)
+        {
+            value = maxAspectRatio;
+        }
+        lastUsedAspectRatio = value;
+        foreach (var func in AspectRatioListeners)
+        {
+            // Tells the listeners what size this layout group would ideally like to be
+            func.Invoke(value);
+        }
+    }
+
 }
