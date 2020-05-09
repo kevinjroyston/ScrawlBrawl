@@ -61,7 +61,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                 {
                     GameState finalDisplay = new DisplayPeople_GS(
                         lobby: lobby,
-                        title: "And Here's The Original people",
+                        title: "And Here's The Original People",
                         peopleList: this.PeopleList);
                     displayPeople.Transition(finalDisplay);
                     finalDisplay.Transition(scoreBoard);
