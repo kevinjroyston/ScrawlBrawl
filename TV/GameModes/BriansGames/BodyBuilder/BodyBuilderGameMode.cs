@@ -40,6 +40,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                         lobby: lobby,
                         setup_PeopleList: this.PeopleList,
                         roundTracker: roundTracker,
+                        gameModeOptions: gameModeOptions,
                         displayPool: gameModeOptions[2].RadioAnswer == 1,
                         displayNames: gameModeOptions[1].RadioAnswer == 1);
                 gameplay.Transition(CreateRevealAndScore);
