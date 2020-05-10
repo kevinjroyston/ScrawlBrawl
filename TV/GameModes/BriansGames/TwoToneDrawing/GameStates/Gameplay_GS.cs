@@ -66,6 +66,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 
         private UserState RandomizeAndMakeVote()
         {
+            NumVotesToSwap = 0;
+            SubChallenge.TeamIdToUsersWhoVotedMapping.Clear();
             foreach (var kvp in SubChallenge.UserSubmittedDrawings)
             {
                 SubChallenge.TeamIdToDrawingMapping.AddOrUpdate(kvp.Value.TeamId, _ => new ConcurrentDictionary<string, TeamUserDrawing>(new Dictionary<string, TeamUserDrawing> { { kvp.Value.Color, kvp.Value} }),
@@ -78,7 +80,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             }
             int count = 0;
             
-            for(int i =0; i<500 || count<133; i++)
+            for(int i =0; i<500 && count<133; i++)
             {
                 var teamIds = SubChallenge.TeamIdToDrawingMapping.Keys.ToList();
                 string teamId1 = teamIds[rand.Next(teamIds.Count)];
