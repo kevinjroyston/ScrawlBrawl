@@ -4,53 +4,55 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FixedDimensionAutoScaleGridLayoutGroup : MonoBehaviour
+public class FixedDimensionAutoScaleGridLayoutGroup : GridLayoutGroup//, ParentUIElement
 {
-    GridLayoutGroup gridLayoutGroup;
     RectTransform rect;
     /// <summary>
     /// Width / Height
     /// </summary>
     public float aspectRatio = 1.0f;
     public Vector2 fixedDimensions { set { _fixedDimensions = value; OnRectTransformDimensionsChange(); } }
+
+   // public float ChildWidth => cellSize.x;
+   // public float ChildHeight => cellSize.y;
+
     private Vector2 _fixedDimensions = new Vector2(1f, 1f);
 
-    List<Action<float>> ImageGridDimensionListeners = new List<Action<float>>();
     public ImageHandler scaler;
 
-    void Start()
+    protected override void Start()
     {
-        gridLayoutGroup = GetComponent<GridLayoutGroup>();
+        base.Start();
         rect = GetComponent<RectTransform>();
 
-        gridLayoutGroup.cellSize = new Vector2(rect.rect.height, aspectRatio * rect.rect.height);
+        cellSize = new Vector2(rect.rect.height, aspectRatio * rect.rect.height);
+        startAxis = Axis.Horizontal;
+        constraint = Constraint.FixedColumnCount;
         OnRectTransformDimensionsChange();
-        scaler = transform.parent.parent.parent.parent.parent.GetComponent<ImageHandler>();
-        scaler.RegisterAspectRatioListener((ar) =>
-        {
-            OnRectTransformDimensionsChange();
-        });
     }
 
-    void OnRectTransformDimensionsChange()
+    protected override void OnRectTransformDimensionsChange()
     {
-        if (gridLayoutGroup == null || rect == null)
+        base.OnRectTransformDimensionsChange();
+
+        if (rect == null)
         {
+            Debug.LogWarning("No rect");
+            rect = GetComponent<RectTransform>();
             return;
+        }
+        if (scaler == null)
+        {
+            scaler = transform.GetComponentInChildren<ImageHandler>();
+            scaler?.RegisterAspectRatioListener((innerAspectRatio, outerAspectRatio) =>
+            {
+                aspectRatio = innerAspectRatio; OnRectTransformDimensionsChange();
+            });
         }
 
         float height = CalculateHeight();
-        gridLayoutGroup.cellSize = new Vector2(height * aspectRatio, height);
-
-        // hacky fix that should work for most gamemodes / input values
-        if (GetFixedWidth() == 1)
-        {
-            gridLayoutGroup.startAxis = GridLayoutGroup.Axis.Vertical;
-        }
-        else
-        {
-            gridLayoutGroup.startAxis = GridLayoutGroup.Axis.Horizontal;
-        }
+        cellSize = new Vector2(height * aspectRatio, height);
+        constraintCount = GetFixedWidth();
     }
 
     private int GetFixedWidth()
@@ -78,6 +80,6 @@ public class FixedDimensionAutoScaleGridLayoutGroup : MonoBehaviour
 
     private float CalculateHeight()
     {
-        return Mathf.Min((rect.rect.height - gridLayoutGroup.padding.vertical) / GetFixedWidth(), (rect.rect.width - gridLayoutGroup.padding.horizontal) / aspectRatio / GetFixedHeight());
+        return Mathf.Min((rect.rect.height - padding.vertical) / GetFixedHeight(), (rect.rect.width - padding.horizontal) / aspectRatio / GetFixedWidth());
     }
 }

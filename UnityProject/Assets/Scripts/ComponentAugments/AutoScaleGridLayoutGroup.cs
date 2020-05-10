@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AutoScaleGridLayoutGroup : MonoBehaviour
+public class AutoScaleGridLayoutGroup : GridLayoutGroup
 {
-    GridLayoutGroup gridLayoutGroup;
     RectTransform rect;
     /// <summary>
     /// Width / Height
@@ -14,47 +13,59 @@ public class AutoScaleGridLayoutGroup : MonoBehaviour
     bool dimensionChanged = false;
     ImageHandler scaler = null;
 
-    void Start()
+    protected override void Start()
     {
-        gridLayoutGroup = GetComponent<GridLayoutGroup>();
+        base.Start();
         rect = GetComponent<RectTransform>();
 
-        gridLayoutGroup.cellSize = new Vector2(rect.rect.height, aspectRatio * rect.rect.height);
+        cellSize = new Vector2(rect.rect.height, aspectRatio * rect.rect.height);
+        startAxis = Axis.Horizontal;
+        constraint = Constraint.FixedColumnCount;
+
         scaler = transform.GetComponentInChildren<ImageHandler>();
-        scaler?.RegisterAspectRatioListener((ar) => 
-        {
-            aspectRatio = ar; dimensionChanged = true;
-        });
+        scaler?.RegisterAspectRatioListener(AspectRatioListener);
+
+        OnRectTransformDimensionsChange();
     }
 
-    private void Update()
+    protected override void OnRectTransformDimensionsChange()
     {
+        base.OnRectTransformDimensionsChange();
+
+        if (rect == null)
+        {
+            rect = GetComponent<RectTransform>();
+            Debug.LogWarning("No rect");
+            return;
+        }
         if (scaler == null)
         {
             scaler = transform.GetComponentInChildren<ImageHandler>();
-            scaler?.RegisterAspectRatioListener((ar) =>
-            {
-                aspectRatio = ar; dimensionChanged = true;
-            });
-
+            scaler?.RegisterAspectRatioListener(AspectRatioListener);
         }
-        if (gridLayoutGroup != null && rect?.rect != null && rect.rect.height > 0 && rect.rect.width > 0)
+
+        if (rect?.rect != null && rect.rect.height > 0 && rect.rect.width > 0)
         {
-            int cellCount = gridLayoutGroup.transform.childCount;
-            if (cellCount != oldCellCount || dimensionChanged)
-            {
-                dimensionChanged = false;
-                var newHeight = CalculateHeight(cellCount);
-                oldCellCount = cellCount;
-                gridLayoutGroup.cellSize = new Vector2(newHeight * aspectRatio - gridLayoutGroup.spacing.x, newHeight - gridLayoutGroup.spacing.y);
-            }
+            int cellCount = transform.childCount;
+            var newHeight = CalculateHeight(cellCount);
+            oldCellCount = cellCount;
+            cellSize = new Vector2((newHeight - top - bottom) * aspectRatio + left + right - spacing.x, newHeight - spacing.y);
         }
     }
 
-    void OnRectTransformDimensionsChange()
+    // TODO: fetch this from actual object instead of hardcode
+    // "Everything but Footer' Vertical Layout Group padding
+    const int left = 20;
+    const int right = 20;
+    const int bottom = 20;
+    const int top = 20;
+
+    private void AspectRatioListener(float innerAspectRatio, float outerAspectRatio)
     {
-        dimensionChanged = true;
+        aspectRatio = outerAspectRatio;
+        OnRectTransformDimensionsChange();
     }
+
     int oldCellCount = 0;
     int columnCount = 1;
 
@@ -78,8 +89,11 @@ public class AutoScaleGridLayoutGroup : MonoBehaviour
         }
 
         int numCols = columnCount;
+        constraintCount = numCols;
         int numRows = RowsPerColumnCount(numCols);
-        return Mathf.Min((rect.rect.height - gridLayoutGroup.padding.vertical) / (numRows == 0 ? 1 : numRows), (rect.rect.width - gridLayoutGroup.padding.horizontal) / aspectRatio / Mathf.Min(numCols, cellCount));
+        numRows = (numRows == 0 ? 1 : numRows);
+        numCols = Mathf.Min(numCols, cellCount);
+        return Mathf.Min((rect.rect.height - (padding.vertical + top + bottom) * (numRows - 1) - top - bottom) / (float)numRows, (rect.rect.width - (padding.horizontal + left + right) * (numCols-1) - left - right) / aspectRatio /(float)numCols);
     }
 
     /// <summary>
@@ -89,6 +103,13 @@ public class AutoScaleGridLayoutGroup : MonoBehaviour
     /// <returns>The number of rows which will fit based on the aspect ratios.</returns>
     private int RowsPerColumnCount(int columnCount)
     {
-        return Mathf.FloorToInt(columnCount * aspectRatio * (rect.rect.height - gridLayoutGroup.padding.vertical) / (rect.rect.width - gridLayoutGroup.padding.horizontal));
+        float returnVal = 1f;
+        for (int i = 0; i < 5; i++)
+        {
+            float effectiveWidth = rect.rect.width - columnCount * (padding.horizontal + left + right);
+            float effectiveHeight = rect.rect.height - returnVal * (padding.vertical + top + bottom);
+            returnVal = columnCount * aspectRatio * effectiveHeight / effectiveWidth;
+        }
+        return Mathf.FloorToInt(returnVal);
     }
 }

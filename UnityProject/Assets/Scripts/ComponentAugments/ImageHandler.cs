@@ -16,28 +16,37 @@ public class ImageHandler : MonoBehaviour
     public Text Title;
     public Text Header;
 
-    public Image Background;
+    // Set to be the Image of the first SpriteGrid
+    private Image Background = null;
     public GameObject SpriteZone;
     public GameObject ImageIdHolder;
 
     public GameObject FooterHolder;
     public Text VoteCount;
-    public Text DummyVoteCount;
+    public GameObject DummyVoteCount;
 
-    private List<Action<float>> AspectRatioListeners = new List<Action<float>>();
+    /// <summary>
+    /// first float is inner(image grid) aspect ratio, second float is outer(entire card w/o padding) aspect ratio for perfect fit UI
+    /// </summary>
+    private List<Action<float, float>> AspectRatioListeners = new List<Action<float, float>>();
 
     public UnityImage UnityImage
     {
         set
         {
-            Background.preserveAspect = true;
+            if (Background!= null)
+            {
+                Background.preserveAspect = true;
 
-            // Default to invisible background, overridden if subimages present.
-            Background.color = new Color(0f, 0f, 0f, 0f);
+                // Default to invisible background, overridden if subimages present.
+                Background.color = new Color(0f, 0f, 0f, 0f);
+            }
 
+            int gridColCount = value._SpriteGridWidth.GetValueOrDefault(1);
+            int gridRowCount = value._SpriteGridHeight.GetValueOrDefault(1);
+            float aspectRatio = 1f;
             if (value?.PngSprites != null)
             {
-                float aspectRatio = 1f;
                 if (value.PngSprites.Count > 0)
                 {
                     aspectRatio = value.PngSprites[0].textureRect.width / value.PngSprites[0].textureRect.height;
@@ -58,10 +67,10 @@ public class ImageHandler : MonoBehaviour
 
                     var autoScaleScript = ImageGrids[i].GetComponent<FixedDimensionAutoScaleGridLayoutGroup>();
                     autoScaleScript.aspectRatio = aspectRatio;
-                    autoScaleScript.fixedDimensions = new Vector2(value._SpriteGridWidth.GetValueOrDefault(1), value._SpriteGridHeight.GetValueOrDefault(1));
+                    autoScaleScript.fixedDimensions = new Vector2(gridColCount, gridRowCount);
                     if (i == 0)
                     {
-                        CallAspectRatioListeners(((float)value._SpriteGridWidth.GetValueOrDefault(1)) / ((float)value._SpriteGridHeight.GetValueOrDefault(1)) * aspectRatio);
+                        Background = ImageGrids[0].GetComponent<Image>();
                     }
                 }
 
@@ -81,10 +90,19 @@ public class ImageHandler : MonoBehaviour
                     Sprite sprite = value.PngSprites[i];
 
                     // Set background if we have any sub images.
-                    if (i == 0)
+                    if (i == 0 && Background != null)
                     {
-                        Background.sprite = Sprite.Create(new Texture2D((int)sprite.rect.width, (int)sprite.rect.height), sprite.rect, sprite.pivot, 10f, 0, SpriteMeshType.FullRect);
+                        Background.sprite = Sprite.Create(
+                            new Texture2D(
+                                (int)(sprite.rect.width * gridColCount),
+                                (int)(sprite.rect.height * gridRowCount)),
+                            new Rect(sprite.rect.x, sprite.rect.y, sprite.rect.width * gridColCount, sprite.rect.height * gridRowCount),
+                            sprite.pivot,
+                            10f,
+                            0,
+                            SpriteMeshType.FullRect);
                         Background.color = value?._BackgroundColor?.ToColor() ?? Color.white;
+                        Background.preserveAspect = true;
                     }
 
                     image.preserveAspect = true;
@@ -119,41 +137,81 @@ public class ImageHandler : MonoBehaviour
             // Janky implementation of votecount/footer. probably needs some revisiting. Good luck.
             VoteCount.text = value?._VoteCount?.ToString() ?? string.Empty;
             VoteCount.enabled = value?._VoteCount != null;
-            DummyVoteCount.text = value?._VoteCount?.ToString() ?? string.Empty;
-            DummyVoteCount.enabled = value?._VoteCount != null;
-            DummyVoteCount.gameObject.SetActive(value?._VoteCount != null);
+            DummyVoteCount.SetActive(value?._VoteCount != null);
             FooterHolder.gameObject.SetActive(value?._VoteCount != null);
 
             //VoteCount.enabled = value?._VoteCount != null;
             //VoteCount.gameObject.SetActive(value?._VoteCount != null);
 
             // TODO: relevant users list.
+
+
+
+            /// Aspect ratio shenanigans
+            float innerAspectRatio = ((float)gridColCount) / ((float)gridRowCount) * aspectRatio;
+            // Code doesnt work if there are no inner images, in this case just default to A.R. 2.0
+            float outerAspectRatio = 2f;
+
+            if (GetFlexibleHeightOrDefault(SpriteZone) > 0.01f)
+            {
+                outerAspectRatio =
+                     innerAspectRatio
+                     / (GetFlexibleHeightOrDefault(Title)
+                         + GetFlexibleHeightOrDefault(Header)
+                         + GetFlexibleHeightOrDefault(FooterHolder)
+                         + GetFlexibleHeightOrDefault(DummyVoteCount)
+                         + GetFlexibleHeightOrDefault(SpriteZone))
+                     * GetFlexibleHeightOrDefault(SpriteZone);
+            }
+            CallAspectRatioListeners(innerAspectRatio, outerAspectRatio);
+
         }
     }
 
-    private float lastUsedAspectRatio = 1f;
-    public void RegisterAspectRatioListener(Action<float> listener)
+    private float GetFlexibleHeightOrDefault(Component comp, float defaultValue = 0f)
+    {
+        return GetFlexibleHeightOrDefault(comp?.gameObject, defaultValue);
+    }
+    private float GetFlexibleHeightOrDefault(GameObject obj, float defaultValue = 0f)
+    {
+        float? flexHeight = obj?.transform?.GetComponent<LayoutElement>()?.flexibleHeight;
+        return ((obj?.activeInHierarchy == true) && flexHeight.HasValue) ? flexHeight.Value : defaultValue;
+    }
+
+    private float lastUsedInnerAspectRatio = 1f;
+    private float lastUsedOuterAspectRatio = 1f;
+    public void RegisterAspectRatioListener(Action<float, float> listener)
     {
         AspectRatioListeners.Add(listener);
-        listener.Invoke(lastUsedAspectRatio);
+        listener.Invoke(lastUsedInnerAspectRatio, lastUsedOuterAspectRatio);
     }
-    const float minAspectRatio = .3f;
-    const float maxAspectRatio = 3.0f;
-    private void CallAspectRatioListeners(float value)
+
+    public float minAspectRatio = .3f;
+    public float maxAspectRatio = 3.3f;
+    private void CallAspectRatioListeners(float innerValue, float outerValue)
     {
-        if (value < minAspectRatio)
+        if (innerValue < minAspectRatio)
         {
-            value = minAspectRatio;
+            innerValue = minAspectRatio;
         }
-        else if (value > maxAspectRatio)
+        else if (innerValue > maxAspectRatio)
         {
-            value = maxAspectRatio;
+            innerValue = maxAspectRatio;
         }
-        lastUsedAspectRatio = value;
+        if (outerValue < minAspectRatio)
+        {
+            outerValue = minAspectRatio;
+        }
+        else if (outerValue > maxAspectRatio)
+        {
+            outerValue = maxAspectRatio;
+        }
+        lastUsedInnerAspectRatio = innerValue;
+        lastUsedOuterAspectRatio = outerValue;
         foreach (var func in AspectRatioListeners)
         {
             // Tells the listeners what size this layout group would ideally like to be
-            func.Invoke(value);
+            func.Invoke(innerValue, outerValue);
         }
     }
 
