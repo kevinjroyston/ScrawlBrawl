@@ -85,7 +85,7 @@ export class DrawingDirective implements ControlValueAccessor{
     @HostListener('mousemove', ['$event'])
     @HostListener('touchmove', ['$event'])
     onmousemove(event) {
-        console.log("move");
+        //console.log("move");
         event.preventDefault();
         if (this.drawing) {
             // get current mouse position
