@@ -29,7 +29,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
     {
         private List<string> Prompts { get; set; }
         private List<PeopleUserDrawing> Drawings { get; set; }
-
+        private RoundTracker RoundTracker { get; set; }
         private Random Rand { get; set; } = new Random();
 
         /// <summary>
@@ -105,7 +105,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                 },
                 formSubmitListener: (User user, UserFormSubmission input) =>
                 {
+                    if(this.RoundTracker.UnusedUserPrompts.Contains(input.SubForms[0].ShortAnswer))
+                    {
+                        return (false, "Someone has already entered that prompt");
+                    }
                     this.Prompts.Add(input.SubForms[0].ShortAnswer);
+                    this.RoundTracker.UnusedUserPrompts.Add(input.SubForms[0].ShortAnswer);
                     return (true, String.Empty);
                 }));
                 promptNumber++;
@@ -121,10 +126,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         }
      
 
-        public Setup_GS(Lobby lobby, List<PeopleUserDrawing> drawings, List<string> prompts, int numDrawings, int numPrompts, Connector outlet = null) : base(lobby, outlet)
+        public Setup_GS(Lobby lobby, RoundTracker roundTracker, List<PeopleUserDrawing> drawings, List<string> prompts, int numDrawings, int numPrompts, Connector outlet = null) : base(lobby, outlet)
         {
             this.Drawings = drawings;
             this.Prompts = prompts;
+            this.RoundTracker = roundTracker;
             UserStateTransition waitForAllDrawingsAndPrompts = new WaitForAllPlayers(lobby: lobby, outlet: this.Outlet);
             this.Entrance = GetDrawingsAndPromptsUserStateChain(numDrawings: numDrawings, numPrompts: numPrompts, outlet: waitForAllDrawingsAndPrompts.Inlet)[0];
 

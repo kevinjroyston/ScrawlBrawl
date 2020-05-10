@@ -30,6 +30,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             int numPromptsPerPlayer = int.Parse(gameModeOptions[2].ShortAnswer);
             Setup = new Setup_GS(
                 lobby: lobby, 
+                roundTracker: roundTracker,
                 drawings: Drawings,
                 prompts: Prompts,
                 numDrawings: numDrawingsPerPart, 
@@ -38,21 +39,23 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
 
             GameState CreateGameplayGamestate()
             {
-                GameState gameplay = new Gameplay_GS(
+                GameState gameplay = new ContestantCreation_GS(
                         lobby: lobby,
                         drawings: Drawings,
-                        prompts: Prompts,
-                        roundTracker: roundTracker);
-                gameplay.Transition(CreateRevealAndScore);
+                        roundTracker: roundTracker,
+                        numSubRounds: 2,//fix
+                        numDrawingsInUserHand: 2
+                        );
+                //gameplay.Transition(CreateRevealAndScore);
                 return gameplay;
             }
-            GameState CreateRevealAndScore()
+            /*GameState CreateRevealAndScore()
             {
                 countRounds++;
                 GameState displayPeople = new DisplayPeople_GS(
                     lobby: lobby,
                     title: "Here's What Everyone Made",
-                    peopleList: roundTracker.UnassignedPeople);
+                    peopleList: roundTracker.);
 
                 GameState scoreBoard = new ScoreBoardGameState(
                     lobby: lobby);
@@ -73,7 +76,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                     scoreBoard.Transition(CreateGameplayGamestate);
                 }
                 return displayPeople;
-            }
+            }*/
             Setup.Transition(CreateGameplayGamestate);
             this.EntranceState = Setup;
             /*Func<GameState, Action> getListener = null; //returns a listener function for who called it

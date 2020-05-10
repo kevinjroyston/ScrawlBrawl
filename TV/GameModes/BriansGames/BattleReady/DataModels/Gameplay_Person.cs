@@ -9,7 +9,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels
 {
     public class Gameplay_Person: Person
     {
-        public bool DoneWithRound { get; set; }
 
     }
 }
