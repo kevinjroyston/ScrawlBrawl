@@ -10,7 +10,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-
+using static RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels.ChallengeTracker;
 using Connector = System.Action<
     RoystonGame.TV.DataModels.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
@@ -40,12 +40,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             this.Entrance = waitForLeader;
 
             var unityImages = new List<UnityImage>();
-            foreach ((string id, ConcurrentDictionary<string, string> colorMap) in challenge.TeamIdToDrawingMapping)
+            foreach ((string id, ConcurrentDictionary<string, TeamUserDrawing> colorMap) in challenge.TeamIdToDrawingMapping)
             {
 
                 unityImages.Add(new UnityImage
                 {
-                    Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = challenge.Colors.Select(color => colorMap[color]).ToList() },
+                    Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = challenge.Colors.Select(color => colorMap[color].Drawing).ToList() },
                     RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = challenge.UserSubmittedDrawings.Where(kvp => kvp.Value.TeamId == id).Select(kvp => kvp.Key).ToList() },
                     ImageIdentifier = new StaticAccessor<string> { Value = id.ToString() },
                     VoteCount = new DynamicAccessor<int?> { DynamicBacker = () => challenge.TeamIdToUsersWhoVotedMapping?[id]?.Count },

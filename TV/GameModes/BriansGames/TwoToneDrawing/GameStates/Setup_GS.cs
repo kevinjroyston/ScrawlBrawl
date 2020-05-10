@@ -184,7 +184,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 {
                     randomizedOrderChallenges[i].UserSubmittedDrawings.Add(
                         randomizedOrderChallenges[(i + j) % randomizedOrderChallenges.Count].Owner,
-                        new ChallengeTracker.UserDrawing
+                        new ChallengeTracker.TeamUserDrawing
                         {
                             TeamId = Invariant($"{j / ColorsPerTeam}"),
                             Color = randomizedOrderChallenges[i].Colors[j % ColorsPerTeam],
@@ -207,8 +207,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 // Unforunately does not swap remainder players. Oh well.
                 if (rand1b != rand2b)
                 {
-                    ChallengeTracker.UserDrawing user1Drawing = randomizedOrderChallenges[rand1].UserSubmittedDrawings[user1];
-                    ChallengeTracker.UserDrawing user2Drawing = randomizedOrderChallenges[rand1].UserSubmittedDrawings[user2];
+                    ChallengeTracker.TeamUserDrawing user1Drawing = randomizedOrderChallenges[rand1].UserSubmittedDrawings[user1];
+                    ChallengeTracker.TeamUserDrawing user2Drawing = randomizedOrderChallenges[rand1].UserSubmittedDrawings[user2];
                     randomizedOrderChallenges[rand1].UserSubmittedDrawings.Remove(user1);
                     randomizedOrderChallenges[rand1].UserSubmittedDrawings.Remove(user2);
                     randomizedOrderChallenges[rand1].UserSubmittedDrawings.Add(user2, user1Drawing);

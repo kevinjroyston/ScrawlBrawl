@@ -22,7 +22,7 @@ namespace RoystonGame.TV.ControlFlows
         {
             if(promptGenerator==null)
             {
-                UserState toReturn = WaitingUserState.DefaultState();
+                WaitingUserState toReturn = WaitingUserState.DefaultState();
                 toReturn.SetOutlet(outlet);
                 return toReturn;
             }
