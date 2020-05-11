@@ -114,7 +114,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                             new SubPrompt
                             {
                                 Prompt = Invariant($"Your prompt:\"{challenge.Prompt}\""),
-                                StringList = this.ShowColors ? challenge.Colors.Select(val=> val == challenge.UserSubmittedDrawings[user].Color ? Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>This is your color.") : Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>")).ToArray() : null,
+                                StringList = this.ShowColors ? challenge.Colors.Select(val=> val == challenge.UserSubmittedDrawings[user].Color ? Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>This is your color.") : Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>")).Reverse().ToArray() : null,
                                 Drawing = new DrawingPromptMetadata
                                 {
                                     Color = challenge.UserSubmittedDrawings[user].Color

@@ -170,6 +170,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ad67be4fa5a2044afcc1d88bbaaeb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 100, y: 100}
+  m_Spacing: {x: 0, y: 0}
+  m_Constraint: 0
+  m_ConstraintCount: 2
   aspectRatio: 0.8
 --- !u!114 &19538257
 MonoBehaviour:
@@ -580,7 +592,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 477148841}
-  - component: {fileID: 477148843}
   - component: {fileID: 477148842}
   - component: {fileID: 477148844}
   - component: {fileID: 477148845}
@@ -622,19 +633,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ad67be4fa5a2044afcc1d88bbaaeb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aspectRatio: 0.8
---- !u!114 &477148843
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 477148840}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   m_Padding:
     m_Left: 0
     m_Right: 0
@@ -643,10 +641,11 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 0, y: 0}
+  m_CellSize: {x: 444.60928, y: 575.7616}
   m_Spacing: {x: 40, y: 20}
-  m_Constraint: 0
-  m_ConstraintCount: 2
+  m_Constraint: 1
+  m_ConstraintCount: 1
+  aspectRatio: 0.8
 --- !u!114 &477148844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1184,6 +1183,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ad67be4fa5a2044afcc1d88bbaaeb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 100, y: 100}
+  m_Spacing: {x: 0, y: 0}
+  m_Constraint: 0
+  m_ConstraintCount: 2
   aspectRatio: 0.8
 --- !u!114 &652567489
 MonoBehaviour:
@@ -1647,7 +1658,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1100625179}
-  - component: {fileID: 1100625180}
   - component: {fileID: 1100625181}
   m_Layer: 0
   m_Name: ImageDropZone
@@ -1670,35 +1680,11 @@ RectTransform:
   m_Father: {fileID: 1506639069}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.08, y: 0}
-  m_AnchorMax: {x: 0.92, y: 0.7}
+  m_AnchorMin: {x: 0.03, y: 0}
+  m_AnchorMax: {x: 0.97, y: 0.73}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0.0000076293945, y: -0.0000019073486}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1100625180
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1100625178}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 1
-  m_StartCorner: 0
-  m_StartAxis: 0
-  m_CellSize: {x: 0, y: 0}
-  m_Spacing: {x: 40, y: 20}
-  m_Constraint: 0
-  m_ConstraintCount: 2
 --- !u!114 &1100625181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1711,6 +1697,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ad67be4fa5a2044afcc1d88bbaaeb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 1
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 566.72003, y: 728.4}
+  m_Spacing: {x: 40, y: 20}
+  m_Constraint: 1
+  m_ConstraintCount: 1
   aspectRatio: 0.8
 --- !u!1 &1177880469
 GameObject:
@@ -2430,8 +2428,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2128029489}
-  - component: {fileID: 2128029491}
   - component: {fileID: 2128029490}
+  - component: {fileID: 2128029491}
   m_Layer: 0
   m_Name: ImageDropZone
   m_TagString: Untagged
@@ -2470,19 +2468,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ad67be4fa5a2044afcc1d88bbaaeb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aspectRatio: 0.8
---- !u!114 &2128029491
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2128029488}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   m_Padding:
     m_Left: 0
     m_Right: 0
@@ -2491,7 +2476,28 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 0, y: 0}
+  m_CellSize: {x: 560.8, y: 696}
   m_Spacing: {x: 20, y: 20}
-  m_Constraint: 0
-  m_ConstraintCount: 2
+  m_Constraint: 1
+  m_ConstraintCount: 1
+  aspectRatio: 0.8
+--- !u!114 &2128029491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128029488}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: 800
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1

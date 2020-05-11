@@ -8,8 +8,11 @@ using RoystonGame.Web.DataModels.Responses;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
+
+using static System.FormattableString;
 
 namespace RoystonGame.TV
 {
@@ -94,7 +97,8 @@ namespace RoystonGame.TV
         public static void ReportGameError(ErrorType type, string lobbyId, User user = null, Exception error = null)
         {
             // Log error to console (TODO redirect to file on release builds).
-            Console.Error.WriteLine(error);
+            Debug.WriteLine(Invariant($"ERROR ERROR ERROR ERROR ERROR ~~~~~~~~~~~~~~~~~~~~~~~~~ {error}"));
+            Debug.Assert(false, error.ToString());
             if (!string.IsNullOrWhiteSpace(lobbyId))
             {
                 DeleteLobby(lobbyId);

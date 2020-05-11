@@ -69,6 +69,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         private int CurrentFinishingPosition { get; set; } = 1;
         private int NumPlayersDoneWithRound { get; set; } = 0;
         private int roundMaxTurnLimit;
+        private int roundCount = 0;
         Dictionary<int, int> WinningScoresByPlace { get; set; } = new Dictionary<int, int>()
         {
             {1, 1000},   // First Place
@@ -184,12 +185,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             
             waitForUsers.AddStateEndingListener(()=>
             {
-                if (this.GameFinished())
+                if (this.GameFinished() || roundCount >= roundMaxTurnLimit)
                 {
                     waitForUsers.SetOutlet(this.Outlet);
                 }
                 else
                 {
+                    roundCount++;
                     waitForUsers.Transition(AddGameplayCycle());
                 }
 
@@ -244,14 +246,16 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             }
 
         }
-        private int numberRoundsPassed = 0;
         private bool GameFinished()
         {
             bool someoneFinished = false;
             foreach(User user in this.Lobby.GetActiveUsers())
             {
-                if( roundTracker.AssignedPeople[user].DoneWithRound)
+                if(roundTracker.AssignedPeople[user].DoneWithRound && !roundTracker.AssignedPeople[user].BeenScored)
                 {
+                    roundTracker.AssignedPeople[user].BeenScored = true;
+                    roundTracker.AssignedPeople[user].FinishedPosition = Invariant($"{CurrentFinishingPosition}");
+                    user.Score += WinningScoresByPlace[CurrentFinishingPosition];
                     someoneFinished = true;
                 }
             }
@@ -272,11 +276,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             Guid legsId = roundTracker.AssignedPeople[user].BodyPartDrawings[DrawingType.Legs].Id;
             if (headId == bodyId && bodyId == legsId && !roundTracker.AssignedPeople[user].DoneWithRound)
             {
-                usersStillPlaying.Remove(user);
-                roundTracker.AssignedPeople[user].DoneWithRound = true;
-                user.Score += WinningScoresByPlace[CurrentFinishingPosition];
-                roundTracker.AssignedPeople[user].FinishedPosition = Invariant($"{CurrentFinishingPosition}");
                 NumPlayersDoneWithRound++;
+                roundTracker.AssignedPeople[user].DoneWithRound = true;
+                usersStillPlaying.Remove(user);
             }
         }
         private void RotateSeats()

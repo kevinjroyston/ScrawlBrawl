@@ -19,7 +19,7 @@ namespace RoystonGame.Web.DataModels.UnityObjects
             modified |= this.Instructions?.Refresh() ?? false;
             // TODO: below 2 lines might be causing excess updates
             modified |= this.UnityImages?.Refresh() ?? false;
-            modified |= this.UnityImages?.Value?.Any(image => image?.Refresh() ?? false) ?? false;
+            modified |= this.UnityImages?.Value?.Select(image => image?.Refresh() ?? false).ToList().Any() ?? false;
             return modified;
         }
 
