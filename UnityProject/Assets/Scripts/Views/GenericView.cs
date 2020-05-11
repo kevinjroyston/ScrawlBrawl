@@ -68,6 +68,10 @@ public class GenericView : MonoBehaviour, ITVView
 
     private void LoadAllImages(List<UnityImage> images)
     {
+        if(images.Count == 0)
+        {
+            return;
+        }
         // Instantiate more image objects if needed
         var breakoutCounter = 0;
         while (images.Count > ImageDropZone.transform.childCount && breakoutCounter++ < 50)
