@@ -42,9 +42,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                         {
                             StringList = new string[]
                             {
-                                CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Head].Drawing,ThreePartPeopleConstants.widths[DrawingType.Head],ThreePartPeopleConstants.heights[DrawingType.Head]),
-                                CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Body].Drawing,ThreePartPeopleConstants.widths[DrawingType.Body],ThreePartPeopleConstants.heights[DrawingType.Body]),
-                                CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Legs].Drawing,ThreePartPeopleConstants.widths[DrawingType.Legs],ThreePartPeopleConstants.heights[DrawingType.Legs])
+                                CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Head].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Head],ThreePartPeopleConstants.Heights[DrawingType.Head]),
+                                CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Body].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Body],ThreePartPeopleConstants.Heights[DrawingType.Body]),
+                                CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Legs].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Legs],ThreePartPeopleConstants.Heights[DrawingType.Legs])
                             },
                         },
                         new SubPrompt
@@ -52,9 +52,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                             Prompt = "Which body part do you want to trade?",
                             Answers = new string[]
                             {
-                                CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Head].Drawing,ThreePartPeopleConstants.widths[DrawingType.Head],ThreePartPeopleConstants.heights[DrawingType.Head]),
-                                CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Body].Drawing,ThreePartPeopleConstants.widths[DrawingType.Body],ThreePartPeopleConstants.heights[DrawingType.Body]),
-                                CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Legs].Drawing,ThreePartPeopleConstants.widths[DrawingType.Legs],ThreePartPeopleConstants.heights[DrawingType.Legs]),
+                                CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Head].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Head],ThreePartPeopleConstants.Heights[DrawingType.Head]),
+                                CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Body].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Body],ThreePartPeopleConstants.Heights[DrawingType.Body]),
+                                CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Legs].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Legs],ThreePartPeopleConstants.Heights[DrawingType.Legs]),
                                 "None"
                             },
                         }
@@ -160,9 +160,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                         {
                             StringList = new string[]
                                 {
-                                    CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Head].Drawing, ThreePartPeopleConstants.widths[DrawingType.Head], ThreePartPeopleConstants.heights[DrawingType.Head]),
-                                    CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Body].Drawing, ThreePartPeopleConstants.widths[DrawingType.Body], ThreePartPeopleConstants.heights[DrawingType.Body]),
-                                    CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Legs].Drawing, ThreePartPeopleConstants.widths[DrawingType.Legs], ThreePartPeopleConstants.heights[DrawingType.Legs])
+                                    CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Head].Drawing, ThreePartPeopleConstants.Widths[DrawingType.Head], ThreePartPeopleConstants.Heights[DrawingType.Head]),
+                                    CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Body].Drawing, ThreePartPeopleConstants.Widths[DrawingType.Body], ThreePartPeopleConstants.Heights[DrawingType.Body]),
+                                    CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Legs].Drawing, ThreePartPeopleConstants.Widths[DrawingType.Legs], ThreePartPeopleConstants.Heights[DrawingType.Legs])
                                 },
                         },
                         },
@@ -176,7 +176,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             });
   
             
-            UserStateTransition waitForUsers = new SimplePromptAndWaitForUsers(lobby: this.Lobby,
+            State waitForUsers = new SimplePromptAndWaitForUsers(lobby: this.Lobby,
                 promptedPlayers: usersStillPlaying,
                 promptedPlayersPrompt: PickADrawing(),
                 formSubmitListener: PromptedUserFormSubmission,                

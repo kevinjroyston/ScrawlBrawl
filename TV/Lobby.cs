@@ -149,12 +149,12 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Number of each body part to draw",
+                        Description = "Number of prompts for each player per round",
                         ShortAnswer = true,
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Number of prompts",
+                        Description = "Number of each body part to draw",
                         ShortAnswer = true,
                     },
                 }
@@ -296,7 +296,7 @@ namespace RoystonGame.TV
         /// </summary>
         /// <param name="transitionTo">The GameState to treat as the current state.</param>
         /// <remarks>This function is not responsible for moving users, users are individually responsible for traversing their FSMs. And the constructor of the FSMs
-        /// is responsible for adding proper UserStateTransitions to synchronize leaving game states.</remarks>
+        /// is responsible for adding proper States to synchronize leaving game states.</remarks>
         public void TransitionCurrentGameState(GameState transitionTo)
         {
             this.CurrentGameState = transitionTo;

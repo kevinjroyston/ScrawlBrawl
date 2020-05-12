@@ -42,7 +42,7 @@ namespace RoystonGame.TV.DataModels.GameStates
         public EndOfGameState(Lobby lobby, Action<EndOfGameRestartType> endOfGameRestartCallback, Connector outlet = null) : base(lobby, outlet)
         {
             UserState partyLeaderPrompt = new SimplePromptUserState(prompt: ContinuePrompt);
-            UserStateTransition waitForLeader = new WaitForPartyLeader(
+            State waitForLeader = new WaitForPartyLeader(
                 lobby: this.Lobby,
                 outlet: this.Outlet,
                 partyLeaderPrompt: partyLeaderPrompt,

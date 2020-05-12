@@ -87,7 +87,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                  });
             this.Entrance = pickDrawing;
 
-            UserStateTransition waitForUsers = new WaitForAllPlayers(this.Lobby, null, this.Outlet, null);
+            State waitForUsers = new WaitForAllPlayers(this.Lobby, null, this.Outlet, null);
             waitForUsers.AddStateEndingListener(() => this.UpdateScores());
             pickDrawing.SetOutlet(waitForUsers.Inlet);
             waitForUsers.SetOutlet(this.Outlet);

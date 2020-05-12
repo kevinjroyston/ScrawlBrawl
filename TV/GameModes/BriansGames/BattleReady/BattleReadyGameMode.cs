@@ -8,6 +8,9 @@ using RoystonGame.Web.DataModels.Exceptions;
 using RoystonGame.TV.GameModes.Common.GameStates;
 using RoystonGame.TV.GameModes.BriansGames.Common.GameStates;
 using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
+using static System.FormattableString;
+using RoystonGame.TV.DataModels;
+using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
 {
@@ -19,65 +22,84 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
         private List<GameState> Gameplays { get; set; } = new List<GameState>();
         private List<GameState> Scoreboards { get; set; } = new List<GameState>();
         private List<GameState> DisplayPeoples { get; set; } = new List<GameState>();
-
+        private Lobby gameLobby { get; set; }
         private RoundTracker roundTracker = new RoundTracker();
         public BattleReadyGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
+            gameLobby = lobby;
             ValidateOptions(gameModeOptions);
 
+            #region CreateRoundVariables
             int numRounds = int.Parse(gameModeOptions[0].ShortAnswer);
-            int numDrawingsPerPart = int.Parse(gameModeOptions[1].ShortAnswer);
-            int numPromptsPerPlayer = int.Parse(gameModeOptions[2].ShortAnswer);
+            int numSubRounds = int.Parse(gameModeOptions[1].ShortAnswer);
+            int numDrawingsPerPersonPerPart = int.Parse(gameModeOptions[2].ShortAnswer);
+
+            int numDrawingsNeededPerPartInTotal = 3*numSubRounds*numRounds*lobby.GetActiveUsers().Count;
+            int numPromptsNeededFromUser = numRounds * numSubRounds / 2;
+            #endregion
+
             Setup = new Setup_GS(
                 lobby: lobby, 
                 roundTracker: roundTracker,
                 drawings: Drawings,
                 prompts: Prompts,
-                numDrawings: numDrawingsPerPart, 
-                numPrompts: numPromptsPerPlayer);
+                numDrawingsToDrawPerPartFromUser: numDrawingsPerPersonPerPart, 
+                numDrawingsNeededPerPartInTotal: numDrawingsNeededPerPartInTotal,
+                numPrompts: numPromptsNeededFromUser);
             int countRounds = 0;
 
-            GameState CreateGameplayGamestate()
+            GameState CreateContestantCreationGamestate()
             {
-                GameState gameplay = new ContestantCreation_GS(
+                GameState contestantCreation = new ContestantCreation_GS(
                         lobby: lobby,
                         drawings: Drawings,
                         roundTracker: roundTracker,
-                        numSubRounds: 2,//fix
-                        numDrawingsInUserHand: 2
+                        numSubRounds: numSubRounds,
+                        numDrawingsInUserHand: 3,
+                        
                         );
-                //gameplay.Transition(CreateRevealAndScore);
-                return gameplay;
+                
+                contestantCreation.Transition(CreateVotingGamestate);
+                
+                return contestantCreation;
             }
-            /*GameState CreateRevealAndScore()
+            GameState CreateVotingGamestate()
+            {
+                GameState voting = new Voting_GS(
+                    lobby: lobby,
+                    roundTracker: roundTracker,
+                    numSubRounds: numSubRounds
+                    );
+                voting.Transition(CreateRevealAndScore);
+                return voting;
+            }
+            GameState CreateRevealAndScore()
             {
                 countRounds++;
                 GameState displayPeople = new DisplayPeople_GS(
                     lobby: lobby,
-                    title: "Here's What Everyone Made",
-                    peopleList: roundTracker.);
+                    title: "Here are your winners",
+                    peopleList: roundTracker.RoundWinners);
 
                 GameState scoreBoard = new ScoreBoardGameState(
                     lobby: lobby);
 
                 if (countRounds >= numRounds)
                 {
-                    GameState finalDisplay = new DisplayPeople_GS(
-                        lobby: lobby,
-                        title: "And Here's The Original Peoeple",
-                        peopleList: this.PeopleList);
-                    displayPeople.Transition(finalDisplay);
-                    finalDisplay.Transition(scoreBoard);
-                    scoreBoard.SetOutlet(this.Outlet);
+                    GameState finalScoreBoard = new ScoreBoardGameState(
+                    lobby: lobby,
+                    title: "Final Scores");
+                    displayPeople.Transition(finalScoreBoard);
+                    finalScoreBoard.SetOutlet(this.Outlet);
                 }
                 else
                 {
                     displayPeople.Transition(scoreBoard);
-                    scoreBoard.Transition(CreateGameplayGamestate);
+                    scoreBoard.Transition(CreateContestantCreationGamestate);
                 }
                 return displayPeople;
-            }*/
-            Setup.Transition(CreateGameplayGamestate);
+            }
+            Setup.Transition(CreateContestantCreationGamestate);
             this.EntranceState = Setup;
             /*Func<GameState, Action> getListener = null; //returns a listener function for who called it
             getListener = (transitionFromGS) => 
@@ -166,9 +188,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
 
         }
 
-
         public void ValidateOptions(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
+
             if (!int.TryParse(gameModeOptions[0].ShortAnswer, out int parsedInteger1)
                 || parsedInteger1 < 1 || parsedInteger1 > 30)
             {
@@ -177,13 +199,17 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             if (!int.TryParse(gameModeOptions[1].ShortAnswer, out int parsedInteger2)
                || parsedInteger2 < 1 || parsedInteger2 > 30)
             {
-                throw new GameModeInstantiationException("Numer of drawings must be an integer from 1-30");
+                throw new GameModeInstantiationException("Numer of prompts per round must be an integer from 1-30");
             }
-            /*if (!int.TryParse(gameModeOptions[2].ShortAnswer, out int parsedInteger3)
-                || parsedInteger3 < int.Parse(gameModeOptions[1].ShortAnswer) * int.Parse(gameModeOptions[0].ShortAnswer) / 2)
+            if(gameLobby.GetActiveUsers().Count%2==1 && int.Parse(gameModeOptions[1].ShortAnswer)%2==1)
             {
-                throw new GameModeInstantiationException("There must be enough prompts for each round");
-            }*/
+                throw new GameModeInstantiationException("Numer of prompts per round must even if you have an odd number of players");
+            }
+            if (!int.TryParse(gameModeOptions[2].ShortAnswer, out int parsedInteger3)
+                || parsedInteger3 < 1 || parsedInteger3 > 30)
+            {
+                throw new GameModeInstantiationException(Invariant($"Numer of drawings per round must be an integer from 1-30"));
+            }
         }
     }
 }

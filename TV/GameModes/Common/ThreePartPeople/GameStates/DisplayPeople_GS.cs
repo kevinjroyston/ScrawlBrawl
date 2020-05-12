@@ -21,7 +21,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.Common.GameStates
             Title = "Skip Reveal",
             SubmitButton = true
         };
-        public DisplayPeople_GS(Lobby lobby, string title, IReadOnlyList<Person> peopleList, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(lobby, outlet)
+        public DisplayPeople_GS(Lobby lobby, string title, IReadOnlyList<Person> peopleList, Action<User, UserStateResult, UserFormSubmission> outlet = null, Func<StateInlet> delayedOutlet = null) : base(lobby, outlet, delayedOutlet)
         {
             if(peopleList == null || peopleList.Count == 0)
             {
@@ -30,7 +30,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.Common.GameStates
             UserState partyLeaderState = new SimplePromptUserState(PartyLeaderSkipButton);
             WaitingUserState waitingState = new WaitingUserState();
 
-            UserStateTransition waitForLeader = new WaitForPartyLeader(
+            State waitForLeader = new WaitForPartyLeader(
                 lobby: this.Lobby,
                 outlet: this.Outlet,
                 partyLeaderPrompt: partyLeaderState,

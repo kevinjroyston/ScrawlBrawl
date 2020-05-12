@@ -43,7 +43,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         };
         private Lobby lobby { get; set; }
         private Random Rand { get; set; } = new Random();
-        public Voting_GS(Lobby lobby, RoundTracker roundTracker, int numSubRounds,  Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(lobby, outlet)
+        public Voting_GS(Lobby lobby, RoundTracker roundTracker, int numSubRounds,  Action<User, UserStateResult, UserFormSubmission> outlet = null, Func<StateInlet> delayedOutlet = null) : base(lobby, outlet, delayedOutlet)
         {        
             List<List<Person>> allRoundPeople = new List<List<Person>>();
             List<User> randomizedUsers = lobby.GetActiveUsers().OrderBy(_ => Rand.Next()).ToList();
@@ -72,12 +72,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                     prompt: PickADrawing(choices: allRoundChoices[subRoundNum]),
                     formSubmitListener: (User user, UserFormSubmission submission) =>
                     {
-                        user.Score += roundTracker.pointsForVote;
+                        user.Score += roundTracker.PointsForVote;
                         return (true, string.Empty);
                     }
                 );
                 this.Entrance = pickContestant;
-                UserStateTransition waitForUsers = new WaitForAllPlayers(lobby: this.Lobby, outlet: this.Outlet);
+                State waitForUsers = new WaitForAllPlayers(lobby: this.Lobby, outlet: this.Outlet);
                 waitForUsers.AddStateEndingListener(() => this.UpdateScores());
                 waitForUsers.SetOutlet(this.Outlet);
                 this.UnityView = new UnityView

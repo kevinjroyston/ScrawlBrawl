@@ -6,6 +6,7 @@ using RoystonGame.TV.DataModels.UserStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels;
 using RoystonGame.TV.GameModes.Common;
+using RoystonGame.TV.GameModes.Common.ThreePartPeople;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
@@ -34,7 +35,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         private int numSubRounds { get; set; }
         private int subRoundCount { get; set; } = 0;
 
-        public ContestantCreation_GS(Lobby lobby, int numDrawingsInUserHand, int numSubRounds, List<PeopleUserDrawing> drawings, RoundTracker roundTracker, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(lobby, outlet)
+        public ContestantCreation_GS(Lobby lobby, int numDrawingsInUserHand, int numSubRounds, List<PeopleUserDrawing> drawings, RoundTracker roundTracker, Action<User, UserStateResult, UserFormSubmission> outlet = null, Func<StateInlet> delayedOutlet = null) : base(lobby, outlet, delayedOutlet)
         {
             this.RandomizedUsers = lobby.GetActiveUsers().OrderBy(_ => Rand.Next()).ToList();
             this.Drawings = drawings;
@@ -43,7 +44,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
             this.numSubRounds = numSubRounds;
             AssignDrawingsAndPrompts();
 
-            UserStateTransition waitForAllPlayers = new WaitForAllPlayers(lobby: lobby, outlet: this.Outlet);
+            State waitForAllPlayers = new WaitForAllPlayers(lobby: lobby, outlet: this.Outlet);
             this.Entrance = MakePeopleUserStateChain(outlet: waitForAllPlayers.Inlet)[0];
 
             this.UnityView = new UnityView
@@ -58,28 +59,29 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
             List<UserState> stateChain = new List<UserState>();
             while(subRoundCount<numSubRounds)
             {
+                int subRoundNum = subRoundCount;
                 stateChain.Add(new SimplePromptUserState(
                     prompt: (User user) =>
-                    {
+                    {       
                         return new UserPrompt
                         {
-                            Title = Invariant($"Make the best character for this prompt: \"{roundTracker.UsersToAssignedPrompts[user][subRoundCount]}\""),
+                            Title = Invariant($"Make the best character for this prompt: \"{roundTracker.UsersToAssignedPrompts[user][subRoundNum]}\""),
                             SubPrompts = new SubPrompt[]
                             {
                             new SubPrompt
                             {
                                 Prompt = "Pick your Head",
-                                Answers = roundTracker.UsersToPlayerHandsHeadsBySubRound[subRoundCount][user].Select( userDrawing => userDrawing.Drawing).ToArray()
+                                Answers = roundTracker.UsersToPlayerHandsHeadsBySubRound[subRoundNum][user].Select( userDrawing => CommonHelpers.HtmlImageWrapper(userDrawing.Drawing, ThreePartPeopleConstants.Widths[DrawingType.Head], ThreePartPeopleConstants.Heights[DrawingType.Head])).ToArray()
                             },
                             new SubPrompt
                             {
                                 Prompt = "Pick your Body",
-                                Answers = roundTracker.UsersToPlayerHandsBodiesBySubRound[subRoundCount][user].Select( userDrawing => userDrawing.Drawing).ToArray()
+                                Answers = roundTracker.UsersToPlayerHandsBodiesBySubRound[subRoundNum][user].Select( userDrawing => CommonHelpers.HtmlImageWrapper(userDrawing.Drawing, ThreePartPeopleConstants.Widths[DrawingType.Body], ThreePartPeopleConstants.Heights[DrawingType.Body])).ToArray()
                             },
                             new SubPrompt
                             {
                                 Prompt = "Pick your Legs",
-                                Answers = roundTracker.UsersToPlayerHandsLegsBySubRound[subRoundCount][user].Select( userDrawing => userDrawing.Drawing).ToArray()
+                                Answers = roundTracker.UsersToPlayerHandsLegsBySubRound[subRoundNum][user].Select( userDrawing => CommonHelpers.HtmlImageWrapper(userDrawing.Drawing, ThreePartPeopleConstants.Widths[DrawingType.Legs], ThreePartPeopleConstants.Heights[DrawingType.Legs])).ToArray()
                             },
                             new SubPrompt
                             {
@@ -92,10 +94,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                     },
                     formSubmitListener: (User user, UserFormSubmission input) =>
                     {
-                        if(!roundTracker.UsersToBuiltPeople.ContainsKey(user))
-                        {
-                            roundTracker.UsersToBuiltPeople.Add(user, new List<Person>());
-                        }
                         Person builtPerson = new Gameplay_Person
                         {
                             BodyPartDrawings = new Dictionary<DrawingType, PeopleUserDrawing>{
@@ -107,19 +105,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                         };
                         roundTracker.UsersToBuiltPeople[user].Add(builtPerson);
                         string prompt = roundTracker.UsersToAssignedPrompts[user][subRoundCount];
-                        if (!roundTracker.PromptsToBuiltPeople.ContainsKey(prompt))
-                        {
-                            roundTracker.PromptsToBuiltPeople.Add(prompt, new List<Person>());
-                        }
-                        roundTracker.PromptsToBuiltPeople[prompt].Add(new Gameplay_Person
-                        {
-                            BodyPartDrawings = new Dictionary<DrawingType, PeopleUserDrawing>{
-                                {DrawingType.Head, roundTracker.UsersToPlayerHandsHeadsBySubRound[subRoundCount][user][(int)input.SubForms[0].RadioAnswer] },
-                                {DrawingType.Body, roundTracker.UsersToPlayerHandsBodiesBySubRound[subRoundCount][user][(int)input.SubForms[1].RadioAnswer] },
-                                {DrawingType.Legs, roundTracker.UsersToPlayerHandsLegsBySubRound[subRoundCount][user][(int)input.SubForms[2].RadioAnswer] }
-                            },
-                            Name = input.SubForms[3].ShortAnswer
-                        });
+                        roundTracker.PromptsToBuiltPeople[prompt].Add(builtPerson);
                         roundTracker.BuiltPeopleToPrompts.Add(builtPerson, prompt);
                         return (true, String.Empty);
                     }
@@ -171,6 +157,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         private void AssignDrawingsAndPrompts()
         {
             roundTracker.ResetRoundVariables();
+            if(numDrawingsInUserHand*3>Drawings.Count)
+            {
+                throw new Exception("Something Went Wrong While Setting Up Game");
+            }
             for (int i = 0; i<numSubRounds; i++)
             {
                 Dictionary<User, List<PeopleUserDrawing>> subRoundHandsHeads = new Dictionary<User, List<PeopleUserDrawing>>();
@@ -209,7 +199,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
              * then doubles the list so that each prompt goes to 2 players
              */
             List<string> randomizedPrompts = roundTracker.UnusedUserPrompts.OrderBy(_ => Rand.Next()).ToList();
-            randomizedPrompts.RemoveRange(0, randomizedPrompts.Count - 2 * numSubRounds * RandomizedUsers.Count);
+            randomizedPrompts.RemoveRange(0, randomizedPrompts.Count - numSubRounds * RandomizedUsers.Count / 2);
             roundTracker.UnusedUserPrompts.RemoveAll((str) => randomizedPrompts.Contains(str));
             randomizedPrompts.AddRange(randomizedPrompts);
             randomizedPrompts = randomizedPrompts.OrderBy(_ => Rand.Next()).ToList();
@@ -219,6 +209,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                 for (int i = 0; i<numSubRounds; i++)
                 {
                     int j = 0;
+                    if(j>= randomizedPrompts.Count)
+                    {
+                        throw new Exception("Something Went Wrong While Setting Up Game");
+                    }
                     while(usersPrompts.Contains(randomizedPrompts[j]))
                     {
                         j++;

@@ -116,9 +116,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                             Prompt = Invariant($"You are drawing the \"{person.UserSubmittedDrawingsByUser[user].Type}\" of \"{person.Name}\""),
                             Drawing = new DrawingPromptMetadata()
                             {
-                                WidthInPx = ThreePartPeopleConstants.widths[person.UserSubmittedDrawingsByUser[user].Type],
-                                HeightInPx = ThreePartPeopleConstants.heights[person.UserSubmittedDrawingsByUser[user].Type],
-                                CanvasBackground = ThreePartPeopleConstants.backgrounds[person.UserSubmittedDrawingsByUser[user].Type],
+                                WidthInPx = ThreePartPeopleConstants.Widths[person.UserSubmittedDrawingsByUser[user].Type],
+                                HeightInPx = ThreePartPeopleConstants.Heights[person.UserSubmittedDrawingsByUser[user].Type],
+                                CanvasBackground = ThreePartPeopleConstants.Backgrounds[person.UserSubmittedDrawingsByUser[user].Type],
                             },
                         },
                     },
@@ -144,8 +144,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         {
             this.PeopleList = peopleList;
 
-            UserStateTransition waitForAllDrawings = new WaitForAllPlayers(lobby: lobby, outlet: this.Outlet);
-            UserStateTransition waitForAllPrompts = new WaitForAllPlayers(lobby: lobby, outlet:(User user, UserStateResult result, UserFormSubmission input) =>
+            State waitForAllDrawings = new WaitForAllPlayers(lobby: lobby, outlet: this.Outlet);
+            State waitForAllPrompts = new WaitForAllPlayers(lobby: lobby, outlet:(User user, UserStateResult result, UserFormSubmission input) =>
             {
                 // This call doesn't actually happen until after all prompts are submitted
                 GetDrawingsUserStateChain(user, waitForAllDrawings.Inlet)[0].Inlet(user, result, input);

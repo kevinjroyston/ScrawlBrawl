@@ -13,7 +13,7 @@ namespace RoystonGame.TV.ControlFlows
     /// <summary>
     /// On state completion, transitions users to a waiting state until a trigger occurs.
     /// </summary>
-    public class WaitForTrigger : UserStateTransition
+    public class WaitForTrigger : State
     {
         protected WaitingUserState WaitingState { get; private set; }
 

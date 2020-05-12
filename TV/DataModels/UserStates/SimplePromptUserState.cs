@@ -3,6 +3,8 @@ using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using static System.FormattableString;
 using Connector = System.Action<
     RoystonGame.TV.DataModels.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
@@ -47,8 +49,10 @@ namespace RoystonGame.TV.DataModels.UserStates
                     error = !string.IsNullOrWhiteSpace(error) ? error : (successTuple?.Item2 ?? string.Empty);
                     success &= successTuple?.Item1 ?? true;
                 }
-                catch
+                catch(Exception exception)
                 {
+                    Debug.WriteLine(exception);
+                    Debug.Assert(false, exception.ToString());
                     error = "Something went wrong.";
                     return false;
                 }

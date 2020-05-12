@@ -28,7 +28,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
     public class Setup_GS : GameState
     {
         private List<string> Prompts { get; set; }
-        private List<PeopleUserDrawing> Drawings { get; set; }
+        //private List<PeopleUserDrawing> Drawings { get; set; }
         private RoundTracker RoundTracker { get; set; }
         private Random Rand { get; set; } = new Random();
 
@@ -38,30 +38,32 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         /// <param name="user">The user to build a chain for.</param>
         /// <param name="outlet">The state to link the end of the chain to.</param>
         /// <returns>A list of user states designed for a given user.</returns>
-        private List<UserState> GetDrawingsAndPromptsUserStateChain(int numDrawings, int numPrompts, Connector outlet)
+        private List<UserState> GetDrawingsAndPromptsUserStateChain(int numDrawings, int numPrompts, List<PeopleUserDrawing> drawings, Connector outlet)
         {
             List<UserState> stateChain = new List<UserState>();
+            List<PeopleUserDrawing> drawingsToAdd = new List<PeopleUserDrawing>();
             for (int i = 0; i< numDrawings; i++)
             {
                 PeopleUserDrawing headDrawing = new PeopleUserDrawing();
                 headDrawing.Type = DrawingType.Head;
-                Drawings.Add(headDrawing);
+                drawingsToAdd.Add(headDrawing);
 
                 PeopleUserDrawing bodyDrawing = new PeopleUserDrawing();
                 bodyDrawing.Type = DrawingType.Body;
-                Drawings.Add(bodyDrawing);
+                drawingsToAdd.Add(bodyDrawing);
 
                 PeopleUserDrawing legsDrawing = new PeopleUserDrawing();
                 legsDrawing.Type = DrawingType.Legs;
-                Drawings.Add(legsDrawing);
+                drawingsToAdd.Add(legsDrawing);
             }
-            Drawings = Drawings.OrderBy(_ => Rand.Next()).ToList();
+            drawingsToAdd = drawingsToAdd.OrderBy(_ => Rand.Next()).ToList();
             int drawingNumber = 1;
-            foreach(PeopleUserDrawing drawing in Drawings) //runs until all 3 values are 0
+            foreach(PeopleUserDrawing drawing in drawingsToAdd) 
             {
+                int tempDrawingNumber = drawingNumber;
                 stateChain.Add(new SimplePromptUserState((User user) => new UserPrompt()
                 {
-                    Title = Invariant($"Time to draw! Drawing \"{drawingNumber}\" of \"{numDrawings}\""),
+                    Title = Invariant($"Time to draw! Drawing \"{tempDrawingNumber}\" of \"{numDrawings*3}\""),
                     Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",
                     SubPrompts = new SubPrompt[]
                     {
@@ -70,9 +72,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                             Prompt = Invariant($"Draw any \"{drawing.Type.ToString()}\""),
                             Drawing = new DrawingPromptMetadata()
                             {
-                                WidthInPx = ThreePartPeopleConstants.widths[drawing.Type],
-                                HeightInPx = ThreePartPeopleConstants.heights[drawing.Type],
-                                CanvasBackground = ThreePartPeopleConstants.backgrounds[drawing.Type],
+                                WidthInPx = ThreePartPeopleConstants.Widths[drawing.Type],
+                                HeightInPx = ThreePartPeopleConstants.Heights[drawing.Type],
+                                CanvasBackground = ThreePartPeopleConstants.Backgrounds[drawing.Type],
                             },
                         },
                     },
@@ -80,7 +82,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                 },
                 formSubmitListener: (User user, UserFormSubmission input) =>
                 {
-                    drawing.Drawing = input.SubForms[0].Drawing;
+                    drawings.Add(new PeopleUserDrawing
+                    {
+                        Drawing = input.SubForms[0].Drawing,
+                        Owner = user,
+                        Type = drawing.Type
+                    });
                     return (true, String.Empty);
                 }));
                 drawingNumber++;
@@ -88,9 +95,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
             int  promptNumber = 1;
             for (int i = 0; i < numPrompts; i++)
             {
+                int tempPromptNumber = promptNumber;
                 stateChain.Add(new SimplePromptUserState((User user) => new UserPrompt()
                 {
-                    Title = Invariant($"Now lets make some battle prompts! Prompt \"{promptNumber}\" of \"{numPrompts}\""),
+                    Title = Invariant($"Now lets make some battle prompts! Prompt \"{tempPromptNumber}\" of \"{numPrompts}\""),
                     Description = "Examples: Who would win in a fight, Who would make the best ____, Etc.",
                     RefreshTimeInMs = 1000,
                     SubPrompts = new SubPrompt[]
@@ -126,14 +134,53 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         }
      
 
-        public Setup_GS(Lobby lobby, RoundTracker roundTracker, List<PeopleUserDrawing> drawings, List<string> prompts, int numDrawings, int numPrompts, Connector outlet = null) : base(lobby, outlet)
+        public Setup_GS(Lobby lobby, List<PeopleUserDrawing> drawings, List<string> prompts, int numDrawingsToDrawPerPartFromUser, int numDrawingsNeededPerPartInTotal, int numPrompts, Connector outlet = null, Func<StateInlet> delayedOutlet = null) : base(lobby, outlet, delayedOutlet)
         {
-            this.Drawings = drawings;
+            //this.Drawings = drawings;
             this.Prompts = prompts;
             this.RoundTracker = roundTracker;
-            UserStateTransition waitForAllDrawingsAndPrompts = new WaitForAllPlayers(lobby: lobby, outlet: this.Outlet);
-            this.Entrance = GetDrawingsAndPromptsUserStateChain(numDrawings: numDrawings, numPrompts: numPrompts, outlet: waitForAllDrawingsAndPrompts.Inlet)[0];
-
+            State waitForAllDrawingsAndPrompts = new WaitForAllPlayers(lobby: lobby, outlet: this.Outlet);
+            this.Entrance = GetDrawingsAndPromptsUserStateChain(numDrawings: numDrawingsToDrawPerPartFromUser, numPrompts: numPrompts, drawings: drawings, outlet: waitForAllDrawingsAndPrompts.Inlet)[0];
+            waitForAllDrawingsAndPrompts.AddStateEndingListener(() =>
+            {
+                int numDrawingsStillNeededPerPart = numDrawingsNeededPerPartInTotal - numDrawingsToDrawPerPartFromUser*lobby.GetActiveUsers().Count;
+                List<PeopleUserDrawing> randomizedHeads = drawings.FindAll((drawing) => drawing.Type == DrawingType.Head).OrderBy(_ => Rand.Next()).ToList();
+                List<PeopleUserDrawing> randomizedBodies = drawings.FindAll((drawing) => drawing.Type == DrawingType.Body).OrderBy(_ => Rand.Next()).ToList();
+                List<PeopleUserDrawing> randomizedLegs = drawings.FindAll((drawing) => drawing.Type == DrawingType.Legs).OrderBy(_ => Rand.Next()).ToList();
+                while (numDrawingsStillNeededPerPart < 0)
+                {
+                    drawings.Remove(randomizedHeads[0]);
+                    drawings.Remove(randomizedBodies[0]);
+                    drawings.Remove(randomizedLegs[0]);
+                    randomizedHeads.RemoveAt(0);
+                    randomizedBodies.RemoveAt(0);
+                    randomizedLegs.RemoveAt(0);
+                    numDrawingsStillNeededPerPart++;
+                }
+                while(numDrawingsStillNeededPerPart > 0)
+                {
+                    if(numDrawingsStillNeededPerPart >= numDrawingsToDrawPerPartFromUser * lobby.GetActiveUsers().Count)
+                    {
+                        List<PeopleUserDrawing> drawingsToAdd = new List<PeopleUserDrawing>();
+                        drawingsToAdd.AddRange(randomizedHeads);
+                        drawingsToAdd.AddRange(randomizedBodies);
+                        drawingsToAdd.AddRange(randomizedLegs);
+                        drawingsToAdd = drawingsToAdd.OrderBy(_ => Rand.Next()).ToList();
+                        drawings.AddRange(drawingsToAdd);
+                        numDrawingsStillNeededPerPart -= numDrawingsToDrawPerPartFromUser * lobby.GetActiveUsers().Count;
+                    }
+                    else
+                    {
+                        List<PeopleUserDrawing> drawingsToAdd = new List<PeopleUserDrawing>();
+                        drawingsToAdd.AddRange(randomizedHeads.GetRange(0,numDrawingsStillNeededPerPart));
+                        drawingsToAdd.AddRange(randomizedBodies.GetRange(0, numDrawingsStillNeededPerPart));
+                        drawingsToAdd.AddRange(randomizedLegs.GetRange(0, numDrawingsStillNeededPerPart));
+                        drawingsToAdd = drawingsToAdd.OrderBy(_ => Rand.Next()).ToList();
+                        drawings.AddRange(drawingsToAdd);
+                        numDrawingsStillNeededPerPart = 0;
+                    }
+                }
+            });
             this.UnityView = new UnityView
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },

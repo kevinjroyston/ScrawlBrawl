@@ -94,15 +94,10 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// <param name="outlet">The default outlet for all users. <see cref="SetOutlet"/> for user specific outlet configuring.</param>
         /// <param name="stateTimeoutDuration">The maximum amount of time to spend in this userstate.</param>
         /// <param name="promptGenerator">A function to be called the first time a user requests a prompt.</param>
-        public UserState(Connector outlet, TimeSpan? stateTimeoutDuration, Func<User, UserPrompt> promptGenerator)
+        public UserState(Connector outlet, TimeSpan? stateTimeoutDuration, Func<User, UserPrompt> promptGenerator, Func<StateInlet> delayedOutlet): base (outlet: outlet, delayedOutlet: delayedOutlet)
         {
             this.PromptGenerator = promptGenerator ?? throw new Exception("Prompt generator cannot be null");
             this.StateTimeoutDuration = stateTimeoutDuration;
-
-            if (outlet != null)
-            {
-                this.SetOutlet(outlet);
-            }
         }
 
 

@@ -33,13 +33,9 @@ namespace RoystonGame.TV.DataModels.GameStates
         /// </summary>
         /// <param name="lobby">The lobby this gamestate belongs to.</param>
         /// <param name="userOutlet">Called back when the state completes.</param>
-        public GameState(Lobby lobby, Connector userOutlet = null)
+        public GameState(Lobby lobby, Connector userOutlet = null, Func<StateInlet> delayedOutlet = null): base (outlet: userOutlet, delayedOutlet: delayedOutlet)
         {
             Lobby = lobby;
-            if (userOutlet != null)
-            {
-                this.SetOutlet(userOutlet);
-            }
         }
 
         /// <summary>

@@ -31,7 +31,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             UserState partyLeaderState = new SimplePromptUserState(prompt: PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
             WaitingUserState waitingState = new WaitingUserState(maxWaitTime: maxWaitTime);
 
-            UserStateTransition waitForLeader = new WaitForPartyLeader(
+            State waitForLeader = new WaitForPartyLeader(
                 lobby: this.Lobby,
                 outlet: this.Outlet,
                 partyLeaderPrompt: partyLeaderState,
