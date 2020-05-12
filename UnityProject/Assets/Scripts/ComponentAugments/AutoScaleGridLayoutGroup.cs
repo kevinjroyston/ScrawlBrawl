@@ -10,20 +10,32 @@ public class AutoScaleGridLayoutGroup : GridLayoutGroup
     /// Width / Height
     /// </summary>
     public float aspectRatio = 1.0f;
-    bool dimensionChanged = false;
     ImageHandler scaler = null;
+
+    public bool imageHandlerDrivenAspectRatio { get; set; } = true;
+
+    // "Everything but Footer' Vertical Layout Group padding
+    public int left = 20;
+    public int right = 20;
+    public int bottom = 20;
+    public int top = 20;
+
+
 
     protected override void Start()
     {
         base.Start();
-        rect = GetComponent<RectTransform>();
+        rect = GetComponentInParent<RectTransform>();
 
         cellSize = new Vector2(rect.rect.height, aspectRatio * rect.rect.height);
         startAxis = Axis.Horizontal;
         constraint = Constraint.FixedColumnCount;
 
-        scaler = transform.GetComponentInChildren<ImageHandler>();
-        scaler?.RegisterAspectRatioListener(AspectRatioListener);
+        if (imageHandlerDrivenAspectRatio)
+        {
+            scaler = transform.GetComponentInChildren<ImageHandler>();
+            scaler?.RegisterAspectRatioListener(AspectRatioListener);
+        }
 
         OnRectTransformDimensionsChange();
     }
@@ -34,11 +46,11 @@ public class AutoScaleGridLayoutGroup : GridLayoutGroup
 
         if (rect == null)
         {
-            rect = GetComponent<RectTransform>();
+            rect = GetComponentInParent<RectTransform>();
             Debug.LogWarning("No rect");
             return;
         }
-        if (scaler == null)
+        if (scaler == null && imageHandlerDrivenAspectRatio)
         {
             scaler = transform.GetComponentInChildren<ImageHandler>();
             scaler?.RegisterAspectRatioListener(AspectRatioListener);
@@ -52,13 +64,6 @@ public class AutoScaleGridLayoutGroup : GridLayoutGroup
             cellSize = new Vector2((newHeight - top - bottom) * aspectRatio + left + right - spacing.x, newHeight - spacing.y);
         }
     }
-
-    // TODO: fetch this from actual object instead of hardcode
-    // "Everything but Footer' Vertical Layout Group padding
-    const int left = 20;
-    const int right = 20;
-    const int bottom = 20;
-    const int top = 20;
 
     private void AspectRatioListener(float innerAspectRatio, float outerAspectRatio)
     {
@@ -93,7 +98,7 @@ public class AutoScaleGridLayoutGroup : GridLayoutGroup
         int numRows = RowsPerColumnCount(numCols);
         numRows = (numRows == 0 ? 1 : numRows);
         numCols = Mathf.Min(numCols, cellCount);
-        return Mathf.Min((rect.rect.height - (padding.vertical + top + bottom) * (numRows - 1) - top - bottom) / (float)numRows, (rect.rect.width - (padding.horizontal + left + right) * (numCols-1) - left - right) / aspectRatio /(float)numCols);
+        return Mathf.Min((rect.rect.height - padding.vertical * (numRows - 1)) / (float)numRows, (rect.rect.width - (padding.horizontal) * (numCols-1)) / aspectRatio /(float)numCols);
     }
 
     /// <summary>

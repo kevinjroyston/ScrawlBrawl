@@ -31,17 +31,19 @@ public class GenericView : MonoBehaviour, ITVView
         UnityView = view;
         gameObject.SetActive(true);
 
-        if (Title?.GetComponent<Text>() != null)
+        if (Title?.GetComponentInChildren<Text>() != null)
         {
-            var title = Title.GetComponent<Text>();
+            var title = Title.GetComponentInChildren<Text>();
             if(!string.IsNullOrWhiteSpace(UnityView._Title))
             {
                 title.enabled = true;
                 title.text = UnityView._Title;
+                Title.SetActive(true);
             }
             else
             {
                 title.enabled = false;
+                Title.SetActive(false);
             }
         }
 
@@ -52,10 +54,12 @@ public class GenericView : MonoBehaviour, ITVView
             {
                 instructions.enabled = true;
                 instructions.text = UnityView._Instructions;
+                Instructions.SetActive(true);
             }
             else
             {
                 instructions.enabled = false;
+                Instructions.SetActive(false);
             }
         }
 
@@ -63,6 +67,11 @@ public class GenericView : MonoBehaviour, ITVView
         {
             // TODO: below causes sprite to be created an extra time. consider caching all the base64 sprites or using RawImage.
             LoadAllImages(UnityView._UnityImages.ToList());
+            ImageDropZone.SetActive(true);
+        }
+        else
+        {
+            ImageDropZone.SetActive(false);
         }
     }
 

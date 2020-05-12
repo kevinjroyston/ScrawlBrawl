@@ -21,9 +21,16 @@ public class ImageHandler : MonoBehaviour
     public GameObject SpriteZone;
     public GameObject ImageIdHolder;
 
-    public GameObject FooterHolder;
+    public RelevantUsersHandler RelevantUsersHandler;
     public Text VoteCount;
-    public GameObject DummyVoteCount;
+    /// <summary>
+    /// Footer overlaps half on half off the card. This gameObject is the part hanging off the card.
+    /// </summary>
+    public GameObject FooterHolder;
+    /// <summary>
+    /// Footer overlaps half on half off the card. This dummy is the bottom part of the card reserved for footer.
+    /// </summary>
+    public GameObject DummyFooter;
 
     /// <summary>
     /// first float is inner(image grid) aspect ratio, second float is outer(entire card w/o padding) aspect ratio for perfect fit UI
@@ -134,18 +141,24 @@ public class ImageHandler : MonoBehaviour
             ImageId.enabled = value?._ImageIdentifier != null;
             ImageIdHolder.SetActive(!string.IsNullOrWhiteSpace(value?._ImageIdentifier));
 
-            // Janky implementation of votecount/footer. probably needs some revisiting. Good luck.
+            bool relevantUsers = value?._RelevantUsers != null && value._RelevantUsers.Any();
             VoteCount.text = value?._VoteCount?.ToString() ?? string.Empty;
             VoteCount.enabled = value?._VoteCount != null;
-            DummyVoteCount.SetActive(value?._VoteCount != null);
-            FooterHolder.gameObject.SetActive(value?._VoteCount != null);
-
-            //VoteCount.enabled = value?._VoteCount != null;
-            //VoteCount.gameObject.SetActive(value?._VoteCount != null);
-
-            // TODO: relevant users list.
+            DummyFooter.SetActive(value?._VoteCount != null || relevantUsers);
+            FooterHolder.gameObject.SetActive(value?._VoteCount != null || relevantUsers);
 
 
+
+            // Used by Colorizer to deterministically color UI objects.
+            string hashableIdentifier =
+                !string.IsNullOrWhiteSpace(value?._ImageIdentifier) ? value._ImageIdentifier
+                : !string.IsNullOrWhiteSpace(value?._Title) ? value._Title
+                : (value?._RelevantUsers != null && value._RelevantUsers.Any()) ? value._RelevantUsers[0].DisplayName
+                : string.Empty;
+            CallColorizers(hashableIdentifier);
+
+            // Handle Relevant users after colorizer so that they can call their own colorizers.
+            RelevantUsersHandler.HandleRelevantUsers(value?._RelevantUsers, value?._VoteCount != null);
 
             /// Aspect ratio shenanigans
             float innerAspectRatio = ((float)gridColCount) / ((float)gridRowCount) * aspectRatio;
@@ -159,12 +172,11 @@ public class ImageHandler : MonoBehaviour
                      / (GetFlexibleHeightOrDefault(Title)
                          + GetFlexibleHeightOrDefault(Header)
                          + GetFlexibleHeightOrDefault(FooterHolder)
-                         + GetFlexibleHeightOrDefault(DummyVoteCount)
+                         + GetFlexibleHeightOrDefault(DummyFooter)
                          + GetFlexibleHeightOrDefault(SpriteZone))
                      * GetFlexibleHeightOrDefault(SpriteZone);
             }
             CallAspectRatioListeners(innerAspectRatio, outerAspectRatio);
-
         }
     }
 
@@ -212,6 +224,18 @@ public class ImageHandler : MonoBehaviour
         {
             // Tells the listeners what size this layout group would ideally like to be
             func.Invoke(innerValue, outerValue);
+        }
+    }
+
+    private void CallColorizers(string identifier)
+    {
+        Colorizer[] colorizers = GetComponentsInChildren<Colorizer>();
+        if (colorizers!= null)
+        {
+            foreach(Colorizer colorizer in colorizers)
+            {
+                colorizer.RefreshColor(identifier);
+            }
         }
     }
 
