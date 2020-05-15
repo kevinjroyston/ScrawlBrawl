@@ -28,7 +28,7 @@ namespace RoystonGame.TV.DataModels
         /// <param name="delayedOutlet">Fucntion called at last possible moment in order to determine the next state to transition to</param>
         public State(Connector outlet = null,Func<StateInlet> delayedOutlet = null)
         {
-            Debug.Assert(outlet != null && delayedOutlet != null, "Should not be populating both outlet and delayedOutlet");
+            Debug.Assert(outlet == null || delayedOutlet == null, "Should not be populating both outlet and delayedOutlet");
             if (delayedOutlet != null)
             {
                 this.Transition(delayedOutlet);

@@ -11,8 +11,10 @@ using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Connector = System.Action<
     RoystonGame.TV.DataModels.User,
@@ -23,10 +25,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
 {
     public class Voting_GS : GameState
     {
-        private static Func<User, UserPrompt> PickADrawing(List<string> choices) => (User user) =>
+        private static Func<User, UserPrompt> PickADrawing(Prompt prompt, List<User> randomizedUsers) => (User user) =>
         {
-            // TODO: Rank several drawings rather than pick one.
-            // TODO: Option to randomize drawing pairings.
             return new UserPrompt
             {
                 Title = "Vote for the best drawing!",
@@ -35,62 +35,57 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                     new SubPrompt
                     {
                         Prompt = $"Which drawing is best",
-                        Answers = choices.ToArray()
+                        Answers = randomizedUsers.Select((user)=> prompt.UsersToUserHands[user].Contestant.Name).ToArray()
+                    },
+                    new SubPrompt
+                    {
+                        Prompt = $"How good was the prompt (Bad) 1 - 5 (Good)",
+                        Dropdown = new string[] {"1","2","3","4","5"}
                     }
                 },
                 SubmitButton = true,
             };
         };
-        private Lobby lobby { get; set; }
-        private Random Rand { get; set; } = new Random();
-        public Voting_GS(Lobby lobby, RoundTracker roundTracker, int numSubRounds,  Action<User, UserStateResult, UserFormSubmission> outlet = null, Func<StateInlet> delayedOutlet = null) : base(lobby, outlet, delayedOutlet)
-        {        
-            List<List<Person>> allRoundPeople = new List<List<Person>>();
-            List<User> randomizedUsers = lobby.GetActiveUsers().OrderBy(_ => Rand.Next()).ToList();
-            for (int i = 0; i < randomizedUsers.Count; i ++)
-            {
-                User user = randomizedUsers[i];
-                List<string> usersPrompts = roundTracker.UsersToAssignedPrompts[user];
-                foreach (string prompt in usersPrompts)
+        Random Rand { get; set; } = new Random();
+        public Voting_GS(Lobby lobby, Prompt prompt, Connector outlet = null, Func<StateInlet> delayedOutlet = null) : base(lobby, outlet, delayedOutlet)
+        {
+            List<User>randomizedUsers = prompt.UsersToUserHands.Keys.OrderBy(_ => Rand.Next()).ToList();
+            ConcurrentDictionary<User, (User, int)> usersToVoteResults = new ConcurrentDictionary<User, (User, int)>();
+            SimplePromptUserState pickContestant = new SimplePromptUserState(
+                prompt: PickADrawing(prompt, randomizedUsers),
+                formSubmitListener: (User user, UserFormSubmission submission) =>
                 {
-                    for (int j = i+1; j<randomizedUsers.Count; j++)
+                    User userVotedFor = randomizedUsers[(int)submission.SubForms[0].RadioAnswer];
+                    int promptRanking = (int)submission.SubForms[1].DropdownChoice;
+                    usersToVoteResults.TryAdd(user, (userVotedFor, promptRanking));
+                    return (true, string.Empty);
+                });
+            this.Entrance = pickContestant;
+            State waitForUsers = new WaitForAllPlayers(lobby: this.Lobby, outlet: this.Outlet);
+            pickContestant.Transition(waitForUsers);
+            waitForUsers.SetOutlet(this.Outlet);
+            waitForUsers.AddStateEndingListener(() =>
+            {
+                foreach (User user in lobby.GetActiveUsers())
+                {
+                    User userVotedFor = usersToVoteResults[user].Item1;
+                    int promptRanking = usersToVoteResults[user].Item2;
+                    userVotedFor.Score += BattleReadyConstants.PointsForVote;
+                    prompt.UsersToUserHands[userVotedFor].VotesForContestant++;
+                    prompt.Owner.Score += (promptRanking - 2) * BattleReadyConstants.PointMultiplierForPromptRating;
+                    if (prompt.Winner == null || prompt.UsersToUserHands[userVotedFor].VotesForContestant > prompt.UsersToUserHands[prompt.Winner].VotesForContestant)
                     {
-                        User user2 = randomizedUsers[j];
-                        if(roundTracker.UsersToAssignedPrompts[user2].Contains(prompt))
-                        {
-                            allRoundPeople.Add(roundTracker.PromptsToBuiltPeople[prompt]);
-                        }
+                        prompt.Winner = userVotedFor;
                     }
                 }
-            }
-            allRoundPeople = allRoundPeople.OrderBy(_ => Rand.Next()).ToList();
-            List<List<string>> allRoundChoices = allRoundPeople.Select(personList => personList.Select(person => person.Name).ToList()).ToList();
-
-            for (int subRoundNum = 0; subRoundNum < numSubRounds; subRoundNum++)
+            });
+            this.UnityView = new UnityView
             {
-                SimplePromptUserState pickContestant = new SimplePromptUserState(
-                    prompt: PickADrawing(choices: allRoundChoices[subRoundNum]),
-                    formSubmitListener: (User user, UserFormSubmission submission) =>
-                    {
-                        user.Score += roundTracker.PointsForVote;
-                        return (true, string.Empty);
-                    }
-                );
-                this.Entrance = pickContestant;
-                State waitForUsers = new WaitForAllPlayers(lobby: this.Lobby, outlet: this.Outlet);
-                waitForUsers.AddStateEndingListener(() => this.UpdateScores());
-                waitForUsers.SetOutlet(this.Outlet);
-                this.UnityView = new UnityView
-                {
-                    ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
-                    UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = allRoundPeople[subRoundNum].Select((Person person) => person.GetPersonImage()).ToList()},
-                    Title = new StaticAccessor<string> { Value = roundTracker.BuiltPeopleToPrompts[allRoundPeople[subRoundNum][0]]},
-                };
-            }
-        }
-        private void UpdateScores()
-        {
-
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
+                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = prompt.UsersToUserHands.Values.Select((userHand) => userHand.Contestant.GetPersonImage()).ToList() },
+                Title = new StaticAccessor<string> { Value = prompt.Text },
+            };
+          
         }
     }
 }

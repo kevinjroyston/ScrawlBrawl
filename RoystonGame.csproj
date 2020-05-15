@@ -30,15 +30,15 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
-    <Compile Remove="TV\DataModels\GameStates\GameStateResultObjects\**" />
+    <Compile Remove="TV\DataModels\States\GameStates\GameStateResultObjects\**" />
     <Compile Remove="UnityProject\**" />
     <Content Remove="$(SpaRoot)**" />
-    <Content Remove="TV\DataModels\GameStates\GameStateResultObjects\**" />
+    <Content Remove="TV\DataModels\States\GameStates\GameStateResultObjects\**" />
     <Content Remove="UnityProject\**" />
-    <EmbeddedResource Remove="TV\DataModels\GameStates\GameStateResultObjects\**" />
+    <EmbeddedResource Remove="TV\DataModels\States\GameStates\GameStateResultObjects\**" />
     <EmbeddedResource Remove="UnityProject\**" />
     <None Remove="$(SpaRoot)**" />
-    <None Remove="TV\DataModels\GameStates\GameStateResultObjects\**" />
+    <None Remove="TV\DataModels\States\GameStates\GameStateResultObjects\**" />
     <None Remove="UnityProject\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
