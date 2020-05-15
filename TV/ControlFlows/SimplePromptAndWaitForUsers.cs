@@ -28,7 +28,7 @@ namespace RoystonGame.TV.ControlFlows
 
         {
             this.PromptedPlayers = promptedPlayers;
-            this.PromptedPlayersState = new SimplePromptUserState(prompt: promptedPlayersPrompt, formSubmitListener: formSubmitListener) ?? PartyLeaderReadyUpButtonUserState.DefaultState();
+            this.PromptedPlayersState = new SimplePrompt_UserState(prompt: promptedPlayersPrompt, formSubmitListener: formSubmitListener) ?? PartyLeaderReadyUpButtonUserState.DefaultState();
             this.PromptedPlayersState.SetOutlet(base.Inlet);
         }
 

@@ -1,5 +1,7 @@
-﻿using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.Extensions;
+﻿using RoystonGame.TV.ControlFlows;
+using RoystonGame.TV.ControlFlows.Enter;
+using RoystonGame.TV.ControlFlows.Exit;
+using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using System;
 using System.Collections.Generic;
@@ -16,31 +18,22 @@ namespace RoystonGame.TV.DataModels
     /// <summary>
     /// A state has an inlet and outlet.
     /// </summary>
-    public abstract class State : StateOutlet, StateInlet
+    public abstract class State : StateOutlet, Inlet
     {
-        public abstract void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission);
+        protected StateEntrance Entrance { get; private set; }
 
-        /// <summary>
-        /// Creates an instance of the state class 
-        /// Used for gamestates and user states
-        /// </summary>
-        /// <param name="outlet">The state to transtion into at the completion of this state</param>
-        /// <param name="delayedOutlet">Fucntion called at last possible moment in order to determine the next state to transition to</param>
-        public State(Connector outlet = null,Func<StateInlet> delayedOutlet = null)
+        public State(StateEntrance entrance = null, StateExit exit = null) : base(stateExit: exit)
         {
-            Debug.Assert(outlet == null || delayedOutlet == null, "Should not be populating both outlet and delayedOutlet");
-            if (delayedOutlet != null)
-            {
-                this.Transition(delayedOutlet);
-            }
-            if(outlet != null)
-            {
-                this.Transition(outlet);
-            }
+            this.Entrance = entrance ?? new StateEntrance();
+        }
+
+        public void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
+        {
+            this.Entrance.Inlet(user, stateResult, formSubmission);
         }
     }
 
-    public interface StateInlet
+    public interface Inlet
     {
         /// <summary>
         /// The inlet to the transition.
@@ -49,10 +42,38 @@ namespace RoystonGame.TV.DataModels
         /// <param name="stateResult">The state result of the last node (this transition doesnt care).</param>
         /// <param name="formSubmission">The user input of the last node (this transition doesnt care).</param>
         public abstract void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission);
+
+        /// <summary>
+        /// Called the first time the Inlet function is called.
+        /// </summary>
+        /// <param name="listener">The function tthe first time the Inlet function is called.</param>
+        public abstract void AddListener(Action listener);
     }
 
-    public abstract class StateOutlet
+    public interface Outlet
     {
+        /// <summary>
+        /// Sets the outlet of the transition.
+        /// </summary>
+        public abstract void SetOutlet(Inlet outlet, List<User> specificUsers = null);
+
+        /// <summary>
+        /// Sets the outlet of the transition by calling <paramref name="outletGenerator"/> at the last possible moment (when FIRST user is leaving the state)
+        /// </summary>
+        /// <param name="outletGenerator"></param>
+        public abstract void SetOutlet(Func<Inlet> outletGenerator, List<User> specificUsers = null);
+
+        /// <summary>
+        /// Called immediately before the outlet is going to be used. This is your last possible chance to call SetOutlet.
+        /// </summary>
+        /// <param name="listener">The function to call just before calling outlet.</param>
+        public abstract void AddListener(Action listener);
+    }
+
+    public abstract class StateOutlet : Outlet
+    {
+
+        #region Tracking
         /// <summary>
         /// Useful for tracking when an outlet is set.
         /// </summary>
@@ -64,15 +85,30 @@ namespace RoystonGame.TV.DataModels
         private Dictionary<User, bool> HaveAlreadyCalledOutlet { get; set; } = new Dictionary<User, bool>();
 
         /// <summary>
+        /// A list of callback functions to call when the state is about to end (first user is leaving).
+        /// </summary>
+        private List<Action> StateEndingListeners { get; set; } = new List<Action>();
+        bool FirstUser = true;
+        #endregion
+
+        /// <summary>
         /// A set of overrides per user for outlet.
         /// </summary>
         private Dictionary<User, Connector> UserOutletOverrides { get; set; } = new Dictionary<User, Connector>();
 
-        private List<Action> StateEndingListeners { get; set; } = new List<Action>();
         private Connector InternalOutlet { get; set; }
-        bool FirstUser = true;
-        // This needs to be wrapped so that "Outlet" can be passed as an action prior to InternalOutlet being defined
-        protected void Outlet(User user, UserStateResult result, UserFormSubmission input)
+
+        protected StateExit Exit { get; set; }
+        protected StateOutlet(StateExit stateExit = null)
+        {
+            this.Exit = stateExit ?? new StateExit();
+            this.Exit.SetInternalOutlet(this.Outlet);
+        }
+        
+        /// <summary>
+        /// This is the outlet function that Exit will call
+        /// </summary>
+        private void Outlet(User user, UserStateResult result, UserFormSubmission input)
         {
             if (this.FirstUser)
             {
@@ -97,40 +133,54 @@ namespace RoystonGame.TV.DataModels
         /// Sets up <paramref name="stateEnding"/> to be called just prior to the first user leaving this state.
         /// </summary>
         /// <param name="stateEnding">The action to call immediately prior to leaving this state.</param>
-        public void AddStateEndingListener(Action listener)
+        public void AddListener(Action listener)
         {
             this.StateEndingListeners.Add(listener);
         }
 
         /// <summary>
-        /// Sets the outlet. This should be called before state is entered!
+        /// Sets the outlet. This should be called before state is left!
         /// </summary>
         /// <param name="outlet">The callback to use.</param>
-        public void SetOutlet(Connector outlet, List<User> specificUsers = null)
+        public void SetOutlet(Inlet outlet, List<User> specificUsers = null)
         {
             if (outlet == null)
             {
                 throw new ArgumentNullException("Outlet cannot be null");
             }
 
-            Debug.WriteLine(Invariant($"|||STATE SETUP|||{this.StateId}|{this.GetType()}|{(specificUsers == null ? "all users" : string.Join(", ", specificUsers.Select(user => user.DisplayName)))}"));
+            SetOutlet(() => outlet, specificUsers);
+        }
+
+        /// <summary>
+        /// Sets the outlet generator. This should be called before state is entered!
+        /// </summary>
+        /// <param name="outletGenerator">This will be called at the last moment to determine the inlet to transition to.</param>
+        public void SetOutlet(Func<Inlet> outletGenerator, List<User> specificUsers = null)
+        {
+            if (outletGenerator == null)
+            {
+                throw new ArgumentNullException("Outlet generator cannot be null");
+            }
+
+            //Debug.WriteLine(Invariant($"|||STATE SETUP|||{this.StateId}|{this.GetType()}|{(specificUsers == null ? "all users" : string.Join(", ", specificUsers.Select(user => user.DisplayName)))}"));
 
             Action<User, UserStateResult, UserFormSubmission> internalOutlet = (User user, UserStateResult result, UserFormSubmission input) =>
-              {
+            {
                 // An outlet should only ever be called once per user. Ignore extra calls (most likely a timeout thread).
                 if (this.HaveAlreadyCalledOutlet.ContainsKey(user) && this.HaveAlreadyCalledOutlet[user] == true)
-                  {
-                      return;
-                  }
+                {
+                    return;
+                }
 
-                  this.HaveAlreadyCalledOutlet[user] = true;
+                this.HaveAlreadyCalledOutlet[user] = true;
 
-                  if (outlet == null)
-                  {
-                      throw new Exception(Invariant($"Outlet not defined for User '{user.DisplayName}' who is currently in state type '{user.UserState.GetType()}'"));
-                  }
-                  outlet(user, result, input);
-              };
+                if (outletGenerator == null)
+                {
+                    throw new Exception(Invariant($"Outlet not defined for User '{user.DisplayName}' who is currently in state type '{user.UserState.GetType()}'"));
+                }
+                outletGenerator().Inlet(user, result, input);
+            };
 
             if (specificUsers == null)
             {

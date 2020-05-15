@@ -32,7 +32,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 
         private UserState GetPeoplePrompts_State(Connector outlet = null)
         {
-            return new SimplePromptUserState((User user) => new UserPrompt()
+            return new SimplePrompt_UserState((User user) => new UserPrompt()
             {
                 Title = "Game setup",
                 Description = "In the boxes below, enter drawing prompts which will be given to different players.",
@@ -105,7 +105,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                     continue;
                 }
 
-                stateChain.Add(new SimplePromptUserState((User user) => new UserPrompt()
+                stateChain.Add(new SimplePrompt_UserState((User user) => new UserPrompt()
                 {
                     Title = "Time to draw!",
                     Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",

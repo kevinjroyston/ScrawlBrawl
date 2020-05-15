@@ -28,7 +28,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
     {
         private UserState GetWordsUserState(Connector outlet = null)
         {
-            return new SimplePromptUserState(
+            return new SimplePrompt_UserState(
                 prompt: (User user) => new UserPrompt()
                 {
                     Title = "Game setup",
@@ -84,7 +84,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 }
 
                 var lambdaSafeIndex = index;
-                stateChain.Add(new SimplePromptUserState(
+                stateChain.Add(new SimplePrompt_UserState(
                     prompt: (User user) => new UserPrompt()
                     {
                         Title = Invariant($"Drawing {lambdaSafeIndex + 1} of {stateChain.Count()}"),

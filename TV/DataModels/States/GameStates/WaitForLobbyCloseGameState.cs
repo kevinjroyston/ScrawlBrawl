@@ -21,7 +21,7 @@ namespace RoystonGame.TV.DataModels.GameStates
 
         private WaitForTrigger WaitingState { get; }
 
-        public WaitForLobbyCloseGameState(Lobby lobby, Connector outlet = null) : base(lobby, outlet)
+        public WaitForLobbyCloseGameState(Lobby lobby) : base(lobby)
         {
             Arg.NotNull(lobby, nameof(lobby));
 

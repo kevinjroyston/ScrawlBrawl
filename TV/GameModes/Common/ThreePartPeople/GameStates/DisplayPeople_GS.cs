@@ -36,7 +36,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.Common.GameStates
             {
                 throw new ArgumentException("PeopleList cannot be empty");
             }
-            UserState partyLeaderState = new SimplePromptUserState(PartyLeaderSkipButton);
+            UserState partyLeaderState = new SimplePrompt_UserState(PartyLeaderSkipButton);
             WaitingUserState waitingState = new WaitingUserState();
 
             State waitForLeader = new WaitForPartyLeader(

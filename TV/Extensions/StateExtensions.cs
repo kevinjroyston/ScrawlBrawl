@@ -14,21 +14,13 @@ namespace RoystonGame.TV.Extensions
     /// </summary>
     public static class StateExtensions
     {
-        public static void Transition(this StateOutlet A, Connector B)
+        public static void Transition(this Outlet A, Inlet B)
         {
             A.SetOutlet(B);
         }
-        public static void Transition(this StateOutlet A, StateInlet B)
+        public static void Transition(this Outlet A, Func<Inlet> B)
         {
-            A.Transition(B.Inlet);
-        }
-        public static void Transition(this StateOutlet A, Func<StateInlet> B )
-        {
-            A.Transition(() => B().Inlet);
-        }     
-        public static void Transition(this StateOutlet A, Func<Connector> B)
-        {
-            A.AddStateEndingListener(() =>
+            A.AddListener(() =>
             {
                 A.Transition(B());
             });

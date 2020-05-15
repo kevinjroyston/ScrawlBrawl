@@ -57,7 +57,7 @@ namespace RoystonGame.TV
         /// States track all of the users that enter it. In order to aid in garbage collection, create a new state instance for each user.
         /// </summary>
         /// <returns>A new user registration user state.</returns>
-        public static UserState CreateUserRegistrationUserState() => new SimplePromptUserState(
+        public static UserState CreateUserRegistrationUserState() => new SimplePrompt_UserState(
             prompt: UserNamePrompt,
             outlet: (User user, UserStateResult result, UserFormSubmission userInput) =>
             {

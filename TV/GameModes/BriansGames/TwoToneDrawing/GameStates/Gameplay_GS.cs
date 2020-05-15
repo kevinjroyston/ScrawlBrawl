@@ -99,7 +99,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 userDrawing2.TeamId = teamId1;
                 count++;
             }
-            SimplePromptUserState pickDrawing = new SimplePromptUserState(
+            SimplePrompt_UserState pickDrawing = new SimplePrompt_UserState(
                 prompt: PickADrawing(SubChallenge, SubChallenge.TeamIdToDrawingMapping.Keys.ToList()),
                 formSubmitListener: (User user, UserFormSubmission submission) =>
                 {

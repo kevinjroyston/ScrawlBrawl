@@ -64,7 +64,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 challengeTracker.IdToDrawingMapping[i.ToString()] = (kvp.Key, kvp.Value);
             }
 
-            SimplePromptUserState pickDrawing = new SimplePromptUserState(
+            SimplePrompt_UserState pickDrawing = new SimplePrompt_UserState(
                 PickADrawing(challengeTracker, challengeTracker.IdToDrawingMapping.Keys.ToList()),
                 formSubmitListener: (User user, UserFormSubmission submission) =>
                  {

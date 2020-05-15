@@ -28,7 +28,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 
         public ImposterRevealed_GS(Lobby lobby, ChallengeTracker challenge, Connector outlet = null, TimeSpan? maxWaitTime = null) : base(lobby, outlet)
         {
-            UserState partyLeaderState = new SimplePromptUserState(PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
+            UserState partyLeaderState = new SimplePrompt_UserState(PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
             WaitingUserState waitingState = new WaitingUserState(maxWaitTime: maxWaitTime);
 
             State waitForLeader = new WaitForPartyLeader(

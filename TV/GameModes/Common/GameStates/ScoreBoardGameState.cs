@@ -25,7 +25,7 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
 
         public ScoreBoardGameState(Lobby lobby, Connector outlet = null, TimeSpan? maxWaitTime = null, string title = "Scores:", Func<StateInlet> delayedOutlet = null) : base(lobby, outlet, delayedOutlet)
         {
-            UserState partyLeaderState = new SimplePromptUserState(prompt: PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
+            UserState partyLeaderState = new SimplePrompt_UserState(prompt: PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
 
             State waitForLeader = new WaitForPartyLeader(
                 lobby: this.Lobby,

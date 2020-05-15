@@ -28,7 +28,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 
         public VoteRevealed_GS(Lobby lobby, ChallengeTracker challenge, Connector outlet = null, TimeSpan? maxWaitTime = null) : base(lobby, outlet)
         {
-            UserState partyLeaderState = new SimplePromptUserState(prompt: PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
+            UserState partyLeaderState = new SimplePrompt_UserState(prompt: PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
             WaitingUserState waitingState = new WaitingUserState(maxWaitTime: maxWaitTime);
 
             State waitForLeader = new WaitForPartyLeader(
