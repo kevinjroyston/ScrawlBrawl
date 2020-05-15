@@ -149,8 +149,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             this.TeamsPerPrompt = int.Parse(gameModeOptions[2].ShortAnswer);
             this.ShowColors = gameModeOptions[3].RadioAnswer.Value == 1;
 
-            UserStateTransition waitForAllDrawings = new WaitForAllPlayers(lobby: this.Lobby, outlet: this.Outlet);
-            UserStateTransition waitForAllPrompts = new WaitForAllPlayers(
+            State waitForAllDrawings = new WaitForAllPlayers(lobby: this.Lobby, outlet: this.Outlet);
+            State waitForAllPrompts = new WaitForAllPlayers(
                 lobby: this.Lobby,
                 outlet: (User user, UserStateResult result, UserFormSubmission input) =>
                 {

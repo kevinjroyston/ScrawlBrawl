@@ -6,21 +6,21 @@ using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 
 namespace RoystonGame.TV.GameModes.Common.ThreePartPeople
 {
-    public class ThreePartPeopleConstants
+    public static class ThreePartPeopleConstants
     {
-        public static Dictionary<DrawingType, int> widths = new Dictionary<DrawingType, int>()
+        public static IReadOnlyDictionary<DrawingType, int> Widths { get; } = new Dictionary<DrawingType, int>()
         {
             {DrawingType.Head, 360},
             {DrawingType.Body, 360},
             {DrawingType.Legs, 360},
         };
-        public static Dictionary<DrawingType, int> heights = new Dictionary<DrawingType, int>()
+        public static IReadOnlyDictionary<DrawingType, int> Heights { get; } = new Dictionary<DrawingType, int>()
         {
             {DrawingType.Head, 240},
             {DrawingType.Body, 240},
             {DrawingType.Legs, 240},
         };
-        public static Dictionary<DrawingType, string> backgrounds = new Dictionary<DrawingType, string>()
+        public static IReadOnlyDictionary<DrawingType, string> Backgrounds { get; } = new Dictionary<DrawingType, string>()
         {
             #region HeadBG
              {DrawingType.Head, "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAAB4CAYAAADMtn8nAAACHUlEQVR4nO3ZwWoTYRSA0ZumIkU0BTe+/4O5FMFNI0IraTpltItmFzfGT85Zziz+y9x8DEk2y7J8npnbAWru1oAfZuat1UHOzzXg48xc2R3kPK3h7u0NkvbevBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ9i15f19x8eZx/uZ4+H06O2bmeubme0/upXq3P8zj/wC1gi+f52538/M8nL+ZuZmN/Ph08z2vbk5j4AvYH2DPexnfnw7DWEzM+8+mpvzCfgC1s/+sswsT6ch/Lpmbv6AgC9gs5m52v7+7vg6hPXaes/cnMuv0BAmYAgTMIQJGMIEDGFrwDsLhKTdGvDB7iDpsP4P/GVmbu0PYmbungEVxFF+WFuqEgAAAABJRU5ErkJggg=="},

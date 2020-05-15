@@ -24,7 +24,7 @@ namespace RoystonGame.TV.ControlFlows
             {
                 WaitingUserState toReturn = WaitingUserState.DefaultState();
                 toReturn.SetOutlet(outlet);
-                return toReturn;
+                return (WaitingUserState)toReturn;
             }
             return new WaitingUserState(promptGenerator: promptGenerator, outlet: outlet);
         }

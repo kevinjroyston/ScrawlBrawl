@@ -121,8 +121,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             this.SubChallenges = challengeTrackers;
             GetWordsUserState();
 
-            UserStateTransition waitForAllDrawings = new WaitForAllPlayers(this.Lobby, null, this.Outlet, null);
-            UserStateTransition waitForAllPrompts = new WaitForAllPlayers(this.Lobby, null, outlet: (User user, UserStateResult result, UserFormSubmission input) =>
+            State waitForAllDrawings = new WaitForAllPlayers(this.Lobby, null, this.Outlet, null);
+            State waitForAllPrompts = new WaitForAllPlayers(this.Lobby, null, outlet: (User user, UserStateResult result, UserFormSubmission input) =>
             {
                 GetDrawingsUserStateChain(user, waitForAllDrawings.Inlet)[0].Inlet(user, result, input);
             });
