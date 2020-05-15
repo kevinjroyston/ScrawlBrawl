@@ -105,7 +105,7 @@ namespace RoystonGame.TV
             new GameModeMetadata
             {
                 Title = "Body Builder",
-                Description = "TODO.",
+                Description = "Try to make a complete character before your opponents can.",
                 MinPlayers = 3,
                 MaxPlayers = null,
                 GameModeInstantiator = (lobby, options) => new BodyBuilderGameMode(lobby, options),
@@ -136,7 +136,7 @@ namespace RoystonGame.TV
             new GameModeMetadata
             {
                 Title = "Battle Ready",
-                Description = "TODO.",
+                Description = "Go head to head body to body and legs to legs with other players to try to make the best constestant for each challenge.",
                 MinPlayers = 3,
                 MaxPlayers = null,
                 GameModeInstantiator = (lobby, options) => new BattleReadyGameMode(lobby, options),

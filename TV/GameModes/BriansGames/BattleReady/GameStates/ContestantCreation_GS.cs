@@ -34,13 +34,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
             this.RoundTracker = roundTracker;
 
             State waitForAllPlayers = new WaitForAllPlayers(lobby: lobby, outlet: this.Outlet);
-            State waitForALlPlayersIntro = new WaitForAllPlayers(lobby: lobby);
+            State waitForAllPlayersIntro = new WaitForAllPlayers(lobby: lobby);
             Func<User, StateInlet> makePeopleStateChainHelper(Connector outlet)
             {
                 return (user) => MakePeopleUserStateChain(user, outlet);
             }
-            waitForALlPlayersIntro.Transition(makePeopleStateChainHelper(waitForAllPlayers.Inlet));
-            this.Entrance = waitForALlPlayersIntro;
+            waitForAllPlayersIntro.Transition(makePeopleStateChainHelper(waitForAllPlayers.Inlet));
+            this.Entrance = waitForAllPlayersIntro;
 
             this.UnityView = new UnityView
             {
