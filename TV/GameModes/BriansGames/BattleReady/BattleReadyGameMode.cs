@@ -58,7 +58,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 List<PeopleUserDrawing> randomizedHeads = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Head).OrderBy(_ => Rand.Next()).ToList();
                 List<PeopleUserDrawing> randomizedBodies = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Body).OrderBy(_ => Rand.Next()).ToList();
                 List<PeopleUserDrawing> randomizedLegs = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Legs).OrderBy(_ => Rand.Next()).ToList();
-                while (Drawings.Count < lobby.GetActiveUsers().Count* numPromptForEachUsersPerRound* 3*numOfEachPartInHand)
+                int totalDrawings = lobby.GetActiveUsers().Count* numPromptForEachUsersPerRound* 3*numOfEachPartInHand;
+                while (Drawings.Count < totalDrawings)
                 {
                     if(randomizedHeads.Count*randomizedBodies.Count*randomizedLegs.Count == 0)
                     {
