@@ -1,4 +1,4 @@
-﻿using RoystonGame.TV.DataModels.GameStates;
+﻿using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates;
@@ -26,7 +26,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
             //ValidateOptions(lobby, gameModeOptions);
 
             Setup = new Setup_GS(lobby, this.SubChallenges, gameModeOptions);
-            Setup.AddStateEndingListener(() =>
+            Setup.AddListener(() =>
             {
                 int index = 0;
                 foreach (ChallengeTracker challenge in SubChallenges.OrderBy(_ => rand.Next()))
@@ -37,16 +37,16 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
                         this.Scoreboards.Last()?.Transition(this.Gameplay.Last());
                     }
                     this.VoteReveals.Add(new VoteRevealed_GS(lobby, challenge));
-                    this.Scoreboards.Add(new ScoreBoardGameState(lobby, null, null, title: Invariant($"{index + 1}/{SubChallenges.Count}")));
+                    this.Scoreboards.Add(new ScoreBoardGameState(lobby, title: Invariant($"{index + 1}/{SubChallenges.Count}")));
                     this.Gameplay.Last().Transition(this.VoteReveals.Last());
                     this.VoteReveals.Last().Transition(this.Scoreboards.Last());
                     index++;
                 }
                 Setup.Transition(this.Gameplay[0]);
-                this.Scoreboards.Last().SetOutlet(this.Outlet);
+                this.Scoreboards.Last().Transition(this.Exit);
             });
 
-            this.EntranceState = Setup;
+            this.Entrance.Transition(Setup);
         }
 
         // TODO: move this to attribute based validation.
@@ -65,9 +65,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
                 throw new GameModeInstantiationException("Could not parse input 'Teams per prompt' as integer");
             }
 
-            if (colorsPerTeam < 1 || colorsPerTeam > lobby.GetActiveUsers().Count/2)
+            if (colorsPerTeam < 1 || colorsPerTeam > lobby.GetAllUsers().Count/2)
             {
-                throw new GameModeInstantiationException (Invariant($"Invalid number of colors per team, must be between ({1}) and ({lobby.GetActiveUsers().Count / 2}) for the current number of users"));
+                throw new GameModeInstantiationException (Invariant($"Invalid number of colors per team, must be between ({1}) and ({lobby.GetAllUsers().Count / 2}) for the current number of users"));
             }
 
             if (maxDrawingsPerPlayer < 1 || maxDrawingsPerPlayer > 30)
@@ -75,9 +75,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
                 throw new GameModeInstantiationException(Invariant($"Invalid number of max drawings per player, must be between ({1}) and ({30})."));
             }
 
-            if (teamsPerPrompt < 2 || teamsPerPrompt > lobby.GetActiveUsers().Count / colorsPerTeam / 2)
+            if (teamsPerPrompt < 2 || teamsPerPrompt > lobby.GetAllUsers().Count / colorsPerTeam / 2)
             {
-                throw new GameModeInstantiationException(Invariant($"Invalid number of teams per prompt, must be between ({2}) and ({lobby.GetActiveUsers().Count / colorsPerTeam / 2}) based on number of players and colors per team."));
+                throw new GameModeInstantiationException(Invariant($"Invalid number of teams per prompt, must be between ({2}) and ({lobby.GetAllUsers().Count / colorsPerTeam / 2}) based on number of players and colors per team."));
             }
         }
     }

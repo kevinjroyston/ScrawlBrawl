@@ -2,6 +2,7 @@
 using RoystonGame.TV.ControlFlows.Enter;
 using RoystonGame.TV.ControlFlows.Exit;
 using RoystonGame.TV.DataModels.Enums;
+using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.Extensions;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
@@ -14,12 +15,8 @@ using System.Threading.Tasks;
 
 using static System.FormattableString;
 
-using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
-    RoystonGame.TV.DataModels.Enums.UserStateResult,
-    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
 
-namespace RoystonGame.TV.DataModels.UserStates
+namespace RoystonGame.TV.DataModels.States.UserStates
 {
     /// <summary>
     /// A UserState should only ever be responsible for 1 prompt / response cycle. The user can refresh the prompt several times, the user
@@ -102,6 +99,8 @@ namespace RoystonGame.TV.DataModels.UserStates
             this.PromptGenerator = promptGenerator ?? throw new Exception("Prompt generator cannot be null");
             this.StateTimeoutDuration = stateTimeoutDuration;
 
+            // TODO: fix the below. its wrong
+            8
             InletOutletConnector connect = new InletOutletConnector(InternalConnector);
             this.Entrance.Transition(connect);
             connect.Transition(this.Exit);

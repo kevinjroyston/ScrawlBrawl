@@ -1,11 +1,11 @@
-﻿using RoystonGame.TV.DataModels.UserStates;
+﻿using RoystonGame.TV.DataModels.States.UserStates;
 using System;
 using System.Net;
 using System.Text.Json.Serialization;
 
 using static System.FormattableString;
 
-namespace RoystonGame.TV.DataModels
+namespace RoystonGame.TV.DataModels.Users
 {
     /// <summary>
     /// Class representing a user instance.
@@ -52,6 +52,16 @@ namespace RoystonGame.TV.DataModels
         public string SelfPortrait { get; set; }
 
         public int Score { get; set; }
+
+        /// <summary>
+        /// Gets the activity level of the user.
+        /// </summary>
+        public UserActivity Activity { get; set; }
+
+        /// <summary>
+        /// Gets the current status of what the user is doing.
+        /// </summary>
+        public UserStatus Status { get; set; }
 
         /// <summary>
         /// Lock used for ensuring only one User form submission is being processed at a time.

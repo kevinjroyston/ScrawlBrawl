@@ -1,4 +1,4 @@
-﻿using RoystonGame.TV.DataModels.GameStates;
+﻿using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels;
 using RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates;
@@ -9,12 +9,12 @@ using RoystonGame.TV.GameModes.Common.GameStates;
 using RoystonGame.TV.GameModes.BriansGames.Common.GameStates;
 using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 using static System.FormattableString;
-using RoystonGame.TV.DataModels;
+using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
 using System;
 using System.Linq;
 using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Users.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
     RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
 

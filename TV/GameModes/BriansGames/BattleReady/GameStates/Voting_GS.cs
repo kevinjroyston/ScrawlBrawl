@@ -1,8 +1,8 @@
 ﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels;
+using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.DataModels.GameStates;
-using RoystonGame.TV.DataModels.UserStates;
+using RoystonGame.TV.DataModels.States.GameStates;
+using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
@@ -17,7 +17,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Users.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
     RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
 

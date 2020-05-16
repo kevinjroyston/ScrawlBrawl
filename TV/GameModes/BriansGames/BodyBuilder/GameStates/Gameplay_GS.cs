@@ -1,8 +1,8 @@
 ﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels;
+using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.DataModels.GameStates;
-using RoystonGame.TV.DataModels.UserStates;
+using RoystonGame.TV.DataModels.States.GameStates;
+using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels;
 using RoystonGame.TV.GameModes.Common;
@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using System.Linq;
 using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 using static System.FormattableString;
+using RoystonGame.TV.DataModels;
+using RoystonGame.TV.ControlFlows.Exit;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 {
@@ -27,40 +29,38 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         private Random Rand { get; } = new Random();
         private RoundTracker roundTracker;
         private List<User> usersStillPlaying;
-        private Func<User, UserPrompt> PickADrawing()
+        private UserPrompt PickADrawing(User user)
         {
-            return (User user) => {
-                Gameplay_Person PlayerHand = roundTracker.AssignedPeople[user];
-                Gameplay_Person PlayerTrade = roundTracker.UnassignedPeople[roundTracker.UsersToSeatNumber[user]];
+            Gameplay_Person PlayerHand = roundTracker.AssignedPeople[user];
+            Gameplay_Person PlayerTrade = roundTracker.UnassignedPeople[roundTracker.UsersToSeatNumber[user]];
                 
-                return new UserPrompt
+            return new UserPrompt
+            {
+                Title = "This is your current person",
+                SubPrompts = new SubPrompt[]
                 {
-                    Title = "This is your current person",
-                    SubPrompts = new SubPrompt[]
+                    new SubPrompt
                     {
-                        new SubPrompt
+                        StringList = new string[]
                         {
-                            StringList = new string[]
-                            {
-                                CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Head].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Head],ThreePartPeopleConstants.Heights[DrawingType.Head]),
-                                CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Body].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Body],ThreePartPeopleConstants.Heights[DrawingType.Body]),
-                                CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Legs].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Legs],ThreePartPeopleConstants.Heights[DrawingType.Legs])
-                            },
+                            CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Head].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Head],ThreePartPeopleConstants.Heights[DrawingType.Head]),
+                            CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Body].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Body],ThreePartPeopleConstants.Heights[DrawingType.Body]),
+                            CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Legs].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Legs],ThreePartPeopleConstants.Heights[DrawingType.Legs])
                         },
-                        new SubPrompt
-                        {
-                            Prompt = "Which body part do you want to trade?",
-                            Answers = new string[]
-                            {
-                                CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Head].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Head],ThreePartPeopleConstants.Heights[DrawingType.Head]),
-                                CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Body].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Body],ThreePartPeopleConstants.Heights[DrawingType.Body]),
-                                CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Legs].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Legs],ThreePartPeopleConstants.Heights[DrawingType.Legs]),
-                                "None"
-                            },
-                        }
                     },
-                    SubmitButton = true,
-                };           
+                    new SubPrompt
+                    {
+                        Prompt = "Which body part do you want to trade?",
+                        Answers = new string[]
+                        {
+                            CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Head].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Head],ThreePartPeopleConstants.Heights[DrawingType.Head]),
+                            CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Body].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Body],ThreePartPeopleConstants.Heights[DrawingType.Body]),
+                            CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Legs].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Legs],ThreePartPeopleConstants.Heights[DrawingType.Legs]),
+                            "None"
+                        },
+                    }
+                },
+                SubmitButton = true,
             };
         }
 
@@ -76,12 +76,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             {2, 500},    // Second Place
             {3, 250}     // Third Place
         };
-        public Gameplay_GS(Lobby lobby, List<Setup_Person> setup_PeopleList, RoundTracker roundTracker, bool displayPool, bool displayNames, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(lobby, outlet)
+        public Gameplay_GS(Lobby lobby, List<Setup_Person> setup_PeopleList, RoundTracker roundTracker, bool displayPool, bool displayNames, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions) : base(lobby)
         {
             this.roundTracker = roundTracker;
             this.AssignPeople(setup_PeopleList);
             this.AssignSeats();       
-            this.Entrance = AddGameplayCycle();
+            this.Entrance.Transition(AddGameplayCycle());
             roundMaxTurnLimit = int.Parse(gameModeOptions[3].ShortAnswer);
             var unityImages = new List<UnityImage>();
             string instructions = null;
@@ -119,7 +119,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             };
 
         }
-        private StateInlet AddGameplayCycle()
+        private Inlet AddGameplayCycle()
         {
             /* ask users what changes they want to make
              * perform said changes
@@ -171,23 +171,23 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 }
                 else
                 {
-                    return WaitingUserState.DefaultPrompt(user);
+                    return SimplePromptUserState.DefaultWaitingPrompt(user);
                 }
             });
   
-            
-            State waitForUsers = new SimplePromptAndWaitForUsers(lobby: this.Lobby,
+            UserState promptAndWaitForUsers = new SelectivePromptUserState(
                 promptedPlayers: usersStillPlaying,
-                promptedPlayersPrompt: PickADrawing(),
-                formSubmitListener: PromptedUserFormSubmission,                
-                waitingPrompt: WaitingStatePromptGenerator
-                );
+                promptGenerator: PickADrawing,
+                formSubmitListener: PromptedUserFormSubmission,
+                exit: new WaitForAllUsers_StateExit(
+                    lobby: this.Lobby,
+                    waitingPromptGenerator: WaitingStatePromptGenerator));
             
-            waitForUsers.AddStateEndingListener(()=>
+            waitForUsers.AddListener(()=>
             {
                 if (this.GameFinished() || roundCount >= roundMaxTurnLimit)
                 {
-                    waitForUsers.SetOutlet(this.Outlet);
+                    waitForUsers.Transition(this.Exit);
                 }
                 else
                 {
@@ -207,7 +207,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             heads = setup_People.Select(val => val.BodyPartDrawings[DrawingType.Head]).OrderBy(_ => Rand.Next()).ToList();
             bodies = setup_People.Select(val => val.BodyPartDrawings[DrawingType.Body]).OrderBy(_ => Rand.Next()).ToList();
             legs = setup_People.Select(val => val.BodyPartDrawings[DrawingType.Legs]).OrderBy(_ => Rand.Next()).ToList();
-            foreach (User user in this.Lobby.GetActiveUsers())
+            foreach (User user in this.Lobby.GetAllUsers())
             {
                 Gameplay_Person temp = new Gameplay_Person
                 {
@@ -224,7 +224,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 temp.Name = user.DisplayName;
                 roundTracker.AssignedPeople.Add(user, temp);
             }
-            if (heads.Count != this.Lobby.GetActiveUsers().Count)
+            if (heads.Count != this.Lobby.GetAllUsers().Count)
             {
                 throw new Exception("Something Went Wrong While Setting Up Game");
             }
@@ -249,7 +249,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         private bool GameFinished()
         {
             bool someoneFinished = false;
-            foreach(User user in this.Lobby.GetActiveUsers())
+            foreach(User user in this.Lobby.GetAllUsers())
             {
                 if(roundTracker.AssignedPeople[user].DoneWithRound && !roundTracker.AssignedPeople[user].BeenScored)
                 {
@@ -291,7 +291,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         private void AssignSeats()
         {
             int count = 0;
-            foreach (User user in this.Lobby.GetActiveUsers().OrderBy(_ => Rand.Next()).ToList())
+            foreach (User user in this.Lobby.GetAllUsers().OrderBy(_ => Rand.Next()).ToList())
             {
                 roundTracker.OrderedUsers.Add(user);
                 roundTracker.UsersToSeatNumber.Add(user, count);

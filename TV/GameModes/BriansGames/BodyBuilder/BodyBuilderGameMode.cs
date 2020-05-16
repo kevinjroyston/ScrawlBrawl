@@ -1,7 +1,7 @@
 ﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels;
+using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.DataModels.GameStates;
+using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels;
 using RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates;

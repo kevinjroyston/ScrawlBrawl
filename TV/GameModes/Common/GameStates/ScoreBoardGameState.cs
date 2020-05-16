@@ -1,7 +1,7 @@
 ﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels;
-using RoystonGame.TV.DataModels.GameStates;
-using RoystonGame.TV.DataModels.UserStates;
+using RoystonGame.TV.DataModels.Users;
+using RoystonGame.TV.DataModels.States.GameStates;
+using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
@@ -9,9 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Users.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
     RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+using RoystonGame.TV.ControlFlows.Exit;
+using RoystonGame.TV.Extensions;
 
 namespace RoystonGame.TV.GameModes.Common.GameStates
 {
@@ -23,16 +25,14 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
             SubmitButton = true
         };
 
-        public ScoreBoardGameState(Lobby lobby, Connector outlet = null, TimeSpan? maxWaitTime = null, string title = "Scores:", Func<StateInlet> delayedOutlet = null) : base(lobby, outlet, delayedOutlet)
+        public ScoreBoardGameState(Lobby lobby, string title = "Scores:")
+            : base(
+                  lobby,
+                  exit: new WaitForPartyLeader_StateExit(
+                      lobby: lobby,
+                      partyLeaderPromptGenerator: PartyLeaderSkipButton))
         {
-            UserState partyLeaderState = new SimplePrompt_UserState(prompt: PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
-
-            State waitForLeader = new WaitForPartyLeader(
-                lobby: this.Lobby,
-                outlet: this.Outlet,
-                partyLeaderPrompt: partyLeaderState);
-
-            this.Entrance = waitForLeader;
+            this.Entrance.Transition(this.Exit);
 
             this.UnityView = new UnityView
             {
@@ -40,7 +40,7 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
                 Title = new StaticAccessor<string> { Value = title },
                 UnityImages = new DynamicAccessor<IReadOnlyList<UnityImage>>
                 {
-                    DynamicBacker = () => this.Lobby.GetActiveUsers().OrderByDescending(usr => usr.Score).Select(usr =>
+                    DynamicBacker = () => this.Lobby.GetAllUsers().OrderByDescending(usr => usr.Score).Select(usr =>
                         new UnityImage
                         {
                             Title = new StaticAccessor<string> { Value = usr.DisplayName },

@@ -1,8 +1,8 @@
 ﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels;
+using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.DataModels.GameStates;
-using RoystonGame.TV.DataModels.UserStates;
+using RoystonGame.TV.DataModels.States.GameStates;
+using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
@@ -36,13 +36,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.Common.GameStates
             {
                 throw new ArgumentException("PeopleList cannot be empty");
             }
-            UserState partyLeaderState = new SimplePrompt_UserState(PartyLeaderSkipButton);
+            UserState partyLeaderState = new SimplePromptUserState(PartyLeaderSkipButton);
             WaitingUserState waitingState = new WaitingUserState();
 
             State waitForLeader = new WaitForPartyLeader(
                 lobby: this.Lobby,
                 outlet: this.Outlet,
-                partyLeaderPrompt: partyLeaderState,
+                partyLeaderPromptGenerator: partyLeaderState,
                 waitingState: waitingState);
 
             this.Entrance = waitForLeader;

@@ -1,8 +1,6 @@
-﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels;
-using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.DataModels.GameStates;
-using RoystonGame.TV.DataModels.UserStates;
+﻿using RoystonGame.TV.DataModels.Users;
+using RoystonGame.TV.DataModels.States.GameStates;
+using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels;
 using RoystonGame.Web.DataModels.Enums;
@@ -13,12 +11,9 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using static RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels.ChallengeTracker;
 using static System.FormattableString;
-using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
-    RoystonGame.TV.DataModels.Enums.UserStateResult,
-    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+using RoystonGame.TV.ControlFlows.Exit;
+using static RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels.ChallengeTracker;
 
 namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 {
@@ -58,10 +53,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 
         private ChallengeTracker SubChallenge { get; set; }
         private int NumVotesToSwap { get; set; } = 0;
-        public Gameplay_GS(Lobby lobby, ChallengeTracker challengeTracker, Action<User, UserStateResult, UserFormSubmission> outlet = null) : base(lobby, outlet)
+        public Gameplay_GS(Lobby lobby, ChallengeTracker challengeTracker) : base(lobby)
         {
             SubChallenge = challengeTracker;
-            this.Entrance = RandomizeAndMakeVote();      
+            this.Entrance.Transition(RandomizeAndMakeVote());      
         }
 
         private UserState RandomizeAndMakeVote()
@@ -99,8 +94,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 userDrawing2.TeamId = teamId1;
                 count++;
             }
-            SimplePrompt_UserState pickDrawing = new SimplePrompt_UserState(
-                prompt: PickADrawing(SubChallenge, SubChallenge.TeamIdToDrawingMapping.Keys.ToList()),
+            SimplePromptUserState pickDrawing = new SimplePromptUserState(
+                promptGenerator: PickADrawing(SubChallenge, SubChallenge.TeamIdToDrawingMapping.Keys.ToList()),
                 formSubmitListener: (User user, UserFormSubmission submission) =>
                 {
                     if (submission.SubForms[0].RadioAnswer == SubChallenge.TeamIdToDrawingMapping.Keys.Count)
@@ -113,12 +108,46 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                         SubChallenge.TeamIdToUsersWhoVotedMapping.Values.ToArray()[submission.SubForms[0].RadioAnswer ?? -1].Add(user);
                     }
                     return (true, string.Empty);
-                });
+                },
+                exit: new WaitForAllUsers_StateExit(lobby: this.Lobby));  
+            pickDrawing.AddListener(HandleStateEnding);
 
+            void HandleStateEnding()
+            {
+                int mostVotes = this.SubChallenge.TeamIdToUsersWhoVotedMapping.Max((kvp) => kvp.Value.Count);
+                if (NumVotesToSwap > mostVotes)
+                {
+                    pickDrawing.Transition(this.RandomizeAndMakeVote());
+                    return;
+                }
+                foreach ((string id, ConcurrentBag<User> users) in this.SubChallenge.TeamIdToUsersWhoVotedMapping)
+                {
+                    foreach (User user in users)
+                    {
+                        if (users.Count == mostVotes)
+                        {
+                            // If the user voted for the drawing with the most votes, give them 100 points
+                            user.Score += 100;
+                        }
+                        else if (this.SubChallenge.UserSubmittedDrawings.ContainsKey(user) && this.SubChallenge.UserSubmittedDrawings[user].TeamId == id)
+                        {
+                            // If the drawing didn't get the most votes and the user voted for themselves subtract points
+                            user.Score -= 1000;
+                        }
+                    }
 
-            State waitForUsers = new WaitForAllPlayers(lobby: this.Lobby, outlet: this.Outlet);           
-            pickDrawing.SetOutlet(waitForUsers.Inlet);
-            waitForUsers.Transition(HandleStateEnding);
+                    if (users.Count == mostVotes)
+                    {
+                        foreach (User user in this.SubChallenge.UserSubmittedDrawings.Where(kvp => kvp.Value.TeamId == id).Select(kvp => kvp.Key))
+                        {
+                            // 500 points if they helped draw the best drawing.
+                            user.Score += 500;
+                        }
+                    }
+                }
+                pickDrawing.Transition(this.Exit);
+                return;
+            }
 
             var unityImages = new List<UnityImage>();
             foreach ((string id, ConcurrentDictionary<string, TeamUserDrawing> colorMap) in this.SubChallenge.TeamIdToDrawingMapping)
@@ -137,47 +166,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 Title = new StaticAccessor<string> { Value = "Behold!" },
             };
             return pickDrawing;
-        }
-
-        private Connector HandleStateEnding()
-        {
-            int mostVotes = this.SubChallenge.TeamIdToUsersWhoVotedMapping.Max((kvp) => kvp.Value.Count);
-            if(NumVotesToSwap>mostVotes)
-            { 
-                return this.RandomizeAndMakeVote().Inlet;
-            }
-            foreach ((string id, ConcurrentBag<User> users) in this.SubChallenge.TeamIdToUsersWhoVotedMapping)
-            {
-                foreach (User user in users)
-                {
-                    //TODO remove this later
-                    if(user.DisplayName.FuzzyEquals("Mom"))
-                    {
-                        user.Score += 500;
-                    }
-
-                    if (users.Count == mostVotes)
-                    {
-                        // If the user voted for the drawing with the most votes, give them 100 points
-                        user.Score += 100;
-                    }
-                    else if (this.SubChallenge.UserSubmittedDrawings.ContainsKey(user) && this.SubChallenge.UserSubmittedDrawings[user].TeamId == id)
-                    {
-                        // If the drawing didn't get the most votes and the user voted for themselves subtract points
-                        user.Score -= 1000;
-                    }
-                }
-
-                if (users.Count == mostVotes)
-                {
-                    foreach (User user in this.SubChallenge.UserSubmittedDrawings.Where(kvp => kvp.Value.TeamId == id).Select(kvp => kvp.Key))
-                    {
-                        // 500 points if they helped draw the best drawing.
-                        user.Score += 500;
-                    }
-                }
-            }
-            return this.Outlet;
         }
     }
 }

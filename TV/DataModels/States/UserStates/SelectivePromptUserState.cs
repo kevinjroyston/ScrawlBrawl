@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RoystonGame.TV.ControlFlows.Exit
+namespace RoystonGame.TV.DataModels.States.UserStates
 {
-    public class WaitForAllPlayers_StateExit
+    public class SelectivePromptUserState : SimplePromptUserState
     {
     }
 }

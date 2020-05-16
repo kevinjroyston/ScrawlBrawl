@@ -1,7 +1,7 @@
 ﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels;
-using RoystonGame.TV.DataModels.GameStates;
-using RoystonGame.TV.DataModels.UserStates;
+using RoystonGame.TV.DataModels.Users;
+using RoystonGame.TV.DataModels.States.GameStates;
+using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Responses;
@@ -12,9 +12,11 @@ using System.Collections.Generic;
 using System.Linq;
 using static RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels.ChallengeTracker;
 using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Users.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
     RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+using RoystonGame.TV.ControlFlows.Exit;
+using RoystonGame.TV.Extensions;
 
 namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 {
@@ -22,22 +24,18 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
     {
         private static UserPrompt PartyLeaderSkipButton(User user) => new UserPrompt()
         {
-            Title = "Skip Reveal",
+            Title = "Skip Scores",
             SubmitButton = true
         };
 
-        public VoteRevealed_GS(Lobby lobby, ChallengeTracker challenge, Connector outlet = null, TimeSpan? maxWaitTime = null) : base(lobby, outlet)
+        public VoteRevealed_GS(Lobby lobby, ChallengeTracker challenge)
+            : base(
+                  lobby: lobby,
+                  exit: new WaitForPartyLeader_StateExit(
+                      lobby: lobby,
+                      partyLeaderPromptGenerator: PartyLeaderSkipButton))
         {
-            UserState partyLeaderState = new SimplePrompt_UserState(prompt: PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
-            WaitingUserState waitingState = new WaitingUserState(maxWaitTime: maxWaitTime);
-
-            State waitForLeader = new WaitForPartyLeader(
-                lobby: this.Lobby,
-                outlet: this.Outlet,
-                partyLeaderPrompt: partyLeaderState,
-                waitingState: waitingState);
-
-            this.Entrance = waitForLeader;
+            this.Entrance.Transition(this.Exit);
 
             var unityImages = new List<UnityImage>();
             foreach ((string id, ConcurrentDictionary<string, TeamUserDrawing> colorMap) in challenge.TeamIdToDrawingMapping)

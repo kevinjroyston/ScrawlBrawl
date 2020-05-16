@@ -1,15 +1,17 @@
-﻿using RoystonGame.TV.DataModels.Enums;
+﻿using RoystonGame.TV.ControlFlows.Enter;
+using RoystonGame.TV.ControlFlows.Exit;
+using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 
 using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Users.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
     RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
 
-namespace RoystonGame.TV.DataModels.GameStates
+namespace RoystonGame.TV.DataModels.States.GameStates
 {
     /// <summary>
     /// Class defining a GameState. A GameState FSM only has one walker, unlike a UserState FSM which has many.
@@ -26,7 +28,7 @@ namespace RoystonGame.TV.DataModels.GameStates
         /// Initializes a GameState to be used in a FSM.
         /// </summary>
         /// <param name="lobby">The lobby this gamestate belongs to.</param>
-        public GameState(Lobby lobby) : base()
+        public GameState(Lobby lobby, StateEntrance entrance = null, StateExit exit = null) : base(entrance: entrance, exit: exit)
         {
             Lobby = lobby;
             this.Entrance.AddListener(() =>

@@ -1,7 +1,8 @@
-﻿using RoystonGame.TV.DataModels;
+﻿using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.DataModels.UserStates;
+using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.Web.DataModels.Requests;
+using RoystonGame.Web.DataModels.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,22 +15,21 @@ namespace RoystonGame.TV.ControlFlows.Exit
     /// </summary>
     public class WaitForTrigger_StateExit : StateExit
     {
-        protected WaitingUserState WaitingState { get; private set; }
+        protected SimplePromptUserState WaitingState { get; private set; }
 
         /// <summary>
-        /// Initializes a new <see cref="WaitForTrigger"/>.
+        /// Initializes a new <see cref="WaitForTrigger_StateExit"/>.
         /// </summary>
-        /// <param name="outlet">The function each user will call post trigger.</param>
-        /// <param name="waitingState">The waiting state to use while waiting for the trigger. The outlet of this state will be overwritten</param>
-        public WaitForTrigger_StateExit(WaitingUserState waitingState = null) : base()
+        /// <param name="waitingPromptGenerator">The prompt generator to use while waiting for the trigger. The outlet of this state will be overwritten</param>
+        public WaitForTrigger_StateExit(Func<User,UserPrompt> waitingPromptGenerator = null) : base()
         {
-            this.WaitingState = waitingState ?? WaitingUserState.DefaultState();
+            this.WaitingState = new SimplePromptUserState(promptGenerator: waitingPromptGenerator ?? SimplePromptUserState.DefaultWaitingPrompt);
+            this.WaitingState.AddListener(() => this.InvokeListeners());
         }
 
         public override void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
             this.WaitingState.Inlet(user, stateResult, formSubmission);
-            this.WaitingState.AddListener(() => this.InvokeListeners());
         }
 
         /// <summary>

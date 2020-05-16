@@ -1,4 +1,4 @@
-﻿using RoystonGame.TV.DataModels;
+﻿using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
 using System;
 using System.Collections.Concurrent;

@@ -1,8 +1,8 @@
 ﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels;
+using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.DataModels.GameStates;
-using RoystonGame.TV.DataModels.UserStates;
+using RoystonGame.TV.DataModels.States.GameStates;
+using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople;
@@ -21,7 +21,7 @@ using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 using static System.FormattableString;
 
 using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Users.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
     RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
 
@@ -32,7 +32,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 
         private UserState GetPeoplePrompts_State(Connector outlet = null)
         {
-            return new SimplePrompt_UserState((User user) => new UserPrompt()
+            return new SimplePromptUserState((User user) => new UserPrompt()
             {
                 Title = "Game setup",
                 Description = "In the boxes below, enter drawing prompts which will be given to different players.",
@@ -105,7 +105,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                     continue;
                 }
 
-                stateChain.Add(new SimplePrompt_UserState((User user) => new UserPrompt()
+                stateChain.Add(new SimplePromptUserState((User user) => new UserPrompt()
                 {
                     Title = "Time to draw!",
                     Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",

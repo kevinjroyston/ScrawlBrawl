@@ -2,6 +2,7 @@
 using RoystonGame.TV.ControlFlows.Enter;
 using RoystonGame.TV.ControlFlows.Exit;
 using RoystonGame.TV.DataModels.Enums;
+using RoystonGame.TV.DataModels.Users;
 using RoystonGame.Web.DataModels.Requests;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Diagnostics;
 using System.Linq;
 using static System.FormattableString;
 using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Users.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
     RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
 
