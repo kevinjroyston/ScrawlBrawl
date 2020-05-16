@@ -16,8 +16,6 @@ namespace RoystonGame.TV.ControlFlows.Exit
 
         private Func<List<User>> UsersToWaitForFunction { get; }
 
-        private Lobby Lobby { get; }
-
         /// <summary>
         /// Initializes a new <see cref="WaitForTrigger"/>.
         /// </summary>

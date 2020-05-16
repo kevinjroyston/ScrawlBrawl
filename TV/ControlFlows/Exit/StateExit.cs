@@ -10,6 +10,8 @@ using Connector = System.Action<
     RoystonGame.TV.DataModels.Users.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
     RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+using RoystonGame.TV.DataModels;
+
 namespace RoystonGame.TV.ControlFlows.Exit
 {
     public class StateExit : Inlet

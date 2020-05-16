@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RoystonGame.TV;
-using RoystonGame.TV.DataModels;
+using RoystonGame.TV.DataModels.Users;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.Helpers;

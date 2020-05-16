@@ -1,4 +1,4 @@
-﻿using RoystonGame.TV.DataModels;
+﻿using RoystonGame.TV.DataModels.Users;
 using System.Collections.Generic;
 
 namespace RoystonGame.Web.DataModels.UnityObjects

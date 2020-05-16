@@ -47,7 +47,7 @@ namespace RoystonGame.TV.DataModels.States.GameStates
                   lobby,
                   exit: new WaitForPartyLeader_StateExit(
                       lobby: lobby,
-                      partyLeaderPrompt: ContinuePrompt,
+                      partyLeaderPromptGenerator: ContinuePrompt,
                       partyLeaderFormSubmitListener: (User user, UserFormSubmission submission) =>
                       {
                           int? selectedIndex = submission.SubForms[0].RadioAnswer;

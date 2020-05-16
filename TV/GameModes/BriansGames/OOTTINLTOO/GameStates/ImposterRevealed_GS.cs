@@ -33,7 +33,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                   lobby,
                   exit: new WaitForPartyLeader_StateExit(
                       lobby: lobby,
-                      partyLeaderPrompt: PartyLeaderSkipButton))
+                      partyLeaderPromptGenerator: PartyLeaderSkipButton))
         {
             this.Entrance.Transition(this.Exit);
 

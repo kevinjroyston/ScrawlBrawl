@@ -3,6 +3,7 @@ using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using System;
 using RoystonGame.TV.DataModels;
+using RoystonGame.TV.ControlFlows;
 
 namespace RoystonGame.TV.Extensions
 {
@@ -22,15 +23,13 @@ namespace RoystonGame.TV.Extensions
                 A.Transition(B());
             });
         }
-
-        // TODO: User splitter exit/ entrance / extension
-        /*public static void Transition(this StateOutlet A, Func<User, Inlet> B)
+        public static void Transition(this StateOutlet A, Func<User, Inlet> B)
         {
-            A.Transition((User user, UserStateResult result, UserFormSubmission input) =>
+            A.Transition(new InletConnector((User user, UserStateResult result, UserFormSubmission input) =>
             {
                 // This call doesn't actually happen until after all prompts are submitted
                 B(user).Inlet(user, result, input);
-            });
-        }*/
+            }));
+        }
     }
 }

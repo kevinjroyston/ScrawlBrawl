@@ -1,8 +1,8 @@
 ﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels;
+using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.DataModels.GameStates;
-using RoystonGame.TV.DataModels.UserStates;
+using RoystonGame.TV.DataModels.States.GameStates;
+using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.DataModels;
 using RoystonGame.Web.DataModels.Enums;
@@ -18,7 +18,7 @@ using System.Linq;
 using static System.FormattableString;
 
 using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
+    RoystonGame.TV.DataModels.Users.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
     RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
 
@@ -28,7 +28,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
     {
         private UserState GetWordsUserState(Connector outlet = null)
         {
-            return new SimplePrompt_UserState(
+            return new SimplePromptUserState(
                 prompt: (User user) => new UserPrompt()
                 {
                     Title = "Game setup",
@@ -84,7 +84,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 }
 
                 var lambdaSafeIndex = index;
-                stateChain.Add(new SimplePrompt_UserState(
+                stateChain.Add(new SimplePromptUserState(
                     prompt: (User user) => new UserPrompt()
                     {
                         Title = Invariant($"Drawing {lambdaSafeIndex + 1} of {stateChain.Count()}"),
