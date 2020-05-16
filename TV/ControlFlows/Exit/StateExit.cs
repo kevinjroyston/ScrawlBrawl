@@ -14,16 +14,25 @@ namespace RoystonGame.TV.ControlFlows.Exit
 {
     public class StateExit : Inlet
     {
-        private Connector InternalOutlet { get; set; }
+
+        protected Inlet InternalOutlet { get; set; }
+        private Connector InternalOutletConnector { get; set; }
         private List<Action> Listeners { get; set; } = new List<Action>();
         private bool CalledListeners { get; set; } = false;
 
         public void SetInternalOutlet(Connector internalOutlet)
         {
-            this.InternalOutlet = internalOutlet;
+            this.InternalOutletConnector = internalOutlet;
+            this.InternalOutlet = new InletConnector(internalOutlet);
         }
 
-        public void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
+        public virtual void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
+        {
+            this.InvokeListeners();
+            this.InternalOutletConnector(user, stateResult, formSubmission);
+        }
+
+        protected void InvokeListeners()
         {
             if (!CalledListeners)
             {
@@ -32,7 +41,10 @@ namespace RoystonGame.TV.ControlFlows.Exit
                     listener.Invoke();
                 }
             }
-            this.InternalOutlet(user, stateResult, formSubmission);
+            else
+            {
+                throw new Exception("Cant invoke listeners twice");
+            }
         }
 
         public void AddListener(Action listener)
