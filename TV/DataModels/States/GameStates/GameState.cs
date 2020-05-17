@@ -1,15 +1,8 @@
 ﻿using RoystonGame.TV.ControlFlows.Enter;
 using RoystonGame.TV.ControlFlows.Exit;
-using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.Web.DataModels.Enums;
-using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System;
-
-using Connector = System.Action<
-    RoystonGame.TV.DataModels.Users.User,
-    RoystonGame.TV.DataModels.Enums.UserStateResult,
-    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
 
 namespace RoystonGame.TV.DataModels.States.GameStates
 {

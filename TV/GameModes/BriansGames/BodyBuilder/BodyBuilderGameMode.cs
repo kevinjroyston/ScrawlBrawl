@@ -1,19 +1,12 @@
-﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels.Users;
-using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.DataModels.States.GameStates;
+﻿using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels;
 using RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates;
 using RoystonGame.Web.DataModels.Requests.LobbyManagement;
-using RoystonGame.Web.DataModels.Requests;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using RoystonGame.Web.DataModels.Exceptions;
 using RoystonGame.TV.GameModes.BriansGames.Common.GameStates;
-using RoystonGame.TV.GameModes.Common.ThreePartPeople;
 using RoystonGame.TV.GameModes.Common.GameStates;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
@@ -22,10 +15,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
     {
         private List<Setup_Person> PeopleList { get; set; } = new List<Setup_Person>();
         private GameState Setup { get; set; }
-        private List<GameState> Gameplays { get; set; } = new List<GameState>();
-        private List<GameState> Scoreboards { get; set; } = new List<GameState>();
-        private List<GameState> DisplayPeoples { get; set; } = new List<GameState>();
-        private RoundTracker roundTracker = new RoundTracker();
+        private RoundTracker RoundTracker { get; } = new RoundTracker();
         public BodyBuilderGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             ValidateOptions(gameModeOptions);
@@ -39,7 +29,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                 GameState gameplay = new Gameplay_GS(
                         lobby: lobby,
                         setup_PeopleList: this.PeopleList,
-                        roundTracker: roundTracker,
+                        roundTracker: RoundTracker,
                         gameModeOptions: gameModeOptions,
                         displayPool: gameModeOptions[2].RadioAnswer == 1,
                         displayNames: gameModeOptions[1].RadioAnswer == 1);
@@ -52,7 +42,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                 GameState displayPeople = new DisplayPeople_GS(
                     lobby: lobby,
                     title: "Here's What Everyone Made",
-                    peopleList: roundTracker.AssignedPeople.Values.ToList());
+                    peopleList: RoundTracker.AssignedPeople.Values.ToList());
 
                 GameState scoreBoard = new ScoreBoardGameState(
                     lobby: lobby);

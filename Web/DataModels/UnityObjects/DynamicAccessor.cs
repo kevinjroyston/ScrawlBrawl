@@ -1,6 +1,5 @@
 ﻿using KellermanSoftware.CompareNetObjects;
 using System;
-using System.Text.Json.Serialization;
 
 namespace RoystonGame.Web.DataModels.UnityObjects
 {

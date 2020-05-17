@@ -1,8 +1,4 @@
-﻿using RoystonGame.TV.DataModels.Users;
-using RoystonGame.TV.DataModels.States.GameStates;
-using RoystonGame.TV.DataModels;
-using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.Web.DataModels.Requests;
+﻿using RoystonGame.TV.DataModels;
 
 namespace RoystonGame.TV.GameModes
 {

@@ -1,5 +1,4 @@
-﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.ControlFlows.Enter;
+﻿using RoystonGame.TV.ControlFlows.Enter;
 using RoystonGame.TV.ControlFlows.Exit;
 using RoystonGame.TV.Extensions;
 using RoystonGame.Web.DataModels.Enums;
@@ -8,10 +7,6 @@ using RoystonGame.Web.Helpers.Validation;
 using System.Collections.Generic;
 using System.Linq;
 using static System.FormattableString;
-using Connector = System.Action<
-    RoystonGame.TV.DataModels.Users.User,
-    RoystonGame.TV.DataModels.Enums.UserStateResult,
-    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
 
 namespace RoystonGame.TV.DataModels.States.GameStates
 {
@@ -21,8 +16,6 @@ namespace RoystonGame.TV.DataModels.States.GameStates
         {
             ((WaitForTrigger_StateExit)this.Exit)?.Trigger();
         }
-
-        private WaitForTrigger_StateExit WaitingState { get; }
 
         public WaitForLobbyCloseGameState(Lobby lobby, StateEntrance entrance = null)
             : base(

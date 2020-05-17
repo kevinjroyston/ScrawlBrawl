@@ -1,29 +1,20 @@
-﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels.Users;
-using RoystonGame.TV.DataModels.Enums;
+﻿using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.Extensions;
-using RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
-using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 using static System.FormattableString;
-
-using Connector = System.Action<
-    RoystonGame.TV.DataModels.Users.User,
-    RoystonGame.TV.DataModels.Enums.UserStateResult,
-    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
 using RoystonGame.TV.DataModels.States.StateGroups;
 using RoystonGame.TV.DataModels;
+using RoystonGame.TV.ControlFlows.Exit;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
 {
@@ -43,16 +34,22 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
             List<PeopleUserDrawing> drawingsToAdd = new List<PeopleUserDrawing>();
             for (int i = 0; i< numDrawingsPerUser; i++)
             {
-                PeopleUserDrawing headDrawing = new PeopleUserDrawing();
-                headDrawing.Type = DrawingType.Head;
+                PeopleUserDrawing headDrawing = new PeopleUserDrawing
+                {
+                    Type = DrawingType.Head
+                };
                 drawingsToAdd.Add(headDrawing);
 
-                PeopleUserDrawing bodyDrawing = new PeopleUserDrawing();
-                bodyDrawing.Type = DrawingType.Body;
+                PeopleUserDrawing bodyDrawing = new PeopleUserDrawing
+                {
+                    Type = DrawingType.Body
+                };
                 drawingsToAdd.Add(bodyDrawing);
 
-                PeopleUserDrawing legsDrawing = new PeopleUserDrawing();
-                legsDrawing.Type = DrawingType.Legs;
+                PeopleUserDrawing legsDrawing = new PeopleUserDrawing
+                {
+                    Type = DrawingType.Legs
+                };
                 drawingsToAdd.Add(legsDrawing);
             }
             drawingsToAdd = drawingsToAdd.OrderBy(_ => Rand.Next()).ToList();
@@ -126,7 +123,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         }
      
 
-        public Setup_GS(Lobby lobby, List<PeopleUserDrawing> drawings, List<(User, string)> prompts, int numDrawingsPerUserPerPart, int numPromptsPerUser) : base(lobby)
+        public Setup_GS(Lobby lobby, List<PeopleUserDrawing> drawings, List<(User, string)> prompts, int numDrawingsPerUserPerPart, int numPromptsPerUser)
+            : base(
+                  lobby: lobby,
+                  exit: new WaitForAllUsers_StateExit(lobby))
         {
             StateChain stateChain = new StateChain(GetDrawingsAndPromptsUserStateChain(
                 numDrawingsPerUser: numDrawingsPerUserPerPart,

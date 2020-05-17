@@ -3,8 +3,6 @@ using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 using Connector = System.Action<
     RoystonGame.TV.DataModels.Users.User,
@@ -14,10 +12,10 @@ using RoystonGame.TV.DataModels;
 
 namespace RoystonGame.TV.ControlFlows.Exit
 {
-    public class StateExit : Inlet
+    public class StateExit : IInlet
     {
 
-        protected Inlet InternalOutlet { get; set; }
+        protected IInlet InternalOutlet { get; set; }
         private Connector InternalOutletConnector { get; set; }
         private List<Action> Listeners { get; set; } = new List<Action>();
         private List<Action<User>> PerUserListeners { get; set; } = new List<Action<User>>();

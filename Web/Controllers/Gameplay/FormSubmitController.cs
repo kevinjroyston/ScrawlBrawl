@@ -23,14 +23,13 @@ namespace RoystonGame.Web.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] UserFormSubmission formData, string idOverride)
         {
-            string error = string.Empty;
             User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, Request.GetUserAgent(), idOverride, out bool newUser);
             if (user?.UserState == null || newUser)
             {
                 return BadRequest("Error finding user object, try again.");
             }
 
-            if (!SanitizeAllStrings(formData, out error))
+            if (!SanitizeAllStrings(formData, out string error))
             {
                 return BadRequest(error);
             }
@@ -82,8 +81,7 @@ namespace RoystonGame.Web.Controllers
                 {
                     continue;
                 }
-                var elems = propValue as IList;
-                if (elems != null)
+                if (propValue is IList elems)
                 {
                     foreach (var item in elems)
                     {
@@ -99,8 +97,7 @@ namespace RoystonGame.Web.Controllers
                     string regex = null;
                     foreach (object attr in attrs)
                     {
-                        RegexSanitizerAttribute regexAttr = attr as RegexSanitizerAttribute;
-                        if (regexAttr != null)
+                        if (attr is RegexSanitizerAttribute regexAttr)
                         {
                             regex = regexAttr.RegexPattern;
                         }

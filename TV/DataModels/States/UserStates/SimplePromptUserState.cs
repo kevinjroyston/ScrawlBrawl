@@ -7,7 +7,6 @@ using RoystonGame.TV.Extensions;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
-using System.Collections.Generic;
 
 namespace RoystonGame.TV.DataModels.States.UserStates
 {
@@ -17,23 +16,18 @@ namespace RoystonGame.TV.DataModels.States.UserStates
     public class SimplePromptUserState : UserState
     {
         public static UserPrompt DefaultWaitingPrompt(User user) => new UserPrompt() { Description = "Waiting . . ." };
-        public static UserPrompt YouHaveThePowerPrompt(User user) => new UserPrompt() { Title = "You have the power!", Description = "Click submit when everybody is ready :)", RefreshTimeInMs = 5000, SubmitButton = true };
+        public static UserPrompt YouHaveThePowerPrompt(User _) => new UserPrompt() { Title = "You have the power!", Description = "Click submit when everybody is ready :)", RefreshTimeInMs = 5000, SubmitButton = true };
 
-        private List<Func<User, UserFormSubmission, (bool, string)>> FormSubmitListeners { get; set; } = new List<Func<User, UserFormSubmission, (bool, string)>>();
+        private Func<User, UserFormSubmission, (bool, string)> FormSubmitListener { get; set; }
         public SimplePromptUserState(Func<User, UserPrompt> promptGenerator = null, TimeSpan? maxPromptDuration = null, Func<User, UserFormSubmission, (bool, string)> formSubmitListener = null, StateEntrance entrance = null, StateExit exit = null)
             : base(maxPromptDuration, promptGenerator ?? DefaultWaitingPrompt, entrance: entrance, exit: exit)
         {
             if (formSubmitListener != null)
             {
-                FormSubmitListeners.Add(formSubmitListener);
+                this.FormSubmitListener = formSubmitListener;
             }
             // Blackhole requests leaving Entrance. Once they properly submit they will make it to the exit.
             this.Entrance.Transition(new InletConnector());
-        }
-
-        public void AddFormSubmitListener(Func<User, UserFormSubmission, (bool, string)> listener)
-        {
-            FormSubmitListeners.Add(listener);
         }
 
         public override bool HandleUserFormInput(User user, UserFormSubmission userInput, out string error)
@@ -51,19 +45,16 @@ namespace RoystonGame.TV.DataModels.States.UserStates
 
 
             bool success = true;
-            foreach (var listener in this.FormSubmitListeners)
+            try
             {
-                try
-                {
-                    var successTuple = listener?.Invoke(user, userInput) ?? null;
-                    error = !string.IsNullOrWhiteSpace(error) ? error : (successTuple?.Item2 ?? string.Empty);
-                    success &= successTuple?.Item1 ?? true;
-                }
-                catch
-                {
-                    error = "Something went wrong.";
-                    return false;
-                }
+                var successTuple = this.FormSubmitListener?.Invoke(user, userInput) ?? null;
+                error = !string.IsNullOrWhiteSpace(error) ? error : (successTuple?.Item2 ?? string.Empty);
+                success &= successTuple?.Item1 ?? true;
+            }
+            catch
+            {
+                error = "Something went wrong.";
+                success = false;
             }
 
             if (!success)

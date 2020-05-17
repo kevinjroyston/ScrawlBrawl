@@ -13,11 +13,6 @@ using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
 using System;
 using System.Linq;
-using Connector = System.Action<
-    RoystonGame.TV.DataModels.Users.User,
-    RoystonGame.TV.DataModels.Enums.UserStateResult,
-    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
-using RoystonGame.TV.DataModels;
 using RoystonGame.TV.DataModels.States.StateGroups;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
@@ -25,14 +20,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
     public class BattleReadyGameMode : IGameMode
     {
         private List<PeopleUserDrawing> Drawings { get; set; } = new List<PeopleUserDrawing>();
-        private List<Prompt> Prompts { get; set; } = new List<Prompt>();
+        private List<Prompt> Prompts { get;} = new List<Prompt>();
         private GameState Setup { get; set; }
-        private List<GameState> Gameplays { get; set; } = new List<GameState>();
-        private List<GameState> Scoreboards { get; set; } = new List<GameState>();
-        private List<GameState> DisplayPeoples { get; set; } = new List<GameState>();
-        private Lobby gameLobby { get; set; }
-        private RoundTracker RoundTracker = new RoundTracker();
-        private Random Rand { get; set; } = new Random();
+        private RoundTracker RoundTracker { get; } = new RoundTracker();
+        private Random Rand { get; } = new Random();
         public BattleReadyGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             ValidateOptions(gameModeOptions);

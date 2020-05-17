@@ -1,9 +1,7 @@
 ﻿using RoystonGame.TV.DataModels.Users;
 using RoystonGame.Web.DataModels.Responses;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace RoystonGame.TV.ControlFlows.Exit
 {

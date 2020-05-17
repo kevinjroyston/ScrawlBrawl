@@ -1,6 +1,4 @@
-﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels.Users;
-using RoystonGame.TV.DataModels.Enums;
+﻿using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.Extensions;
@@ -16,11 +14,6 @@ using System.Diagnostics;
 using System.Linq;
 
 using static System.FormattableString;
-
-using Connector = System.Action<
-    RoystonGame.TV.DataModels.Users.User,
-    RoystonGame.TV.DataModels.Enums.UserStateResult,
-    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
 using RoystonGame.TV.ControlFlows.Exit;
 using RoystonGame.TV.DataModels;
 using RoystonGame.TV.DataModels.States.StateGroups;
@@ -66,7 +59,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 
         private List<ChallengeTracker> SubChallenges { get; set; }
 
-        private Random rand { get; set; } = new Random();
+        private Random Rand { get; set; } = new Random();
 
         /// <summary>
         /// Returns a chain of user states which will prompt for the proper drawings, assumes this.SubChallenges is fully set up.
@@ -76,7 +69,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
         private List<State> GetDrawingsUserStateChain(User user)
         {
             List<State> stateChain = new List<State>();
-            List<ChallengeTracker> challenges = this.SubChallenges.OrderBy(_ => rand.Next()).ToList();
+            List<ChallengeTracker> challenges = this.SubChallenges.OrderBy(_ => Rand.Next()).ToList();
             int index = 0;
             foreach (ChallengeTracker challenge in challenges)
             {
@@ -139,7 +132,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
         private void AssignPrompts(int maxDrawingsPerPrompt = 6)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
-            List<ChallengeTracker> randomizedOrderChallenges = this.SubChallenges.OrderBy(_ => rand.Next()).ToList();
+            List<ChallengeTracker> randomizedOrderChallenges = this.SubChallenges.OrderBy(_ => Rand.Next()).ToList();
             IReadOnlyList<User> users = this.Lobby.GetAllUsers();
             if (users.Count - 1 > maxDrawingsPerPrompt)
             {
@@ -156,11 +149,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 // Make 100 attempts at valid swaps
                 for (int i = 0; i < 100; i++)
                 {
-                    int rand1a = rand.Next(0, randomizedOrderChallenges.Count);
-                    int rand1b = rand.Next(0, randomizedOrderChallenges[0].UserSubmittedDrawings.Count);
+                    int rand1a = Rand.Next(0, randomizedOrderChallenges.Count);
+                    int rand1b = Rand.Next(0, randomizedOrderChallenges[0].UserSubmittedDrawings.Count);
 
-                    int rand2a = rand.Next(0, randomizedOrderChallenges.Count);
-                    int rand2b = rand.Next(0, randomizedOrderChallenges[0].UserSubmittedDrawings.Count);
+                    int rand2a = Rand.Next(0, randomizedOrderChallenges.Count);
+                    int rand2b = Rand.Next(0, randomizedOrderChallenges[0].UserSubmittedDrawings.Count);
 
                     User user1 = randomizedOrderChallenges[rand1a].UserSubmittedDrawings.Keys.ToList()[rand1b];
                     User user2 = randomizedOrderChallenges[rand2a].UserSubmittedDrawings.Keys.ToList()[rand2b];
@@ -196,7 +189,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             foreach (ChallengeTracker challenge in randomizedOrderChallenges)
             {
                 List<User> usersGivenPrompt = challenge.UserSubmittedDrawings.Keys.ToList();
-                challenge.OddOneOut = usersGivenPrompt[rand.Next(0, usersGivenPrompt.Count)];
+                challenge.OddOneOut = usersGivenPrompt[Rand.Next(0, usersGivenPrompt.Count)];
             }
 
             Debug.WriteLine(Invariant($"Assigned user prompts in ({stopwatch.ElapsedMilliseconds} ms)"), "Timing");

@@ -1,11 +1,9 @@
 ﻿using RoystonGame.TV.ControlFlows.Enter;
 using RoystonGame.TV.ControlFlows.Exit;
-using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace RoystonGame.TV.DataModels.States.StateGroups
 {
@@ -24,7 +22,7 @@ namespace RoystonGame.TV.DataModels.States.StateGroups
             this.Entrance.Transition(ChainCounter(counter: 0, stateGenerator: stateGenerator));
         }
 
-        private Func<Inlet> ChainCounter(int counter, Func<int, State> stateGenerator)
+        private Func<IInlet> ChainCounter(int counter, Func<int, State> stateGenerator)
         {
             return () =>
             {

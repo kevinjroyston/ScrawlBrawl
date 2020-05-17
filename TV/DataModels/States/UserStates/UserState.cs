@@ -1,19 +1,14 @@
-﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.ControlFlows.Enter;
+﻿using RoystonGame.TV.ControlFlows.Enter;
 using RoystonGame.TV.ControlFlows.Exit;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.Users;
-using RoystonGame.TV.Extensions;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-
-using static System.FormattableString;
 
 
 namespace RoystonGame.TV.DataModels.States.UserStates
@@ -105,14 +100,17 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             // Start timers after leaving entrance state.
             this.Entrance.AddExitListener(() =>
             {
-                // Make sure the user is calling refresh at or before this time to ensure a quick state transition.
-                this.DontRefreshLaterThan = DateTime.Now.Add(this.StateTimeoutDuration.Value).Add(Constants.DefaultBufferTime);
+                if (this.StateTimeoutDuration.HasValue)
+                {
+                    // Make sure the user is calling refresh at or before this time to ensure a quick state transition.
+                    this.DontRefreshLaterThan = DateTime.Now.Add(this.StateTimeoutDuration.Value).Add(Constants.DefaultBufferTime);
 
-                // Total state timeout timer duration.
-                int millisecondsDelay = (int)this.StateTimeoutDuration.Value.TotalMilliseconds;
+                    // Total state timeout timer duration.
+                    int millisecondsDelay = (int)this.StateTimeoutDuration.Value.TotalMilliseconds;
 
-                // Start and track the timeout thread.
-                this.StateTimeoutTask = TimeoutFunc(millisecondsDelay);
+                    // Start and track the timeout thread.
+                    this.StateTimeoutTask = TimeoutFunc(millisecondsDelay);
+                }
             });
         }
 

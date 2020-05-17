@@ -5,9 +5,7 @@ using RoystonGame.TV.Extensions;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace RoystonGame.TV.ControlFlows.Exit
 {
@@ -26,7 +24,7 @@ namespace RoystonGame.TV.ControlFlows.Exit
                   waitingPromptGenerator: waitingPromptGenerator)
         {
             this.PartyLeaderUserState = new SimplePromptUserState(partyLeaderPromptGenerator ?? SimplePromptUserState.YouHaveThePowerPrompt, formSubmitListener: partyLeaderFormSubmitListener);
-            this.PartyLeaderUserState.Transition(this.WaitingState);
+            this.PartyLeaderUserState.Transition(new InletConnector(base.Inlet));
         }
 
         /// <summary>

@@ -17,13 +17,12 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 using static System.FormattableString;
 using RoystonGame.TV.DataModels;
 
 namespace RoystonGame.TV
 {
-    public class Lobby : Inlet
+    public class Lobby : IInlet
     {
         /// <summary>
         /// An email address denoting what authenticated user created this lobby.

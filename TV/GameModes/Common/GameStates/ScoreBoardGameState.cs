@@ -1,17 +1,10 @@
-﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels.Users;
+﻿using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.DataModels.States.GameStates;
-using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Connector = System.Action<
-    RoystonGame.TV.DataModels.Users.User,
-    RoystonGame.TV.DataModels.Enums.UserStateResult,
-    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
 using RoystonGame.TV.ControlFlows.Exit;
 using RoystonGame.TV.Extensions;
 

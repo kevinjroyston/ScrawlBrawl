@@ -7,7 +7,6 @@ using RoystonGame.Web.DataModels.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 
 using static System.FormattableString;
 

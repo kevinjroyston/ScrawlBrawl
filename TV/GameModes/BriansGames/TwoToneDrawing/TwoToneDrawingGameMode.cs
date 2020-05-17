@@ -20,7 +20,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
         private List<GameState> Gameplay { get; set; } = new List<GameState>();
         private List<GameState> Scoreboards { get; set; } = new List<GameState>();
         private List<GameState> VoteReveals { get; set; } = new List<GameState>();
-        private Random rand { get; } = new Random();
+        private Random Rand { get; } = new Random();
         public TwoToneDrawingGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             //ValidateOptions(lobby, gameModeOptions);
@@ -29,7 +29,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
             Setup.Transition(() =>
             {
                 int index = 0;
-                foreach (ChallengeTracker challenge in SubChallenges.OrderBy(_ => rand.Next()))
+                foreach (ChallengeTracker challenge in SubChallenges.OrderBy(_ => Rand.Next()))
                 {
                     this.Gameplay.Add(new Gameplay_GS(lobby, challenge));
                     if (this.Scoreboards.Count > 0)

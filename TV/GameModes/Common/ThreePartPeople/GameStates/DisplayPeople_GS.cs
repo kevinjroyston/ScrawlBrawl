@@ -1,11 +1,7 @@
-﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels.Users;
-using RoystonGame.TV.DataModels.Enums;
+﻿using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.DataModels.States.GameStates;
-using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
 using RoystonGame.Web.DataModels.Enums;
-using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System;
@@ -44,10 +40,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.Common.GameStates
 
             this.Entrance.Transition(this.Exit);
 
-            backgroundColor = backgroundColor ?? ((person) => null);
-            imageIdentifier = imageIdentifier ?? ((person) => null);
-            imageTitle = imageTitle ?? ((person) => null);
-            imageHeader = imageHeader ?? ((person) => null);
+            backgroundColor ??= (person) => null;
+            imageIdentifier ??= (person) => null;
+            imageTitle ??= (person) => null;
+            imageHeader ??= (person) => null;
             var unityImages = new List<UnityImage>();
             foreach(Person person in peopleList)
             {

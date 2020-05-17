@@ -1,13 +1,10 @@
-﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.ControlFlows.Enter;
+﻿using RoystonGame.TV.ControlFlows.Enter;
 using RoystonGame.TV.ControlFlows.Exit;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.Users;
 using RoystonGame.Web.DataModels.Requests;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using static System.FormattableString;
 using Connector = System.Action<
     RoystonGame.TV.DataModels.Users.User,
@@ -19,12 +16,12 @@ namespace RoystonGame.TV.DataModels
     /// <summary>
     /// A state has an inlet and outlet.
     /// </summary>
-    public abstract class State : StateOutlet, Inlet
+    public abstract class State : StateOutlet, IInlet
     {
         public StateEntrance Entrance { get; private set; }
 
-        private List<Action> EntranceListeners = new List<Action>();
-        private List<Action<User>> PerUserEntranceListeners = new List<Action<User>>();
+        private List<Action> EntranceListeners { get; } = new List<Action>();
+        private List<Action<User>> PerUserEntranceListeners { get; } = new List<Action<User>>();
 
         private bool Entered = false;
 
@@ -62,7 +59,7 @@ namespace RoystonGame.TV.DataModels
         }
     }
 
-    public interface Inlet
+    public interface IInlet
     {
         /// <summary>
         /// The inlet to the transition.
@@ -85,18 +82,18 @@ namespace RoystonGame.TV.DataModels
         public abstract void AddPerUserEntranceListener(Action<User> listener);
     }
 
-    public interface Outlet
+    public interface IOutlet
     {
         /// <summary>
         /// Sets the outlet of the transition.
         /// </summary>
-        public abstract void SetOutlet(Inlet outlet, List<User> specificUsers = null);
+        public abstract void SetOutlet(IInlet outlet, List<User> specificUsers = null);
 
         /// <summary>
         /// Sets the outlet of the transition by calling <paramref name="outletGenerator"/> at the last possible moment (when FIRST user is leaving the state)
         /// </summary>
         /// <param name="outletGenerator"></param>
-        public abstract void SetOutlet(Func<Inlet> outletGenerator, List<User> specificUsers = null);
+        public abstract void SetOutlet(Func<IInlet> outletGenerator, List<User> specificUsers = null);
 
         /// <summary>
         /// Called immediately before the outlet is going to be used. This is your last possible chance to call SetOutlet.
@@ -111,7 +108,7 @@ namespace RoystonGame.TV.DataModels
         public abstract void AddPerUserExitListener(Action<User> listener);
     }
 
-    public abstract class StateOutlet : Outlet
+    public abstract class StateOutlet : IOutlet
     {
 
         #region Tracking
@@ -165,6 +162,11 @@ namespace RoystonGame.TV.DataModels
                 }
             }
 
+            foreach (var listener in this.PerUserStateEndingListeners)
+            {
+                listener?.Invoke(user);
+            }
+
             if (this.UserOutletOverrides.ContainsKey(user))
             {
                 this.UserOutletOverrides[user](user, result, input);
@@ -197,7 +199,7 @@ namespace RoystonGame.TV.DataModels
         /// Sets the outlet. This should be called before state is left!
         /// </summary>
         /// <param name="outlet">The callback to use.</param>
-        public void SetOutlet(Inlet outlet, List<User> specificUsers = null)
+        public void SetOutlet(IInlet outlet, List<User> specificUsers = null)
         {
             if (outlet == null)
             {
@@ -211,7 +213,7 @@ namespace RoystonGame.TV.DataModels
         /// Sets the outlet generator. This should be called before state is entered!
         /// </summary>
         /// <param name="outletGenerator">This will be called at the last moment to determine the inlet to transition to.</param>
-        public void SetOutlet(Func<Inlet> outletGenerator, List<User> specificUsers = null)
+        public void SetOutlet(Func<IInlet> outletGenerator, List<User> specificUsers = null)
         {
             if (outletGenerator == null)
             {
@@ -220,7 +222,7 @@ namespace RoystonGame.TV.DataModels
 
             //Debug.WriteLine(Invariant($"|||STATE SETUP|||{this.StateId}|{this.GetType()}|{(specificUsers == null ? "all users" : string.Join(", ", specificUsers.Select(user => user.DisplayName)))}"));
 
-            Action<User, UserStateResult, UserFormSubmission> internalOutlet = (User user, UserStateResult result, UserFormSubmission input) =>
+            void InternalOutlet(User user, UserStateResult result, UserFormSubmission input)
             {
                 // An outlet should only ever be called once per user. Ignore extra calls (most likely a timeout thread).
                 if (this.HaveAlreadyCalledOutlet.ContainsKey(user) && this.HaveAlreadyCalledOutlet[user] == true)
@@ -235,17 +237,17 @@ namespace RoystonGame.TV.DataModels
                     throw new Exception(Invariant($"Outlet not defined for User '{user.DisplayName}' who is currently in state type '{user.UserState.GetType()}'"));
                 }
                 outletGenerator().Inlet(user, result, input);
-            };
+            }
 
             if (specificUsers == null)
             {
-                this.InternalOutlet = internalOutlet;
+                this.InternalOutlet = InternalOutlet;
             }
             else
             {
                 foreach (User user in specificUsers)
                 {
-                    this.UserOutletOverrides[user] = internalOutlet;
+                    this.UserOutletOverrides[user] = InternalOutlet;
                 }
             }
         }

@@ -1,6 +1,4 @@
-﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels.Users;
-using RoystonGame.TV.DataModels.Enums;
+﻿using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.DataModels;
@@ -21,7 +19,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 {
     public class Gameplay_GS : GameState
     {
-        private Random rand { get; } = new Random();
+        private Random Rand { get; } = new Random();
         private static Func<User, UserPrompt> PickADrawing(ChallengeTracker challenge, List<string> choices) => (User user) =>
         {
             List<string> detailedChoices = choices.Select(val => (challenge.IdToDrawingMapping[val].Item1 == user) ? Invariant($"{val} - You drew this") : val).ToList();
@@ -60,7 +58,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
         {
             SubChallenge = challengeTracker;
             int i = 0;
-            foreach (var kvp in challengeTracker.UserSubmittedDrawings.OrderBy(_ => rand.Next()))
+            foreach (var kvp in challengeTracker.UserSubmittedDrawings.OrderBy(_ => Rand.Next()))
             {
                 i++;
                 challengeTracker.IdToDrawingMapping[i.ToString()] = (kvp.Key, kvp.Value);

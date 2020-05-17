@@ -19,7 +19,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 {
     public class Gameplay_GS : GameState
     {
-        private Random rand { get; } = new Random();
+        private Random Rand { get; } = new Random();
         private static Func<User, UserPrompt> PickADrawing(ChallengeTracker challenge, List<string> choices) => (User user) =>
         {
             List<string> detailedChoices = choices.Select(val => (challenge.UserSubmittedDrawings.ContainsKey(user) && challenge.UserSubmittedDrawings[user].TeamId == val) ? Invariant($"{val} - You helped draw this") : val).ToList();
@@ -78,14 +78,14 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             for(int i =0; i<500 && count<133; i++)
             {
                 var teamIds = SubChallenge.TeamIdToDrawingMapping.Keys.ToList();
-                string teamId1 = teamIds[rand.Next(teamIds.Count)];
-                string teamId2 = teamIds[rand.Next(teamIds.Count)];
+                string teamId1 = teamIds[Rand.Next(teamIds.Count)];
+                string teamId2 = teamIds[Rand.Next(teamIds.Count)];
                 if (teamId1 == teamId2)
                 {
                     continue;
                 }
                 var colors = SubChallenge.TeamIdToDrawingMapping[teamId1].Keys.ToList();
-                string color = colors[rand.Next(colors.Count)];
+                string color = colors[Rand.Next(colors.Count)];
                 TeamUserDrawing userDrawing1 = SubChallenge.TeamIdToDrawingMapping[teamId1][color];
                 TeamUserDrawing userDrawing2 = SubChallenge.TeamIdToDrawingMapping[teamId2][color];
                 SubChallenge.TeamIdToDrawingMapping[teamId1][color] = userDrawing2;

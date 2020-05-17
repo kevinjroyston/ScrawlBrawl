@@ -4,9 +4,6 @@ using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace RoystonGame.TV.ControlFlows.Exit
 {

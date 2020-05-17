@@ -139,6 +139,7 @@ namespace RoystonGame.TV
             catch (Exception e)
             {
                 Console.Error.WriteLine(e);
+                Debug.Assert(false, Invariant($"Error on user creation: {e}"));
                 newUser = false;
                 return null;
             }
@@ -167,6 +168,7 @@ namespace RoystonGame.TV
             catch (Exception e)
             {
                 Console.Error.WriteLine(e);
+                Debug.Assert(false, Invariant($"Error on create authenticated user: {e}"));
                 return null;
             }
         }

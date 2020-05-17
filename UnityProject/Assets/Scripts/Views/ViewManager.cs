@@ -43,7 +43,7 @@ public class ViewManager
             DefaultView?.ExitView();
         }
 
-        if (id.HasValue)
+        if (id.HasValue && AvailableTVViews.ContainsKey(id.Value))
         {
             AvailableTVViews[id.Value].EnterView(view);
         }

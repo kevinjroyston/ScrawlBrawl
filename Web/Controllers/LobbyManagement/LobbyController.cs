@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RoystonGame.TV;
 using RoystonGame.Web.DataModels;
 using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.Helpers.Extensions;
 using System;
-
-using static System.FormattableString;
 
 namespace RoystonGame.Web.Controllers.LobbyManagement
 {

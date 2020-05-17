@@ -3,8 +3,6 @@ using RoystonGame.TV.ControlFlows.Exit;
 using RoystonGame.TV.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace RoystonGame.TV.DataModels.States.StateGroups
 {
@@ -16,28 +14,28 @@ namespace RoystonGame.TV.DataModels.States.StateGroups
             // Child classes using this are expected to set transitions up themselves.
         }
 
-        public StateGroup(Inlet firstState, Outlet lastState, StateEntrance entrance = null, StateExit exit = null) : base(entrance: entrance, exit: exit)
+        public StateGroup(IInlet firstState, IOutlet lastState, StateEntrance entrance = null, StateExit exit = null) : base(entrance: entrance, exit: exit)
         {
             this.Entrance.Transition(firstState);
             lastState.Transition(this.Exit);
         }
-        public StateGroup(Func<Inlet> firstState, Outlet lastState, StateEntrance entrance = null, StateExit exit = null) : base(entrance: entrance, exit: exit)
+        public StateGroup(Func<IInlet> firstState, IOutlet lastState, StateEntrance entrance = null, StateExit exit = null) : base(entrance: entrance, exit: exit)
         {
             this.Entrance.Transition(firstState);
             lastState.Transition(this.Exit);
         }
-        public StateGroup(Inlet firstState, List<Outlet> lastStates, StateEntrance entrance = null, StateExit exit = null) : base(entrance: entrance, exit: exit)
+        public StateGroup(IInlet firstState, List<IOutlet> lastStates, StateEntrance entrance = null, StateExit exit = null) : base(entrance: entrance, exit: exit)
         {
             this.Entrance.Transition(firstState);
-            foreach (Outlet lastState in lastStates)
+            foreach (IOutlet lastState in lastStates)
             {
                 lastState.Transition(this.Exit);
             }
         }
-        public StateGroup(Func<Inlet> firstState, List<Outlet> lastStates, StateEntrance entrance = null, StateExit exit = null) : base(entrance: entrance, exit: exit)
+        public StateGroup(Func<IInlet> firstState, List<IOutlet> lastStates, StateEntrance entrance = null, StateExit exit = null) : base(entrance: entrance, exit: exit)
         {
             this.Entrance.Transition(firstState);
-            foreach (Outlet lastState in lastStates)
+            foreach (IOutlet lastState in lastStates)
             {
                 lastState.Transition(this.Exit);
             }

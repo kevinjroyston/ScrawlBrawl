@@ -2,9 +2,6 @@
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 using Connector = System.Action<
     RoystonGame.TV.DataModels.Users.User,
@@ -17,7 +14,7 @@ namespace RoystonGame.TV.ControlFlows
     /// <summary>
     /// Class whose sole purpose is to implement inlet interface to just use a standard connector.
     /// </summary>
-    public class InletConnector : Inlet
+    public class InletConnector : IInlet
     {
         private Connector InternalConnector { get; set; }
 
@@ -28,10 +25,7 @@ namespace RoystonGame.TV.ControlFlows
 
         public void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
-            if (this.InternalConnector != null)
-            {
-                this.InternalConnector(user, stateResult, formSubmission);
-            }
+            this.InternalConnector?.Invoke(user, stateResult, formSubmission);
         }
 
         public void AddEntranceListener(Action listener)

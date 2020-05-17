@@ -14,7 +14,7 @@ namespace RoystonGame.TV.ControlFlows
     /// <summary>
     /// Class whose sole purpose is to implement inlet and outlet interfaces in addition to executing a provided func.
     /// </summary>
-    public class InletOutletConnector : StateOutlet, Inlet
+    public class InletOutletConnector : StateOutlet, IInlet
     {
         private Connector InternalConnector { get; set; }
 
