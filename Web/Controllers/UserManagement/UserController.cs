@@ -12,7 +12,7 @@ namespace RoystonGame.Web.Controllers.UserManagement
         [Route("Reset")]
         public IActionResult ResetUser()
         {
-            GameManager.UnregisterUser(TV.DataModels.User.GetUserIdentifier(this.HttpContext.Connection.RemoteIpAddress, Request.GetUserAgent()));
+            GameManager.UnregisterUser(TV.DataModels.Users.User.GetUserIdentifier(this.HttpContext.Connection.RemoteIpAddress, Request.GetUserAgent()));
             return new OkResult();
         }
     }

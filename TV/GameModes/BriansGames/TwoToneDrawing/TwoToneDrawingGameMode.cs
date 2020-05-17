@@ -26,12 +26,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
             //ValidateOptions(lobby, gameModeOptions);
 
             Setup = new Setup_GS(lobby, this.SubChallenges, gameModeOptions);
-            Setup.AddListener(() =>
+            Setup.Transition(() =>
             {
                 int index = 0;
                 foreach (ChallengeTracker challenge in SubChallenges.OrderBy(_ => rand.Next()))
                 {
-                    this.Gameplay.Add(new Gameplay_GS(lobby, challenge, null));
+                    this.Gameplay.Add(new Gameplay_GS(lobby, challenge));
                     if (this.Scoreboards.Count > 0)
                     {
                         this.Scoreboards.Last()?.Transition(this.Gameplay.Last());
@@ -42,8 +42,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
                     this.VoteReveals.Last().Transition(this.Scoreboards.Last());
                     index++;
                 }
-                Setup.Transition(this.Gameplay[0]);
                 this.Scoreboards.Last().Transition(this.Exit);
+                return this.Gameplay[0];
             });
 
             this.Entrance.Transition(Setup);

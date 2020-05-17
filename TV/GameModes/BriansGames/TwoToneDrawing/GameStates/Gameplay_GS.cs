@@ -110,7 +110,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     return (true, string.Empty);
                 },
                 exit: new WaitForAllUsers_StateExit(lobby: this.Lobby));  
-            pickDrawing.AddListener(HandleStateEnding);
+            pickDrawing.AddExitListener(HandleStateEnding);
 
             void HandleStateEnding()
             {

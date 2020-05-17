@@ -22,6 +22,8 @@ using Connector = System.Action<
     RoystonGame.TV.DataModels.Users.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
     RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+using RoystonGame.TV.DataModels.States.StateGroups;
+using RoystonGame.TV.DataModels;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
 {
@@ -35,9 +37,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         /// <param name="user">The user to build a chain for.</param>
         /// <param name="outlet">The state to link the end of the chain to.</param>
         /// <returns>A list of user states designed for a given user.</returns>
-        private List<UserState> GetDrawingsAndPromptsUserStateChain(int numDrawingsPerUser, int numPromptsPerUser, List<PeopleUserDrawing> drawings, List<(User, string)> prompts, Connector outlet)
+        private List<State> GetDrawingsAndPromptsUserStateChain(int numDrawingsPerUser, int numPromptsPerUser, List<PeopleUserDrawing> drawings, List<(User, string)> prompts)
         {
-            List<UserState> stateChain = new List<UserState>();
+            List<State> stateChain = new List<State>();
             List<PeopleUserDrawing> drawingsToAdd = new List<PeopleUserDrawing>();
             for (int i = 0; i< numDrawingsPerUser; i++)
             {
@@ -120,25 +122,19 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                 promptNumber++;
             }
 
-            for (int i = 1; i < stateChain.Count; i++)
-            {
-                stateChain[i - 1].Transition(stateChain[i]);
-            }
-            stateChain.Last().SetOutlet(outlet);
-
             return stateChain;
         }
      
 
-        public Setup_GS(Lobby lobby, List<PeopleUserDrawing> drawings, List<(User, string)> prompts, int numDrawingsPerUserPerPart, int numPromptsPerUser, Connector outlet = null, Func<StateInlet> delayedOutlet = null) : base(lobby, outlet, delayedOutlet)
+        public Setup_GS(Lobby lobby, List<PeopleUserDrawing> drawings, List<(User, string)> prompts, int numDrawingsPerUserPerPart, int numPromptsPerUser) : base(lobby)
         {
-            State waitForAllDrawingsAndPrompts = new WaitForAllPlayers(lobby: lobby, outlet: this.Outlet);
-            this.Entrance = GetDrawingsAndPromptsUserStateChain(
+            StateChain stateChain = new StateChain(GetDrawingsAndPromptsUserStateChain(
                 numDrawingsPerUser: numDrawingsPerUserPerPart,
                 numPromptsPerUser: numPromptsPerUser,
                 drawings: drawings,
-                prompts: prompts,
-                outlet: waitForAllDrawingsAndPrompts.Inlet)[0];
+                prompts: prompts));
+            this.Entrance.Transition(stateChain);
+            stateChain.Transition(this.Exit);
             this.UnityView = new UnityView
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },

@@ -24,7 +24,7 @@ namespace RoystonGame.TV.ControlFlows.Exit
         public WaitForTrigger_StateExit(Func<User,UserPrompt> waitingPromptGenerator = null) : base()
         {
             this.WaitingState = new SimplePromptUserState(promptGenerator: waitingPromptGenerator ?? SimplePromptUserState.DefaultWaitingPrompt);
-            this.WaitingState.AddListener(() => this.InvokeListeners());
+            this.WaitingState.AddPerUserExitListener((User user) => this.InvokeEntranceListeners(user));
         }
 
         public override void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)

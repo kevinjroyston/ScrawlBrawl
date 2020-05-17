@@ -20,6 +20,7 @@ using Connector = System.Action<
     RoystonGame.TV.DataModels.Users.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
     RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+using RoystonGame.TV.ControlFlows.Exit;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
 {
@@ -47,26 +48,24 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
             };
         };
         Random Rand { get; set; } = new Random();
-        public Voting_GS(Lobby lobby, Prompt prompt, Connector outlet = null, Func<StateInlet> delayedOutlet = null) : base(lobby, outlet, delayedOutlet)
+        public Voting_GS(Lobby lobby, Prompt prompt) : base(lobby)
         {
             List<User>randomizedUsers = prompt.UsersToUserHands.Keys.OrderBy(_ => Rand.Next()).ToList();
             ConcurrentDictionary<User, (User, int)> usersToVoteResults = new ConcurrentDictionary<User, (User, int)>();
             SimplePromptUserState pickContestant = new SimplePromptUserState(
-                prompt: PickADrawing(prompt, randomizedUsers),
+                promptGenerator: PickADrawing(prompt, randomizedUsers),
                 formSubmitListener: (User user, UserFormSubmission submission) =>
                 {
                     User userVotedFor = randomizedUsers[(int)submission.SubForms[0].RadioAnswer];
                     int promptRanking = (int)submission.SubForms[1].DropdownChoice;
                     usersToVoteResults.TryAdd(user, (userVotedFor, promptRanking));
                     return (true, string.Empty);
-                });
-            this.Entrance = pickContestant;
-            State waitForUsers = new WaitForAllPlayers(lobby: this.Lobby, outlet: this.Outlet);
-            pickContestant.Transition(waitForUsers);
-            waitForUsers.SetOutlet(this.Outlet);
-            waitForUsers.AddStateEndingListener(() =>
+                },
+                exit: new WaitForAllUsers_StateExit(lobby));
+            this.Entrance.Transition(pickContestant);
+            pickContestant.AddExitListener(() =>
             {
-                foreach (User user in lobby.GetActiveUsers())
+                foreach (User user in lobby.GetAllUsers())
                 {
                     User userVotedFor = usersToVoteResults[user].Item1;
                     int promptRanking = usersToVoteResults[user].Item2;

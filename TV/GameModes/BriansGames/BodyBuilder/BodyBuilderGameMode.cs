@@ -65,7 +65,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                         peopleList: this.PeopleList);
                     displayPeople.Transition(finalDisplay);
                     finalDisplay.Transition(scoreBoard);
-                    scoreBoard.SetOutlet(this.Outlet);
+                    scoreBoard.Transition(this.Exit);
                 }
                 else
                 {
@@ -75,7 +75,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                 return displayPeople;
             }
             Setup.Transition(CreateGameplayGamestate);
-            this.EntranceState = Setup;
+            this.Entrance.Transition(Setup);
         }
 
 

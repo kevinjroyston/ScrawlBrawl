@@ -415,7 +415,12 @@ namespace RoystonGame.TV
             UsersInLobby.Clear();
         }
 
-        public void AddListener(Action listener)
+        public void AddEntranceListener(Action listener)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddPerUserEntranceListener(Action<User> listener)
         {
             throw new NotImplementedException();
         }

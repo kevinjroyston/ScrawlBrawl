@@ -89,7 +89,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 },
                 exit: new WaitForAllUsers_StateExit(lobby));
             this.Entrance.Transition(pickDrawing);
-            pickDrawing.AddListener(() => this.UpdateScores());
+            pickDrawing.AddExitListener(() => this.UpdateScores());
             pickDrawing.Transition(this.Exit);
 
             var unityImages = new List<UnityImage>();

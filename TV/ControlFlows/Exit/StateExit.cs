@@ -20,6 +20,7 @@ namespace RoystonGame.TV.ControlFlows.Exit
         protected Inlet InternalOutlet { get; set; }
         private Connector InternalOutletConnector { get; set; }
         private List<Action> Listeners { get; set; } = new List<Action>();
+        private List<Action<User>> PerUserListeners { get; set; } = new List<Action<User>>();
         private bool CalledListeners { get; set; } = false;
 
         public void SetInternalOutlet(Connector internalOutlet)
@@ -30,32 +31,43 @@ namespace RoystonGame.TV.ControlFlows.Exit
 
         public virtual void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
-            this.InvokeListeners();
+            this.InvokeEntranceListeners(user);
             this.InternalOutletConnector(user, stateResult, formSubmission);
         }
 
-        protected void InvokeListeners()
+        protected void InvokeEntranceListeners(User user)
         {
             if (!CalledListeners)
             {
+                CalledListeners = true;
                 foreach (Action listener in Listeners)
                 {
                     listener.Invoke();
                 }
             }
-            else
+
+            foreach (Action<User> listener in PerUserListeners)
             {
-                throw new Exception("Cant invoke listeners twice");
+                listener.Invoke(user);
             }
         }
 
-        public void AddListener(Action listener)
+        public void AddEntranceListener(Action listener)
         {
             if (CalledListeners)
             {
                 throw new Exception("Too late to add a listener!");
             }
             Listeners.Add(listener);
+        }
+
+        public void AddPerUserEntranceListener(Action<User> listener)
+        {
+            if (CalledListeners)
+            {
+                throw new Exception("Too late to add a listener!");
+            }
+            PerUserListeners.Add(listener);
         }
     }
 }

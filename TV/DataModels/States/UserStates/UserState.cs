@@ -99,14 +99,11 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             this.PromptGenerator = promptGenerator ?? throw new Exception("Prompt generator cannot be null");
             this.StateTimeoutDuration = stateTimeoutDuration;
 
-            // TODO: fix the below. its wrong
-            8
-            InletOutletConnector connect = new InletOutletConnector(InternalConnector);
-            this.Entrance.Transition(connect);
-            connect.Transition(this.Exit);
+            // Per user logic for tracking / moving user between states.
+            this.Entrance.AddPerUserExitListener(InternalPerUserInlet);
 
             // Start timers after leaving entrance state.
-            this.Entrance.AddListener(() =>
+            this.Entrance.AddExitListener(() =>
             {
                 // Make sure the user is calling refresh at or before this time to ensure a quick state transition.
                 this.DontRefreshLaterThan = DateTime.Now.Add(this.StateTimeoutDuration.Value).Add(Constants.DefaultBufferTime);
@@ -217,13 +214,7 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             this.ApplySpecialCallbackToAllUsersInState((User user) => this.Exit.Inlet(user, userStateResult, null));
         }
 
-        /// <summary>
-        /// Implements the Inlet interface so that other places can easily use GameStates, ControlFlows, or UserStates directly
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="result"></param>
-        /// <param name="userInput"></param>
-        private void InternalConnector(User user, UserStateResult result, UserFormSubmission userInput)
+        private void InternalPerUserInlet(User user)
         {
             //Debug.WriteLine(Invariant($"|||USER CALLED INLET|||{user.DisplayName}|{this.GetType()}|{this.StateId}"));
 

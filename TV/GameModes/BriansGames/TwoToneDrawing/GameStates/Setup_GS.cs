@@ -23,6 +23,8 @@ using Connector = System.Action<
     RoystonGame.TV.DataModels.Enums.UserStateResult,
     RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
 using RoystonGame.TV.DataModels;
+using RoystonGame.TV.ControlFlows.Exit;
+using RoystonGame.TV.DataModels.States.StateGroups;
 
 namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 {
@@ -33,7 +35,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
         private int TeamsPerPrompt { get; set; }
         private bool ShowColors { get; set; }
 
-        private UserState GetChallengesUserState(Inlet outlet = null)
+        private UserState GetChallengesUserState()
         {
             UserState toReturn = new SimplePromptUserState(
                 promptGenerator: (User user) =>
@@ -78,8 +80,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                         Colors = colors
                     });
                     return (true, string.Empty);
-                });
-            toReturn.Transition(outlet);
+                },
+                exit: new WaitForAllUsers_StateExit(this.Lobby));
             return toReturn;
         }
 
@@ -91,11 +93,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
         /// Returns a chain of user states which will prompt for the proper drawings, assumes this.SubChallenges is fully set up.
         /// </summary>
         /// <param name="user">The user to build a chain for.</param>
-        /// <param name="outlet">The state to link the end of the chain to.</param>
         /// <returns>A list of user states designed for a given user.</returns>
-        private List<UserState> GetDrawingsUserStateChain(User user, Inlet outlet)
+        private List<State> GetDrawingsUserStateChain(User user)
         {
-            List<UserState> stateChain = new List<UserState>();
+            List<State> stateChain = new List<State>();
             List<ChallengeTracker> challenges = this.SubChallenges.OrderBy(_ => rand.Next()).ToList();
             int index = 0;
             foreach (ChallengeTracker challenge in challenges)
@@ -133,12 +134,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 index++;
             }
 
-            for (int i = 1; i < stateChain.Count; i++)
-            {
-                stateChain[i - 1].Transition(stateChain[i]);
-            }
-            stateChain.Last().Transition(outlet);
-
             return stateChain;
         }
 
@@ -151,19 +146,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             this.TeamsPerPrompt = int.Parse(gameModeOptions[2].ShortAnswer);
             this.ShowColors = gameModeOptions[3].RadioAnswer.Value == 1;
 
-            // TODO: state chains as a service
-            State waitForAllDrawings = new WaitForAllPlayers(lobby: this.Lobby, outlet: this.Outlet);
-            State waitForAllPrompts = new WaitForAllPlayers(
-                lobby: this.Lobby,
-                outlet: (User user, UserStateResult result, UserFormSubmission input) =>
-                {
-                    // This call doesn't actually happen until after all prompts are submitted
-                    GetDrawingsUserStateChain(user, waitForAllDrawings.Inlet)[0].Inlet(user, result, input);
-                });
-            // Just before users call the line above, call AssignPrompts
-            waitForAllPrompts.AddStateEndingListener(() => this.AssignPrompts());
+            State getChallenges = GetChallengesUserState();
+            MultiStateChain getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForAllUsers_StateExit(this.Lobby));
 
-            this.Entrance = GetChallengesUserState(waitForAllPrompts.Inlet);
+            this.Entrance.Transition(getChallenges);
+            getChallenges.AddExitListener(() => this.AssignPrompts());
+            getChallenges.Transition(getDrawings);
+            getDrawings.Transition(this.Exit);
 
             this.UnityView = new UnityView
             {

@@ -21,6 +21,7 @@ using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 using static System.FormattableString;
 using RoystonGame.TV.DataModels;
 using RoystonGame.TV.ControlFlows.Exit;
+using RoystonGame.TV.DataModels.States.StateGroups;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 {
@@ -119,7 +120,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             };
 
         }
-        private Inlet AddGameplayCycle()
+        private State AddGameplayCycle()
         {
             /* ask users what changes they want to make
              * perform said changes
@@ -176,27 +177,27 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             });
   
             UserState promptAndWaitForUsers = new SelectivePromptUserState(
-                promptedPlayers: usersStillPlaying,
+                usersToPrompt: usersStillPlaying,
                 promptGenerator: PickADrawing,
                 formSubmitListener: PromptedUserFormSubmission,
                 exit: new WaitForAllUsers_StateExit(
                     lobby: this.Lobby,
                     waitingPromptGenerator: WaitingStatePromptGenerator));
-            
-            waitForUsers.AddListener(()=>
+
+            promptAndWaitForUsers.Transition(()=>
             {
                 if (this.GameFinished() || roundCount >= roundMaxTurnLimit)
                 {
-                    waitForUsers.Transition(this.Exit);
+                    return this.Exit;
                 }
                 else
                 {
                     roundCount++;
-                    waitForUsers.Transition(AddGameplayCycle());
+                    return AddGameplayCycle();
                 }
 
             });
-            return waitForUsers;
+            return promptAndWaitForUsers;
         }
         private void AssignPeople(List<Setup_Person> setup_People)
         {

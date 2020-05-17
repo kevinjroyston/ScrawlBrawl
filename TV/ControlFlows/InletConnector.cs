@@ -21,16 +21,25 @@ namespace RoystonGame.TV.ControlFlows
     {
         private Connector InternalConnector { get; set; }
 
-        public InletConnector(Connector internalConnector)
+        public InletConnector(Connector internalConnector = null)
         {
             InternalConnector = internalConnector;
         }
 
         public void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
-            this.InternalConnector(user, stateResult, formSubmission);
+            if (this.InternalConnector != null)
+            {
+                this.InternalConnector(user, stateResult, formSubmission);
+            }
         }
-        public void AddListener(Action listener)
+
+        public void AddEntranceListener(Action listener)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddPerUserEntranceListener(Action<User> listener)
         {
             throw new NotImplementedException();
         }

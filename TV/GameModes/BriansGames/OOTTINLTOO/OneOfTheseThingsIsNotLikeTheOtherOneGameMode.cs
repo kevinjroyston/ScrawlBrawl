@@ -27,7 +27,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO
             ValidateOptions(lobby, gameModeOptions);
 
             Setup = new Setup_GS(lobby, this.SubChallenges, int.Parse(gameModeOptions[0].ShortAnswer));
-            Setup.AddListener(() =>
+            Setup.Transition(() =>
             {
                 int index = 0;
                 foreach (ChallengeTracker challenge in SubChallenges.OrderBy(_ => rand.Next()))
@@ -44,8 +44,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO
                     this.Reveals.Last().Transition(this.Scoreboards.Last());
                     index++;
                 }
-                Setup.Transition(this.Gameplay[0]);
                 this.Scoreboards.Last().Transition(this.Exit);
+                return this.Gameplay[0];
             });
 
             this.Entrance.Transition(Setup);

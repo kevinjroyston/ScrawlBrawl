@@ -1,7 +1,9 @@
-﻿using RoystonGame.TV.ControlFlows.Enter;
+﻿using RoystonGame.TV.ControlFlows;
+using RoystonGame.TV.ControlFlows.Enter;
 using RoystonGame.TV.ControlFlows.Exit;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.Users;
+using RoystonGame.TV.Extensions;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
@@ -25,6 +27,8 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             {
                 FormSubmitListeners.Add(formSubmitListener);
             }
+            // Blackhole requests leaving Entrance. Once they properly submit they will make it to the exit.
+            this.Entrance.Transition(new InletConnector());
         }
 
         public void AddFormSubmitListener(Func<User, UserFormSubmission, (bool, string)> listener)

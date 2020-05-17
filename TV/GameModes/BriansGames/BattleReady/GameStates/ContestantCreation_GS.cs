@@ -22,6 +22,9 @@ using Connector = System.Action<
     RoystonGame.TV.DataModels.Users.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
     RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+using RoystonGame.TV.DataModels;
+using RoystonGame.TV.DataModels.States.StateGroups;
+using RoystonGame.TV.ControlFlows.Exit;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
 {
@@ -29,18 +32,16 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
     {
         private RoundTracker RoundTracker { get; set; }
 
-        public ContestantCreation_GS(Lobby lobby, RoundTracker roundTracker, Connector outlet = null, Func<StateInlet> delayedOutlet = null) : base(lobby, outlet, delayedOutlet)
+        public ContestantCreation_GS(Lobby lobby, RoundTracker roundTracker)
+            : base(
+                  lobby:lobby,
+                  exit: new WaitForAllUsers_StateExit(lobby))
         {
             this.RoundTracker = roundTracker;
+            MultiStateChain contestantsMultiStateChain = new MultiStateChain(MakePeopleUserStateChain);
 
-            State waitForAllPlayers = new WaitForAllPlayers(lobby: lobby, outlet: this.Outlet);
-            State waitForAllPlayersIntro = new WaitForAllPlayers(lobby: lobby);
-            Func<User, StateInlet> makePeopleStateChainHelper(Connector outlet)
-            {
-                return (user) => MakePeopleUserStateChain(user, outlet);
-            }
-            waitForAllPlayersIntro.Transition(makePeopleStateChainHelper(waitForAllPlayers.Inlet));
-            this.Entrance = waitForAllPlayersIntro;
+            this.Entrance.Transition(contestantsMultiStateChain);
+            contestantsMultiStateChain.Transition(this.Exit);
 
             this.UnityView = new UnityView
             {
@@ -49,14 +50,14 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
             };
         }
 
-        private StateInlet MakePeopleUserStateChain(User user, Connector outlet)
+        private List<State> MakePeopleUserStateChain(User user)
         {
-            List<UserState> stateChain = new List<UserState>();
+            List<State> stateChain = new List<State>();
             foreach(Prompt promptIter in RoundTracker.UsersToAssignedPrompts[user])
             {
                 Prompt prompt = promptIter;
                 stateChain.Add(new SimplePromptUserState(
-                    prompt: (User user) =>
+                    promptGenerator: (User user) =>
                     {       
                         return new UserPrompt
                         {
@@ -105,13 +106,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                     }
                     ));
             }
-            for (int i = 1; i < stateChain.Count; i++)
-            {
-                stateChain[i - 1].Transition(stateChain[i]);
-            }
-            stateChain.Last().SetOutlet(outlet);
-
-            return stateChain[0];
+            return stateChain;
         }
     }
 }

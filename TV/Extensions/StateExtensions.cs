@@ -18,7 +18,7 @@ namespace RoystonGame.TV.Extensions
         }
         public static void Transition(this Outlet A, Func<Inlet> B)
         {
-            A.AddListener(() =>
+            A.AddExitListener(() =>
             {
                 A.Transition(B());
             });

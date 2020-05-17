@@ -21,15 +21,18 @@ using Connector = System.Action<
     RoystonGame.TV.DataModels.Users.User,
     RoystonGame.TV.DataModels.Enums.UserStateResult,
     RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+using RoystonGame.TV.ControlFlows.Exit;
+using RoystonGame.TV.DataModels;
+using RoystonGame.TV.DataModels.States.StateGroups;
 
 namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 {
     public class Setup_GS : GameState
     {
-        private UserState GetWordsUserState(Connector outlet = null)
+        private UserState GetWordsUserState()
         {
             return new SimplePromptUserState(
-                prompt: (User user) => new UserPrompt()
+                promptGenerator: (User user) => new UserPrompt()
                 {
                     Title = "Game setup",
                     Description = "In the boxes below, enter two drawing prompts such that only you will be able to tell the drawings apart.",
@@ -48,7 +51,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     },
                     SubmitButton = true
                 },
-                outlet: outlet,
                 formSubmitListener: (User user, UserFormSubmission input) =>
                 {
                     this.SubChallenges.Add(new ChallengeTracker
@@ -58,7 +60,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                         DeceptionPrompt = input.SubForms[1].ShortAnswer,
                     });
                     return (true, string.Empty);
-                });
+                },
+                exit: new WaitForAllUsers_StateExit(this.Lobby));
         }
 
         private List<ChallengeTracker> SubChallenges { get; set; }
@@ -69,11 +72,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
         /// Returns a chain of user states which will prompt for the proper drawings, assumes this.SubChallenges is fully set up.
         /// </summary>
         /// <param name="user">The user to build a chain for.</param>
-        /// <param name="outlet">The state to link the end of the chain to.</param>
         /// <returns>A list of user states designed for a given user.</returns>
-        private List<UserState> GetDrawingsUserStateChain(User user, Connector outlet)
+        private List<State> GetDrawingsUserStateChain(User user)
         {
-            List<UserState> stateChain = new List<UserState>();
+            List<State> stateChain = new List<State>();
             List<ChallengeTracker> challenges = this.SubChallenges.OrderBy(_ => rand.Next()).ToList();
             int index = 0;
             foreach (ChallengeTracker challenge in challenges)
@@ -85,7 +87,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 
                 var lambdaSafeIndex = index;
                 stateChain.Add(new SimplePromptUserState(
-                    prompt: (User user) => new UserPrompt()
+                    promptGenerator: (User user) => new UserPrompt()
                     {
                         Title = Invariant($"Drawing {lambdaSafeIndex + 1} of {stateChain.Count()}"),
                         Description = "Draw the prompt below. Careful, if you aren't the odd one out and people think you are, you will lose points for being a terrible artist.",
@@ -107,28 +109,20 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 index++;
             }
 
-            for (int i = 1; i < stateChain.Count; i++)
-            {
-                stateChain[i - 1].Transition(stateChain[i]);
-            }
-            stateChain.Last().SetOutlet(outlet);
-
             return stateChain;
         }
 
-        public Setup_GS(Lobby lobby, List<ChallengeTracker> challengeTrackers, int numDrawingsPerPrompt, Connector outlet = null) : base(lobby, outlet)
+        public Setup_GS(Lobby lobby, List<ChallengeTracker> challengeTrackers, int numDrawingsPerPrompt) : base(lobby)
         {
             this.SubChallenges = challengeTrackers;
-            GetWordsUserState();
 
-            State waitForAllDrawings = new WaitForAllPlayers(this.Lobby, null, this.Outlet, null);
-            State waitForAllPrompts = new WaitForAllPlayers(this.Lobby, null, outlet: (User user, UserStateResult result, UserFormSubmission input) =>
-            {
-                GetDrawingsUserStateChain(user, waitForAllDrawings.Inlet)[0].Inlet(user, result, input);
-            });
-            waitForAllPrompts.AddStateEndingListener(() => this.AssignPrompts(numDrawingsPerPrompt));
+            State getWordsState = GetWordsUserState();
+            MultiStateChain contestantsMultiStateChain = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForAllUsers_StateExit(lobby));
 
-            this.Entrance = GetWordsUserState(waitForAllPrompts.Inlet);
+            this.Entrance.Transition(getWordsState);
+            getWordsState.AddExitListener(() => this.AssignPrompts(numDrawingsPerPrompt));
+            getWordsState.Transition(contestantsMultiStateChain);
+            contestantsMultiStateChain.Transition(this.Exit);
 
             this.UnityView = new UnityView
             {
@@ -146,7 +140,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             List<ChallengeTracker> randomizedOrderChallenges = this.SubChallenges.OrderBy(_ => rand.Next()).ToList();
-            IReadOnlyList<User> users = this.Lobby.GetActiveUsers();
+            IReadOnlyList<User> users = this.Lobby.GetAllUsers();
             if (users.Count - 1 > maxDrawingsPerPrompt)
             {
                 for (int i = 0; i < randomizedOrderChallenges.Count; i++)

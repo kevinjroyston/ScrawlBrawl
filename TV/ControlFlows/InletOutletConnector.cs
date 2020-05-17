@@ -1,4 +1,5 @@
-﻿using RoystonGame.TV.DataModels;
+﻿using System;
+using RoystonGame.TV.DataModels;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.Users;
 using RoystonGame.Web.DataModels.Requests;
@@ -26,6 +27,16 @@ namespace RoystonGame.TV.ControlFlows
         {
             this.InternalConnector(user, stateResult, formSubmission);
             this.Exit.Inlet(user, stateResult, formSubmission);
+        }
+
+        public void AddEntranceListener(Action listener)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddPerUserEntranceListener(Action<User> listener)
+        {
+            throw new NotImplementedException();
         }
     }
 }

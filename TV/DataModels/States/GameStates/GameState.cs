@@ -31,7 +31,7 @@ namespace RoystonGame.TV.DataModels.States.GameStates
         public GameState(Lobby lobby, StateEntrance entrance = null, StateExit exit = null) : base(entrance: entrance, exit: exit)
         {
             Lobby = lobby;
-            this.Entrance.AddListener(() =>
+            this.Entrance.AddExitListener(() =>
             {
                 // When we are leaving the entrance / entering this state. Tell our lobby to update the current gamestate to be this one.
                 this.Lobby.TransitionCurrentGameState(this);
