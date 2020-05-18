@@ -1,8 +1,6 @@
-﻿using RoystonGame.TV.DataModels;
+﻿using RoystonGame.TV.DataModels.Users;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using RoystonGame.TV.GameModes.Common.DataModels;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System.Drawing;

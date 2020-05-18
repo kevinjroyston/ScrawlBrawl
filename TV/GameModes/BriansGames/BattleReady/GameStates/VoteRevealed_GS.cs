@@ -1,20 +1,14 @@
-﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels;
-using RoystonGame.TV.DataModels.GameStates;
-using RoystonGame.TV.DataModels.UserStates;
+﻿using RoystonGame.TV.DataModels.Users;
+using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
-    RoystonGame.TV.DataModels.Enums.UserStateResult,
-    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+using RoystonGame.TV.ControlFlows.Exit;
+using RoystonGame.TV.Extensions;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
 {
@@ -26,18 +20,14 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
             SubmitButton = true
         };
 
-        public VoteRevealed_GS(Lobby lobby, Prompt prompt, Connector outlet = null, TimeSpan? maxWaitTime = null, Func<StateInlet> delayedOutlet = null) : base(lobby, outlet, delayedOutlet)
+        public VoteRevealed_GS(Lobby lobby, Prompt prompt, TimeSpan? maxWaitTime = null)
+            : base(
+                  lobby: lobby,
+                  exit: new WaitForPartyLeader_StateExit(
+                      lobby: lobby,
+                      partyLeaderPromptGenerator: PartyLeaderSkipButton))
         {
-            UserState partyLeaderState = new SimplePromptUserState(prompt: PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
-            WaitingUserState waitingState = new WaitingUserState(maxWaitTime: maxWaitTime);
-
-            State waitForLeader = new WaitForPartyLeader(
-                lobby: this.Lobby,
-                outlet: this.Outlet,
-                partyLeaderPrompt: partyLeaderState,
-                waitingState: waitingState);
-
-            this.Entrance = waitForLeader;
+            this.Entrance.Transition(this.Exit);
 
             this.UnityView = new UnityView
             {

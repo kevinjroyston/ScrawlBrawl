@@ -1,11 +1,8 @@
-﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels;
-using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.DataModels.GameStates;
-using RoystonGame.TV.DataModels.UserStates;
+﻿using RoystonGame.TV.DataModels.Users;
+using RoystonGame.TV.DataModels.States.GameStates;
+using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels;
-using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
@@ -14,17 +11,14 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
-    RoystonGame.TV.DataModels.Enums.UserStateResult,
-    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+using RoystonGame.TV.ControlFlows.Exit;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
 {
     public class Voting_GS : GameState
     {
+        private Random Rand { get; set; } = new Random();
+
         private static Func<User, UserPrompt> PickADrawing(Prompt prompt, List<User> randomizedUsers) => (User user) =>
         {
             return new UserPrompt
@@ -46,27 +40,26 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                 SubmitButton = true,
             };
         };
-        Random Rand { get; set; } = new Random();
-        public Voting_GS(Lobby lobby, Prompt prompt, Connector outlet = null, Func<StateInlet> delayedOutlet = null) : base(lobby, outlet, delayedOutlet)
+
+        public Voting_GS(Lobby lobby, Prompt prompt) : base(lobby)
         {
             List<User>randomizedUsers = prompt.UsersToUserHands.Keys.OrderBy(_ => Rand.Next()).ToList();
             ConcurrentDictionary<User, (User, int)> usersToVoteResults = new ConcurrentDictionary<User, (User, int)>();
             SimplePromptUserState pickContestant = new SimplePromptUserState(
-                prompt: PickADrawing(prompt, randomizedUsers),
+                promptGenerator: PickADrawing(prompt, randomizedUsers),
                 formSubmitListener: (User user, UserFormSubmission submission) =>
                 {
                     User userVotedFor = randomizedUsers[(int)submission.SubForms[0].RadioAnswer];
                     int promptRanking = (int)submission.SubForms[1].DropdownChoice;
                     usersToVoteResults.TryAdd(user, (userVotedFor, promptRanking));
                     return (true, string.Empty);
-                });
-            this.Entrance = pickContestant;
-            State waitForUsers = new WaitForAllPlayers(lobby: this.Lobby, outlet: this.Outlet);
-            pickContestant.Transition(waitForUsers);
-            waitForUsers.SetOutlet(this.Outlet);
-            waitForUsers.AddStateEndingListener(() =>
+                },
+                exit: new WaitForAllUsers_StateExit(lobby));
+            this.Entrance.Transition(pickContestant);
+            pickContestant.Transition(this.Exit);
+            pickContestant.AddExitListener(() =>
             {
-                foreach (User user in lobby.GetActiveUsers())
+                foreach (User user in lobby.GetAllUsers())
                 {
                     User userVotedFor = usersToVoteResults[user].Item1;
                     int promptRanking = usersToVoteResults[user].Item2;

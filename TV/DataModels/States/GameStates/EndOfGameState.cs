@@ -1,6 +1,7 @@
-﻿using RoystonGame.TV.ControlFlows;
+﻿using RoystonGame.TV.ControlFlows.Exit;
 using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.DataModels.UserStates;
+using RoystonGame.TV.DataModels.Users;
+using RoystonGame.TV.Extensions;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
@@ -8,12 +9,8 @@ using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
-    RoystonGame.TV.DataModels.Enums.UserStateResult,
-    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
 
-namespace RoystonGame.TV.DataModels.GameStates
+namespace RoystonGame.TV.DataModels.States.GameStates
 {
     public class EndOfGameState : GameState
     {
@@ -32,31 +29,31 @@ namespace RoystonGame.TV.DataModels.GameStates
             SubmitButton = true,
         };
 
-        private static Dictionary<EndOfGameRestartType, string> RestartTypes = new Dictionary<EndOfGameRestartType, string>()
+        private static readonly Dictionary<EndOfGameRestartType, string> RestartTypes = new Dictionary<EndOfGameRestartType, string>()
         {
             { EndOfGameRestartType.SameGameAndPlayers, "Replay" },
             { EndOfGameRestartType.SamePlayers, "New game, Same players" },
             { EndOfGameRestartType.NewPlayers, "Change Players" },
         };
 
-        public EndOfGameState(Lobby lobby, Action<EndOfGameRestartType> endOfGameRestartCallback, Connector outlet = null) : base(lobby, outlet)
+        public EndOfGameState(Lobby lobby, Action<EndOfGameRestartType> endOfGameRestartCallback)
+            : base(
+                  lobby,
+                  exit: new WaitForPartyLeader_StateExit(
+                      lobby: lobby,
+                      partyLeaderPromptGenerator: ContinuePrompt,
+                      partyLeaderFormSubmitListener: (User user, UserFormSubmission submission) =>
+                      {
+                          int? selectedIndex = submission.SubForms[0].RadioAnswer;
+                          if (selectedIndex == null)
+                          {
+                              throw new Exception("Should have been caught in user input validation");
+                          }
+                          endOfGameRestartCallback(RestartTypes.Keys.ToList()[selectedIndex.Value]);
+                          return (true, string.Empty);
+                      }))
         {
-            UserState partyLeaderPrompt = new SimplePromptUserState(prompt: ContinuePrompt);
-            State waitForLeader = new WaitForPartyLeader(
-                lobby: this.Lobby,
-                outlet: this.Outlet,
-                partyLeaderPrompt: partyLeaderPrompt,
-                partyLeaderSubmission: (User user, UserStateResult result, UserFormSubmission userInput) =>
-                {
-                    int? selectedIndex = userInput.SubForms[0].RadioAnswer;
-                    if (selectedIndex == null)
-                    {
-                        throw new Exception("Should have been caught in user input validation");
-                    }
-                    endOfGameRestartCallback(RestartTypes.Keys.ToList()[selectedIndex.Value]);
-                });
-
-            this.Entrance = waitForLeader;
+            this.Entrance.Transition(this.Exit);
 
             this.UnityView = new UnityView
             {

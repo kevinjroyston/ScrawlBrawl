@@ -1,15 +1,10 @@
-﻿using RoystonGame.TV.DataModels.Enums;
+﻿using RoystonGame.TV.ControlFlows.Enter;
+using RoystonGame.TV.ControlFlows.Exit;
 using RoystonGame.Web.DataModels.Enums;
-using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 
-using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
-    RoystonGame.TV.DataModels.Enums.UserStateResult,
-    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
-
-namespace RoystonGame.TV.DataModels.GameStates
+namespace RoystonGame.TV.DataModels.States.GameStates
 {
     /// <summary>
     /// Class defining a GameState. A GameState FSM only has one walker, unlike a UserState FSM which has many.
@@ -20,54 +15,20 @@ namespace RoystonGame.TV.DataModels.GameStates
     /// </summary>
     public abstract class GameState : State
     {
-        protected StateInlet Entrance { get; set; }
         protected Lobby Lobby { get; }
-
-        #region TrackingFlags
-        private bool CalledEnterState { get; set; } = false;
-
-        #endregion
 
         /// <summary>
         /// Initializes a GameState to be used in a FSM.
         /// </summary>
         /// <param name="lobby">The lobby this gamestate belongs to.</param>
-        /// <param name="userOutlet">Called back when the state completes.</param>
-        public GameState(Lobby lobby, Connector userOutlet = null, Func<StateInlet> delayedOutlet = null): base (outlet: userOutlet, delayedOutlet: delayedOutlet)
+        public GameState(Lobby lobby, StateEntrance entrance = null, StateExit exit = null) : base(entrance: entrance, exit: exit)
         {
             Lobby = lobby;
-        }
-
-        /// <summary>
-        /// Called when the state is entered by the game.
-        /// </summary>
-        private void EnterState()
-        {
-            // If the game already entered this state once fail.
-            if (this.CalledEnterState)
+            this.Entrance.AddExitListener(() =>
             {
-                throw new Exception("This GameState has already been entered once. Please use a new state instance.");
-            }
-
-            this.CalledEnterState = true;
-            this.Lobby.TransitionCurrentGameState(this);
-        }
-
-        /// <summary>
-        /// The entrance state for users. Game orchestrator is responsible for sending all users here. Either all at once, or one at a time depending on the use case.
-        /// </summary>
-        public override void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
-        {
-            if (!this.CalledEnterState)
-            {
-                EnterState();
-            }
-
-            if (Entrance == null)
-            {
-                throw new Exception("Entrance of gamestate has not been set!!");
-            }
-            Entrance.Inlet(user, stateResult, formSubmission);
+                // When we are leaving the entrance / entering this state. Tell our lobby to update the current gamestate to be this one.
+                this.Lobby.TransitionCurrentGameState(this);
+            });
         }
 
         #region TVRendering

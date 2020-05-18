@@ -1,20 +1,13 @@
-﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels;
-using RoystonGame.TV.DataModels.GameStates;
-using RoystonGame.TV.DataModels.UserStates;
+﻿using RoystonGame.TV.DataModels.Users;
+using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.DataModels;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 using System.Collections.Generic;
-
-using static System.FormattableString;
-
-using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
-    RoystonGame.TV.DataModels.Enums.UserStateResult,
-    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+using RoystonGame.TV.ControlFlows.Exit;
+using RoystonGame.TV.Extensions;
 
 namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 {
@@ -26,23 +19,19 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             SubmitButton = true
         };
 
-        public ImposterRevealed_GS(Lobby lobby, ChallengeTracker challenge, Connector outlet = null, TimeSpan? maxWaitTime = null) : base(lobby, outlet)
+        public ImposterRevealed_GS(Lobby lobby, ChallengeTracker challenge)
+            : base(
+                  lobby,
+                  exit: new WaitForPartyLeader_StateExit(
+                      lobby: lobby,
+                      partyLeaderPromptGenerator: PartyLeaderSkipButton))
         {
-            UserState partyLeaderState = new SimplePromptUserState(PartyLeaderSkipButton, maxPromptDuration: maxWaitTime);
-            WaitingUserState waitingState = new WaitingUserState(maxWaitTime: maxWaitTime);
-
-            State waitForLeader = new WaitForPartyLeader(
-                lobby: this.Lobby,
-                outlet: this.Outlet,
-                partyLeaderPrompt: partyLeaderState,
-                waitingState: waitingState);
-
-            this.Entrance = waitForLeader;
+            this.Entrance.Transition(this.Exit);
 
             var unityImages = new List<UnityImage>();
             foreach ((User user, string userDrawing) in challenge.IdToDrawingMapping.Values)
             {
-                Func<int?> footer = () => (user == challenge.OddOneOut) ? challenge.UsersWhoFoundOOO.Count : (challenge.UsersWhoConfusedWhichUsers.ContainsKey(user) ? challenge.UsersWhoConfusedWhichUsers[user].Count : 0);
+                int? footer() => (user == challenge.OddOneOut) ? challenge.UsersWhoFoundOOO.Count : (challenge.UsersWhoConfusedWhichUsers.ContainsKey(user) ? challenge.UsersWhoConfusedWhichUsers[user].Count : 0);
                 unityImages.Add(new UnityImage
                 {
                     Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string> { userDrawing } },

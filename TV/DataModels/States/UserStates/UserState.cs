@@ -1,21 +1,17 @@
-﻿using RoystonGame.TV.DataModels.Enums;
+﻿using RoystonGame.TV.ControlFlows.Enter;
+using RoystonGame.TV.ControlFlows.Exit;
+using RoystonGame.TV.DataModels.Enums;
+using RoystonGame.TV.DataModels.Users;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-using static System.FormattableString;
 
-using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
-    RoystonGame.TV.DataModels.Enums.UserStateResult,
-    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
-
-namespace RoystonGame.TV.DataModels.UserStates
+namespace RoystonGame.TV.DataModels.States.UserStates
 {
     /// <summary>
     /// A UserState should only ever be responsible for 1 prompt / response cycle. The user can refresh the prompt several times, the user
@@ -91,13 +87,31 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// <summary>
         /// Creates a new user state.
         /// </summary>
-        /// <param name="outlet">The default outlet for all users. <see cref="SetOutlet"/> for user specific outlet configuring.</param>
         /// <param name="stateTimeoutDuration">The maximum amount of time to spend in this userstate.</param>
         /// <param name="promptGenerator">A function to be called the first time a user requests a prompt.</param>
-        public UserState(Connector outlet, TimeSpan? stateTimeoutDuration, Func<User, UserPrompt> promptGenerator, Func<StateInlet> delayedOutlet = null): base (outlet: outlet, delayedOutlet: delayedOutlet)
+        public UserState(TimeSpan? stateTimeoutDuration, Func<User, UserPrompt> promptGenerator, StateEntrance entrance, StateExit exit) : base(entrance: entrance, exit: exit)
         {
             this.PromptGenerator = promptGenerator ?? throw new Exception("Prompt generator cannot be null");
             this.StateTimeoutDuration = stateTimeoutDuration;
+
+            // Per user logic for tracking / moving user between states.
+            this.Entrance.AddPerUserExitListener(InternalPerUserInlet);
+
+            // Start timers after leaving entrance state.
+            this.Entrance.AddExitListener(() =>
+            {
+                if (this.StateTimeoutDuration.HasValue)
+                {
+                    // Make sure the user is calling refresh at or before this time to ensure a quick state transition.
+                    this.DontRefreshLaterThan = DateTime.Now.Add(this.StateTimeoutDuration.Value).Add(Constants.DefaultBufferTime);
+
+                    // Total state timeout timer duration.
+                    int millisecondsDelay = (int)this.StateTimeoutDuration.Value.TotalMilliseconds;
+
+                    // Start and track the timeout thread.
+                    this.StateTimeoutTask = TimeoutFunc(millisecondsDelay);
+                }
+            });
         }
 
 
@@ -113,7 +127,7 @@ namespace RoystonGame.TV.DataModels.UserStates
                 await Task.Delay(millisecondsDelay).ConfigureAwait(false);
             }
 
-            this.ApplySpecialCallbackToAllUsersInState((User user) => this.Outlet(user, UserStateResult.Timeout, null));
+            this.ApplySpecialCallbackToAllUsersInState((User user) => this.Exit.Inlet(user, UserStateResult.Timeout, null));
         }
 
         /// <summary>
@@ -195,18 +209,12 @@ namespace RoystonGame.TV.DataModels.UserStates
         /// </summary>
         public void ForceChangeOfUserStates(UserStateResult userStateResult)
         {
-            this.ApplySpecialCallbackToAllUsersInState((User user) => this.Outlet(user, userStateResult, null));
+            this.ApplySpecialCallbackToAllUsersInState((User user) => this.Exit.Inlet(user, userStateResult, null));
         }
 
-        /// <summary>
-        /// Implements the Inlet interface so that other places can easily use GameStates, ControlFlows, or UserStates directly
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="result"></param>
-        /// <param name="userInput"></param>
-        public override void Inlet(User user, UserStateResult result, UserFormSubmission userInput)
+        private void InternalPerUserInlet(User user)
         {
-            Debug.WriteLine(Invariant($"|||USER CALLED INLET|||{user.DisplayName}|{this.GetType()}|{this.StateId}"));
+            //Debug.WriteLine(Invariant($"|||USER CALLED INLET|||{user.DisplayName}|{this.GetType()}|{this.StateId}"));
 
             // If the user already entered this state once fail.
             if (this.CalledEnterState.ContainsKey(user) && this.CalledEnterState[user])
@@ -219,22 +227,6 @@ namespace RoystonGame.TV.DataModels.UserStates
             {
                 this.SpecialCallbackAppliedToAllUsersInState(user);
                 return;
-            }
-
-            // First user entering a state triggers the timers.
-            if (!this.CalledEnterState.Values.Any())
-            {
-                if (this.StateTimeoutDuration.HasValue)
-                {
-                    // Make sure the user is calling refresh at or before this time to ensure a quick state transition.
-                    this.DontRefreshLaterThan = DateTime.Now.Add(this.StateTimeoutDuration.Value).Add(Constants.DefaultBufferTime);
-
-                    // Total state timeout timer duration.
-                    int millisecondsDelay = (int)this.StateTimeoutDuration.Value.TotalMilliseconds;
-
-                    // Start and track the timeout thread.
-                    this.StateTimeoutTask = TimeoutFunc(millisecondsDelay);
-                }
             }
 
             this.CalledEnterState[user] = true;

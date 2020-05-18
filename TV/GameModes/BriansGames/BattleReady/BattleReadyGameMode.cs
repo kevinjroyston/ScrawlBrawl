@@ -1,4 +1,4 @@
-﻿using RoystonGame.TV.DataModels.GameStates;
+﻿using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels;
 using RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates;
@@ -9,28 +9,21 @@ using RoystonGame.TV.GameModes.Common.GameStates;
 using RoystonGame.TV.GameModes.BriansGames.Common.GameStates;
 using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 using static System.FormattableString;
-using RoystonGame.TV.DataModels;
+using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
 using System;
 using System.Linq;
-using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
-    RoystonGame.TV.DataModels.Enums.UserStateResult,
-    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+using RoystonGame.TV.DataModels.States.StateGroups;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
 {
     public class BattleReadyGameMode : IGameMode
     {
         private List<PeopleUserDrawing> Drawings { get; set; } = new List<PeopleUserDrawing>();
-        private List<Prompt> Prompts { get; set; } = new List<Prompt>();
+        private List<Prompt> Prompts { get;} = new List<Prompt>();
         private GameState Setup { get; set; }
-        private List<GameState> Gameplays { get; set; } = new List<GameState>();
-        private List<GameState> Scoreboards { get; set; } = new List<GameState>();
-        private List<GameState> DisplayPeoples { get; set; } = new List<GameState>();
-        private Lobby gameLobby { get; set; }
-        private RoundTracker RoundTracker = new RoundTracker();
-        private Random Rand { get; set; } = new Random();
+        private RoundTracker RoundTracker { get; } = new RoundTracker();
+        private Random Rand { get; } = new Random();
         public BattleReadyGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             ValidateOptions(gameModeOptions);
@@ -43,7 +36,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             int numOfEachPartInHand = 3;
             int numUsersPerPrompt = 2;
 
-            int numPromptsEachRound = numPromptForEachUsersPerRound * lobby.GetActiveUsers().Count / numUsersPerPrompt;
+            int numPromptsEachRound = numPromptForEachUsersPerRound * lobby.GetAllUsers().Count / numUsersPerPrompt;
             int numPromptsNeededFromUser = numRounds * numPromptForEachUsersPerRound / numUsersPerPrompt;
 
             Setup = new Setup_GS(
@@ -53,12 +46,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 numDrawingsPerUserPerPart: numDrawingsPerPersonPerPart,
                 numPromptsPerUser: numPromptsNeededFromUser);
 
-            Setup.AddStateEndingListener(() =>
+            Setup.AddExitListener(() =>
             {
                 List<PeopleUserDrawing> randomizedHeads = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Head).OrderBy(_ => Rand.Next()).ToList();
                 List<PeopleUserDrawing> randomizedBodies = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Body).OrderBy(_ => Rand.Next()).ToList();
                 List<PeopleUserDrawing> randomizedLegs = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Legs).OrderBy(_ => Rand.Next()).ToList();
-                int totalDrawings = lobby.GetActiveUsers().Count* numPromptForEachUsersPerRound* 3*numOfEachPartInHand;
+                int totalDrawings = lobby.GetAllUsers().Count* numPromptForEachUsersPerRound* 3*numOfEachPartInHand;
                 while (Drawings.Count < totalDrawings)
                 {
                     if(randomizedHeads.Count*randomizedBodies.Count*randomizedLegs.Count == 0)
@@ -108,7 +101,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 
                 for (int i = 0; i < numPromptForEachUsersPerRound; i++)
                 {
-                    foreach (User user in lobby.GetActiveUsers())
+                    foreach (User user in lobby.GetAllUsers())
                     {
                         List<Prompt> roundPromptsCopy = roundPrompts.ToList();
                         Prompt randPrompt = null;
@@ -143,46 +136,44 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                     }
 
                 }
-                return new ContestantCreation_GS(
+                GameState toReturn = new ContestantCreation_GS(
                         lobby: lobby,
-                        roundTracker: RoundTracker,
-                        delayedOutlet: CreateVotingGameState(roundPrompts)
-                        );     
+                        roundTracker: RoundTracker);
+                toReturn.Transition(CreateVotingGameStates(roundPrompts));
+                return toReturn;
             }
-            Func<GameState> CreateVotingGameState(List<Prompt> roundPrompts)
+            Func<StateChain> CreateVotingGameStates(List<Prompt> roundPrompts)
             {
                 return () =>
                 {
-                    List<GameState> votingStates = new List<GameState>();
-                    foreach (Prompt prompt in roundPrompts)
-                    {
-                        votingStates.Add( new Voting_GS(
-                            lobby: lobby,
-                            prompt: prompt
-                            ));
-                        votingStates.Last().AddStateEndingListener(() =>
+                    StateChain voting = new StateChain(
+                        stateGenerator: (int counter) =>
                         {
-
+                            int round = counter / 2;
+                            int type = counter % 2; // Even rounds are Voting, Odd rounds are reveals
+                            if (round < roundPrompts.Count)
+                            {
+                                if (type == 0)
+                                {
+                                    return new Voting_GS(
+                                        lobby: lobby,
+                                        prompt: roundPrompts[round]);
+                                }
+                                else
+                                {
+                                    return new VoteRevealed_GS(
+                                        lobby: lobby,
+                                        prompt: roundPrompts[round]);
+                                }
+                            }
+                            else
+                            {
+                                // Stops the chain.
+                                return null;
+                            }
                         });
-                    }
-                    for (int i =0; i < votingStates.Count-1; i++)
-                    {
-                        votingStates[i].Transition(CreateRevealGameState(roundPrompts[i], outlet: votingStates[i + 1].Inlet));
-                    }
-                    votingStates.Last().Transition(CreateRevealGameState(roundPrompts.Last(), delayedOutlet: CreateScoreGameState(roundPrompts)));
-                    return votingStates[0];
-                };      
-            }
-            Func<GameState> CreateRevealGameState(Prompt votedPrompt, Connector outlet = null, Func<StateInlet> delayedOutlet = null)
-                {
-                return () =>
-                {
-                    return new VoteRevealed_GS(
-                        lobby: lobby,
-                        prompt: votedPrompt,
-                        outlet: outlet,
-                        delayedOutlet: delayedOutlet
-                        );
+                    voting.Transition(CreateScoreGameState(roundPrompts));
+                    return voting;
                 };
             }
             
@@ -201,27 +192,26 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                         imageHeader: (person) => person.Name
                         );
 
-                    GameState scoreBoard = new ScoreBoardGameState(
-                        lobby: lobby);
-
                     if (countRounds >= numRounds)
                     {
                         GameState finalScoreBoard = new ScoreBoardGameState(
                         lobby: lobby,
                         title: "Final Scores");
                         displayPeople.Transition(finalScoreBoard);
-                        finalScoreBoard.SetOutlet(this.Outlet);
+                        finalScoreBoard.Transition(this.Exit);
                     }
                     else
                     {
+                        GameState scoreBoard = new ScoreBoardGameState(
+                            lobby: lobby);
                         displayPeople.Transition(scoreBoard);
                         scoreBoard.Transition(CreateContestantCreationGamestate);
                     }
                     return displayPeople;
-                };              
+                };
             }
             Setup.Transition(CreateContestantCreationGamestate);
-            this.EntranceState = Setup;
+            this.Entrance.Transition(Setup);
            
         }
 
@@ -238,7 +228,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             {
                 throw new GameModeInstantiationException("Numer of prompts per round must be an integer from 1-30");
             }
-            /*if(gameLobby.GetActiveUsers().Count%2==1 && int.Parse(gameModeOptions[1].ShortAnswer)%2==1)
+            /*if(gameLobby.GetAllUsers().Count%2==1 && int.Parse(gameModeOptions[1].ShortAnswer)%2==1)
             {
                 throw new GameModeInstantiationException("Numer of prompts per round must even if you have an odd number of players");
             }*/

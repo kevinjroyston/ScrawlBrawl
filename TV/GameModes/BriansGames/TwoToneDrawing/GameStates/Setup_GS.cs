@@ -1,8 +1,6 @@
-﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels;
-using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.DataModels.GameStates;
-using RoystonGame.TV.DataModels.UserStates;
+﻿using RoystonGame.TV.DataModels.Users;
+using RoystonGame.TV.DataModels.States.GameStates;
+using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels;
 using RoystonGame.Web.DataModels.Enums;
@@ -17,11 +15,9 @@ using System.Diagnostics;
 using System.Linq;
 
 using static System.FormattableString;
-
-using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
-    RoystonGame.TV.DataModels.Enums.UserStateResult,
-    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+using RoystonGame.TV.DataModels;
+using RoystonGame.TV.ControlFlows.Exit;
+using RoystonGame.TV.DataModels.States.StateGroups;
 
 namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 {
@@ -32,10 +28,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
         private int TeamsPerPrompt { get; set; }
         private bool ShowColors { get; set; }
 
-        private UserState GetChallengesUserState(Connector outlet = null)
+        private UserState GetChallengesUserState()
         {
-            return new SimplePromptUserState(
-                prompt: (User user) =>
+            UserState toReturn = new SimplePromptUserState(
+                promptGenerator: (User user) =>
                 {
                     List<SubPrompt> subPrompts = new List<SubPrompt>()
                     {
@@ -62,7 +58,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                         SubmitButton = true
                     };
                 },
-                outlet: outlet,
                 formSubmitListener: (User user, UserFormSubmission input) =>
                 {
                     List<string> colors = input.SubForms.Where((subForm, index) => index > 0).Select((subForm) => subForm.Color).Reverse().ToList();
@@ -78,23 +73,24 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                         Colors = colors
                     });
                     return (true, string.Empty);
-                });
+                },
+                exit: new WaitForAllUsers_StateExit(this.Lobby));
+            return toReturn;
         }
 
         private List<ChallengeTracker> SubChallenges { get; set; }
 
-        private Random rand { get; set; } = new Random();
+        private Random Rand { get; set; } = new Random();
 
         /// <summary>
         /// Returns a chain of user states which will prompt for the proper drawings, assumes this.SubChallenges is fully set up.
         /// </summary>
         /// <param name="user">The user to build a chain for.</param>
-        /// <param name="outlet">The state to link the end of the chain to.</param>
         /// <returns>A list of user states designed for a given user.</returns>
-        private List<UserState> GetDrawingsUserStateChain(User user, Connector outlet)
+        private List<State> GetDrawingsUserStateChain(User user)
         {
-            List<UserState> stateChain = new List<UserState>();
-            List<ChallengeTracker> challenges = this.SubChallenges.OrderBy(_ => rand.Next()).ToList();
+            List<State> stateChain = new List<State>();
+            List<ChallengeTracker> challenges = this.SubChallenges.OrderBy(_ => Rand.Next()).ToList();
             int index = 0;
             foreach (ChallengeTracker challenge in challenges)
             {
@@ -105,7 +101,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 
                 var lambdaSafeIndex = index;
                 stateChain.Add(new SimplePromptUserState(
-                    prompt: (User user) => new UserPrompt()
+                    promptGenerator: (User user) => new UserPrompt()
                     {
                         Title = Invariant($"Drawing { lambdaSafeIndex + 1} of {stateChain.Count()}"),
                         Description = "Draw the prompt below. Keep in mind you are only drawing part of the picture!",
@@ -131,16 +127,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 index++;
             }
 
-            for (int i = 1; i < stateChain.Count; i++)
-            {
-                stateChain[i - 1].Transition(stateChain[i]);
-            }
-            stateChain.Last().SetOutlet(outlet);
-
             return stateChain;
         }
 
-        public Setup_GS(Lobby lobby, List<ChallengeTracker> challengeTrackers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, Connector outlet = null) : base(lobby, outlet)
+        public Setup_GS(Lobby lobby, List<ChallengeTracker> challengeTrackers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions) : base(lobby)
         {
             this.SubChallenges = challengeTrackers;
 
@@ -149,18 +139,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             this.TeamsPerPrompt = int.Parse(gameModeOptions[2].ShortAnswer);
             this.ShowColors = gameModeOptions[3].RadioAnswer.Value == 1;
 
-            State waitForAllDrawings = new WaitForAllPlayers(lobby: this.Lobby, outlet: this.Outlet);
-            State waitForAllPrompts = new WaitForAllPlayers(
-                lobby: this.Lobby,
-                outlet: (User user, UserStateResult result, UserFormSubmission input) =>
-                {
-                    // This call doesn't actually happen until after all prompts are submitted
-                    GetDrawingsUserStateChain(user, waitForAllDrawings.Inlet)[0].Inlet(user, result, input);
-                });
-            // Just before users call the line above, call AssignPrompts
-            waitForAllPrompts.AddStateEndingListener(() => this.AssignPrompts());
+            State getChallenges = GetChallengesUserState();
+            MultiStateChain getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForAllUsers_StateExit(this.Lobby));
 
-            this.Entrance = GetChallengesUserState(waitForAllPrompts.Inlet);
+            this.Entrance.Transition(getChallenges);
+            getChallenges.AddExitListener(() => this.AssignPrompts());
+            getChallenges.Transition(getDrawings);
+            getDrawings.Transition(this.Exit);
 
             this.UnityView = new UnityView
             {
@@ -176,8 +161,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
         private void AssignPrompts()
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
-            IReadOnlyList<User> users = this.Lobby.GetActiveUsers();
-            List<ChallengeTracker> randomizedOrderChallenges = this.SubChallenges.OrderBy(_ => rand.Next()).Take(DrawingsPerPlayer * users.Count / TeamsPerPrompt / ColorsPerTeam).ToList();
+            IReadOnlyList<User> users = this.Lobby.GetAllUsers();
+            List<ChallengeTracker> randomizedOrderChallenges = this.SubChallenges.OrderBy(_ => Rand.Next()).Take(DrawingsPerPlayer * users.Count / TeamsPerPrompt / ColorsPerTeam).ToList();
             for (int i = 0; i < randomizedOrderChallenges.Count; i++)
             {
                 for (int j = 0; j < ColorsPerTeam * TeamsPerPrompt; j++)
@@ -195,11 +180,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             // Make 100 attempts at valid swaps
             for (int i = 0; i < 100; i++)
             {
-                int rand1 = rand.Next(0, randomizedOrderChallenges.Count);
-                int rand1b = rand.Next(0, randomizedOrderChallenges[0].UserSubmittedDrawings.Count);
+                int rand1 = Rand.Next(0, randomizedOrderChallenges.Count);
+                int rand1b = Rand.Next(0, randomizedOrderChallenges[0].UserSubmittedDrawings.Count);
 
                 //int rand2a = rand.Next(0, randomizedOrderChallenges.Count);
-                int rand2b = rand.Next(0, randomizedOrderChallenges[0].UserSubmittedDrawings.Count);
+                int rand2b = Rand.Next(0, randomizedOrderChallenges[0].UserSubmittedDrawings.Count);
 
                 User user1 = randomizedOrderChallenges[rand1].UserSubmittedDrawings.Keys.ToList()[rand1b];
                 User user2 = randomizedOrderChallenges[rand1].UserSubmittedDrawings.Keys.ToList()[rand2b];

@@ -14,7 +14,7 @@ namespace RoystonGame.WordLists
         });
 
         private static object ReadFileLock { get; set; } = new Object();
-        static Random rand { get; set; } = new Random();
+        private static Random Rand { get; set; } = new Random();
         public static string GetRandomLine(FileNames file)
         {
             if (!FilesToLines.ContainsKey(file))
@@ -28,7 +28,7 @@ namespace RoystonGame.WordLists
                 }
             }
             // TODO: fix inefficiency below.
-            return FilesToLines[file].ToArray()[rand.Next(0, FilesToLines[file].Count)];
+            return FilesToLines[file].ToArray()[Rand.Next(0, FilesToLines[file].Count)];
         }
         public static List<string> GetRandomLines(FileNames file, int count)
         {

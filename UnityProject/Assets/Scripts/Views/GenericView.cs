@@ -88,13 +88,10 @@ public class GenericView : MonoBehaviour, ITVView
             Instantiate(ImagePrefab, ImageDropZone.transform);
         }
 
-        // TODO: Delete excess image objects if needed
-        /* 
-        breakoutCounter = 0;
-        while (images.Count < ImageDropZone.transform.childCount && breakoutCounter++ < 50)
+        for ( int i = images.Count; i < ImageDropZone.transform.childCount; i++)
         {
-            Destroy(ImageDropZone.transform.GetChild(ImageDropZone.transform.childCount - 1));
-        }*/
+            Destroy(ImageDropZone.transform.GetChild(i));
+        }
 
         // Set the image object sprites accordingly.
         for (int i = 0; i < ImageDropZone.transform.childCount; i++)

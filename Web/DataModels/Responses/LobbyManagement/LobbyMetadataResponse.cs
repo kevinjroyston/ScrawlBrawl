@@ -25,7 +25,7 @@ namespace RoystonGame.Web.DataModels.Responses
         public LobbyMetadataResponse(Lobby lobby)
         {
             this.LobbyId = lobby.LobbyId;
-            this.PlayerCount = lobby.GetActiveUsers().Count();
+            this.PlayerCount = lobby.GetAllUsers().Count();
             this.SelectedGameMode = lobby.SelectedGameMode;
             this.CurrentGameModeOptions = lobby.GameModeOptions;
         }

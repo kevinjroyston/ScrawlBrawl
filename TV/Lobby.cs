@@ -1,6 +1,6 @@
-﻿using RoystonGame.TV.DataModels;
+﻿using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.DataModels.GameStates;
+using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes;
 using RoystonGame.TV.GameModes.BriansGames.BattleReady;
@@ -17,12 +17,12 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 using static System.FormattableString;
+using RoystonGame.TV.DataModels;
 
 namespace RoystonGame.TV
 {
-    public class Lobby
+    public class Lobby : IInlet
     {
         /// <summary>
         /// An email address denoting what authenticated user created this lobby.
@@ -196,7 +196,7 @@ namespace RoystonGame.TV
             }
 
             // Don't check player minimum count when configuring, but do check on start.
-            if (!GameModes[request.GameMode.Value].IsSupportedPlayerCount(GetActiveUsers().Count, ignoreMinimum: true))
+            if (!GameModes[request.GameMode.Value].IsSupportedPlayerCount(GetAllUsers().Count, ignoreMinimum: true))
             {
                 errorMsg = Invariant($"Selected game mode has following restrictions: {GameModes[request.GameMode.Value].RestrictionsToString()})");
                 return false;
@@ -305,7 +305,15 @@ namespace RoystonGame.TV
         /// <summary>
         /// Returns the list of users which are currently registered in the lobby.
         /// </summary>
-        public IReadOnlyList<User> GetActiveUsers()
+        public IReadOnlyList<User> GetUsers(UserActivity acitivity)
+        {
+            return this.UsersInLobby.Where(user => user.Activity == acitivity).ToList().AsReadOnly();
+        }
+
+        /// <summary>
+        /// Returns the list of users which are currently registered in the lobby.
+        /// </summary>
+        public IReadOnlyList<User> GetAllUsers()
         {
             return this.UsersInLobby.ToList().AsReadOnly();
         }
@@ -323,7 +331,7 @@ namespace RoystonGame.TV
                 return false;
             }
 
-            if (!GameModes[this.SelectedGameMode.Value].IsSupportedPlayerCount(this.GetActiveUsers().Count))
+            if (!GameModes[this.SelectedGameMode.Value].IsSupportedPlayerCount(this.GetAllUsers().Count))
             {
                 errorMsg = Invariant($"Selected game mode has following restrictions: {GameModes[this.SelectedGameMode.Value].RestrictionsToString()})");
                 return false;
@@ -346,7 +354,7 @@ namespace RoystonGame.TV
 
             this.Game = game;
 
-            transitionFrom.Transition(game.EntranceState);
+            transitionFrom.Transition(game);
             game.Transition(this.EndOfGameRestart);
             this.WaitForLobbyStart.LobbyHasClosed();
 
@@ -404,6 +412,16 @@ namespace RoystonGame.TV
                 GameManager.UnregisterUser(user);
             }
             UsersInLobby.Clear();
+        }
+
+        public void AddEntranceListener(Action listener)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddPerUserEntranceListener(Action<User> listener)
+        {
+            throw new NotImplementedException();
         }
 
         // TODO: unregister individual users manually as well as automatically. Handle it gracefully in the gamemode (don't wait for them on timeouts, also don't index OOB anywhere).

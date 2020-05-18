@@ -1,8 +1,5 @@
-﻿using RoystonGame.TV.DataModels;
-using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
-using System.Collections.Concurrent;
+﻿using RoystonGame.TV.DataModels.Users;
 using System.Collections.Generic;
-using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels
 {

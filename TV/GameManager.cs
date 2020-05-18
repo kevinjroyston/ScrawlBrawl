@@ -1,6 +1,6 @@
-﻿using RoystonGame.TV.DataModels;
+﻿using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.DataModels.UserStates;
+using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.Web.DataModels;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net;
 
 using static System.FormattableString;
+using RoystonGame.TV.Extensions;
 
 namespace RoystonGame.TV
 {
@@ -57,17 +58,19 @@ namespace RoystonGame.TV
         /// States track all of the users that enter it. In order to aid in garbage collection, create a new state instance for each user.
         /// </summary>
         /// <returns>A new user registration user state.</returns>
-        public static UserState CreateUserRegistrationUserState() => new SimplePromptUserState(
-            prompt: UserNamePrompt,
-            outlet: (User user, UserStateResult result, UserFormSubmission userInput) =>
-            {
-                GetLobby(user.LobbyId).Inlet(user, result, userInput);
-            },
-            // Outlet won't be called until the below returns true
-            formSubmitListener: (User user, UserFormSubmission userInput) =>
-            {
-                return RegisterUser(userInput.SubForms[1].ShortAnswer, user, userInput.SubForms[0].ShortAnswer, userInput.SubForms[2].Drawing);
-            });
+        public static UserState CreateUserRegistrationUserState()
+        {
+            UserState toReturn = new SimplePromptUserState(
+                promptGenerator: UserNamePrompt,
+                // Outlet won't be called until the below returns true
+                formSubmitListener: (User user, UserFormSubmission userInput) =>
+                {
+                    return RegisterUser(userInput.SubForms[1].ShortAnswer, user, userInput.SubForms[0].ShortAnswer, userInput.SubForms[2].Drawing);
+                });
+
+            toReturn.Transition((User user)=> GetLobby(user.LobbyId));
+            return toReturn;
+        }
         public static UserPrompt UserNamePrompt(User user) => new UserPrompt()
         {
             Title = "join a game:",
@@ -136,6 +139,7 @@ namespace RoystonGame.TV
             catch (Exception e)
             {
                 Console.Error.WriteLine(e);
+                Debug.Assert(false, Invariant($"Error on user creation: {e}"));
                 newUser = false;
                 return null;
             }
@@ -164,6 +168,7 @@ namespace RoystonGame.TV
             catch (Exception e)
             {
                 Console.Error.WriteLine(e);
+                Debug.Assert(false, Invariant($"Error on create authenticated user: {e}"));
                 return null;
             }
         }

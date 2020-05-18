@@ -1,8 +1,6 @@
-﻿using RoystonGame.TV.ControlFlows;
-using RoystonGame.TV.DataModels;
-using RoystonGame.TV.DataModels.Enums;
-using RoystonGame.TV.DataModels.GameStates;
-using RoystonGame.TV.DataModels.UserStates;
+﻿using RoystonGame.TV.DataModels.Users;
+using RoystonGame.TV.DataModels.States.GameStates;
+using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople;
@@ -11,26 +9,22 @@ using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
-using RoystonGame.WordLists;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using static RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels.Setup_Person;
 using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 using static System.FormattableString;
-
-using Connector = System.Action<
-    RoystonGame.TV.DataModels.User,
-    RoystonGame.TV.DataModels.Enums.UserStateResult,
-    RoystonGame.Web.DataModels.Requests.UserFormSubmission>;
+using RoystonGame.TV.DataModels;
+using RoystonGame.TV.ControlFlows.Exit;
+using RoystonGame.TV.DataModels.States.StateGroups;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 {
     public class Setup_GS : GameState
     {
 
-        private UserState GetPeoplePrompts_State(Connector outlet = null)
+        private UserState GetPeoplePrompts_State()
         {
             return new SimplePromptUserState((User user) => new UserPrompt()
             {
@@ -52,7 +46,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 },
                 SubmitButton = true
             },
-            outlet,
             formSubmitListener: (User user, UserFormSubmission input) =>
             {
                 string person1 = input.SubForms[0].ShortAnswer;
@@ -80,7 +73,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                     Name = input.SubForms[1].ShortAnswer
                 });
                 return (true, String.Empty);
-            });
+            },
+            exit: new WaitForAllUsers_StateExit(this.Lobby));
         }
 
 
@@ -94,9 +88,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         /// <param name="user">The user to build a chain for.</param>
         /// <param name="outlet">The state to link the end of the chain to.</param>
         /// <returns>A list of user states designed for a given user.</returns>
-        private List<UserState> GetDrawingsUserStateChain(User user, Connector outlet)
+        private List<State> GetDrawingsUserStateChain(User user)
         {
-            List<UserState> stateChain = new List<UserState>();
+            List<State> stateChain = new List<State>();
             List<Setup_Person> people = this.PeopleList.OrderBy(_ => Rand.Next()).ToList();
             foreach (Setup_Person person in people)
             {
@@ -131,29 +125,24 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 }));
             }
 
-            for (int i = 1; i < stateChain.Count; i++)
-            {
-                stateChain[i - 1].Transition(stateChain[i]);
-            }
-            stateChain.Last().SetOutlet(outlet);
-
             return stateChain;
         }
 
-        public Setup_GS(Lobby lobby, List<Setup_Person> peopleList, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, Connector outlet = null) : base(lobby, outlet)
+        public Setup_GS(Lobby lobby, List<Setup_Person> peopleList, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions) : base(lobby)
         {
             this.PeopleList = peopleList;
 
-            State waitForAllDrawings = new WaitForAllPlayers(lobby: lobby, outlet: this.Outlet);
-            State waitForAllPrompts = new WaitForAllPlayers(lobby: lobby, outlet:(User user, UserStateResult result, UserFormSubmission input) =>
+            State getPeoplePrompts = GetPeoplePrompts_State();
+            this.Entrance.Transition(getPeoplePrompts);
+            getPeoplePrompts.Transition(() => 
             {
-                // This call doesn't actually happen until after all prompts are submitted
-                GetDrawingsUserStateChain(user, waitForAllDrawings.Inlet)[0].Inlet(user, result, input);
+                this.AssignPrompts();
+                MultiStateChain drawingsStateChains = new MultiStateChain(
+                    GetDrawingsUserStateChain,
+                    exit: new WaitForAllUsers_StateExit(this.Lobby));
+                drawingsStateChains.Transition(this.Exit);
+                return drawingsStateChains;
             });
-            // Just before users call the line above, call AssignPrompts
-            waitForAllPrompts.AddStateEndingListener(() => this.AssignPrompts());
-
-            this.Entrance = GetPeoplePrompts_State(waitForAllPrompts.Inlet);
 
             this.UnityView = new UnityView
             {
@@ -170,7 +159,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             List<Setup_Person> randomlyOrderedPeople = this.PeopleList.OrderBy(_ => Rand.Next()).ToList();
-            IReadOnlyList<User> users = this.Lobby.GetActiveUsers();
+            IReadOnlyList<User> users = this.Lobby.GetAllUsers();
             for (int i = 0; i < randomlyOrderedPeople.Count; i++)
             {
                 for (int j = 0; j < 3; j++)

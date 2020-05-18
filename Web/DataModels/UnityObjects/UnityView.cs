@@ -44,7 +44,7 @@ namespace RoystonGame.Web.DataModels.UnityObjects
 
         /* // Disabled, relevant user information will be passed in via UnityImages list.
         [JsonIgnore]
-        public IAccessor<IReadOnlyList<User>> Users { private get; set; } = new DynamicAccessor<IReadOnlyList<User>> { DynamicBacker = () => GameManager.GetActiveUsers() };
+        public IAccessor<IReadOnlyList<User>> Users { private get; set; } = new DynamicAccessor<IReadOnlyList<User>> { DynamicBacker = () => GameManager.GetAllUsers() };
         public IReadOnlyList<User> _Users { get => Users?.Value; }*/
 
         [Newtonsoft.Json.JsonIgnore]

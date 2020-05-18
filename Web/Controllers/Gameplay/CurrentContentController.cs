@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RoystonGame.TV;
-using RoystonGame.TV.DataModels;
+using RoystonGame.TV.DataModels.Users;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.Helpers.Extensions;
 using System;
+using System.Diagnostics;
 
 namespace RoystonGame.Web.Controllers
 {
@@ -17,7 +18,8 @@ namespace RoystonGame.Web.Controllers
             User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, Request.GetUserAgent(), idOverride, out bool newUser);
             if (user?.UserState == null)
             {
-                return new BadRequestResult();
+                Debug.Assert(false, "User not in a state!");
+                return BadRequest("Error finding/creating user object.");
             }
 
             try
