@@ -117,16 +117,71 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                         {
                             throw new Exception("Something went wrong while setting up the game");
                         }
+                        List<PeopleUserDrawing> headDrawingsToAdd = new List<PeopleUserDrawing>();
+                        List<PeopleUserDrawing> bodyDrawingsToAdd = new List<PeopleUserDrawing>();
+                        List<PeopleUserDrawing> legsDrawingsToAdd = new List<PeopleUserDrawing>();
+                        for(int j = 0; j < numOfEachPartInHand; j++)
+                        {
+                            bool headAdded = false;
+                            bool bodyAdded = false;
+                            bool legsAdded = false;
+                            for (int k = 0; k < randomizedHeads.Count; k++)
+                            {
+                                if (!headAdded&&!headDrawingsToAdd.Contains(randomizedHeads[k]))
+                                {
+                                    headDrawingsToAdd.Add(randomizedHeads[k]);
+                                    headAdded = true; 
+                                }
+                                if (!bodyAdded && !bodyDrawingsToAdd.Contains(randomizedBodies[k]))
+                                {
+                                    bodyDrawingsToAdd.Add(randomizedBodies[k]);
+                                    bodyAdded = true;
+                                }
+                                if (!legsAdded && !legsDrawingsToAdd.Contains(randomizedLegs[k]))
+                                {
+                                    legsDrawingsToAdd.Add(randomizedLegs[k]);
+                                    legsAdded = true;
+                                }
+                            }
+                            if(!(headAdded && bodyAdded && legsAdded))
+                            {
+                                throw new Exception("Something went wrong while setting up the game");
+                            }
+                        }
                         randPrompt.UsersToUserHands.TryAdd(user, new Prompt.UserHand
                         {
-                            Heads = randomizedHeads.GetRange(0, numOfEachPartInHand),
-                            Bodies = randomizedBodies.GetRange(0, numOfEachPartInHand),
-                            Legs = randomizedLegs.GetRange(0, numOfEachPartInHand),
+                            Heads = headDrawingsToAdd,
+                            Bodies = bodyDrawingsToAdd,
+                            Legs = legsDrawingsToAdd,
                             Contestant = new Person()
                         });
-                        randomizedHeads.RemoveRange(0, numOfEachPartInHand);
-                        randomizedBodies.RemoveRange(0, numOfEachPartInHand);
-                        randomizedLegs.RemoveRange(0, numOfEachPartInHand);
+                        randomizedHeads.RemoveAll((drawing) =>
+                        {
+                            if(headDrawingsToAdd.Contains(drawing))
+                            {
+                                headDrawingsToAdd.Remove(drawing);
+                                return true;
+                            }
+                            return false;
+                        });
+                        randomizedBodies.RemoveAll((drawing) =>
+                        {
+                            if (bodyDrawingsToAdd.Contains(drawing))
+                            {
+                                bodyDrawingsToAdd.Remove(drawing);
+                                return true;
+                            }
+                            return false;
+                        });
+                        randomizedLegs.RemoveAll((drawing) =>
+                        {
+                            if (legsDrawingsToAdd.Contains(drawing))
+                            {
+                                legsDrawingsToAdd.Remove(drawing);
+                                return true;
+                            }
+                            return false;
+                        });
                         roundPromptsCopy.Remove(randPrompt);
                         if (!RoundTracker.UsersToAssignedPrompts.ContainsKey(user))
                         {
@@ -232,10 +287,14 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             {
                 throw new GameModeInstantiationException("Numer of prompts per round must even if you have an odd number of players");
             }*/
-            if (!int.TryParse(gameModeOptions[2].ShortAnswer, out int parsedInteger3)
-                || parsedInteger3 < 1 || parsedInteger3 > 30)
+            if (int.Parse(gameModeOptions[1].ShortAnswer) % 2 == 1)
             {
-                throw new GameModeInstantiationException(Invariant($"Numer of drawings per round must be an integer from 1-30"));
+                throw new GameModeInstantiationException("Numer of prompts per round must even");
+            }
+            if (!int.TryParse(gameModeOptions[2].ShortAnswer, out int parsedInteger3)
+                || parsedInteger3 < 2 || parsedInteger3 > 30)
+            {
+                throw new GameModeInstantiationException(Invariant($"Numer of drawings per person per part must be an integer from 2-30"));
             }
         }
     }
