@@ -17,6 +17,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
 {
     public class Voting_GS : GameState
     {
+        private Random Rand { get; set; } = new Random();
+
         private static Func<User, UserPrompt> PickADrawing(Prompt prompt, List<User> randomizedUsers) => (User user) =>
         {
             return new UserPrompt
@@ -38,7 +40,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                 SubmitButton = true,
             };
         };
-        Random Rand { get; set; } = new Random();
+
         public Voting_GS(Lobby lobby, Prompt prompt) : base(lobby)
         {
             List<User>randomizedUsers = prompt.UsersToUserHands.Keys.OrderBy(_ => Rand.Next()).ToList();

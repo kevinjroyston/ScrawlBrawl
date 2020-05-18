@@ -14,7 +14,7 @@ namespace RoystonGame.WordLists
         });
 
         private static object ReadFileLock { get; set; } = new Object();
-        static Random Rand { get; set; } = new Random();
+        private static Random Rand { get; set; } = new Random();
         public static string GetRandomLine(FileNames file)
         {
             if (!FilesToLines.ContainsKey(file))

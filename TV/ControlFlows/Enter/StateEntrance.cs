@@ -10,7 +10,7 @@ namespace RoystonGame.TV.ControlFlows.Enter
     {
         public StateEntrance(StateExit stateExit = null): base(stateExit)
         {
-
+            // Empty
         }
         public void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
