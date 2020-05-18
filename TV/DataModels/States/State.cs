@@ -5,6 +5,7 @@ using RoystonGame.TV.DataModels.Users;
 using RoystonGame.Web.DataModels.Requests;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using static System.FormattableString;
 using Connector = System.Action<
     RoystonGame.TV.DataModels.Users.User,
@@ -25,10 +26,55 @@ namespace RoystonGame.TV.DataModels
 
         private bool Entered = false;
 
+        /// <summary>
+        /// The total time to spend in the state.
+        /// </summary>
+        protected TimeSpan? StateTimeoutDuration { get; }
 
-        public State(StateEntrance entrance = null, StateExit exit = null) : base(stateExit: exit)
+        /// <summary>
+        /// A mapping of users to a tuple indicating if they have (entered state, exited state).
+        /// </summary>
+        protected Dictionary<User, (bool, bool)> UsersEnteredAndExitedState { get; } = new Dictionary<User, (bool, bool)>();
+
+        public State(TimeSpan? stateTimeoutDuration, StateEntrance entrance, StateExit exit) : base(stateExit: exit)
         {
+            this.StateTimeoutDuration = stateTimeoutDuration;
             this.Entrance = entrance ?? new StateEntrance();
+
+            this.Entrance.AddPerUserExitListener((User user) =>
+            {
+                // If the user already entered this state once fail.
+                if (this.UsersEnteredAndExitedState.ContainsKey(user) && this.UsersEnteredAndExitedState[user].Item1)
+                {
+                    throw new Exception("This UserState has already been entered once. Please use a new state instance.");
+                }
+                this.UsersEnteredAndExitedState[user] = (true, false);
+            });
+
+            this.Exit.AddPerUserEntranceListener((User user) =>
+            {
+                // User has exited state.
+                this.UsersEnteredAndExitedState[user] = (true, true);
+
+                // If we have a timeout and we told this user to hurry. Tell them not to hurry.
+                if (this.StateTimeoutDuration.HasValue && user.StatesTellingMeToHurry.Count > 0 && user.StatesTellingMeToHurry.Contains(this))
+                {
+                    user.StatesTellingMeToHurry.Remove(this);
+                }
+            });
+
+            // Start timers after leaving entrance state.
+            this.Entrance.AddExitListener(() =>
+            {
+                if (this.StateTimeoutDuration.HasValue)
+                {
+                    // Total state timeout timer duration.
+                    int millisecondsDelay = (int)this.StateTimeoutDuration.Value.TotalMilliseconds;
+
+                    // Start the timeout thread.
+                    _ = TimeoutFunc(millisecondsDelay);
+                }
+            });
         }
 
         public void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
@@ -56,6 +102,31 @@ namespace RoystonGame.TV.DataModels
         public void AddPerUserEntranceListener(Action<User> listener)
         {
             PerUserEntranceListeners.Add(listener);
+        }
+
+
+        /// <summary>
+        /// Timeout for the state.
+        /// </summary>
+        /// <returns></returns>
+        private async Task TimeoutFunc(int millisecondsDelay)
+        {
+            if (millisecondsDelay > 0)
+            {
+                await Task.Delay(millisecondsDelay).ConfigureAwait(false);
+            }
+
+            // For any users currently within this state, hurry them up.
+            foreach ((User user, (bool entered, bool exited)) in this.UsersEnteredAndExitedState)
+            {
+                if (entered && !exited)
+                {
+                    // Set user to hurry mode first!
+                    user.StatesTellingMeToHurry.Add(this);
+                    // Kick all the users into motion so they can hurry through the states.
+                    user.UserState.HandleUserTimeout(user);
+                }
+            }
         }
     }
 

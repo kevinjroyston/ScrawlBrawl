@@ -96,7 +96,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             }
             SimplePromptUserState pickDrawing = new SimplePromptUserState(
                 promptGenerator: PickADrawing(SubChallenge, SubChallenge.TeamIdToDrawingMapping.Keys.ToList()),
-                formSubmitListener: (User user, UserFormSubmission submission) =>
+                formSubmitHandler: (User user, UserFormSubmission submission) =>
                 {
                     if (submission.SubForms[0].RadioAnswer == SubChallenge.TeamIdToDrawingMapping.Keys.Count)
                     {
@@ -109,7 +109,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     }
                     return (true, string.Empty);
                 },
-                exit: new WaitForAllUsers_StateExit(lobby: this.Lobby));  
+                exit: new WaitForUsers_StateExit(lobby: this.Lobby));  
             pickDrawing.AddExitListener(HandleStateEnding);
 
             void HandleStateEnding()

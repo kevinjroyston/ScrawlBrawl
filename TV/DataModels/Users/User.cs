@@ -1,5 +1,6 @@
 ﻿using RoystonGame.TV.DataModels.States.UserStates;
 using System;
+using System.Collections.Generic;
 using System.Net;
 
 using static System.FormattableString;
@@ -53,9 +54,15 @@ namespace RoystonGame.TV.DataModels.Users
         public int Score { get; set; }
 
         /// <summary>
-        /// Gets the activity level of the user.
+        /// Gets the activity level of the user by looking at their <see cref="LastHeardFromTime"/>.
         /// </summary>
-        public UserActivity Activity { get; set; }
+        public UserActivity Activity 
+        {
+            get
+            {
+                return (DateTime.UtcNow.Subtract(this.LastHeardFrom) < Constants.UserInactivityTimer) ? UserActivity.Active : UserActivity.Inactive;
+            }
+        }
 
         /// <summary>
         /// Gets the current status of what the user is doing.
@@ -75,6 +82,20 @@ namespace RoystonGame.TV.DataModels.Users
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public string Identifier { get; }
+
+        /// <summary>
+        /// The states in this list would like the user to hurry up until they leave said state.
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public List<State> StatesTellingMeToHurry { get; set; } = new List<State>();
+
+        /// <summary>
+        /// The states in this list would like the user to hurry up until they leave said state.
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public DateTime LastHeardFrom { get; set; } = DateTime.UtcNow;
 
         public User (IPAddress address, string userAgent)
         {

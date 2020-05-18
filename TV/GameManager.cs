@@ -63,7 +63,7 @@ namespace RoystonGame.TV
             UserState toReturn = new SimplePromptUserState(
                 promptGenerator: UserNamePrompt,
                 // Outlet won't be called until the below returns true
-                formSubmitListener: (User user, UserFormSubmission userInput) =>
+                formSubmitHandler: (User user, UserFormSubmission userInput) =>
                 {
                     return RegisterUser(userInput.SubForms[1].ShortAnswer, user, userInput.SubForms[0].ShortAnswer, userInput.SubForms[2].Drawing);
                 });

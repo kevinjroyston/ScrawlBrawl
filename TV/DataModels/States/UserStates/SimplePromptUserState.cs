@@ -18,16 +18,33 @@ namespace RoystonGame.TV.DataModels.States.UserStates
         public static UserPrompt DefaultWaitingPrompt(User user) => new UserPrompt() { Description = "Waiting . . ." };
         public static UserPrompt YouHaveThePowerPrompt(User _) => new UserPrompt() { Title = "You have the power!", Description = "Click submit when everybody is ready :)", RefreshTimeInMs = 5000, SubmitButton = true };
 
-        private Func<User, UserFormSubmission, (bool, string)> FormSubmitListener { get; set; }
-        public SimplePromptUserState(Func<User, UserPrompt> promptGenerator = null, TimeSpan? maxPromptDuration = null, Func<User, UserFormSubmission, (bool, string)> formSubmitListener = null, StateEntrance entrance = null, StateExit exit = null)
+        private Func<User, UserFormSubmission, (bool, string)> FormSubmitHandler { get; set; }
+        private Func<User, UserTimeoutAction> UserTimeoutHandler { get; set; }
+        public SimplePromptUserState(Func<User, UserPrompt> promptGenerator = null, TimeSpan? maxPromptDuration = null, Func<User, UserFormSubmission, (bool, string)> formSubmitHandler = null, StateEntrance entrance = null, StateExit exit = null, Func<User, UserTimeoutAction> userTimeoutHandler = null)
             : base(maxPromptDuration, promptGenerator ?? DefaultWaitingPrompt, entrance: entrance, exit: exit)
         {
-            if (formSubmitListener != null)
+            if (userTimeoutHandler != null)
             {
-                this.FormSubmitListener = formSubmitListener;
+                this.UserTimeoutHandler = userTimeoutHandler;
+            }
+            if (formSubmitHandler != null)
+            {
+                this.FormSubmitHandler = formSubmitHandler;
             }
             // Blackhole requests leaving Entrance. Once they properly submit they will make it to the exit.
-            this.Entrance.Transition(new InletConnector());
+            this.Entrance.Transition(new WaitForUserInput_BlackholeInletConnector(HandleUserTimeout));
+        }
+
+        public override UserTimeoutAction HandleUserTimeout(User user)
+        {
+            var toReturn = UserTimeoutAction.None;
+            if (this.UserTimeoutHandler != null)
+            {
+                toReturn = this.UserTimeoutHandler(user);
+            }
+
+            this.Exit.Inlet(user, UserStateResult.Timeout, null);
+            return toReturn;
         }
 
         public override bool HandleUserFormInput(User user, UserFormSubmission userInput, out string error)
@@ -47,7 +64,7 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             bool success = true;
             try
             {
-                var successTuple = this.FormSubmitListener?.Invoke(user, userInput) ?? null;
+                var successTuple = this.FormSubmitHandler?.Invoke(user, userInput) ?? null;
                 error = !string.IsNullOrWhiteSpace(error) ? error : (successTuple?.Item2 ?? string.Empty);
                 success &= successTuple?.Item1 ?? true;
             }

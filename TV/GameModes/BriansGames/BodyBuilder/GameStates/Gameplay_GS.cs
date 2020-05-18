@@ -174,9 +174,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             UserState promptAndWaitForUsers = new SelectivePromptUserState(
                 usersToPrompt: UsersStillPlaying,
                 promptGenerator: PickADrawing,
-                formSubmitListener: PromptedUserFormSubmission,
-                exit: new WaitForAllUsers_StateExit(
+                formSubmitHandler: PromptedUserFormSubmission,
+                exit: new WaitForUsers_StateExit(
                     lobby: this.Lobby,
+                    usersToWaitFor: WaitForUsersType.All,
                     waitingPromptGenerator: WaitingStatePromptGenerator));
 
             promptAndWaitForUsers.Transition(()=>

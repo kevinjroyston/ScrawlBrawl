@@ -24,6 +24,12 @@ namespace RoystonGame.Web.Controllers
         public IActionResult Post([FromBody] UserFormSubmission formData, string idOverride)
         {
             User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, Request.GetUserAgent(), idOverride, out bool newUser);
+
+            if (user != null)
+            {
+                user.LastHeardFrom = DateTime.UtcNow;
+            }
+
             if (user?.UserState == null || newUser)
             {
                 return BadRequest("Error finding user object, try again.");
@@ -41,6 +47,12 @@ namespace RoystonGame.Web.Controllers
                 lock (user.LockObject)
                 {
                     success = user.UserState.HandleUserFormInput(user, formData, out error);
+
+                    // If they form input was successfully handled, the user is now waiting until they are prompted again
+                    if (success)
+                    {
+                        user.Status = UserStatus.Waiting;
+                    }
                 }
             }
             catch (Exception e)

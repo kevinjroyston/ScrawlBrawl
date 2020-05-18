@@ -76,7 +76,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                     },
                     SubmitButton = true
                 },
-                formSubmitListener: (User user, UserFormSubmission input) =>
+                formSubmitHandler: (User user, UserFormSubmission input) =>
                 {
                     drawings.Add(new PeopleUserDrawing
                     {
@@ -107,7 +107,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                     },
                     SubmitButton = true
                 },
-                formSubmitListener: (User user, UserFormSubmission input) =>
+                formSubmitHandler: (User user, UserFormSubmission input) =>
                 {
                     if(prompts.Select((tuple)=>tuple.Item2).Contains(input.SubForms[0].ShortAnswer))
                     {
@@ -126,7 +126,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         public Setup_GS(Lobby lobby, List<PeopleUserDrawing> drawings, List<(User, string)> prompts, int numDrawingsPerUserPerPart, int numPromptsPerUser)
             : base(
                   lobby: lobby,
-                  exit: new WaitForAllUsers_StateExit(lobby))
+                  exit: new WaitForUsers_StateExit(lobby))
         {
             StateChain stateChain = new StateChain(GetDrawingsAndPromptsUserStateChain(
                 numDrawingsPerUser: numDrawingsPerUserPerPart,

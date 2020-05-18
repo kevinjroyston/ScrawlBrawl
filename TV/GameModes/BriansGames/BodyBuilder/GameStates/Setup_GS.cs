@@ -46,7 +46,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 },
                 SubmitButton = true
             },
-            formSubmitListener: (User user, UserFormSubmission input) =>
+            formSubmitHandler: (User user, UserFormSubmission input) =>
             {
                 string person1 = input.SubForms[0].ShortAnswer;
                 string person2 = input.SubForms[1].ShortAnswer;
@@ -74,7 +74,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 });
                 return (true, String.Empty);
             },
-            exit: new WaitForAllUsers_StateExit(this.Lobby));
+            exit: new WaitForUsers_StateExit(this.Lobby));
         }
 
 
@@ -118,7 +118,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                     },
                     SubmitButton = true
                 },
-                formSubmitListener: (User user, UserFormSubmission input) =>
+                formSubmitHandler: (User user, UserFormSubmission input) =>
                 {
                     person.UserSubmittedDrawingsByUser[user].Drawing = input.SubForms[0].Drawing;
                     return (true, String.Empty);
@@ -139,7 +139,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 this.AssignPrompts();
                 MultiStateChain drawingsStateChains = new MultiStateChain(
                     GetDrawingsUserStateChain,
-                    exit: new WaitForAllUsers_StateExit(this.Lobby));
+                    exit: new WaitForUsers_StateExit(this.Lobby));
                 drawingsStateChains.Transition(this.Exit);
                 return drawingsStateChains;
             });

@@ -66,7 +66,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 
             SimplePromptUserState pickDrawing = new SimplePromptUserState(
                 PickADrawing(challengeTracker, challengeTracker.IdToDrawingMapping.Keys.ToList()),
-                formSubmitListener: (User user, UserFormSubmission submission) =>
+                formSubmitHandler: (User user, UserFormSubmission submission) =>
                 {
                     User authorOfDrawing;
                     authorOfDrawing = challengeTracker.IdToDrawingMapping.Values.ToArray()[submission.SubForms[0].RadioAnswer ?? -1].Item1;
@@ -85,7 +85,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     }
                     return (true, string.Empty);
                 },
-                exit: new WaitForAllUsers_StateExit(lobby));
+                exit: new WaitForUsers_StateExit(lobby));
             this.Entrance.Transition(pickDrawing);
             pickDrawing.AddExitListener(() => this.UpdateScores());
             pickDrawing.Transition(this.Exit);

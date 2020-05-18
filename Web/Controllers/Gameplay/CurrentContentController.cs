@@ -16,6 +16,11 @@ namespace RoystonGame.Web.Controllers
         public IActionResult Get(string idOverride)
         {
             User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, Request.GetUserAgent(), idOverride, out bool newUser);
+            if (user != null)
+            {
+                user.LastHeardFrom = DateTime.UtcNow;
+            }
+
             if (user?.UserState == null)
             {
                 Debug.Assert(false, "User not in a state!");

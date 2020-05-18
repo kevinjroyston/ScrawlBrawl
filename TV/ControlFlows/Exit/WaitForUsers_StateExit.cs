@@ -6,38 +6,35 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using static System.FormattableString;
+
 namespace RoystonGame.TV.ControlFlows.Exit
 {
+    public enum WaitForUsersType
+    {
+        All,
+        // TODO: Active,
+    }
+
     public class WaitForUsers_StateExit : WaitForTrigger_StateExit
     {
-        private Dictionary<User, bool> UsersToWaitFor { get; } = new Dictionary<User, bool>();
-
-        private Func<List<User>> UsersToWaitForFunction { get; }
+        private Lobby Lobby { get; }
+        private HashSet<User> UsersWaiting { get; } = new HashSet<User>();
+        private WaitForUsersType UsersToWaitForType { get; }
 
         /// <summary>
         /// Initializes a new <see cref="WaitForTrigger"/>.
         /// </summary>
-        /// <param name="usersToWaitFor">Function returning users to wait for, null indicates to use all currently registered users upon first caller. Called when first user hits waiting state.</param>
+        /// <param name="usersToWaitFor">Function returning users to wait for, null indicates to use all currently registered users upon first caller. Called ONCE when first user hits waiting state.</param>
         /// <param name="waitingPromptGenerator">The waiting state to use while waiting for the trigger. The outlet of this state will be overwritten</param>
         public WaitForUsers_StateExit(
-            Func<List<User>> usersToWaitFor,
+            Lobby lobby,
+            WaitForUsersType usersToWaitFor = WaitForUsersType.All,
             Func<User, UserPrompt> waitingPromptGenerator = null)
             : base(waitingPromptGenerator)
         {
-            this.UsersToWaitForFunction = usersToWaitFor;
-        }
-
-        /// <summary>
-        /// Sets the users to wait for.
-        /// </summary>
-        private void SetUsersToWaitFor()
-        {
-            List<User> usersToWaitFor = this.UsersToWaitForFunction();
-
-            foreach (User waitForMe in usersToWaitFor)
-            {
-                this.UsersToWaitFor[waitForMe] = false;
-            }
+            this.Lobby = lobby;
+            this.UsersToWaitForType = usersToWaitFor;
         }
 
         /// <summary>
@@ -48,17 +45,29 @@ namespace RoystonGame.TV.ControlFlows.Exit
         /// <param name="formSubmission">The user input of the last node (this transition doesnt care).</param>
         public override void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
-            if (this.UsersToWaitFor.Count == 0)
-            {
-                SetUsersToWaitFor();
-            }
-
             base.Inlet(user, stateResult, formSubmission);
-            this.UsersToWaitFor[user] = true;
+            this.UsersWaiting.Add(user);
 
-            if (this.UsersToWaitFor.Values.All(val => val))
+            // TODO: Fix bug. User switching from active to inactive will currently not prompt a re-calculation of this state
+            if (this.GetUsers(this.UsersToWaitForType).IsSubsetOf(this.UsersWaiting))
             {
+                // TODO: This is not sufficient for WaitForActiveUsers
                 this.Trigger();
+            }
+        }
+
+        // TODO: move this to lobby and optimize.
+        private HashSet<User> GetUsers(WaitForUsersType type)
+        {
+            switch (type)
+            {
+                // TODO: no need to call this multiple times if not looking at active users.
+                case WaitForUsersType.All:
+                    return new HashSet<User>(this.Lobby.GetAllUsers());
+                //case WaitForUsersType.Active:
+                //    return new HashSet<User>(this.Lobby.GetUsers(UserActivity.Active));
+                default:
+                    throw new Exception(Invariant($"Something went wrong. Unknown WaitForUsersType '{type}'"));
             }
         }
     }

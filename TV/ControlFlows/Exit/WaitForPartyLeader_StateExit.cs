@@ -20,10 +20,14 @@ namespace RoystonGame.TV.ControlFlows.Exit
         /// <param name="waitingPromptGenerator">The waiting prompt generator to use while waiting for the trigger.</param>
         public WaitForPartyLeader_StateExit(Lobby lobby, Func<User, UserPrompt> partyLeaderPromptGenerator = null, Func<User, UserPrompt> waitingPromptGenerator = null, Func<User, UserFormSubmission, (bool, string)> partyLeaderFormSubmitListener = null)
             : base(
-                  usersToWaitFor:()=>lobby.GetAllUsers().ToList(),
+                  lobby: lobby,
+                  usersToWaitFor: WaitForUsersType.All,
                   waitingPromptGenerator: waitingPromptGenerator)
         {
-            this.PartyLeaderUserState = new SimplePromptUserState(partyLeaderPromptGenerator ?? SimplePromptUserState.YouHaveThePowerPrompt, formSubmitListener: partyLeaderFormSubmitListener);
+            this.PartyLeaderUserState = new SimplePromptUserState(
+                userTimeoutHandler: (User user) => throw new Exception("Cant time out the party leader!"),
+                promptGenerator: partyLeaderPromptGenerator ?? SimplePromptUserState.YouHaveThePowerPrompt,
+                formSubmitHandler: partyLeaderFormSubmitListener);
             this.PartyLeaderUserState.Transition(new InletConnector(base.Inlet));
         }
 
