@@ -24,8 +24,8 @@ namespace RoystonGame.TV.ControlFlows
         }
         public void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
-            // Shouldn't be answering prompts if a state is asking us to hurry up.
-            if (user.StatesTellingMeToHurry.Count == 0)
+            // Set user to answering prompts state if they arent being hurried and their current prompt has a submit button.
+            if (user.StatesTellingMeToHurry.Count == 0 && user.UserState.UserRequestingCurrentPrompt(user).SubmitButton)
             {
                 user.Status = UserStatus.AnsweringPrompts;
             }

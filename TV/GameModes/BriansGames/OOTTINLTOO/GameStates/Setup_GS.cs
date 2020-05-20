@@ -117,7 +117,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             getWordsState.Transition(contestantsMultiStateChain);
             contestantsMultiStateChain.Transition(this.Exit);
 
-            this.UnityView = new UnityView
+            this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
                 Instructions = new StaticAccessor<string> { Value = "Complete all the prompts on your devices." },

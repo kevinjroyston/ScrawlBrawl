@@ -42,7 +42,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     BackgroundColor = new DynamicAccessor<IReadOnlyList<int>> { DynamicBacker = () => challenge.TeamIdToUsersWhoVotedMapping[id].Count == challenge.TeamIdToUsersWhoVotedMapping.Max((kvp) => kvp.Value.Count) ? new List<int> { 32, 178, 170 } : new List<int> { 255, 255, 255 } }
                 });
             }
-            this.UnityView = new UnityView
+            this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
                 UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages },

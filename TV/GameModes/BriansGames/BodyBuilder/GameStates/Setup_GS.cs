@@ -144,7 +144,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 return drawingsStateChains;
             });
 
-            this.UnityView = new UnityView
+            this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
                 Instructions = new StaticAccessor<string> { Value = "Complete all the prompts on your devices." },

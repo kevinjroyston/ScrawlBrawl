@@ -1,4 +1,5 @@
-﻿using RoystonGame.TV.DataModels.Users;
+﻿using RoystonGame.TV;
+using RoystonGame.TV.DataModels.Users;
 using RoystonGame.Web.DataModels.Enums;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,18 @@ namespace RoystonGame.Web.DataModels.UnityObjects
 {
     public class UnityView
     {
+        // TODO: standardize on one json framework.
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        private Lobby Lobby { get; }
+        public UnityView(Lobby lobby)
+        {
+            this.Lobby = lobby;
+            if(lobby != null)
+            {
+                this.Users = new DynamicAccessor<IReadOnlyList<User>> { DynamicBacker = () => Lobby.GetAllUsers() };
+            }
+        }
         public bool Refresh()
         {
             // First Refresh is always dirty.

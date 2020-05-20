@@ -82,6 +82,12 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             // Per user logic for tracking / moving user between states.
             this.Entrance.AddPerUserExitListener(InternalPerUserInlet);
 
+            this.Exit.AddPerUserEntranceListener((User user) =>
+            {
+                // Any time a user exits a state they should be set to Waiting.
+                user.Status = UserStatus.Waiting;
+            });
+
             // Start timers after leaving entrance state.
             this.Entrance.AddExitListener(() =>
             {
@@ -112,7 +118,7 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             Debug.Assert(this.SpecialCallbackAppliedToAllUsersInState == null, "Shouldn't be applying more than 1 special callback.");
             this.SpecialCallbackAppliedToAllUsersInState = specialCallback;
 
-            foreach ((User user, (bool entered, bool exited)) in this.UsersEnteredAndExitedState)
+            foreach ((User user, (bool entered, bool exited)) in this.UsersEnteredAndExitedState.ToList())
             {
                 if ( entered && !exited)
                 {

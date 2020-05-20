@@ -101,7 +101,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 });
             }
 
-            this.UnityView = new UnityView
+            this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
                 UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages },

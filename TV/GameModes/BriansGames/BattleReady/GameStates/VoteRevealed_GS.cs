@@ -29,7 +29,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         {
             this.Entrance.Transition(this.Exit);
 
-            this.UnityView = new UnityView
+            this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
                 UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = prompt.UsersToUserHands.Keys.Select((user) => prompt.UsersToUserHands[user].Contestant.GetPersonImage(imageIdentifier: ""+ prompt.UsersToUserHands[user].VotesForContestant, header: user.DisplayName)).ToList() },

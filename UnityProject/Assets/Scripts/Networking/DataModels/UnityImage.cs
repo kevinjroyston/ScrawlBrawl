@@ -23,6 +23,6 @@ public class UnityImage
     public string _Footer { get; set; }
     public string _ImageIdentifier { get; set; }
     public int? _VoteCount { get; set; }
-    public IReadOnlyList<User> _RelevantUsers { get; set; }
+    //public IReadOnlyList<User> _RelevantUsers { get; set; }
     public IReadOnlyList<int> _BackgroundColor { get; set; }
 }

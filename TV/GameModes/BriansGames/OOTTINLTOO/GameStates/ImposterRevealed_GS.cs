@@ -40,7 +40,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = user == challenge.OddOneOut ? new List<int> { 250, 128, 114 } : new List<int> { 255, 255, 255 } }
                 });
             }
-            this.UnityView = new UnityView
+            this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
                 UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages },

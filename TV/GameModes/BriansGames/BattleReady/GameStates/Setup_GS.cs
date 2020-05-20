@@ -135,7 +135,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                 prompts: prompts));
             this.Entrance.Transition(stateChain);
             stateChain.Transition(this.Exit);
-            this.UnityView = new UnityView
+            this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
                 Instructions = new StaticAccessor<string> { Value = "Complete all the drawings and prompts on your devices." },

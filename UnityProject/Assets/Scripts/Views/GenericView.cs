@@ -12,6 +12,8 @@ public class GenericView : MonoBehaviour, ITVView
     public GameObject Instructions = null;
     public GameObject ImageDropZone = null;
     public GameObject ImagePrefab = null;
+    public GameObject PlayerBar = null;
+    public GameObject TimerUI = null;
 
     void Awake()
     {
@@ -72,6 +74,34 @@ public class GenericView : MonoBehaviour, ITVView
         else
         {
             ImageDropZone.SetActive(false);
+        }
+
+        if (PlayerBar?.GetComponent<PlayerBarHandler>() != null)
+        {
+            var playerBar = PlayerBar.GetComponent<PlayerBarHandler>();
+            if (UnityView._Users != null && UnityView._Users.Count > 0)
+            {
+                playerBar.HandleUsers(UnityView._Users);
+                PlayerBar.SetActive(true);
+            }
+            else
+            {
+                PlayerBar.SetActive(false);
+            }
+        }
+
+        if (TimerUI?.GetComponent<TimerUI>() != null)
+        {
+            var timer = TimerUI.GetComponent<TimerUI>();
+            if (UnityView._StateEndTime != null && UnityView._StateEndTime > UnityView.ServerTime)
+            {
+                timer.UpdateTime(UnityView._StateEndTime.Value, UnityView.ServerTime);
+                TimerUI.SetActive(true);
+            }
+            else
+            {
+                TimerUI.SetActive(false);
+            }
         }
     }
 

@@ -41,7 +41,7 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             {
                 if (this.UsersToPrompt.Contains(user))
                 {
-                    // Blackhole requests until user submits proper form
+                    // Blackhole requests until user submits proper form. Set user status according to whether or not we gave them a submit button.
                     return new WaitForUserInput_BlackholeInletConnector(HandleUserTimeout);
                 }
                 else

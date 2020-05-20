@@ -47,12 +47,6 @@ namespace RoystonGame.Web.Controllers
                 lock (user.LockObject)
                 {
                     success = user.UserState.HandleUserFormInput(user, formData, out error);
-
-                    // If they form input was successfully handled, the user is now waiting until they are prompted again
-                    if (success)
-                    {
-                        user.Status = UserStatus.Waiting;
-                    }
                 }
             }
             catch (Exception e)

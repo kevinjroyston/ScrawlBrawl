@@ -63,13 +63,13 @@ public class TestClient : MonoBehaviour
         hubConnection.SendAsync("JoinRoom", lobby);
     }
 
-
     public void Update()
     {
         // If the Dirty bit is set that means the networking thread got a response from the server. Since it is not possible
         // to make certain types of calls outside of the main thread we listen for it here and make the call here.
         if (Dirty)
         {
+            Debug.Log($"Server update");
             Dirty = false;
             if (LobbyClosed)
             {
