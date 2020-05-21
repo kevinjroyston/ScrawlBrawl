@@ -36,7 +36,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 
                 unityImages.Add(new UnityImage
                 {
-                    Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = challenge.Colors.Select(color => colorMap[color].Drawing).ToList() },
+                    //ToDo move back to staticAccessor and refactor GameMode
+                    Base64Pngs = new DynamicAccessor<IReadOnlyList<string>> { DynamicBacker = ()=>challenge.Colors.Select(color => colorMap[color].Drawing).ToList() },
                     RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = challenge.UserSubmittedDrawings.Where(kvp => kvp.Value.TeamId == id).Select(kvp => kvp.Key).ToList() },
                     ImageIdentifier = new StaticAccessor<string> { Value = id.ToString() },
                     VoteCount = new DynamicAccessor<int?> { DynamicBacker = () => challenge.TeamIdToUsersWhoVotedMapping?[id]?.Count },

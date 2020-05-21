@@ -25,6 +25,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
         {
             //ValidateOptions(lobby, gameModeOptions);
 
+            //ToDo Refactor to move to vote reveal after the votes are done and scrambled 
             Setup = new Setup_GS(lobby, this.SubChallenges, gameModeOptions);
             Setup.Transition(() =>
             {
