@@ -89,11 +89,8 @@ namespace RoystonGame
 
             app.UseHttpsRedirection();
 
-            /*app.UseStaticFiles();
-            if (!env.IsDevelopment())
-            {
-                app.UseSpaStaticFiles();
-            }*/
+            app.UseStaticFiles();
+            app.UseSpaStaticFiles();
 
             app.UseRouting();
             app.UseAuthentication();
