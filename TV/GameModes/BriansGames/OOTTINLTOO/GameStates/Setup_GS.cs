@@ -44,7 +44,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     },
                     SubmitButton = true
                 },
-                formSubmitListener: (User user, UserFormSubmission input) =>
+                formSubmitHandler: (User user, UserFormSubmission input) =>
                 {
                     this.SubChallenges.Add(new ChallengeTracker
                     {
@@ -54,7 +54,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     });
                     return (true, string.Empty);
                 },
-                exit: new WaitForAllUsers_StateExit(this.Lobby));
+                exit: new WaitForUsers_StateExit(this.Lobby));
         }
 
         private List<ChallengeTracker> SubChallenges { get; set; }
@@ -94,7 +94,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                         },
                         SubmitButton = true
                     },
-                    formSubmitListener: (User user, UserFormSubmission input) =>
+                    formSubmitHandler: (User user, UserFormSubmission input) =>
                     {
                         challenge.UserSubmittedDrawings[user] = input.SubForms[0].Drawing;
                         return (true, string.Empty);
@@ -110,14 +110,14 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             this.SubChallenges = challengeTrackers;
 
             State getWordsState = GetWordsUserState();
-            MultiStateChain contestantsMultiStateChain = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForAllUsers_StateExit(lobby));
+            MultiStateChain contestantsMultiStateChain = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(lobby));
 
             this.Entrance.Transition(getWordsState);
             getWordsState.AddExitListener(() => this.AssignPrompts(numDrawingsPerPrompt));
             getWordsState.Transition(contestantsMultiStateChain);
             contestantsMultiStateChain.Transition(this.Exit);
 
-            this.UnityView = new UnityView
+            this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
                 Instructions = new StaticAccessor<string> { Value = "Complete all the prompts on your devices." },

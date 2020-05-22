@@ -21,16 +21,17 @@ public class ImageHandler : MonoBehaviour
     public GameObject SpriteZone;
     public GameObject ImageIdHolder;
 
-    public RelevantUsersHandler RelevantUsersHandler;
     public Text VoteCount;
+    public Text Footer;
+
     /// <summary>
-    /// Footer overlaps half on half off the card. This gameObject is the part hanging off the card.
+    /// Score overlaps half on half off the card. This gameObject is the part hanging off the card.
     /// </summary>
-    public GameObject FooterHolder;
+    public GameObject ScoreHolder;
     /// <summary>
-    /// Footer overlaps half on half off the card. This dummy is the bottom part of the card reserved for footer.
+    /// Score overlaps half on half off the card. This dummy is the bottom part of the card reserved for footer.
     /// </summary>
-    public GameObject DummyFooter;
+    public GameObject DummyScore;
 
     /// <summary>
     /// first float is inner(image grid) aspect ratio, second float is outer(entire card w/o padding) aspect ratio for perfect fit UI
@@ -132,33 +133,27 @@ public class ImageHandler : MonoBehaviour
             Header.enabled = value?._Header != null;
             Header.gameObject.SetActive(!string.IsNullOrWhiteSpace(value?._Header));
 
-            // TODO: Footer
-            //Footer.text = value?._Footer ?? string.Empty;
-            //Footer.enabled = value?._Footer != null;
-            //Footer.gameObject.SetActive(!string.IsNullOrWhiteSpace(value?._Footer));
+            Footer.text = value?._Footer ?? string.Empty;
+            Footer.enabled = value?._Footer != null;
+            Footer.gameObject.SetActive(!string.IsNullOrWhiteSpace(value?._Footer));
 
             ImageId.text = value?._ImageIdentifier ?? string.Empty;
             ImageId.enabled = value?._ImageIdentifier != null;
             ImageIdHolder.SetActive(!string.IsNullOrWhiteSpace(value?._ImageIdentifier));
 
-            bool relevantUsers = value?._RelevantUsers != null && value._RelevantUsers.Any();
+            //bool relevantUsers = value?._RelevantUsers != null && value._RelevantUsers.Any();
             VoteCount.text = value?._VoteCount?.ToString() ?? string.Empty;
             VoteCount.enabled = value?._VoteCount != null;
-            DummyFooter.SetActive(value?._VoteCount != null || relevantUsers);
-            FooterHolder.gameObject.SetActive(value?._VoteCount != null || relevantUsers);
-
+            DummyScore.SetActive(value?._VoteCount != null);
+            ScoreHolder.gameObject.SetActive(value?._VoteCount != null);
 
 
             // Used by Colorizer to deterministically color UI objects.
             string hashableIdentifier =
                 !string.IsNullOrWhiteSpace(value?._ImageIdentifier) ? value._ImageIdentifier
                 : !string.IsNullOrWhiteSpace(value?._Title) ? value._Title
-                : (value?._RelevantUsers != null && value._RelevantUsers.Any()) ? value._RelevantUsers[0].DisplayName
                 : string.Empty;
             CallColorizers(hashableIdentifier);
-
-            // Handle Relevant users after colorizer so that they can call their own colorizers.
-            RelevantUsersHandler.HandleRelevantUsers(value?._RelevantUsers, value?._VoteCount != null);
 
             /// Aspect ratio shenanigans
             float innerAspectRatio = ((float)gridColCount) / ((float)gridRowCount) * aspectRatio;
@@ -171,8 +166,9 @@ public class ImageHandler : MonoBehaviour
                      innerAspectRatio
                      / (GetFlexibleHeightOrDefault(Title)
                          + GetFlexibleHeightOrDefault(Header)
-                         + GetFlexibleHeightOrDefault(FooterHolder)
-                         + GetFlexibleHeightOrDefault(DummyFooter)
+                         + GetFlexibleHeightOrDefault(ScoreHolder)
+                         + GetFlexibleHeightOrDefault(Footer)
+                         + GetFlexibleHeightOrDefault(DummyScore)
                          + GetFlexibleHeightOrDefault(SpriteZone))
                      * GetFlexibleHeightOrDefault(SpriteZone);
             }

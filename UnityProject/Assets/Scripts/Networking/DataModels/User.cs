@@ -31,4 +31,19 @@ public class User
     private Sprite InternalSelfPortraitSprite = null;
 
     public int Score { get; set; }
+ 
+    public UserActivity Activity { get; set; }
+ 
+    public UserStatus Status { get; set; }
+
+    public enum UserActivity
+    {
+        Active,
+        Inactive
+    }
+    public enum UserStatus
+    {
+        AnsweringPrompts,
+        Waiting,
+    }
 }

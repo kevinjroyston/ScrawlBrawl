@@ -1,8 +1,8 @@
 ﻿using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.States.GameStates;
+using RoystonGame.TV.DataModels.States.StateGroups;
 using RoystonGame.TV.Extensions;
-using RoystonGame.TV.GameModes;
 using RoystonGame.TV.GameModes.BriansGames.BattleReady;
 using RoystonGame.TV.GameModes.BriansGames.BodyBuilder;
 using RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO;
@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static System.FormattableString;
 using RoystonGame.TV.DataModels;
+using static RoystonGame.Web.DataModels.Requests.LobbyManagement.ConfigureLobbyRequest;
 
 namespace RoystonGame.TV
 {
@@ -61,7 +62,7 @@ namespace RoystonGame.TV
                 Description = "Come up with a difference only you'll be able to spot!",
                 MinPlayers = 3,
                 MaxPlayers = null,
-                GameModeInstantiator = (lobby, options) => new OneOfTheseThingsIsNotLikeTheOtherOneGameMode(lobby, options),
+                GameModeInstantiator = (Lobby lobby, List<GameModeOptionRequest> options) => new OneOfTheseThingsIsNotLikeTheOtherOneGameMode(lobby, options),
                 Options = new List<GameModeOptionResponse>
                 {
                     new GameModeOptionResponse
@@ -129,6 +130,11 @@ namespace RoystonGame.TV
                     new GameModeOptionResponse
                     {
                         Description = "Number of turns for round timeout",
+                        ShortAnswer = true,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Seconds per turn",
                         ShortAnswer = true,
                     },
                 }

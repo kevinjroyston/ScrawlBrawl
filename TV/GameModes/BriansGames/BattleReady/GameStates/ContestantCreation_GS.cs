@@ -28,7 +28,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         public ContestantCreation_GS(Lobby lobby, RoundTracker roundTracker)
             : base(
                   lobby:lobby,
-                  exit: new WaitForAllUsers_StateExit(lobby))
+                  exit: new WaitForUsers_StateExit(lobby))
         {
             this.RoundTracker = roundTracker;
             MultiStateChain contestantsMultiStateChain = new MultiStateChain(MakePeopleUserStateChain);
@@ -36,7 +36,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
             this.Entrance.Transition(contestantsMultiStateChain);
             contestantsMultiStateChain.Transition(this.Exit);
 
-            this.UnityView = new UnityView
+            this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
                 Instructions = new StaticAccessor<string> { Value = "Make your contestants on your devices." },
@@ -81,7 +81,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                             SubmitButton = true,
                         };
                     },
-                    formSubmitListener: (User user, UserFormSubmission input) =>
+                    formSubmitHandler: (User user, UserFormSubmission input) =>
                     {
                         prompt.UsersToUserHands[user].Heads[(int)input.SubForms[0].RadioAnswer].Owner.Score += BattleReadyConstants.PointsForPartUsed;
                         prompt.UsersToUserHands[user].Bodies[(int)input.SubForms[1].RadioAnswer].Owner.Score += BattleReadyConstants.PointsForPartUsed;

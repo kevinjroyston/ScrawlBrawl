@@ -58,7 +58,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                         SubmitButton = true
                     };
                 },
-                formSubmitListener: (User user, UserFormSubmission input) =>
+                formSubmitHandler: (User user, UserFormSubmission input) =>
                 {
                     List<string> colors = input.SubForms.Where((subForm, index) => index > 0).Select((subForm) => subForm.Color).Reverse().ToList();
                     if (colors.Count != new HashSet<string>(colors).Count)
@@ -74,7 +74,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     });
                     return (true, string.Empty);
                 },
-                exit: new WaitForAllUsers_StateExit(this.Lobby));
+                exit: new WaitForUsers_StateExit(this.Lobby));
             return toReturn;
         }
 
@@ -119,7 +119,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                         },
                         SubmitButton = true
                     },
-                    formSubmitListener: (User user, UserFormSubmission input) =>
+                    formSubmitHandler: (User user, UserFormSubmission input) =>
                     {
                         challenge.UserSubmittedDrawings[user].Drawing = input.SubForms[0].Drawing;
                         return (true, string.Empty);
@@ -140,14 +140,14 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             this.ShowColors = gameModeOptions[3].RadioAnswer.Value == 1;
 
             State getChallenges = GetChallengesUserState();
-            MultiStateChain getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForAllUsers_StateExit(this.Lobby));
+            MultiStateChain getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby));
 
             this.Entrance.Transition(getChallenges);
             getChallenges.AddExitListener(() => this.AssignPrompts());
             getChallenges.Transition(getDrawings);
             getDrawings.Transition(this.Exit);
 
-            this.UnityView = new UnityView
+            this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
                 Instructions = new StaticAccessor<string> { Value = "Complete all the prompts on your devices." },

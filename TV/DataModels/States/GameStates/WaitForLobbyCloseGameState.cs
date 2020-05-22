@@ -28,7 +28,7 @@ namespace RoystonGame.TV.DataModels.States.GameStates
             this.Entrance.Transition(this.Exit);
 
             // I have created a monstrosity.
-            this.UnityView = new UnityView
+            this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForLobbyToStart },
                 Title = new StaticAccessor<string> { Value = Invariant($"Lobby code: {lobby.LobbyId}") },

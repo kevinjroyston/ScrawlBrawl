@@ -1,5 +1,5 @@
 ﻿using RoystonGame.TV;
-using RoystonGame.TV.GameModes;
+using RoystonGame.TV.DataModels.States.StateGroups;
 using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using RoystonGame.Web.DataModels.Responses;
 using System;

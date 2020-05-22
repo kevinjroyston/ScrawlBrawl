@@ -17,6 +17,7 @@ using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 using static System.FormattableString;
 using RoystonGame.TV.DataModels;
 using RoystonGame.TV.ControlFlows.Exit;
+using RoystonGame.TV.DataModels.Enums;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 {
@@ -66,17 +67,20 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         private int NumPlayersDoneWithRound { get; set; } = 0;
         private int RoundMaxTurnLimit { get; }
         private int RoundCount = 0;
+        private State CurrentRoundUserState { get; set; }
+        private TimeSpan? TurnTimeLimit { get; set; } = null;
         Dictionary<int, int> WinningScoresByPlace { get; set; } = new Dictionary<int, int>()
         {
             {1, 1000},   // First Place
             {2, 500},    // Second Place
             {3, 250}     // Third Place
         };
-        public Gameplay_GS(Lobby lobby, List<Setup_Person> setup_PeopleList, RoundTracker roundTracker, bool displayPool, bool displayNames, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions) : base(lobby)
+        public Gameplay_GS(Lobby lobby, List<Setup_Person> setup_PeopleList, RoundTracker roundTracker, bool displayPool, bool displayNames, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, TimeSpan? perRoundTimeoutDuration = null) : base(lobby)
         {
             this.RoundTracker = roundTracker;
             this.AssignPeople(setup_PeopleList);
-            this.AssignSeats();       
+            this.AssignSeats();
+            this.TurnTimeLimit = perRoundTimeoutDuration;
             this.Entrance.Transition(AddGameplayCycle());
             RoundMaxTurnLimit = int.Parse(gameModeOptions[3].ShortAnswer);
             var unityImages = new List<UnityImage>();
@@ -106,12 +110,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 
             }
 
-            this.UnityView = new UnityView
+            this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
                 UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages },
                 Title = new StaticAccessor<string> { Value = title },
                 Instructions = new StaticAccessor<string> { Value = instructions },
+                StateEndTime = new DynamicAccessor<DateTime?> { DynamicBacker = () => this.CurrentRoundUserState?.ApproximateStateEndTime }
             };
 
         }
@@ -122,6 +127,20 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
              * see if anyone won
              */
             RotateSeats();
+            UserTimeoutAction UserTimeoutHandler(User user)
+            {
+                Gameplay_Person PlayerHand = RoundTracker.AssignedPeople[user];
+                Gameplay_Person PlayerTrade = RoundTracker.UnassignedPeople[RoundTracker.UsersToSeatNumber[user]];
+                // Pick a random choice to swap.
+                DrawingType randAnswer = (DrawingType)Rand.Next(3);
+                PeopleUserDrawing temp = PlayerHand.BodyPartDrawings[randAnswer];
+                PlayerHand.BodyPartDrawings[randAnswer] = PlayerTrade.BodyPartDrawings[randAnswer];
+                PlayerTrade.BodyPartDrawings[randAnswer] = temp;
+                // Check if they randomly won despite timing out.
+                CheckPlayerWon(user);
+                return UserTimeoutAction.None;
+            }
+
             (bool, string) PromptedUserFormSubmission( User user, UserFormSubmission submission)
             {
                 Gameplay_Person PlayerHand = RoundTracker.AssignedPeople[user];
@@ -174,10 +193,14 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             UserState promptAndWaitForUsers = new SelectivePromptUserState(
                 usersToPrompt: UsersStillPlaying,
                 promptGenerator: PickADrawing,
-                formSubmitListener: PromptedUserFormSubmission,
-                exit: new WaitForAllUsers_StateExit(
+                formSubmitHandler: PromptedUserFormSubmission,
+                maxPromptDuration: this.TurnTimeLimit,
+                userTimeoutHandler: UserTimeoutHandler,
+                exit: new WaitForUsers_StateExit(
                     lobby: this.Lobby,
+                    usersToWaitFor: WaitForUsersType.All,
                     waitingPromptGenerator: WaitingStatePromptGenerator));
+            this.CurrentRoundUserState = promptAndWaitForUsers;
 
             promptAndWaitForUsers.Transition(()=>
             {

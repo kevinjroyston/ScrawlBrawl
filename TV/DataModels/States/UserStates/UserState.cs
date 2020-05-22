@@ -7,6 +7,7 @@ using RoystonGame.Web.DataModels.Responses;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -67,32 +68,16 @@ namespace RoystonGame.TV.DataModels.States.UserStates
         /// </summary>
         private DateTime? DontRefreshLaterThan { get; set; }
 
-        /// <summary>
-        /// The total time to spend in the state.
-        /// </summary>
-        private TimeSpan? StateTimeoutDuration { get; }
-
-        /// <summary>
-        /// A task tracking a thread which will forcefully call StateCompletedCallback if time runs out.
-        /// </summary>
-        private Task StateTimeoutTask { get; set; }
-
         #endregion
-
-        /// <summary>
-        /// A bool per user indicating this user has entered the UserState.
-        /// </summary>
-        private Dictionary<User, bool> CalledEnterState { get; set; } = new Dictionary<User, bool>();
 
         /// <summary>
         /// Creates a new user state.
         /// </summary>
         /// <param name="stateTimeoutDuration">The maximum amount of time to spend in this userstate.</param>
         /// <param name="promptGenerator">A function to be called the first time a user requests a prompt.</param>
-        public UserState(TimeSpan? stateTimeoutDuration, Func<User, UserPrompt> promptGenerator, StateEntrance entrance, StateExit exit) : base(entrance: entrance, exit: exit)
+        public UserState(TimeSpan? stateTimeoutDuration, Func<User, UserPrompt> promptGenerator, StateEntrance entrance, StateExit exit) : base(stateTimeoutDuration: stateTimeoutDuration, entrance: entrance, exit: exit)
         {
             this.PromptGenerator = promptGenerator ?? throw new Exception("Prompt generator cannot be null");
-            this.StateTimeoutDuration = stateTimeoutDuration;
 
             // Per user logic for tracking / moving user between states.
             this.Entrance.AddPerUserExitListener(InternalPerUserInlet);
@@ -104,31 +89,16 @@ namespace RoystonGame.TV.DataModels.States.UserStates
                 {
                     // Make sure the user is calling refresh at or before this time to ensure a quick state transition.
                     this.DontRefreshLaterThan = DateTime.Now.Add(this.StateTimeoutDuration.Value).Add(Constants.DefaultBufferTime);
-
-                    // Total state timeout timer duration.
-                    int millisecondsDelay = (int)this.StateTimeoutDuration.Value.TotalMilliseconds;
-
-                    // Start and track the timeout thread.
-                    this.StateTimeoutTask = TimeoutFunc(millisecondsDelay);
                 }
             });
         }
 
-
-
         /// <summary>
-        /// Timeout for the state.
+        /// Called when a user times out.
         /// </summary>
+        /// <param name="user"></param>
         /// <returns></returns>
-        private async Task TimeoutFunc(int millisecondsDelay)
-        {
-            if (millisecondsDelay > 0)
-            {
-                await Task.Delay(millisecondsDelay).ConfigureAwait(false);
-            }
-
-            this.ApplySpecialCallbackToAllUsersInState((User user) => this.Exit.Inlet(user, UserStateResult.Timeout, null));
-        }
+        public abstract UserTimeoutAction HandleUserTimeout(User user);
 
         /// <summary>
         /// Applies a function to all users who have entered this state, and users who enter this state in the future.
@@ -138,11 +108,16 @@ namespace RoystonGame.TV.DataModels.States.UserStates
         /// <param name="specialCallback">The callback to apply.</param>
         private void ApplySpecialCallbackToAllUsersInState(Action<User> specialCallback)
         {
+            // TODO: add support for multiple special callbacks.
+            Debug.Assert(this.SpecialCallbackAppliedToAllUsersInState == null, "Shouldn't be applying more than 1 special callback.");
             this.SpecialCallbackAppliedToAllUsersInState = specialCallback;
 
-            foreach (User user in this.CalledEnterState.Keys)
+            foreach ((User user, (bool entered, bool exited)) in this.UsersEnteredAndExitedState.ToList())
             {
-                specialCallback(user);
+                if ( entered && !exited)
+                {
+                    specialCallback(user);
+                }
             }
         }
 
@@ -216,12 +191,6 @@ namespace RoystonGame.TV.DataModels.States.UserStates
         {
             //Debug.WriteLine(Invariant($"|||USER CALLED INLET|||{user.DisplayName}|{this.GetType()}|{this.StateId}"));
 
-            // If the user already entered this state once fail.
-            if (this.CalledEnterState.ContainsKey(user) && this.CalledEnterState[user])
-            {
-                throw new Exception("This UserState has already been entered once. Please use a new state instance.");
-            }
-
             // If there is a state-wide callback applied to all users, apply it immediately.
             if (this.SpecialCallbackAppliedToAllUsersInState != null)
             {
@@ -229,7 +198,6 @@ namespace RoystonGame.TV.DataModels.States.UserStates
                 return;
             }
 
-            this.CalledEnterState[user] = true;
             user.TransitionUserState(this);
         }
     }

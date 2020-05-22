@@ -11,10 +11,12 @@ TrueTypeFontImporter:
   fontName: Sen
   fontNames:
   - Sen
-  fallbackFontReferences: []
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: e8a1e7c9013833f4c8bfdaac414861f6, type: 3}
+  - {fileID: 12800000, guid: 34b145ffff40e0f4baa69d5fec0ee938, type: 3}
   customCharacters: 
   fontRenderingMode: 0
-  ascentCalculationMode: 1
+  ascentCalculationMode: 2
   useLegacyBoundsCalculation: 0
   shouldRoundAdvanceValue: 1
   userData: 

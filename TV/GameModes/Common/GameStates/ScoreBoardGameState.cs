@@ -27,7 +27,7 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
         {
             this.Entrance.Transition(this.Exit);
 
-            this.UnityView = new UnityView
+            this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.Scoreboard },
                 Title = new StaticAccessor<string> { Value = title },

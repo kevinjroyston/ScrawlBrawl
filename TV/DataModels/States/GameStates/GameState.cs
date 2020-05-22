@@ -21,7 +21,7 @@ namespace RoystonGame.TV.DataModels.States.GameStates
         /// Initializes a GameState to be used in a FSM.
         /// </summary>
         /// <param name="lobby">The lobby this gamestate belongs to.</param>
-        public GameState(Lobby lobby, StateEntrance entrance = null, StateExit exit = null) : base(entrance: entrance, exit: exit)
+        public GameState(Lobby lobby, TimeSpan? stateTimeoutDuration = null, StateEntrance entrance = null, StateExit exit = null) : base(stateTimeoutDuration: stateTimeoutDuration, entrance: entrance, exit: exit)
         {
             Lobby = lobby;
             this.Entrance.AddExitListener(() =>
@@ -32,7 +32,7 @@ namespace RoystonGame.TV.DataModels.States.GameStates
         }
 
         #region TVRendering
-        protected UnityView UnityView { get; set; } = new UnityView { ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.NoUnityViewConfigured } };
+        protected UnityView UnityView { get; set; } = new UnityView(null) { ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.NoUnityViewConfigured } };
 
         public UnityView GetActiveUnityView()
         {

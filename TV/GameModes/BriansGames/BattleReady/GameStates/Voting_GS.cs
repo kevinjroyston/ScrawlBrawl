@@ -47,14 +47,14 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
             ConcurrentDictionary<User, (User, int)> usersToVoteResults = new ConcurrentDictionary<User, (User, int)>();
             SimplePromptUserState pickContestant = new SimplePromptUserState(
                 promptGenerator: PickADrawing(prompt, randomizedUsers),
-                formSubmitListener: (User user, UserFormSubmission submission) =>
+                formSubmitHandler: (User user, UserFormSubmission submission) =>
                 {
                     User userVotedFor = randomizedUsers[(int)submission.SubForms[0].RadioAnswer];
                     int promptRanking = (int)submission.SubForms[1].DropdownChoice;
                     usersToVoteResults.TryAdd(user, (userVotedFor, promptRanking));
                     return (true, string.Empty);
                 },
-                exit: new WaitForAllUsers_StateExit(lobby));
+                exit: new WaitForUsers_StateExit(lobby));
             this.Entrance.Transition(pickContestant);
             pickContestant.Transition(this.Exit);
             pickContestant.AddExitListener(() =>
@@ -72,7 +72,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                     }
                 }
             });
-            this.UnityView = new UnityView
+            this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
                 UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = prompt.UsersToUserHands.Values.Select((userHand) => userHand.Contestant.GetPersonImage()).ToList() },

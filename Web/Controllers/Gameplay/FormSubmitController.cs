@@ -24,6 +24,12 @@ namespace RoystonGame.Web.Controllers
         public IActionResult Post([FromBody] UserFormSubmission formData, string idOverride)
         {
             User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, Request.GetUserAgent(), idOverride, out bool newUser);
+
+            if (user != null)
+            {
+                user.LastHeardFrom = DateTime.UtcNow;
+            }
+
             if (user?.UserState == null || newUser)
             {
                 return BadRequest("Error finding user object, try again.");

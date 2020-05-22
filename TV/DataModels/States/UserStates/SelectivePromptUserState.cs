@@ -1,6 +1,7 @@
 ﻿using RoystonGame.TV.ControlFlows;
 using RoystonGame.TV.ControlFlows.Enter;
 using RoystonGame.TV.ControlFlows.Exit;
+using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.Extensions;
 using RoystonGame.Web.DataModels.Requests;
@@ -20,14 +21,18 @@ namespace RoystonGame.TV.DataModels.States.UserStates
         public SelectivePromptUserState(
             List<User> usersToPrompt,
             Func<User, UserPrompt> promptGenerator = null,
-            Func<User, UserFormSubmission, (bool, string)> formSubmitListener = null,
+            Func<User, UserFormSubmission, (bool, string)> formSubmitHandler = null,
             StateEntrance entrance = null,
-            StateExit exit = null)
+            StateExit exit = null,
+            TimeSpan? maxPromptDuration = null,
+            Func<User, UserTimeoutAction> userTimeoutHandler = null)
             : base(
                   promptGenerator: promptGenerator,
-                  formSubmitListener: formSubmitListener,
+                  formSubmitHandler: formSubmitHandler,
                   entrance: entrance,
-                  exit: exit)
+                  exit: exit,
+                  maxPromptDuration: maxPromptDuration,
+                  userTimeoutHandler: userTimeoutHandler)
         {
             Arg.NotNull(usersToPrompt);
             this.UsersToPrompt = usersToPrompt;
@@ -38,8 +43,8 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             {
                 if (this.UsersToPrompt.Contains(user))
                 {
-                    // Blackhole requests until user submits proper form
-                    return new InletConnector();
+                    // Blackhole requests until user submits proper form. Set user status according to whether or not we gave them a submit button.
+                    return new WaitForUserInput_BlackholeInletConnector(HandleUserTimeout);
                 }
                 else
                 {
