@@ -48,28 +48,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
 
             Setup.AddExitListener(() =>
             {
-                List<PeopleUserDrawing> randomizedHeads = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Head).OrderBy(_ => Rand.Next()).ToList();
-                List<PeopleUserDrawing> randomizedBodies = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Body).OrderBy(_ => Rand.Next()).ToList();
-                List<PeopleUserDrawing> randomizedLegs = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Legs).OrderBy(_ => Rand.Next()).ToList();
-                int totalDrawings = lobby.GetAllUsers().Count* numPromptForEachUsersPerRound* 3*numOfEachPartInHand;
-                while (Drawings.Count < totalDrawings)
-                {
-                    if(randomizedHeads.Count*randomizedBodies.Count*randomizedLegs.Count == 0)
-                    {
-                        randomizedHeads = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Head).OrderBy(_ => Rand.Next()).ToList();
-                        randomizedBodies = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Body).OrderBy(_ => Rand.Next()).ToList();
-                        randomizedLegs = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Legs).OrderBy(_ => Rand.Next()).ToList();
-                    }
-                    Drawings.Add(randomizedHeads[0]);
-                    randomizedHeads.RemoveAt(0);
-
-                    Drawings.Add(randomizedBodies[0]);
-                    randomizedBodies.RemoveAt(0);
-
-                    Drawings.Add(randomizedLegs[0]);
-                    randomizedLegs.RemoveAt(0);
-                }
-                Drawings = Drawings.OrderBy(_ => Rand.Next()).ToList();
                 foreach ((User, string) promptTuple in promptTuples)
                 {
                     Prompts.Add(new Prompt
@@ -95,10 +73,15 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 List<Prompt> roundPrompts = promptsCopy.GetRange(0, numPromptsEachRound);
                 promptsCopy.RemoveRange(0, numPromptsEachRound);
 
-                List<PeopleUserDrawing> randomizedHeads = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Head).OrderBy(_ => Rand.Next()).ToList();
-                List<PeopleUserDrawing> randomizedBodies = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Body).OrderBy(_ => Rand.Next()).ToList();
-                List<PeopleUserDrawing> randomizedLegs = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Legs).OrderBy(_ => Rand.Next()).ToList();
-                
+                List<PeopleUserDrawing> headDrawings = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Head).OrderBy(_ => Rand.Next()).ToList();
+                List<PeopleUserDrawing> bodyDrawings = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Body).OrderBy(_ => Rand.Next()).ToList();
+                List<PeopleUserDrawing> legsDrawings = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Legs).OrderBy(_ => Rand.Next()).ToList();
+                if(headDrawings.Count != bodyDrawings.Count || bodyDrawings.Count != legsDrawings.Count)
+                {
+                    throw new Exception("Something went wrong while setting up the game");
+                }
+                int drawingIndex = 0;
+
                 for (int i = 0; i < numPromptForEachUsersPerRound; i++)
                 {
                     foreach (User user in lobby.GetAllUsers())
@@ -117,16 +100,29 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                         {
                             throw new Exception("Something went wrong while setting up the game");
                         }
+                        List<PeopleUserDrawing> headDrawingsToAdd = new List<PeopleUserDrawing>();
+                        List<PeopleUserDrawing> bodyDrawingsToAdd = new List<PeopleUserDrawing>();
+                        List<PeopleUserDrawing> legsDrawingsToAdd = new List<PeopleUserDrawing>();
+                        
+                        for(int j = 0; j < numOfEachPartInHand; j++)
+                        {
+                            headDrawingsToAdd.Add(headDrawings[drawingIndex]);
+                            bodyDrawingsToAdd.Add(bodyDrawings[drawingIndex]);
+                            legsDrawingsToAdd.Add(legsDrawings[drawingIndex]);
+                            drawingIndex++;
+                            if(drawingIndex>= headDrawings.Count)
+                            {
+                                drawingIndex = 0;
+                            }
+                        }
                         randPrompt.UsersToUserHands.TryAdd(user, new Prompt.UserHand
                         {
-                            Heads = randomizedHeads.GetRange(0, numOfEachPartInHand),
-                            Bodies = randomizedBodies.GetRange(0, numOfEachPartInHand),
-                            Legs = randomizedLegs.GetRange(0, numOfEachPartInHand),
+                            Heads = headDrawingsToAdd,
+                            Bodies = bodyDrawingsToAdd,
+                            Legs = legsDrawingsToAdd,
                             Contestant = new Person()
                         });
-                        randomizedHeads.RemoveRange(0, numOfEachPartInHand);
-                        randomizedBodies.RemoveRange(0, numOfEachPartInHand);
-                        randomizedLegs.RemoveRange(0, numOfEachPartInHand);
+                        
                         roundPromptsCopy.Remove(randPrompt);
                         if (!RoundTracker.UsersToAssignedPrompts.ContainsKey(user))
                         {
@@ -232,10 +228,14 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             {
                 throw new GameModeInstantiationException("Numer of prompts per round must even if you have an odd number of players");
             }*/
-            if (!int.TryParse(gameModeOptions[2].ShortAnswer, out int parsedInteger3)
-                || parsedInteger3 < 1 || parsedInteger3 > 30)
+            if (int.Parse(gameModeOptions[1].ShortAnswer) % 2 == 1)
             {
-                throw new GameModeInstantiationException(Invariant($"Numer of drawings per round must be an integer from 1-30"));
+                throw new GameModeInstantiationException("Numer of prompts per round must even");
+            }
+            if (!int.TryParse(gameModeOptions[2].ShortAnswer, out int parsedInteger3)
+                || parsedInteger3 < 2 || parsedInteger3 > 30)
+            {
+                throw new GameModeInstantiationException(Invariant($"Numer of drawings per person per part must be an integer from 2-30"));
             }
         }
     }
