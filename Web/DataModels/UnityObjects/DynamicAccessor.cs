@@ -1,5 +1,7 @@
 ﻿using KellermanSoftware.CompareNetObjects;
+using RoystonGame.TV.DataModels.Users;
 using System;
+using System.Collections.Generic;
 
 namespace RoystonGame.Web.DataModels.UnityObjects
 {
@@ -23,10 +25,23 @@ namespace RoystonGame.Web.DataModels.UnityObjects
             T value = this.DynamicBacker.Invoke();
             CompareLogic compareLogic = new CompareLogic();
             ComparisonResult result = compareLogic.Compare(value, Value);
+            // NEED TO DO A COPY OF VALUE / compare hashes
             Value = value;
-            return !result.AreEqual;
-        }
 
+            // TODO remove hack: Hacky user status fix
+            bool toReturn = !result.AreEqual;
+            IReadOnlyList<User> userVal = value as IReadOnlyList<User>;
+            if (userVal != null)
+            {
+                foreach(User user in userVal)
+                {
+                    toReturn |= user.Dirty;
+                    user.Dirty = false;
+                }
+            }
+
+            return toReturn;
+        }
         public T Value { get; private set; }
 
 

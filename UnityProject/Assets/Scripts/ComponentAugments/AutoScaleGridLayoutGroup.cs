@@ -2,34 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.UI.GridLayoutGroup;
 
-public class AutoScaleGridLayoutGroup : GridLayoutGroup
+public class AutoScaleGridLayoutGroup : MonoBehaviour
 {
     RectTransform rect;
+    GridLayoutGroup gridLayoutGroup;
     /// <summary>
     /// Width / Height
     /// </summary>
     public float aspectRatio = 1.0f;
     ImageHandler scaler = null;
 
-    public bool imageHandlerDrivenAspectRatio { get; set; } = true;
+    public bool imageHandlerDrivenAspectRatio = true;
+    public int pretendThereIsAlwaysAtLeastThisManyDrawings = 0;
 
     // "Everything but Footer' Vertical Layout Group padding
-    public int left = 20;
-    public int right = 20;
-    public int bottom = 20;
-    public int top = 20;
+    private int left = 20;
+    private int right = 20;
+    private int bottom = 20;
+    private int top = 20;
 
 
 
-    protected override void Start()
+    protected void Start()
     {
-        base.Start();
+        gridLayoutGroup = GetComponent<GridLayoutGroup>();
         rect = GetComponentInParent<RectTransform>();
 
-        cellSize = new Vector2(rect.rect.height, aspectRatio * rect.rect.height);
-        startAxis = Axis.Horizontal;
-        constraint = Constraint.FixedColumnCount;
+        gridLayoutGroup.cellSize = new Vector2(rect.rect.height, aspectRatio * rect.rect.height);
+        gridLayoutGroup.startAxis = Axis.Horizontal;
+        gridLayoutGroup.constraint = Constraint.FixedColumnCount;
 
         if (imageHandlerDrivenAspectRatio)
         {
@@ -40,10 +43,8 @@ public class AutoScaleGridLayoutGroup : GridLayoutGroup
         OnRectTransformDimensionsChange();
     }
 
-    protected override void OnRectTransformDimensionsChange()
+    protected void OnRectTransformDimensionsChange()
     {
-        base.OnRectTransformDimensionsChange();
-
         if (rect == null)
         {
             rect = GetComponentInParent<RectTransform>();
@@ -61,7 +62,7 @@ public class AutoScaleGridLayoutGroup : GridLayoutGroup
             int cellCount = transform.childCount;
             var newHeight = CalculateHeight(cellCount);
             oldCellCount = cellCount;
-            cellSize = new Vector2((newHeight - top - bottom) * aspectRatio + left + right - spacing.x, newHeight - spacing.y);
+            gridLayoutGroup.cellSize = new Vector2((newHeight - top - bottom) * aspectRatio + left + right - gridLayoutGroup.spacing.x, newHeight - gridLayoutGroup.spacing.y);
         }
     }
 
@@ -81,6 +82,7 @@ public class AutoScaleGridLayoutGroup : GridLayoutGroup
     /// <returns></returns>
     private float CalculateHeight(int cellCount)
     {
+        cellCount = Mathf.Max(cellCount, pretendThereIsAlwaysAtLeastThisManyDrawings);
         // In case objects were deleted
         while (columnCount * RowsPerColumnCount(columnCount - 1) > cellCount)
         {
@@ -94,11 +96,11 @@ public class AutoScaleGridLayoutGroup : GridLayoutGroup
         }
 
         int numCols = columnCount;
-        constraintCount = numCols;
+        gridLayoutGroup.constraintCount = numCols;
         int numRows = RowsPerColumnCount(numCols);
         numRows = (numRows == 0 ? 1 : numRows);
         numCols = Mathf.Min(numCols, cellCount);
-        return Mathf.Min((rect.rect.height - padding.vertical * (numRows - 1)) / (float)numRows, (rect.rect.width - (padding.horizontal) * (numCols-1)) / aspectRatio /(float)numCols);
+        return Mathf.Min((rect.rect.height - gridLayoutGroup.padding.vertical * (numRows - 1)) / (float)numRows, (rect.rect.width - (gridLayoutGroup.padding.horizontal) * (numCols-1)) / aspectRatio /(float)numCols);
     }
 
     /// <summary>
@@ -111,8 +113,8 @@ public class AutoScaleGridLayoutGroup : GridLayoutGroup
         float returnVal = 1f;
         for (int i = 0; i < 5; i++)
         {
-            float effectiveWidth = rect.rect.width - columnCount * (padding.horizontal + left + right);
-            float effectiveHeight = rect.rect.height - returnVal * (padding.vertical + top + bottom);
+            float effectiveWidth = rect.rect.width - columnCount * (gridLayoutGroup.padding.horizontal + left + right);
+            float effectiveHeight = rect.rect.height - returnVal * (gridLayoutGroup.padding.vertical + top + bottom);
             returnVal = columnCount * aspectRatio * effectiveHeight / effectiveWidth;
         }
         return Mathf.FloorToInt(returnVal);

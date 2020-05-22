@@ -132,6 +132,11 @@ namespace RoystonGame.TV
                         Description = "Number of turns for round timeout",
                         ShortAnswer = true,
                     },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Seconds per turn",
+                        ShortAnswer = true,
+                    },
                 }
             },
             new GameModeMetadata

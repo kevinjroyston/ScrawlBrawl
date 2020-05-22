@@ -53,7 +53,7 @@ namespace RoystonGame.Web.DataModels.UnityObjects
 
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public IAccessor<DateTime> StateEndTime { private get; set; }
+        public IAccessor<DateTime?> StateEndTime { private get; set; }
         public DateTime? _StateEndTime { get => StateEndTime?.Value; }
 
         [Newtonsoft.Json.JsonIgnore]

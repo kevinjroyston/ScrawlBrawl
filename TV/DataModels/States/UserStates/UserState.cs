@@ -82,12 +82,6 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             // Per user logic for tracking / moving user between states.
             this.Entrance.AddPerUserExitListener(InternalPerUserInlet);
 
-            this.Exit.AddPerUserEntranceListener((User user) =>
-            {
-                // Any time a user exits a state they should be set to Waiting.
-                user.Status = UserStatus.Waiting;
-            });
-
             // Start timers after leaving entrance state.
             this.Entrance.AddExitListener(() =>
             {

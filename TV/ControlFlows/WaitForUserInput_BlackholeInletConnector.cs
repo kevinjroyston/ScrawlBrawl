@@ -24,9 +24,18 @@ namespace RoystonGame.TV.ControlFlows
         }
         public void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
-            // Set user to answering prompts state if they arent being hurried and their current prompt has a submit button.
-            if (user.StatesTellingMeToHurry.Count == 0 && user.UserState.UserRequestingCurrentPrompt(user).SubmitButton)
+            // If there is no submit button the user is not meant to answer prompts or hurry through.
+            if (!user.UserState.UserRequestingCurrentPrompt(user).SubmitButton)
             {
+                return;
+            }
+
+            // Set user to answering prompts state if they arent being hurried and their current prompt has a submit button.
+            if (user.StatesTellingMeToHurry.Count == 0)
+            {
+                // TODO: remove hack
+                user.Dirty |= user.Status != UserStatus.AnsweringPrompts;
+
                 user.Status = UserStatus.AnsweringPrompts;
             }
             else

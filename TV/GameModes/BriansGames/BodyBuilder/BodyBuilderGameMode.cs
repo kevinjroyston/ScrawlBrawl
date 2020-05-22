@@ -9,6 +9,7 @@ using RoystonGame.Web.DataModels.Exceptions;
 using RoystonGame.TV.GameModes.BriansGames.Common.GameStates;
 using RoystonGame.TV.GameModes.Common.GameStates;
 using RoystonGame.TV.DataModels.States.StateGroups;
+using System;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
 {
@@ -24,6 +25,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
             int numRounds = int.Parse(gameModeOptions[0].ShortAnswer);
             Setup = new Setup_GS(lobby: lobby, peopleList: this.PeopleList, gameModeOptions: gameModeOptions);
             int countRounds = 0;
+            int roundTimeoutInSeconds = Int32.Parse(gameModeOptions[4].ShortAnswer);
+            TimeSpan? roundTimeout = null;
+            if (roundTimeoutInSeconds >= 3)
+            {
+                roundTimeout = TimeSpan.FromSeconds(roundTimeoutInSeconds);
+            }
 
             GameState CreateGameplayGamestate()
             {
@@ -33,7 +40,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                         roundTracker: RoundTracker,
                         gameModeOptions: gameModeOptions,
                         displayPool: gameModeOptions[2].RadioAnswer == 1,
-                        displayNames: gameModeOptions[1].RadioAnswer == 1);
+                        displayNames: gameModeOptions[1].RadioAnswer == 1,
+                        perRoundTimeoutDuration: roundTimeout);
                 gameplay.Transition(CreateRevealAndScore);
                 return gameplay;
             }
@@ -81,6 +89,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                 || parsedInteger2 < 1 || parsedInteger2 > 100)
             {
                 throw new GameModeInstantiationException("Must be an integer from 1-100");
+            }
+            if (!int.TryParse(gameModeOptions[4].ShortAnswer, out int parsedInteger3)
+                || (parsedInteger3 != -1 && (parsedInteger3<3 || parsedInteger3 > 60)))
+            {
+                throw new GameModeInstantiationException("Must be an integer from 3-60, or -1 to indicate no timeout");
             }
         }
     }

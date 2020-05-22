@@ -97,6 +97,13 @@ namespace RoystonGame.TV.DataModels.Users
         [System.Text.Json.Serialization.JsonIgnore]
         public DateTime LastHeardFrom { get; set; } = DateTime.UtcNow;
 
+        /// <summary>
+        /// TODO: Remove this / refactor this hack.
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public bool Dirty { get; set; } = false;
+
         public User (IPAddress address, string userAgent)
         {
             Identifier = GetUserIdentifier(address, userAgent);

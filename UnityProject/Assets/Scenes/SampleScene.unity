@@ -1133,6 +1133,7 @@ GameObject:
   - component: {fileID: 477148841}
   - component: {fileID: 477148842}
   - component: {fileID: 477148844}
+  - component: {fileID: 477148843}
   m_Layer: 0
   m_Name: ImageDropZone
   m_TagString: Untagged
@@ -1171,6 +1172,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ad67be4fa5a2044afcc1d88bbaaeb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  aspectRatio: 0.8
+  imageHandlerDrivenAspectRatio: 1
+  pretendThereIsAlwaysAtLeastThisManyDrawings: 0
+--- !u!114 &477148843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 477148840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Padding:
     m_Left: 0
     m_Right: 0
@@ -1179,15 +1195,10 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 484.04922, y: 600.0615}
-  m_Spacing: {x: 20, y: 20}
-  m_Constraint: 1
-  m_ConstraintCount: 1
-  aspectRatio: 0.8
-  left: 20
-  right: 20
-  bottom: 20
-  top: 20
+  m_CellSize: {x: 100, y: 100}
+  m_Spacing: {x: 0, y: 0}
+  m_Constraint: 0
+  m_ConstraintCount: 2
 --- !u!114 &477148844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1745,23 +1756,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ad67be4fa5a2044afcc1d88bbaaeb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_StartCorner: 0
-  m_StartAxis: 0
-  m_CellSize: {x: 100, y: 100}
-  m_Spacing: {x: 0, y: 0}
-  m_Constraint: 0
-  m_ConstraintCount: 2
   aspectRatio: 0.8
-  left: 20
-  right: 20
-  bottom: 20
-  top: 20
+  imageHandlerDrivenAspectRatio: 1
+  pretendThereIsAlwaysAtLeastThisManyDrawings: 0
 --- !u!114 &652567489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2734,6 +2731,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1100625179}
   - component: {fileID: 1100625181}
+  - component: {fileID: 1100625180}
   m_Layer: 0
   m_Name: ImageDropZone
   m_TagString: Untagged
@@ -2760,6 +2758,30 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1100625180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1100625178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 1
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 100, y: 100}
+  m_Spacing: {x: 0, y: 0}
+  m_Constraint: 0
+  m_ConstraintCount: 2
 --- !u!114 &1100625181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2772,23 +2794,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ad67be4fa5a2044afcc1d88bbaaeb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 1
-  m_StartCorner: 0
-  m_StartAxis: 0
-  m_CellSize: {x: 598.72003, y: 768.4}
-  m_Spacing: {x: 40, y: 20}
-  m_Constraint: 1
-  m_ConstraintCount: 1
   aspectRatio: 0.8
-  left: 20
-  right: 20
-  bottom: 20
-  top: 20
+  imageHandlerDrivenAspectRatio: 1
+  pretendThereIsAlwaysAtLeastThisManyDrawings: 0
 --- !u!1 &1162883965
 GameObject:
   m_ObjectHideFlags: 0
@@ -2799,6 +2807,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1162883966}
   - component: {fileID: 1162883967}
+  - component: {fileID: 1162883968}
   m_Layer: 0
   m_Name: DropZone
   m_TagString: Untagged
@@ -2837,6 +2846,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ad67be4fa5a2044afcc1d88bbaaeb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  aspectRatio: 1
+  imageHandlerDrivenAspectRatio: 1
+  pretendThereIsAlwaysAtLeastThisManyDrawings: 10
+--- !u!114 &1162883968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1162883965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Padding:
     m_Left: 0
     m_Right: 0
@@ -2845,15 +2869,10 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 296.8, y: 296.8}
-  m_Spacing: {x: 20, y: 20}
-  m_Constraint: 1
-  m_ConstraintCount: 1
-  aspectRatio: 1
-  left: 20
-  right: 20
-  bottom: 20
-  top: 20
+  m_CellSize: {x: 100, y: 100}
+  m_Spacing: {x: 0, y: 0}
+  m_Constraint: 0
+  m_ConstraintCount: 2
 --- !u!1 &1177880469
 GameObject:
   m_ObjectHideFlags: 0
@@ -3590,6 +3609,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1462122228}
   - component: {fileID: 1462122229}
+  - component: {fileID: 1462122230}
   m_Layer: 0
   m_Name: DropZone
   m_TagString: Untagged
@@ -3628,6 +3648,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ad67be4fa5a2044afcc1d88bbaaeb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  aspectRatio: 1
+  imageHandlerDrivenAspectRatio: 1
+  pretendThereIsAlwaysAtLeastThisManyDrawings: 0
+--- !u!114 &1462122230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1462122227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Padding:
     m_Left: 0
     m_Right: 0
@@ -3636,15 +3671,10 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 135.01538, y: 135.01538}
-  m_Spacing: {x: 20, y: 20}
-  m_Constraint: 1
-  m_ConstraintCount: 1
-  aspectRatio: 1
-  left: 20
-  right: 20
-  bottom: 20
-  top: 20
+  m_CellSize: {x: 100, y: 100}
+  m_Spacing: {x: 0, y: 0}
+  m_Constraint: 0
+  m_ConstraintCount: 2
 --- !u!1 &1463793723
 GameObject:
   m_ObjectHideFlags: 0
@@ -5108,6 +5138,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2128029489}
   - component: {fileID: 2128029490}
+  - component: {fileID: 2128029491}
   m_Layer: 0
   m_Name: ImageDropZone
   m_TagString: Untagged
@@ -5146,6 +5177,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ad67be4fa5a2044afcc1d88bbaaeb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  aspectRatio: 0.8
+  imageHandlerDrivenAspectRatio: 1
+  pretendThereIsAlwaysAtLeastThisManyDrawings: 0
+--- !u!114 &2128029491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128029488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Padding:
     m_Left: 0
     m_Right: 0
@@ -5154,12 +5200,7 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 636, y: 790}
-  m_Spacing: {x: 20, y: 20}
-  m_Constraint: 1
-  m_ConstraintCount: 1
-  aspectRatio: 0.8
-  left: 20
-  right: 20
-  bottom: 20
-  top: 20
+  m_CellSize: {x: 100, y: 100}
+  m_Spacing: {x: 0, y: 0}
+  m_Constraint: 0
+  m_ConstraintCount: 2

@@ -32,6 +32,11 @@ namespace RoystonGame.TV.DataModels
         protected TimeSpan? StateTimeoutDuration { get; }
 
         /// <summary>
+        /// Returns the approximate time at which the state will end.
+        /// </summary>
+        public DateTime? ApproximateStateEndTime { get; private set; } = null;
+
+        /// <summary>
         /// A mapping of users to a tuple indicating if they have (entered state, exited state).
         /// </summary>
         protected Dictionary<User, (bool, bool)> UsersEnteredAndExitedState { get; } = new Dictionary<User, (bool, bool)>();
@@ -49,6 +54,12 @@ namespace RoystonGame.TV.DataModels
                     throw new Exception("This UserState has already been entered once. Please use a new state instance.");
                 }
                 this.UsersEnteredAndExitedState[user] = (true, false);
+
+                // TODO: remove hack
+                user.Dirty |= user.Status != UserStatus.Waiting;
+
+                // Any time a user exits a state they should be set to Waiting.
+                user.Status = UserStatus.Waiting;
             });
 
             this.Exit.AddPerUserEntranceListener((User user) =>
@@ -68,6 +79,9 @@ namespace RoystonGame.TV.DataModels
             {
                 if (this.StateTimeoutDuration.HasValue)
                 {
+                    // Estimate for what time the state will end at.
+                    this.ApproximateStateEndTime = DateTime.UtcNow.Add(this.StateTimeoutDuration.Value);
+
                     // Total state timeout timer duration.
                     int millisecondsDelay = (int)this.StateTimeoutDuration.Value.TotalMilliseconds;
 

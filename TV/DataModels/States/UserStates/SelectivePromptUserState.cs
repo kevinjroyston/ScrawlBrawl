@@ -24,12 +24,14 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             Func<User, UserFormSubmission, (bool, string)> formSubmitHandler = null,
             StateEntrance entrance = null,
             StateExit exit = null,
+            TimeSpan? maxPromptDuration = null,
             Func<User, UserTimeoutAction> userTimeoutHandler = null)
             : base(
                   promptGenerator: promptGenerator,
                   formSubmitHandler: formSubmitHandler,
                   entrance: entrance,
                   exit: exit,
+                  maxPromptDuration: maxPromptDuration,
                   userTimeoutHandler: userTimeoutHandler)
         {
             Arg.NotNull(usersToPrompt);

@@ -43,6 +43,7 @@ namespace RoystonGame.TV.DataModels.States.UserStates
                 toReturn = this.UserTimeoutHandler(user);
             }
 
+            // TODO: UserTimeoutAction doesnt work if we call exit.inlet prior to returning it
             this.Exit.Inlet(user, UserStateResult.Timeout, null);
             return toReturn;
         }
