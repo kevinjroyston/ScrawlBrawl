@@ -113,6 +113,8 @@ public class AutoScaleGridLayoutGroup : MonoBehaviour
         float returnVal = 1f;
         for (int i = 0; i < 5; i++)
         {
+
+            gridLayoutGroup = GetComponent<GridLayoutGroup>();
             float effectiveWidth = rect.rect.width - columnCount * (gridLayoutGroup.padding.horizontal + left + right);
             float effectiveHeight = rect.rect.height - returnVal * (gridLayoutGroup.padding.vertical + top + bottom);
             returnVal = columnCount * aspectRatio * effectiveHeight / effectiveWidth;
