@@ -55,9 +55,6 @@ namespace RoystonGame.TV.DataModels
                 }
                 this.UsersEnteredAndExitedState[user] = (true, false);
 
-                // TODO: remove hack
-                user.Dirty |= user.Status != UserStatus.Waiting;
-
                 // Any time a user exits a state they should be set to Waiting.
                 user.Status = UserStatus.Waiting;
             });

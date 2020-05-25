@@ -1,6 +1,8 @@
 ﻿using RoystonGame.TV.DataModels.States.UserStates;
+using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
 using static System.FormattableString;
@@ -10,7 +12,7 @@ namespace RoystonGame.TV.DataModels.Users
     /// <summary>
     /// Class representing a user instance.
     /// </summary>
-    public class User
+    public class User : IAccessorHashable
     {
         public Guid UserId { get; set; } = Guid.NewGuid();
 
@@ -91,18 +93,11 @@ namespace RoystonGame.TV.DataModels.Users
         public List<State> StatesTellingMeToHurry { get; set; } = new List<State>();
 
         /// <summary>
-        /// The states in this list would like the user to hurry up until they leave said state.
+        /// The last time the user called any API.
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public DateTime LastHeardFrom { get; set; } = DateTime.UtcNow;
-
-        /// <summary>
-        /// TODO: Remove this / refactor this hack.
-        /// </summary>
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public bool Dirty { get; set; } = false;
 
         public User (IPAddress address, string userAgent)
         {
@@ -133,6 +128,22 @@ namespace RoystonGame.TV.DataModels.Users
         public void TransitionUserState(UserState newState)
         {
             this.UserState = newState;
+        }
+
+        public int GetIAccessorHashCode()
+        {
+            var hash = new HashCode();
+            hash.Add(UserId);
+            hash.Add(LobbyId);
+            hash.Add(AuthenticatedUserPrincipalName);
+            hash.Add(IsPartyLeader);
+            hash.Add(DisplayName);
+            hash.Add(SelfPortrait);
+            hash.Add(Score);
+            hash.Add(Activity);
+            hash.Add(Status);
+            hash.Add(Identifier);
+            return hash.ToHashCode();
         }
     }
 }

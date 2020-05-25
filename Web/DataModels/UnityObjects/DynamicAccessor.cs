@@ -1,6 +1,4 @@
-﻿using KellermanSoftware.CompareNetObjects;
-using RoystonGame.TV.DataModels.Users;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace RoystonGame.Web.DataModels.UnityObjects
@@ -23,25 +21,39 @@ namespace RoystonGame.Web.DataModels.UnityObjects
             }
 
             T value = this.DynamicBacker.Invoke();
-            CompareLogic compareLogic = new CompareLogic();
-            ComparisonResult result = compareLogic.Compare(value, Value);
-            // NEED TO DO A COPY OF VALUE / compare hashes
-            Value = value;
+            // Default comparison
+            bool toReturn = value?.Equals(Value) ?? Value == null;
 
-            // TODO remove hack: Hacky user status fix
-            bool toReturn = !result.AreEqual;
-            IReadOnlyList<User> userVal = value as IReadOnlyList<User>;
-            if (userVal != null)
+            // IAccessor specific hashcode.
+            IAccessorHashable hashableVal = value as IAccessorHashable;
+            // IEnumerable of IAccessorHashable
+            IEnumerable<IAccessorHashable> listHashableVal = value as IEnumerable<IAccessorHashable>;
+
+            // TODO: IEnumerable of non IAccessorHashables
+            int hashCode = 0;
+
+            if (listHashableVal != null)
             {
-                foreach(User user in userVal)
+                hashCode = 0;
+                foreach (IAccessorHashable val in listHashableVal)
                 {
-                    toReturn |= user.Dirty;
-                    user.Dirty = false;
+                    hashCode ^= val.GetIAccessorHashCode();
                 }
+                toReturn = PriorHashCode != hashCode;
             }
+            else if (hashableVal != null)
+            {
+                hashCode = hashableVal.GetIAccessorHashCode();
+                toReturn = PriorHashCode != hashCode;
+            }
+
+            Value = value;
+            PriorHashCode = hashCode;
 
             return toReturn;
         }
+
+        private int PriorHashCode { get; set; } = 0;
         public T Value { get; private set; }
 
 

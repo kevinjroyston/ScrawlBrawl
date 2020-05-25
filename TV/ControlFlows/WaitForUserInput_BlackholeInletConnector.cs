@@ -33,9 +33,6 @@ namespace RoystonGame.TV.ControlFlows
             // Set user to answering prompts state if they arent being hurried and their current prompt has a submit button.
             if (user.StatesTellingMeToHurry.Count == 0)
             {
-                // TODO: remove hack
-                user.Dirty |= user.Status != UserStatus.AnsweringPrompts;
-
                 user.Status = UserStatus.AnsweringPrompts;
             }
             else

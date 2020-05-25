@@ -31,8 +31,8 @@ public class TestClient : MonoBehaviour
     void Awake()
     {
         hubConnection = new HubConnectionBuilder()
-            .WithUrl("http://game.royston.com/signalr")
-            //.WithUrl("http://localhost:50403/signalr")
+            //.WithUrl("http://game.royston.com/signalr")
+            .WithUrl("http://localhost:50403/signalr")
             .ConfigureLogging(logging =>
             {
                 logging.AddProvider(new DebugLoggerProvider());
@@ -78,7 +78,7 @@ public class TestClient : MonoBehaviour
             }
             else
             {
-                ViewManager.Singleton.SwitchToView(CurrentView._ScreenId, CurrentView);
+                ViewManager.Singleton.SwitchToView(CurrentView?._ScreenId ?? TVScreenId.Unknown, CurrentView);
             }
         }
 
