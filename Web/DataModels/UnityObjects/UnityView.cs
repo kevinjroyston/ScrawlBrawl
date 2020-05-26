@@ -29,7 +29,6 @@ namespace RoystonGame.Web.DataModels.UnityObjects
 
             modified |= this.Options?.Refresh() ?? false;
             modified |= this.ScreenId?.Refresh() ?? false;
-            modified |= this.StateEndTime?.Refresh() ?? false;
             modified |= this.Users?.Refresh() ?? false;
             modified |= this.Title?.Refresh() ?? false;
             modified |= this.Instructions?.Refresh() ?? false;
@@ -51,10 +50,11 @@ namespace RoystonGame.Web.DataModels.UnityObjects
         public DateTime ServerTime { get { return DateTime.UtcNow; } }
 
 
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public IAccessor<DateTime?> StateEndTime { private get; set; }
-        public DateTime? _StateEndTime { get => StateEndTime?.Value; }
+        // TODO: this is pretty inefficient to be run as frequently as this gets run.
+        public DateTime? _StateEndTime
+        {
+            get => this.Lobby.GetAllUsers().SelectMany(user => user.StateStack).Select(state => state.ApproximateStateEndTime).Min();
+        }
 
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]

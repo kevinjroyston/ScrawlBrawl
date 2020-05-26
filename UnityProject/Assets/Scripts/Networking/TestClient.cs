@@ -78,7 +78,7 @@ public class TestClient : MonoBehaviour
             }
             else
             {
-                ViewManager.Singleton.SwitchToView(CurrentView._ScreenId, CurrentView);
+                ViewManager.Singleton.SwitchToView(CurrentView?._ScreenId ?? TVScreenId.Unknown, CurrentView);
             }
         }
 

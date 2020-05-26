@@ -5,6 +5,7 @@ using RoystonGame.TV.DataModels.Users;
 using RoystonGame.Web.DataModels.Requests;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using static System.FormattableString;
 using Connector = System.Action<
@@ -55,8 +56,7 @@ namespace RoystonGame.TV.DataModels
                 }
                 this.UsersEnteredAndExitedState[user] = (true, false);
 
-                // TODO: remove hack
-                user.Dirty |= user.Status != UserStatus.Waiting;
+                user.StateStack.Push(this);
 
                 // Any time a user exits a state they should be set to Waiting.
                 user.Status = UserStatus.Waiting;
@@ -66,6 +66,13 @@ namespace RoystonGame.TV.DataModels
             {
                 // User has exited state.
                 this.UsersEnteredAndExitedState[user] = (true, true);
+
+                // If the user has a state stack (they usually should, try popping from the stack. If something goes wrong, debug warn and clear.
+                if(user.StateStack.Count > 0 && (!user.StateStack.TryPop(out State state) || state != this))
+                {
+                    Debug.Assert(false, "Something went wrong with the state stack");
+                    user.StateStack.Clear();
+                }
 
                 // If we have a timeout and we told this user to hurry. Tell them not to hurry.
                 if (this.StateTimeoutDuration.HasValue && user.StatesTellingMeToHurry.Count > 0 && user.StatesTellingMeToHurry.Contains(this))
@@ -138,7 +145,10 @@ namespace RoystonGame.TV.DataModels
                     // Set user to hurry mode first!
                     user.StatesTellingMeToHurry.Add(this);
                     // Kick all the users into motion so they can hurry through the states.
-                    user.UserState.HandleUserTimeout(user);
+                    if (user.Status == UserStatus.AnsweringPrompts)
+                    {
+                        user.UserState.HandleUserTimeout(user);
+                    }
                 }
             }
         }

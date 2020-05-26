@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.UI.GridLayoutGroup;
 
-public class AutoScaleGridLayoutGroup : MonoBehaviour
+public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
 {
     RectTransform rect;
     GridLayoutGroup gridLayoutGroup;
@@ -43,8 +43,21 @@ public class AutoScaleGridLayoutGroup : MonoBehaviour
         OnRectTransformDimensionsChange();
     }
 
-    protected void OnRectTransformDimensionsChange()
+    public void Update()
     {
+        if (oldCellCount != transform.childCount)
+        {
+            OnRectTransformDimensionsChange();
+        }
+    }
+
+    protected override void OnRectTransformDimensionsChange()
+    {
+        base.OnRectTransformDimensionsChange();
+        if (gridLayoutGroup == null)
+        {
+            gridLayoutGroup = GetComponent<GridLayoutGroup>();
+        }
         if (rect == null)
         {
             rect = GetComponentInParent<RectTransform>();
@@ -100,7 +113,7 @@ public class AutoScaleGridLayoutGroup : MonoBehaviour
         int numRows = RowsPerColumnCount(numCols);
         numRows = (numRows == 0 ? 1 : numRows);
         numCols = Mathf.Min(numCols, cellCount);
-        return Mathf.Min((rect.rect.height - gridLayoutGroup.padding.vertical * (numRows - 1)) / (float)numRows, (rect.rect.width - (gridLayoutGroup.padding.horizontal) * (numCols-1)) / aspectRatio /(float)numCols);
+        return Mathf.Min((rect.rect.height - gridLayoutGroup.padding.vertical - gridLayoutGroup.spacing.y * (numRows-1)) / (float)numRows, (rect.rect.width - gridLayoutGroup.padding.horizontal - (gridLayoutGroup.spacing.x) * (numCols-1)) / aspectRatio /(float)numCols);
     }
 
     /// <summary>

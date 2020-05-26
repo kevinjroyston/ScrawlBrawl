@@ -1,9 +1,11 @@
 ﻿using RoystonGame.TV.DataModels.Users;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RoystonGame.Web.DataModels.UnityObjects
 {
-    public class UnityImage
+    public class UnityImage : IAccessorHashable
     {
         public bool Refresh()
         {
@@ -19,6 +21,27 @@ namespace RoystonGame.Web.DataModels.UnityObjects
             modified |= this.SpriteGridWidth?.Refresh() ?? false;
             modified |= this.SpriteGridHeight?.Refresh() ?? false;
             return modified;
+        }
+
+        public int GetIAccessorHashCode()
+        {
+            var hash = new HashCode();
+            foreach(string png in _Base64Pngs ?? new List<string>())
+            {
+                hash.Add(png);
+            }
+            hash.Add(_Title);
+            hash.Add(_SpriteGridWidth);
+            hash.Add(_SpriteGridHeight);
+            hash.Add(_Header);
+            hash.Add(_Footer);
+            hash.Add(_VoteCount);
+            hash.Add(_ImageIdentifier);
+            foreach(int i in _BackgroundColor ?? new List<int>())
+            {
+                hash.Add(i);
+            }
+            return hash.ToHashCode();
         }
 
         [Newtonsoft.Json.JsonIgnore]

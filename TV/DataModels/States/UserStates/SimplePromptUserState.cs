@@ -50,6 +50,13 @@ namespace RoystonGame.TV.DataModels.States.UserStates
 
         public override bool HandleUserFormInput(User user, UserFormSubmission userInput, out string error)
         {
+            // If the user is being hurried they cant submit forms.
+            if (user.StatesTellingMeToHurry.Count != 0)
+            {
+                error = "You are too late to submit that";
+                return false;
+            }
+
             if (!base.HandleUserFormInput(user, userInput, out error))
             {
                 return false;
