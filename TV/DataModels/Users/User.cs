@@ -1,6 +1,7 @@
 ﻿using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
@@ -91,6 +92,10 @@ namespace RoystonGame.TV.DataModels.Users
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public List<State> StatesTellingMeToHurry { get; set; } = new List<State>();
+
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public ConcurrentStack<State> StateStack { get; set; } = new ConcurrentStack<State>();
 
         /// <summary>
         /// The last time the user called any API.

@@ -116,7 +116,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages },
                 Title = new StaticAccessor<string> { Value = title },
                 Instructions = new StaticAccessor<string> { Value = instructions },
-                StateEndTime = new DynamicAccessor<DateTime?> { DynamicBacker = () => this.CurrentRoundUserState?.ApproximateStateEndTime }
             };
 
         }

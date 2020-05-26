@@ -29,7 +29,8 @@ namespace RoystonGame.Web.DataModels.UnityObjects
             // IEnumerable of IAccessorHashable
             IEnumerable<IAccessorHashable> listHashableVal = value as IEnumerable<IAccessorHashable>;
 
-            // TODO: IEnumerable of non IAccessorHashables
+            // TODO: IEnumerable of non IAccessorHashables (for drawing list and colors)
+            // TODO: factor in the list order to the hash (multiply by index)
             int hashCode = 0;
 
             if (listHashableVal != null)

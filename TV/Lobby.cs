@@ -19,7 +19,6 @@ using System.Collections.Generic;
 using System.Linq;
 using static System.FormattableString;
 using RoystonGame.TV.DataModels;
-using static RoystonGame.Web.DataModels.Requests.LobbyManagement.ConfigureLobbyRequest;
 
 namespace RoystonGame.TV
 {
@@ -28,12 +27,8 @@ namespace RoystonGame.TV
         /// <summary>
         /// An email address denoting what authenticated user created this lobby.
         /// </summary>
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public AuthenticatedUser Owner { get; }
         private ConcurrentBag<User> UsersInLobby { get; } = new ConcurrentBag<User>();
-
-        #region Serialized fields
         public string LobbyId { get; }
 
         /// <summary>
@@ -43,14 +38,12 @@ namespace RoystonGame.TV
 
         public List<ConfigureLobbyRequest.GameModeOptionRequest> GameModeOptions { get; private set; }
         public int? SelectedGameMode { get; private set; }
-        #endregion
-        #region GameStates
+
         private GameState CurrentGameState { get; set; }
         private GameState EndOfGameRestart { get; set; }
         private WaitForLobbyCloseGameState WaitForLobbyStart { get; set; }
 
         private IGameMode Game { get; set; }
-        #endregion
 
 
         #region GameModes
@@ -62,7 +55,7 @@ namespace RoystonGame.TV
                 Description = "Come up with a difference only you'll be able to spot!",
                 MinPlayers = 3,
                 MaxPlayers = null,
-                GameModeInstantiator = (Lobby lobby, List<GameModeOptionRequest> options) => new OneOfTheseThingsIsNotLikeTheOtherOneGameMode(lobby, options),
+                GameModeInstantiator = (lobby, options) => new OneOfTheseThingsIsNotLikeTheOtherOneGameMode(lobby, options),
                 Options = new List<GameModeOptionResponse>
                 {
                     new GameModeOptionResponse
