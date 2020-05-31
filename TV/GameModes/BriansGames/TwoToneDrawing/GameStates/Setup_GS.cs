@@ -171,7 +171,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                         randomizedOrderChallenges[(i + j) % randomizedOrderChallenges.Count].Owner,
                         new ChallengeTracker.TeamUserDrawing
                         {
-                            TeamId = Invariant($"{j / ColorsPerTeam}"),
+                            TeamId = Invariant($"{(j / ColorsPerTeam)+1}"),
                             Color = randomizedOrderChallenges[i].Colors[j % ColorsPerTeam],
                         });
                 }
