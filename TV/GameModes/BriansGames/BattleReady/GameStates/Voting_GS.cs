@@ -31,11 +31,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                         Prompt = $"Which drawing is best",
                         Answers = randomizedUsers.Select((user)=> prompt.UsersToUserHands[user].Contestant.Name).ToArray()
                     },
-                    new SubPrompt
-                    {
-                        Prompt = $"How good was the prompt (Bad) 1 - 5 (Good)",
-                        Dropdown = new string[] {"1","2","3","4","5"}
-                    }
                 },
                 SubmitButton = true,
             };
@@ -44,14 +39,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         public Voting_GS(Lobby lobby, Prompt prompt) : base(lobby)
         {
             List<User>randomizedUsers = prompt.UsersToUserHands.Keys.OrderBy(_ => Rand.Next()).ToList();
-            ConcurrentDictionary<User, (User, int)> usersToVoteResults = new ConcurrentDictionary<User, (User, int)>();
+            ConcurrentDictionary<User, User> usersToVoteResults = new ConcurrentDictionary<User, User>();
             SimplePromptUserState pickContestant = new SimplePromptUserState(
                 promptGenerator: PickADrawing(prompt, randomizedUsers),
                 formSubmitHandler: (User user, UserFormSubmission submission) =>
                 {
                     User userVotedFor = randomizedUsers[(int)submission.SubForms[0].RadioAnswer];
-                    int promptRanking = (int)submission.SubForms[1].DropdownChoice;
-                    usersToVoteResults.TryAdd(user, (userVotedFor, promptRanking));
+                    usersToVoteResults.TryAdd(user, userVotedFor);
                     return (true, string.Empty);
                 },
                 exit: new WaitForUsers_StateExit(lobby));
@@ -61,11 +55,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
             {
                 foreach (User user in lobby.GetAllUsers())
                 {
-                    User userVotedFor = usersToVoteResults[user].Item1;
-                    int promptRanking = usersToVoteResults[user].Item2;
+                    User userVotedFor = usersToVoteResults[user];
                     userVotedFor.Score += BattleReadyConstants.PointsForVote;
                     prompt.UsersToUserHands[userVotedFor].VotesForContestant++;
-                    prompt.Owner.Score += (promptRanking - 2) * BattleReadyConstants.PointMultiplierForPromptRating;
                     if (prompt.Winner == null || prompt.UsersToUserHands[userVotedFor].VotesForContestant > prompt.UsersToUserHands[prompt.Winner].VotesForContestant)
                     {
                         prompt.Winner = userVotedFor;
