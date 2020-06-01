@@ -14,6 +14,7 @@ using System.Linq;
 using static System.FormattableString;
 using RoystonGame.TV.ControlFlows.Exit;
 using static RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels.ChallengeTracker;
+using System.Collections.Immutable;
 
 namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 {
@@ -94,8 +95,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 userDrawing2.TeamId = teamId1;
                 count++;
             }
+            List<string> choices = SubChallenge.TeamIdToDrawingMapping.Keys.OrderBy(val => val).ToList();
             SimplePromptUserState pickDrawing = new SimplePromptUserState(
-                promptGenerator: PickADrawing(SubChallenge, SubChallenge.TeamIdToDrawingMapping.Keys.ToList()),
+                promptGenerator: PickADrawing(SubChallenge, choices),
                 formSubmitHandler: (User user, UserFormSubmission submission) =>
                 {
                     if (submission.SubForms[0].RadioAnswer == SubChallenge.TeamIdToDrawingMapping.Keys.Count)
@@ -105,7 +107,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     }
                     else
                     {
-                        SubChallenge.TeamIdToUsersWhoVotedMapping.Values.ToArray()[submission.SubForms[0].RadioAnswer ?? -1].Add(user);
+                        SubChallenge.TeamIdToUsersWhoVotedMapping[choices[submission.SubForms[0].RadioAnswer??-1]].Add(user);
                     }
                     return (true, string.Empty);
                 },
@@ -150,7 +152,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             }
 
             var unityImages = new List<UnityImage>();
-            foreach ((string id, ConcurrentDictionary<string, TeamUserDrawing> colorMap) in this.SubChallenge.TeamIdToDrawingMapping)
+            foreach ((string id, ConcurrentDictionary<string, TeamUserDrawing> colorMap) in this.SubChallenge.TeamIdToDrawingMapping.OrderBy(val=>val.Key))
             {
                 unityImages.Add(new UnityImage
                 {
