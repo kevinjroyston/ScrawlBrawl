@@ -76,11 +76,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 List<PeopleUserDrawing> headDrawings = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Head).OrderBy(_ => Rand.Next()).ToList();
                 List<PeopleUserDrawing> bodyDrawings = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Body).OrderBy(_ => Rand.Next()).ToList();
                 List<PeopleUserDrawing> legsDrawings = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Legs).OrderBy(_ => Rand.Next()).ToList();
+                List<PeopleUserDrawing> headDrawingsCopy = headDrawings.ToList();
+                List<PeopleUserDrawing> bodyDrawingsCopy = bodyDrawings.ToList();
+                List<PeopleUserDrawing> legsDrawingsCopy = legsDrawings.ToList();
                 if(headDrawings.Count != bodyDrawings.Count || bodyDrawings.Count != legsDrawings.Count)
                 {
                     throw new Exception("Something went wrong while setting up the game");
                 }
-                int drawingIndex = 0;
 
                 for (int i = 0; i < numPromptForEachUsersPerRound; i++)
                 {
@@ -100,20 +102,34 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                         {
                             throw new Exception("Something went wrong while setting up the game");
                         }
+
                         List<PeopleUserDrawing> headDrawingsToAdd = new List<PeopleUserDrawing>();
                         List<PeopleUserDrawing> bodyDrawingsToAdd = new List<PeopleUserDrawing>();
-                        List<PeopleUserDrawing> legsDrawingsToAdd = new List<PeopleUserDrawing>();
+                        List<PeopleUserDrawing> legsDrawingsToAdd = new List<PeopleUserDrawing>();    
                         
                         for(int j = 0; j < numOfEachPartInHand; j++)
                         {
-                            headDrawingsToAdd.Add(headDrawings[drawingIndex]);
-                            bodyDrawingsToAdd.Add(bodyDrawings[drawingIndex]);
-                            legsDrawingsToAdd.Add(legsDrawings[drawingIndex]);
-                            drawingIndex++;
-                            if(drawingIndex>= headDrawings.Count)
+                            if(headDrawingsCopy.Count<headDrawings.Count)
                             {
-                                drawingIndex = 0;
+                                headDrawingsCopy.AddRange(headDrawings.OrderBy(_ => Rand.Next()));
                             }
+                            if (bodyDrawingsCopy.Count < bodyDrawings.Count)
+                            {
+                                bodyDrawingsCopy.AddRange(bodyDrawings.OrderBy(_ => Rand.Next()));
+                            }
+                            if (legsDrawingsCopy.Count < legsDrawings.Count)
+                            {
+                                legsDrawingsCopy.AddRange(legsDrawings.OrderBy(_ => Rand.Next()));
+                            }
+
+                            headDrawingsToAdd.Add(headDrawingsCopy.Find((drawing) => !headDrawingsToAdd.Contains(drawing)));
+                            headDrawingsCopy.Remove(headDrawingsToAdd.Last());
+
+                            bodyDrawingsToAdd.Add(bodyDrawingsCopy.Find((drawing) => !bodyDrawingsToAdd.Contains(drawing)));
+                            bodyDrawingsCopy.Remove(bodyDrawingsToAdd.Last());
+
+                            legsDrawingsToAdd.Add(legsDrawingsCopy.Find((drawing) => !legsDrawingsToAdd.Contains(drawing)));
+                            legsDrawingsCopy.Remove(legsDrawingsToAdd.Last());
                         }
                         randPrompt.UsersToUserHands.TryAdd(user, new Prompt.UserHand
                         {
