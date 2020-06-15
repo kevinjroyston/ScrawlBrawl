@@ -1,15 +1,23 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.AzureAD.UI;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+
+using System;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RoystonGame.Web.Hubs;
-using System;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Identity.Web;
+
+
 
 namespace RoystonGame
 {
@@ -25,13 +33,7 @@ namespace RoystonGame
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
-
+            services.AddProtectedWebApi(Configuration);
             services.AddSignalR(hubOptions =>
             {
                 hubOptions.EnableDetailedErrors = true;
@@ -39,20 +41,13 @@ namespace RoystonGame
                 //hubOptions.ClientTimeoutInterval = TimeSpan.FromMinutes(1);
             });
 
-            services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
-                    .AddAzureAD(options => Configuration.Bind("AzureAd", options));
-
-            services.Configure<OpenIdConnectOptions>(AzureADDefaults.OpenIdScheme, options =>
+            services.AddCors(options =>
             {
-                options.Authority = options.Authority + "/v2.0/";         // Microsoft identity platform
-
-                options.TokenValidationParameters.ValidateIssuer = false; // accept several tenants (here simplified)
-            });
-
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("Admins", policyBuilder => policyBuilder.RequireClaim("groups", Configuration.GetValue<string>("AzureSecurityGroup:AdminGroupObjectId")));
-                options.AddPolicy("Users", policyBuilder => policyBuilder.RequireAuthenticatedUser());
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("https://login.microsoftonline.com", "http://localhost:50403");
+                    });
             });
 
             //services.AddControllersWithViews();
@@ -67,9 +62,6 @@ namespace RoystonGame
                 configuration.RootPath = "ClientApp/dist";
             });
             services.AddHostedService<GameNotifier>();
-
-            //services.AddDbContext<ConfigurationDbContext>(options =>
-            //    options.UseSqlServer(Configuration.GetConnectionString("ConfigurationDbContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -86,13 +78,16 @@ namespace RoystonGame
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            //app.UseCors("CorsPolicy"); 
             app.UseHttpsRedirection();
+            app.UseCookiePolicy();
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
             app.UseRouting();
+            app.UseCors();
+
             app.UseAuthentication();
             app.UseAuthorization();
 

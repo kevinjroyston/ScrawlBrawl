@@ -46,10 +46,6 @@ input {
   text-transform: none;
 }
 
-.Error {
-  color: red;
-}
-
 .Description {
   font-size: 21px;
   letter-spacing: 0.4px;

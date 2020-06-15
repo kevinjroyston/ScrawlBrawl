@@ -1,10 +1,48 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset="utf-8" />
-    <title></title>
-</head>
-<body>
-
-</body>
+    <title>Manage Lobby</title>
+  </head>
+  <body>
+    <div *ngIf="lobby == null">
+      <button (click)="onCreateLobby()">Create Lobby</button>
+    </div>
+    <div *ngIf="lobby != null">
+      <p>Lobby ID: {{ lobby.lobbyId }}</p>
+      <p>{{ lobby.playerCount }} players in lobby</p>
+      <button (click)="onDeleteLobby()">Delete Lobby</button>
+      <div *ngIf="!lobby.gameInProgress">
+        <div *ngIf="lobby.selectedGameMode != null && gameModes != null">
+          <p>Selected game mode: {{ gameModes[lobby.selectedGameMode].title }}</p>
+          <form (ngSubmit)="onConfigure(f)" #f="ngForm">
+            <div *ngFor="let option of gameModes[lobby.selectedGameMode].options; let i = index">
+              <div *ngIf="option.responseType === 'Integer'">
+                <label>{{ option.description }}</label>
+                <input type="number" name="value{{i}}" [(ngModel)]="option.value" />
+              </div>
+              <div *ngIf="option.responseType === 'Boolean'">
+                <label>{{ option.description }}</label>
+                <ui-switch name="value{{i}}" [(ngModel)]="option.value"></ui-switch>
+                <label>Current value: {{ option.value }}</label>
+              </div>
+            </div>
+            <div class="Error" *ngIf="error">{{ error }}</div>
+            <button type="submit">Configure</button>
+          </form>
+          <button (click)="onStartLobby()">Start</button>
+        </div>
+      </div>
+      <div *ngIf="lobby==null || !lobby.gameInProgress">
+        <div>
+          <p>Select a game mode:</p>
+          <ul>
+            <div *ngFor="let gameMode of gameModes; let i = index">
+              <li (click)="onSelectGameMode(i)">{{ gameMode.title }}</li>
+            </div>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

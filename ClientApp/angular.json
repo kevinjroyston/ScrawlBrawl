@@ -13,6 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "aot": true,
             "progress": true,
             "extractCss": true,
             "outputPath": "dist",
@@ -22,13 +23,18 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": [ "src/assets" ],
             "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css"
             ],
             "scripts": []
           },
           "configurations": {
             "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -74,7 +80,9 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
-            "styles": [ "styles.css" ],
+            "styles": [
+              "styles.css"
+            ],
             "scripts": [],
             "assets": [ "src/assets" ]
           }

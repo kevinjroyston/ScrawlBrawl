@@ -1,11 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
+using System.Collections.Generic;
 
 namespace RoystonGame.Web.DataModels.Responses
 {
     public class GameModeOptionResponse
     {
         public string Description { get; set; }
-        public bool ShortAnswer { get; set; }
-        public List<string> RadioAnswers { get; set; }
+
+        public ResponseType ResponseType { get; set; }
+
+        public int? MinValue { get; set; }
+
+        public int? MaxValue { get; set; }
+        public bool Optional { get; set; } = false;
+
+        [JsonProperty("value")]
+        public object DefaultValue { get; set; }
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum ResponseType
+    {
+        Boolean = 0,
+        Integer,
+        Text,
     }
 }

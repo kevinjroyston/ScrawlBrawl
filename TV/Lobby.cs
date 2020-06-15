@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static System.FormattableString;
 using RoystonGame.TV.DataModels;
+using RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels;
 
 namespace RoystonGame.TV
 {
@@ -35,13 +36,14 @@ namespace RoystonGame.TV
         /// Used for monitoring lobby age.
         /// </summary>
         public DateTime CreationTime { get; } = DateTime.Now;
-
         public List<ConfigureLobbyRequest.GameModeOptionRequest> GameModeOptions { get; private set; }
-        public int? SelectedGameMode { get; private set; }
+        public GameModeMetadata SelectedGameMode { get; private set; }
 
+        #region GameStates
         private GameState CurrentGameState { get; set; }
         private GameState EndOfGameRestart { get; set; }
         private WaitForLobbyCloseGameState WaitForLobbyStart { get; set; }
+        #endregion
 
         private IGameMode Game { get; set; }
 
@@ -49,22 +51,27 @@ namespace RoystonGame.TV
         #region GameModes
         public static IReadOnlyList<GameModeMetadata> GameModes { get; set; } = new List<GameModeMetadata>
         {
+            #region Imposter Syndrome
             new GameModeMetadata
             {
                 Title = "Imposter Syndrome",
                 Description = "Come up with a difference only you'll be able to spot!",
-                MinPlayers = 3,
+                MinPlayers = 4,
                 MaxPlayers = null,
                 GameModeInstantiator = (lobby, options) => new OneOfTheseThingsIsNotLikeTheOtherOneGameMode(lobby, options),
                 Options = new List<GameModeOptionResponse>
                 {
                     new GameModeOptionResponse
                     {
-                        Description = "Drawings per prompt pair (with 1 being the imposter)",
-                        ShortAnswer = true,
+                        Description = "Max total drawings per player.",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 6,
+                        MinValue = 3
                     },
                 }
             },
+            #endregion
+            #region Chaotic Cooperation
             new GameModeMetadata
             {
                 Title = "Chaotic Cooperation",
@@ -76,26 +83,30 @@ namespace RoystonGame.TV
                 {
                     new GameModeOptionResponse
                     {
-                        Description = "Number of colors per team",
-                        ShortAnswer = true,
+                        Description = "Max number of colors per team",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 2,
+                        MinValue = 1,
+                        MaxValue = 10,
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Max number of drawings per player (will likely be less)",
-                        ShortAnswer = true,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Number of teams per prompt",
-                        ShortAnswer = true,
+                        Description = "Max number of teams per prompt",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 4,
+                        MinValue = 2,
+                        MaxValue = 20,
                     },
                     new GameModeOptionResponse
                     {
                         Description = "Show other colors",
-                        RadioAnswers = new List<string>{"No", "Yes"},
+                        DefaultValue = true,
+                        ResponseType = ResponseType.Boolean
                     },
                 }
             },
+            #endregion
+            #region BodyBuilder
             new GameModeMetadata
             {
                 Title = "Body Builder",
@@ -105,33 +116,45 @@ namespace RoystonGame.TV
                 GameModeInstantiator = (lobby, options) => new BodyBuilderGameMode(lobby, options),
                 Options = new List<GameModeOptionResponse>
                 {
-                   new GameModeOptionResponse
+                    new GameModeOptionResponse
                     {
                         Description = "Number of rounds",
-                        ShortAnswer = true,
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 2,
+                        MinValue = 1,
+                        MaxValue = 10,
                     },
                     new GameModeOptionResponse
                     {
                         Description = "Display names on screen",
-                        RadioAnswers = new List<string>{"No", "Yes"},
+                        DefaultValue = true,
+                        ResponseType = ResponseType.Boolean
                     },
                     new GameModeOptionResponse
                     {
                         Description = "Display images on screen",
-                        RadioAnswers = new List<string>{"No", "Yes"},
+                        DefaultValue = false,
+                        ResponseType = ResponseType.Boolean
                     },
                     new GameModeOptionResponse
                     {
                         Description = "Number of turns for round timeout",
-                        ShortAnswer = true,
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 25,
+                        MinValue = 1,
+                        MaxValue = 100,
                     },
                     new GameModeOptionResponse
                     {
                         Description = "Seconds per turn",
-                        ShortAnswer = true,
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = -1,
+                        MaxValue = 60,
                     },
                 }
             },
+            #endregion
+            #region BattleReady
             new GameModeMetadata
             {
                 Title = "Battle Ready",
@@ -144,20 +167,30 @@ namespace RoystonGame.TV
                     new GameModeOptionResponse
                     {
                         Description = "Number of rounds",
-                        ShortAnswer = true,
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 3,
+                        MinValue = 1,
+                        MaxValue = 30,
                     },
                     new GameModeOptionResponse
                     {
                         Description = "Number of prompts for each player per round",
-                        ShortAnswer = true,
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 2,
+                        MinValue = 1,
+                        MaxValue = 30,
                     },
                     new GameModeOptionResponse
                     {
                         Description = "Number of each body part to draw",
-                        ShortAnswer = true,
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 2,
+                        MinValue = 2,
+                        MaxValue = 30,
                     },
                 }
             }
+            #endregion
         }.AsReadOnly();
         #endregion
 
@@ -175,7 +208,11 @@ namespace RoystonGame.TV
         public bool IsLobbyOpen()
         {
             // Either a game mode hasn't been selected, or the selected gamemode is not at its' capacity.
-            return (this.Game == null) && (!this.SelectedGameMode.HasValue || GameModes[this.SelectedGameMode.Value].IsSupportedPlayerCount(this.UsersInLobby.Count, ignoreMinimum:true));
+            return !IsGameInProgress() && (this.SelectedGameMode == null || this.SelectedGameMode.IsSupportedPlayerCount(this.UsersInLobby.Count, ignoreMinimum: true));
+        }
+        public bool IsGameInProgress()
+        {
+            return this.Game != null;
         }
 
         public bool ConfigureLobby(ConfigureLobbyRequest request, out string errorMsg)
@@ -197,7 +234,7 @@ namespace RoystonGame.TV
             // Don't check player minimum count when configuring, but do check on start.
             if (!GameModes[request.GameMode.Value].IsSupportedPlayerCount(GetAllUsers().Count, ignoreMinimum: true))
             {
-                errorMsg = Invariant($"Selected game mode has following restrictions: {GameModes[request.GameMode.Value].RestrictionsToString()})");
+                errorMsg = Invariant($"Selected game mode has following restrictions: {GameModes[request.GameMode.Value].RestrictionsToString()}");
                 return false;
             }
 
@@ -210,15 +247,13 @@ namespace RoystonGame.TV
 
             for (int i = 0; i < requiredOptions.Count; i++)
             {
-                if (requiredOptions[i].ShortAnswer == string.IsNullOrWhiteSpace(request.Options[i].ShortAnswer)
-                    || (requiredOptions[i].RadioAnswers != null && requiredOptions[i].RadioAnswers.Count > 0) == (!request.Options[i].RadioAnswer.HasValue || request.Options[i].RadioAnswer.Value < 0 || request.Options[i].RadioAnswer.Value >= requiredOptions[i].RadioAnswers.Count))
+                if(!request.Options[i].ParseValue(requiredOptions[i], out errorMsg))
                 {
-                    errorMsg = "Did not provide valid set of options for selected game mode.";
                     return false;
                 }
             }
 
-            this.SelectedGameMode = request.GameMode;
+            this.SelectedGameMode = GameModes[request.GameMode.Value];
             this.GameModeOptions = request.Options;
 
             return true;
@@ -324,22 +359,22 @@ namespace RoystonGame.TV
         public bool StartGame(out string errorMsg, GameState specialTransitionFrom = null)
         {
             errorMsg = string.Empty;
-            if (!this.SelectedGameMode.HasValue)
+            if (this.SelectedGameMode == null)
             {
                 errorMsg = "No game mode selected!";
                 return false;
             }
 
-            if (!GameModes[this.SelectedGameMode.Value].IsSupportedPlayerCount(this.GetAllUsers().Count))
+            if (!this.SelectedGameMode.IsSupportedPlayerCount(this.GetAllUsers().Count))
             {
-                errorMsg = Invariant($"Selected game mode has following restrictions: {GameModes[this.SelectedGameMode.Value].RestrictionsToString()})");
+                errorMsg = Invariant($"Selected game mode has following restrictions: {this.SelectedGameMode.RestrictionsToString()}");
                 return false;
             }
 
             // Slightly hacky default because it can't be passed in.
             GameState transitionFrom = specialTransitionFrom ?? this.WaitForLobbyStart;
 
-            GameModeMetadata gameModeMetadata = GameModes[this.SelectedGameMode.Value];
+            GameModeMetadata gameModeMetadata = this.SelectedGameMode;
             IGameMode game;
             try
             {

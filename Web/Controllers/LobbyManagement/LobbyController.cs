@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Web.Resource;
 using RoystonGame.TV;
 using RoystonGame.Web.DataModels;
 using RoystonGame.Web.DataModels.Requests.LobbyManagement;
@@ -10,24 +13,48 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
 {
     [ApiController]
     [Route("[controller]")]
-    //[Authorize(Policy = "Users")]
+    [Authorize]
     public class LobbyController : ControllerBase
     {
+        // The Web API will only accept tokens 1) for users, and 
+        // 2) having the access_as_user scope for this API
+        static readonly string[] scopeRequiredByApi = new string[] { "ManageLobby" };
+
         [HttpGet]
-        [Route("GetOrCreate")]
-        public IActionResult GetOrCreateLobby()
+        [Route("Get")]
+        public IActionResult GetLobby()
         {
+            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
+
             if (user == null)
             {
-                // should not be reached
-                return new BadRequestObjectResult("Something went wrong finding that user, try again");
+                return StatusCode(500, "Something went wrong finding that user, try again");
             }
 
-            // If the user already has a lobby made they shouldnt be entering this flow. But in case we messed up bookkeeping, lets just clean the old one up in that case.
             if (user.OwnedLobby != null)
             {
                 return new OkObjectResult(new LobbyMetadataResponse(user.OwnedLobby));
+            }
+
+            return StatusCode(404, "Lobby doesn't exist.");
+        }
+
+        [HttpPost]
+        [Route("Create")]
+        public IActionResult CreateLobby()
+        {
+            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
+            AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
+
+            if (user == null)
+            {
+                return StatusCode(500, "Something went wrong finding that user, try again");
+            }
+
+            if (user.OwnedLobby != null)
+            {
+                return new OkResult();
             }
 
             string lobbyId;
@@ -46,79 +73,87 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
 
             if (!GameManager.RegisterLobby(newLobby))
             {
-                return new BadRequestObjectResult("Something went wrong creating the lobby, try again");
+                return StatusCode(500, "Failed to create lobby, try again");
             }
 
             user.OwnedLobby = newLobby;
-            return new OkObjectResult(new LobbyMetadataResponse(user.OwnedLobby));
+            return new OkResult();
         }
 
         [HttpGet]
         [Route("Delete")]
         public IActionResult DeleteLobby()
         {
+            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
             if (user == null)
             {
-                // should not be reached
-                return new BadRequestObjectResult("Something went wrong finding that user, try again");
+                return StatusCode(500, "Something went wrong finding that user, try again");
             }
 
             if (user.OwnedLobby == null)
             {
-                return new BadRequestObjectResult("No lobby to delete!");
+                return new AcceptedResult();
             }
 
             GameManager.DeleteLobby(user.OwnedLobby);
-            return new OkResult();
+            return new AcceptedResult();
         }
 
         [HttpPost]
         [Route("Configure")]
         public IActionResult ConfigureLobby([FromBody]ConfigureLobbyRequest request)
         {
+            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
             if (user == null)
             {
-                // should not be reached
-                return new BadRequestObjectResult("Something went wrong finding that user, try again");
+                return StatusCode(500, "Something went wrong finding that user, try again");
             }
 
             if (user.OwnedLobby == null)
             {
-                return new BadRequestObjectResult("No lobby to select game mode for!");
+                return StatusCode(404, "Lobby doesn't exist.");
             }
 
             if (!user.OwnedLobby.ConfigureLobby(request, out string error))
             {
-                return new BadRequestObjectResult(error);
+                return StatusCode(500, error);
             }
 
-            return new OkResult();
+            return new AcceptedResult();
         }
 
         [HttpGet]
         [Route("Start")]
         public IActionResult StartLobby()
         {
+            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
             if (user == null)
             {
-                // should not be reached
-                return new BadRequestObjectResult("Something went wrong finding that user, try again");
+                return StatusCode(500, "Something went wrong finding that user, try again");
             }
 
             if (user.OwnedLobby == null)
             {
-                return new BadRequestObjectResult("No lobby to start!");
+                return StatusCode(404, "Lobby doesn't exist.");
             }
 
             if (!user.OwnedLobby.StartGame(out string error))
             {
-                return new BadRequestObjectResult(error);
+                return StatusCode(500, error);
             }
 
-            return new OkResult();
+            return new AcceptedResult();
+        }
+
+        [HttpGet]
+        [Route("Games")]
+        public IActionResult GetGames()
+        {
+            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
+            return new OkObjectResult(Lobby.GameModes);
         }
     }
 }

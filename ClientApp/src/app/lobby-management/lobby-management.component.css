@@ -1,2 +1,30 @@
-﻿body {
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background-color: #FFFFFF;
+    color: #210F4C;
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  }
+
+input {
+  border: 1px solid black;
 }
+
+button {
+  color: rgb(61, 49, 173);
+  font-size: 23px;
+  padding: 6px;
+  border: 1px solid black;
+  border-radius: 4px;
+  display: inline-block;
+  align-content: center;
+}
+
+  button:hover {
+    background: #5F4EA4;
+  }
+
+  button:active {
+    background: #362C5D;
+  }

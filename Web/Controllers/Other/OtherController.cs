@@ -11,7 +11,7 @@ namespace RoystonGame.Web.Controllers.Other
     {
 
         [HttpGet]
-        [Route("Feedback")]
+        [Route("Feedback-Api")]
         public IActionResult SubmitFeedback(FeedbackRequest request)
         {
             Console.WriteLine(request);
