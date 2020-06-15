@@ -17,6 +17,11 @@ namespace RoystonGame.Web.DataModels.Responses
         public string[] StringList { get; set; }
 
         /// <summary>
+        /// If this is not null a selector will be created with the specified metadata.
+        /// </summary>
+        public SelectorPromptMetadata Selector { get; set; }
+
+        /// <summary>
         /// The dropdown choices to choose from, if applicable
         /// </summary>
         public string[] Dropdown { get; set; }

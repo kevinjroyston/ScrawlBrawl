@@ -135,4 +135,15 @@ input[type='radio'] {
   top: 5px;
 }
 
+.leftImg {
+  opacity: 0.4;
+}
+
+.rightImg {
+  opacity: 0.4
+}
+
+.mainImg {
+  border: 2px solid blue;
+}
 

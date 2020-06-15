@@ -10,6 +10,7 @@ import { FetchDataComponent, Safe } from './fetch-data/fetch-data.component';
 import { DrawingDirective } from './fetch-data/fetch-data.drawingdirective.component';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { LobbyManagementComponent } from './lobby-management/lobby-management.component';
+import { SelectorDirective } from './fetch-data/fetch-data.selectordirective.component';
 
 const appRoutes: Routes = [
     { path: 'Lobby/Manage', component: LobbyManagementComponent },
@@ -23,6 +24,7 @@ const appRoutes: Routes = [
     NavMenuComponent,
     FetchDataComponent,
     DrawingDirective,
+    SelectorDirective,
     LobbyManagementComponent,
     Safe,
   ],
