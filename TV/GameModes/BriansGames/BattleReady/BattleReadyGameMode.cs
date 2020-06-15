@@ -75,7 +75,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
 
                 List<PeopleUserDrawing> headDrawings = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Head).OrderBy(_ => Rand.Next()).ToList();
                 List<PeopleUserDrawing> bodyDrawings = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Body).OrderBy(_ => Rand.Next()).ToList();
-                List<PeopleUserDrawing> legsDrawings = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Legs).OrderBy(_ => Rand.Next()).ToList();                List<PeopleUserDrawing> legsDrawings = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Legs).OrderBy(_ => Rand.Next()).ToList();
+                List<PeopleUserDrawing> legsDrawings = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Legs).OrderBy(_ => Rand.Next()).ToList();
                 List<PeopleUserDrawing> headDrawingsCopy = headDrawings.ToList();
                 List<PeopleUserDrawing> bodyDrawingsCopy = bodyDrawings.ToList();
                 List<PeopleUserDrawing> legsDrawingsCopy = legsDrawings.ToList();
