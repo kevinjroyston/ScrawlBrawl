@@ -150,6 +150,7 @@ export class FetchDataComponent
             shortAnswer: '',
             color: '',
             drawing: '',
+            selector: '',
         });
     }
 
@@ -179,6 +180,7 @@ interface SubPrompt {
     colorPicker: boolean;
     shortAnswer: boolean;
     drawing: DrawingPromptMetadata;
+    selector: SelectorPromptMetadata;
 }
 interface DrawingPromptMetadata {
     color: string;
@@ -186,4 +188,9 @@ interface DrawingPromptMetadata {
     heightInPx: number;
     premadeDrawing: string;
     canvasBackground: string;
+}
+interface SelectorPromptMetadata {
+  widthInPx: number;
+  heightInPx: number;
+  imageList: string[];
 }
