@@ -13,7 +13,6 @@
               <div [innerHTML]="iString | safe: 'html'"></div>
             </div>
           </div>
-        </div>
         <select class="Dropdown" formControlName="dropdownChoice" *ngIf="subPrompt.dropdown">
           <option *ngFor="let dropdown of subPrompt.dropdown; let i = index" value="{{i}}">
             {{dropdown}}
