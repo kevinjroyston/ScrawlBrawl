@@ -22,10 +22,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
         {
             ValidateOptions(gameModeOptions);
 
-            int numRounds = int.Parse(gameModeOptions[0].ShortAnswer);
+            int numRounds = (int)gameModeOptions[0].ValueParsed;
             Setup = new Setup_GS(lobby: lobby, peopleList: this.PeopleList, gameModeOptions: gameModeOptions);
             int countRounds = 0;
-            int roundTimeoutInSeconds = Int32.Parse(gameModeOptions[4].ShortAnswer);
+            // TODO: make this an optional param and bring back minvalue 3 instead of having this invisible constraint.
+            int roundTimeoutInSeconds = (int)gameModeOptions[4].ValueParsed;
             TimeSpan? roundTimeout = null;
             if (roundTimeoutInSeconds >= 3)
             {
@@ -39,8 +40,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                         setup_PeopleList: this.PeopleList,
                         roundTracker: RoundTracker,
                         gameModeOptions: gameModeOptions,
-                        displayPool: gameModeOptions[2].RadioAnswer == 1,
-                        displayNames: gameModeOptions[1].RadioAnswer == 1,
+                        displayPool: (bool)gameModeOptions[2].ValueParsed,
+                        displayNames: (bool)gameModeOptions[1].ValueParsed,
                         perRoundTimeoutDuration: roundTimeout);
                 gameplay.Transition(CreateRevealAndScore);
                 return gameplay;
@@ -80,21 +81,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
 
         public void ValidateOptions(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            if (!int.TryParse(gameModeOptions[0].ShortAnswer, out int parsedInteger1)
-                || parsedInteger1 < 1 || parsedInteger1 > 10)
-            {
-                throw new GameModeInstantiationException("Must be an integer from 1-30");
-            }
-            if (!int.TryParse(gameModeOptions[3].ShortAnswer, out int parsedInteger2)
-                || parsedInteger2 < 1 || parsedInteger2 > 100)
-            {
-                throw new GameModeInstantiationException("Must be an integer from 1-100");
-            }
-            if (!int.TryParse(gameModeOptions[4].ShortAnswer, out int parsedInteger3)
-                || (parsedInteger3 != -1 && (parsedInteger3<3 || parsedInteger3 > 60)))
-            {
-                throw new GameModeInstantiationException("Must be an integer from 3-60, or -1 to indicate no timeout");
-            }
+            // Empty
         }
     }
 }

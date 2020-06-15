@@ -134,10 +134,14 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
         {
             this.SubChallenges = challengeTrackers;
 
-            this.ColorsPerTeam = int.Parse(gameModeOptions[0].ShortAnswer);
-            this.DrawingsPerPlayer = int.Parse(gameModeOptions[1].ShortAnswer);
-            this.TeamsPerPrompt = int.Parse(gameModeOptions[2].ShortAnswer);
-            this.ShowColors = gameModeOptions[3].RadioAnswer.Value == 1;
+            this.ColorsPerTeam = (int)gameModeOptions[0].ValueParsed;
+            this.TeamsPerPrompt = (int)gameModeOptions[1].ValueParsed;
+
+            // Cap the values at 2 teams using maximal colors (attempts to use all players).
+            this.ColorsPerTeam = Math.Min(this.ColorsPerTeam, this.Lobby.GetAllUsers().Count() / 2);
+            this.TeamsPerPrompt = Math.Min(this.TeamsPerPrompt, this.Lobby.GetAllUsers().Count() / this.ColorsPerTeam);
+
+            this.ShowColors = (bool)gameModeOptions[2].ValueParsed;
 
             State getChallenges = GetChallengesUserState();
             MultiStateChain getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby));

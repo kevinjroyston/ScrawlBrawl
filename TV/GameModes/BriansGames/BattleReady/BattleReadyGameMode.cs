@@ -30,9 +30,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
 
             List<(User, string)> promptTuples = new List<(User, string)>();
             List<Prompt> promptsCopy = new List<Prompt>();
-            int numRounds = int.Parse(gameModeOptions[0].ShortAnswer);
-            int numPromptForEachUsersPerRound = int.Parse(gameModeOptions[1].ShortAnswer);
-            int numDrawingsPerPersonPerPart = int.Parse(gameModeOptions[2].ShortAnswer);
+            int numRounds = (int)gameModeOptions[0].ValueParsed;
+            int numPromptForEachUsersPerRound = (int)gameModeOptions[1].ValueParsed;
+            int numDrawingsPerPersonPerPart = (int)gameModeOptions[2].ValueParsed;
             int numOfEachPartInHand = 3;
             int numUsersPerPrompt = 2;
 
@@ -229,29 +229,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
 
         public void ValidateOptions(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-
-            if (!int.TryParse(gameModeOptions[0].ShortAnswer, out int parsedInteger1)
-                || parsedInteger1 < 1 || parsedInteger1 > 30)
-            {
-                throw new GameModeInstantiationException("Numer of rounds must be an integer from 1-30");
-            }
-            if (!int.TryParse(gameModeOptions[1].ShortAnswer, out int parsedInteger2)
-               || parsedInteger2 < 1 || parsedInteger2 > 30)
-            {
-                throw new GameModeInstantiationException("Numer of prompts per round must be an integer from 1-30");
-            }
             /*if(gameLobby.GetAllUsers().Count%2==1 && int.Parse(gameModeOptions[1].ShortAnswer)%2==1)
             {
                 throw new GameModeInstantiationException("Numer of prompts per round must even if you have an odd number of players");
             }*/
-            if (int.Parse(gameModeOptions[1].ShortAnswer) % 2 == 1)
+            if ((int)gameModeOptions[1].ValueParsed % 2 == 1)
             {
                 throw new GameModeInstantiationException("Numer of prompts per round must even");
-            }
-            if (!int.TryParse(gameModeOptions[2].ShortAnswer, out int parsedInteger3)
-                || parsedInteger3 < 2 || parsedInteger3 > 30)
-            {
-                throw new GameModeInstantiationException(Invariant($"Numer of drawings per person per part must be an integer from 2-30"));
             }
         }
     }

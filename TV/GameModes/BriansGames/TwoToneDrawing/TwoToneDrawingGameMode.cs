@@ -24,7 +24,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
         private Random Rand { get; } = new Random();
         public TwoToneDrawingGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            //ValidateOptions(lobby, gameModeOptions);
+            ValidateOptions(lobby, gameModeOptions);
 
             //ToDo Refactor to move to vote reveal after the votes are done and scrambled 
             Setup = new Setup_GS(lobby, this.SubChallenges, gameModeOptions);
@@ -51,36 +51,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
             this.Entrance.Transition(Setup);
         }
 
-        // TODO: move this to attribute based validation.
         public void ValidateOptions(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            if (!int.TryParse(gameModeOptions[0].ShortAnswer, out int colorsPerTeam))
-            {
-                throw new GameModeInstantiationException("Could not parse input 'Colors per team' as integer");
-            }
-            if (!int.TryParse(gameModeOptions[1].ShortAnswer, out int maxDrawingsPerPlayer))
-            {
-                throw new GameModeInstantiationException("Could not parse input 'Max drawings per player' as integer");
-            }
-            if (!int.TryParse(gameModeOptions[2].ShortAnswer, out int teamsPerPrompt))
-            {
-                throw new GameModeInstantiationException("Could not parse input 'Teams per prompt' as integer");
-            }
-
-            if (colorsPerTeam < 1 || colorsPerTeam > lobby.GetAllUsers().Count/2)
-            {
-                throw new GameModeInstantiationException (Invariant($"Invalid number of colors per team, must be between ({1}) and ({lobby.GetAllUsers().Count / 2}) for the current number of users"));
-            }
-
-            if (maxDrawingsPerPlayer < 1 || maxDrawingsPerPlayer > 30)
-            {
-                throw new GameModeInstantiationException(Invariant($"Invalid number of max drawings per player, must be between ({1}) and ({30})."));
-            }
-
-            if (teamsPerPrompt < 2 || teamsPerPrompt > lobby.GetAllUsers().Count / colorsPerTeam / 2)
-            {
-                throw new GameModeInstantiationException(Invariant($"Invalid number of teams per prompt, must be between ({2}) and ({lobby.GetAllUsers().Count / colorsPerTeam / 2}) based on number of players and colors per team."));
-            }
+            // None
         }
     }
 }

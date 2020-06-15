@@ -107,6 +107,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 
         public Setup_GS(Lobby lobby, List<ChallengeTracker> challengeTrackers, int numDrawingsPerPrompt) : base(lobby)
         {
+            numDrawingsPerPrompt = Math.Min(numDrawingsPerPrompt, lobby.GetAllUsers().Count - 1);
             this.SubChallenges = challengeTrackers;
 
             State getWordsState = GetWordsUserState();

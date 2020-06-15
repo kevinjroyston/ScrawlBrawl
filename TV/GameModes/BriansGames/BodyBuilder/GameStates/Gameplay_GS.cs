@@ -72,8 +72,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         Dictionary<int, int> WinningScoresByPlace { get; set; } = new Dictionary<int, int>()
         {
             {1, 1000},   // First Place
-            {2, 500},    // Second Place
-            {3, 250}     // Third Place
+            {2, 800},    // Second Place
+            {3, 600}     // Third Place
         };
         public Gameplay_GS(Lobby lobby, List<Setup_Person> setup_PeopleList, RoundTracker roundTracker, bool displayPool, bool displayNames, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, TimeSpan? perRoundTimeoutDuration = null) : base(lobby)
         {
@@ -82,7 +82,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             this.AssignSeats();
             this.TurnTimeLimit = perRoundTimeoutDuration;
             this.Entrance.Transition(AddGameplayCycle());
-            RoundMaxTurnLimit = int.Parse(gameModeOptions[3].ShortAnswer);
+            RoundMaxTurnLimit = (int)gameModeOptions[3].ValueParsed;
             var unityImages = new List<UnityImage>();
             string instructions = null;
             string title = null;

@@ -103,7 +103,7 @@ export class FetchDataComponent
         }
       }, error => {
         console.error(error);
-        this.refreshUserPromptTimer(1000);
+        this.refreshUserPromptTimer(10000);
       });
     }
     refreshUserPromptTimer(ms:number):void {

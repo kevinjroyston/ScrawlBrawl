@@ -148,8 +148,6 @@ namespace RoystonGame.TV
 
         public static AuthenticatedUser GetAuthenticatedUser(string userId)
         {
-            // TODO: remove this hack once auth is fixed.
-            userId = "Temp";
             try
             {
                 if (!Singleton.AuthenticatedUsers.ContainsKey(userId))

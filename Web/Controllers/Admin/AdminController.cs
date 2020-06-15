@@ -1,32 +1,30 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using RoystonGame.TV;
-using RoystonGame.Web.DataModels.Requests;
-using RoystonGame.Web.DataModels.Responses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
-using static System.FormattableString;
+using Microsoft.Extensions.Configuration;
 
 namespace RoystonGame.Web.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize(Policy = "Admins")]
+    [Authorize]
     public class AdminController : ControllerBase
     {
         private readonly ILogger<CurrentContentController> _logger;
+        private readonly IConfiguration Config;
 
-        public AdminController(ILogger<CurrentContentController> logger)
+        public AdminController(ILogger<CurrentContentController> logger, IConfiguration config)
         {
             _logger = logger;
+            Config = config;
         }
-
+        /*
         [HttpGet]
-        public static IActionResult Get()
+        [Route("Get")]
+        public IActionResult Get()
         {
+            this.HttpContext.User.VerifyHasGroupRole(Config);
             AdminFetchResponse response = new AdminFetchResponse
             {
                 ActiveLobbies = GameManager.GetLobbies()
@@ -53,9 +51,10 @@ namespace RoystonGame.Web.Controllers
         }
 
         [HttpPost]
-        [Route("/Delete")]
-        public static IActionResult DeleteEntities(AdministrativeActionRequest input)
+        [Route("Delete")]
+        public IActionResult DeleteEntities(AdministrativeActionRequest input)
         {
+            this.HttpContext.User.VerifyHasGroupRole(Config);
             int deletedEntries = 0;
             Exception lastException = null;
             foreach (string userIdentifier in input?.Users ?? new List<string>())
@@ -84,6 +83,6 @@ namespace RoystonGame.Web.Controllers
                 }
             }
             return new JsonResult(Invariant($"Deleted ({deletedEntries}) entries. Last exception: '{lastException}'"));
-        }
+        }*/
     }
 }

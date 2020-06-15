@@ -1,4 +1,5 @@
 ﻿using RoystonGame.TV;
+using RoystonGame.Web.Helpers.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,26 +9,30 @@ namespace RoystonGame.Web.DataModels.Responses
 {
     public class LobbyMetadataResponse
     {
-        /// <summary>
-        /// Guid to uniquely identify a prompt/formSubmit pair.
-        /// </summary>
-        public Guid Id { get; set; } = Guid.NewGuid();
-
         public string LobbyId { get; }
 
         public int PlayerCount { get; }
+        public bool GameInProgress { get; }
 
-        public List<GameModeMetadata> GameModes { get; } = Lobby.GameModes.ToList();
+        public GameModeMetadata GameModeSettings { get; }
 
         public int? SelectedGameMode { get; }
-        public List<GameModeOptionRequest> CurrentGameModeOptions { get; }
 
         public LobbyMetadataResponse(Lobby lobby)
         {
             this.LobbyId = lobby.LobbyId;
             this.PlayerCount = lobby.GetAllUsers().Count();
-            this.SelectedGameMode = lobby.SelectedGameMode;
-            this.CurrentGameModeOptions = lobby.GameModeOptions;
+            this.GameInProgress = lobby.IsGameInProgress();
+            // TODO: GameModeSettings isn't used
+            this.GameModeSettings = lobby.SelectedGameMode;
+            for (int i = 0; i < (this.GameModeSettings?.Options?.Count ?? 0); i++)
+            {
+                if (lobby?.GameModeOptions?[i]?.ValueParsed != null)
+                {
+                    this.GameModeSettings.Options[i].DefaultValue = lobby.GameModeOptions[i].Value;
+                }
+            }
+            this.SelectedGameMode = Lobby.GameModes.FirstIndex((gameMode) => gameMode.Title.Equals(GameModeSettings?.Title, StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }

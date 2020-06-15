@@ -27,7 +27,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO
         {
             ValidateOptions(lobby, gameModeOptions);
 
-            Setup = new Setup_GS(lobby, this.SubChallenges, int.Parse(gameModeOptions[0].ShortAnswer));
+            Setup = new Setup_GS(lobby, this.SubChallenges, (int)gameModeOptions[0].ValueParsed);
             Setup.Transition(() =>
             {
                 int index = 0;
@@ -54,15 +54,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO
 
         public void ValidateOptions(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            if (!int.TryParse(gameModeOptions[0].ShortAnswer, out int parsedInteger))
-            {
-                throw new GameModeInstantiationException("Could not parse input as integer");
-            }
-
-            if (parsedInteger < 3 || parsedInteger > lobby.GetAllUsers().Count - 1)
-            {
-                throw new GameModeInstantiationException(Invariant($"Invalid number of drawings per prompt pair, must be between ({3}) and ({lobby.GetAllUsers().Count - 1})"));
-            }
+            // Empty
         }
     }
 }

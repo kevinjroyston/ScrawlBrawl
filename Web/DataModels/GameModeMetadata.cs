@@ -18,6 +18,13 @@ namespace RoystonGame.Web.DataModels
 
         public List<GameModeOptionResponse> Options { get; set; }
 
+        /// <summary>
+        /// An enum expected to be 0-indexed which will be used for accessing GameMode options.
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public Type OptionsEnum { get; set; }
+
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public Func<Lobby, List<ConfigureLobbyRequest.GameModeOptionRequest>, IGameMode> GameModeInstantiator { get; set; }
@@ -40,12 +47,12 @@ namespace RoystonGame.Web.DataModels
 
             if (MinPlayers.HasValue)
             {
-                restrictions.Add(Invariant($"Min: ({MinPlayers.Value})"));
+                restrictions.Add(Invariant($"Min Players: ({MinPlayers.Value})"));
             }
 
             if (MaxPlayers.HasValue)
             {
-                restrictions.Add(Invariant($"Max: ({MaxPlayers.Value})"));
+                restrictions.Add(Invariant($"Max Players: ({MaxPlayers.Value})"));
             }
 
             if (restrictions.Count == 0)
