@@ -60,17 +60,32 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                             new SubPrompt
                             {
                                 Prompt = "Pick your Head",
-                                Answers = prompt.UsersToUserHands[user].Heads.Select(userDrawing => CommonHelpers.HtmlImageWrapper(userDrawing.Drawing, ThreePartPeopleConstants.Widths[DrawingType.Body], ThreePartPeopleConstants.Heights[DrawingType.Body])).ToArray()                       
+                                Selector = new SelectorPromptMetadata()
+                                {
+                                    HeightInPx = ThreePartPeopleConstants.Heights[DrawingType.Head],
+                                    WidthInPx = ThreePartPeopleConstants.Widths[DrawingType.Head],
+                                    ImageList = prompt.UsersToUserHands[user].Heads.Select(userDrawing => userDrawing.Drawing).ToArray()
+                                }
                             },
                             new SubPrompt
                             {
                                 Prompt = "Pick your Body",
-                                Answers = prompt.UsersToUserHands[user].Bodies.Select(userDrawing => CommonHelpers.HtmlImageWrapper(userDrawing.Drawing, ThreePartPeopleConstants.Widths[DrawingType.Body], ThreePartPeopleConstants.Heights[DrawingType.Body])).ToArray()
+                                Selector = new SelectorPromptMetadata()
+                                {
+                                    HeightInPx = ThreePartPeopleConstants.Heights[DrawingType.Body],
+                                    WidthInPx = ThreePartPeopleConstants.Widths[DrawingType.Body],
+                                    ImageList = prompt.UsersToUserHands[user].Bodies.Select(userDrawing => userDrawing.Drawing).ToArray()
+                                }
                             },
                             new SubPrompt
                             {
                                 Prompt = "Pick your Legs",
-                                Answers = prompt.UsersToUserHands[user].Legs.Select(userDrawing => CommonHelpers.HtmlImageWrapper(userDrawing.Drawing, ThreePartPeopleConstants.Widths[DrawingType.Body], ThreePartPeopleConstants.Heights[DrawingType.Body])).ToArray()
+                                Selector = new SelectorPromptMetadata()
+                                {
+                                    HeightInPx = ThreePartPeopleConstants.Heights[DrawingType.Legs],
+                                    WidthInPx = ThreePartPeopleConstants.Widths[DrawingType.Legs],
+                                    ImageList = prompt.UsersToUserHands[user].Legs.Select(userDrawing => userDrawing.Drawing).ToArray()
+                                }
                             },
                             new SubPrompt
                             {

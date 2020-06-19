@@ -45,7 +45,5 @@ namespace RoystonGame.Web.DataModels.Responses
         /// If this is not null a drawing will be prompted with the specified metadata.
         /// </summary>
         public DrawingPromptMetadata Drawing { get; set; }
-
-
     }
 }
