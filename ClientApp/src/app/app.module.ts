@@ -65,7 +65,7 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
         consentScopes: [
             "api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby"
         ],
-        unprotectedResources: ["/currentContent", "/formSubmit"],
+        unprotectedResources: ["/currentContent", "/FormSubmit"],
         protectedResourceMap,
         extraQueryParameters: {}
     };
