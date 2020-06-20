@@ -31,8 +31,11 @@ public class TestClient : MonoBehaviour
     void Awake()
     {
         hubConnection = new HubConnectionBuilder()
+#if DEBUG
+            .WithUrl("http://localhost:50403/signalr")
+#else
             .WithUrl("http://game.royston.com/signalr")
-            //.WithUrl("http://localhost:50403/signalr")
+#endif
             .ConfigureLogging(logging =>
             {
                 logging.AddProvider(new DebugLoggerProvider());

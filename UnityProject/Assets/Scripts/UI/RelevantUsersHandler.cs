@@ -21,41 +21,42 @@ public class RelevantUsersHandler : MonoBehaviour
     public void HandleRelevantUsers(IReadOnlyList<User> relevantUsers, bool voteCountEnabled)
     {
         return;
-        // TODO: fix this implementation
-        ClearUsers();
-        if (relevantUsers == null || relevantUsers.Count <= 0)
-        {
-            return;
-        }
-
-        if (voteCountEnabled)
-        {
-            for (int i = 0; i < relevantUsers.Count; i++)
+    }
+    /*
+            // TODO: fix this implementation
+            ClearUsers();
+            if (relevantUsers == null || relevantUsers.Count <= 0)
             {
-                InstantiateRelevantUser(
-                    i % 2 == 0 ? RelevantUserLeftDropZone.transform : RelevantUserRightDropZone.transform,
-                    relevantUsers[i]);
+                return;
+            }
+
+            if (voteCountEnabled)
+            {
+                for (int i = 0; i < relevantUsers.Count; i++)
+                {
+                    InstantiateRelevantUser(
+                        i % 2 == 0 ? RelevantUserLeftDropZone.transform : RelevantUserRightDropZone.transform,
+                        relevantUsers[i]);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < relevantUsers.Count; i++)
+                {
+                    InstantiateRelevantUser(RelevantUserSingleDropZone.transform, relevantUsers[i]);
+                }
             }
         }
-        else
+        private void InstantiateRelevantUser(Transform parent, User user)
         {
-            for (int i = 0; i < relevantUsers.Count; i++)
-            {
-                InstantiateRelevantUser(RelevantUserSingleDropZone.transform, relevantUsers[i]);
-            }
-        }
-    }
+            var relUser = Instantiate(RelevantUserPrefab, parent);
+            relUser.transform.localScale = new Vector3(1f, 1f, 1f);
+            relUser.transform.localPosition = Vector3.zero;
 
-    private void InstantiateRelevantUser(Transform parent, User user)
-    {
-        var relUser = Instantiate(RelevantUserPrefab, parent);
-        relUser.transform.localScale = new Vector3(1f, 1f, 1f);
-        relUser.transform.localPosition = Vector3.zero;
+            relUser.GetComponent<RelevantUserPopulator>().Populate(user);
+        }*/
 
-        relUser.GetComponent<RelevantUserPopulator>().Populate(user);
-    }
-
-    private void ClearUsers()
+        private void ClearUsers()
     {
         foreach (Transform child in RelevantUserLeftDropZone.transform)
         {

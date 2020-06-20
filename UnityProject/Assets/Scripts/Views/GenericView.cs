@@ -107,20 +107,20 @@ public class GenericView : MonoBehaviour, ITVView
 
     private void LoadAllImages(List<UnityImage> images)
     {
-        if(images.Count == 0)
+        for (int i = 0; i < ImageDropZone.transform.childCount; i++)
+        {
+            Destroy(ImageDropZone.transform.GetChild(i));
+        }
+
+        if (images.Count == 0)
         {
             return;
         }
         // Instantiate more image objects if needed
         var breakoutCounter = 0;
-        while (images.Count > ImageDropZone.transform.childCount && breakoutCounter++ < 50)
+        while (images.Count > ImageDropZone.transform.childCount && breakoutCounter++ < 100)
         {
             Instantiate(ImagePrefab, ImageDropZone.transform);
-        }
-
-        for ( int i = images.Count; i < ImageDropZone.transform.childCount; i++)
-        {
-            Destroy(ImageDropZone.transform.GetChild(i));
         }
 
         // Set the image object sprites accordingly.

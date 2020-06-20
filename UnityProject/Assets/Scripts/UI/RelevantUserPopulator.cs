@@ -7,10 +7,13 @@ public class RelevantUserPopulator : MonoBehaviour
 {
     public Image TargetLocation;
     public Colorizer Colorizer;
+    public Text DisplayName;
 
-    public void Populate(User user)
+    public void Populate(User user, bool showName)
     {
         TargetLocation.sprite = user.SelfPortraitSprite;
         Colorizer.RefreshColor(user.DisplayName);
+        DisplayName.text = user.DisplayName;
+        DisplayName.transform.parent.gameObject.SetActive(showName);
     }
 }

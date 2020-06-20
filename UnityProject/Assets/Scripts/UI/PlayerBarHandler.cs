@@ -23,18 +23,18 @@ public class PlayerBarHandler : MonoBehaviour
         {
             if (users[i].Status == User.UserStatus.AnsweringPrompts)
             {
-                InstantiateRelevantUser(DropZone.transform, users[i]);
+                InstantiateRelevantUser(DropZone.transform, users[i], users.Count < 3);
             }
         }
     }
 
-    private void InstantiateRelevantUser(Transform parent, User user)
+    private void InstantiateRelevantUser(Transform parent, User user, bool showName)
     {
         var relUser = Instantiate(PlayerIconPrefab, parent);
         relUser.transform.localScale = new Vector3(1f, 1f, 1f);
         relUser.transform.localPosition = Vector3.zero;
 
-        relUser.GetComponent<RelevantUserPopulator>().Populate(user);
+        relUser.GetComponent<RelevantUserPopulator>().Populate(user, showName);
     }
 
     private void ClearUsers()
