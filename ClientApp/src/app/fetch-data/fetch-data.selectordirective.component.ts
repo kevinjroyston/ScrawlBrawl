@@ -149,6 +149,7 @@ export class SelectorDirective implements ControlValueAccessor {
   onmouseup(event) {
     console.log("up/end");
     if (this.inSwipe) {
+      this.inSwipe = false;
       console.log("swipe ended");
 
       event.preventDefault();

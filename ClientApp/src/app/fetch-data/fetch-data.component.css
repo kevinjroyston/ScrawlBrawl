@@ -133,13 +133,19 @@ input[type='radio'] {
 
 .leftImg {
   opacity: 0.4;
+  max-width: 24%;
+  height:auto;
 }
 
 .rightImg {
-  opacity: 0.4
+  opacity: 0.4;
+  max-width: 24%;
+  height: auto;
 }
 
 .mainImg {
   border: 2px solid blue;
+  max-width: 50%;
+  height: auto;
 }
 
