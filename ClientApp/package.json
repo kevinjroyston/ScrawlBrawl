@@ -1,6 +1,6 @@
 {
   "name": "roystongame",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "ng": "ng",
     "start": "echo Starting... && ng serve",
@@ -26,12 +26,9 @@
     "aspnet-prerendering": "^3.0.1",
     "bootstrap": "^4.5.0",
     "core-js": "^3.6.5",
-    "jquery": "3.5.1",
     "msal": "^1.3.2",
     "ngx-color-picker": "9.1.0",
     "ngx-ui-switch": "^9.0.2",
-    "popper.js": "^1.16.1",
-    "rxjs": "^6.5.5",
     "tslib": "^1.13.0",
     "tslint": "^5.20.1",
     "zone.js": "~0.10.3"
