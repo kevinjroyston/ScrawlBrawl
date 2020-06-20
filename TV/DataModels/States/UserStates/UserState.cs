@@ -144,6 +144,7 @@ namespace RoystonGame.TV.DataModels.States.UserStates
                     || (prompt.ShortAnswer == string.IsNullOrWhiteSpace(userInput.SubForms[i].ShortAnswer))
                     || (prompt.ColorPicker == string.IsNullOrWhiteSpace(userInput.SubForms[i].Color))
                     || ((prompt.Answers != null && prompt.Answers.Length > 0) == (!userInput.SubForms[i].RadioAnswer.HasValue || userInput.SubForms[i].RadioAnswer.Value < 0 || userInput.SubForms[i].RadioAnswer.Value >= prompt.Answers.Length))
+                    || ((prompt.Selector?.ImageList != null && prompt.Selector.ImageList.Length > 0) == (!userInput.SubForms[i].Selector.HasValue || userInput.SubForms[i].Selector.Value < 0 || userInput.SubForms[i].Selector.Value >= prompt.Selector.ImageList.Length))
                     || ((prompt.Dropdown != null && prompt.Dropdown.Length > 0) == (!userInput.SubForms[i].DropdownChoice.HasValue || userInput.SubForms[i].DropdownChoice.Value < 0 || userInput.SubForms[i].DropdownChoice.Value >= prompt.Dropdown.Length)))
                 {
                     error = "Not all form fields have been filled out";

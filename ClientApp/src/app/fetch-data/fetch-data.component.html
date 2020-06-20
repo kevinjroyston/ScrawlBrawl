@@ -13,7 +13,6 @@
               <div [innerHTML]="iString | safe: 'html'"></div>
             </div>
           </div>
-        </div>
         <select class="Dropdown" formControlName="dropdownChoice" *ngIf="subPrompt.dropdown">
           <option *ngFor="let dropdown of subPrompt.dropdown; let i = index" value="{{i}}">
             {{dropdown}}
@@ -24,7 +23,7 @@
             <input type="radio" formControlName="radioAnswer" value="{{i}}" /> <label [innerHTML]="answer | safe: 'html'"></label>
           </div>
         </div>
-        <div *ngIf="subPrompt.selector"  title="{{subPrompt.selector.heightInPx}}"
+        <div *ngIf="subPrompt.selector"
              appSelector class="SelectorHolder"
                   [selectorParameters]="subPrompt.selector"
                   formControlName="selector">
