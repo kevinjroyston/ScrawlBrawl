@@ -55,18 +55,20 @@ export class LobbyManagementComponent {
     }
 
     async onGetLobby() {
-        await this.api.request({ type: "Lobby", path: "Get" }).catch(() => {this.lobby = null}).then((result) =>
-        {
-            this.lobby = result;
-            if (this.lobby != null && this.lobby.selectedGameMode != null && this.lobby.gameModeSettings != null)
+        await this.api.request({ type: "Lobby", path: "Get" })
+            .catch(() => {this.lobby = null})
+            .then((result) =>
             {
-                this.lobby.gameModeSettings.options.forEach((value: GameModeOptionResponse, index: number, array: GameModeOptionResponse[]) => {
-                    if (value != null && value.value != null) {
-                        this.gameModes[this.lobby.selectedGameMode].options[index].value = value.value;
-                    }
-                });
-            }
-        });
+                this.lobby = result;
+                if (this.lobby != null && this.lobby.selectedGameMode != null && this.lobby.gameModeSettings != null)
+                {
+                    this.lobby.gameModeSettings.options.forEach((value: GameModeOptionResponse, index: number, array: GameModeOptionResponse[]) => {
+                        if (value != null && value.value != null) {
+                            this.gameModes[this.lobby.selectedGameMode].options[index].value = value.value;
+                        }
+                    });
+                }
+            });
     }
 
     async onCreateLobby() {
