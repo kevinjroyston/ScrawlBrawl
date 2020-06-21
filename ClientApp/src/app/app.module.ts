@@ -23,6 +23,7 @@ import { LobbyManagementComponent } from './lobby-management/lobby-management.co
 import { SelectorDirective } from './fetch-data/fetch-data.selectordirective.component';
 import { FeedbackComponent} from './feedback/feedback.component';
 import { Configuration } from 'msal';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 const appRoutes: Routes = [
     { path: 'lobby/manage', component: LobbyManagementComponent, canActivate: [MsalGuard] },
@@ -90,7 +91,8 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     ReactiveFormsModule,
     UiSwitchModule,
     RouterModule.forRoot(appRoutes),
-    MsalModule
+    MsalModule,
+    NgbModule
   ],
   exports: [
     ColorPickerModule
