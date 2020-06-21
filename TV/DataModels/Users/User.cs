@@ -80,7 +80,7 @@ namespace RoystonGame.TV.DataModels.Users
         public object LockObject { get; set; } = new object();
 
         /// <summary>
-        /// User identifier in Debug is CallerIP + UserAgent. Or just CallerIP in production.
+        /// User identifier is 50 character random hex string generated and stored client-side.
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
@@ -104,26 +104,9 @@ namespace RoystonGame.TV.DataModels.Users
         [System.Text.Json.Serialization.JsonIgnore]
         public DateTime LastHeardFrom { get; set; } = DateTime.UtcNow;
 
-        public User (IPAddress address, string userAgent)
+        public User (string userId)
         {
-            Identifier = GetUserIdentifier(address, userAgent);
-        }
-
-        public static string GetUserIdentifier(IPAddress ip, string userAgent, string idOverride = null)
-        {
-            // Append the UserAgent in debug to allow for easier testing.
-#if DEBUG
-            if ((!string.IsNullOrWhiteSpace(idOverride)) && (idOverride != "undefined"))
-            {
-                return idOverride;
-            }
-            else
-            {
-                return Invariant($"{ip}|{userAgent}");
-            }
-#else
-            return Invariant($"{ip}");
-#endif
+            Identifier = userId;
         }
 
         /// <summary>

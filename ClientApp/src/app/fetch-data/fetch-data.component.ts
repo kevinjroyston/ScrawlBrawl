@@ -44,18 +44,18 @@ export class FetchDataComponent
     private formBuilder: FormBuilder;
     private userPromptTimerId;
     private currentPromptId;
-    private userIdOverride: string;
+    private userId: string;
 
     constructor(
         http: HttpClient,
         formBuilder: FormBuilder,
         @Inject('BASE_URL') baseUrl: string,
-        @Inject('userIdOverride') userIdOverride: string)
+        @Inject('userId') userId: string)
     {
       this.formBuilder = formBuilder;
       this.http = http;
       this.baseUrl = baseUrl;
-      this.userIdOverride = userIdOverride;
+      this.userId = userId;
 
 
       this.fetchUserPrompt();
@@ -64,7 +64,7 @@ export class FetchDataComponent
     fetchUserPrompt(): void {
       const httpOptions = {
           params: {
-              idOverride: this.userIdOverride
+              id: this.userId
           }
       };
       // poor attempt at removing race condition on submit + regular fetch cycle.
@@ -116,7 +116,7 @@ export class FetchDataComponent
             'Content-Type': 'application/json',
         }),          
         params: {
-          idOverride: this.userIdOverride
+          id: this.userId
         }
       };
       // Populate IDs.

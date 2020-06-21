@@ -8,12 +8,12 @@ namespace RoystonGame.Web.Controllers.UserManagement
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-        [HttpGet]
+        /*[HttpGet]
         [Route("Reset")]
         public IActionResult ResetUser()
         {
-            GameManager.UnregisterUser(TV.DataModels.Users.User.GetUserIdentifier(this.HttpContext.Connection.RemoteIpAddress, Request.GetUserAgent()));
+            GameManager.UnregisterUser();
             return new OkResult();
-        }
+        }*/
     }
 }
