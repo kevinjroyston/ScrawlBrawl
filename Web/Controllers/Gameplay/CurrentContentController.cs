@@ -16,7 +16,7 @@ namespace RoystonGame.Web.Controllers
         [HttpGet]
         public IActionResult Get(string idOverride)
         {
-
+            /**/
             User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, Request.GetUserAgent(), idOverride, out bool newUser);
             if (user != null)
             {
@@ -39,8 +39,9 @@ namespace RoystonGame.Web.Controllers
                 GameManager.ReportGameError(ErrorType.GetContent, user?.LobbyId, user, e);
                 return new BadRequestResult();
             }
+            /**/
 
-            /*
+            /** /
             return new JsonResult(new UserPrompt
             {
                 Id = Guid.Empty,
@@ -143,7 +144,7 @@ namespace RoystonGame.Web.Controllers
                 },
                 SubmitButton = true
             });
-*/
+/ **/
         }
     }
 }
