@@ -21,10 +21,19 @@ button {
   align-content: center;
 }
 
-  button:hover {
-    background: #5F4EA4;
-  }
+button:hover {
+  background: #5F4EA4;
+}
 
-  button:active {
-    background: #362C5D;
-  }
+button:active {
+  background: #362C5D;
+}
+
+.fake-link {
+  cursor: pointer;
+  color: #007bff;
+}
+
+.fake-link:hover {
+  text-decoration: underline;
+}
