@@ -4,18 +4,37 @@
     <meta charset="utf-8" />
     <title>Manage Lobby</title>
   </head>
+
   <body>
+
     <div *ngIf="lobby == null">
       <button (click)="onCreateLobby()">Create Lobby</button>
     </div>
+
     <div *ngIf="lobby != null">
-      <p>Lobby ID: {{ lobby.lobbyId }}</p>
-      <p>{{ lobby.playerCount }} players in lobby</p>
-      <button (click)="onDeleteLobby()">Delete Lobby</button>
-      <div *ngIf="!lobby.gameInProgress">
+      <div class="row justify-content-around align-items-center p-2 border-bottom">
+        <div class="d-inline-flex">Lobby ID: {{ lobby.lobbyId.toUpperCase() }}</div>
+        <div class="d-inline-flex">Players Joined: {{ lobby.playerCount }}</div>
+        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="onDeleteLobby()">Delete Lobby</button>
+      </div>
+
+      <div *ngIf="!lobby.gameInProgress" class="p-1">
+        <div>
+          <button class="btn btn-primary" (click)="gameModeCollapse = !gameModeCollapse" [attr.aria-expanded]="!gameModeCollapse" aria-controls="gameModes">
+            Select a game mode
+          </button>
+          <div id="gameModes" [ngbCollapse]="gameModeCollapse">
+            <ul>
+              <div *ngFor="let gameMode of gameModes; let i = index">
+                <li (click)="onSelectGameMode(i)">{{ gameMode.title }}</li>
+              </div>
+            </ul>
+          </div>
+        </div>
+
         <div *ngIf="lobby.selectedGameMode != null && gameModes != null">
           <p>Selected game mode: {{ gameModes[lobby.selectedGameMode].title }}</p>
-          <form (ngSubmit)="onConfigure(f)" #f="ngForm">
+
             <div *ngFor="let option of gameModes[lobby.selectedGameMode].options; let i = index">
               <div *ngIf="option.responseType === 'Integer'">
                 <label>{{ option.description }}</label>
@@ -28,21 +47,11 @@
               </div>
             </div>
             <div class="Error" *ngIf="error">{{ error }}</div>
-            <button type="submit">Configure</button>
-          </form>
-          <button (click)="onStartLobby()">Start</button>
+          <button class="btn btn-primary" (click)="onStartLobby()">Start</button>
         </div>
       </div>
-      <div *ngIf="lobby==null || !lobby.gameInProgress">
-        <div>
-          <p>Select a game mode:</p>
-          <ul>
-            <div *ngFor="let gameMode of gameModes; let i = index">
-              <li (click)="onSelectGameMode(i)">{{ gameMode.title }}</li>
-            </div>
-          </ul>
-        </div>
-      </div>
+
     </div>
+    
   </body>
 </html>

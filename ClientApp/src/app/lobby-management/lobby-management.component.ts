@@ -17,6 +17,7 @@ export class LobbyManagementComponent {
     public lobby!: LobbyMetadata;
     public gameModes!: GameModeMetadata[];
     public error: string = "";
+    public gameModeCollapse = false;
 
     constructor(
         private http: HttpClient,
@@ -91,6 +92,7 @@ export class LobbyManagementComponent {
 
     onSelectGameMode(game: number) {
         this.lobby.selectedGameMode = game;
+        this.gameModeCollapse = true;
         this.error = "";
     }
 }

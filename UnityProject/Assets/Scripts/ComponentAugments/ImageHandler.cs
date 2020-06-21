@@ -42,6 +42,18 @@ public class ImageHandler : MonoBehaviour
     {
         set
         {
+
+            for (int i = 0; i < Images.Count; i++)
+            {
+                Destroy(Images[i].gameObject);
+            }
+            Images.Clear();
+            for (int i = 0; i < ImageGrids.Count; i++)
+            {
+                Destroy(ImageGrids[i]);
+            }
+            ImageGrids.Clear();
+
             if (Background!= null)
             {
                 Background.preserveAspect = true;

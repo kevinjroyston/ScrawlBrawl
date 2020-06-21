@@ -36,7 +36,7 @@ public class GenericView : MonoBehaviour, ITVView
         if (Title?.GetComponentInChildren<Text>() != null)
         {
             var title = Title.GetComponentInChildren<Text>();
-            if(!string.IsNullOrWhiteSpace(UnityView._Title))
+            if(!string.IsNullOrWhiteSpace(UnityView?._Title))
             {
                 title.enabled = true;
                 title.text = UnityView._Title;
@@ -52,7 +52,7 @@ public class GenericView : MonoBehaviour, ITVView
         if (Instructions?.GetComponent<Text>() != null)
         {
             var instructions = Instructions.GetComponent<Text>();
-            if (!string.IsNullOrWhiteSpace(UnityView._Instructions))
+            if (!string.IsNullOrWhiteSpace(UnityView?._Instructions))
             {
                 instructions.enabled = true;
                 instructions.text = UnityView._Instructions;
@@ -79,7 +79,7 @@ public class GenericView : MonoBehaviour, ITVView
         if (PlayerBar?.GetComponent<PlayerBarHandler>() != null)
         {
             var playerBar = PlayerBar.GetComponent<PlayerBarHandler>();
-            if (UnityView._Users != null && UnityView._Users.Count > 0)
+            if (UnityView?._Users != null && UnityView._Users.Count > 0)
             {
                 playerBar.HandleUsers(UnityView._Users);
                 PlayerBar.SetActive(true);
@@ -107,20 +107,20 @@ public class GenericView : MonoBehaviour, ITVView
 
     private void LoadAllImages(List<UnityImage> images)
     {
-        if(images.Count == 0)
+        for (int i = 0; i < ImageDropZone.transform.childCount; i++)
+        {
+            Destroy(ImageDropZone.transform.GetChild(i).gameObject);
+        }
+
+        if (images.Count == 0)
         {
             return;
         }
         // Instantiate more image objects if needed
         var breakoutCounter = 0;
-        while (images.Count > ImageDropZone.transform.childCount && breakoutCounter++ < 50)
+        while (images.Count > ImageDropZone.transform.childCount && breakoutCounter++ < 100)
         {
             Instantiate(ImagePrefab, ImageDropZone.transform);
-        }
-
-        for ( int i = images.Count; i < ImageDropZone.transform.childCount; i++)
-        {
-            Destroy(ImageDropZone.transform.GetChild(i));
         }
 
         // Set the image object sprites accordingly.
