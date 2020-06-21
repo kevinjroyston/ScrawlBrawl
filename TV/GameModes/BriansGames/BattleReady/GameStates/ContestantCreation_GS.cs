@@ -59,7 +59,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                             {
                             new SubPrompt
                             {
-                                Prompt = "Pick your Head",
                                 Selector = new SelectorPromptMetadata()
                                 {
                                     HeightInPx = ThreePartPeopleConstants.Heights[DrawingType.Head],
@@ -69,7 +68,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                             },
                             new SubPrompt
                             {
-                                Prompt = "Pick your Body",
                                 Selector = new SelectorPromptMetadata()
                                 {
                                     HeightInPx = ThreePartPeopleConstants.Heights[DrawingType.Body],
@@ -79,7 +77,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                             },
                             new SubPrompt
                             {
-                                Prompt = "Pick your Legs",
                                 Selector = new SelectorPromptMetadata()
                                 {
                                     HeightInPx = ThreePartPeopleConstants.Heights[DrawingType.Legs],
@@ -98,15 +95,15 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                     },
                     formSubmitHandler: (User user, UserFormSubmission input) =>
                     {
-                        prompt.UsersToUserHands[user].Heads[(int)input.SubForms[0].RadioAnswer].Owner.Score += BattleReadyConstants.PointsForPartUsed;
-                        prompt.UsersToUserHands[user].Bodies[(int)input.SubForms[1].RadioAnswer].Owner.Score += BattleReadyConstants.PointsForPartUsed;
-                        prompt.UsersToUserHands[user].Legs[(int)input.SubForms[2].RadioAnswer].Owner.Score += BattleReadyConstants.PointsForPartUsed;
+                        prompt.UsersToUserHands[user].Heads[(int)input.SubForms[0].Selector].Owner.Score += BattleReadyConstants.PointsForPartUsed;
+                        prompt.UsersToUserHands[user].Bodies[(int)input.SubForms[1].Selector].Owner.Score += BattleReadyConstants.PointsForPartUsed;
+                        prompt.UsersToUserHands[user].Legs[(int)input.SubForms[2].Selector].Owner.Score += BattleReadyConstants.PointsForPartUsed;
                         prompt.UsersToUserHands[user].Contestant = new Person
                         {
                             BodyPartDrawings = new Dictionary<DrawingType, PeopleUserDrawing>{
-                                {DrawingType.Head, prompt.UsersToUserHands[user].Heads[(int)input.SubForms[0].RadioAnswer] },
-                                {DrawingType.Body, prompt.UsersToUserHands[user].Bodies[(int)input.SubForms[1].RadioAnswer] },
-                                {DrawingType.Legs, prompt.UsersToUserHands[user].Legs[(int)input.SubForms[2].RadioAnswer] }
+                                {DrawingType.Head, prompt.UsersToUserHands[user].Heads[(int)input.SubForms[0].Selector] },
+                                {DrawingType.Body, prompt.UsersToUserHands[user].Bodies[(int)input.SubForms[1].Selector] },
+                                {DrawingType.Legs, prompt.UsersToUserHands[user].Legs[(int)input.SubForms[2].Selector] }
                             },
                             Name = input.SubForms[3].ShortAnswer
                         };

@@ -113,19 +113,23 @@ namespace RoystonGame.TV
             }
         }
 
-        public static User MapIPToUser(IPAddress callerIP, string userAgent, string idOverride, out bool newUser)
+        public static User MapIdentifierToUser(string identifier, out bool newUser)
         {
             newUser = false;
-            string userIdentifier = User.GetUserIdentifier(callerIP, userAgent, idOverride);
+            if (identifier.Length < 30)
+            {
+                return null;
+            }
+
             try
             {
-                if (Singleton.Users.ContainsKey(userIdentifier))
+                if (Singleton.Users.ContainsKey(identifier))
                 {
-                    return Singleton.Users[userIdentifier];
+                    return Singleton.Users[identifier];
                 }
 
-                User user = new User(callerIP, userAgent);
-                if (Singleton.Users.TryAdd(userIdentifier, user))
+                User user = new User(identifier);
+                if (Singleton.Users.TryAdd(identifier, user))
                 {
                     CreateUserRegistrationUserState().Inlet(user, UserStateResult.Success, null);
                     newUser = true;

@@ -3,7 +3,9 @@ using RoystonGame.TV;
 using RoystonGame.TV.DataModels.Users;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Responses;
+using RoystonGame.Web.Helpers;
 using RoystonGame.Web.Helpers.Extensions;
+using RoystonGame.Web.Helpers.Validation;
 using System;
 using System.Diagnostics;
 
@@ -14,10 +16,15 @@ namespace RoystonGame.Web.Controllers
     public class CurrentContentController : ControllerBase
     {
         [HttpGet]
-        public IActionResult Get(string idOverride)
+        public IActionResult Get(string id)
         {
             /**/
-            User user = GameManager.MapIPToUser(this.HttpContext.Connection.RemoteIpAddress, Request.GetUserAgent(), idOverride, out bool newUser);
+            if (!Sanitize.SanitizeString(id, out string error, "^([0-9A-Fa-f]){50}$"))
+            {
+                return BadRequest(error);
+            }
+
+            User user = GameManager.MapIdentifierToUser(id, out bool newUser);
             if (user != null)
             {
                 user.LastHeardFrom = DateTime.UtcNow;
@@ -144,7 +151,7 @@ namespace RoystonGame.Web.Controllers
                 },
                 SubmitButton = true
             });
-/ **/
+            / **/
         }
     }
 }
