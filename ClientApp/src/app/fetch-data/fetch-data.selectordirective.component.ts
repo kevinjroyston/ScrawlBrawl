@@ -68,8 +68,7 @@ export class SelectorDirective implements ControlValueAccessor {
   inSwipe: boolean = false;
   images = new Array(0);
   lastX: number;
-  lastY: number;
-
+  
 
   onChange = function (s) { console.log("selector onchange called before initialization"); };
   element;
@@ -92,6 +91,10 @@ export class SelectorDirective implements ControlValueAccessor {
     this.leftImg = this.createImage("leftimg", "leftImg", Math.floor(w / 2), h);
     this.mainImg = this.createImage("mainimg", "mainImg", w, h);
     this.rightImg = this.createImage("rightimg", "rightImg", Math.floor(w / 2), h);
+
+    this.mainImg.style.setProperty('--n', '100');
+    this.rightImg.style.setProperty('--n', '100');
+    this.leftImg.style.setProperty('--n', '100');
 
   }
   addRotatorImage(img): void {
@@ -120,6 +123,45 @@ export class SelectorDirective implements ControlValueAccessor {
     else if (img == this.rightImg) this.setImages(1)
   }
 
+  @HostListener('mousemove', ['$event'])
+  @HostListener('touchmove', ['$event'])
+  onmousemove(event) {
+    if (this.inSwipe) {
+      event.preventDefault();
+      if (this.mainImg.width > 300) return false;
+      let newX: number;
+      if (event.changedTouches) {                      // only for touch
+        newX = event.changedTouches[0].pageX;
+      } else {
+        if (event.offsetX !== undefined) {
+          newX = event.offsetX;
+        } else {
+          newX = event.layerX;
+        }
+      }
+      newX -= this.lastX;
+      if (newX > 0) {
+        if (newX > 200) newX = 200;
+        newX = Math.round(49 * (newX / 200));  // between 0 and 50
+        console.log(newX);
+        this.mainImg.style.setProperty('--n', 100 - newX);
+        this.rightImg.style.setProperty('--n', 100 - newX);
+        this.leftImg.style.setProperty('--n', 100 + 2*newX);
+      } else {
+        if (newX < 0) {
+          newX = -newX;
+          if (newX > 200) newX = 200;
+          newX = Math.round(49 * (newX / 200));
+          console.log(-newX);
+          this.mainImg.style.setProperty('--n', 100 - newX);
+          this.leftImg.style.setProperty('--n', 100 - newX);
+          this.rightImg.style.setProperty('--n', 100 + 2*newX);
+        }
+      }
+    }
+
+  }
+
   @HostListener('mousedown', ['$event'])
   @HostListener('touchstart', ['$event'])
   onmousedown(event) {
@@ -129,15 +171,12 @@ export class SelectorDirective implements ControlValueAccessor {
       this.inSwipe = true;
       console.log("swipe started");
       if (event.changedTouches) {                      // only for touch
-        this.lastX = event.changedTouches[0].pageX - this.element.offsetLeft - this.element.clientLeft;
-        this.lastY = event.changedTouches[0].pageY - this.element.offsetTop - this.element.clientTop;
+        this.lastX = event.changedTouches[0].pageX;
       } else {
         if (event.offsetX !== undefined) {
           this.lastX = event.offsetX;
-          this.lastY = event.offsetY;
         } else {
-          this.lastX = event.layerX - event.currentTarget.offsetLeft;
-          this.lastY = event.layerY - event.currentTarget.offsetTop;
+          this.lastX = event.layerX;
         }
       }
     }
@@ -153,17 +192,21 @@ export class SelectorDirective implements ControlValueAccessor {
       console.log("swipe ended");
 
       event.preventDefault();
+      this.mainImg.style.setProperty('--n', '100');
+      this.rightImg.style.setProperty('--n', '100');
+      this.leftImg.style.setProperty('--n', '100');
+
       let newX: number;
       if (event.changedTouches) {                      // only for touch
-        newX = event.changedTouches[0].pageX - this.element.offsetLeft - this.element.clientLeft;
+        newX = event.changedTouches[0].pageX;
       } else {
         if (event.offsetX !== undefined) {
           newX = event.offsetX;
         } else {
-          newX = event.layerX - event.currentTarget.offsetLeft;
+          newX = event.layerX;
         }
       }
-      this.setImages(Math.sign(newX - this.lastX))
+      this.setImages(Math.sign(this.lastX - newX))
     }
 
   }
