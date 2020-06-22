@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
@@ -25,7 +25,9 @@
             <button class="btn btn-primary d-inline-flex" (click)="gameModeCollapse = !gameModeCollapse" [attr.aria-expanded]="!gameModeCollapse" aria-controls="gameModes">
               {{ gameModeCollapse ? "▼" : "▲" }} Select Game
             </button>
-            <span class="d-inline-flex">Selected game mode:<b class="pl-1">{{ gameModes[lobby.selectedGameMode].title }}</b></span>
+            <div *ngif ="gameModes && gameModes.Length > 0 && lobby.selectedGameMode">
+              <span class="d-inline-flex">Selected game mode:<b class="pl-1">{{ gameModes[lobby.selectedGameMode].title }}</b></span>
+            </div>
           </div>
           <div id="gameModes" [ngbCollapse]="gameModeCollapse">
             <div *ngFor="let gameMode of gameModes; let i = index" >

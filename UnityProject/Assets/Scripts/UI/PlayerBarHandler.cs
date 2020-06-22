@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class PlayerBarHandler : MonoBehaviour
 {
@@ -19,11 +20,13 @@ public class PlayerBarHandler : MonoBehaviour
             return;
         }
 
+        int waitingCount = users.Where(user => user.Status == User.UserStatus.AnsweringPrompts).Count();
+
         for (int i = 0; i < users.Count; i++)
         {
             if (users[i].Status == User.UserStatus.AnsweringPrompts)
             {
-                InstantiateRelevantUser(DropZone.transform, users[i], users.Count < 3);
+                InstantiateRelevantUser(DropZone.transform, users[i], waitingCount <= 3);
             }
         }
     }
