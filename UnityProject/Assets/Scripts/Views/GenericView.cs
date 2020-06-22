@@ -107,7 +107,7 @@ public class GenericView : MonoBehaviour, ITVView
 
     private void LoadAllImages(List<UnityImage> images)
     {
-        for (int i = 0; i < ImageDropZone.transform.childCount; i++)
+        for (int i = images.Count; i < ImageDropZone.transform.childCount; i++)
         {
             Destroy(ImageDropZone.transform.GetChild(i).gameObject);
         }

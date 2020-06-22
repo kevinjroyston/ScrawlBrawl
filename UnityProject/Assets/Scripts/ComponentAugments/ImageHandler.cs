@@ -42,17 +42,27 @@ public class ImageHandler : MonoBehaviour
     {
         set
         {
+            int gridCapacity = value._SpriteGridWidth.GetValueOrDefault(1) * value._SpriteGridHeight.GetValueOrDefault(1);
+            // This instantiates 1 extra grid in some scenarios but that doesn't matter.
+            int requiredGridCount = (value?.PngSprites?.Count ?? 0) / gridCapacity;
 
-            for (int i = 0; i < Images.Count; i++)
+            if (Images.Count > 0)
             {
-                Destroy(Images[i].gameObject);
+                for (int i = (value?.PngSprites?.Count ?? 0); i < Images.Count ; i++)
+                {
+                    Destroy(Images[i].gameObject);
+                }
+                Images = Images.GetRange(0, Math.Min(Images.Count, (value?.PngSprites?.Count ?? 0)));
             }
-            Images.Clear();
-            for (int i = 0; i < ImageGrids.Count; i++)
+
+            if (ImageGrids.Count > 0)
             {
-                Destroy(ImageGrids[i]);
+                for (int i = requiredGridCount; i < ImageGrids.Count; i++)
+                {
+                    Destroy(ImageGrids[i]);
+                }
+                ImageGrids = ImageGrids.GetRange(0, Math.Min(ImageGrids.Count, requiredGridCount));
             }
-            ImageGrids.Clear();
 
             if (Background!= null)
             {
@@ -71,9 +81,6 @@ public class ImageHandler : MonoBehaviour
                 {
                     aspectRatio = value.PngSprites[0].textureRect.width / value.PngSprites[0].textureRect.height;
                 }
-                int gridCapacity = value._SpriteGridWidth.GetValueOrDefault(1) * value._SpriteGridHeight.GetValueOrDefault(1);
-                // This instantiates 1 extra grid in some scenarios but that doesn't matter.
-                int requiredGridCount = value.PngSprites.Count / gridCapacity;
                 for (int i = 0; i <= requiredGridCount; i++)
                 {
                     if(ImageGrids.Count <= i)

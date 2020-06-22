@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using RoystonGame.TV.ControlFlows.Exit;
 using RoystonGame.TV.Extensions;
 
+using static System.FormattableString;
+
 namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
 {
     public class ImposterRevealed_GS : GameState
@@ -45,6 +47,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
                 UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages },
                 Title = new StaticAccessor<string> { Value = "Reveal!" },
+                Instructions = new StaticAccessor<string> { Value = Invariant($"Real: '{challenge.RealPrompt}', Imposter: '{challenge.DeceptionPrompt}'")}
             };
         }
     }

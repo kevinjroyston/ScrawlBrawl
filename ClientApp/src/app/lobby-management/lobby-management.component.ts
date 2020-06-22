@@ -47,11 +47,17 @@ export class LobbyManagementComponent {
     }
 
     async onStartLobby() {
-        await this.onConfigure();
-        if (this.error == "") {
-            await this.api.request({ type: "Lobby", path: "Start" })
-                .catch(error => this.error = error.error); 
-        }
+        await this.onConfigure().then(async () => {
+            if (this.error == "") {
+                await this.api.request({ type: "Lobby", path: "Start" })
+                    .catch(error => this.error = error.error)
+                    .then(async () => {
+                        if (this.error == "") {
+                            await this.onGetLobby()
+                        }
+                    });
+            }
+        });
     }
 
     async onGetLobby() {
