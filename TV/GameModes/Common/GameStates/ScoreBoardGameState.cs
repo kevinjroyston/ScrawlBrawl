@@ -27,25 +27,6 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
                       partyLeaderPromptGenerator: PartyLeaderSkipButton))
         {
             this.Entrance.Transition(this.Exit);
-
-            Random rand = new Random();
-            foreach (User user in lobby.GetAllUsers())
-            {
-                if (!(user.DisplayName.Contains("Dad", StringComparison.OrdinalIgnoreCase)
-                    || user.DisplayName.Contains("Pete", StringComparison.OrdinalIgnoreCase)
-                    || user.DisplayName.Contains("Father", StringComparison.OrdinalIgnoreCase)
-                    || user.DisplayName.Contains("Imfallible", StringComparison.OrdinalIgnoreCase)
-                    || user.DisplayName.Contains("Pop", StringComparison.OrdinalIgnoreCase)
-                    || user.DisplayName.Contains("Papa", StringComparison.OrdinalIgnoreCase)))
-                {
-                    user.Score -= rand.Next(-1, 3) * 50;
-                }
-                else
-                {
-                    user.Score = 25 + Math.Max(0, (int) (user.Score * 1.1));
-                }
-            }
-
             this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.Scoreboard },

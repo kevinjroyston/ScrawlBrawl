@@ -31,9 +31,9 @@ namespace RoystonGame.TV.DataModels.States.GameStates
 
         private static readonly Dictionary<EndOfGameRestartType, string> RestartTypes = new Dictionary<EndOfGameRestartType, string>()
         {
-            { EndOfGameRestartType.SameGameAndPlayers, "Replay" },
-            { EndOfGameRestartType.SamePlayers, "New game, Same players" },
-            { EndOfGameRestartType.NewPlayers, "Change Players" },
+            { EndOfGameRestartType.ResetScore, "Back to lobby, reset scores" },
+            { EndOfGameRestartType.KeepScore, "Back to lobby, keep scores" },
+            { EndOfGameRestartType.Disband, "Disband" }
         };
 
         public EndOfGameState(Lobby lobby, Action<EndOfGameRestartType> endOfGameRestartCallback)

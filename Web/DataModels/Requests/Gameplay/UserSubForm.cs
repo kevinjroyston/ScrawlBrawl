@@ -10,9 +10,11 @@ namespace RoystonGame.Web.DataModels.Requests
         [RegexSanitizer("^([0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12})$")]
         public Guid Id { get; set; }
 
+        [LengthSanitizer(max: 500)]
         public string ShortAnswer { get; set; }
 
-        [RegexSanitizer("^data:image\\/png;base64,[a-zA-Z0-9+/]+=*$")]
+        [RegexSanitizer("^data:image/png;base64,[a-zA-Z0-9+/]+=*$")]
+        [LengthSanitizer(max:100000)]
         public string Drawing { get; set; }
 
         public int? Selector { get; set; }

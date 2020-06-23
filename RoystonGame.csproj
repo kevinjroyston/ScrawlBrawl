@@ -60,6 +60,7 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\lobby-management\lobby-management.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\user-management\user-management.component.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

@@ -2,8 +2,8 @@
 {
     public enum EndOfGameRestartType
     {
-        SamePlayers,
-        NewPlayers,
-        SameGameAndPlayers,
+        KeepScore,
+        ResetScore,
+        Disband,
     }
 }

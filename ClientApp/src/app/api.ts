@@ -4,7 +4,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 //TODO: Change all "any" types to concrete, importable data types.
 //TODO: clean up this class to simplify usage / logging of responses/errors to consoles is not done correctly.
 
-type APIRequest = LobbyRequest; // | DummyRequest
+type APIRequest = LobbyRequest | UserRequest;
+
+type UserRequest = {
+    type: "User",
+    path: "Delete",
+    body?: {}
+}
 
 type LobbyRequest = {
     type: "Lobby", 
@@ -15,15 +21,27 @@ type LobbyRequest = {
 export class API {
     private http: HttpClient
     private baseUrl: string
-    private httpOptions = {
+
+    private getHttpOptions = {
+        params: {
+            id: "--Set by constructor--"
+        }, 
+    };
+    private postHttpOptions = {
         headers: new HttpHeaders({
             'Content-Type': 'application/json',
-        })
+        }),
+        params: {
+            id: "--Set by constructor--"
+        }
     };
 
-    constructor(http: HttpClient, baseUrl: string) {
+    // TODO: instantiate api via dependency injection / make it injectable.
+    constructor(http: HttpClient, baseUrl: string,  userId: string) {
         this.http = http;
         this.baseUrl = baseUrl;
+        this.postHttpOptions.params.id = userId;
+        this.getHttpOptions.params.id = userId;
     }
 
     logRequest = (r: APIRequest) => {
@@ -54,17 +72,25 @@ export class API {
                         break;
                     default: return;
                 }
+                break;
+            case "User":
+                switch (r.path) {
+                    case "Delete": p = this.Get(r);
+                        break;
+                    default: return;
+                }
+                break;
             default: "return"
         }
-        return await p//.then(this.logRequest(r)).catch(this.logError(r))    
+        return await p;
     } 
     
     async Get(r: APIRequest) {
-        return await this.http.get(this.getAPIPath(r)).toPromise()
+        return await this.http.get(this.getAPIPath(r), this.getHttpOptions).toPromise();
     }
 
     async Post(r: APIRequest): Promise<any> {
-        return await this.http.post(this.getAPIPath(r), r.body, this.httpOptions).toPromise()
+        return await this.http.post(this.getAPIPath(r), r.body, this.postHttpOptions).toPromise()
     }
 
     getAPIPath = (r: APIRequest): string => {

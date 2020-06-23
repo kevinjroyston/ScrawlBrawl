@@ -20,6 +20,7 @@ import { FetchDataComponent, Safe } from './fetch-data/fetch-data.component';
 import { DrawingDirective } from './fetch-data/fetch-data.drawingdirective.component';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { LobbyManagementComponent } from './lobby-management/lobby-management.component';
+import { UserManagementComponent } from './user-management/user-management.component';
 import { SelectorDirective } from './fetch-data/fetch-data.selectordirective.component';
 import { FeedbackComponent} from './feedback/feedback.component';
 import { Configuration } from 'msal';
@@ -27,6 +28,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 const appRoutes: Routes = [
     { path: 'lobby/manage', component: LobbyManagementComponent, canActivate: [MsalGuard] },
+    { path: 'user/manage', component: UserManagementComponent },
     { path: '', component: FetchDataComponent },
     { path: 'feedback', component: FeedbackComponent}
     //{ path: 'admin', component: AdminComponent} //not yet made
@@ -66,7 +68,7 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
         consentScopes: [
             "api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby"
         ],
-        unprotectedResources: ["/currentContent", "/FormSubmit"],
+        unprotectedResources: ["/currentContent", "/FormSubmit", "/User/Delete"],
         protectedResourceMap,
         extraQueryParameters: {}
     };
@@ -81,6 +83,7 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     DrawingDirective,
     SelectorDirective,
     LobbyManagementComponent,
+    UserManagementComponent,
     Safe,
   ],
   imports: [
