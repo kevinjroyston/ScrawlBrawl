@@ -296,8 +296,8 @@ namespace RoystonGame.TV
                 return false;
             }
 
-            // TODO: default to lobby owner if possible.
-            if (this.UsersInLobby.Count == 0)
+            // Should be a quick check in most scenarios
+            if (!this.UsersInLobby.Any((user)=>user.IsPartyLeader))
             {
                 user.IsPartyLeader = true;
             }

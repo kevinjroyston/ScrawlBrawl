@@ -25,7 +25,7 @@ export class API {
     private getHttpOptions = {
         params: {
             id: "--Set by constructor--"
-        }
+        }, 
     };
     private postHttpOptions = {
         headers: new HttpHeaders({
@@ -72,12 +72,14 @@ export class API {
                         break;
                     default: return;
                 }
+                break;
             case "User":
                 switch (r.path) {
                     case "Delete": p = this.Get(r);
                         break;
                     default: return;
                 }
+                break;
             default: "return"
         }
         return await p;
