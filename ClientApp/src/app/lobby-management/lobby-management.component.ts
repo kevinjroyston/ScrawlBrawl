@@ -21,9 +21,10 @@ export class LobbyManagementComponent {
 
     constructor(
         private http: HttpClient,
-        @Inject('BASE_URL') baseUrl: string) {
+        @Inject('BASE_URL') baseUrl: string,
+        @Inject('userId') userId: string) {
         this.baseUrl = baseUrl;
-        this.api = new API(http, baseUrl)
+        this.api = new API(http, baseUrl, userId)
         this.getGames().then(()=>this.onGetLobby())
     }
 

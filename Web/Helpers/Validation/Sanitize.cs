@@ -52,15 +52,27 @@ namespace RoystonGame.Web.Helpers.Validation
                 {
                     object[] attrs = property.GetCustomAttributes(true);
                     string regex = null;
+                    int? minLength = null;
+                    int? maxLength = null;
                     foreach (object attr in attrs)
                     {
                         if (attr is RegexSanitizerAttribute regexAttr)
                         {
                             regex = regexAttr.RegexPattern;
                         }
+                        if (attr is LengthSanitizerAttribute lengthAttr)
+                        {
+                            minLength = lengthAttr.Min;
+                            maxLength = lengthAttr.Max;
+                        }
                     }
 
-                    if (!SanitizeString(propValue.ToString(), out error, regex))
+                    if (!SanitizeString(
+                        str: propValue.ToString(),
+                        error: out error,
+                        regex: regex,
+                        minLength: minLength,
+                        maxLength: maxLength))
                     {
                         return false;
                     }
@@ -71,9 +83,20 @@ namespace RoystonGame.Web.Helpers.Validation
             return true;
         }
 
-        public static bool SanitizeString(string str, out string error, string regex = null)
+        public static bool SanitizeString(string str, out string error, string regex = null, int? minLength = null, int? maxLength = null)
         {
             error = string.Empty;
+            if (minLength != null && (str == null || str.Length < minLength))
+            {
+                error = Invariant($"Input too short");
+                return false;
+            }
+            if (maxLength != null && ((str?.Length ?? 0) > maxLength))
+            {
+                error = Invariant($"Input too long");
+                return false;
+            }
+
             // If regex attribute present use that instead.
             if (!string.IsNullOrWhiteSpace(regex))
             {
@@ -86,7 +109,7 @@ namespace RoystonGame.Web.Helpers.Validation
             else if (!DefaultSanitizeString(str))
             {
                 Debug.WriteLine(Invariant($"'{str}' failed sanitization"));
-                error = Invariant($"Only alphanumeric characters allowed: '{str}'");
+                error = Invariant($"Some of those characters aren't allowed: '{str}'");
                 return false;
             }
             return true;
@@ -95,7 +118,7 @@ namespace RoystonGame.Web.Helpers.Validation
         private static bool DefaultSanitizeString(string str)
         {
             // first line is overly strict, last 4 should be more than sufficient and slightly less restrictive. Might as well default to overly secure.
-            bool valid = str.All(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".Contains);
+            bool valid = str.All(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.?,'-".Contains);
             valid &= HttpUtility.HtmlEncode(str).Equals(str, StringComparison.InvariantCulture);
             valid &= HttpUtility.JavaScriptStringEncode(str).Equals(str, StringComparison.InvariantCulture);
             //valid &= HttpUtility.UrlEncode(str).Equals(str);

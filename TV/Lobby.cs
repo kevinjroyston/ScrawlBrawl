@@ -400,36 +400,26 @@ namespace RoystonGame.TV
         /// </summary>
         public void PrepareToRestartGame(EndOfGameRestartType restartType)
         {
-            // TODO: figure out and decide on this whole flow.
+            GameState previousEndOfGameRestart = this.EndOfGameRestart;
             switch (restartType)
             {
-                case EndOfGameRestartType.NewPlayers:
+                case EndOfGameRestartType.Disband:
                     UnregisterAllUsers();
                     InitializeAllGameStates();
                     this.SelectedGameMode = null;
                     break;
-                case EndOfGameRestartType.SameGameAndPlayers:
-                    GameState previousEndOfGameRestart = this.EndOfGameRestart;
-                    this.EndOfGameRestart = new EndOfGameState(this, PrepareToRestartGame);
-                    if (!StartGame(out string errorMsg, specialTransitionFrom: previousEndOfGameRestart))
-                    {
-                        throw new Exception(errorMsg);
-                    }
+                case EndOfGameRestartType.ResetScore:
+                    InitializeAllGameStates();
+                    previousEndOfGameRestart.Transition(this.WaitForLobbyStart);
 
                     foreach (User user in this.UsersInLobby)
                     {
                         user.Score = 0;
                     }
                     break;
-                case EndOfGameRestartType.SamePlayers:
-                    this.WaitForLobbyStart = null;
-                    //this.EndOfGameRestart.Transition(this.PartyLeaderSelect);
-
-                    this.EndOfGameRestart = new EndOfGameState(this, PrepareToRestartGame);
-                    foreach (User user in this.UsersInLobby)
-                    {
-                        user.Score = 0;
-                    }
+                case EndOfGameRestartType.KeepScore:
+                    InitializeAllGameStates();
+                    previousEndOfGameRestart.Transition(this.WaitForLobbyStart);
                     break;
                 default:
                     throw new Exception("Unknown restart game type");
