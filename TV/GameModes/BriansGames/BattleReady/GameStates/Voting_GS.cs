@@ -19,7 +19,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
     {
         private Random Rand { get; set; } = new Random();
 
-        private static Func<User, UserPrompt> PickADrawing(Prompt prompt, List<User> randomizedUsers) => (User user) =>
+        private static Func<User, UserPrompt> PickADrawing(Prompt prompt, IReadOnlyList<User> randomizedUsers) => (User user) =>
         {
             return new UserPrompt
             {
@@ -38,7 +38,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
 
         public Voting_GS(Lobby lobby, Prompt prompt) : base(lobby)
         {
-            List<User>randomizedUsers = prompt.UsersToUserHands.Keys.OrderBy(_ => Rand.Next()).ToList();
+            IReadOnlyList<User>randomizedUsers = prompt.UsersToUserHands.Keys.OrderBy(_ => Rand.Next()).ToList();
             ConcurrentDictionary<User, User> usersToVoteResults = new ConcurrentDictionary<User, User>();
             SimplePromptUserState pickContestant = new SimplePromptUserState(
                 promptGenerator: PickADrawing(prompt, randomizedUsers),

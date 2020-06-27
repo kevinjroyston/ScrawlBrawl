@@ -136,6 +136,12 @@ namespace RoystonGame.TV.DataModels.States.UserStates
                 return false;
             }
 
+            if (userInput?.SubForms == null)
+            {
+                error = "Error in submission, try again or try refreshing the page.";
+                return false;
+            }
+
             int i = 0;
             foreach (SubPrompt prompt in userPrompt?.SubPrompts ?? new SubPrompt[0])
             {
@@ -144,7 +150,7 @@ namespace RoystonGame.TV.DataModels.States.UserStates
                     || (prompt.ShortAnswer == string.IsNullOrWhiteSpace(userInput.SubForms[i].ShortAnswer))
                     || (prompt.ColorPicker == string.IsNullOrWhiteSpace(userInput.SubForms[i].Color))
                     || ((prompt.Answers != null && prompt.Answers.Length > 0) == (!userInput.SubForms[i].RadioAnswer.HasValue || userInput.SubForms[i].RadioAnswer.Value < 0 || userInput.SubForms[i].RadioAnswer.Value >= prompt.Answers.Length))
-                    || ((prompt.Selector?.ImageList != null && prompt.Selector.ImageList.Length > 0) == (!userInput.SubForms[i].Selector.HasValue || userInput.SubForms[i].Selector.Value < 0 || userInput.SubForms[i].Selector.Value >= prompt.Selector.ImageList.Length))
+                    || ((prompt.Selector?.ImageList != null && prompt.Selector.ImageList.Length > 0) == (!userInput.SubForms[i].Selector.HasValue || userInput.SubForms[i].Selector.Value < 0 || userInput.SubForms[i].Selector.Value >= (prompt.Selector?.ImageList?.Length ?? 0)))
                     || ((prompt.Dropdown != null && prompt.Dropdown.Length > 0) == (!userInput.SubForms[i].DropdownChoice.HasValue || userInput.SubForms[i].DropdownChoice.Value < 0 || userInput.SubForms[i].DropdownChoice.Value >= prompt.Dropdown.Length)))
                 {
                     error = "Not all form fields have been filled out";
