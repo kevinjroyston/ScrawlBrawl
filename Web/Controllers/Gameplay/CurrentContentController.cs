@@ -18,49 +18,51 @@ namespace RoystonGame.Web.Controllers
         [HttpGet]
         public IActionResult Get(string id)
         {
-            /**/
-            if (!Sanitize.SanitizeString(id, out string error, "^([0-9A-Fa-f]){50}$"))
+            const bool tempDebug = false;
+            if (!tempDebug)
             {
-                return BadRequest(error);
-            }
-
-            User user = GameManager.MapIdentifierToUser(id, out bool newUser);
-            if (user != null)
-            {
-                user.LastHeardFrom = DateTime.UtcNow;
-            }
-
-            if (user?.UserState == null)
-            {
-                Debug.Assert(false, "User not in a state!");
-                return BadRequest("Error finding/creating user object.");
-            }
-
-            try
-            {
-                return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
-            }
-            catch (Exception e)
-            {
-                // If this is reached, the game state is likely corrupted and the lobby will need to be restarted or the user evicted.
-                GameManager.ReportGameError(ErrorType.GetContent, user?.LobbyId, user, e);
-                return new BadRequestResult();
-            }
-            /**/
-
-            /** /
-            return new JsonResult(new UserPrompt
-            {
-                Id = Guid.Empty,
-                Title = "This is a title",
-                Description = "This is a description",
-                RefreshTimeInMs = 1000,
-                SubPrompts = new SubPrompt[]
+                if (!Sanitize.SanitizeString(id, out string error, "^([0-9A-Fa-f]){50}$"))
                 {
+                    return BadRequest(error);
+                }
+
+                User user = GameManager.MapIdentifierToUser(id, out bool newUser);
+                if (user != null)
+                {
+                    user.LastHeardFrom = DateTime.UtcNow;
+                }
+
+                if (user?.UserState == null)
+                {
+                    Debug.Assert(false, "User not in a state!");
+                    return BadRequest("Error finding/creating user object.");
+                }
+
+                try
+                {
+                    return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
+                }
+                catch (Exception e)
+                {
+                    // If this is reached, the game state is likely corrupted and the lobby will need to be restarted or the user evicted.
+                    GameManager.ReportGameError(ErrorType.GetContent, user?.LobbyId, user, e);
+                    return new BadRequestResult();
+                }
+            }
+            else
+            {
+                return new JsonResult(new UserPrompt
+                {
+                    Id = Guid.Empty,
+                    Title = "This is a title",
+                    Description = "This is a description",
+                    RefreshTimeInMs = 1000,
+                    SubPrompts = new SubPrompt[]
+                    {
                     new SubPrompt
-                    { 
+                    {
                         Prompt = "this is a selector",
-                        Selector = new SelectorPromptMetadata 
+                        Selector = new SelectorPromptMetadata
                         {
                             WidthInPx=315,
                             HeightInPx=210,
@@ -127,7 +129,7 @@ namespace RoystonGame.Web.Controllers
                         Prompt = "This is a sub prompt with a background",
                         Drawing = new DrawingPromptMetadata
                         {
-                            CanvasBackground="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+                            CanvasBackground="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
                             HeightInPx=200,
                             WidthInPx=300,
                         }
@@ -137,7 +139,7 @@ namespace RoystonGame.Web.Controllers
                         Prompt = "This is a sub prompt with a premade drawing",
                         Drawing = new DrawingPromptMetadata
                         {
-                            PremadeDrawing="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+                            PremadeDrawing="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
                             HeightInPx=300,
                             WidthInPx=200,
                         }
@@ -148,10 +150,10 @@ namespace RoystonGame.Web.Controllers
                         Dropdown = new string[]{ "A", "B", "C" }
                     }
 
-                },
-                SubmitButton = true
-            });
-            / **/
+                    },
+                    SubmitButton = true
+                });
+            }
         }
     }
 }

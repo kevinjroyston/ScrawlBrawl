@@ -1,4 +1,7 @@
-﻿namespace RoystonGame.Web.DataModels.Responses
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace RoystonGame.Web.DataModels.Responses
 {
     /// <summary>
     /// Class containing metadata about a drawing prompt.
@@ -6,9 +9,9 @@
     public class DrawingPromptMetadata
     {
         /// <summary>
-        /// Indicates the color to use in the drawing. If there is a color picker element it should automatically link to the brush color.
+        /// Indicates the colors to use in the drawing.
         /// </summary>
-        public string Color { get; set; }
+        public List<string> ColorList { get; set; } = Constants.DefaultColorPalette.ToList();
 
         public int WidthInPx { get; set; } = 350;
         public int HeightInPx { get; set; } = 350;

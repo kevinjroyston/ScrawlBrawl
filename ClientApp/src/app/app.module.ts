@@ -4,6 +4,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
 import { UiSwitchModule } from 'ngx-ui-switch';
+import { MaterialModule } from './material.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import {
     MsalModule,
     MsalGuard,
@@ -23,6 +26,7 @@ import { LobbyManagementComponent } from './lobby-management/lobby-management.co
 import { UserManagementComponent } from './user-management/user-management.component';
 import { SelectorDirective } from './fetch-data/fetch-data.selectordirective.component';
 import { FeedbackComponent} from './feedback/feedback.component';
+import { DrawingBoard} from './drawingboard/drawingboard.component';
 import { Configuration } from 'msal';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -84,18 +88,21 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     SelectorDirective,
     LobbyManagementComponent,
     UserManagementComponent,
+    DrawingBoard,
     Safe,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+    BrowserAnimationsModule,
     ColorPickerModule,
-    HttpClientModule,
     FormsModule,
-    ReactiveFormsModule,
-    UiSwitchModule,
-    RouterModule.forRoot(appRoutes),
+    HttpClientModule,
+    MaterialModule,
     MsalModule,
-    NgbModule
+    NgbModule,
+    ReactiveFormsModule,
+    RouterModule.forRoot(appRoutes),
+    UiSwitchModule,
   ],
   exports: [
     ColorPickerModule

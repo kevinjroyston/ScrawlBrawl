@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-
+/*
 * {
   margin: 0;
   padding: 0;
@@ -8,7 +8,7 @@
   color: #210F4C;
   font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
-
+    */
 .SubmitButton {
   color: rgb(61, 49, 173);
   font-size: 23px;
@@ -19,14 +19,15 @@
   align-content: center;
 }
 
-  .SubmitButton:hover {
-    background: #5F4EA4;
-  }
+.SubmitButton:hover {
+  background: #5F4EA4;
+}
 
-  .SubmitButton:active {
-    background: #362C5D;
-  }
+.SubmitButton:active {
+  background: #362C5D;
+}
 
+/*
 input.text {
   padding: 3px;
 }
@@ -36,7 +37,7 @@ input {
   border: 1px solid #DEDEDE;
   border-radius: 4px;
 }
-
+*/
 .Title {
   font-size: 27px;
   letter-spacing: -0.4px;
@@ -89,24 +90,6 @@ input {
   font-variant: normal;
   text-transform: none;
 }
-
-.DrawingCanvas {
-  border: 1px solid #DEDEDE;
-  border-radius: 4px;
-  background-color: transparent;
-  pointer-events: all;
-}
-
-.DrawingBackground {
-  border: 5px ridge rgba(0,0,0,0.0);
-  background-color: whitesmoke;
-}
-
-.CanvasHolder {
-  background-color: transparent;
-  pointer-events: none;
-}
-
 #wrapper {
   width: 980px;
   text-align: left;
@@ -114,14 +97,13 @@ input {
   margin-right: auto;
   background-color: #38147C;
 }
-
-
+/*
 input[type='radio'] {
   height: 45px;
   width: 45px;
   vertical-align: middle;
 }
-
+    */
 .color-box {
   width: 20px;
   height: 20px;
@@ -151,4 +133,3 @@ input[type='radio'] {
   height: auto;
   max-width: calc(50% * (var(--n) / 100))
 }
-

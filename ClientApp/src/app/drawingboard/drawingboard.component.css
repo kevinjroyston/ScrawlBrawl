@@ -1,0 +1,53 @@
+.drawing-canvas-holder {
+    display: block;
+}
+
+.drawing-canvas {
+    max-width: 100%;
+    max-height: 100%;
+    background-color: whitesmoke;
+    background-size: 100% 100%;
+    border: 1px solid #DEDEDE;
+    border-radius: 4px;
+    pointer-events: all;
+}
+
+.color-picker-dot {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    padding: 10px 13px;
+    x-display: inline-block;
+}
+radio-group {
+  display: flex;
+  flex-direction: row;
+  margin: 15px 0;
+}
+
+radio-button {
+  margin: 5px;
+  
+}
+
+mat-radio-container {
+  height: 10px;
+  width: 10px;
+}
+
+mat-radio-outer-circle {
+  height: 10px;
+  width: 10px;
+}
+
+mat-radio-inner-circle {
+  height: 10px;
+  width: 10px;
+}
+
+mat-radio-button .mat-radio-ripple {
+  height: 20px;
+  width: 20px;
+  left: calc(50% - 10px);
+  top: calc(50% - 10px);
+}

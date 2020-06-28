@@ -113,7 +113,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                                 StringList = this.ShowColors ? challenge.Colors.Select(val=> val == challenge.UserSubmittedDrawings[user].Color ? Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>This is your color.") : Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>")).Reverse().ToArray() : null,
                                 Drawing = new DrawingPromptMetadata
                                 {
-                                    Color = challenge.UserSubmittedDrawings[user].Color
+                                    ColorList = new List<string> { challenge.UserSubmittedDrawings[user].Color }
                                 }
                             },
                         },

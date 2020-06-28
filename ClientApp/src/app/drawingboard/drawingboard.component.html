@@ -1,0 +1,42 @@
+<div class="drawing-canvas-holder">
+    <!-- Drawing Canvas -->
+    <canvas appDrawing class="drawing-canvas"
+            [width]="drawingPrompt.widthInPx"
+            [height]="drawingPrompt.heightInPx"
+            [ngStyle]="{'background-image': 'url(' + drawingPrompt.canvasBackground + ')'}"
+            [premadeDrawing]="drawingPrompt.premadeDrawing"
+            [lineColor]="selectedColor"
+            [lineWidth]="selectedBrushSize"
+            [eraserMode]="eraserMode"
+            (drawingEmitter)="onChange($event)">
+    </canvas>
+</div>
+
+<!-- Drawing Settings -->
+<div *ngIf="showEraser">
+    <mat-radio-group class="radio-group" [(ngModel)]="eraserMode">
+        <mat-radio-button class="radio-button" [value]="false">Brush</mat-radio-button>
+        <mat-radio-button class="radio-button" [value]="true">Erase</mat-radio-button>
+    </mat-radio-group>
+</div>
+<div class="d-flex justify-content-between align-items-center mb-2">
+</div>
+<button type="button" class="btn btn-primary d-inline-flex" (click)="drawingOptionsCollapse = !drawingOptionsCollapse" [attr.aria-expanded]="!drawingOptionsCollapse">
+    {{ drawingOptionsCollapse ? "▼" : "▲" }} Brush options
+</button>
+<div *ngIf="showColorSelector && drawingPrompt.colorList && drawingPrompt.colorList.length > 1" [ngbCollapse]="drawingOptionsCollapse">
+    <mat-radio-group aria-labelledby="color-picker-label"
+                     class="color-picker-group"
+                     [(ngModel)]="selectedColor" (change)="eraserMode=false">
+        <mat-radio-button class="color-picker-dot" *ngFor="let colorChoice of drawingPrompt.colorList; let i = index" [value]="colorChoice" [checked]="i==0" style="background-color:{{ colorChoice }};color:{{ colorChoice }}">
+
+        </mat-radio-button>
+    </mat-radio-group>
+</div>
+<div *ngIf="showBrushSizeSelector" [ngbCollapse]="drawingOptionsCollapse">
+    <mat-radio-group class="radio-group" [(ngModel)]="selectedBrushSize">
+        <mat-radio-button class="button" [value]="5">Small</mat-radio-button>
+        <mat-radio-button class="button" [value]="15">Medium</mat-radio-button>
+        <mat-radio-button class="button" [value]="40">Large</mat-radio-button>
+    </mat-radio-group>
+</div>
