@@ -26,7 +26,7 @@ import { LobbyManagementComponent } from './lobby-management/lobby-management.co
 import { UserManagementComponent } from './user-management/user-management.component';
 import { SelectorDirective } from './fetch-data/fetch-data.selectordirective.component';
 import { FeedbackComponent} from './feedback/feedback.component';
-import { DrawingBoard} from './drawingboard/drawingboard.component';
+import { DrawingBoard } from './drawingboard/drawingboard.component';
 import { Configuration } from 'msal';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 

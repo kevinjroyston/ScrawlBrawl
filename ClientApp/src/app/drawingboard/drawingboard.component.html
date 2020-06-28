@@ -19,24 +19,26 @@
         <mat-radio-button class="radio-button" [value]="true">Erase</mat-radio-button>
     </mat-radio-group>
 </div>
-<div class="d-flex justify-content-between align-items-center mb-2">
-</div>
+
 <button type="button" class="btn btn-primary d-inline-flex" (click)="drawingOptionsCollapse = !drawingOptionsCollapse" [attr.aria-expanded]="!drawingOptionsCollapse">
     {{ drawingOptionsCollapse ? "▼" : "▲" }} Brush options
 </button>
-<div *ngIf="showColorSelector && drawingPrompt.colorList && drawingPrompt.colorList.length > 1" [ngbCollapse]="drawingOptionsCollapse">
-    <mat-radio-group aria-labelledby="color-picker-label"
-                     class="color-picker-group"
-                     [(ngModel)]="selectedColor" (change)="eraserMode=false">
-        <mat-radio-button class="color-picker-dot" *ngFor="let colorChoice of drawingPrompt.colorList; let i = index" [value]="colorChoice" [checked]="i==0" style="background-color:{{ colorChoice }};color:{{ colorChoice }}">
+<div [ngbCollapse]="drawingOptionsCollapse">
+    <!-- Brush Color Picker -->
+    <div *ngIf="showColorSelector && drawingPrompt.colorList && drawingPrompt.colorList.length > 1">
+        <mat-radio-group class="color-picker-group" [(ngModel)]="selectedColor" (change)="eraserMode=false">
+            <div class="color-picker-dot" *ngFor="let colorChoice of drawingPrompt.colorList; let i = index" [ngStyle]="{'background-color': colorChoice}">
+                <mat-radio-button [value]="colorChoice" [checked]="i==0"></mat-radio-button>
+            </div>
+        </mat-radio-group>
+    </div>
 
-        </mat-radio-button>
-    </mat-radio-group>
-</div>
-<div *ngIf="showBrushSizeSelector" [ngbCollapse]="drawingOptionsCollapse">
-    <mat-radio-group class="radio-group" [(ngModel)]="selectedBrushSize">
-        <mat-radio-button class="button" [value]="5">Small</mat-radio-button>
-        <mat-radio-button class="button" [value]="15">Medium</mat-radio-button>
-        <mat-radio-button class="button" [value]="40">Large</mat-radio-button>
-    </mat-radio-group>
+    <!-- Brush Size Picker -->
+    <div *ngIf="showBrushSizeSelector">
+        <mat-radio-group class="radio-group" [(ngModel)]="selectedBrushSize">
+            <mat-radio-button class="radio-button" [value]="5">Small</mat-radio-button>
+            <mat-radio-button class="radio-button" [value]="15">Medium</mat-radio-button>
+            <mat-radio-button class="radio-button" [value]="40">Large</mat-radio-button>
+        </mat-radio-group>
+    </div>
 </div>

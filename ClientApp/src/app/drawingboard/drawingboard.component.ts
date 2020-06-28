@@ -17,11 +17,11 @@ export class DrawingBoard implements ControlValueAccessor {
     @Input() showColorSelector: boolean = true;
     @Input() showEraser: boolean = true;
     @Input() showBrushSizeSelector: boolean = true;
-    
+
     onChange;
     selectedColor: string;
     selectedBrushSize: number = 15;
-    drawingOptionsCollapse: boolean;
+    drawingOptionsCollapse: boolean = true;
     eraserMode: boolean = false; // Todo make brush-mode enum + group brush options into one object
 
     ngOnInit() {
