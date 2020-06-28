@@ -14,12 +14,13 @@ using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
 using System;
 using System.Linq;
 using RoystonGame.TV.DataModels.States.StateGroups;
+using System.Collections.Concurrent;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
 {
     public class BattleReadyGameMode : IGameMode
     {
-        private List<PeopleUserDrawing> Drawings { get; set; } = new List<PeopleUserDrawing>();
+        private ConcurrentBag<PeopleUserDrawing> Drawings { get; set; } = new ConcurrentBag<PeopleUserDrawing>();
         private List<Prompt> Prompts { get;} = new List<Prompt>();
         private GameState Setup { get; set; }
         private RoundTracker RoundTracker { get; } = new RoundTracker();
@@ -28,7 +29,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
         {
             ValidateOptions(gameModeOptions);
 
-            List<(User, string)> promptTuples = new List<(User, string)>();
+            ConcurrentBag<(User, string)> promptTuples = new ConcurrentBag<(User, string)>();
             List<Prompt> promptsCopy = new List<Prompt>();
             int numRounds = (int)gameModeOptions[0].ValueParsed;
             int numPromptForEachUsersPerRound = (int)gameModeOptions[1].ValueParsed;
@@ -73,9 +74,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 List<Prompt> roundPrompts = promptsCopy.GetRange(0, numPromptsEachRound);
                 promptsCopy.RemoveRange(0, numPromptsEachRound);
 
-                List<PeopleUserDrawing> headDrawings = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Head).OrderBy(_ => Rand.Next()).ToList();
-                List<PeopleUserDrawing> bodyDrawings = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Body).OrderBy(_ => Rand.Next()).ToList();
-                List<PeopleUserDrawing> legsDrawings = Drawings.FindAll((drawing) => drawing.Type == DrawingType.Legs).OrderBy(_ => Rand.Next()).ToList();
+                List<PeopleUserDrawing> headDrawings = Drawings.ToList().FindAll((drawing) => drawing.Type == DrawingType.Head).OrderBy(_ => Rand.Next()).ToList();
+                List<PeopleUserDrawing> bodyDrawings = Drawings.ToList().FindAll((drawing) => drawing.Type == DrawingType.Body).OrderBy(_ => Rand.Next()).ToList();
+                List<PeopleUserDrawing> legsDrawings = Drawings.ToList().FindAll((drawing) => drawing.Type == DrawingType.Legs).OrderBy(_ => Rand.Next()).ToList();
                 List<PeopleUserDrawing> headDrawingsCopy = headDrawings.ToList();
                 List<PeopleUserDrawing> bodyDrawingsCopy = bodyDrawings.ToList();
                 List<PeopleUserDrawing> legsDrawingsCopy = legsDrawings.ToList();

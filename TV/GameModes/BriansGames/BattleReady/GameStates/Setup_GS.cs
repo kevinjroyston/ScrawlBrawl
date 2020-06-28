@@ -15,6 +15,7 @@ using static System.FormattableString;
 using RoystonGame.TV.DataModels.States.StateGroups;
 using RoystonGame.TV.DataModels;
 using RoystonGame.TV.ControlFlows.Exit;
+using System.Collections.Concurrent;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
 {
@@ -28,7 +29,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         /// <param name="user">The user to build a chain for.</param>
         /// <param name="outlet">The state to link the end of the chain to.</param>
         /// <returns>A list of user states designed for a given user.</returns>
-        private List<State> GetDrawingsAndPromptsUserStateChain(int numDrawingsPerUser, int numPromptsPerUser, List<PeopleUserDrawing> drawings, List<(User, string)> prompts)
+        private List<State> GetDrawingsAndPromptsUserStateChain(int numDrawingsPerUser, int numPromptsPerUser, ConcurrentBag<PeopleUserDrawing> drawings, ConcurrentBag<(User, string)> prompts)
         {
             List<State> stateChain = new List<State>();
             List<PeopleUserDrawing> drawingsToAdd = new List<PeopleUserDrawing>();
@@ -95,7 +96,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                 stateChain.Add(new SimplePromptUserState((User user) => new UserPrompt()
                 {
                     Title = Invariant($"Now lets make some battle prompts! Prompt \"{tempPromptNumber}\" of \"{numPromptsPerUser}\""),
-                    Description = "Examples: Who would win in a fight, Who would make the best ____, Etc.",
+                    Description = "Examples: Who would win in a fight, Who would make the best actor, Etc.",
                     RefreshTimeInMs = 1000,
                     SubPrompts = new SubPrompt[]
                     {
@@ -123,7 +124,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         }
      
 
-        public Setup_GS(Lobby lobby, List<PeopleUserDrawing> drawings, List<(User, string)> prompts, int numDrawingsPerUserPerPart, int numPromptsPerUser)
+        public Setup_GS(Lobby lobby, ConcurrentBag<PeopleUserDrawing> drawings, ConcurrentBag<(User, string)> prompts, int numDrawingsPerUserPerPart, int numPromptsPerUser)
             : base(
                   lobby: lobby,
                   exit: new WaitForUsers_StateExit(lobby))
