@@ -43,7 +43,7 @@ namespace RoystonGame.Web.DataModels.UnityObjects
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public bool Dirty { get; set; } = true;
+        private bool Dirty { get; set; } = true;
 
         public UnityViewOptions Options { get; set; }
 
@@ -53,7 +53,7 @@ namespace RoystonGame.Web.DataModels.UnityObjects
         // TODO: this is pretty inefficient to be run as frequently as this gets run.
         public DateTime? _StateEndTime
         {
-            get => this.Lobby.GetAllUsers().SelectMany(user => user.StateStack).Select(state => state.ApproximateStateEndTime).Min();
+            get => this.Lobby?.GetAllUsers().SelectMany(user => user.StateStack).Select(state => state.ApproximateStateEndTime).Min();
         }
 
         [Newtonsoft.Json.JsonIgnore]

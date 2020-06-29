@@ -20,6 +20,7 @@ using System.Linq;
 using static System.FormattableString;
 using RoystonGame.TV.DataModels;
 using RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels;
+using RoystonGame.TV.GameModes.KevinsGames.Mimic;
 
 namespace RoystonGame.TV
 {
@@ -187,6 +188,75 @@ namespace RoystonGame.TV
                         DefaultValue = 2,
                         MinValue = 2,
                         MaxValue = 30,
+                    },
+                }
+            },
+            #endregion
+            #region Mimic
+            new GameModeMetadata
+            {
+                Title = "Mimic",
+                Description = "Test your drawing and memory skills",
+                MinPlayers = 3,
+                MaxPlayers = null,
+                GameModeInstantiator = (lobby, options) => new MimicGameMode(lobby, options),
+                Options = new List<GameModeOptionResponse>
+                {
+                    new GameModeOptionResponse
+                    {
+                        Description = "Number of starting drawings from each person",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 2,
+                        MinValue = 1,
+                        MaxValue = 30,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "length of timer for memorizing the drawings",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 10,
+                        MinValue = 2,
+                        MaxValue = 60,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "length of timer for each drawing",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 45,
+                        MinValue = 10,
+                        MaxValue = 120,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "length of timer for voting",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 30,
+                        MinValue = 5,
+                        MaxValue = 60,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Number of drawings before players are asked to vote",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 5,
+                        MinValue = 1,
+                        MaxValue = 30,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Number of sets of drawings per game",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 3,
+                        MinValue = 1,
+                        MaxValue = 10,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Max number of drawings to display for voting",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 10,
+                        MinValue = 2,
+                        MaxValue = 36,
                     },
                 }
             }
