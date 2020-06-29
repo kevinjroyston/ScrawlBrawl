@@ -129,18 +129,13 @@ export class SelectorDirective implements ControlValueAccessor {
   onmousemove(event) {
     if (this.inSwipe) {
       event.preventDefault();
-      if (this.mainImg.width > 300) return false;
-      let newX: number;
-      if (event.changedTouches) {                      // only for touch
-        newX = event.changedTouches[0].pageX;
-      } else {
-        if (event.offsetX !== undefined) {
-          newX = event.offsetX;
-        } else {
-          newX = event.layerX;
-        }
+      if (this.mainImg.width > 300) {
+        return false;
       }
+
+      let newX = this.getX(event);
       newX -= this.lastX;
+
       if (newX > 0) {
         if (newX > 200) newX = 200;
         newX = Math.round(49 * (newX / 200));  // between 0 and 50
@@ -148,7 +143,8 @@ export class SelectorDirective implements ControlValueAccessor {
         this.mainImg.style.setProperty('--n', 100 - newX);
         this.rightImg.style.setProperty('--n', 100 - newX);
         this.leftImg.style.setProperty('--n', 100 + 2*newX);
-      } else {
+      }
+      else {
         if (newX < 0) {
           newX = -newX;
           if (newX > 200) newX = 200;
@@ -160,7 +156,6 @@ export class SelectorDirective implements ControlValueAccessor {
         }
       }
     }
-
   }
 
   @HostListener('mousedown', ['$event'])
@@ -171,17 +166,9 @@ export class SelectorDirective implements ControlValueAccessor {
       event.preventDefault();
       this.inSwipe = true;
       console.log("swipe started");
-      if (event.changedTouches) {                      // only for touch
-        this.lastX = event.changedTouches[0].pageX;
-      } else {
-        if (event.offsetX !== undefined) {
-          this.lastX = event.offsetX;
-        } else {
-          this.lastX = event.layerX;
-        }
-      }
-    }
 
+      this.lastX = this.getX(event);
+    }
   }
 
   @HostListener('mouseup', ['$event'])
@@ -197,21 +184,18 @@ export class SelectorDirective implements ControlValueAccessor {
       this.rightImg.style.setProperty('--n', '100');
       this.leftImg.style.setProperty('--n', '100');
 
-      let newX: number;
-      if (event.changedTouches) {                      // only for touch
-        newX = event.changedTouches[0].pageX;
-      } else {
-        if (event.offsetX !== undefined) {
-          newX = event.offsetX;
-        } else {
-          newX = event.layerX;
-        }
-      }
+      let newX = this.getX(event);
       this.setImages(Math.sign(this.lastX - newX))
     }
+  }
 
+  getX(event): number {
+    if (event.changedTouches) {
+      // for touch event
+      return event.changedTouches[0].pageX;
+    }
+    else {
+      return event.offsetX !== undefined ? event.offsetX : event.layerX;
+    }
   }
 }
-
-
-

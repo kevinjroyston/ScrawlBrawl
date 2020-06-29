@@ -4,8 +4,6 @@ import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@ang
 import { Time } from '@angular/common';
 import { DomSanitizer, SafeHtml, SafeStyle, SafeScript, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
 
-
-
 @Pipe({ name: 'safe' })
 export class Safe {
     constructor(private _sanitizer: DomSanitizer) { }
@@ -29,12 +27,12 @@ export class Safe {
 }
 
 @Component({
-  selector: 'app-fetch-data',
-  templateUrl: './fetch-data.component.html',
+    selector: 'app-fetch-data',
+    templateUrl: './fetch-data.component.html',
     styleUrls: ['./fetch-data.component.css'],
-
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.Emulated
 })
+
 export class FetchDataComponent
 {
     public userPrompt: UserPrompt;
@@ -183,7 +181,7 @@ interface SubPrompt {
     selector: SelectorPromptMetadata;
 }
 interface DrawingPromptMetadata {
-    color: string;
+    colorList: string[];
     widthInPx: number;
     heightInPx: number;
     premadeDrawing: string;

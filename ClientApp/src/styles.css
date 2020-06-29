@@ -1,5 +1,9 @@
+@import "./../node_modules/bootstrap/dist/css/bootstrap.min.css";
 @import "./../node_modules/ngx-ui-switch/ui-switch.component.css";
 
 .Error {
   color: red;
 }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
