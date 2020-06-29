@@ -55,10 +55,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="TV\GameModes\KevinsGames\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\lobby-management\lobby-management.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\user-management\user-management.component.ts" />
   </ItemGroup>
