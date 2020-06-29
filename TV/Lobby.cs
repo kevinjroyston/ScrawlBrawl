@@ -258,6 +258,12 @@ namespace RoystonGame.TV
                         MinValue = 2,
                         MaxValue = 36,
                     },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Blurred Reveal",
+                        ResponseType = ResponseType.Boolean,
+                        DefaultValue = false
+                    },
                 }
             }
             #endregion

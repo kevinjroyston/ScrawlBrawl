@@ -39,8 +39,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
         {
             ConcurrentDictionary<User, User> usersToVoteResults = new ConcurrentDictionary<User, User>();
             List<User> randomizedUserChoices = roundTracker.UsersToDisplay;
-            SelectivePromptUserState pickOriginal = new SelectivePromptUserState(
-                usersToPrompt: lobby.GetAllUsers().Where((User user) => user != roundTracker.originalDrawer).ToList(),
+            SimplePromptUserState pickOriginal = new SimplePromptUserState(
                 promptGenerator: PickADrawing(Enumerable.Range(1,randomizedUserChoices.Count).Select((int num)=> ""+num).ToList()),
                 formSubmitHandler: (User user, UserFormSubmission submission) =>
                 {
@@ -59,6 +58,10 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
                     {
                         User userVotedFor = usersToVoteResults[user];
                         userVotedFor.Score += MimicConstants.PointsForVote;
+                        if(user == roundTracker.originalDrawer && userVotedFor != user)
+                        {
+                            user.Score -= MimicConstants.PointsToLooseForForgeting(lobby.GetAllUsers().Count);
+                        }
                         if(userVotedFor == roundTracker.originalDrawer)
                         {
                             user.Score += MimicConstants.PointsForCorrectPick(lobby.GetAllUsers().Count);
@@ -74,7 +77,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
                 UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>>
                 {
                     Value = randomizedUserChoices.Select((User user) =>  
-                    roundTracker.UsersToUserDrawings[user].GetUnityImage(title:""+(randomizedUserChoices.IndexOf(user)+1))).ToList().AsReadOnly()
+                    roundTracker.UsersToUserDrawings[user].GetUnityImage(imageIdentifier:""+(randomizedUserChoices.IndexOf(user)+1))).ToList().AsReadOnly()
                 }
             };
         }
