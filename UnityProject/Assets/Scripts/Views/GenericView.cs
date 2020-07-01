@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GenericView : MonoBehaviour, ITVView
+public class GenericView : ITVView
 {
     private UnityView UnityView { get; set; }
     public List<TVScreenId> ScreenId;
@@ -28,11 +28,11 @@ public class GenericView : MonoBehaviour, ITVView
     {
     }
 
-    public void EnterView(UnityView view)
+    public override void EnterView(UnityView view)
     {
+        base.EnterView(view);
         UnityView = view;
         gameObject.SetActive(true);
-
         if (Title?.GetComponentInChildren<Text>() != null)
         {
             var title = Title.GetComponentInChildren<Text>();
@@ -126,12 +126,13 @@ public class GenericView : MonoBehaviour, ITVView
         // Set the image object sprites accordingly.
         for (int i = 0; i < ImageDropZone.transform.childCount; i++)
         {
-            ImageDropZone.transform.GetChild(i).GetComponent<ImageHandler>().UnityImage = images[i];
+            ImageDropZone.transform.GetChild(i).GetComponent<UnityObjectHandlerInterface>().UnityImage = images[i];
         }
     }
 
-    public void ExitView()
+    public override void ExitView()
     {
+        base.ExitView();
         gameObject.SetActive(false);
     }
 }
