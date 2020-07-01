@@ -5,8 +5,6 @@ using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using System.Collections.Generic;
 using RoystonGame.Web.DataModels.Exceptions;
 using RoystonGame.TV.GameModes.Common.GameStates;
-using RoystonGame.TV.GameModes.BriansGames.Common.GameStates;
-using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 using static System.FormattableString;
 using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
