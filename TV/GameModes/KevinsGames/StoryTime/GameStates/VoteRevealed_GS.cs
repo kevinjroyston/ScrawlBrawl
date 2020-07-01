@@ -31,26 +31,53 @@ namespace RoystonGame.TV.GameModes.KevinsGames.StoryTime.GameStates
         {
             List<User> randomizedUserChoices = roundTracker.UsersToDisplay;
             this.Entrance.Transition(this.Exit);
-            UserWriting writing = roundTracker.Winner;
-            string formattedString;
-            if (writing.Position == WritingDisplayPosition.Before)
+            List<UserWriting> writings = roundTracker.UsersToUserWriting.Values.ToList();
+            
+           
+            List<UnityImage> displayTexts = writings.Select((UserWriting writing) =>
             {
-                formattedString = "<p style=\"color:green\"><b>" + writing.Text + "</b></p> \n" + oldText;
-            }
-            else if (writing.Position == WritingDisplayPosition.After)
-            {
-                formattedString = oldText + "\n<p style=\"color:green\"><b>" + writing.Text + "</b></p>";
-            }
-            else // position is none (only in setup)
-            {
-                formattedString = writing.Text;
-            }
+                string formattedText;
+                if (writing.Position == WritingDisplayPosition.Before)
+                {
+                    formattedText = "<color=green><b>" + writing.Text + "</b></color> \n" + oldText;
+                }
+                else if (writing.Position == WritingDisplayPosition.After)
+                {
+                    formattedText = oldText + "\n<color=green><b>" + writing.Text + "</b></color>";
+                }
+                else // position is none (only in setup)
+                {
+                    formattedText = writing.Text;
+                }
+
+                string userName = writing.Owner.DisplayName;
+                if(writing == roundTracker.Winner)
+                {
+                    userName = "<color=green><b>" + userName + "</b></color>";
+                }
+
+                return new UnityImage()
+                {
+                    Header = new StaticAccessor<string> { Value = formattedText },
+                    Title = new StaticAccessor<string> { Value = userName },
+                    VoteCount = new StaticAccessor<int?> { Value = writing.VotesRecieved }
+                };
+            }).ToList();
 
             this.UnityView = new UnityView(this.Lobby)
             {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
-                Title = new StaticAccessor<string> { Value = Invariant($"{writing.Owner.DisplayName} created the best {prompt}")},
-                Instructions = new StaticAccessor<string> { Value = formattedString}
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.TextView },
+                Title = new StaticAccessor<string> { Value = "Here are the results" },
+                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = displayTexts.AsReadOnly() },
+                Instructions = new StaticAccessor<string> { Value = Invariant($"Which one was the best \"{prompt}\"?") },
+                Options = new StaticAccessor<UnityViewOptions>
+                {
+                    Value = new UnityViewOptions()
+                    {
+                        PrimaryAxis = new StaticAccessor<Axis?> { Value = Axis.Horizontal },
+                        PrimaryAxisMaxCount = new StaticAccessor<int?> { Value = 4 }
+                    }
+                }
             };
         }
     }

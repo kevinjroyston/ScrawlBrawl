@@ -70,6 +70,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.StoryTime.GameStates
             pickWriting.Transition(this.Exit);
             pickWriting.AddExitListener(() =>
             {
+                List<UserWriting> winners = new List<UserWriting>();
                 foreach (User user in lobby.GetAllUsers())
                 {
                     User userVotedFor = usersToVoteResults[user].Owner;
@@ -78,16 +79,57 @@ namespace RoystonGame.TV.GameModes.KevinsGames.StoryTime.GameStates
                         userVotedFor.Score += StoryTimeConstants.PointsForVote;
                     }
                     usersToVoteResults[user].VotesRecieved++;
-                    if (roundTracker.Winner == null || usersToVoteResults[user].VotesRecieved > roundTracker.Winner.VotesRecieved)
+
+                    if (winners.Count == 0)
                     {
-                        roundTracker.Winner = usersToVoteResults[user];
+                        winners = new List<UserWriting>() { usersToVoteResults[user] };
+                    }
+                    else
+                    {
+                        if (usersToVoteResults[user].VotesRecieved > winners.First().VotesRecieved)
+                        {
+                            winners = new List<UserWriting>() { usersToVoteResults[user] };
+                        }
+                        else if (usersToVoteResults[user].VotesRecieved == winners.First().VotesRecieved)
+                        {
+                            winners.Add(usersToVoteResults[user]);
+                        }
                     }
                 }
+                roundTracker.Winner = winners[Rand.Next(0, winners.Count)]; //randomly pick one of the winners to be the one that is kept
             });
+            List<UnityImage> displayTexts = writings.Select((UserWriting writing)=>
+            {
+                string formattedText;
+                if (writing.Position == WritingDisplayPosition.Before)
+                {
+                    formattedText = "<color=green><b>" + writing.Text + "</b></color> \n" + oldText;
+                }
+                else if (writing.Position == WritingDisplayPosition.After)
+                {
+                    formattedText = oldText + "\n<color=green><b>" + writing.Text + "</b></color>";
+                }
+                else // position is none (only in setup)
+                {
+                    formattedText = writing.Text;
+                }
+                return new UnityImage()
+                {
+                    Header = new StaticAccessor<string> { Value = formattedText }
+                };
+            }).ToList();
+
             this.UnityView = new UnityView(this.Lobby)
             {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings }, //TODO display text on screen
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.TextView }, 
                 Title = new StaticAccessor<string> { Value = "Time To Vote!"},
+                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = displayTexts.AsReadOnly()},
+                Instructions = new StaticAccessor<string> { Value = Invariant($"Which one is the best \"{prompt}\"?")},
+                Options = new StaticAccessor<UnityViewOptions> { Value = new UnityViewOptions() 
+                { 
+                    PrimaryAxis = new StaticAccessor<Axis?> { Value = Axis.Horizontal },
+                    PrimaryAxisMaxCount = new StaticAccessor<int?> { Value = 4}
+                }}
             };
 
         }

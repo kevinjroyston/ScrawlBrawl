@@ -26,7 +26,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.StoryTime
     public class StoryTimeGameMode : IGameMode
     {
         private Random Rand { get; } = new Random();
-        private GameState Setup { get; set; }
+        private GameState Setup { get; set;}
         public StoryTimeGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             ValidateOptions(gameModeOptions);
@@ -50,6 +50,11 @@ namespace RoystonGame.TV.GameModes.KevinsGames.StoryTime
             {
                 StateChain setupVoting = new StateChain(stateGenerator: (int counter) =>
                 {
+                    if(setupTracker.UsersToUserWriting.Count <= 0)
+                    {
+                        oldText = "Nobody finished their starting sentences.";
+                        return null;                        
+                    }
                     if (counter == 0)
                     {
                         return new Voting_GS(
@@ -100,6 +105,11 @@ namespace RoystonGame.TV.GameModes.KevinsGames.StoryTime
                             }
                             else if (counter == 1)
                             {
+                                if(roundTracker.UsersToUserWriting.Count <= 0)
+                                {
+                                    // no users finished their input and so skip the voting and just move to the next round
+                                    return null;
+                                }
                                 return new Voting_GS(
                                     lobby: lobby,
                                     oldText: oldText,
