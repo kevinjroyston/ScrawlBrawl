@@ -45,8 +45,10 @@ namespace RoystonGame.Web.DataModels.UnityObjects
         [System.Text.Json.Serialization.JsonIgnore]
         private bool Dirty { get; set; } = true;
 
-        public UnityViewOptions Options { get; set; }
-
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public IAccessor<UnityViewOptions> Options { private get; set; }
+        public UnityViewOptions _Options { get => Options?.Value; }
         public DateTime ServerTime { get { return DateTime.UtcNow; } }
 
 

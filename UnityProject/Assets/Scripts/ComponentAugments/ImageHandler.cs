@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ImageHandler : MonoBehaviour
+public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
 {
     private List<Image> Images = new List<Image>();
     private List<GameObject> ImageGrids = new List<GameObject>();

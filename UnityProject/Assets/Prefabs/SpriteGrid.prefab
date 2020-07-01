@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 502030004276576916}
   - component: {fileID: 6822938290674501122}
   - component: {fileID: -3619765510818997372}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SpriteGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -66,7 +66,7 @@ MonoBehaviour:
   m_ChildAlignment: 4
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 587, y: 587}
+  m_CellSize: {x: 473, y: 473}
   m_Spacing: {x: 0, y: 0}
   m_Constraint: 1
   m_ConstraintCount: 1
@@ -87,6 +87,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []

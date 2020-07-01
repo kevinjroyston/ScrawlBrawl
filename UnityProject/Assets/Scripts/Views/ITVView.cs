@@ -2,8 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface ITVView
+public abstract class ITVView : MonoBehaviour
 {
-    void EnterView(UnityView currentView);
-    void ExitView();
+    public UnityViewOptions Options { get; private set; }
+    public virtual void EnterView(UnityView currentView)
+    {
+        this.Options = currentView?._Options;
+    }
+    public virtual void ExitView()
+    {
+
+    }
+    
 }
