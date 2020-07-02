@@ -1,4 +1,5 @@
-﻿Shader "UI/Super Blur"
+﻿// from https://github.com/PavelDoGreat/Super-Blur
+Shader "UI/Super Blur"
 {
 	Properties
 	{

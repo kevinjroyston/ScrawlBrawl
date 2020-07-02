@@ -56,7 +56,7 @@ namespace RoystonGame.Web.DataModels.UnityObjects
         // TODO: this is pretty inefficient to be run as frequently as this gets run.
         public DateTime? _StateEndTime
         {
-            get => this.Lobby?.GetAllUsers().SelectMany(user => user.StateStack).Select(state => state.ApproximateStateEndTime).Min();
+            get => this.Lobby?.GetAllUsers().SelectMany(user => user.StateStack).Select(state => state.ApproximateStateEndTime).Append(this.Lobby.GetCurrentGameState().ApproximateStateEndTime).Min();
         }
 
         [Newtonsoft.Json.JsonIgnore]

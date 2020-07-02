@@ -10,6 +10,7 @@ namespace RoystonGame.Web.DataModels.UnityObjects
             bool modified = false;
             modified |= this.PrimaryAxisMaxCount?.Refresh() ?? false;
             modified |= this.PrimaryAxis?.Refresh() ?? false;
+            modified |= this.BlurAnimate?.Refresh() ?? false;
             return modified;
         }
 

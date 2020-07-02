@@ -1,5 +1,5 @@
 ﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
+// from https://github.com/PavelDoGreat/Super-Blur
 Shader "Custom/SuperBlurPostEffect"
 {
 	Properties

@@ -3,6 +3,7 @@ using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.Extensions;
+using RoystonGame.TV.GameModes.Common;
 using RoystonGame.TV.GameModes.KevinsGames.Mimic.DataModels;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
@@ -79,7 +80,12 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
                         {
                             if(speedBasedScore)
                             {
-                                user.Score += MimicConstants.PointsForSpeed(timeSubmitted.Subtract(startingTime).TotalSeconds, lobby.GetAllUsers().Count);
+                                user.Score += CommonHelpers.PointsForSpeed(
+                                    maxPoints: MimicConstants.PointsForCorrectPick(lobby.GetAllUsers().Count),
+                                    minPoints: MimicConstants.PointsForCorrectPick(lobby.GetAllUsers().Count) / 10,
+                                    startTime: MimicConstants.BlurDelay,
+                                    endTime: MimicConstants.BlurDelay + MimicConstants.BlurLength,
+                                    secondsTaken: timeSubmitted.Subtract(startingTime).TotalSeconds);
                             }
                             else
                             {
