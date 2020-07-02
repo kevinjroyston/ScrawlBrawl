@@ -14,6 +14,7 @@ public class GenericView : ITVView
     public GameObject ImagePrefab = null;
     public GameObject PlayerBar = null;
     public GameObject TimerUI = null;
+    public Camera BlurCamera = null;
 
     void Awake()
     {
@@ -101,6 +102,23 @@ public class GenericView : ITVView
             else
             {
                 TimerUI.SetActive(false);
+            }
+        }
+
+        if(BlurCamera?.GetComponent<BlurController>() != null)
+        {
+            if (UnityView._Options != null && UnityView._Options._BlurAnimate != null)
+            {
+                BlurCamera.GetComponent<BlurController>().UpdateBlur(
+                    startValue: UnityView._Options._BlurAnimate._StartValue,
+                    endValue: UnityView._Options._BlurAnimate._EndValue,
+                    startTime: UnityView._Options._BlurAnimate._StartTime,
+                    endTime: UnityView._Options._BlurAnimate._EndTime,
+                    serverCurrentTime: UnityView.ServerTime);
+            }
+            else
+            {
+                BlurCamera.GetComponent<BlurController>().RemoveBlur();
             }
         }
     }

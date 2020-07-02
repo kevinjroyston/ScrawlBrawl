@@ -260,9 +260,15 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Blurred Reveal",
+                        Description = "Blurred reveal",
                         ResponseType = ResponseType.Boolean,
-                        DefaultValue = false
+                        DefaultValue = true
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Speed base scoring",
+                        ResponseType = ResponseType.Boolean,
+                        DefaultValue = true
                     },
                 }
             }
