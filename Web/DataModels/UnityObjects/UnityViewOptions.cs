@@ -24,5 +24,10 @@ namespace RoystonGame.Web.DataModels.UnityObjects
         [System.Text.Json.Serialization.JsonIgnore]
         public IAccessor<Axis?> PrimaryAxis { private get; set; }
         public Axis? _PrimaryAxis { get => PrimaryAxis?.Value; }
+
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public IAccessor<UnityViewAnimationOptions<float?>> BlurAnimate { private get; set; }
+        public UnityViewAnimationOptions<float?> _BlurAnimate {get => BlurAnimate?.Value; }
     }
 }

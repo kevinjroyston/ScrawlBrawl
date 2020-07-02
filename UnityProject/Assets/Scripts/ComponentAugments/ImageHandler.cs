@@ -11,6 +11,7 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
     private List<GameObject> ImageGrids = new List<GameObject>();
     public GameObject SpriteGridPrefab;
     public GameObject SpriteObjectPrefab;
+    public GameObject SpriteZoneHolder;
 
     public Text ImageId;
     public Text Title;
@@ -179,7 +180,7 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
             // Code doesnt work if there are no inner images, in this case just default to A.R. 2.0
             float outerAspectRatio = 2f;
 
-            if (GetFlexibleHeightOrDefault(SpriteZone) > 0.01f)
+            if (GetFlexibleHeightOrDefault(SpriteZoneHolder) > 0.01f)
             {
                 outerAspectRatio =
                      innerAspectRatio
@@ -188,8 +189,8 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
                          + GetFlexibleHeightOrDefault(ScoreHolder)
                          + GetFlexibleHeightOrDefault(Footer)
                          + GetFlexibleHeightOrDefault(DummyScore)
-                         + GetFlexibleHeightOrDefault(SpriteZone))
-                     * GetFlexibleHeightOrDefault(SpriteZone);
+                         + GetFlexibleHeightOrDefault(SpriteZoneHolder))
+                     * GetFlexibleHeightOrDefault(SpriteZoneHolder);
             }
             CallAspectRatioListeners(innerAspectRatio, outerAspectRatio);
         }
