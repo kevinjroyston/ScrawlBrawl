@@ -142,7 +142,7 @@ public class GenericView : ITVView
         }
 
         // Set the image object sprites accordingly.
-        for (int i = 0; i < ImageDropZone.transform.childCount; i++)
+        for (int i = 0; i < images.Count; i++)
         {
             ImageDropZone.transform.GetChild(i).GetComponent<UnityObjectHandlerInterface>().UnityImage = images[i];
         }
