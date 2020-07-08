@@ -22,6 +22,7 @@ using RoystonGame.TV.DataModels;
 using RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels;
 using RoystonGame.TV.GameModes.KevinsGames.Mimic;
 using RoystonGame.TV.GameModes.KevinsGames.StoryTime;
+using RoystonGame.TV.GameModes.TimsGames.FriendQuiz;
 
 namespace RoystonGame.TV
 {
@@ -249,7 +250,7 @@ namespace RoystonGame.TV
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 3,
                         MinValue = 1,
-                        MaxValue = 10,
+                        MaxValue = 50,
                     },
                     new GameModeOptionResponse
                     {
@@ -259,6 +260,51 @@ namespace RoystonGame.TV
                         MinValue = 2,
                         MaxValue = 36,
                     },
+                }
+            },
+            #endregion
+            #region Friend Quiz
+            new GameModeMetadata
+            {
+                Title = "Friend Quiz",
+                Description = "See how well you know your fellow players",
+                MinPlayers = 3,
+                MaxPlayers = null,
+                GameModeInstantiator = (lobby, options) => new FriendQuizGameMode(lobby, options),
+                Options = new List<GameModeOptionResponse>
+                {
+                    new GameModeOptionResponse
+                    {
+                        Description = "Max number of quesgtions to play with",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 1,
+                        MinValue = 1,
+                        MaxValue = 30,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "length of timer for coming up with questions",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 10,
+                        MinValue = 2,
+                        MaxValue = 120,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "length of timer for answering",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 45,
+                        MinValue = 5,
+                        MaxValue = 60,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "length of timer for voting",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 30,
+                        MinValue = 5,
+                        MaxValue = 60,
+                    },                
                 }
             },
             #endregion
