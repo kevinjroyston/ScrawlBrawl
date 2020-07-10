@@ -38,12 +38,10 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
                 SubmitButton = true,
             };
         };
-        public Voting_GS(Lobby lobby, RoundTracker roundTracker, TimeSpan? votingTime, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions) : base(lobby)
+        public Voting_GS(Lobby lobby, RoundTracker roundTracker, TimeSpan? votingTime) : base(lobby)
         {
             ConcurrentDictionary<User, (DateTime, User)> usersToVoteResults = new ConcurrentDictionary<User, (DateTime, User)>();
             List<User> randomizedUserChoices = roundTracker.UsersToDisplay;
-            bool bluredReveal = (bool)gameModeOptions[(int)GameModeOptions.BlurredReveal].ValueParsed;
-            bool speedBasedScore = (bool)gameModeOptions[(int)GameModeOptions.SpeedBasedScoring].ValueParsed;
             SimplePromptUserState pickOriginal = new SimplePromptUserState(
                 promptGenerator: PickADrawing(Enumerable.Range(1,randomizedUserChoices.Count).Select((int num)=> ""+num).ToList()),
                 formSubmitHandler: (User user, UserFormSubmission submission) =>
@@ -69,75 +67,46 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
                         User userVotedFor = usersToVoteResults[user].Item2;
                         DateTime timeSubmitted = usersToVoteResults[user].Item1;
                         userVotedFor.Score += MimicConstants.PointsForVote;
-                        if(user == roundTracker.originalDrawer && userVotedFor != user)
-                        {
-                            if(!speedBasedScore)
-                            {
-                                user.Score -= MimicConstants.PointsToLooseForForgeting(lobby.GetAllUsers().Count);
-                            }
-                        }
                         if(userVotedFor == roundTracker.originalDrawer)
                         {
-                            if(speedBasedScore)
-                            {
-                                user.Score += CommonHelpers.PointsForSpeed(
-                                    maxPoints: MimicConstants.PointsForCorrectPick(lobby.GetAllUsers().Count),
-                                    minPoints: MimicConstants.PointsForCorrectPick(lobby.GetAllUsers().Count) / 10,
-                                    startTime: MimicConstants.BlurDelay,
-                                    endTime: MimicConstants.BlurDelay + MimicConstants.BlurLength,
-                                    secondsTaken: timeSubmitted.Subtract(startingTime).TotalSeconds);
-                            }
-                            else
-                            {
-                                user.Score += MimicConstants.PointsForCorrectPick(lobby.GetAllUsers().Count);
-                            }
+                            user.Score += CommonHelpers.PointsForSpeed(
+                                maxPoints: MimicConstants.PointsForCorrectPick(lobby.GetAllUsers().Count),
+                                minPoints: MimicConstants.PointsForCorrectPick(lobby.GetAllUsers().Count) / 10,
+                                startTime: MimicConstants.BlurDelay,
+                                endTime: MimicConstants.BlurDelay + MimicConstants.BlurLength,
+                                secondsTaken: timeSubmitted.Subtract(startingTime).TotalSeconds);                         
                         }
                         roundTracker.UserToNumVotesRecieved.AddOrUpdate(userVotedFor, 1, (User user, int numVotes) => numVotes + 1);
                     }
                 }
             });
-            if(bluredReveal)
+
+            this.UnityView = new UnityView(this.Lobby)
             {
-                this.UnityView = new UnityView(this.Lobby)
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
+                Title = new StaticAccessor<string> { Value = "Find the original drawing" },
+                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>>
                 {
-                    ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
-                    Title = new StaticAccessor<string> { Value = "Find the original drawing" },
-                    UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>>
+                    Value = randomizedUserChoices.Select((User user) =>
+                    roundTracker.UsersToUserDrawings[user].GetUnityImage(imageIdentifier: "" + (randomizedUserChoices.IndexOf(user) + 1))).ToList().AsReadOnly(),
+                },
+                Options = new StaticAccessor<UnityViewOptions>
+                {
+                    Value = new UnityViewOptions()
                     {
-                        Value = randomizedUserChoices.Select((User user) =>
-                        roundTracker.UsersToUserDrawings[user].GetUnityImage(imageIdentifier: "" + (randomizedUserChoices.IndexOf(user) + 1))).ToList().AsReadOnly(),
-                    },
-                    Options = new StaticAccessor<UnityViewOptions>
-                    {
-                        Value = new UnityViewOptions()
+                        BlurAnimate = new StaticAccessor<UnityViewAnimationOptions<float?>>
                         {
-                            BlurAnimate = new StaticAccessor<UnityViewAnimationOptions<float?>>
+                            Value = new UnityViewAnimationOptions<float?>()
                             {
-                                Value = new UnityViewAnimationOptions<float?>()
-                                {
-                                    StartValue = new StaticAccessor<float?> { Value = 1.0f },
-                                    EndValue = new StaticAccessor<float?> { Value = 0.0f },
-                                    StartTime = new StaticAccessor<DateTime?> { Value = DateTime.UtcNow.AddSeconds(MimicConstants.BlurDelay) },
-                                    EndTime = new StaticAccessor<DateTime?> { Value = DateTime.UtcNow.AddSeconds(MimicConstants.BlurDelay + MimicConstants.BlurLength) }
-                                }
+                                StartValue = new StaticAccessor<float?> { Value = 1.0f },
+                                EndValue = new StaticAccessor<float?> { Value = 0.0f },
+                                StartTime = new StaticAccessor<DateTime?> { Value = DateTime.UtcNow.AddSeconds(MimicConstants.BlurDelay) },
+                                EndTime = new StaticAccessor<DateTime?> { Value = DateTime.UtcNow.AddSeconds(MimicConstants.BlurDelay + MimicConstants.BlurLength) }
                             }
                         }
                     }
-                };
-            }
-            else
-            {
-                this.UnityView = new UnityView(this.Lobby)
-                {
-                    ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
-                    Title = new StaticAccessor<string> { Value = "Find the original drawing" },
-                    UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>>
-                    {
-                        Value = randomizedUserChoices.Select((User user) =>
-                        roundTracker.UsersToUserDrawings[user].GetUnityImage(imageIdentifier: "" + (randomizedUserChoices.IndexOf(user) + 1))).ToList().AsReadOnly(),
-                    }
-                };
-            }
+                }
+            };
         }
     }
 }
