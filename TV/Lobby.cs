@@ -267,7 +267,7 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Speed base scoring",
+                        Description = "Speed based scoring",
                         ResponseType = ResponseType.Boolean,
                         DefaultValue = true
                     },
@@ -350,7 +350,10 @@ namespace RoystonGame.TV
         {
             return this.Game != null;
         }
-
+        public GameState GetCurrentGameState()
+        {
+            return this.CurrentGameState;
+        }
         public bool ConfigureLobby(ConfigureLobbyRequest request, out string errorMsg)
         {
             errorMsg = string.Empty;
