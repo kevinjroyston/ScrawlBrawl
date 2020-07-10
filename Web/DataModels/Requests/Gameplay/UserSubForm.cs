@@ -14,7 +14,7 @@ namespace RoystonGame.Web.DataModels.Requests
         public string ShortAnswer { get; set; }
 
         [RegexSanitizer("^data:image/png;base64,[a-zA-Z0-9+/]+=*$")]
-        [LengthSanitizer(max:100000)]
+        [LengthSanitizer(max:10000000)]
         public string Drawing { get; set; }
 
         public int? Selector { get; set; }
