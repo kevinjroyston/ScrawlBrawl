@@ -1,10 +1,14 @@
 ﻿using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.DataModels.Users;
+using RoystonGame.TV.GameModes.KevinsGames.Mimic.DataModels;
+using RoystonGame.TV.GameModes.TimsGames.FriendQuiz.DataModels;
+using RoystonGame.Web.DataModels.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static System.FormattableString;
 
 namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.GameStates
 {
@@ -13,16 +17,22 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.GameStates
         private Random Rand { get; } = new Random();
         public Setup_GS(Lobby lobby, string prompt, RoundTracker roundTracker, TimeSpan? writingDurration = null) : base(lobby)
         {
+            List<string> answerTypeStrings = new List<string>();
+            foreach(Question.AnswerTypes)
             SimplePromptUserState writingUserState = new SimplePromptUserState(
                 promptGenerator: (User user) => new UserPrompt()
                 {
-                    Title = "Time To Write",
-                    Description = Invariant($"Write the first sentence for a \"{prompt}\""),
+                    Title = "Let's Make Some Questions",
+                    Description = "Write a question and choose an answer type for it",
                     SubPrompts = new SubPrompt[]
                     {
                         new SubPrompt
                         {
                             ShortAnswer = true
+                        },
+                        new SubPrompt
+                        {
+                            Answers
                         }
                     },
                     SubmitButton = true

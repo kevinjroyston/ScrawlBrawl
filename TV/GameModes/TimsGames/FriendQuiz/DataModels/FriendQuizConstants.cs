@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 
 namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.DataModels
 {
-    public class FriendQuizConstants
+    public static class FriendQuizConstants
     {
+       
     }
 }
