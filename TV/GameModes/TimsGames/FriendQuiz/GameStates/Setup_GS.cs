@@ -1,9 +1,13 @@
-﻿using RoystonGame.TV.DataModels.States.GameStates;
+﻿using RoystonGame.TV.ControlFlows.Exit;
+using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.DataModels.Users;
-using RoystonGame.TV.GameModes.KevinsGames.Mimic.DataModels;
+using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.TimsGames.FriendQuiz.DataModels;
+using RoystonGame.Web.DataModels.Enums;
+using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +19,18 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.GameStates
     public class Setup_GS: GameState
     {
         private Random Rand { get; } = new Random();
-        public Setup_GS(Lobby lobby, string prompt, RoundTracker roundTracker, TimeSpan? writingDurration = null) : base(lobby)
+        public Setup_GS(Lobby lobby, RoundTracker roundTracker, TimeSpan? writingDurration = null) : base(lobby)
         {
             List<string> answerTypeStrings = new List<string>();
-            foreach(Question.AnswerTypes)
+            foreach(Question.AnswerTypes answerType in Enum.GetValues(typeof(Question.AnswerTypes)))
+            {
+                string answerTypeString = "";
+                foreach(string answer in Question.AnswerTypeToStrings[answerType])
+                {
+                    answerTypeString = answerTypeString + answer + "-";
+                }
+                answerTypeStrings.Add(answerTypeString.Trim('-'));
+            }
             SimplePromptUserState writingUserState = new SimplePromptUserState(
                 promptGenerator: (User user) => new UserPrompt()
                 {
@@ -32,16 +44,20 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.GameStates
                         },
                         new SubPrompt
                         {
-                            Answers
+                            Answers = answerTypeStrings.ToArray()
                         }
                     },
                     SubmitButton = true
                 },
                 formSubmitHandler: (User user, UserFormSubmission input) =>
-                {
-                    string text = input.SubForms[0].ShortAnswer;
-                    UserWriting writing = new UserWriting(user, text, WritingDisplayPosition.None);
-                    roundTracker.UsersToUserWriting.AddOrUpdate(user, writing, (User user, UserWriting oldWriting) => writing);
+                {                  
+                    Question question = new Question()
+                    {
+                        Owner = user,
+                        Text = input.SubForms[0].ShortAnswer,
+                        AnswerType = (Question.AnswerTypes)(input.SubForms[1].RadioAnswer ?? 0)
+                    };                   
+                    roundTracker.UsersToQuestions.AddOrUpdate(user, question, (User user, Question oldQuestion) => question);
                     return (true, string.Empty);
                 },
                 exit: new WaitForUsers_StateExit(
@@ -55,7 +71,7 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.GameStates
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
                 Title = new StaticAccessor<string> { Value = "Time To Write" },
-                Instructions = new StaticAccessor<string> { Value = Invariant($"Write the first sentence for a \"{prompt}\"") },
+                Instructions = new StaticAccessor<string> { Value = "Write your questions") },
             };
         }
     }
