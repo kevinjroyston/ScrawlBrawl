@@ -24,7 +24,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
     public class Setup_GS : GameState
     {
         private int ColorsPerTeam { get; set; }
-        private int DrawingsPerPlayer { get; set; }
         private int TeamsPerPrompt { get; set; }
         private bool ShowColors { get; set; }
 
@@ -166,7 +165,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             IReadOnlyList<User> users = this.Lobby.GetAllUsers();
-            List<ChallengeTracker> randomizedOrderChallenges = this.SubChallenges.OrderBy(_ => Rand.Next()).Take(DrawingsPerPlayer * users.Count / TeamsPerPrompt / ColorsPerTeam).ToList();
+            List<ChallengeTracker> randomizedOrderChallenges = this.SubChallenges.OrderBy(_ => Rand.Next()).ToList();
             for (int i = 0; i < randomizedOrderChallenges.Count; i++)
             {
                 for (int j = 0; j < ColorsPerTeam * TeamsPerPrompt; j++)
