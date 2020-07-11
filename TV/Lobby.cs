@@ -259,18 +259,6 @@ namespace RoystonGame.TV
                         MinValue = 2,
                         MaxValue = 36,
                     },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Blurred reveal",
-                        ResponseType = ResponseType.Boolean,
-                        DefaultValue = true
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Speed based scoring",
-                        ResponseType = ResponseType.Boolean,
-                        DefaultValue = true
-                    },
                 }
             },
             #endregion

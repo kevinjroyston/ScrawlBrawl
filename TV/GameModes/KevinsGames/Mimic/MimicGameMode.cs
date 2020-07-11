@@ -111,8 +111,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic
                                         return new Voting_GS(
                                             lobby: lobby,
                                             roundTracker: votingRoundTracker,
-                                            votingTime: TimeSpan.FromSeconds(votingTimerLength),
-                                            gameModeOptions: gameModeOptions);
+                                            votingTime: TimeSpan.FromSeconds(votingTimerLength));
                                     }
 
                                     else
