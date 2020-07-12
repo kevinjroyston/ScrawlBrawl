@@ -69,6 +69,8 @@ namespace RoystonGame.Web.DataModels.UnityObjects
         public IAccessor<TVScreenId> ScreenId { private get; set; }
         public TVScreenId? _ScreenId { get => ScreenId?.Value; }
 
+        public Guid? _Id { get; } = Guid.NewGuid();
+
         // TODO: Streamline what data is being sent about the user here
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]

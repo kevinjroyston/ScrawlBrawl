@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class UnityView
 {
-    public Guid Id { get; } = Guid.NewGuid();
+    public Guid _Id { get; set; }
     //public UnityViewOptions Options { get; set; }
     public IReadOnlyList<UnityImage> _UnityImages { get; set; }
     public TVScreenId _ScreenId { get; set; }
