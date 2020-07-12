@@ -15,6 +15,13 @@ namespace RoystonGame.Web.Controllers
     [Route("[controller]")]
     public class CurrentContentController : ControllerBase
     {
+        public CurrentContentController(GameManager gameManager)
+        {
+            this.GameManager = gameManager;
+        }
+
+        private GameManager GameManager { get; set; }
+
         [HttpGet]
         public IActionResult Get(string id)
         {

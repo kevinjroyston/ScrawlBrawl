@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace RoystonGame
 {
@@ -15,6 +16,10 @@ namespace RoystonGame
             {
                 WebHost.CreateDefaultBuilder(args)
                     .UseStartup<Startup>()
+                    .ConfigureLogging(logging =>
+                    {
+                        logging.AddEventLog();
+                    })
                     .Build()
                     .RunAsync(cancellation.Token)
                     .Wait();
@@ -29,15 +34,6 @@ namespace RoystonGame
                 cancellation.Cancel();
                 cancellation.Dispose();
             }
-        }
-
-        public static async Task RunWebServer(string[] args, CancellationToken cancellationToken)
-        {
-            await WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .Build()
-                .RunAsync(cancellationToken)
-                .ConfigureAwait(false);
         }
     }
 }

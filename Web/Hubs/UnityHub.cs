@@ -12,6 +12,12 @@ namespace RoystonGame.Web.Hubs
     /// </summary>
     public class UnityHub : Hub
     {
+        private GameManager GameManager { get; set; }
+        public UnityHub(GameManager gameManager)
+        {
+            GameManager = gameManager;
+        }
+
         // TODO: this class needs some work.
         public override async Task OnConnectedAsync()
         {

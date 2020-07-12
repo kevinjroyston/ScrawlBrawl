@@ -21,6 +21,13 @@ namespace RoystonGame.Web.Controllers
     [Route("[controller]")]
     public class FormSubmitController : ControllerBase
     {
+        public FormSubmitController(GameManager gameManager)
+        {
+            this.GameManager = gameManager;
+        }
+
+        private GameManager GameManager { get; set; }
+
         [HttpPost]
         public IActionResult Post(
             [FromBody] UserFormSubmission formData,
