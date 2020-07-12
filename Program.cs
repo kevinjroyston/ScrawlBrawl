@@ -4,6 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using RoystonGame.Web.Helpers.Telemetry;
 
 namespace RoystonGame
 {
@@ -14,11 +15,17 @@ namespace RoystonGame
             CancellationTokenSource cancellation = new CancellationTokenSource();
             try
             {
+                string sourceName = TelemetryHelpers.CreateEventSource(AppDomain.CurrentDomain.FriendlyName);
+
                 WebHost.CreateDefaultBuilder(args)
                     .UseStartup<Startup>()
                     .ConfigureLogging(logging =>
                     {
-                        logging.AddEventLog();
+                        logging.AddEventLog(options =>
+                        {
+                            options.SourceName = sourceName;
+                            options.LogName = "Application";
+                        });
                     })
                     .Build()
                     .RunAsync(cancellation.Token)
