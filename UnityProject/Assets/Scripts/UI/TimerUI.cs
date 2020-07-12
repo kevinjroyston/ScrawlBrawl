@@ -14,10 +14,19 @@ public class TimerUI : MonoBehaviour
     {
         timeRemainingInSeconds = endTime.Subtract(currentTime).TotalSeconds;
     }
-
+    private bool startedTimerSound = false;
     public void Update()
     {
         timeRemainingInSeconds -= Time.deltaTime;
+        if(timeRemainingInSeconds >10 && startedTimerSound)
+        {
+            startedTimerSound = false;
+        }
+        if(timeRemainingInSeconds <= 10 && !startedTimerSound)
+        {
+            startedTimerSound = true;
+            AudioController.Singleton.PlayTimer();
+        }
         if(timeRemainingInSeconds >= 0)
         {
             TimeSpan timespan = TimeSpan.FromSeconds(timeRemainingInSeconds);
