@@ -35,7 +35,6 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
         [Route("Get")]
         public IActionResult GetLobby()
         {
-            Logger.LogInformation(EventIds.Controller, "Get Lobby Test");
             HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
 

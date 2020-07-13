@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using RoystonGame.Web.Helpers.Telemetry;
+using System.Diagnostics;
 
 namespace RoystonGame
 {
@@ -21,6 +22,7 @@ namespace RoystonGame
                     .UseStartup<Startup>()
                     .ConfigureLogging(logging =>
                     {
+                        logging.AddFilter(category: "None", LogLevel.Warning);
                         logging.AddEventLog(options =>
                         {
                             options.SourceName = sourceName;
@@ -34,6 +36,7 @@ namespace RoystonGame
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+                EventLog.WriteEntry("Application", ex, EventLogEntryType.Error);
                 throw;
             }
             finally

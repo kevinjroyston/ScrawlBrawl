@@ -12,6 +12,7 @@ using Microsoft.Identity.Web;
 using RoystonGame.Web.Helpers.Extensions;
 using Microsoft.Extensions.Logging;
 using RoystonGame.TV;
+using Microsoft.ApplicationInsights.Extensibility.EventCounterCollector;
 
 namespace RoystonGame
 {
@@ -29,7 +30,23 @@ namespace RoystonGame
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            this.Logger.Log(LogLevel.Debug, "Startup.cs: Starting service");
+            // The following line enables Application Insights telemetry collection.
+            services.AddApplicationInsightsTelemetry();
+            // The following code shows several customizations done to EventCounterCollectionModule.
+            services.ConfigureTelemetryModule<EventCounterCollectionModule>(
+                (module, o) =>
+                {
+                    // This removes all default counters.
+                    module.Counters.Clear();
+
+                    // This adds a user defined counter "Users" from EventSource named "Application"
+                    module.Counters.Add(new EventCounterCollectionRequest("Application", "User-Count"));
+                    module.Counters.Add(new EventCounterCollectionRequest("Application", "Lobby-Count"));
+                    module.Counters.Add(new EventCounterCollectionRequest("Application", "User"));
+                    module.Counters.Add(new EventCounterCollectionRequest("Application", "Users"));
+                }
+            );
+
             services.AddSingleton(typeof(GameManager));
 
             services.AddProtectedWebApi(Configuration);
@@ -59,6 +76,7 @@ namespace RoystonGame
                 configuration.RootPath = "ClientApp/dist";
             });
             services.AddHostedService<GameNotifier>();
+            services.AddApplicationInsightsTelemetry();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -21,7 +21,7 @@ namespace RoystonGame.Web.Hubs
         // TODO: this class needs some work.
         public override async Task OnConnectedAsync()
         {
-            Console.WriteLine("Client connected via SignalR");
+            // TODO: Log metric
             await Task.Yield();
         }
         public void JoinRoom(string lobbyFriendlyName)
