@@ -55,6 +55,7 @@ namespace RoystonGame.TV.DataModels.Users
         public string SelfPortrait { get; set; }
 
         public int Score { get; set; }
+        public int ScoreChange { get; private set; } = 0;
 
         /// <summary>
         /// Gets the activity level of the user by looking at their <see cref="LastHeardFromTime"/>.
@@ -132,6 +133,16 @@ namespace RoystonGame.TV.DataModels.Users
             hash.Add(Status);
             hash.Add(Identifier);
             return hash.ToHashCode();
+        }
+        public void ResetScoreChange()
+        {
+            this.ScoreChange = 0;
+        }
+
+        public void AddScore(int amount)
+        {
+            this.Score += amount;
+            this.ScoreChange += amount;
         }
     }
 }

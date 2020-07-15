@@ -275,23 +275,37 @@ namespace RoystonGame.TV
                 {
                     new GameModeOptionResponse
                     {
-                        Description = "Max number of quesgtions to play with",
+                        Description = "Max number of questions to show for voting",
                         ResponseType = ResponseType.Integer,
-                        DefaultValue = 1,
+                        DefaultValue = 5,
                         MinValue = 1,
                         MaxValue = 30,
                     },
                     new GameModeOptionResponse
                     {
+                        Description = "Min number of questions to show for voting",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 3,
+                        MinValue = 1,
+                        MaxValue = 30,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Outlier Extra Round",
+                        ResponseType = ResponseType.Boolean,
+                        DefaultValue = true,
+                    },
+                    new GameModeOptionResponse
+                    {
                         Description = "length of timer for coming up with questions",
                         ResponseType = ResponseType.Integer,
-                        DefaultValue = 10,
-                        MinValue = 2,
+                        DefaultValue = 60,
+                        MinValue = 30,
                         MaxValue = 120,
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "length of timer for answering",
+                        Description = "length of timer for answering each question",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 45,
                         MinValue = 5,

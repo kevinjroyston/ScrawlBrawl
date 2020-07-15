@@ -9,6 +9,6 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.DataModels
 {
     public class RoundTracker
     {
-        public ConcurrentDictionary<User, Question> UsersToQuestions { get; set; } = new ConcurrentDictionary<User, Question>();
+        public ConcurrentBag<Question> Questions { get; set; } = new ConcurrentBag<Question>();
     }
 }

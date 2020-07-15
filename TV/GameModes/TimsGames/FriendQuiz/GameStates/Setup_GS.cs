@@ -25,11 +25,11 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.GameStates
             foreach(Question.AnswerTypes answerType in Enum.GetValues(typeof(Question.AnswerTypes)))
             {
                 string answerTypeString = "";
-                foreach(string answer in Question.AnswerTypeToStrings[answerType])
+                foreach(string answer in Question.AnswerTypeToStrings[answerType].Where((string ans) => ans != "Abstain"))
                 {
-                    answerTypeString = answerTypeString + answer + "-";
+                    answerTypeString = " " + answerTypeString + answer + ",";
                 }
-                answerTypeStrings.Add(answerTypeString.Trim('-'));
+                answerTypeStrings.Add(answerTypeString.Trim(','));
             }
             SimplePromptUserState writingUserState = new SimplePromptUserState(
                 promptGenerator: (User user) => new UserPrompt()
@@ -56,8 +56,8 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.GameStates
                         Owner = user,
                         Text = input.SubForms[0].ShortAnswer,
                         AnswerType = (Question.AnswerTypes)(input.SubForms[1].RadioAnswer ?? 0)
-                    };                   
-                    roundTracker.UsersToQuestions.AddOrUpdate(user, question, (User user, Question oldQuestion) => question);
+                    };
+                    roundTracker.Questions.Add(question);
                     return (true, string.Empty);
                 },
                 exit: new WaitForUsers_StateExit(
@@ -71,7 +71,7 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.GameStates
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
                 Title = new StaticAccessor<string> { Value = "Time To Write" },
-                Instructions = new StaticAccessor<string> { Value = "Write your questions") },
+                Instructions = new StaticAccessor<string> { Value = "Write your questions" },
             };
         }
     }

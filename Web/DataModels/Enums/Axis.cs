@@ -7,7 +7,7 @@ namespace RoystonGame.Web.DataModels.Enums
 {
     public enum Axis
     {
-        Vertical,
-        Horizontal,
+        Horizontal = 0,
+        Vertical = 1
     }
 }
