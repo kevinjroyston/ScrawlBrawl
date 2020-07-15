@@ -7,3 +7,23 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.leftImg {
+  opacity: 0.4;
+  max-width: 24%;
+  height: auto;
+  max-width: calc(24% * (var(--n) / 100))
+}
+
+.rightImg {
+  opacity: 0.4;
+  max-width: 24%;
+  height: auto;
+  max-width: calc(24% * (var(--n) / 100))
+}
+
+.mainImg {
+  border: 2px solid blue;
+  max-width: 50%;
+  height: auto;
+  max-width: calc(50% * (var(--n) / 100))
+}
