@@ -17,25 +17,36 @@ public class TextGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
 
     public void Awake()
     {
-        if(this.iTVView?.Options != null)
+        this.iTVView.AddOptionsListener((UnityViewOptions options) =>
         {
-            placementAxis = this.iTVView.Options._PrimaryAxis ?? placementAxis;
-            dimensionMax = this.iTVView.Options._PrimaryAxisMaxCount ?? dimensionMax;
-        }
-        else
-        {
-            Debug.LogWarning("Options not set");
-        }
+            if (options != null)
+            {
+                placementAxis = options._PrimaryAxis ?? placementAxis;
+                dimensionMax = options._PrimaryAxisMaxCount ?? dimensionMax;
+                SetOptions();
+            }     
+        });
     }
-    protected void Start()
+    protected void SetOptions()
     {
         gridLayoutGroup = GetComponent<GridLayoutGroup>();
-        rect = GetComponentInParent<RectTransform>();
+        rect = GetComponent<RectTransform>();
 
         gridLayoutGroup.cellSize = new Vector2(rect.rect.height, rect.rect.width);
         gridLayoutGroup.startAxis = placementAxis;
-        gridLayoutGroup.constraint = Constraint.Flexible;
-
+        if (placementAxis == Axis.Vertical)
+        {
+            gridLayoutGroup.constraint = Constraint.FixedRowCount;
+        }
+        else if (placementAxis == Axis.Horizontal)
+        {
+            gridLayoutGroup.constraint = Constraint.FixedColumnCount;
+        }
+        else
+        {
+            gridLayoutGroup.constraint = Constraint.Flexible;
+        }
+        gridLayoutGroup.constraintCount = dimensionMax;
         OnRectTransformDimensionsChange();
     }
 
