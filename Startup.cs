@@ -13,6 +13,7 @@ using RoystonGame.Web.Helpers.Extensions;
 using Microsoft.Extensions.Logging;
 using RoystonGame.TV;
 using Microsoft.ApplicationInsights.Extensibility.EventCounterCollector;
+using RoystonGame.Web.Helpers.Telemetry;
 
 namespace RoystonGame
 {
@@ -37,16 +38,18 @@ namespace RoystonGame
                 (module, o) =>
                 {
                     // This removes all default counters.
-                    module.Counters.Clear();
+                    //module.Counters.Clear();
 
                     // This adds a user defined counter "Users" from EventSource named "Application"
-                    module.Counters.Add(new EventCounterCollectionRequest("Application", "User-Count"));
-                    module.Counters.Add(new EventCounterCollectionRequest("Application", "Lobby-Count"));
-                    module.Counters.Add(new EventCounterCollectionRequest("Application", "User"));
-                    module.Counters.Add(new EventCounterCollectionRequest("Application", "Users"));
+                    module.Counters.Add(new EventCounterCollectionRequest("Application", "LobbyStart"));
+                    module.Counters.Add(new EventCounterCollectionRequest("Application", "LobbyEnd"));
+                    module.Counters.Add(new EventCounterCollectionRequest("Application", "GameStart"));
+                    module.Counters.Add(new EventCounterCollectionRequest("Application", "SignalRConnect"));
+                    module.Counters.Add(new EventCounterCollectionRequest("Application", "SignalRDisconnect"));
+                    module.Counters.Add(new EventCounterCollectionRequest("Application", "GameError"));
                 }
             );
-
+            services.AddSingleton(typeof(RgEventSource));
             services.AddSingleton(typeof(GameManager));
 
             services.AddProtectedWebApi(Configuration);

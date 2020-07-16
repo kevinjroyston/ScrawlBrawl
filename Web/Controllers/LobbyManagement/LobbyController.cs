@@ -108,6 +108,7 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
             }
 
             GameManager.DeleteLobby(user.OwnedLobby);
+            user.OwnedLobby = null;
             return new AcceptedResult();
         }
 

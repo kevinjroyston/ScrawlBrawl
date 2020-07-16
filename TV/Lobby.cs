@@ -580,6 +580,8 @@ namespace RoystonGame.TV
             game.Transition(this.EndOfGameRestart);
             this.WaitForLobbyStart.LobbyHasClosed();
 
+
+
             return true;
         }
 

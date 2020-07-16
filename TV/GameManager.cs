@@ -22,6 +22,7 @@ namespace RoystonGame.TV
     public class GameManager
     {
         private ILogger<GameManager> Logger { get; set; }
+        private RgEventSource EventSource { get; set; }
         #region User and Object trackers
         private ConcurrentDictionary<string, User> Users { get; } = new ConcurrentDictionary<string, User>();
         private ConcurrentDictionary<string, AuthenticatedUser> AuthenticatedUsers { get; } = new ConcurrentDictionary<string, AuthenticatedUser>();
@@ -77,14 +78,16 @@ namespace RoystonGame.TV
         };
         #endregion
 
-        public GameManager(ILogger<GameManager> logger)
+        public GameManager(ILogger<GameManager> logger, RgEventSource eventSource)
         {
             Logger = logger;
+            EventSource = eventSource;
         }
 
         public void ReportGameError(ErrorType type, string lobbyId, User user = null, Exception error = null)
         {
             Logger.LogError(EventIds.Error, error, $"{type},{lobbyId},{user.Identifier},{user.UserId}");
+            EventSource.GameErrorCounter.WriteMetric(1);
             // Log error to console (TODO redirect to file on release builds).
             Debug.WriteLine(Invariant($"ERROR ERROR ERROR ERROR ERROR ~~~~~~~~~~~~~~~~~~~~~~~~~ {error}"));
             Debug.Assert(false, error.ToString());
@@ -128,6 +131,7 @@ namespace RoystonGame.TV
             }
             catch (Exception e)
             {
+                Logger.LogWarning(exception: e, $"Error thrown when looking up user: '{identifier}'");
                 Console.Error.WriteLine(e);
                 Debug.Assert(false, Invariant($"Error on user creation: {e}"));
                 newUser = false;
@@ -155,6 +159,7 @@ namespace RoystonGame.TV
             }
             catch (Exception e)
             {
+                Logger.LogWarning(exception: e, message: $"Error creating authenticated user object: '{userId}'");
                 Console.Error.WriteLine(e);
                 Debug.Assert(false, Invariant($"Error on create authenticated user: {e}"));
                 return null;
@@ -168,6 +173,7 @@ namespace RoystonGame.TV
             {
                 return false;
             }
+            EventSource.LobbyStartCounter.WriteMetric(1);
             return LobbyIdToLobby.TryAdd(lobby.LobbyId, lobby);
         }
         public void DeleteLobby(Lobby lobby)
@@ -180,6 +186,7 @@ namespace RoystonGame.TV
         }
         public void DeleteLobby(string lobbyId)
         {
+            EventSource.LobbyEndCounter.WriteMetric(1);
             Lobby lobby = GetLobby(lobbyId);
             LobbyIdToLobby.TryRemove(lobbyId, out Lobby _);
 
