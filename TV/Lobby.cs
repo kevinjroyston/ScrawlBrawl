@@ -85,13 +85,14 @@ namespace RoystonGame.TV
                 GameModeInstantiator = (lobby, options) => new ImposterTextGameMode(lobby, options),
                 Options = new List<GameModeOptionResponse>
                 {
-                    /*new GameModeOptionResponse
+                    new GameModeOptionResponse
                     {
-                        Description = "Number of answers per prompt",
+                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
-                        DefaultValue = 6,
-                        MinValue = 3
-                    },*/
+                        DefaultValue = 5,
+                        MinValue = 0,
+                        MaxValue = 10,
+                    }
                 }
             },
             #endregion

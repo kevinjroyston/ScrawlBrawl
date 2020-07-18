@@ -21,12 +21,37 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
         public ImposterTextGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             ValidateOptions(lobby, gameModeOptions);
+            int gameSpeed = (int)gameModeOptions[(int)GameModeOptionsEnum.gameSpeed].ValueParsed;
+            TimeSpan? setupTimer = null;
+            TimeSpan? answeringTimer = null;
+            TimeSpan? votingTimer = null;
+            if (gameSpeed > 0)
+            {
+                setupTimer = TimeSpan.FromSeconds(CommonHelpers.LinearMapping(
+                    minPosition: 1,
+                    maxPosition: 10,
+                    position: (double)gameSpeed,
+                    minValue: ImposterTextConstants.SetupTimerMin,
+                    maxValue: ImposterTextConstants.SetupTimerMax));
+                answeringTimer = TimeSpan.FromSeconds(CommonHelpers.LinearMapping(
+                    minPosition: 1,
+                    maxPosition: 10,
+                    position: (double)gameSpeed,
+                    minValue: ImposterTextConstants.AnsweringTimerMin,
+                    maxValue: ImposterTextConstants.AnsweringTimerMax));
+                votingTimer = TimeSpan.FromSeconds(CommonHelpers.LinearMapping(
+                    minPosition: 1,
+                    maxPosition: 10,
+                    position: (double)gameSpeed,
+                    minValue: ImposterTextConstants.VotingTimerMin,
+                    maxValue: ImposterTextConstants.VotingTimerMax));
+            }    
             int numWritingsPerPrompt = lobby.GetAllUsers().Count - 1;
             List<Prompt> prompts = new List<Prompt>();
             Setup = new Setup_GS(
                 lobby: lobby,
                 promptsToPopulate: prompts,
-                setupTimeDurration: null);
+                setupTimeDurration: setupTimer);
 
             Dictionary<Prompt, List<User>> promptsToPromptedUsers = new Dictionary<Prompt, List<User>>();
             Setup.AddExitListener(() =>
@@ -65,7 +90,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
                                 lobby: lobby,
                                 promptToDraw: prompt,
                                 usersToPrompt: randomizedUsers,
-                                writingTimeDurration: null);
+                                writingTimeDurration: answeringTimer);
                         }
                         if (counter == 1)
                         {
@@ -74,7 +99,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
                                 prompt: prompt,
                                 randomizedUsersToShow: randomizedUsers,
                                 possibleNone: (prompt.UsersToAnswers.Count < randomizedUsers.Count),
-                                drawingTimeDurration: null);
+                                votingTimeDurration: votingTimer);
                         }
                         if (counter == 2)
                         {
@@ -82,8 +107,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
                                 lobby: lobby,
                                 prompt: prompt,
                                 randomizedUsersToShow: randomizedUsers,
-                                possibleNone: (prompt.UsersToAnswers.Count < randomizedUsers.Count),
-                                drawingTimeDurration: null);
+                                possibleNone: (prompt.UsersToAnswers.Count < randomizedUsers.Count));
                         }
                         else
                         {

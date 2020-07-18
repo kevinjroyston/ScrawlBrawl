@@ -22,7 +22,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
             SubmitButton = true
         };
 
-        public VoteRevealed_GS(Lobby lobby, Prompt prompt, List<User> randomizedUsersToShow, bool possibleNone, TimeSpan? drawingTimeDurration)
+        public VoteRevealed_GS(Lobby lobby, Prompt prompt, List<User> randomizedUsersToShow, bool possibleNone, TimeSpan? voteRevealTimeDurration = null)
            : base(
                  lobby: lobby,
                  exit: new WaitForPartyLeader_StateExit(

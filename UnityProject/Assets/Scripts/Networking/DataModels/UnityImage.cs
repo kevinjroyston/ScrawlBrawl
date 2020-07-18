@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Newtonsoft.Json;
 
 public class UnityImage
 {
@@ -25,4 +26,7 @@ public class UnityImage
     public int? _VoteCount { get; set; }
     //public IReadOnlyList<User> _RelevantUsers { get; set; }
     public IReadOnlyList<int> _BackgroundColor { get; set; }
+
+    [JsonIgnore]
+    public UnityViewOptions Options { get; set; }
 }

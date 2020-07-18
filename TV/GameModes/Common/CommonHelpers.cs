@@ -29,6 +29,11 @@ namespace RoystonGame.TV.GameModes.Common
             }
         }
 
+        public static double LinearMapping(double minPosition, double maxPosition, double position, double minValue, double maxValue)
+        {
+            return ((maxPosition - position) / (maxPosition - minPosition) * (maxValue - minValue)) + minValue;
+        }
+
         /// <summary>
         /// Evenly distributes the elements of toDistribute into the groups. Will duplicate toDistribute elements
         /// until the groups have reached maxGroupSize or all elements that pass the check have been assigned for each group
