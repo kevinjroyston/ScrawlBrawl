@@ -49,7 +49,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
                         Drawing = input.SubForms[0].Drawing,
                         Owner = user
                     };
-                    roundTracker.UsersToUserDrawings.AddOrUpdate(user, (User user)=>submission, (User user, UserDrawing userDrawing) => submission);
+                    roundTracker.UsersToUserDrawings.AddOrReplace(user, submission);
                     return (true, string.Empty);
                 },
                 exit: new WaitForUsers_StateExit(

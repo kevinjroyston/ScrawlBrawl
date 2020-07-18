@@ -61,7 +61,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.StoryTime.GameStates
                         position = WritingDisplayPosition.Before;
                     }
                     UserWriting writing = new UserWriting(user, text, position);
-                    roundTracker.UsersToUserWriting.AddOrUpdate(user, writing, (User user, UserWriting oldWriting) => writing);
+                    roundTracker.UsersToUserWriting.AddOrReplace(user, writing);
                     return (true, string.Empty);
                 },
                 exit: new WaitForUsers_StateExit(

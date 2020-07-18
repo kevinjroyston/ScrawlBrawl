@@ -23,6 +23,7 @@ using RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels;
 using RoystonGame.TV.GameModes.KevinsGames.Mimic;
 using RoystonGame.TV.GameModes.KevinsGames.StoryTime;
 using RoystonGame.TV.GameModes.TimsGames.FriendQuiz;
+using RoystonGame.TV.GameModes.BriansGames.ImposterText;
 
 namespace RoystonGame.TV
 {
@@ -71,6 +72,26 @@ namespace RoystonGame.TV
                         DefaultValue = 6,
                         MinValue = 3
                     },
+                }
+            },
+            #endregion
+            #region Imposter Syndrome Text
+            new GameModeMetadata
+            {
+                Title = "Imposter Syndrome (Text)",
+                Description = "Come up with a difference only you'll be able to spot!",
+                MinPlayers = 4,
+                MaxPlayers = null,
+                GameModeInstantiator = (lobby, options) => new ImposterTextGameMode(lobby, options),
+                Options = new List<GameModeOptionResponse>
+                {
+                    /*new GameModeOptionResponse
+                    {
+                        Description = "Number of answers per prompt",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 6,
+                        MinValue = 3
+                    },*/
                 }
             },
             #endregion
