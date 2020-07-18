@@ -97,7 +97,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
                             return new Voting_GS(
                                 lobby: lobby,
                                 prompt: prompt,
-                                randomizedUsersToShow: randomizedUsers,
+                                randomizedUsersToShow: randomizedUsers.Where((User user) => prompt.UsersToAnswers.ContainsKey(user)).ToList(),
                                 possibleNone: (prompt.UsersToAnswers.Count < randomizedUsers.Count),
                                 votingTimeDurration: votingTimer);
                         }
@@ -106,7 +106,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
                             return new VoteRevealed_GS(
                                 lobby: lobby,
                                 prompt: prompt,
-                                randomizedUsersToShow: randomizedUsers,
+                                randomizedUsersToShow: randomizedUsers.Where((User user) => prompt.UsersToAnswers.ContainsKey(user)).ToList(),
                                 possibleNone: (prompt.UsersToAnswers.Count < randomizedUsers.Count));
                         }
                         else

@@ -38,13 +38,25 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
                 {
                     numVotesRecieved = prompt.UsersToNumVotesRecieved[user];
                 }
-                return new UnityImage()
+                if (user == prompt.ImposterCreator)
                 {
-                    Title = new StaticAccessor<string> { Value = user.DisplayName },
-                    Header = new StaticAccessor<string> { Value = prompt.UsersToAnswers[user] },
-                    VoteCount = new StaticAccessor<int?> { Value = numVotesRecieved },
-                    BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = user == prompt.ImposterCreator ? new List<int> { 250, 128, 114 } : new List<int> { 255, 255, 255 } }
-                };  
+                    return new UnityImage()
+                    {
+                        Title = new StaticAccessor<string> { Value = "<color=green>" + user.DisplayName + "</color>" },
+                        Header = new StaticAccessor<string> { Value = "<color=green>" + prompt.UsersToAnswers[user] + "</color>" },
+                        VoteCount = new StaticAccessor<int?> { Value = numVotesRecieved },
+                    };
+                }
+                else
+                {
+                    return new UnityImage()
+                    {
+                        Title = new StaticAccessor<string> { Value = user.DisplayName },
+                        Header = new StaticAccessor<string> { Value = prompt.UsersToAnswers[user] },
+                        VoteCount = new StaticAccessor<int?> { Value = numVotesRecieved },
+                    };
+                }
+                
             }).ToList();
 
             string imposterTitle = prompt.ImposterCreator.DisplayName;
@@ -60,9 +72,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
                     }
                     unityImages.Add(new UnityImage()
                     {
-                        Header = new StaticAccessor<string> { Value = "None" },
+                        Header = new StaticAccessor<string> { Value = "<color=green>None of these</color>" },
                         VoteCount = new StaticAccessor<int?> { Value = numVotesRecieved },
-                        BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = new List<int> { 250, 128, 114 } },
                     });
                 }
                 else
@@ -74,7 +85,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
                     }
                     unityImages.Add(new UnityImage()
                     {
-                        Header = new StaticAccessor<string> { Value = "None" },
+                        Header = new StaticAccessor<string> { Value = "None of these" },
                         VoteCount = new StaticAccessor<int?> { Value = numVotesRecieved }
                     });
                 }
@@ -84,7 +95,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.TextView },
                 UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages },
-                Title = new StaticAccessor<string> { Value = Invariant($"{imposterTitle} was the imposter!")  },
+                Title = new StaticAccessor<string> { Value = Invariant($"<color=green>{imposterTitle}</color> was the imposter!")  },
                 Instructions = new StaticAccessor<string> { Value = Invariant($"Real: '{prompt.RealPrompt}', Imposter: '{prompt.FakePrompt}'") },
                 Options = new StaticAccessor<UnityViewOptions>
                 {

@@ -12,10 +12,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.DataModels
         public const int PointsToLooseForWrongVote = 50;
 
         public const double SetupTimerMin = 45;
-        public const double SetupTimerMax = 420;
+        public const double SetupTimerMax = 240;
         public const double AnsweringTimerMin = 30;
-        public const double AnsweringTimerMax = 420;
+        public const double AnsweringTimerMax = 240;
         public const double VotingTimerMin = 30;
-        public const double VotingTimerMax = 420;
+        public const double VotingTimerMax = 240;
     }
 }

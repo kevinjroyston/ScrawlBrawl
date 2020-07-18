@@ -28,17 +28,18 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
                 promptGenerator: (User user) => new UserPrompt()
                 {
                     Title = "Game setup",
-                    Description = "In the boxes below, enter two drawing prompts such that only you will be able to tell the drawings apart.",
+                    Description = "In the boxes below, enter two questions such that only you will be able to tell the answers apart.",
                     SubPrompts = new SubPrompt[]
                     {
                         new SubPrompt
                         {
-                            Prompt = Invariant($"The drawing prompt to show all users. Suggestions: '{string.Join("', '",RandomLineFromFile.GetRandomLines(FileNames.Nouns, 5))}'"),
+                            //Prompt = Invariant($"The drawing prompt to show all users. Suggestions: '{string.Join("', '",RandomLineFromFile.GetRandomLines(FileNames.Nouns, 5))}'"),
+                            Prompt = Invariant($"The question to show all players"),
                             ShortAnswer = true,
                         },
                         new SubPrompt
                         {
-                            Prompt = "The drawing prompt to show to imposter",
+                            Prompt = "The question to show to the imposter",
                             ShortAnswer = true,
                         }
                     },

@@ -70,7 +70,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
                 formSubmitHandler: (User user, UserFormSubmission input) =>
                 {
                     int choice = input.SubForms[0].RadioAnswer ?? 0;
-                    if (possibleNone && choice == input.SubForms.Count - 1 ) // user selected None
+                    if (possibleNone && choice == randomizedUsersToShow.Count ) // user selected None
                     {
                         if (!randomizedUsersToShow.Contains(prompt.ImposterCreator))
                         {
@@ -81,7 +81,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
                             usersToVotes.AddOrReplace(user, prompt.Owner); // User was wrong, set their answer as the prompt creator which will always be wrong
                         }         
                     }
-                    usersToVotes.AddOrReplace(user, randomizedUsersToShow[choice]);
+                    else
+                    {
+                        usersToVotes.AddOrReplace(user, randomizedUsersToShow[choice]);
+                    }           
                     return (true, string.Empty);
                 },
                 exit: new WaitForUsers_StateExit(
@@ -136,7 +139,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
                     Header = new StaticAccessor<string> { Value = prompt.UsersToAnswers[user] }
                 };
             }).ToList();
-
+            if (possibleNone)
+            {
+                unityImages.Add(new UnityImage()
+                {
+                    Header = new StaticAccessor<string> { Value = "None of these" }
+                });
+            }
             this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.TextView },
