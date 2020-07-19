@@ -17,12 +17,15 @@ namespace RoystonGame.Web.Hubs
         private Timer _timer;
         private IHubContext<UnityHub> UnityHubNotifier { get; }
 
+        private GameManager GameManager { get; set; }
+
         /// <summary>
         /// Class which runs on a background thread constantly sending updates to connected unity game clients.
         /// </summary>
         /// <param name="notificationHub">The hub to use for pushing updates to clients (Depency Injected)</param>
-        public GameNotifier(IHubContext<UnityHub> notificationHub)
+        public GameNotifier(IHubContext<UnityHub> notificationHub, GameManager gameManager)
         {
+            GameManager = gameManager;
             UnityHubNotifier = notificationHub;
         }
 
@@ -39,7 +42,7 @@ namespace RoystonGame.Web.Hubs
         /// </summary>
         private void DoWork(object _)
         {
-            while (GameManager.Singleton.AbandonedLobbyIds.TryTake(out string lobbyId))
+            while (GameManager.AbandonedLobbyIds.TryTake(out string lobbyId))
             {
                 UnityHubNotifier.Clients.Group(lobbyId).SendAsync("LobbyClose");
             }

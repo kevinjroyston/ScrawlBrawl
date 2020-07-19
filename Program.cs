@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using RoystonGame.Web.Helpers.Telemetry;
+using System.Diagnostics;
 
 namespace RoystonGame
 {
@@ -13,8 +16,19 @@ namespace RoystonGame
             CancellationTokenSource cancellation = new CancellationTokenSource();
             try
             {
+                string sourceName = TelemetryHelpers.CreateEventSource(AppDomain.CurrentDomain.FriendlyName);
+
                 WebHost.CreateDefaultBuilder(args)
                     .UseStartup<Startup>()
+                    .ConfigureLogging(logging =>
+                    {
+                        logging.AddFilter(category: "None", LogLevel.Warning);
+                        logging.AddEventLog(options =>
+                        {
+                            options.SourceName = sourceName;
+                            options.LogName = "Application";
+                        });
+                    })
                     .Build()
                     .RunAsync(cancellation.Token)
                     .Wait();
@@ -22,6 +36,7 @@ namespace RoystonGame
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+                EventLog.WriteEntry(source:"Application", message: ex.ToString(), type: EventLogEntryType.Error);
                 throw;
             }
             finally
@@ -29,15 +44,6 @@ namespace RoystonGame
                 cancellation.Cancel();
                 cancellation.Dispose();
             }
-        }
-
-        public static async Task RunWebServer(string[] args, CancellationToken cancellationToken)
-        {
-            await WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .Build()
-                .RunAsync(cancellationToken)
-                .ConfigureAwait(false);
         }
     }
 }

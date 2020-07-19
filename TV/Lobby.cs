@@ -49,6 +49,7 @@ namespace RoystonGame.TV
         #endregion
 
         private IGameMode Game { get; set; }
+        private GameManager GameManager { get; set; }
 
 
         #region GameModes
@@ -378,7 +379,7 @@ namespace RoystonGame.TV
         }.AsReadOnly();
         #endregion
 
-        public Lobby(string friendlyName, AuthenticatedUser owner)
+        public Lobby(string friendlyName, AuthenticatedUser owner, GameManager gameManager)
         {
             this.LobbyId = friendlyName;
             this.Owner = owner;
@@ -579,6 +580,8 @@ namespace RoystonGame.TV
             game.Transition(this.EndOfGameRestart);
             this.WaitForLobbyStart.LobbyHasClosed();
 
+
+
             return true;
         }
 
@@ -620,7 +623,7 @@ namespace RoystonGame.TV
         {
             foreach (User user in UsersInLobby)
             {
-                GameManager.UnregisterUser(user);
+                this.GameManager.UnregisterUser(user);
             }
             UsersInLobby.Clear();
         }

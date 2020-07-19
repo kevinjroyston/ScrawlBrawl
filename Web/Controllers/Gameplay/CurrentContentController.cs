@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using RoystonGame.TV;
 using RoystonGame.TV.DataModels.Users;
 using RoystonGame.Web.DataModels.Enums;
@@ -15,6 +16,15 @@ namespace RoystonGame.Web.Controllers
     [Route("[controller]")]
     public class CurrentContentController : ControllerBase
     {
+        private ILogger<CurrentContentController> Logger { get; set; }
+        public CurrentContentController(GameManager gameManager, ILogger<CurrentContentController> logger)
+        {
+            this.GameManager = gameManager;
+            this.Logger = logger;
+        }
+
+        private GameManager GameManager { get; set; }
+
         [HttpGet]
         public IActionResult Get(string id)
         {
@@ -35,6 +45,7 @@ namespace RoystonGame.Web.Controllers
                 if (user?.UserState == null)
                 {
                     Debug.Assert(false, "User not in a state!");
+                    Logger.LogWarning(message: $"User (name:'{user?.DisplayName}', id:'{id}') is not in a state");
                     return BadRequest("Error finding/creating user object.");
                 }
 

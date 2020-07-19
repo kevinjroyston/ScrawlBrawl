@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web.Resource;
 using RoystonGame.TV;
 using RoystonGame.Web.DataModels;
 using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.Helpers.Extensions;
+using RoystonGame.Web.Helpers.Telemetry;
 using System;
 
 namespace RoystonGame.Web.Controllers.LobbyManagement
@@ -16,6 +18,15 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
     [Authorize]
     public class LobbyController : ControllerBase
     {
+        public LobbyController(ILogger<LobbyController> logger, GameManager gameManager)
+        {
+            this.GameManager = gameManager;
+            this.Logger = logger;
+        }
+
+        private GameManager GameManager { get; set; }
+        private ILogger<LobbyController> Logger { get; set; }
+
         // The Web API will only accept tokens 1) for users, and 
         // 2) having the access_as_user scope for this API
         static readonly string[] scopeRequiredByApi = new string[] { "ManageLobby" };
@@ -69,7 +80,7 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
                 }
             } while (GameManager.GetLobby(lobbyId) != null);
 
-            Lobby newLobby = new Lobby(lobbyId, owner: user);
+            Lobby newLobby = new Lobby(lobbyId, owner: user, gameManager: GameManager);
 
             if (!GameManager.RegisterLobby(newLobby))
             {
@@ -97,6 +108,7 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
             }
 
             GameManager.DeleteLobby(user.OwnedLobby);
+            user.OwnedLobby = null;
             return new AcceptedResult();
         }
 

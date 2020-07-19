@@ -9,6 +9,13 @@ namespace RoystonGame.Web.Controllers.UserManagement
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
+        public UserController(GameManager gameManager)
+        {
+            this.GameManager = gameManager;
+        }
+
+        private GameManager GameManager { get; set; }
+
         [HttpGet]
         [Route("Delete")]
         public IActionResult ResetUser(string id)

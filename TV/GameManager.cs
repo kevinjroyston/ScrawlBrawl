@@ -14,34 +14,15 @@ using System.Net;
 
 using static System.FormattableString;
 using RoystonGame.TV.Extensions;
+using Microsoft.Extensions.Logging;
+using RoystonGame.Web.Helpers.Telemetry;
 
 namespace RoystonGame.TV
 {
     public class GameManager
     {
-        #region Singleton
-        private static GameManager _internalSingleton;
-        public static GameManager Singleton
-        {
-            get
-            {
-                if (_internalSingleton == null)
-                {
-                    _internalSingleton = new GameManager();
-                }
-                return _internalSingleton;
-            }
-        }
-
-        private GameManager()
-        {
-            if (_internalSingleton != null)
-            {
-                throw new Exception("Tried to instantiate a second instance of GameManager.cs");
-            }
-        }
-        #endregion
-
+        private ILogger<GameManager> Logger { get; set; }
+        private RgEventSource EventSource { get; set; }
         #region User and Object trackers
         private ConcurrentDictionary<string, User> Users { get; } = new ConcurrentDictionary<string, User>();
         private ConcurrentDictionary<string, AuthenticatedUser> AuthenticatedUsers { get; } = new ConcurrentDictionary<string, AuthenticatedUser>();
@@ -58,7 +39,7 @@ namespace RoystonGame.TV
         /// States track all of the users that enter it. In order to aid in garbage collection, create a new state instance for each user.
         /// </summary>
         /// <returns>A new user registration user state.</returns>
-        public static UserState CreateUserRegistrationUserState()
+        public UserState CreateUserRegistrationUserState()
         {
             UserState toReturn = new SimplePromptUserState(
                 promptGenerator: UserNamePrompt,
@@ -97,8 +78,16 @@ namespace RoystonGame.TV
         };
         #endregion
 
-        public static void ReportGameError(ErrorType type, string lobbyId, User user = null, Exception error = null)
+        public GameManager(ILogger<GameManager> logger, RgEventSource eventSource)
         {
+            Logger = logger;
+            EventSource = eventSource;
+        }
+
+        public void ReportGameError(ErrorType type, string lobbyId, User user = null, Exception error = null)
+        {
+            Logger.LogError(EventIds.Error, error, $"{type},{lobbyId},{user.Identifier},{user.UserId}");
+            EventSource.GameErrorCounter.WriteMetric(1);
             // Log error to console (TODO redirect to file on release builds).
             Debug.WriteLine(Invariant($"ERROR ERROR ERROR ERROR ERROR ~~~~~~~~~~~~~~~~~~~~~~~~~ {error}"));
             Debug.Assert(false, error.ToString());
@@ -113,7 +102,7 @@ namespace RoystonGame.TV
             }
         }
 
-        public static User MapIdentifierToUser(string identifier, out bool newUser)
+        public User MapIdentifierToUser(string identifier, out bool newUser)
         {
             newUser = false;
             if (identifier.Length < 30)
@@ -123,13 +112,13 @@ namespace RoystonGame.TV
 
             try
             {
-                if (Singleton.Users.ContainsKey(identifier))
+                if (Users.ContainsKey(identifier))
                 {
-                    return Singleton.Users[identifier];
+                    return Users[identifier];
                 }
 
                 User user = new User(identifier);
-                if (Singleton.Users.TryAdd(identifier, user))
+                if (Users.TryAdd(identifier, user))
                 {
                     CreateUserRegistrationUserState().Inlet(user, UserStateResult.Success, null);
                     newUser = true;
@@ -142,6 +131,7 @@ namespace RoystonGame.TV
             }
             catch (Exception e)
             {
+                Logger.LogWarning(exception: e, $"Error thrown when looking up user: '{identifier}'");
                 Console.Error.WriteLine(e);
                 Debug.Assert(false, Invariant($"Error on user creation: {e}"));
                 newUser = false;
@@ -150,13 +140,13 @@ namespace RoystonGame.TV
         }
 
 
-        public static AuthenticatedUser GetAuthenticatedUser(string userId)
+        public AuthenticatedUser GetAuthenticatedUser(string userId)
         {
             try
             {
-                if (!Singleton.AuthenticatedUsers.ContainsKey(userId))
+                if (!AuthenticatedUsers.ContainsKey(userId))
                 {
-                    if (!Singleton.AuthenticatedUsers.TryAdd(userId, new AuthenticatedUser()
+                    if (!AuthenticatedUsers.TryAdd(userId, new AuthenticatedUser()
                     {
                         UserId = userId
                     }))
@@ -165,10 +155,11 @@ namespace RoystonGame.TV
                     }
                 }
 
-                return Singleton.AuthenticatedUsers[userId];
+                return AuthenticatedUsers[userId];
             }
             catch (Exception e)
             {
+                Logger.LogWarning(exception: e, message: $"Error creating authenticated user object: '{userId}'");
                 Console.Error.WriteLine(e);
                 Debug.Assert(false, Invariant($"Error on create authenticated user: {e}"));
                 return null;
@@ -176,15 +167,16 @@ namespace RoystonGame.TV
         }
 
         #region Lobby Management
-        public static bool RegisterLobby(Lobby lobby)
+        public bool RegisterLobby(Lobby lobby)
         {
             if (lobby == null)
             {
                 return false;
             }
-            return Singleton.LobbyIdToLobby.TryAdd(lobby.LobbyId, lobby);
+            EventSource.LobbyStartCounter.WriteMetric(1);
+            return LobbyIdToLobby.TryAdd(lobby.LobbyId, lobby);
         }
-        public static void DeleteLobby(Lobby lobby)
+        public void DeleteLobby(Lobby lobby)
         {
             if (lobby == null)
             {
@@ -192,40 +184,41 @@ namespace RoystonGame.TV
             }
             DeleteLobby(lobby.LobbyId);
         }
-        public static void DeleteLobby(string lobbyId)
+        public void DeleteLobby(string lobbyId)
         {
+            EventSource.LobbyEndCounter.WriteMetric(1);
             Lobby lobby = GetLobby(lobbyId);
-            Singleton.LobbyIdToLobby.TryRemove(lobbyId, out Lobby _);
+            LobbyIdToLobby.TryRemove(lobbyId, out Lobby _);
 
             lobby?.UnregisterAllUsers();
             if (lobby?.Owner?.OwnedLobby != null)
             {
                 lobby.Owner.OwnedLobby = null;
             }
-            Singleton.AbandonedLobbyIds.Add(lobbyId);
+            AbandonedLobbyIds.Add(lobbyId);
         }
 
-        public static List<Lobby> GetLobbies()
+        public List<Lobby> GetLobbies()
         {
-            return Singleton.LobbyIdToLobby.Values.ToList();
+            return LobbyIdToLobby.Values.ToList();
         }
 
-        public static Lobby GetLobby(string lobbyId)
+        public Lobby GetLobby(string lobbyId)
         {
             if (string.IsNullOrWhiteSpace(lobbyId))
             {
                 return null;
             }
-            return Singleton.LobbyIdToLobby.GetValueOrDefault(lobbyId);
+            return LobbyIdToLobby.GetValueOrDefault(lobbyId);
         }
         #endregion
 
         #region User Management
-        public static List<User> GetUsers()
+        public List<User> GetUsers()
         {
-            return Singleton.Users.Values.ToList();
+            return Users.Values.ToList();
         }
-        public static void UnregisterUser(User user)
+        public void UnregisterUser(User user)
         {
             if (user == null)
             {
@@ -233,18 +226,18 @@ namespace RoystonGame.TV
             }
             UnregisterUser(user.Identifier);
         }
-        public static void UnregisterUser(string userIdentifier)
+        public void UnregisterUser(string userIdentifier)
         {
             if (string.IsNullOrWhiteSpace(userIdentifier))
             {
                 return;
             }
-            Singleton.Users.TryRemove(userIdentifier, out User _);
+            Users.TryRemove(userIdentifier, out User _);
         }
 
-        private static (bool, string) RegisterUser(string lobbyId, User user, string displayName, string selfPortrait)
+        private (bool, string) RegisterUser(string lobbyId, User user, string displayName, string selfPortrait)
         {
-            string userIdentifier = Singleton.Users.FirstOrDefault((kvp) => kvp.Value == user).Key;
+            string userIdentifier = Users.FirstOrDefault((kvp) => kvp.Value == user).Key;
             if (userIdentifier == null)
             {
                 return (false, "Can't register unknown user. Refresh the page.");
@@ -257,7 +250,7 @@ namespace RoystonGame.TV
             user.DisplayName = displayName;
             user.SelfPortrait = selfPortrait;
 
-            if (!Singleton.LobbyIdToLobby.ContainsKey(lobbyId))
+            if (!LobbyIdToLobby.ContainsKey(lobbyId))
             {
                 return (false, "Lobby not found.");
             }
@@ -265,7 +258,7 @@ namespace RoystonGame.TV
             if (!string.IsNullOrWhiteSpace(user.LobbyId))
             {
                 // If the user is supposedly already registered to a lobby, try adding them again.
-                if (!Singleton.LobbyIdToLobby[user.LobbyId].TryAddUser(user, out string errorMsg))
+                if (!LobbyIdToLobby[user.LobbyId].TryAddUser(user, out string errorMsg))
                 {
                     // If that didn't work, clear them from this lobby.
                     user.LobbyId = null;
@@ -274,7 +267,7 @@ namespace RoystonGame.TV
             }
             else
             {
-                if (!Singleton.LobbyIdToLobby[lobbyId].TryAddUser(user, out string errorMsg))
+                if (!LobbyIdToLobby[lobbyId].TryAddUser(user, out string errorMsg))
                 {
                     return (false, errorMsg);
                 }
