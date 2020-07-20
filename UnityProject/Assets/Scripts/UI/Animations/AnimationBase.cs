@@ -12,10 +12,10 @@ public abstract class AnimationBase: MonoBehaviour
     public GameEvent endEvent = new GameEvent() { eventType = GameEvent.EventEnum.None, id = null };
 
     public float startDelay = 0f;
-    public float endDelay = 0f;
-    public float rampDownTime = 0f;
+    public float endDurration = 0f;
     protected RectTransform rect;
     public User relevantUser;
+    public bool persistant = false;
     List<LTDescr> animations;
     private bool started = false;
 
@@ -32,9 +32,9 @@ public abstract class AnimationBase: MonoBehaviour
             StartCoroutine(StartAnimateCoroutine(gameEvent));
         }
     }
-    public void EndAnimation(GameEvent gameEvent)
+    public void EndAnimation(GameEvent gameEvent, float? endDurration = null)
     {
-        StartCoroutine(EndAnimateCoroutine(gameEvent));
+        StartCoroutine(EndAnimateCoroutine(gameEvent, endDurration));
     }
     IEnumerator StartAnimateCoroutine(GameEvent gameEvent)
     {
@@ -55,25 +55,33 @@ public abstract class AnimationBase: MonoBehaviour
         }
         
     }
-    IEnumerator EndAnimateCoroutine(GameEvent gameEvent)
+    IEnumerator EndAnimateCoroutine(GameEvent gameEvent, float? endDurration)
     {
-        yield return new WaitForSeconds(endDelay);
-
         yield return new WaitForFixedUpdate();
-        //LeanTween.cancel(rect);
-        started = false;
-        EndAnimate(gameEvent, animations, rampDownTime);
+        List<LTDescr> endAnimations = EndAnimate(gameEvent, animations, endDurration);
+        foreach (LTDescr anim in endAnimations)
+        {
+            anim.setOnComplete(
+                () =>
+                {
+                    if (animations.Where((LTDescr anim2) => LeanTween.isTweening(anim2.id)).Count() == 0)
+                    {
+                        started = false;
+                    }
+                });
+        }
     }
 
     public abstract List<LTDescr> Animate(GameEvent gameEvent);
-    public virtual void EndAnimate(GameEvent gameEvent, List<LTDescr> animations, float rampDownTime)
+    public virtual List<LTDescr> EndAnimate(GameEvent gameEvent, List<LTDescr> animations, float? endDurration)
     {
         foreach (LTDescr anim in animations)
         {
             LeanTween.cancel(anim.id);
         }
+        return new List<LTDescr>();
     }
-    public void CallRegisterForAnimation()
+    public virtual void CallRegisterForAnimation()
     {
         AnimationManagerScript.Singleton.RegisterAnimation(this);
     }

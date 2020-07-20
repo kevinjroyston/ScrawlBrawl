@@ -362,6 +362,7 @@ MonoBehaviour:
   Header: {fileID: 7233078079472361656}
   SpriteZone: {fileID: 272053788141012050}
   ImageIdHolder: {fileID: 7139616067880138905}
+  VoteCountHolder: {fileID: 7382733499985497662}
   VoteCount: {fileID: 7957746443236290024}
   Footer: {fileID: 1511291836278710226}
   BlurMask: {fileID: 5313831369598500535}

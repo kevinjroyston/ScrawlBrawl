@@ -10,7 +10,7 @@ public class GameEvent
     {
         None,
         EnteredState,
-        ExitedState,
+        ExitingState,
         ImageCreated,
         UserSubmitted,
         MoveToTarget,
@@ -18,4 +18,6 @@ public class GameEvent
     public EventEnum eventType;
 
     public Guid? id;
+
+    public DateTime eventTime;
 }

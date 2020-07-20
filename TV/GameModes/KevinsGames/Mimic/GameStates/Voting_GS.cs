@@ -40,13 +40,13 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
         };
         public Voting_GS(Lobby lobby, RoundTracker roundTracker, TimeSpan? votingTime) : base(lobby)
         {
-            ConcurrentDictionary<User, (DateTime, User)> usersToVoteResults = new ConcurrentDictionary<User, (DateTime, User)>();
+            ConcurrentDictionary<User, (DateTime, int)> usersToVoteResults = new ConcurrentDictionary<User, (DateTime, int)>();
             List<User> randomizedUserChoices = roundTracker.UsersToDisplay;
             SimplePromptUserState pickOriginal = new SimplePromptUserState(
                 promptGenerator: PickADrawing(Enumerable.Range(1,randomizedUserChoices.Count).Select((int num)=> ""+num).ToList()),
                 formSubmitHandler: (User user, UserFormSubmission submission) =>
                 {
-                    User userVotedFor = randomizedUserChoices[(int)submission.SubForms[0].RadioAnswer];
+                    int userVotedFor = (int)submission.SubForms[0].RadioAnswer;
                     usersToVoteResults.TryAdd(user, (DateTime.UtcNow, userVotedFor));
                     return (true, string.Empty);
                 },
@@ -64,7 +64,15 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
                 {
                     if (usersToVoteResults.ContainsKey(user))
                     {
-                        User userVotedFor = usersToVoteResults[user].Item2;
+                        User userVotedFor = randomizedUserChoices[usersToVoteResults[user].Item2];
+                        roundTracker.QuestionsToUsersWhoVotedFor.AddOrUpdate(
+                            key: usersToVoteResults[user].Item2,
+                            addValue: new List<User>() { user },
+                            updateValueFactory: (int key, List<User> oldList) =>
+                            {
+                                oldList.Add(user);
+                                return oldList;
+                            });
                         DateTime timeSubmitted = usersToVoteResults[user].Item1;
                         userVotedFor.Score += MimicConstants.PointsForVote;
                         if(userVotedFor == roundTracker.originalDrawer)

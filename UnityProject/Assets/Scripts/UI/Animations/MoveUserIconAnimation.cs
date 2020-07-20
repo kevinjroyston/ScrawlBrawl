@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MoveUserIconAnimation : AnimationBase
+public class MoveUserIconAnimation : AnimationUserBase
 {
     public Image ScoreMarkerPrefab;
 
-    public void Awake()
-    {
-        startEvent.id = gameObject.GetComponent<RelevantUserPopulator>().IconUser.UserId;
-    }
     public override List<LTDescr> Animate(GameEvent gameEvent)
     {
         MoveToTargetGameEvent targetGameEvent = (MoveToTargetGameEvent)gameEvent;
@@ -41,5 +37,11 @@ public class MoveUserIconAnimation : AnimationBase
         AnimationHelpers.MakeAnimationsStaged(animations);
         return animations;
     }
-   
+
+    public void AssignUserAndRegister(User relevantUser)
+    {
+        startEvent.id = relevantUser.UserId;
+        AnimationManagerScript.Singleton.RegisterAnimation(this);
+    }
+
 }

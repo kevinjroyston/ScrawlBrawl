@@ -8,10 +8,9 @@ public class RelevantUserPopulator : MonoBehaviour
     public Image TargetLocation;
     public Colorizer Colorizer;
     public Text DisplayName;
-    public User IconUser;
     public void Populate(User user, bool showName)
     {
-        IconUser = user;
+        gameObject.GetComponent<MoveUserIconAnimation>().AssignUserAndRegister(user);
         TargetLocation.sprite = user.SelfPortraitSprite;
         Colorizer.RefreshColor(user.DisplayName);
         DisplayName.text = user.DisplayName;

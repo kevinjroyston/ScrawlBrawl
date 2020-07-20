@@ -1,43 +1,61 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EventSystem : MonoBehaviour
 {
-    Dictionary<GameEvent.EventEnum, List<Action<GameEvent>>> EventsToListeners = new Dictionary<GameEvent.EventEnum, List<Action<GameEvent>>>();
-    Dictionary<Guid, List<Action<GameEvent>>> IdsToListeners = new Dictionary<Guid, List<Action<GameEvent>>>();
-    Dictionary<(GameEvent.EventEnum, Guid), List<Action<GameEvent>>> EventsAndIdsTolisteners = new Dictionary<(GameEvent.EventEnum, Guid), List<Action<GameEvent>>>();
+    private class EventListenerPair
+    {
+        public GameEvent.EventEnum EventEnum { get; set; }
+        public Guid? Id { get; set; }
+        public Action<GameEvent> Listener { get; set; }
+        public bool Persists { get; set; }
+    }
+    List<EventListenerPair> eventListenerPairs = new List<EventListenerPair>();
+    
+    List<GameEvent> EventStorage = new List<GameEvent>();
+    double EventStorageLength = 10;
     public static EventSystem Singleton;
     public void Awake()
     {
         Singleton = this;
     }
-    public void RegisterListener(Action<GameEvent> listener, GameEvent gameEvent)
+    public void RegisterListener(Action<GameEvent> listener, GameEvent gameEvent, bool persistant = false)
     {
-        if (gameEvent.eventType != GameEvent.EventEnum.None && gameEvent.id != null)
+        eventListenerPairs.Add(new EventListenerPair
         {
-            if (!EventsAndIdsTolisteners.ContainsKey((gameEvent.eventType, (Guid)gameEvent.id)))
-            {
-                EventsAndIdsTolisteners.Add((gameEvent.eventType, (Guid)gameEvent.id), new List<Action<GameEvent>>());
-            }
-            EventsAndIdsTolisteners[(gameEvent.eventType, (Guid)gameEvent.id)].Add(listener);
-        }
-        else if (gameEvent.eventType != GameEvent.EventEnum.None)
+            EventEnum = gameEvent.eventType,
+            Id = gameEvent.id,
+            Listener = listener,
+            Persists = persistant
+        });
+        EventStorage = EventStorage.Where((GameEvent storedEvent) => DateTime.UtcNow.Subtract(storedEvent.eventTime).TotalSeconds < EventStorageLength).ToList();
+        foreach (GameEvent storedEvent in EventStorage)
         {
-            if (!EventsToListeners.ContainsKey(gameEvent.eventType))
+            if (gameEvent.eventType != GameEvent.EventEnum.None && gameEvent.id != null)
             {
-                EventsToListeners.Add(gameEvent.eventType, new List<Action<GameEvent>>());
+                if (storedEvent.eventTime == gameEvent.eventTime
+                    && storedEvent.id == gameEvent.id)
+                {
+                    listener(storedEvent);
+                }
             }
-            EventsToListeners[gameEvent.eventType].Add(listener);
-        }
-        else if (gameEvent.id != null)
-        {
-            if (!IdsToListeners.ContainsKey((Guid)gameEvent.id))
+            else if (gameEvent.eventType != GameEvent.EventEnum.None)
             {
-                IdsToListeners.Add((Guid)gameEvent.id, new List<Action<GameEvent>>());
+                if (storedEvent.eventTime == gameEvent.eventTime)
+                {
+                    listener(storedEvent);
+                }
             }
-            IdsToListeners[(Guid)gameEvent.id].Add(listener);
+            else if (gameEvent.id != null)
+            {
+                if (storedEvent.id == gameEvent.id)
+                {
+                    listener(storedEvent);
+                }
+            }
         }
     }
 
@@ -45,39 +63,46 @@ public class EventSystem : MonoBehaviour
     {
         if (gameEvent.eventType != GameEvent.EventEnum.None && gameEvent.id != null)
         {
-            if (EventsAndIdsTolisteners.ContainsKey((gameEvent.eventType, (Guid)gameEvent.id)))
+            gameEvent.eventTime = DateTime.UtcNow;
+            EventStorage.Add(gameEvent);
+            foreach (EventListenerPair pair in eventListenerPairs)
             {
-                foreach (Action<GameEvent> listener in EventsAndIdsTolisteners[(gameEvent.eventType, (Guid)gameEvent.id)])
+                if (pair.EventEnum == gameEvent.eventType && pair.Id == gameEvent.id)
                 {
-                    listener(gameEvent);
+                    pair.Listener(gameEvent);
                 }
-            }        
+            }       
         }
         else if (gameEvent.eventType != GameEvent.EventEnum.None)
         {
-            if (EventsToListeners.ContainsKey(gameEvent.eventType))
+            gameEvent.eventTime = DateTime.UtcNow;
+            EventStorage.Add(gameEvent);
+            foreach (EventListenerPair pair in eventListenerPairs)
             {
-                foreach (Action<GameEvent> listener in EventsToListeners[gameEvent.eventType])
+                if (pair.EventEnum == gameEvent.eventType)
                 {
-                    listener(gameEvent);
+                    pair.Listener(gameEvent);
                 }
             }
         }
         else if (gameEvent.id != null)
         {
-            if (IdsToListeners.ContainsKey((Guid)gameEvent.id))
+            gameEvent.eventTime = DateTime.UtcNow;
+            EventStorage.Add(gameEvent);
+            foreach (EventListenerPair pair in eventListenerPairs)
             {
-                foreach (Action<GameEvent> listener in IdsToListeners[(Guid)gameEvent.id])
+                if (pair.Id == gameEvent.id)
                 {
-                    listener(gameEvent);
+                    pair.Listener(gameEvent);
                 }
             }
         }    
     }
 
 
-    public void Update()
+    public void ResetDataStructures()
     {
-
+        EventStorage = new List<GameEvent>();
+        eventListenerPairs = eventListenerPairs.Where(pair => pair.Persists).ToList();
     }
 }
