@@ -643,6 +643,12 @@ namespace RoystonGame.TV
         /// </summary>
         public void UnregisterAllUsers()
         {
+            if (UsersInLobby == null)
+            {
+                // This shouldn't be possible.
+                return;
+            }
+
             foreach (User user in UsersInLobby)
             {
                 this.GameManager.UnregisterUser(user);
