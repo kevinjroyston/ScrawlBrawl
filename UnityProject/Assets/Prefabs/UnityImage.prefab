@@ -312,6 +312,7 @@ GameObject:
   - component: {fileID: 958200141029690272}
   - component: {fileID: 958200141029690279}
   - component: {fileID: 8119418885486890060}
+  - component: {fileID: 542952215164431744}
   m_Layer: 0
   m_Name: UnityImage
   m_TagString: Untagged
@@ -363,6 +364,7 @@ MonoBehaviour:
   ImageIdHolder: {fileID: 7139616067880138905}
   VoteCount: {fileID: 7957746443236290024}
   Footer: {fileID: 1511291836278710226}
+  BlurMask: {fileID: 5313831369598500535}
   ScoreHolder: {fileID: 3977420273987508775}
   DummyScore: {fileID: 800937734571461495}
   minAspectRatio: 0.3
@@ -375,6 +377,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 958200141029690273}
   m_CullTransparentMesh: 0
+--- !u!114 &542952215164431744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 958200141029690273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7217fa1a62be34b4a949d34e65641059, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startEvent:
+    eventType: 0
+  endEvent:
+    eventType: 0
+  startDelay: 0
+  endDelay: 0
+  rampDownTime: 0
 --- !u!1 &1260170741602024387
 GameObject:
   m_ObjectHideFlags: 0
@@ -1836,8 +1857,8 @@ MonoBehaviour:
   m_IgnoreLayout: 0
   m_MinWidth: -1
   m_MinHeight: -1
-  m_PreferredWidth: 132.46156
-  m_PreferredHeight: 66.23078
+  m_PreferredWidth: 173.53848
+  m_PreferredHeight: 86.76924
   m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1

@@ -1,5 +1,6 @@
 ﻿using RoystonGame.TV.ControlFlows.Enter;
 using RoystonGame.TV.ControlFlows.Exit;
+using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.Extensions;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.UnityObjects;
@@ -35,8 +36,8 @@ namespace RoystonGame.TV.DataModels.States.GameStates
                 Instructions = new StaticAccessor<string> { Value = "Players joined so far:" },
                 UnityImages = new DynamicAccessor<IReadOnlyList<UnityImage>>
                 {
-                    DynamicBacker = () => this.Lobby.GetAllUsers().Select(usr =>
-                        new UnityImage
+                    DynamicBacker = () => this.Lobby.GetAllUsers().OrderBy((User user)=>user.LobbyJoinTime).Select(usr =>
+                        new UnityImage(usr.UserId)
                         {
                             Title = new StaticAccessor<string> { Value = usr.DisplayName },
                             Base64Pngs = new StaticAccessor<IReadOnlyList<string>>

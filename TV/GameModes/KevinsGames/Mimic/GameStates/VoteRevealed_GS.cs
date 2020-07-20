@@ -41,11 +41,20 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
                     roundTracker.UserToNumVotesRecieved.TryGetValue(user, out voteCount);
                     if (user == roundTracker.originalDrawer)
                     {                   
-                        return roundTracker.UsersToUserDrawings[user].GetUnityImage(header: user.DisplayName, voteCount: voteCount, backgroundColor: Color.LightGreen, imageIdentifier: "" + (randomizedUserChoices.IndexOf(user) + 1));
+                        return roundTracker.UsersToUserDrawings[user].GetUnityImage(
+                            header: user.DisplayName,
+                            voteCount: voteCount,
+                            backgroundColor: Color.LightGreen,
+                            imageIdentifier: "" + (randomizedUserChoices.IndexOf(user) + 1),
+                            relevantUsers: roundTracker.);
                     }
                     else
                     {
-                        return roundTracker.UsersToUserDrawings[user].GetUnityImage(header: user.DisplayName, voteCount: voteCount, imageIdentifier: "" + (randomizedUserChoices.IndexOf(user) + 1));
+                        return roundTracker.UsersToUserDrawings[user].GetUnityImage(
+                            header: user.DisplayName,
+                            voteCount: voteCount,
+                            imageIdentifier: "" + (randomizedUserChoices.IndexOf(user) + 1),
+                            relevantUsers: );
                     }
                 }).ToList().AsReadOnly()},      
             };

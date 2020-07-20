@@ -16,7 +16,7 @@ namespace RoystonGame.TV.DataModels.Users
     /// </summary>
     public class User : IAccessorHashable
     {
-        public Guid UserId { get; set; } = Guid.NewGuid();
+        public Guid UserId { get; } = Guid.NewGuid();
 
         /// <summary>
         /// The lobby id the user is a part of. Null indicates the user is unregistered.
@@ -26,7 +26,13 @@ namespace RoystonGame.TV.DataModels.Users
         /// <summary>
         /// Used for monitoring user age.
         /// </summary>
+        public DateTime LobbyJoinTime { get; private set; }
         public DateTime CreationTime { get; } = DateTime.UtcNow;
+
+        public void SetJoinTime()
+        {
+            LobbyJoinTime = DateTime.UtcNow;
+        }
 
         /// <summary>
         /// If populated, contains the user's authenticated username.

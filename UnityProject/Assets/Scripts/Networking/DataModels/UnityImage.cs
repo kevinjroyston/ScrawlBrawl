@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Newtonsoft.Json;
+using System;
 
 public class UnityImage
 {
@@ -24,9 +25,10 @@ public class UnityImage
     public string _Footer { get; set; }
     public string _ImageIdentifier { get; set; }
     public int? _VoteCount { get; set; }
-    //public IReadOnlyList<User> _RelevantUsers { get; set; }
+    public IReadOnlyList<User> _RelevantUsers { get; set; }
     public IReadOnlyList<int> _BackgroundColor { get; set; }
 
     [JsonIgnore]
     public UnityViewOptions Options { get; set; }
+    public Guid _UnityImageId { get; set; }
 }

@@ -673,8 +673,8 @@ MonoBehaviour:
   m_IgnoreLayout: 0
   m_MinWidth: -1
   m_MinHeight: -1
-  m_PreferredWidth: 17.153847
-  m_PreferredHeight: 8.576923
+  m_PreferredWidth: 169.46155
+  m_PreferredHeight: 84.730774
   m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -1194,6 +1194,7 @@ GameObject:
   - component: {fileID: 5878494561059324835}
   - component: {fileID: 3203561469803709519}
   - component: {fileID: 6272267671190920254}
+  - component: {fileID: 4675074446462072082}
   m_Layer: 0
   m_Name: UnityText
   m_TagString: Untagged
@@ -1210,7 +1211,7 @@ RectTransform:
   m_GameObject: {fileID: 5878494561059324834}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 3286403506070961695}
   m_Father: {fileID: 0}
@@ -1251,6 +1252,25 @@ MonoBehaviour:
   Footer: {fileID: 5197578043087591377}
   ScoreHolder: {fileID: 7776041938833789476}
   DummyScore: {fileID: 6324512909692666740}
+--- !u!114 &4675074446462072082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5878494561059324834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7217fa1a62be34b4a949d34e65641059, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startEvent:
+    eventType: 0
+  endEvent:
+    eventType: 0
+  startDelay: 0
+  endDelay: 0
+  rampDownTime: 0
 --- !u!1 &6324512909692666740
 GameObject:
   m_ObjectHideFlags: 0

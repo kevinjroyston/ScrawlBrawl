@@ -7,6 +7,14 @@ namespace RoystonGame.Web.DataModels.UnityObjects
 {
     public class UnityImage : IAccessorHashable
     {
+        public UnityImage (Guid UnityImageId)
+        {
+            this._UnityImageId = UnityImageId;
+        }
+        public UnityImage()
+        {
+            
+        }
         public bool Refresh()
         {
             bool modified = false;
@@ -15,7 +23,7 @@ namespace RoystonGame.Web.DataModels.UnityObjects
             modified |= this.Header?.Refresh() ?? false;
             modified |= this.Footer?.Refresh() ?? false;
             modified |= this.VoteCount?.Refresh() ?? false;
-            //modified |= this.RelevantUsers?.Refresh() ?? false;
+            modified |= this.RelevantUsers?.Refresh() ?? false;
             modified |= this.BackgroundColor?.Refresh() ?? false;
             modified |= this.ImageIdentifier?.Refresh() ?? false;
             modified |= this.SpriteGridWidth?.Refresh() ?? false;
@@ -84,10 +92,12 @@ namespace RoystonGame.Web.DataModels.UnityObjects
         public IAccessor<string> ImageIdentifier { private get; set; }
         public string _ImageIdentifier { get => ImageIdentifier?.Value; }
 
-        /*[Newtonsoft.Json.JsonIgnore]
+        public Guid _UnityImageId { get; } = Guid.NewGuid();
+
+        [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public IAccessor<IReadOnlyList<User>> RelevantUsers { private get; set; }
-        public IReadOnlyList<User> _RelevantUsers { get => RelevantUsers?.Value; }*/
+        public IReadOnlyList<User> _RelevantUsers { get => RelevantUsers?.Value; }
 
         // TODO: add some validation to this setter.
         [Newtonsoft.Json.JsonIgnore]

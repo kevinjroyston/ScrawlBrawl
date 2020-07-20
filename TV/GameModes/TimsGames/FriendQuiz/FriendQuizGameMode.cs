@@ -162,6 +162,7 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz
                                         }
                                         numAnswersChosen++;
                                     }
+                                    
                                     answerGroups[question.UsersToAnswers[user]] = answerGroups[question.UsersToAnswers[user]] + 1;
                                 }
                                 

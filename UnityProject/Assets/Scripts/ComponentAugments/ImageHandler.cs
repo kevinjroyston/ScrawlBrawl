@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,9 +22,12 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
     private Image Background = null;
     public GameObject SpriteZone;
     public GameObject ImageIdHolder;
+    public GameObject VoteCountHolder;
 
     public Text VoteCount;
     public Text Footer;
+
+    public Image BlurMask;
 
     /// <summary>
     /// Score overlaps half on half off the card. This gameObject is the part hanging off the card.
@@ -34,6 +38,8 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
     /// </summary>
     public GameObject DummyScore;
 
+    public Guid UnityImageId = Guid.Empty;
+
     /// <summary>
     /// first float is inner(image grid) aspect ratio, second float is outer(entire card w/o padding) aspect ratio for perfect fit UI
     /// </summary>
@@ -43,6 +49,15 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
     {
         set
         {
+            if (value._UnityImageId != this.UnityImageId)
+            {
+                this.UnityImageId = value._UnityImageId;
+                EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ImageCreated });
+                this.GetComponent<ScaleInAnimation>().StartAnimation(new GameEvent() { eventType = GameEvent.EventEnum.None });
+            }       
+            BlurController.Singleton.blurMasks.Add(BlurMask);
+            BlurMask.enabled = false;
+
             int gridCapacity = value._SpriteGridWidth.GetValueOrDefault(1) * value._SpriteGridHeight.GetValueOrDefault(1);
             // This instantiates 1 extra grid in some scenarios but that doesn't matter.
             int requiredGridCount = (value?.PngSprites?.Count ?? 0) / gridCapacity;
@@ -161,11 +176,22 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
             ImageId.enabled = value?._ImageIdentifier != null;
             ImageIdHolder.SetActive(!string.IsNullOrWhiteSpace(value?._ImageIdentifier));
 
-            //bool relevantUsers = value?._RelevantUsers != null && value._RelevantUsers.Any();
+            bool relevantUsers = value?._RelevantUsers != null && value._RelevantUsers.Any();
             VoteCount.text = value?._VoteCount?.ToString() ?? string.Empty;
             VoteCount.enabled = value?._VoteCount != null;
             DummyScore.SetActive(value?._VoteCount != null);
             ScoreHolder.gameObject.SetActive(value?._VoteCount != null);
+
+            if (relevantUsers)
+            {
+                foreach (User user in value._RelevantUsers)
+                {
+                    EventSystem.Singleton.PublishEvent(new MoveToTargetGameEvent() {
+                        eventType = GameEvent.EventEnum.MoveToTarget,
+                        id = user.UserId,
+                        TargetRect = VoteCountHolder.GetComponent<RectTransform>()});
+                }
+            }
 
 
             // Used by Colorizer to deterministically color UI objects.
