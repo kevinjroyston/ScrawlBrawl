@@ -27,23 +27,29 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
             TimeSpan? votingTimer = null;
             if (gameSpeed > 0)
             {
-                setupTimer = TimeSpan.FromSeconds(CommonHelpers.LinearMapping(
-                    minPosition: 1,
-                    maxPosition: 10,
-                    position: (double)gameSpeed,
+                setupTimer = TimeSpan.FromSeconds(CommonHelpers.ThreePointLerp(
+                    minX: 1,
+                    aveX: 5,
+                    maxX: 10,
+                    x: (double)gameSpeed,
                     minValue: ImposterTextConstants.SetupTimerMin,
+                    aveValue: ImposterTextConstants.SetupTimerAve,
                     maxValue: ImposterTextConstants.SetupTimerMax));
-                answeringTimer = TimeSpan.FromSeconds(CommonHelpers.LinearMapping(
-                    minPosition: 1,
-                    maxPosition: 10,
-                    position: (double)gameSpeed,
+                answeringTimer = TimeSpan.FromSeconds(CommonHelpers.ThreePointLerp(
+                    minX: 1,
+                    aveX: 5,
+                    maxX: 10,
+                    x: (double)gameSpeed,
                     minValue: ImposterTextConstants.AnsweringTimerMin,
+                    aveValue: ImposterTextConstants.AnsweringTimerAve,
                     maxValue: ImposterTextConstants.AnsweringTimerMax));
-                votingTimer = TimeSpan.FromSeconds(CommonHelpers.LinearMapping(
-                    minPosition: 1,
-                    maxPosition: 10,
-                    position: (double)gameSpeed,
+                votingTimer = TimeSpan.FromSeconds(CommonHelpers.ThreePointLerp(
+                    minX: 1,
+                    aveX: 5,
+                    maxX: 10,
+                    x: (double)gameSpeed,
                     minValue: ImposterTextConstants.VotingTimerMin,
+                    aveValue: ImposterTextConstants.VotingTimerAve,
                     maxValue: ImposterTextConstants.VotingTimerMax));
             }    
             int numWritingsPerPrompt = lobby.GetAllUsers().Count - 1;
@@ -63,7 +69,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
                     validDistributeCheck: (Prompt prompt, User user) => user != prompt.Owner);
                 foreach (Prompt prompt in promptsToPromptedUsers.Keys)
                 {
-                    prompt.ImposterCreator = promptsToPromptedUsers[prompt][Rand.Next(0, promptsToPromptedUsers[prompt].Count)];
+                    prompt.Imposter = promptsToPromptedUsers[prompt][Rand.Next(0, promptsToPromptedUsers[prompt].Count)];
                 }
             });
             StateChain CreateGamePlayLoop()

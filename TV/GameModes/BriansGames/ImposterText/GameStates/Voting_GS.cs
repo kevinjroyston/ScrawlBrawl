@@ -38,7 +38,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
                 string description;
                 if (prompt.UsersToAnswers.ContainsKey(user))
                 {
-                    description = Invariant($"'{prompt.Owner.DisplayName}' created this prompt. Your prompt was '{(prompt.ImposterCreator == user ? prompt.FakePrompt : prompt.RealPrompt)}'");
+                    description = Invariant($"'{prompt.Owner.DisplayName}' created this prompt. Your prompt was '{(prompt.Imposter == user ? prompt.FakePrompt : prompt.RealPrompt)}'");
                 }
                 else if (prompt.Owner == user)
                 {
@@ -72,9 +72,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
                     int choice = input.SubForms[0].RadioAnswer ?? 0;
                     if (possibleNone && choice == randomizedUsersToShow.Count ) // user selected None
                     {
-                        if (!randomizedUsersToShow.Contains(prompt.ImposterCreator))
+                        if (!randomizedUsersToShow.Contains(prompt.Imposter))
                         {
-                            usersToVotes.AddOrReplace(user, prompt.ImposterCreator); // User was correct, set their answer as the imposter 
+                            usersToVotes.AddOrReplace(user, prompt.Imposter); // User was correct, set their answer as the imposter 
                         }
                         else
                         {
@@ -100,7 +100,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
                 foreach (User user in usersToVotes.Keys)
                 {
                     prompt.UsersToNumVotesRecieved.AddOrIncrease(usersToVotes[user], 1, 1);
-                    if (usersToVotes[user] == prompt.ImposterCreator)
+                    if (usersToVotes[user] == prompt.Imposter)
                     {
                         correctUsers.Add(user);
                     }

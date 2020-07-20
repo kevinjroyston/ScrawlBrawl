@@ -11,12 +11,12 @@ public class TextHandler : MonoBehaviour, UnityObjectHandlerInterface
     public Text TextId;
     public Text Title;
     public Text Header;
-    public Text VerticleScore;
+    public Text VerticalScore;
 
     // Set to be the Image of the first SpriteGrid
     private Image Background = null;
     public GameObject TextIdHolder;
-    public GameObject VerticleScoreHolder;
+    public GameObject VerticalScoreHolder;
 
     public Text VoteCount;
     public Text Footer;
@@ -60,9 +60,9 @@ public class TextHandler : MonoBehaviour, UnityObjectHandlerInterface
 
             if (value.Options._PrimaryAxis == Axis.Vertical)
             {
-                VerticleScore.text = value?._VoteCount.ToString() ?? string.Empty;
-                VerticleScore.enabled = value?._VoteCount != null;
-                VerticleScoreHolder.SetActive(value?._VoteCount != null);
+                VerticalScore.text = value?._VoteCount.ToString() ?? string.Empty;
+                VerticalScore.enabled = value?._VoteCount != null;
+                VerticalScoreHolder.SetActive(value?._VoteCount != null);
 
                 VoteCount.enabled = false;
                 ScoreHolder.gameObject.SetActive(false);
@@ -74,8 +74,8 @@ public class TextHandler : MonoBehaviour, UnityObjectHandlerInterface
                 DummyScore.SetActive(value?._VoteCount != null);
                 ScoreHolder.gameObject.SetActive(value?._VoteCount != null);
 
-                VerticleScore.enabled = false;
-                VerticleScoreHolder.SetActive(false);
+                VerticalScore.enabled = false;
+                VerticalScoreHolder.SetActive(false);
             }
             //bool relevantUsers = value?._RelevantUsers != null && value._RelevantUsers.Any();
             

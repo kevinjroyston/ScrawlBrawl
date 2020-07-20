@@ -38,7 +38,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
                 {
                     numVotesRecieved = prompt.UsersToNumVotesRecieved[user];
                 }
-                if (user == prompt.ImposterCreator)
+                if (user == prompt.Imposter)
                 {
                     return new UnityImage()
                     {
@@ -59,16 +59,16 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
                 
             }).ToList();
 
-            string imposterTitle = prompt.ImposterCreator.DisplayName;
+            string imposterTitle = prompt.Imposter.DisplayName;
             if (possibleNone)
             {
-                if (!randomizedUsersToShow.Contains(prompt.ImposterCreator))
+                if (!randomizedUsersToShow.Contains(prompt.Imposter))
                 {
                     imposterTitle = "Nobody";
                     int numVotesRecieved = 0;
-                    if (prompt.UsersToNumVotesRecieved.ContainsKey(prompt.ImposterCreator)) // if none was correct choice all votes were given to imposter
+                    if (prompt.UsersToNumVotesRecieved.ContainsKey(prompt.Imposter)) // if none was correct choice all votes were given to imposter
                     {
-                        numVotesRecieved = prompt.UsersToNumVotesRecieved[prompt.ImposterCreator];
+                        numVotesRecieved = prompt.UsersToNumVotesRecieved[prompt.Imposter];
                     }
                     unityImages.Add(new UnityImage()
                     {

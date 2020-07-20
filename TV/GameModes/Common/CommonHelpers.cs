@@ -29,9 +29,28 @@ namespace RoystonGame.TV.GameModes.Common
             }
         }
 
-        public static double LinearMapping(double minPosition, double maxPosition, double position, double minValue, double maxValue)
+        public static double ThreePointLerp(double minX, double aveX, double maxX, double x, double minValue, double aveValue, double maxValue)
         {
-            return ((maxPosition - position) / (maxPosition - minPosition) * (maxValue - minValue)) + minValue;
+            if (x < minX)
+            {
+                return minValue;
+            }
+            else if (x < aveX)
+            {
+                return Lerp(minValue, aveValue, (x - minX) / (aveX - minX));
+            }
+            else if (x < maxX)
+            {
+                return Lerp(aveValue, maxValue, (x - aveX) / (maxX - aveX));
+            }
+            else
+            {
+                return maxValue;
+            }
+        }
+        public static double Lerp(double a, double b, double t)
+        {
+            return (b - a) * t + a;
         }
 
         /// <summary>
@@ -64,18 +83,18 @@ namespace RoystonGame.TV.GameModes.Common
                     {
                         break;
                     }
-                    bool addedFromSkiped = false;
+                    bool addedFromSkipped = false;
                     foreach (TToDistribute skiped in skipedDistributes)
                     {
                         if (validDistributeCheck(group, skiped) && !distributedDict[group].Contains(skiped))
                         {
                             distributedDict[group].Add(skiped);
                             skipedDistributes.Remove(skiped);
-                            addedFromSkiped = true;
+                            addedFromSkipped = true;
                             break;
                         }
                     }
-                    if (!addedFromSkiped)
+                    if (!addedFromSkipped)
                     {
                         if (validDistributeCheck(group, toDistribute[distributeIndex]) && !distributedDict[group].Contains(toDistribute[distributeIndex]))
                         {
