@@ -405,6 +405,7 @@ namespace RoystonGame.TV
         {
             this.LobbyId = friendlyName;
             this.Owner = owner;
+            this.GameManager = gameManager;
             InitializeAllGameStates();
         }
 
@@ -643,13 +644,7 @@ namespace RoystonGame.TV
         /// </summary>
         public void UnregisterAllUsers()
         {
-            if (UsersInLobby == null)
-            {
-                // This shouldn't be possible.
-                return;
-            }
-
-            foreach (User user in UsersInLobby)
+            foreach (User user in GetAllUsers())
             {
                 this.GameManager.UnregisterUser(user);
             }
