@@ -36,7 +36,6 @@ namespace RoystonGame
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                EventLog.WriteEntry(source:"Application", message: ex.ToString(), type: EventLogEntryType.Error);
                 throw;
             }
             finally

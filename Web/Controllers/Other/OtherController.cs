@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RoystonGame.Web.DataModels.Requests.Other;
@@ -10,11 +12,13 @@ namespace RoystonGame.Web.Controllers.Other
     public class OtherController : ControllerBase
 
     {
-        public OtherController (ILogger<OtherController> logger)
+        public OtherController (ILogger<OtherController> logger, IWebHostEnvironment env)
         {
             Logger = logger;
+            Env = env;
         }
         private ILogger<OtherController> Logger { get; set; }
+        private IWebHostEnvironment Env { get; set; }
 
         [HttpGet]
         [Route("Feedback-Api")]
@@ -28,5 +32,12 @@ namespace RoystonGame.Web.Controllers.Other
             return new OkResult();
         }
 
+        [HttpGet]
+        [Route(".well-known/acme-challenge/{id}")]
+        public ActionResult LetsEncrypt(string id)
+        {
+            var file = Path.Combine(Env.ContentRootPath, ".well-known", "acme-challenge", id);
+            return PhysicalFile(file, "text/plain");
+        }
     }
 }
