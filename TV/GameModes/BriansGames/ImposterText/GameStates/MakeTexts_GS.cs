@@ -34,7 +34,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
                         {
                             new SubPrompt
                             {
-                                Prompt = Invariant($"Your prompt:\"{(promptToDraw.ImposterCreator == user ? promptToDraw.FakePrompt : promptToDraw.RealPrompt)}\""),
+                                Prompt = Invariant($"Your prompt:\"{(promptToDraw.Imposter == user ? promptToDraw.FakePrompt : promptToDraw.RealPrompt)}\""),
                                 ShortAnswer = true
                             },
                         },
