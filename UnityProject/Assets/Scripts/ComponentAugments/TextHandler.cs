@@ -4,16 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.UI.GridLayoutGroup;
 
 public class TextHandler : MonoBehaviour, UnityObjectHandlerInterface
 {
     public Text TextId;
     public Text Title;
     public Text Header;
+    public Text VerticalScore;
 
     // Set to be the Image of the first SpriteGrid
     private Image Background = null;
     public GameObject TextIdHolder;
+    public GameObject VerticalScoreHolder;
 
     public Text VoteCount;
     public Text Footer;
@@ -55,13 +58,27 @@ public class TextHandler : MonoBehaviour, UnityObjectHandlerInterface
             TextId.enabled = value?._ImageIdentifier != null;
             TextIdHolder.SetActive(!string.IsNullOrWhiteSpace(value?._ImageIdentifier));
 
+            if (value.Options._PrimaryAxis == Axis.Vertical)
+            {
+                VerticalScore.text = value?._VoteCount.ToString() ?? string.Empty;
+                VerticalScore.enabled = value?._VoteCount != null;
+                VerticalScoreHolder.SetActive(value?._VoteCount != null);
+
+                VoteCount.enabled = false;
+                ScoreHolder.gameObject.SetActive(false);
+            }
+            else
+            {
+                VoteCount.text = value?._VoteCount?.ToString() ?? string.Empty;
+                VoteCount.enabled = value?._VoteCount != null;
+                DummyScore.SetActive(value?._VoteCount != null);
+                ScoreHolder.gameObject.SetActive(value?._VoteCount != null);
+
+                VerticalScore.enabled = false;
+                VerticalScoreHolder.SetActive(false);
+            }
             //bool relevantUsers = value?._RelevantUsers != null && value._RelevantUsers.Any();
-            VoteCount.text = value?._VoteCount?.ToString() ?? string.Empty;
-            VoteCount.enabled = value?._VoteCount != null;
-            DummyScore.SetActive(value?._VoteCount != null);
-            ScoreHolder.gameObject.SetActive(value?._VoteCount != null);
-
-
+            
             // Used by Colorizer to deterministically color UI objects.
             string hashableIdentifier =
                 !string.IsNullOrWhiteSpace(value?._ImageIdentifier) ? value._ImageIdentifier

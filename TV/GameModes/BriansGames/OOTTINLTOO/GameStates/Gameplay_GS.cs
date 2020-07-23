@@ -77,11 +77,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                     }
                     else
                     {
-                        challengeTracker.UsersWhoConfusedWhichUsers.AddOrUpdate(authorOfDrawing, _ => new ConcurrentBag<User> { user }, (key, currentBag) =>
-                        {
-                            currentBag.Add(user);
-                            return currentBag;
-                        });
+                        challengeTracker.UsersWhoConfusedWhichUsers.AddOrAppend(authorOfDrawing, user);
                     }
                     return (true, string.Empty);
                 },

@@ -40,7 +40,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.StoryTime.GameStates
                 {
                     string text = input.SubForms[0].ShortAnswer;
                     UserWriting writing = new UserWriting(user, text, WritingDisplayPosition.None);
-                    roundTracker.UsersToUserWriting.AddOrUpdate(user, writing, (User user, UserWriting oldWriting) => writing);
+                    roundTracker.UsersToUserWriting.AddOrReplace(user, writing);
                     return (true, string.Empty);
                 },
                 exit: new WaitForUsers_StateExit(
