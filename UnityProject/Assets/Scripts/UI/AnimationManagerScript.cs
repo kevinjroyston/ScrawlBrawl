@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,60 +9,78 @@ using UnityEngine.UI;
 public class AnimationManagerScript : MonoBehaviour
 {
     public static AnimationManagerScript Singleton;
-    public List<Action<GameEvent, float?>> Stops = new List<Action<GameEvent, float?>>();
+    public List<AnimationBase> animations = new List<AnimationBase>();
+    private Dictionary<AnimationBase, Action<GameEvent>> animationsToEndListeners = new Dictionary<AnimationBase, Action<GameEvent>>();
     public void Awake()
     {
         Singleton = this;
     }
     public void RegisterAnimation(AnimationBase animation)
     {
-        Stops.Add(animation.EndAnimation);
+        animations.Add(animation);
 
         DelayedStartCallbackGenerator(
             gameEvent: animation.startEvent,
-            startAction: animation.StartAnimation);
+            startAction: animation.StartAnimation,
+            persistant: animation.persistant);
 
         DelayedStopCallbackGenerator(
+            animation: animation,
             gameEvent: animation.endEvent,
-            stopAction: animation.EndAnimation);
+            stopAction: animation.EndAnimation,
+            persistant: animation.persistant);
     }
     public void SendAnimationWrapUp(float durration)
     {
-        foreach (Action<GameEvent, float?> stop in Stops)
+        foreach (AnimationBase animation in animations)
         {
-            stop(null, durration);
+            if (!animation.persistant)
+            {
+                animation.EndAnimation(null, durration);
+            }
         }
+    }
+    public void RemoveListener(AnimationBase animation)
+    {
+        animations.Remove(animation);
+        EventSystem.Singleton.RemoveListener(animation.StartAnimation);
+        if (animationsToEndListeners.ContainsKey(animation))
+        {
+            EventSystem.Singleton.RemoveListener(animationsToEndListeners[animation]);
+        }     
     }
     public void ResetAndStopAllAnimations()
     {
-        foreach (Action<GameEvent, float?> hardStop in Stops)
+        foreach (AnimationBase animation in animations)
         {
-            hardStop(null, 0f);
+            if (!animation.persistant)
+            {
+                animation.EndAnimation(null, 0f);
+            }
         }
-        Stops = new List<Action<GameEvent, float?>>();
+        animations = animations.Where(animation => animation.persistant).ToList();
     }
-    private void DelayedStartCallbackGenerator(GameEvent gameEvent, Action<GameEvent> startAction)
+    private void DelayedStartCallbackGenerator(GameEvent gameEvent, Action<GameEvent> startAction, bool persistant)
     {
         if (gameEvent.eventType != GameEvent.EventEnum.None)
         {
             EventSystem.Singleton.RegisterListener(
                 gameEvent: gameEvent,
-                listener: (GameEvent trigerringGameEvent) =>
-                {
-                    startAction(trigerringGameEvent);
-                });
+                listener: startAction,
+                persistant: persistant);
         }      
     }
-    private void DelayedStopCallbackGenerator(GameEvent gameEvent, Action<GameEvent, float?> stopAction)
+    private void DelayedStopCallbackGenerator(AnimationBase animation, GameEvent gameEvent, Action<GameEvent, float?> stopAction, bool persistant)
     {
         if (gameEvent.eventType != GameEvent.EventEnum.None)
         {
+            Action<GameEvent> listener = (GameEvent triggeringGameEvent) => stopAction(triggeringGameEvent, null);
+            animationsToEndListeners.Add(animation, listener);
+            
             EventSystem.Singleton.RegisterListener(
                 gameEvent: gameEvent,
-                listener: (GameEvent triggeringGameEvent) =>
-                {
-                    stopAction(triggeringGameEvent, null);
-                });
+                listener: listener,
+                persistant: persistant);
         }
     }
 }

@@ -152,6 +152,7 @@ RectTransform:
   m_Children:
   - {fileID: 672176312}
   - {fileID: 677125846}
+  - {fileID: 547372198}
   m_Father: {fileID: 1177880470}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -383,6 +384,7 @@ MonoBehaviour:
   ImagePrefab: {fileID: 958200141029690273, guid: f01a60ea2d78bc245b181d85162ab70c,
     type: 3}
   PlayerBar: {fileID: 533607378}
+  VoteReavealBar: {fileID: 533607378}
   TimerUI: {fileID: 533607378}
   BlurCamera: {fileID: 1846907645}
 --- !u!1 &56352059
@@ -897,6 +899,7 @@ GameObject:
   m_Component:
   - component: {fileID: 209659237}
   - component: {fileID: 209659236}
+  - component: {fileID: 209659238}
   m_Layer: 0
   m_Name: AnimationManager
   m_TagString: Untagged
@@ -916,6 +919,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29048aab426a2664c81360eac6956ef0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animations: []
 --- !u!4 &209659237
 Transform:
   m_ObjectHideFlags: 0
@@ -930,6 +934,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &209659238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 209659235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e63d682d47639d44875b88b97d44bce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &243414341
 GameObject:
   m_ObjectHideFlags: 0
@@ -1757,6 +1773,79 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 542038322}
   m_CullTransparentMesh: 0
+--- !u!1 &547372197
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 547372198}
+  - component: {fileID: 547372200}
+  - component: {fileID: 547372199}
+  m_Layer: 0
+  m_Name: VoteRevealIconDropZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &547372198
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 547372197}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1835677735}
+  m_Father: {fileID: 15642594}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &547372199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 547372197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 110aeb1defee0fa46b85c2984041221f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerIconPrefab: {fileID: 4290861889265694557, guid: e37a7a4f30fa7ee4db6f88654b37625d,
+    type: 3}
+  DropZone: {fileID: 1835677734}
+--- !u!114 &547372200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 547372197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: 0
+  m_PreferredHeight: 0
+  m_FlexibleWidth: 5
+  m_FlexibleHeight: 3
+  m_LayoutPriority: 1
 --- !u!1 &560375248
 GameObject:
   m_ObjectHideFlags: 0
@@ -2315,9 +2404,10 @@ MonoBehaviour:
   ImageDropZone: {fileID: 652567486}
   ImagePrefab: {fileID: 958200141029690273, guid: f01a60ea2d78bc245b181d85162ab70c,
     type: 3}
-  PlayerBar: {fileID: 0}
-  TimerUI: {fileID: 0}
-  BlurCamera: {fileID: 0}
+  PlayerBar: {fileID: 1857957962}
+  VoteReavealBar: {fileID: 1857957962}
+  TimerUI: {fileID: 533607378}
+  BlurCamera: {fileID: 1846907645}
 --- !u!1 &672176311
 GameObject:
   m_ObjectHideFlags: 0
@@ -2844,6 +2934,7 @@ MonoBehaviour:
   ImagePrefab: {fileID: 958200141029690273, guid: f01a60ea2d78bc245b181d85162ab70c,
     type: 3}
   PlayerBar: {fileID: 999931677}
+  VoteReavealBar: {fileID: 999931677}
   TimerUI: {fileID: 999931677}
   BlurCamera: {fileID: 1846907645}
 --- !u!1 &748542947
@@ -4078,6 +4169,7 @@ MonoBehaviour:
   ImagePrefab: {fileID: 958200141029690273, guid: f01a60ea2d78bc245b181d85162ab70c,
     type: 3}
   PlayerBar: {fileID: 672176311}
+  VoteReavealBar: {fileID: 547372197}
   TimerUI: {fileID: 677125845}
   BlurCamera: {fileID: 1846907645}
 --- !u!114 &1177880473
@@ -4990,6 +5082,7 @@ MonoBehaviour:
   ImagePrefab: {fileID: 958200141029690273, guid: f01a60ea2d78bc245b181d85162ab70c,
     type: 3}
   PlayerBar: {fileID: 1857957962}
+  VoteReavealBar: {fileID: 1857957962}
   TimerUI: {fileID: 1857957962}
   BlurCamera: {fileID: 519420031}
 --- !u!1 &1516675577
@@ -5059,10 +5152,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 155.01538
-  m_MinHeight: 155.01538
-  m_PreferredWidth: 155.01538
-  m_PreferredHeight: 155.01538
+  m_MinWidth: 143.94286
+  m_MinHeight: 143.94286
+  m_PreferredWidth: 143.94286
+  m_PreferredHeight: 143.94286
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -5742,6 +5835,7 @@ MonoBehaviour:
   ImagePrefab: {fileID: 958200141029690273, guid: f01a60ea2d78bc245b181d85162ab70c,
     type: 3}
   PlayerBar: {fileID: 299602095}
+  VoteReavealBar: {fileID: 145848810}
   TimerUI: {fileID: 1727650411}
   BlurCamera: {fileID: 1846907645}
 --- !u!1 &1727650411
@@ -6045,6 +6139,82 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1815018442}
   m_CullTransparentMesh: 0
+--- !u!1 &1835677734
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1835677735}
+  - component: {fileID: 1835677737}
+  - component: {fileID: 1835677736}
+  m_Layer: 0
+  m_Name: DropZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1835677735
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1835677734}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 547372198}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1835677736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1835677734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 1
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 100, y: 100}
+  m_Spacing: {x: 20, y: 20}
+  m_Constraint: 0
+  m_ConstraintCount: 2
+--- !u!114 &1835677737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1835677734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4ad67be4fa5a2044afcc1d88bbaaeb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aspectRatio: 1
+  imageHandlerDrivenAspectRatio: 1
+  pretendThereIsAlwaysAtLeastThisManyDrawings: 0
 --- !u!1 &1846907639
 GameObject:
   m_ObjectHideFlags: 0
@@ -6399,6 +6569,7 @@ MonoBehaviour:
   ImagePrefab: {fileID: 5878494561059324834, guid: 1d2b3d0389ac7df4382ab7cc70994623,
     type: 3}
   PlayerBar: {fileID: 1681740302}
+  VoteReavealBar: {fileID: 533607378}
   TimerUI: {fileID: 110113023}
   BlurCamera: {fileID: 1846907645}
 --- !u!1 &1999920789
@@ -6454,7 +6625,7 @@ MonoBehaviour:
   startEvent:
     eventType: 2
   endEvent:
-    eventType: 1
+    eventType: 0
   startDelay: 0
   endDurration: 0.4
   persistant: 1
@@ -6673,10 +6844,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 155.01538
-  m_MinHeight: 155.01538
-  m_PreferredWidth: 155.01538
-  m_PreferredHeight: 155.01538
+  m_MinWidth: 143.94286
+  m_MinHeight: 143.94286
+  m_PreferredWidth: 143.94286
+  m_PreferredHeight: 143.94286
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1

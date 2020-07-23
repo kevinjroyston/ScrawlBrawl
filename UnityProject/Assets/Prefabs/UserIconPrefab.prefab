@@ -276,10 +276,10 @@ MonoBehaviour:
     eventType: 5
   endEvent:
     eventType: 2
-  startDelay: 0
-  endDelay: 0
-  rampDownTime: 0
-  ScoreMarkerPrefab: {fileID: 6376038442444300468, guid: f6de71f75ce43914fa445d57732ad0d2,
+  startDelay: 1.5
+  endDurration: 0
+  persistant: 0
+  ScoreProjectilePrefab: {fileID: 4907439955422424169, guid: 5cc8fcf8650a6b94eafcbfc9e0364879,
     type: 3}
 --- !u!1 &5392144856759429275
 GameObject:

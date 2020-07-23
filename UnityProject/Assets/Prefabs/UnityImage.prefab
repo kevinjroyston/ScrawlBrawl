@@ -329,7 +329,7 @@ RectTransform:
   m_GameObject: {fileID: 958200141029690273}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 8161376606224987676}
   m_Father: {fileID: 0}
@@ -394,9 +394,9 @@ MonoBehaviour:
     eventType: 0
   endEvent:
     eventType: 0
-  startDelay: 0
-  endDelay: 0
-  rampDownTime: 0
+  startDelay: 0.5
+  endDurration: 0
+  persistant: 0
 --- !u!1 &1260170741602024387
 GameObject:
   m_ObjectHideFlags: 0
@@ -646,6 +646,7 @@ MonoBehaviour:
   - {r: 0.48235297, g: 0.8588236, b: 0.30588236, a: 1}
   - {r: 0.93725497, g: 0.4039216, b: 0.49803925, a: 1}
   - {r: 0.35686275, g: 0.3137255, b: 0.86274517, a: 1}
+  AssignedColor: {r: 0, g: 0, b: 0, a: 0}
   TargetImage: {fileID: 778682848155374791}
 --- !u!1 &2444954822253391570
 GameObject:
@@ -973,6 +974,7 @@ MonoBehaviour:
   - {r: 0.48235297, g: 0.8588236, b: 0.30588236, a: 1}
   - {r: 0.93725497, g: 0.4039216, b: 0.49803925, a: 1}
   - {r: 0.35686275, g: 0.3137255, b: 0.86274517, a: 1}
+  AssignedColor: {r: 0, g: 0, b: 0, a: 0}
   TargetImage: {fileID: 4901969237852308644}
 --- !u!1 &3903044391079863251
 GameObject:
@@ -1858,8 +1860,8 @@ MonoBehaviour:
   m_IgnoreLayout: 0
   m_MinWidth: -1
   m_MinHeight: -1
-  m_PreferredWidth: 173.53848
-  m_PreferredHeight: 86.76924
+  m_PreferredWidth: 106.615395
+  m_PreferredHeight: 53.307697
   m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1

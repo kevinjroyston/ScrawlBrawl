@@ -34,6 +34,10 @@ public class BlurController : MonoBehaviour
         superBlur.downsample = 0;
         superBlur.iterations = 6;
     }
+    public void ResetMasks()
+    {
+        this.blurMasks = new List<Image>();
+    }
 
     public void RemoveBlur()
     {

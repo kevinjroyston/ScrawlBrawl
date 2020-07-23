@@ -13,6 +13,7 @@ public class GenericView : ITVView
     public GameObject ImageDropZone = null;
     public GameObject ImagePrefab = null;
     public GameObject PlayerBar = null;
+    public GameObject VoteReavealBar = null;
     public GameObject TimerUI = null;
     public Camera BlurCamera = null;
 
@@ -77,10 +78,26 @@ public class GenericView : ITVView
             ImageDropZone.SetActive(false);
         }
 
+        bool voteRevealBar = false;
+        if (VoteReavealBar?.GetComponent<VoteRevealUserImageHandler>() != null)
+        {
+            var voteRevealHandler = VoteReavealBar.GetComponent<VoteRevealUserImageHandler>();
+            if (UnityView?._VoteRevealUsers != null && UnityView._VoteRevealUsers.Count > 0)
+            {
+                voteRevealBar = true;
+                voteRevealHandler.HandleUsers(UnityView._VoteRevealUsers);
+                VoteReavealBar.SetActive(true);
+            }
+            else
+            {
+                VoteReavealBar.SetActive(false);
+            }
+        }
+
         if (PlayerBar?.GetComponent<PlayerBarHandler>() != null)
         {
             var playerBar = PlayerBar.GetComponent<PlayerBarHandler>();
-            if (UnityView?._Users != null && UnityView._Users.Count > 0)
+            if (UnityView?._Users != null && UnityView._Users.Count > 0 && !voteRevealBar)
             {
                 playerBar.HandleUsers(UnityView._Users);
                 PlayerBar.SetActive(true);

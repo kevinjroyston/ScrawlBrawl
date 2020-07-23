@@ -79,7 +79,8 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
                 Title = new StaticAccessor<string> { Value = "Voting results!" },
-                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages.AsReadOnly()},      
+                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages.AsReadOnly() },
+                VoteRevealUsers = new StaticAccessor<IReadOnlyList<User>> { Value = lobby.GetAllUsers() },
             };
         }
     }

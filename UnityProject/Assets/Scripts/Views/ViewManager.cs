@@ -28,16 +28,12 @@ public class ViewManager : MonoBehaviour
 
     public void SwitchToView(TVScreenId? id, UnityView view)
     {
-        if (!id.HasValue || !AvailableTVViews.ContainsKey(id.Value))
-        {
-            DefaultView?.EnterView(null);
-        }
-        else if (view._Id != lastGuid)
+        if (view != null &&  view._Id != lastGuid)
         {
             lastGuid = view._Id;
             EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ExitingState });
-            AnimationManagerScript.Singleton.SendAnimationWrapUp(1f);
-            StartCoroutine(TransitionSceneCoroutine(1f, id, view));
+            AnimationManagerScript.Singleton.SendAnimationWrapUp(0.6f);
+            StartCoroutine(TransitionSceneCoroutine(0.6f, id, view));
 
             AudioController.Singleton.PlayStartDing();
             AudioController.Singleton.StopTimer();
@@ -54,6 +50,7 @@ public class ViewManager : MonoBehaviour
         yield return new WaitForSeconds(delay);
         AnimationManagerScript.Singleton.ResetAndStopAllAnimations();
         EventSystem.Singleton.ResetDataStructures();
+        BlurController.Singleton.ResetMasks();
 
         ChangeView(id, view);
         EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.EnteredState });

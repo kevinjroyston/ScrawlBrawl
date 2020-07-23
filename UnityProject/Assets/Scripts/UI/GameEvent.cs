@@ -14,10 +14,15 @@ public class GameEvent
         ImageCreated,
         UserSubmitted,
         MoveToTarget,
+        IncreaseScore,
+        VoteRevealBubbleCreated,
+        VoteRevealBubbleMove,
+        AnimationStarted,
+        AnimationCompleted,
     }
     public EventEnum eventType;
 
-    public Guid? id;
+    public string id;
 
     public DateTime eventTime;
 }

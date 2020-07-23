@@ -9,21 +9,26 @@ public class EventSystem : MonoBehaviour
     private class EventListenerPair
     {
         public GameEvent.EventEnum EventEnum { get; set; }
-        public Guid? Id { get; set; }
+        public string Id { get; set; }
         public Action<GameEvent> Listener { get; set; }
         public bool Persists { get; set; }
     }
     List<EventListenerPair> eventListenerPairs = new List<EventListenerPair>();
     
     List<GameEvent> EventStorage = new List<GameEvent>();
-    double EventStorageLength = 10;
+    double EventStorageLength = 100;
     public static EventSystem Singleton;
+
     public void Awake()
     {
         Singleton = this;
     }
     public void RegisterListener(Action<GameEvent> listener, GameEvent gameEvent, bool persistant = false)
     {
+        if (gameEvent.id != null)
+        {
+
+        }
         eventListenerPairs.Add(new EventListenerPair
         {
             EventEnum = gameEvent.eventType,
@@ -36,24 +41,24 @@ public class EventSystem : MonoBehaviour
         {
             if (gameEvent.eventType != GameEvent.EventEnum.None && gameEvent.id != null)
             {
-                if (storedEvent.eventTime == gameEvent.eventTime
+                if (storedEvent.eventType == gameEvent.eventType
                     && storedEvent.id == gameEvent.id)
                 {
-                    listener(storedEvent);
+                    listener?.Invoke(storedEvent);
                 }
             }
             else if (gameEvent.eventType != GameEvent.EventEnum.None)
             {
-                if (storedEvent.eventTime == gameEvent.eventTime)
+                if (storedEvent.eventType == gameEvent.eventType)
                 {
-                    listener(storedEvent);
+                    listener?.Invoke(storedEvent);
                 }
             }
             else if (gameEvent.id != null)
             {
                 if (storedEvent.id == gameEvent.id)
                 {
-                    listener(storedEvent);
+                    listener?.Invoke(storedEvent);
                 }
             }
         }
@@ -61,6 +66,10 @@ public class EventSystem : MonoBehaviour
 
     public void PublishEvent(GameEvent gameEvent)
     {
+        if (gameEvent.id != null)
+        {
+
+        }
         if (gameEvent.eventType != GameEvent.EventEnum.None && gameEvent.id != null)
         {
             gameEvent.eventTime = DateTime.UtcNow;
@@ -69,7 +78,7 @@ public class EventSystem : MonoBehaviour
             {
                 if (pair.EventEnum == gameEvent.eventType && pair.Id == gameEvent.id)
                 {
-                    pair.Listener(gameEvent);
+                    pair.Listener?.Invoke(gameEvent);
                 }
             }       
         }
@@ -81,7 +90,7 @@ public class EventSystem : MonoBehaviour
             {
                 if (pair.EventEnum == gameEvent.eventType)
                 {
-                    pair.Listener(gameEvent);
+                    pair.Listener?.Invoke(gameEvent);
                 }
             }
         }
@@ -93,13 +102,19 @@ public class EventSystem : MonoBehaviour
             {
                 if (pair.Id == gameEvent.id)
                 {
-                    pair.Listener(gameEvent);
+                    pair.Listener?.Invoke(gameEvent);
                 }
             }
         }    
     }
-
-
+    public void Update()
+    {
+        
+    }
+    public void RemoveListener(Action<GameEvent> listener)
+    {
+        eventListenerPairs.RemoveAll(pair => pair.Listener == listener);
+    }
     public void ResetDataStructures()
     {
         EventStorage = new List<GameEvent>();

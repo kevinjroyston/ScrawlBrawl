@@ -30,6 +30,8 @@ public class TestClient : MonoBehaviour
     /// </summary>
     void Awake()
     {
+        Application.runInBackground = true;
+
         hubConnection = new HubConnectionBuilder()
         #if DEBUG
             .WithUrl("http://localhost:50403/signalr")

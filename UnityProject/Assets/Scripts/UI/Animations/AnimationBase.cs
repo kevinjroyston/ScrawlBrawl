@@ -14,19 +14,31 @@ public abstract class AnimationBase: MonoBehaviour
     public float startDelay = 0f;
     public float endDurration = 0f;
     protected RectTransform rect;
+    protected bool registerOnEnable = true;
+    private bool missedRegistation = false;
     public User relevantUser;
     public bool persistant = false;
-    List<LTDescr> animations;
+    List<LTDescr> animations = new List<LTDescr>();
     private bool started = false;
-
-    public void Start()
+    public virtual void Awake()
     {
         rect = this.GetComponent<RectTransform>();
-        CallRegisterForAnimation();
+    }
+    public void OnEnable()
+    {     
+        if (registerOnEnable || missedRegistation)
+        {
+            missedRegistation = false;
+            CallRegisterForAnimation();
+        }        
+    }
+    public void OnDisable()
+    {
+        AnimationManagerScript.Singleton.RemoveListener(this);
     }
     public void StartAnimation(GameEvent gameEvent)
     {
-        if (!started)
+        if (!started && gameObject.activeInHierarchy)
         {
             started = true;
             StartCoroutine(StartAnimateCoroutine(gameEvent));
@@ -34,7 +46,10 @@ public abstract class AnimationBase: MonoBehaviour
     }
     public void EndAnimation(GameEvent gameEvent, float? endDurration = null)
     {
-        StartCoroutine(EndAnimateCoroutine(gameEvent, endDurration));
+        if (this.isActiveAndEnabled)
+        {
+            StartCoroutine(EndAnimateCoroutine(gameEvent, endDurration));
+        }   
     }
     IEnumerator StartAnimateCoroutine(GameEvent gameEvent)
     {
@@ -83,6 +98,13 @@ public abstract class AnimationBase: MonoBehaviour
     }
     public virtual void CallRegisterForAnimation()
     {
-        AnimationManagerScript.Singleton.RegisterAnimation(this);
+        if (gameObject.activeInHierarchy)
+        {
+            AnimationManagerScript.Singleton.RegisterAnimation(this);
+        }
+        else
+        {
+            missedRegistation = true;
+        }
     }
 }

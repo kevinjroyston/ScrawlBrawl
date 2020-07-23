@@ -76,6 +76,11 @@ namespace RoystonGame.Web.DataModels.UnityObjects
 
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
+        public IAccessor<IReadOnlyList<User>> VoteRevealUsers { private get; set; }
+        public IReadOnlyList<User> _VoteRevealUsers { get => VoteRevealUsers?.Value; }
+
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public IAccessor<string> Title { private get; set; }
         public string _Title { get => Title?.Value; }
 

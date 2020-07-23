@@ -45,6 +45,14 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
     /// </summary>
     private List<Action<float, float>> AspectRatioListeners = new List<Action<float, float>>();
 
+    public void OnDestroy()
+    {
+        BlurController.Singleton.blurMasks.Remove(this.BlurMask);
+    }
+    public void Update()
+    {
+        
+    }
     public UnityImage UnityImage
     {
         set
@@ -188,7 +196,7 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
                 {
                     EventSystem.Singleton.PublishEvent(new MoveToTargetGameEvent() {
                         eventType = GameEvent.EventEnum.MoveToTarget,
-                        id = user.UserId,
+                        id = user.UserId.ToString(),
                         TargetRect = VoteCountHolder.GetComponent<RectTransform>()});
                 }
             }
