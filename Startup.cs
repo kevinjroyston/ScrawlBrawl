@@ -99,7 +99,7 @@ namespace RoystonGame
             app.UseHttpsRedirection();
             app.UseCookiePolicy();
 
-            app.UseLetsEncryptFolder(env);
+            //app.UseLetsEncryptFolder(env);
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
