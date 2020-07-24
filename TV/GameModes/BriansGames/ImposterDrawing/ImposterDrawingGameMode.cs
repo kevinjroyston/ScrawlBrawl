@@ -2,24 +2,23 @@
 using RoystonGame.TV.DataModels.States.StateGroups;
 using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.Extensions;
-using RoystonGame.TV.GameModes.BriansGames.ImposterText.DataModels;
-using RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates;
+using RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.DataModels;
+using RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.GameStates;
 using RoystonGame.TV.GameModes.Common;
 using RoystonGame.TV.GameModes.Common.GameStates;
 using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
+namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
 {
-    public class ImposterTextGameMode : IGameMode
+    public class ImposterDrawingGameMode : IGameMode
     {
         private Setup_GS Setup { get; set; }
         private Random Rand { get; } = new Random();
-        public ImposterTextGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
+        public ImposterDrawingGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             ValidateOptions(lobby, gameModeOptions);
             int gameSpeed = (int)gameModeOptions[(int)GameModeOptionsEnum.gameSpeed].ValueParsed;
@@ -33,26 +32,26 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
                     aveX: 5,
                     maxX: 10,
                     x: (double)gameSpeed,
-                    minValue: ImposterTextConstants.SetupTimerMin,
-                    aveValue: ImposterTextConstants.SetupTimerAve,
-                    maxValue: ImposterTextConstants.SetupTimerMax));
+                    minValue: ImposterDrawingConstants.SetupTimerMin,
+                    aveValue: ImposterDrawingConstants.SetupTimerAve,
+                    maxValue: ImposterDrawingConstants.SetupTimerMax));
                 answeringTimer = TimeSpan.FromSeconds(CommonHelpers.ThreePointLerp(
                     minX: 1,
                     aveX: 5,
                     maxX: 10,
                     x: (double)gameSpeed,
-                    minValue: ImposterTextConstants.AnsweringTimerMin,
-                    aveValue: ImposterTextConstants.AnsweringTimerAve,
-                    maxValue: ImposterTextConstants.AnsweringTimerMax));
+                    minValue: ImposterDrawingConstants.AnsweringTimerMin,
+                    aveValue: ImposterDrawingConstants.AnsweringTimerAve,
+                    maxValue: ImposterDrawingConstants.AnsweringTimerMax));
                 votingTimer = TimeSpan.FromSeconds(CommonHelpers.ThreePointLerp(
                     minX: 1,
                     aveX: 5,
                     maxX: 10,
                     x: (double)gameSpeed,
-                    minValue: ImposterTextConstants.VotingTimerMin,
-                    aveValue: ImposterTextConstants.VotingTimerAve,
-                    maxValue: ImposterTextConstants.VotingTimerMax));
-            }    
+                    minValue: ImposterDrawingConstants.VotingTimerMin,
+                    aveValue: ImposterDrawingConstants.VotingTimerAve,
+                    maxValue: ImposterDrawingConstants.VotingTimerMax));
+            }
             int numWritingsPerPrompt = lobby.GetAllUsers().Count - 1;
             List<Prompt> prompts = new List<Prompt>();
             Setup = new Setup_GS(
@@ -85,7 +84,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
                     else
                     {
                         stateList.Add(GetImposterLoop(prompt));
-                    }
+                    }          
                 }
                 StateChain gamePlayChain = new StateChain(states: stateList, exit: this.Exit);
                 gamePlayChain.Transition(this.Exit);
@@ -96,13 +95,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
 
             StateChain GetImposterLoop(Prompt prompt, bool lastRound = false)
             {
-                List<User> randomizedUsers = promptsToPromptedUsers[prompt].OrderBy(_=>Rand.Next()).ToList();
+                List<User> randomizedUsers = promptsToPromptedUsers[prompt].OrderBy(_ => Rand.Next()).ToList();
                 return new StateChain(
                     stateGenerator: (int counter) =>
                     {
                         if (counter == 0)
                         {
-                            return new MakeTexts_GS(
+                            return new MakeDrawings_GS(
                                 lobby: lobby,
                                 promptToDraw: prompt,
                                 usersToPrompt: randomizedUsers,
@@ -113,8 +112,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
                             return new Voting_GS(
                                 lobby: lobby,
                                 prompt: prompt,
-                                randomizedUsersToShow: randomizedUsers.Where((User user) => prompt.UsersToAnswers.ContainsKey(user)).ToList(),
-                                possibleNone: (prompt.UsersToAnswers.Count < randomizedUsers.Count),
+                                randomizedUsersToShow: randomizedUsers.Where((User user) => prompt.UsersToDrawings.ContainsKey(user)).ToList(),
+                                possibleNone: (prompt.UsersToDrawings.Count < randomizedUsers.Count),
                                 votingTimeDurration: votingTimer);
                         }
                         if (counter == 2)
@@ -122,8 +121,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
                             return new VoteRevealed_GS(
                                 lobby: lobby,
                                 prompt: prompt,
-                                randomizedUsersToShow: randomizedUsers.Where((User user) => prompt.UsersToAnswers.ContainsKey(user)).ToList(),
-                                possibleNone: (prompt.UsersToAnswers.Count < randomizedUsers.Count));
+                                randomizedUsersToShow: randomizedUsers.Where((User user) => prompt.UsersToDrawings.ContainsKey(user)).ToList(),
+                                possibleNone: (prompt.UsersToDrawings.Count < randomizedUsers.Count));
                         }
                         if (counter == 3)
                         {
@@ -134,7 +133,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
                             else
                             {
                                 return new ScoreBoardGameState(lobby);
-                            }
+                            }        
                         }
                         else
                         {
@@ -148,7 +147,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
         {
             return CommonHelpers.EvenlyDistribute(
                 groups: prompts,
-                toDistribute: users,
+                toDistribute: users, 
                 maxGroupSize: maxTextsPerPrompt,
                 validDistributeCheck: (Prompt prompt, User user) => user != prompt.Owner);
         }

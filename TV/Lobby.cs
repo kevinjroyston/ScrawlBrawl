@@ -24,6 +24,7 @@ using RoystonGame.TV.GameModes.KevinsGames.Mimic;
 using RoystonGame.TV.GameModes.KevinsGames.StoryTime;
 using RoystonGame.TV.GameModes.TimsGames.FriendQuiz;
 using RoystonGame.TV.GameModes.BriansGames.ImposterText;
+using RoystonGame.TV.GameModes.BriansGames.ImposterDrawing;
 
 namespace RoystonGame.TV
 {
@@ -84,6 +85,27 @@ namespace RoystonGame.TV
                 MinPlayers = 4,
                 MaxPlayers = null,
                 GameModeInstantiator = (lobby, options) => new ImposterTextGameMode(lobby, options),
+                Options = new List<GameModeOptionResponse>
+                {
+                    new GameModeOptionResponse
+                    {
+                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 5,
+                        MinValue = 0,
+                        MaxValue = 10,
+                    }
+                }
+            },
+            #endregion
+            #region Imposter Syndrome Drawing
+            new GameModeMetadata
+            {
+                Title = "Imposter Syndrome (Drawing)",
+                Description = "Come up with a difference only you'll be able to spot!",
+                MinPlayers = 4,
+                MaxPlayers = null,
+                GameModeInstantiator = (lobby, options) => new ImposterDrawingGameMode(lobby, options),
                 Options = new List<GameModeOptionResponse>
                 {
                     new GameModeOptionResponse

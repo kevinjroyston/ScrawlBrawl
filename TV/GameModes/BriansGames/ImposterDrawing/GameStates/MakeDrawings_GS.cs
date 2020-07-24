@@ -1,25 +1,25 @@
 ﻿using RoystonGame.TV.ControlFlows.Exit;
-using RoystonGame.TV.DataModels;
 using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.DataModels.Users;
-using RoystonGame.TV.GameModes.BriansGames.ImposterText.DataModels;
+using RoystonGame.TV.Extensions;
+using RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.DataModels;
+using RoystonGame.TV.GameModes.Common.DataModels;
+using RoystonGame.Web.DataModels.Enums;
+using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static System.FormattableString;
 using System.Threading.Tasks;
-using RoystonGame.Web.DataModels.Requests;
-using RoystonGame.TV.Extensions;
-using RoystonGame.Web.DataModels.UnityObjects;
-using RoystonGame.Web.DataModels.Enums;
+using static System.FormattableString;
 
-namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
+namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.GameStates
 {
-    public class MakeTexts_GS : GameState
+    public class MakeDrawings_GS : GameState
     {
-        public MakeTexts_GS(Lobby lobby, Prompt promptToDraw, List<User> usersToPrompt, TimeSpan? writingTimeDurration)
+        public MakeDrawings_GS(Lobby lobby, Prompt promptToDraw, List<User> usersToPrompt, TimeSpan? writingTimeDurration)
            : base(
                  lobby: lobby,
                  exit: new WaitForUsers_StateExit(lobby))
@@ -28,23 +28,23 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
                 usersToPrompt: usersToPrompt,
                 promptGenerator: (User user) => new UserPrompt()
                 {
-                    Title = "Answer the question below",
-                    Description = "Careful, if you aren't the odd one out and people think you are, you will lose points for your terrible answer.",
+                    Title = "Draw the prompt below",
+                    Description = "Careful, if you aren't the odd one out and people think you are, you will lose points for being a terrible artist.",
                     SubPrompts = new SubPrompt[]
                         {
                             new SubPrompt
                             {
                                 Prompt = Invariant($"Your prompt:\"{(promptToDraw.Imposter == user ? promptToDraw.FakePrompt : promptToDraw.RealPrompt)}\""),
-                                ShortAnswer = true
+                                Drawing = new DrawingPromptMetadata(),
                             },
                         },
                     SubmitButton = true
                 },
                 formSubmitHandler: (User user, UserFormSubmission input) =>
                 {
-                    promptToDraw.UsersToAnswers.AddOrReplace(user, input.SubForms[0].ShortAnswer);
+                    promptToDraw.UsersToDrawings.AddOrReplace(user, new UserDrawing() { Drawing = input.SubForms[0].Drawing, Owner = user} );
                     return (true, string.Empty);
-                },            
+                },
                 exit: new WaitForUsers_StateExit(
                     lobby: this.Lobby,
                     usersToWaitFor: WaitForUsersType.All,
@@ -52,12 +52,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
                     {
                         if (user == promptToDraw.Owner)
                         {
-                            return new UserPrompt() { Description = "You won't be answering this one. Sit tight" };
+                            return new UserPrompt() { Description = "You won't be drawing for this one. Sit tight" };
                         }
                         else
                         {
                             return SimplePromptUserState.DefaultWaitingPrompt(user);
-                        }                   
+                        }
                     }),
                 maxPromptDuration: writingTimeDurration);
 
@@ -66,7 +66,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
             this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
-                Instructions = new StaticAccessor<string> { Value = "Answer the question on your devices" },
+                Instructions = new StaticAccessor<string> { Value = "Complete the drawings on your devices" },
             };
         }
     }
