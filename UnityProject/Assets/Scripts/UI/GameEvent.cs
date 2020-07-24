@@ -19,6 +19,9 @@ public class GameEvent
         VoteRevealBubbleMove,
         AnimationStarted,
         AnimationCompleted,
+        TenSecondsLeft,
+        PlayPop,
+
     }
     public EventEnum eventType;
 

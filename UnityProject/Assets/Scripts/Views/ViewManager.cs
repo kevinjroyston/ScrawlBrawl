@@ -34,14 +34,11 @@ public class ViewManager : MonoBehaviour
             EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ExitingState });
             AnimationManagerScript.Singleton.SendAnimationWrapUp(0.6f);
             StartCoroutine(TransitionSceneCoroutine(0.6f, id, view));
-
-            AudioController.Singleton.PlayStartDing();
-            AudioController.Singleton.StopTimer();
         }
         else
         {
             ChangeView(id, view);
-            AudioController.Singleton.PlayUserSubmit();
+            EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.UserSubmitted });
         }       
     }
 

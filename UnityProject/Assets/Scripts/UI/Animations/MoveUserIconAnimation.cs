@@ -47,7 +47,7 @@ public class MoveUserIconAnimation : AnimationBase
                     rectTrans: rect,
                     to: new Vector3(1.1f,1.1f,1.1f),
                     time: 0.2f)
-            .SetCallEventOnComplete(new GameEvent(){ eventType = GameEvent.EventEnum.VoteRevealBubbleCreated}),
+            .SetCallEventOnComplete(new GameEvent(){ eventType = GameEvent.EventEnum.PlayPop}),
             LeanTween.scale(
                     rectTrans: rect,
                     to: new Vector3(1f,1f,1f),
@@ -70,7 +70,8 @@ public class MoveUserIconAnimation : AnimationBase
                 rectTransform: markerRect,
                 to: targetTangent,
                 time: Vector2.Distance(markerRect.position, targetTangent) / speed)
-            .setDelay(0.4f + IconCountTotal * OrderOffset - Vector2.Distance(markerRect.position, targetTangent) / speed),
+            .setDelay(0.4f + IconCountTotal * OrderOffset - Vector2.Distance(markerRect.position, targetTangent) / speed)
+            .SetCallEventOnStart(new GameEvent(){ eventType = GameEvent.EventEnum.VoteRevealBubbleMove}),
             LeanTweenHelper.Singleton.DynamicOrbitAroundPoint(
                 rectTransform: markerRect,
                 center: targetScoreRect.position,
