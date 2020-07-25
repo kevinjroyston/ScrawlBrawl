@@ -22,7 +22,7 @@ public class VoteRevealUserImageHandler : MonoBehaviour
 
         for (int i = 0; i < users.Count; i++)
         {
-            InstantiateRelevantUser(DropZone.transform, users[i], i, users.Count);      
+            InstantiateRelevantUser(DropZone.transform, users[i], i + 1, users.Count);      
         }
     }
 

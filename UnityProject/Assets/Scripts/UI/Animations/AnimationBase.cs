@@ -14,7 +14,7 @@ public abstract class AnimationBase: MonoBehaviour
     public float startDelay = 0f;
     public float endDurration = 0f;
     protected RectTransform rect;
-    protected bool registerOnEnable = true;
+    public bool registerOnEnable = true;
     private bool missedRegistation = false;
     public User relevantUser;
     public bool persistant = false;
@@ -59,14 +59,13 @@ public abstract class AnimationBase: MonoBehaviour
         animations = Animate(gameEvent);
         foreach (LTDescr anim in animations)
         {
-            anim.setOnComplete(
-                () =>
+            anim.AddOnComplete(() =>
+            {
+                if (animations.Where((LTDescr anim2) => TweenAnimator.isTweening(anim2.id)).Count() == 0)
                 {
-                    if (animations.Where((LTDescr anim2) => LeanTween.isTweening(anim2.id)).Count() == 0)
-                    {
-                        started = false;
-                    }
-                });
+                    started = false;
+                }
+            });
         }
         
     }
@@ -76,14 +75,14 @@ public abstract class AnimationBase: MonoBehaviour
         List<LTDescr> endAnimations = EndAnimate(gameEvent, animations, endDurration);
         foreach (LTDescr anim in endAnimations)
         {
-            anim.setOnComplete(
-                () =>
+            Action checkForFinished = () =>
+            {
+                if (animations.Where((LTDescr anim2) => TweenAnimator.isTweening(anim2.id)).Count() == 0)
                 {
-                    if (animations.Where((LTDescr anim2) => LeanTween.isTweening(anim2.id)).Count() == 0)
-                    {
-                        started = false;
-                    }
-                });
+                    started = false;
+                }
+            };
+            anim.AddOnComplete(checkForFinished);
         }
     }
 
@@ -92,7 +91,7 @@ public abstract class AnimationBase: MonoBehaviour
     {
         foreach (LTDescr anim in animations)
         {
-            LeanTween.cancel(anim.id);
+            TweenAnimator.cancel(anim.id);
         }
         return new List<LTDescr>();
     }

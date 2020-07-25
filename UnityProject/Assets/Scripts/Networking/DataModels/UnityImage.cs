@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using Newtonsoft.Json;
 using System;
+using Assets.Scripts.Networking.DataModels;
 
 public class UnityImage
 {
@@ -25,7 +26,7 @@ public class UnityImage
     public string _Footer { get; set; }
     public string _ImageIdentifier { get; set; }
     public int? _VoteCount { get; set; }
-    public IReadOnlyList<User> _RelevantUsers { get; set; }
+    public UnityImageVoteRevealOptions _VoteRevealOptions { get; set; }
     public IReadOnlyList<int> _BackgroundColor { get; set; }
 
     [JsonIgnore]

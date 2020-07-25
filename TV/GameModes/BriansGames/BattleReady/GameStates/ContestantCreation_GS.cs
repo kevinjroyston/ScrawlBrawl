@@ -95,9 +95,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                     },
                     formSubmitHandler: (User user, UserFormSubmission input) =>
                     {
-                        prompt.UsersToUserHands[user].Heads[(int)input.SubForms[0].Selector].Owner.Score += BattleReadyConstants.PointsForPartUsed;
-                        prompt.UsersToUserHands[user].Bodies[(int)input.SubForms[1].Selector].Owner.Score += BattleReadyConstants.PointsForPartUsed;
-                        prompt.UsersToUserHands[user].Legs[(int)input.SubForms[2].Selector].Owner.Score += BattleReadyConstants.PointsForPartUsed;
+                        prompt.UsersToUserHands[user].Heads[(int)input.SubForms[0].Selector].Owner.AddScore(BattleReadyConstants.PointsForPartUsed);
+                        prompt.UsersToUserHands[user].Bodies[(int)input.SubForms[1].Selector].Owner.AddScore(BattleReadyConstants.PointsForPartUsed);
+                        prompt.UsersToUserHands[user].Legs[(int)input.SubForms[2].Selector].Owner.AddScore(BattleReadyConstants.PointsForPartUsed);
                         prompt.UsersToUserHands[user].Contestant = new Person
                         {
                             BodyPartDrawings = new Dictionary<DrawingType, PeopleUserDrawing>{

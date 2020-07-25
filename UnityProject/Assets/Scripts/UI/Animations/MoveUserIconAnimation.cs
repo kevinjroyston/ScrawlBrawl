@@ -11,23 +11,24 @@ public class MoveUserIconAnimation : AnimationBase
     public Image ScoreProjectilePrefab;
     private int IconOrder;
     private int IconCountTotal;
-    private float OrderOffset = 0.4f;
-    public override void Awake()
-    {
-        base.Awake();
-        registerOnEnable = false;
-    }
+    private float OrderOffset = 0.1f;
     public override List<LTDescr> Animate(GameEvent gameEvent)
     {
         MoveToTargetGameEvent targetGameEvent = (MoveToTargetGameEvent)gameEvent;
         Image createdMarker = Instantiate(ScoreProjectilePrefab, rect);
         createdMarker.color = gameObject.GetComponent<Colorizer>().AssignedColor;
         RectTransform targetScoreRect = targetGameEvent.TargetRect;
+        string targetId = targetGameEvent.TargetUserId;
         RectTransform markerRect = createdMarker.rectTransform;
+
+        Vector2 targetRadiusVector = targetScoreRect.localToWorldMatrix.MultiplyVector(new Vector2(targetScoreRect.rect.width, targetScoreRect.rect.height));
+        float targetRadius = Mathf.Min(targetRadiusVector.x, targetRadiusVector.y);
+        Vector2 markerRadiusVector = markerRect.localToWorldMatrix.MultiplyVector(new Vector2(markerRect.rect.width, markerRect.rect.height));
+        float markerRadius = Mathf.Min(markerRadiusVector.x, markerRadiusVector.y);
 
         markerRect.localScale = Vector3.zero;
         #region calculating tangent
-        float r = 1;
+        float r = targetRadius * 1.1f;
         float x = rect.position.x;
         float y = rect.position.y + 1;
         float tangentY = (2 * r * r * y + Mathf.Sqrt(4 * r * r * r * r * y * y  - 4 * (x * x + y * y) * (r * r * r * r - x * x * r * r))) / (2 * (x * x + y * y));
@@ -39,63 +40,90 @@ public class MoveUserIconAnimation : AnimationBase
             z: targetScoreRect.position.z);
         #endregion
 
-        float speed = 15f;
+        float speed = Vector2.Distance(markerRect.position, targetTangent) / 0.5f;
 
-        List<LTDescr> animations = new List<LTDescr>()
-        {
-            LeanTween.scale(
+        #region tweens
+        LTDescr iconScaleDown = TweenAnimator.scale(
                     rectTrans: rect,
-                    to: new Vector3(1.1f,1.1f,1.1f),
-                    time: 0.2f)
-            .SetCallEventOnComplete(new GameEvent(){ eventType = GameEvent.EventEnum.PlayPop}),
-            LeanTween.scale(
+                    to: new Vector3(1.1f, 1.1f, 1.1f),
+                    time: 0.2f);
+        LTDescr iconScaleUp = TweenAnimator.scale(
                     rectTrans: rect,
-                    to: new Vector3(1f,1f,1f),
+                    to: new Vector3(1f, 1f, 1f),
                     time: 0.3f)
             .setEaseOutBack()
-            .setDelay(0.2f),
-            LeanTween.scale(
+            .PlayAfter(iconScaleDown)
+            .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.PlayPop });
+        LTDescr markerScaleUp = TweenAnimator.scale(
                 rectTrans: markerRect,
                 to: Vector3.one,
                 time: 0.3f)
             .setEaseOutBack()
-            .setDelay(0.2f),
-            LeanTweenHelper.Singleton.UIMoveRelative(
+            .PlayAfter(iconScaleDown);
+        LTDescr markerMoveUp = LeanTweenHelper.Singleton.UIMoveRelative(
                 rectTransform: markerRect,
                 to: new Vector3(0, 1, 0),
                 time: 0.2f)
             .setEaseOutBack()
-            .setDelay(0.2f),
-            LeanTweenHelper.Singleton.UIMove(
+            .PlayAfter(iconScaleDown);
+        LTDescr markerMoveToTarget = LeanTweenHelper.Singleton.UIMove(
                 rectTransform: markerRect,
                 to: targetTangent,
-                time: Vector2.Distance(markerRect.position, targetTangent) / speed)
-            .setDelay(0.4f + IconCountTotal * OrderOffset - Vector2.Distance(markerRect.position, targetTangent) / speed)
-            .SetCallEventOnStart(new GameEvent(){ eventType = GameEvent.EventEnum.VoteRevealBubbleMove}),
-            LeanTweenHelper.Singleton.DynamicOrbitAroundPoint(
+                time: 0.5f)
+            .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.VoteRevealBubbleMove })
+            .PlayAfter(markerMoveUp, IconCountTotal * OrderOffset + 0.0f);
+        LTDescr markerScaleUpToTarget = TweenAnimator.scale(
+            rectTrans: markerRect,
+            to: new Vector3(targetRadius / markerRadius * 0.5f, targetRadius / markerRadius * 0.5f, targetRadius / markerRadius * 0.5f),
+            time: 0.5f)
+            .PlayAfter(markerMoveUp, IconCountTotal * OrderOffset + 0.0f);
+        LTDescr markerOrbit = LeanTweenHelper.Singleton.DynamicOrbitAroundPoint(
                 rectTransform: markerRect,
                 center: targetScoreRect.position,
-                radiusValueTween: LeanTween.value(1, 0, 2).setDelay(0.4f + IconCountTotal * OrderOffset),
-                radians: 6 * Mathf.PI ,
-                time: 6 * Mathf.PI * 1 / speed)
-            .setDelay(0.4f + IconCountTotal * OrderOffset),
-            LeanTween.scale(
-                rectTrans: markerRect,
-                to: Vector3.zero,
-                time: 1f)
-            .setDelay(0.4f + IconCountTotal * OrderOffset +  6 * Mathf.PI * 1 / speed - 1),
-            LeanTween.scale(
+                radiusValueTween: TweenAnimator.value(targetRadius * 1.1f, targetRadius * 0.6f, 2).PlayAfter(markerMoveToTarget),
+                radians: speed * (IconCountTotal * OrderOffset + 0.5f) * targetRadius * 1.1f,
+                time: (IconCountTotal * OrderOffset + 0.5f) * targetRadius * 1.1f)
+            .PlayAfter(markerMoveToTarget);
+        LTDescr markerFall = LeanTweenHelper.Singleton.UIMove(
+                rectTransform: markerRect,
+                to: targetScoreRect.position,
+                time: 0.4f)
+            .setEaseOutBounce()
+            .PlayAfter(markerOrbit);
+        LTDescr targetScaleUp = TweenAnimator.scale(
+                rectTrans: targetScoreRect,
+                to: new Vector3(1.1f, 1.1f, 1.1f),
+                time: 0.5f)
+            .PlayAfter(markerFall, -0.5f);
+        LTDescr targetScaleDown = TweenAnimator.scale(
                     rectTrans: targetScoreRect,
-                    to: new Vector3(0.9f,0.9f,0.9f),
-                    time: 0.2f)
-            .setDelay(0.4f + IconCountTotal * OrderOffset +  6 * Mathf.PI * 1 / speed)
-            .SetCallEventOnComplete(new GameEvent(){ eventType = GameEvent.EventEnum.IncreaseScore, id = startEvent.id }),
-            LeanTween.scale(
-                    rectTrans: targetScoreRect,
-                    to: new Vector3(1f,1f,1f),
+                    to: new Vector3(1f, 1f, 1f),
                     time: 0.3f)
             .setEaseOutBack()
-            .setDelay(0.4f + IconCountTotal * OrderOffset +  6 * Mathf.PI * 1 / speed + 0.2f),
+            .PlayAfter(targetScaleUp)
+            .AddOnStart(() => Destroy(createdMarker))
+            .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.PlayPop })
+            .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.IncreaseScore, id = targetId });
+        if (IconOrder == IconCountTotal)
+        {
+            targetScaleDown.SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.ShakeRevealImages });
+        }
+
+
+        #endregion
+
+        List<LTDescr> animations = new List<LTDescr>()
+        {
+            iconScaleDown,
+            iconScaleUp,
+            markerScaleUp,
+            markerMoveUp,
+            markerMoveToTarget,
+            markerScaleUpToTarget,
+            markerOrbit,
+            markerFall,
+            targetScaleUp,
+            targetScaleDown
         };
         return animations;
     }

@@ -23,7 +23,7 @@ namespace RoystonGame.TV.GameModes.Common.DataModels
             string title = null,
             string header = null,
             int? voteCount = null,
-            List<User> relevantUsers = null)
+            UnityImageVoteRevealOptions voteRevealOptions = null)
         {
             backgroundColor = backgroundColor ?? UnityImageBackGroundColor;
             imageIdentifier = imageIdentifier ?? UnityImageIdentifier;
@@ -46,7 +46,7 @@ namespace RoystonGame.TV.GameModes.Common.DataModels
                 Title = new StaticAccessor<string> { Value = title },
                 Header = new StaticAccessor<string> { Value = header },
                 VoteCount = new StaticAccessor<int?> { Value = voteCount},
-                RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = relevantUsers}
+                VoteRevealOptions = new StaticAccessor<UnityImageVoteRevealOptions> { Value = voteRevealOptions},
             };
 
         }

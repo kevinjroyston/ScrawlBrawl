@@ -146,6 +146,7 @@ GameObject:
   - component: {fileID: 7326542074114077056}
   - component: {fileID: 7355054927151955104}
   - component: {fileID: 1224490650957241704}
+  - component: {fileID: 359703546244937976}
   m_Layer: 0
   m_Name: UserIconPrefab
   m_TagString: Untagged
@@ -214,6 +215,7 @@ MonoBehaviour:
   - {r: 0.30588236, g: 0.7568628, b: 0.8588236, a: 1}
   - {r: 0.48235297, g: 0.8588236, b: 0.30588236, a: 1}
   - {r: 0.35686275, g: 0.3137255, b: 0.86274517, a: 1}
+  AssignedColor: {r: 0, g: 0, b: 0, a: 0}
   TargetImage: {fileID: 2358495627232553503}
 --- !u!114 &7326542074114077056
 MonoBehaviour:
@@ -274,12 +276,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startEvent:
     eventType: 5
+    id: 
   endEvent:
     eventType: 2
+    id: 
   startDelay: 1.5
   endDurration: 0
+  registerOnEnable: 0
   persistant: 0
   ScoreProjectilePrefab: {fileID: 4907439955422424169, guid: 5cc8fcf8650a6b94eafcbfc9e0364879,
+    type: 3}
+--- !u!114 &359703546244937976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4290861889265694557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09deb827e78d5aa498b2e131112cc0ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startEvent:
+    eventType: 17
+    id: 
+  endEvent:
+    eventType: 2
+    id: 
+  startDelay: 1
+  endDurration: 0
+  registerOnEnable: 0
+  persistant: 0
+  scoreDeltaTextPrefab: {fileID: 3580659679997914763, guid: a64b19dfe96bd8749936be3f0a3c518f,
     type: 3}
 --- !u!1 &5392144856759429275
 GameObject:

@@ -10,5 +10,6 @@
         Scoreboard = 5,
         ShowDrawings = 6,
         TextView = 7,
+        VoteRevealImageView = 8,
     }
 }

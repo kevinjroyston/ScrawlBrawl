@@ -11,6 +11,7 @@ public class RelevantUserPopulator : MonoBehaviour
     public void Populate(User user, bool showName, int order = 1, int total = 1)
     {
         gameObject.GetComponent<MoveUserIconAnimation>().AssignUserAndRegister(user, order, total);
+        gameObject.GetComponent<ShowScoreDeltaAnimation>().AssignUserAndRegister(user);
         TargetLocation.sprite = user.SelfPortraitSprite;
         Colorizer.RefreshColor(user.DisplayName);
         DisplayName.text = user.DisplayName;

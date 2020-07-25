@@ -21,7 +21,11 @@ public class GameEvent
         AnimationCompleted,
         TenSecondsLeft,
         PlayPop,
-
+        ShakeRevealImages,
+        RevealImages,
+        CallRevealImages,
+        PlayDrumRoll,
+        ShowDeltaScores,
     }
     public EventEnum eventType;
 

@@ -62,7 +62,8 @@ namespace RoystonGame.TV.DataModels.Users
         public string SelfPortrait { get; set; }
 
         public int Score { get; set; }
-        public int ScoreChange { get; private set; } = 0;
+        public int ScoreDeltaReveal { get; private set; } = 0;
+        public int ScoreDeltaScoreboard { get; private set; } = 0;
 
         /// <summary>
         /// Gets the activity level of the user by looking at their <see cref="LastPingTime"/>.
@@ -155,17 +156,24 @@ namespace RoystonGame.TV.DataModels.Users
             hash.Add(Activity);
             hash.Add(Status);
             hash.Add(Identifier);
+            hash.Add(ScoreDeltaReveal);
+            hash.Add(ScoreDeltaScoreboard);
             return hash.ToHashCode();
         }
-        public void ResetScoreChange()
+        public void ResetScoreDeltaReveal()
         {
-            this.ScoreChange = 0;
+            this.ScoreDeltaReveal = 0;
+        }
+        public void ResetScoreDeltaScoreBoard()
+        {
+            this.ScoreDeltaScoreboard = 0;
         }
 
         public void AddScore(int amount)
         {
             this.Score += amount;
-            this.ScoreChange += amount;
+            this.ScoreDeltaReveal += amount;
+            this.ScoreDeltaScoreboard += amount;
         }
     }
 }

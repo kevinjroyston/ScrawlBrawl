@@ -74,15 +74,15 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
                                 return oldList;
                             });
                         DateTime timeSubmitted = usersToVoteResults[user].Item1;
-                        userVotedFor.Score += MimicConstants.PointsForVote;
+                        userVotedFor.AddScore( MimicConstants.PointsForVote);
                         if(userVotedFor == roundTracker.originalDrawer)
                         {
-                            user.Score += CommonHelpers.PointsForSpeed(
+                            user.AddScore( CommonHelpers.PointsForSpeed(
                                 maxPoints: MimicConstants.PointsForCorrectPick(lobby.GetAllUsers().Count),
                                 minPoints: MimicConstants.PointsForCorrectPick(lobby.GetAllUsers().Count) / 10,
                                 startTime: MimicConstants.BlurDelay,
                                 endTime: MimicConstants.BlurDelay + MimicConstants.BlurLength,
-                                secondsTaken: timeSubmitted.Subtract(startingTime).TotalSeconds);                         
+                                secondsTaken: timeSubmitted.Subtract(startingTime).TotalSeconds));                         
                         }
                         roundTracker.UserToNumVotesRecieved.AddOrUpdate(userVotedFor, 1, (User user, int numVotes) => numVotes + 1);
                     }

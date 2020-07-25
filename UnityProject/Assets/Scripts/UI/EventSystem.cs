@@ -25,10 +25,7 @@ public class EventSystem : MonoBehaviour
     }
     public void RegisterListener(Action<GameEvent> listener, GameEvent gameEvent, bool persistant = false)
     {
-        if (gameEvent.id != null)
-        {
 
-        }
         eventListenerPairs.Add(new EventListenerPair
         {
             EventEnum = gameEvent.eventType,
@@ -66,10 +63,6 @@ public class EventSystem : MonoBehaviour
 
     public void PublishEvent(GameEvent gameEvent)
     {
-        if (gameEvent.id != null)
-        {
-
-        }
         if (gameEvent.eventType != GameEvent.EventEnum.None && gameEvent.id != null)
         {
             gameEvent.eventTime = DateTime.UtcNow;

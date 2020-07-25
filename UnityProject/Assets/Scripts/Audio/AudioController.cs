@@ -10,6 +10,7 @@ public class AudioController : MonoBehaviour
     public AudioClip userSubmitClip;
     public AudioClip wooshClip;
     public AudioClip popClip;
+    public AudioClip drumRollClip;
     //public AudioClip endDingClip;
     
 
@@ -45,14 +46,17 @@ public class AudioController : MonoBehaviour
             listener: PlayPop,
             gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.PlayPop },
             persistant: true);
-
+        EventSystem.Singleton.RegisterListener(
+            listener: PlayDrumRoll,
+            gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.PlayDrumRoll },
+            persistant: true);
     }
 
     public void PlayStartDing(GameEvent gameEvent = null)
     {
         if (audioSource!=null && startDingClip != null)
         {
-            audioSource.PlayOneShot(startDingClip);
+            audioSource.PlayOneShot(startDingClip, 0.2f);
         }     
     }
     /*public void PlayEndDing()
@@ -87,7 +91,7 @@ public class AudioController : MonoBehaviour
     {
         if (audioSource != null && wooshClip != null)
         {
-            audioSource.PlayOneShot(wooshClip, 0.6f);
+            audioSource.PlayOneShot(wooshClip, 0.2f);
         }
     }
     public void PlayPop(GameEvent gameEvent = null)
@@ -97,4 +101,12 @@ public class AudioController : MonoBehaviour
             audioSource.PlayOneShot(popClip);
         }
     }
+    public void PlayDrumRoll(GameEvent gameEvent = null)
+    {
+        if (audioSource != null && drumRollClip != null)
+        {
+            audioSource.PlayOneShot(drumRollClip, 0.5f);
+        }
+    }
+
 }

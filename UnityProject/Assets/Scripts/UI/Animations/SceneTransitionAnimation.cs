@@ -6,16 +6,19 @@ public class SceneTransitionAnimation : AnimationBase
 {
     public override List<LTDescr> Animate(GameEvent gameEvent)
     {
-        return new List<LTDescr>()
-        {
-            LeanTween.color(
+        LTDescr fadeOut = TweenAnimator.color(
                 rectTrans: rect,
                 to: Color.black,
-                time: 0.5f) ,
-            LeanTween.color(
+                time: 0.5f);
+        LTDescr fadeIn = TweenAnimator.color(
                 rectTrans: rect,
                 to: Color.clear,
-                time: 0.4f).setDelay(1f)
+                time: 0.4f)
+            .PlayAfter(fadeOut);
+        return new List<LTDescr>()
+        {
+            fadeOut,
+            fadeIn
         };
     }
 
@@ -32,7 +35,7 @@ public class SceneTransitionAnimation : AnimationBase
         }
         return new List<LTDescr>()
         {
-            LeanTween.color(
+            TweenAnimator.color(
                 rectTrans: rect,
                 to: Color.clear,
                 time: selfEndDurration)

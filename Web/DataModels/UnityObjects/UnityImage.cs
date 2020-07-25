@@ -23,11 +23,11 @@ namespace RoystonGame.Web.DataModels.UnityObjects
             modified |= this.Header?.Refresh() ?? false;
             modified |= this.Footer?.Refresh() ?? false;
             modified |= this.VoteCount?.Refresh() ?? false;
-            modified |= this.RelevantUsers?.Refresh() ?? false;
             modified |= this.BackgroundColor?.Refresh() ?? false;
             modified |= this.ImageIdentifier?.Refresh() ?? false;
             modified |= this.SpriteGridWidth?.Refresh() ?? false;
             modified |= this.SpriteGridHeight?.Refresh() ?? false;
+            modified |= this.VoteRevealOptions?.Refresh() ?? false;
             return modified;
         }
 
@@ -45,6 +45,7 @@ namespace RoystonGame.Web.DataModels.UnityObjects
             hash.Add(_Footer);
             hash.Add(_VoteCount);
             hash.Add(_ImageIdentifier);
+            hash.Add(_VoteRevealOptions);
             foreach(int i in _BackgroundColor ?? new List<int>())
             {
                 hash.Add(i);
@@ -96,8 +97,8 @@ namespace RoystonGame.Web.DataModels.UnityObjects
 
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public IAccessor<IReadOnlyList<User>> RelevantUsers { private get; set; }
-        public IReadOnlyList<User> _RelevantUsers { get => RelevantUsers?.Value; }
+        public IAccessor<UnityImageVoteRevealOptions> VoteRevealOptions { private get; set; }
+        public UnityImageVoteRevealOptions _VoteRevealOptions { get => VoteRevealOptions?.Value; }
 
         // TODO: add some validation to this setter.
         [Newtonsoft.Json.JsonIgnore]

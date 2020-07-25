@@ -5,5 +5,5 @@ using UnityEngine;
 public class MoveToTargetGameEvent : GameEvent
 {
     public RectTransform TargetRect { get; set; }
-
+    public string TargetUserId { get; set; }
 }

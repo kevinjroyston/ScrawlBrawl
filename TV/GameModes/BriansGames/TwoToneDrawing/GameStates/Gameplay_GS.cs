@@ -129,12 +129,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                         if (users.Count == mostVotes)
                         {
                             // If the user voted for the drawing with the most votes, give them 100 points
-                            user.Score += 100;
+                            user.AddScore( 100);
                         }
                         else if (this.SubChallenge.UserSubmittedDrawings.ContainsKey(user) && this.SubChallenge.UserSubmittedDrawings[user].TeamId == id)
                         {
                             // If the drawing didn't get the most votes and the user voted for themselves subtract points
-                            user.Score -= 1000;
+                            user.AddScore(-1000);
                         }
                     }
 
@@ -143,7 +143,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                         foreach (User user in this.SubChallenge.UserSubmittedDrawings.Where(kvp => kvp.Value.TeamId == id).Select(kvp => kvp.Key))
                         {
                             // 500 points if they helped draw the best drawing.
-                            user.Score += 500;
+                            user.AddScore( 500);
                         }
                     }
                 }
