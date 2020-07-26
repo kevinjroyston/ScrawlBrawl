@@ -1,4 +1,5 @@
 //namespace DentedPixel{
+using Boo.Lang;
 using System;
 using UnityEngine;
 
@@ -32,6 +33,40 @@ using UnityEngine;
 */
 public class LTDescr
 {
+	#region Modifications
+	public Guid guid = Guid.NewGuid();
+	/*public bool isFinished = false;
+	public LTDescr()
+	{
+		addOnComplete(() => isFinished = true);
+	}
+
+	private List<Action> onCompleteActions = new List<Action>();
+	public LTDescr addOnComplete(Action action)
+    {
+		onCompleteActions.Add(action);
+		return this.setOnComplete(() =>
+		{
+			foreach (Action onCompleteAction in onCompleteActions)
+            {
+				onCompleteAction();
+            }
+		});
+    }
+	private List<Action> onStartActions = new List<Action>();
+	public LTDescr addOnStart(Action action)
+	{
+		onCompleteActions.Add(action);
+		return this.setOnStart(() =>
+		{
+			foreach (Action onStartAction in onStartActions)
+			{
+				onStartAction();
+			}
+		});
+	}*/
+	#endregion
+
 	public bool toggle;
 	public bool useEstimatedTime;
 	public bool useFrames;
@@ -101,9 +136,11 @@ public class LTDescr
 		return (trans!=null ? "name:"+trans.gameObject.name : "gameObject:null")+" toggle:"+toggle+" passed:"+passed+" time:"+time+" delay:"+delay+" direction:"+direction+" from:"+from+" to:"+to+" diff:"+diff+" type:"+type+" ease:"+easeType+" useEstimatedTime:"+useEstimatedTime+" id:"+id+" hasInitiliazed:"+hasInitiliazed;
 	}
 
-	public LTDescr(){
+	public LTDescr()
+	{
 
 	}
+
 
 	[System.Obsolete("Use 'LeanTween.cancel( id )' instead")]
 	public LTDescr cancel( GameObject gameObject ){

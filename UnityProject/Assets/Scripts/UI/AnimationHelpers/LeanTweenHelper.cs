@@ -15,22 +15,22 @@ public class LeanTweenHelper : MonoBehaviour
         return (b - a) * t + a;
     }
     #region UIMove
-    public TweenAnimation UIMove(RectTransform rectTransform, Vector3 to, float time)
+    public LTDescr UIMove(RectTransform rectTransform, Vector3 to, float time)
     {
-        TweenAnimation leanTweenValue = TweenAnimator.value(0, 1, time);
+        LTDescr leanTweenValue = LeanTween.value(0, 1, time);
         leanTweenValue.AddOnStart(() =>
         {
             StartCoroutine(UIMoveCoroutine(leanTweenValue, rectTransform, to, time));
         });    
         return leanTweenValue;
     }
-    IEnumerator UIMoveCoroutine(TweenAnimation leanTweenValue, RectTransform rectTransform, Vector3 to, float time)
+    IEnumerator UIMoveCoroutine(LTDescr leanTweenValue, RectTransform rectTransform, Vector3 to, float time)
     {
         float elapsedTime = 0f;
         float tweeningValue = 0;
         leanTweenValue.setOnUpdate((float value) => tweeningValue = value);
         Vector3 originalPosition = rectTransform.position;
-        while (TweenAnimator.isTweening(leanTweenValue.id) && rectTransform != null && elapsedTime < time + leanTweenValue.delay + 2)
+        while (LeanTween.isTweening(leanTweenValue.id) && rectTransform != null && elapsedTime < time + leanTweenValue.delay + 2)
         {
             elapsedTime += Time.deltaTime;
             rectTransform.position = UnBoundedLerp(
@@ -49,7 +49,7 @@ public class LeanTweenHelper : MonoBehaviour
     #region UIMoveRelative
     public LTDescr UIMoveRelative(RectTransform rectTransform, Vector3 to, float time)
     {
-        LTDescr leanTweenValue = TweenAnimator.value(0, 1, time);
+        LTDescr leanTweenValue = LeanTween.value(0, 1, time);
         leanTweenValue.AddOnStart(() =>
         {
             StartCoroutine(UIMoveRelativeCoroutine(leanTweenValue, rectTransform, to, time));
@@ -63,7 +63,7 @@ public class LeanTweenHelper : MonoBehaviour
         float lastTweenValue = 0;
         leanTweenValue.setOnUpdate((float value) => tweeningValue = value);
         Vector3 originalPosition = rectTransform.position;
-        while (TweenAnimator.isTweening(leanTweenValue.id) && rectTransform != null && elapsedTime < time + leanTweenValue.delay + 2)
+        while (LeanTween.isTweening(leanTweenValue.id) && rectTransform != null && elapsedTime < time + leanTweenValue.delay + 2)
         {
             float deltaTween = tweeningValue - lastTweenValue;
             elapsedTime += Time.deltaTime;
@@ -77,7 +77,7 @@ public class LeanTweenHelper : MonoBehaviour
     #region OrbitAroundPoint
     public LTDescr OrbitAroundPoint(RectTransform rectTransform, Vector3 center, float radians, float time, float? startingRadians)
     {
-        LTDescr leanTweenValue = TweenAnimator.value(0, 1, time);
+        LTDescr leanTweenValue = LeanTween.value(0, 1, time);
         leanTweenValue.AddOnStart(() =>
         {
             StartCoroutine(OrbitCoroutine(leanTweenValue, rectTransform, center, radians, time, startingRadians));
@@ -112,7 +112,7 @@ public class LeanTweenHelper : MonoBehaviour
             startingRadiansAssigned = (float)startingRadians;
         }
         
-        while (TweenAnimator.isTweening(leanTweenValue.id) && rectTransform != null && elapsedTime < time + leanTweenValue.delay + 2)
+        while (LeanTween.isTweening(leanTweenValue.id) && rectTransform != null && elapsedTime < time + leanTweenValue.delay + 2)
         {
             radius = Vector3.Distance(rectTransform.position, center);
             elapsedTime += Time.deltaTime;
@@ -128,7 +128,7 @@ public class LeanTweenHelper : MonoBehaviour
     #region DynamicOrbitAroundPoint
     /// <summary>
     /// Orbits with a changing radius defined by radiusValueTween. 
-    /// Only pass in a TweenAnimator.value(...) tween into radiusValueTween.
+    /// Only pass in a LeanTween.value(...) tween into radiusValueTween.
     /// </summary>
     /// <param name="rectTransform"></param>
     /// <param name="center"></param>
@@ -138,7 +138,7 @@ public class LeanTweenHelper : MonoBehaviour
     /// <returns></returns>
     public LTDescr DynamicOrbitAroundPoint(RectTransform rectTransform, Vector3 center, LTDescr radiusValueTween, float radians, float time, float? startingRadians = null)
     {
-        LTDescr leanTweenValue = TweenAnimator.value(0, 1, time);
+        LTDescr leanTweenValue = LeanTween.value(0, 1, time);
         leanTweenValue.AddOnStart(() =>
         {
             StartCoroutine(DynamicOrbitCoroutine(leanTweenValue, rectTransform, center, radiusValueTween, radians, time, startingRadians));
@@ -174,7 +174,7 @@ public class LeanTweenHelper : MonoBehaviour
             startingRadiansAssigned = (float)startingRadians;
         }
 
-        while (TweenAnimator.isTweening(leanTweenValue.id) && rectTransform != null && elapsedTime < time + leanTweenValue.delay + 2)
+        while (LeanTween.isTweening(leanTweenValue.id) && rectTransform != null && elapsedTime < time + leanTweenValue.delay + 2)
         {
             elapsedTime += Time.deltaTime;
             float currentRadians = tweeningValue * radians + startingRadiansAssigned;
@@ -189,7 +189,7 @@ public class LeanTweenHelper : MonoBehaviour
     #region UIShake
     public LTDescr UIShake(RectTransform rectTransform, float magnitude, float rateOfChange, float time, float frequency = 10)
     {
-        LTDescr leanTweenValue = TweenAnimator.value(0, frequency * time, time);
+        LTDescr leanTweenValue = LeanTween.value(0, frequency * time, time);
         leanTweenValue.AddOnStart(() =>
         {
             StartCoroutine(UIShakeCoroutine(leanTweenValue, rectTransform, magnitude, rateOfChange, time));
@@ -209,7 +209,7 @@ public class LeanTweenHelper : MonoBehaviour
         float sin2ValY = Random.Range(0, 10);
         Vector2 distanceFromStart = Vector2.zero;
 
-        while (TweenAnimator.isTweening(leanTweenValue.id) && rectTransform != null && elapsedTime < time + leanTweenValue.delay + 2)
+        while (LeanTween.isTweening(leanTweenValue.id) && rectTransform != null && elapsedTime < time + leanTweenValue.delay + 2)
         {
             elapsedTime += Time.deltaTime;
             sin1ValX += Random.Range(-rateOfChange, rateOfChange);

@@ -14,18 +14,18 @@ public class ShowScoreDeltaAnimation : AnimationBase
         RectTransform textTransform = createdText.rectTransform;
         textTransform.localScale = Vector3.zero;
 
-        LTDescr iconScaleDown = TweenAnimator.scale(
+        LTDescr iconScaleDown = LeanTween.scale(
                     rectTrans: rect,
                     to: new Vector3(1.1f, 1.1f, 1.1f),
                     time: 0.2f);
-        LTDescr iconScaleUp = TweenAnimator.scale(
+        LTDescr iconScaleUp = LeanTween.scale(
                     rectTrans: rect,
                     to: new Vector3(1f, 1f, 1f),
                     time: 0.3f)
             .setEaseOutBack()
             .PlayAfter(iconScaleDown)
             .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.PlayPop });
-        LTDescr scaleTextUp = TweenAnimator.scale(
+        LTDescr scaleTextUp = LeanTween.scale(
                 rectTrans: textTransform,
                 to: Vector3.one,
                 time: 0.2f)
@@ -44,7 +44,7 @@ public class ShowScoreDeltaAnimation : AnimationBase
                 frequency: 0.7f,
                 time: 3f)
             .PlayAfter(moveTextUp);
-        LTDescr scaleTextDown = TweenAnimator.scale(
+        LTDescr scaleTextDown = LeanTween.scale(
                 rectTrans: textTransform,
                 to: Vector3.zero,
                 time: 0.2f)

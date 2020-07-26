@@ -22,13 +22,15 @@ public class AnimationManagerScript : MonoBehaviour
         DelayedStartCallbackGenerator(
             gameEvent: animation.startEvent,
             startAction: animation.StartAnimation,
-            persistant: animation.persistant);
+            persistant: animation.persistant,
+            oneShot: animation.oneShot);
 
         DelayedStopCallbackGenerator(
             animation: animation,
             gameEvent: animation.endEvent,
             stopAction: animation.EndAnimation,
-            persistant: animation.persistant);
+            persistant: animation.persistant,
+            oneShot: animation.oneShot);
     }
     public void SendAnimationWrapUp(float durration)
     {
@@ -60,17 +62,18 @@ public class AnimationManagerScript : MonoBehaviour
         }
         animations = animations.Where(animation => animation.persistant).ToList();
     }
-    private void DelayedStartCallbackGenerator(GameEvent gameEvent, Action<GameEvent> startAction, bool persistant)
+    private void DelayedStartCallbackGenerator(GameEvent gameEvent, Action<GameEvent> startAction, bool persistant, bool oneShot)
     {
         if (gameEvent.eventType != GameEvent.EventEnum.None)
         {
             EventSystem.Singleton.RegisterListener(
                 gameEvent: gameEvent,
                 listener: startAction,
-                persistant: persistant);
+                persistant: persistant,
+                oneShot: oneShot);
         }      
     }
-    private void DelayedStopCallbackGenerator(AnimationBase animation, GameEvent gameEvent, Action<GameEvent, float?> stopAction, bool persistant)
+    private void DelayedStopCallbackGenerator(AnimationBase animation, GameEvent gameEvent, Action<GameEvent, float?> stopAction, bool persistant, bool oneShot)
     {
         if (gameEvent.eventType != GameEvent.EventEnum.None)
         {
@@ -80,7 +83,8 @@ public class AnimationManagerScript : MonoBehaviour
             EventSystem.Singleton.RegisterListener(
                 gameEvent: gameEvent,
                 listener: listener,
-                persistant: persistant);
+                persistant: persistant,
+                oneShot: oneShot);
         }
     }
 }

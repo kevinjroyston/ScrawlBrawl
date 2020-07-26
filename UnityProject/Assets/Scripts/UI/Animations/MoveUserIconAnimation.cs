@@ -43,18 +43,18 @@ public class MoveUserIconAnimation : AnimationBase
         float speed = Vector2.Distance(markerRect.position, targetTangent) / 0.5f;
 
         #region tweens
-        LTDescr iconScaleDown = TweenAnimator.scale(
+        LTDescr iconScaleDown = LeanTween.scale(
                     rectTrans: rect,
                     to: new Vector3(1.1f, 1.1f, 1.1f),
                     time: 0.2f);
-        LTDescr iconScaleUp = TweenAnimator.scale(
+        LTDescr iconScaleUp = LeanTween.scale(
                     rectTrans: rect,
                     to: new Vector3(1f, 1f, 1f),
                     time: 0.3f)
             .setEaseOutBack()
             .PlayAfter(iconScaleDown)
             .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.PlayPop });
-        LTDescr markerScaleUp = TweenAnimator.scale(
+        LTDescr markerScaleUp = LeanTween.scale(
                 rectTrans: markerRect,
                 to: Vector3.one,
                 time: 0.3f)
@@ -72,7 +72,7 @@ public class MoveUserIconAnimation : AnimationBase
                 time: 0.5f)
             .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.VoteRevealBubbleMove })
             .PlayAfter(markerMoveUp, IconCountTotal * OrderOffset + 0.0f);
-        LTDescr markerScaleUpToTarget = TweenAnimator.scale(
+        LTDescr markerScaleUpToTarget = LeanTween.scale(
             rectTrans: markerRect,
             to: new Vector3(targetRadius / markerRadius * 0.5f, targetRadius / markerRadius * 0.5f, targetRadius / markerRadius * 0.5f),
             time: 0.5f)
@@ -80,7 +80,7 @@ public class MoveUserIconAnimation : AnimationBase
         LTDescr markerOrbit = LeanTweenHelper.Singleton.DynamicOrbitAroundPoint(
                 rectTransform: markerRect,
                 center: targetScoreRect.position,
-                radiusValueTween: TweenAnimator.value(targetRadius * 1.1f, targetRadius * 0.6f, 2).PlayAfter(markerMoveToTarget),
+                radiusValueTween: LeanTween.value(targetRadius * 1.1f, targetRadius * 0.6f, 2).PlayAfter(markerMoveToTarget),
                 radians: speed * (IconCountTotal * OrderOffset + 0.5f) * targetRadius * 1.1f,
                 time: (IconCountTotal * OrderOffset + 0.5f) * targetRadius * 1.1f)
             .PlayAfter(markerMoveToTarget);
@@ -90,12 +90,12 @@ public class MoveUserIconAnimation : AnimationBase
                 time: 0.4f)
             .setEaseOutBounce()
             .PlayAfter(markerOrbit);
-        LTDescr targetScaleUp = TweenAnimator.scale(
+        LTDescr targetScaleUp = LeanTween.scale(
                 rectTrans: targetScoreRect,
                 to: new Vector3(1.1f, 1.1f, 1.1f),
                 time: 0.5f)
             .PlayAfter(markerFall, -0.5f);
-        LTDescr targetScaleDown = TweenAnimator.scale(
+        LTDescr targetScaleDown = LeanTween.scale(
                     rectTrans: targetScoreRect,
                     to: new Vector3(1f, 1f, 1f),
                     time: 0.3f)

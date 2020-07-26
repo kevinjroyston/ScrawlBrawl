@@ -25,31 +25,38 @@ public class AudioController : MonoBehaviour
         EventSystem.Singleton.RegisterListener(
             listener: PlayStartDing,
             gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.EnteredState },
-            persistant: true);
+            persistant: true,
+            oneShot: false);
         EventSystem.Singleton.RegisterListener(
             listener: PlayTimer,
             gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.TenSecondsLeft },
-            persistant: true);
+            persistant: true,
+            oneShot: false);
         EventSystem.Singleton.RegisterListener(
             listener: StopTimer,
             gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.ExitingState },
-            persistant: true);
+            persistant: true,
+            oneShot: false);
         EventSystem.Singleton.RegisterListener(
             listener: PlayUserSubmit,
             gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.UserSubmitted },
-            persistant: true);
+            persistant: true,
+            oneShot: false);
         EventSystem.Singleton.RegisterListener(
             listener: PlayWoosh,
             gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.VoteRevealBubbleMove },
-            persistant: true);
+            persistant: true,
+            oneShot: false);
         EventSystem.Singleton.RegisterListener(
             listener: PlayPop,
             gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.PlayPop },
-            persistant: true);
+            persistant: true,
+            oneShot: false);
         EventSystem.Singleton.RegisterListener(
             listener: PlayDrumRoll,
             gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.PlayDrumRoll },
-            persistant: true);
+            persistant: true,
+            oneShot: false);
     }
 
     public void PlayStartDing(GameEvent gameEvent = null)
@@ -105,7 +112,7 @@ public class AudioController : MonoBehaviour
     {
         if (audioSource != null && drumRollClip != null)
         {
-            audioSource.PlayOneShot(drumRollClip, 0.5f);
+            audioSource.PlayOneShot(drumRollClip, 0.2f);
         }
     }
 

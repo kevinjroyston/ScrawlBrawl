@@ -13,11 +13,11 @@ public class RevealImageAnimation : AnimationBase
     public override List<LTDescr> Animate(GameEvent gameEvent)
     {
         List<LTDescr> animations = new List<LTDescr>();
-        LTDescr scaleUp = TweenAnimator.scale(
+        LTDescr scaleUp = LeanTween.scale(
                      rectTrans: rect,
                      to: new Vector3(1.1f, 1.1f, 1.1f),
                      time: 0.1f);
-        LTDescr scaleDown = TweenAnimator.scale(
+        LTDescr scaleDown = LeanTween.scale(
                     rectTrans: rect,
                     to: new Vector3(1f, 1f, 1f),
                     time: 0.2f)
@@ -28,7 +28,7 @@ public class RevealImageAnimation : AnimationBase
         animations.Add(scaleDown);
         if (Background != null)
         {
-            LTDescr backgroundChange = TweenAnimator.color(
+            LTDescr backgroundChange = LeanTween.color(
                 rectTrans: Background.rectTransform,
                 to: backgroundRevealColor,
                 time: 0.1f);
@@ -36,7 +36,7 @@ public class RevealImageAnimation : AnimationBase
         }
         if (Title != null)
         {
-            LTDescr titleChange = TweenAnimator.textColor(
+            LTDescr titleChange = LeanTween.textColor(
                 rectTransform: Title.rectTransform,
                 to: textRevealColor,
                 time: 0.1f);

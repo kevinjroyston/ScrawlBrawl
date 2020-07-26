@@ -12,7 +12,7 @@ public class ScoreIncreaseManager : MonoBehaviour
     {
         if (user != null)
         {
-            EventSystem.Singleton.RegisterListener(IncreaseScore, new GameEvent() { eventType = GameEvent.EventEnum.IncreaseScore, id = user.UserId.ToString() });
+            EventSystem.Singleton.RegisterListener(IncreaseScore, new GameEvent() { eventType = GameEvent.EventEnum.IncreaseScore, id = user.UserId.ToString() }, oneShot: false);
         }
     }
         

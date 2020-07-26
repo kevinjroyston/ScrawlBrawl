@@ -124,7 +124,7 @@ public class GenericView : ITVView
 
         if(BlurCamera?.GetComponent<BlurController>() != null)
         {
-            if (UnityView._Options != null && UnityView._Options._BlurAnimate != null)
+            if (UnityView?._Options != null && UnityView?._Options._BlurAnimate != null)
             {
                 BlurCamera.GetComponent<BlurController>().UpdateBlur(
                     startValue: UnityView._Options._BlurAnimate._StartValue,

@@ -8750,6 +8750,7 @@ MonoBehaviour:
   endDurration: 0.4
   registerOnEnable: 1
   persistant: 1
+  oneShot: 0
 --- !u!114 &1999920792
 MonoBehaviour:
   m_ObjectHideFlags: 0

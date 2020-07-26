@@ -8,33 +8,27 @@ public static class AnimationHelpers
 {
     public static LTDescr AddOnComplete(this LTDescr animation, Action action)
     {
-        EventSystem.Singleton.RegisterListener(
-            listener: (GameEvent gameEvent) =>
-            {
-                action();
-            }, 
-            gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.AnimationCompleted, id = Math.Abs(animation.id).ToString() },
-            persistant: true);
+        EventSystem.Singleton.RegisterListener((GameEvent gameEvent)=> action(), new GameEvent() { eventType = GameEvent.EventEnum.AnimationCompleted, id = animation.guid.ToString() });
         return animation.setOnComplete(() =>
         {
-            EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.AnimationCompleted, id = Math.Abs(animation.id).ToString() });
+            EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.AnimationCompleted, id = animation.guid.ToString() });
         });
     }
     public static LTDescr AddOnStart(this LTDescr animation, Action action)
     {
-        EventSystem.Singleton.RegisterListener((GameEvent gameEvent) => action(), new GameEvent() { eventType = GameEvent.EventEnum.AnimationStarted, id = animation.id.ToString() });
-        return animation.setOnStart(() =>
+        EventSystem.Singleton.RegisterListener((GameEvent gameEvent) => action(), new GameEvent() { eventType = GameEvent.EventEnum.AnimationStarted, id = animation.guid.ToString() });
+        return animation.setOnComplete(() =>
         {
-            EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.AnimationStarted, id = animation.id.ToString() });
+            EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.AnimationStarted, id = animation.guid.ToString() });
         });
     }
-    public static LTDescr SetCallEventOnComplete(this LTDescr animation, GameEvent gameEvent)
+    public static LTDescr SetCallEventOnComplete(this LTDescr animation, GameEvent gameEvent, bool allowDuplicates = true)
     {
-        return animation.AddOnComplete(() => EventSystem.Singleton.PublishEvent(gameEvent));
+        return animation.AddOnComplete(() => EventSystem.Singleton.PublishEvent(gameEvent, allowDuplicates));
     }
-    public static LTDescr SetCallEventOnStart(this LTDescr animation, GameEvent gameEvent)
+    public static LTDescr SetCallEventOnStart(this LTDescr animation, GameEvent gameEvent, bool allowDuplicates = true)
     {
-        return animation.AddOnStart(() => EventSystem.Singleton.PublishEvent(gameEvent));
+        return animation.AddOnStart(() => EventSystem.Singleton.PublishEvent(gameEvent, allowDuplicates));
     }
     public static LTDescr PlayAfter(this LTDescr animation2, LTDescr animation1, float offset = 0f)
     {

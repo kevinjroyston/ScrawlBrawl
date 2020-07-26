@@ -18,6 +18,7 @@ public abstract class AnimationBase: MonoBehaviour
     private bool missedRegistation = false;
     public User relevantUser;
     public bool persistant = false;
+    public bool oneShot = true;
     List<LTDescr> animations = new List<LTDescr>();
     private bool started = false;
     public virtual void Awake()
@@ -61,7 +62,7 @@ public abstract class AnimationBase: MonoBehaviour
         {
             anim.AddOnComplete(() =>
             {
-                if (animations.Where((LTDescr anim2) => TweenAnimator.isTweening(anim2.id)).Count() == 0)
+                if (animations.Where((LTDescr anim2) => LeanTween.isTweening(anim2.id)).Count() == 0)
                 {
                     started = false;
                 }
@@ -77,7 +78,7 @@ public abstract class AnimationBase: MonoBehaviour
         {
             Action checkForFinished = () =>
             {
-                if (animations.Where((LTDescr anim2) => TweenAnimator.isTweening(anim2.id)).Count() == 0)
+                if (animations.Where((LTDescr anim2) => LeanTween.isTweening(anim2.id)).Count() == 0)
                 {
                     started = false;
                 }
@@ -91,7 +92,7 @@ public abstract class AnimationBase: MonoBehaviour
     {
         foreach (LTDescr anim in animations)
         {
-            TweenAnimator.cancel(anim.id);
+            LeanTween.cancel(anim.id);
         }
         return new List<LTDescr>();
     }

@@ -8,11 +8,11 @@ public class ScaleInAnimation : AnimationBase
     {
         return new List<LTDescr>()
         {
-            TweenAnimator.scale(
+            LeanTween.scale(
                     rectTrans: rect,
                     to: Vector3.zero,
                     time: 0f),
-            TweenAnimator.scale(
+            LeanTween.scale(
                     rectTrans: rect,
                     to: new Vector3(1f,1f,1f),
                     time: 0.5f).setDelay(0f).setEaseOutBack()

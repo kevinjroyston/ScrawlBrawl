@@ -403,6 +403,7 @@ MonoBehaviour:
   endDurration: 0
   registerOnEnable: 1
   persistant: 0
+  oneShot: 1
 --- !u!114 &2867806224292541402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -421,10 +422,11 @@ MonoBehaviour:
   endEvent:
     eventType: 0
     id: 
-  startDelay: 3.7
+  startDelay: 0
   endDurration: 0
   registerOnEnable: 0
   persistant: 0
+  oneShot: 1
   backgroundRevealColor: {r: 0.61923724, g: 1, b: 0.5801887, a: 0.6666667}
   textRevealColor: {r: 0, g: 0.6037736, b: 0, a: 1}
   Background: {fileID: 4689843705774137828}
@@ -451,6 +453,7 @@ MonoBehaviour:
   endDurration: 0
   registerOnEnable: 1
   persistant: 0
+  oneShot: 1
 --- !u!1 &1260170741602024387
 GameObject:
   m_ObjectHideFlags: 0
