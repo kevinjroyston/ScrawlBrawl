@@ -21,7 +21,7 @@ export class DrawingBoard implements ControlValueAccessor {
     onChange;
     selectedColor: string;
     selectedBrushSize: number = 15;
-    drawingOptionsCollapse: boolean = true;
+    drawingOptionsCollapse: boolean = false;
     eraserMode: boolean = false; // Todo make brush-mode enum + group brush options into one object
 
     ngOnInit() {
