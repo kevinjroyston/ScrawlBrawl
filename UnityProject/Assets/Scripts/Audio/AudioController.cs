@@ -112,7 +112,7 @@ public class AudioController : MonoBehaviour
     {
         if (audioSource != null && drumRollClip != null)
         {
-            audioSource.PlayOneShot(drumRollClip, 0.2f);
+            audioSource.PlayOneShot(drumRollClip, 0.4f);
         }
     }
 

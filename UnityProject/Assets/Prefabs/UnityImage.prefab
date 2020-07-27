@@ -399,7 +399,7 @@ MonoBehaviour:
   endEvent:
     eventType: 0
     id: 
-  startDelay: 0.5
+  startDelay: 0
   endDurration: 0
   registerOnEnable: 1
   persistant: 0
