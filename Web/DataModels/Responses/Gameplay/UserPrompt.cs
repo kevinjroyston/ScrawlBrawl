@@ -15,6 +15,16 @@ namespace RoystonGame.Web.DataModels.Responses
         public int RefreshTimeInMs { get; set; } = 5000;
 
         /// <summary>
+        /// The current server time.
+        /// </summary>
+        public DateTime CurrentServerTime { get { return DateTime.UtcNow; } }
+
+        /// <summary>
+        /// The current server time.
+        /// </summary>
+        public DateTime? AutoSubmitAtTime { get; set; } = null;
+
+        /// <summary>
         /// Bool indicating whether to render the Submit button.
         /// </summary>
         public bool SubmitButton { get; set; }

@@ -32,7 +32,6 @@ namespace RoystonGame.Web.DataModels.UnityObjects
             modified |= this.Users?.Refresh() ?? false;
             modified |= this.Title?.Refresh() ?? false;
             modified |= this.Instructions?.Refresh() ?? false;
-            // TODO: below 2 lines might be causing excess updates
             modified |= this.UnityImages?.Refresh() ?? false;
             modified |= this.UnityImages?.Value?.Select(image => image?.Refresh() ?? false).ToList().Any(val => val) ?? false;
             return modified;
@@ -52,11 +51,9 @@ namespace RoystonGame.Web.DataModels.UnityObjects
 
         public DateTime ServerTime { get { return DateTime.UtcNow; } }
 
-
-        // TODO: this is pretty inefficient to be run as frequently as this gets run.
         public DateTime? _StateEndTime
         {
-            get => this.Lobby?.GetAllUsers().SelectMany(user => user.StateStack).Select(state => state.ApproximateStateEndTime).Append(this.Lobby.GetCurrentGameState().ApproximateStateEndTime).Min();
+            get => this.Lobby?.GetAllUsers().Select(user => user.EarliestStateTimeout).Append(this.Lobby.GetCurrentGameState().ApproximateStateEndTime).Min();
         }
 
         [Newtonsoft.Json.JsonIgnore]

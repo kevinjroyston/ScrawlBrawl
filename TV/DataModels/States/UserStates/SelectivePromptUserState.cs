@@ -25,7 +25,7 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             StateEntrance entrance = null,
             StateExit exit = null,
             TimeSpan? maxPromptDuration = null,
-            Func<User, UserTimeoutAction> userTimeoutHandler = null)
+            Func<User, UserFormSubmission, UserTimeoutAction> userTimeoutHandler = null)
             : base(
                   promptGenerator: promptGenerator,
                   formSubmitHandler: formSubmitHandler,

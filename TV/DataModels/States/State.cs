@@ -90,7 +90,7 @@ namespace RoystonGame.TV.DataModels
                     this.ApproximateStateEndTime = DateTime.UtcNow.Add(this.StateTimeoutDuration.Value);
 
                     // Total state timeout timer duration.
-                    int millisecondsDelay = (int)this.StateTimeoutDuration.Value.TotalMilliseconds;
+                    int millisecondsDelay = (int)this.StateTimeoutDuration.Value.Add(Constants.AutoSubmitBuffer).TotalMilliseconds;
 
                     // Start the timeout thread.
                     _ = TimeoutFunc(millisecondsDelay);
@@ -147,9 +147,15 @@ namespace RoystonGame.TV.DataModels
                     // Kick all the users into motion so they can hurry through the states.
                     if (user.Status == UserStatus.AnsweringPrompts)
                     {
-                        user.UserState.HandleUserTimeout(user);
+                        user.UserState.HandleUserTimeout(user, new UserFormSubmission());
                     }
                 }
+            }
+
+            // Hacky: If the attached StateExit is specifically a "WaitForStateTimeoutDuration_StateExit", invoke it here.
+            if (this.Exit is WaitForStateTimeoutDuration_StateExit)
+            {
+                ((WaitForStateTimeoutDuration_StateExit)this.Exit).Trigger();
             }
         }
     }

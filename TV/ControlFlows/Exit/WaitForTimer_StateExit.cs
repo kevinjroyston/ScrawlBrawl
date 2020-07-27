@@ -16,9 +16,11 @@ namespace RoystonGame.TV.ControlFlows.Exit
         private Task delayTriggerTask { get; set; }
 
         /// <summary>
-        /// Initializes a new <see cref="WaitForTrigger"/>.
+        /// This class adds a delay, but does not force users to hurry up when the delay expires. It also does not show the timer
+        /// on the Unity client!
+        ///
+        /// If for a GameState: You are likely looking for <see cref="WaitForStateTimeoutDuration_StateExit"/> :).
         /// </summary>
-        /// <param name="usersToWaitFor">Function returning users to wait for, null indicates to use all currently registered users upon first caller. Called ONCE when first user hits waiting state.</param>
         /// <param name="waitingPromptGenerator">The waiting state to use while waiting for the trigger. The outlet of this state will be overwritten</param>
         public WaitForTimer_StateExit(
             TimeSpan? delay,

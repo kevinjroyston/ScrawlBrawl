@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Net;
 
 using static System.FormattableString;
@@ -25,7 +26,7 @@ namespace RoystonGame.TV.DataModels.Users
         /// <summary>
         /// Used for monitoring user age.
         /// </summary>
-        public DateTime CreationTime { get; } = DateTime.Now;
+        public DateTime CreationTime { get; } = DateTime.UtcNow;
 
         /// <summary>
         /// If populated, contains the user's authenticated username.
@@ -58,13 +59,13 @@ namespace RoystonGame.TV.DataModels.Users
         public int ScoreChange { get; private set; } = 0;
 
         /// <summary>
-        /// Gets the activity level of the user by looking at their <see cref="LastHeardFromTime"/>.
+        /// Gets the activity level of the user by looking at their <see cref="LastPingTime"/>.
         /// </summary>
         public UserActivity Activity 
         {
             get
             {
-                return (DateTime.UtcNow.Subtract(this.LastHeardFrom) < Constants.UserInactivityTimer) ? UserActivity.Active : UserActivity.Inactive;
+                return (DateTime.UtcNow.Subtract(this.LastPingTime) < Constants.UserInactivityTimer) ? UserActivity.Active : UserActivity.Inactive;
             }
         }
 
@@ -74,11 +75,18 @@ namespace RoystonGame.TV.DataModels.Users
         public UserStatus Status { get; set; }
 
         /// <summary>
+        /// Gets the earliest timer the user is under the influence of.
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public DateTime? EarliestStateTimeout { get; private set; }
+
+        /// <summary>
         /// Lock used for ensuring only one User form submission is being processed at a time.
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public object LockObject { get; set; } = new object();
+        public object LockObject { get; private set; } = new object();
 
         /// <summary>
         /// User identifier is 50 character random hex string generated and stored client-side.
@@ -92,18 +100,26 @@ namespace RoystonGame.TV.DataModels.Users
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public List<State> StatesTellingMeToHurry { get; set; } = new List<State>();
+        public List<State> StatesTellingMeToHurry { get; private set; } = new List<State>();
 
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public ConcurrentStack<State> StateStack { get; set; } = new ConcurrentStack<State>();
+        public ConcurrentStack<State> StateStack { get; private set; } = new ConcurrentStack<State>();
 
         /// <summary>
         /// The last time the user called any API.
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public DateTime LastHeardFrom { get; set; } = DateTime.UtcNow;
+        public DateTime LastPingTime { get; set; } = DateTime.UtcNow;
+
+        /// <summary>
+        /// The last time we saw a user submission.
+        /// </summary>
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public DateTime LastSubmitTime { get; set; } = DateTime.UtcNow;
 
         public User (string userId)
         {
@@ -117,6 +133,7 @@ namespace RoystonGame.TV.DataModels.Users
         public void TransitionUserState(UserState newState)
         {
             this.UserState = newState;
+            this.EarliestStateTimeout = this.StateStack.Select(state => state.ApproximateStateEndTime).Min();
         }
 
         public int GetIAccessorHashCode()
