@@ -27,3 +27,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   height: auto;
   max-width: calc(50% * (var(--n) / 100))
 }
+
+.color-box {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  background-color: #ccc;
+  position: relative;
+  top: 5px;
+}

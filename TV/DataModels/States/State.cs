@@ -44,7 +44,7 @@ namespace RoystonGame.TV.DataModels
 
         public State(TimeSpan? stateTimeoutDuration, StateEntrance entrance, StateExit exit) : base(stateExit: exit)
         {
-            this.StateTimeoutDuration = stateTimeoutDuration?.Add(Constants.AutoSubmitBuffer);
+            this.StateTimeoutDuration = stateTimeoutDuration;
             this.Entrance = entrance ?? new StateEntrance();
 
             this.Entrance.AddPerUserExitListener((User user) =>
@@ -90,7 +90,7 @@ namespace RoystonGame.TV.DataModels
                     this.ApproximateStateEndTime = DateTime.UtcNow.Add(this.StateTimeoutDuration.Value);
 
                     // Total state timeout timer duration.
-                    int millisecondsDelay = (int)this.StateTimeoutDuration.Value.TotalMilliseconds;
+                    int millisecondsDelay = (int)this.StateTimeoutDuration.Value.Add(Constants.AutoSubmitBuffer).TotalMilliseconds;
 
                     // Start the timeout thread.
                     _ = TimeoutFunc(millisecondsDelay);

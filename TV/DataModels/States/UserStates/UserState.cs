@@ -160,7 +160,7 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             {
                 userInput.SubForms = null;
                 error = "";
-                return CleanUserFormInputResult.Invalid;
+                return CleanUserFormInputResult.Valid;
             }
 
             if (userInput?.SubForms == null || (userPrompt.SubPrompts.Length != userInput.SubForms.Count))
@@ -204,7 +204,7 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             UserPromptHolder userPrompt = GetUserPromptHolder(user);
 
             // Set the Auto submit datetime
-            userPrompt.Prompt.AutoSubmitAtTime = user.EarliestStateTimeout?.Subtract(Constants.AutoSubmitBuffer);
+            userPrompt.Prompt.AutoSubmitAtTime = user.EarliestStateTimeout;
 
             // Refresh at the normal cadence unless the DontRefreshLaterThan time is coming up.
             if (this.DontRefreshLaterThan.HasValue)
