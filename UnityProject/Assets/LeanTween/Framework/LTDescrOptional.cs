@@ -6,7 +6,11 @@ using System.Collections.Generic;
 
 public class LTDescrOptional  {
 
-	public Transform toTrans { get; set; }
+	#region Modifications
+	public List<Action> onCompletesList { get; set; } = new List<Action>();
+	public List<Action> onStartsList { get; set; } = new List<Action>();
+    #endregion
+    public Transform toTrans { get; set; }
 	public Vector3 point { get; set; }
 	public Vector3 axis { get; set; }
     public float lastVal{ get; set; }
@@ -52,6 +56,8 @@ public class LTDescrOptional  {
 	public void reset(){
 		animationCurve = null;
 
+		this.onCompletesList = new List<Action>(); // [RoystonGame] added
+		this.onStartsList = new List<Action>(); // [RoystonGame] added
 		this.onUpdateFloat = null;
 		this.onUpdateFloatRatio = null;
 		this.onUpdateVector2 = null;
@@ -82,6 +88,24 @@ public class LTDescrOptional  {
 			this.onUpdateVector3(LTDescr.newVect);
 		}else if(this.onUpdateVector2!=null){
 			this.onUpdateVector2(new Vector2(LTDescr.newVect.x,LTDescr.newVect.y));
+		}
+	}
+
+	// [RoystonGame] added new function to call on completes
+	public void callOnCompletesInList()
+    {
+		foreach (Action onComplete in onCompletesList)
+        {
+			onComplete();
+        }
+    }
+
+	// [RoystonGame] added new function to call on starts
+	public void callOnStartsInList()
+	{
+		foreach (Action onStart in onStartsList)
+		{
+			onStart();
 		}
 	}
 }

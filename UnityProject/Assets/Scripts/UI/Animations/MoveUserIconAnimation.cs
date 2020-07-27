@@ -31,6 +31,8 @@ public class MoveUserIconAnimation : AnimationBase
         float r = targetRadius * 1.1f;
         float x = rect.position.x;
         float y = rect.position.y + 1;
+
+        //Todo fix tangent calculation
         float tangentY = (2 * r * r * y + Mathf.Sqrt(4 * r * r * r * r * y * y  - 4 * (x * x + y * y) * (r * r * r * r - x * x * r * r))) / (2 * (x * x + y * y));
         float tangentX = Mathf.Sqrt(r * r - tangentY * tangentY);
 
@@ -101,12 +103,12 @@ public class MoveUserIconAnimation : AnimationBase
                     time: 0.3f)
             .setEaseOutBack()
             .PlayAfter(targetScaleUp)
-            .AddOnStart(() => Destroy(createdMarker))
+            .addOnStart(() => Destroy(createdMarker))
             .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.PlayPop })
             .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.IncreaseScore, id = targetId });
         if (IconOrder == IconCountTotal)
         {
-            targetScaleDown.SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.ShakeRevealImages });
+            targetScaleDown.SetCallEventOnComplete(new GameEvent() { eventType = GameEvent.EventEnum.ShakeRevealImages });
         }
 
 

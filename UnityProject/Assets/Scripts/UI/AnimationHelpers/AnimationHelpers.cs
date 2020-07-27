@@ -6,7 +6,7 @@ using UnityEngine;
 
 public static class AnimationHelpers
 {
-    public static LTDescr AddOnComplete(this LTDescr animation, Action action)
+    /*public static LTDescr AddOnComplete(this LTDescr animation, Action action)
     {
         EventSystem.Singleton.RegisterListener((GameEvent gameEvent)=> action(), new GameEvent() { eventType = GameEvent.EventEnum.AnimationCompleted, id = animation.guid.ToString() });
         return animation.setOnComplete(() =>
@@ -21,14 +21,20 @@ public static class AnimationHelpers
         {
             EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.AnimationStarted, id = animation.guid.ToString() });
         });
-    }
+    }*/
     public static LTDescr SetCallEventOnComplete(this LTDescr animation, GameEvent gameEvent, bool allowDuplicates = true)
     {
-        return animation.AddOnComplete(() => EventSystem.Singleton.PublishEvent(gameEvent, allowDuplicates));
+        return animation.addOnComplete(() =>
+        {
+            EventSystem.Singleton.PublishEvent(gameEvent, allowDuplicates);
+        });
     }
     public static LTDescr SetCallEventOnStart(this LTDescr animation, GameEvent gameEvent, bool allowDuplicates = true)
     {
-        return animation.AddOnStart(() => EventSystem.Singleton.PublishEvent(gameEvent, allowDuplicates));
+        return animation.addOnStart(() =>
+        {
+            EventSystem.Singleton.PublishEvent(gameEvent, allowDuplicates);
+        });
     }
     public static LTDescr PlayAfter(this LTDescr animation2, LTDescr animation1, float offset = 0f)
     {

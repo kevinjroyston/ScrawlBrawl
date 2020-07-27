@@ -284,6 +284,7 @@ MonoBehaviour:
   endDurration: 0
   registerOnEnable: 0
   persistant: 0
+  oneShot: 1
   ScoreProjectilePrefab: {fileID: 4907439955422424169, guid: 5cc8fcf8650a6b94eafcbfc9e0364879,
     type: 3}
 --- !u!114 &359703546244937976
@@ -308,6 +309,7 @@ MonoBehaviour:
   endDurration: 0
   registerOnEnable: 0
   persistant: 0
+  oneShot: 0
   scoreDeltaTextPrefab: {fileID: 3580659679997914763, guid: a64b19dfe96bd8749936be3f0a3c518f,
     type: 3}
 --- !u!1 &5392144856759429275

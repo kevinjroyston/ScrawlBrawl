@@ -18,7 +18,7 @@ public class LeanTweenHelper : MonoBehaviour
     public LTDescr UIMove(RectTransform rectTransform, Vector3 to, float time)
     {
         LTDescr leanTweenValue = LeanTween.value(0, 1, time);
-        leanTweenValue.AddOnStart(() =>
+        leanTweenValue.addOnStart(() =>
         {
             StartCoroutine(UIMoveCoroutine(leanTweenValue, rectTransform, to, time));
         });    
@@ -30,6 +30,8 @@ public class LeanTweenHelper : MonoBehaviour
         float tweeningValue = 0;
         leanTweenValue.setOnUpdate((float value) => tweeningValue = value);
         Vector3 originalPosition = rectTransform.position;
+        bool isTweening = LeanTween.isTweening(leanTweenValue.id);
+        bool isFinished = leanTweenValue.isFinished;
         while (LeanTween.isTweening(leanTweenValue.id) && rectTransform != null && elapsedTime < time + leanTweenValue.delay + 2)
         {
             elapsedTime += Time.deltaTime;
@@ -50,7 +52,7 @@ public class LeanTweenHelper : MonoBehaviour
     public LTDescr UIMoveRelative(RectTransform rectTransform, Vector3 to, float time)
     {
         LTDescr leanTweenValue = LeanTween.value(0, 1, time);
-        leanTweenValue.AddOnStart(() =>
+        leanTweenValue.addOnStart(() =>
         {
             StartCoroutine(UIMoveRelativeCoroutine(leanTweenValue, rectTransform, to, time));
         });
@@ -78,7 +80,7 @@ public class LeanTweenHelper : MonoBehaviour
     public LTDescr OrbitAroundPoint(RectTransform rectTransform, Vector3 center, float radians, float time, float? startingRadians)
     {
         LTDescr leanTweenValue = LeanTween.value(0, 1, time);
-        leanTweenValue.AddOnStart(() =>
+        leanTweenValue.addOnStart(() =>
         {
             StartCoroutine(OrbitCoroutine(leanTweenValue, rectTransform, center, radians, time, startingRadians));
         });
@@ -139,7 +141,7 @@ public class LeanTweenHelper : MonoBehaviour
     public LTDescr DynamicOrbitAroundPoint(RectTransform rectTransform, Vector3 center, LTDescr radiusValueTween, float radians, float time, float? startingRadians = null)
     {
         LTDescr leanTweenValue = LeanTween.value(0, 1, time);
-        leanTweenValue.AddOnStart(() =>
+        leanTweenValue.addOnStart(() =>
         {
             StartCoroutine(DynamicOrbitCoroutine(leanTweenValue, rectTransform, center, radiusValueTween, radians, time, startingRadians));
         });
@@ -190,7 +192,7 @@ public class LeanTweenHelper : MonoBehaviour
     public LTDescr UIShake(RectTransform rectTransform, float magnitude, float rateOfChange, float time, float frequency = 10)
     {
         LTDescr leanTweenValue = LeanTween.value(0, frequency * time, time);
-        leanTweenValue.AddOnStart(() =>
+        leanTweenValue.addOnStart(() =>
         {
             StartCoroutine(UIShakeCoroutine(leanTweenValue, rectTransform, magnitude, rateOfChange, time));
         });

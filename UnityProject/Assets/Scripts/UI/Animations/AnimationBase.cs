@@ -60,7 +60,7 @@ public abstract class AnimationBase: MonoBehaviour
         animations = Animate(gameEvent);
         foreach (LTDescr anim in animations)
         {
-            anim.AddOnComplete(() =>
+            anim.addOnComplete(() =>
             {
                 if (animations.Where((LTDescr anim2) => LeanTween.isTweening(anim2.id)).Count() == 0)
                 {
@@ -83,7 +83,7 @@ public abstract class AnimationBase: MonoBehaviour
                     started = false;
                 }
             };
-            anim.AddOnComplete(checkForFinished);
+            anim.addOnComplete(checkForFinished);
         }
     }
 

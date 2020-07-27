@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class ShowScoreDeltaAnimation : AnimationBase
 {
     public Text scoreDeltaTextPrefab;
-    private string scoreDelta = "";
+    private string scoreDelta = "+0";
     public override List<LTDescr> Animate(GameEvent gameEvent)
     {
         Text createdText = Instantiate(scoreDeltaTextPrefab, rect);
@@ -33,7 +33,7 @@ public class ShowScoreDeltaAnimation : AnimationBase
             .PlayAfter(iconScaleDown);
         LTDescr moveTextUp = LeanTweenHelper.Singleton.UIMoveRelative(
                 rectTransform: textTransform,
-                to: new Vector3(0, 2, 0),
+                to: new Vector3(0, 1.5f, 0),
                 time: 0.2f)
             .setEaseOutBack()
             .PlayAfter(iconScaleDown);
@@ -72,7 +72,7 @@ public class ShowScoreDeltaAnimation : AnimationBase
     public void AssignUserAndRegister(User relevantUser)
     {
         scoreDelta = "+" + relevantUser.ScoreDeltaReveal;
-        startEvent.id = relevantUser.UserId.ToString();
+        //startEvent.id = relevantUser.UserId.ToString();
         CallRegisterForAnimation();    
     }
 }

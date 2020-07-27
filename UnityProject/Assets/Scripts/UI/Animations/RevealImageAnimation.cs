@@ -23,7 +23,7 @@ public class RevealImageAnimation : AnimationBase
                     time: 0.2f)
             .setEaseOutBack()
             .PlayAfter(scaleUp)
-            .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.ShowDeltaScores});
+            .SetCallEventOnComplete(new GameEvent() { eventType = GameEvent.EventEnum.ShowDeltaScores});
         animations.Add(scaleUp);
         animations.Add(scaleDown);
         if (Background != null)

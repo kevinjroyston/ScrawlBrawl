@@ -513,8 +513,14 @@ public class LeanTween : MonoBehaviour {
         for (int i = 0; i <= tweenMaxSearch; i++)
         {
             if (tweens[i].trans != null){
-                if (callComplete && tweens[i].optional.onComplete != null)
+                if (callComplete)//modified to use multiple onComplete actions
+                {
+                    tweens[i].optional.callOnCompletesInList();
+                }
+                if (callComplete && tweens[i].optional.onComplete != null) 
+                {
                     tweens[i].optional.onComplete();
+                }      
                 removeTween(i);
             }
         }
@@ -538,6 +544,10 @@ public class LeanTween : MonoBehaviour {
         for(int i = 0; i <= tweenMaxSearch; i++){
             LTDescr tween = tweens[i];
             if(tween!=null && tween.toggle && tween.trans==trans){
+                if (callOnComplete)
+                {
+                    tween.optional.callOnCompletesInList();
+                }
                 if (callOnComplete && tween.optional.onComplete != null)
                     tween.optional.onComplete();
                 removeTween(i);
@@ -567,6 +577,10 @@ public class LeanTween : MonoBehaviour {
             int backCounter = uniqueId >> 16;
                 // Debug.Log("uniqueId:"+uniqueId+ " id:"+backId +" counter:"+backCounter + " setCounter:"+ tw     eens[backId].counter + " tweens[id].type:"+tweens[backId].type);
             if(tweens[backId].trans==null || (tweens[backId].trans.gameObject == gameObject && tweens[backId].counter==backCounter)) {
+                if(callOnComplete)//modified to use multiple onComplete actions
+                {
+                    tweens[backId].callOnCompletes();
+                }
                 if (callOnComplete && tweens[backId].optional.onComplete != null)
                     tweens[backId].optional.onComplete();
                 removeTween((int)backId);
@@ -620,6 +634,10 @@ public class LeanTween : MonoBehaviour {
             } else { // tween
                 // Debug.Log("uniqueId:"+uniqueId+ " id:"+backId +" action:"+(TweenAction)backType + " tweens[id].type:"+tweens[backId].type);
                 if (tweens[backId].counter == backCounter) {
+                    if (callOnComplete)//modified to use multiple onComplete actions
+                    {
+                        tweens[backId].optional.callOnCompletesInList();
+                    }
                     if (callOnComplete && tweens[backId].optional.onComplete != null)
                         tweens[backId].optional.onComplete();
                     removeTween((int)backId);

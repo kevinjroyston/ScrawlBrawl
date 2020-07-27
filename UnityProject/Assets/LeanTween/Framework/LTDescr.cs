@@ -1,6 +1,6 @@
 //namespace DentedPixel{
-//using Boo.Lang;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /**
@@ -35,36 +35,24 @@ public class LTDescr
 {
 	#region Modifications
 	public Guid guid = Guid.NewGuid();
-	/*public bool isFinished = false;
+	public bool isFinished = false;
 	public LTDescr()
 	{
 		addOnComplete(() => isFinished = true);
 	}
-
-	private List<Action> onCompleteActions = new List<Action>();
 	public LTDescr addOnComplete(Action action)
     {
-		onCompleteActions.Add(action);
-		return this.setOnComplete(() =>
-		{
-			foreach (Action onCompleteAction in onCompleteActions)
-            {
-				onCompleteAction();
-            }
-		});
+		this._optional.onCompletesList.Add(action);
+		this.hasExtraOnCompletes = true;
+		return this;
+
     }
-	private List<Action> onStartActions = new List<Action>();
 	public LTDescr addOnStart(Action action)
 	{
-		onCompleteActions.Add(action);
-		return this.setOnStart(() =>
-		{
-			foreach (Action onStartAction in onStartActions)
-			{
-				onStartAction();
-			}
-		});
-	}*/
+		this._optional.onStartsList.Add(action);
+		return this;
+
+	}
 	#endregion
 
 	public bool toggle;
@@ -136,10 +124,10 @@ public class LTDescr
 		return (trans!=null ? "name:"+trans.gameObject.name : "gameObject:null")+" toggle:"+toggle+" passed:"+passed+" time:"+time+" delay:"+delay+" direction:"+direction+" from:"+from+" to:"+to+" diff:"+diff+" type:"+type+" ease:"+easeType+" useEstimatedTime:"+useEstimatedTime+" id:"+id+" hasInitiliazed:"+hasInitiliazed;
 	}
 
-	public LTDescr()
+	/*public LTDescr()
 	{
 
-	}
+	}*/
 
 
 	[System.Obsolete("Use 'LeanTween.cancel( id )' instead")]
@@ -957,6 +945,7 @@ public class LTDescr
 		this.diff = this.to - this.from;
 		this.diffDiv2 = this.diff * 0.5f;
 
+		this._optional.callOnStartsInList();
 		if (this._optional.onStart != null)
 			this._optional.onStart();
 
@@ -1061,6 +1050,7 @@ public class LTDescr
 		if(this.type==TweenAction.DELAYED_SOUND){
 			AudioSource.PlayClipAtPoint((AudioClip)this._optional.onCompleteParam, this.to, this.from.x);
 		}
+		this.optional.callOnCompletesInList();
 		if(this._optional.onComplete!=null){
 			this._optional.onComplete();
 		}else if(this._optional.onCompleteObject!=null){

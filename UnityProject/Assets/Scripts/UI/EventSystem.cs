@@ -17,7 +17,7 @@ public class EventSystem : MonoBehaviour
     List<EventListenerPair> eventListenerPairs = new List<EventListenerPair>();
     
     List<GameEvent> EventStorage = new List<GameEvent>();
-    double EventStorageLength = 3;
+    double EventStorageLength = 2;
     public static EventSystem Singleton;
 
     public void Awake()
@@ -64,7 +64,7 @@ public class EventSystem : MonoBehaviour
     }
     private void CheckPairAndTriggerListener(GameEvent gameEvent, EventListenerPair listenerPair)
     {
-        if ((listenerPair.EventEnum == gameEvent.eventType || listenerPair.EventEnum == GameEvent.EventEnum.None) && (listenerPair.Id == gameEvent.id || listenerPair.Id == null))
+        if ((listenerPair.EventEnum == gameEvent.eventType || listenerPair.EventEnum == GameEvent.EventEnum.None) && (listenerPair.Id == gameEvent.id || string.IsNullOrWhiteSpace(listenerPair.Id)))
         {
             listenerPair.Listener?.Invoke(gameEvent);
             if (listenerPair.OneShot)
