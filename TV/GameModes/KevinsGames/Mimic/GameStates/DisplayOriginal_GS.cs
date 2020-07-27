@@ -22,7 +22,10 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
 {
     public class DisplayOriginal_GS : GameState
     {
-        public DisplayOriginal_GS(Lobby lobby, TimeSpan? displayTimeDurration, UserDrawing displayDrawing) : base(lobby, exit: new WaitForTimer_StateExit(displayTimeDurration))
+        public DisplayOriginal_GS(Lobby lobby, TimeSpan? displayTimeDuration, UserDrawing displayDrawing)
+            : base(lobby,
+                  stateTimeoutDuration: displayTimeDuration,
+                  exit: new WaitForStateTimeoutDuration_StateExit())
         {
             this.UnityView = new UnityView(this.Lobby)
             {

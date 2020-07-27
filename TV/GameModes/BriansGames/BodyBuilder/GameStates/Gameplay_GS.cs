@@ -119,6 +119,17 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             };
 
         }
+
+        private void ProcessUserInput(User user, DrawingType? answer)
+        {
+            Gameplay_Person PlayerHand = RoundTracker.AssignedPeople[user];
+            Gameplay_Person PlayerTrade = RoundTracker.UnassignedPeople[RoundTracker.UsersToSeatNumber[user]];
+
+            PeopleUserDrawing temp = PlayerHand.BodyPartDrawings[answer.Value];
+            PlayerHand.BodyPartDrawings[answer.Value] = PlayerTrade.BodyPartDrawings[answer.Value];
+            PlayerTrade.BodyPartDrawings[answer.Value] = temp;
+        }
+
         private State AddGameplayCycle()
         {
             /* ask users what changes they want to make
@@ -126,24 +137,27 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
              * see if anyone won
              */
             RotateSeats();
-            UserTimeoutAction UserTimeoutHandler(User user)
+            UserTimeoutAction UserTimeoutHandler(User user, UserFormSubmission input)
             {
-                Gameplay_Person PlayerHand = RoundTracker.AssignedPeople[user];
-                Gameplay_Person PlayerTrade = RoundTracker.UnassignedPeople[RoundTracker.UsersToSeatNumber[user]];
-                // Pick a random choice to swap.
-                DrawingType randAnswer = (DrawingType)Rand.Next(3);
-                PeopleUserDrawing temp = PlayerHand.BodyPartDrawings[randAnswer];
-                PlayerHand.BodyPartDrawings[randAnswer] = PlayerTrade.BodyPartDrawings[randAnswer];
-                PlayerTrade.BodyPartDrawings[randAnswer] = temp;
-                // Check if they randomly won despite timing out.
+                DrawingType? answer = (DrawingType?)input?.SubForms?[1]?.RadioAnswer;
+
+                if (answer == null)
+                {
+                    // Make a random decision.
+                    DrawingType randAnswer = (DrawingType)Rand.Next(3);
+                }
+
+                if (answer != DrawingType.None)
+                {
+                    // Normal flow.
+                    ProcessUserInput(user, answer);
+                }
                 CheckPlayerWon(user);
                 return UserTimeoutAction.None;
             }
 
             (bool, string) PromptedUserFormSubmission( User user, UserFormSubmission submission)
             {
-                Gameplay_Person PlayerHand = RoundTracker.AssignedPeople[user];
-                Gameplay_Person PlayerTrade = RoundTracker.UnassignedPeople[RoundTracker.UsersToSeatNumber[user]];
                 DrawingType? answer = (DrawingType?)submission.SubForms[1].RadioAnswer;
                 if (answer == null)
                 {
@@ -151,9 +165,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 }
                 if (answer != DrawingType.None)
                 {
-                    PeopleUserDrawing temp = PlayerHand.BodyPartDrawings[answer.Value];
-                    PlayerHand.BodyPartDrawings[answer.Value] = PlayerTrade.BodyPartDrawings[answer.Value];
-                    PlayerTrade.BodyPartDrawings[answer.Value] = temp;
+                    ProcessUserInput(user, answer);
                 }
                 CheckPlayerWon(user);
                 return (true, string.Empty);

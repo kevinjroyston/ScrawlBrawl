@@ -19,8 +19,8 @@ namespace RoystonGame.TV.DataModels.States.UserStates
         public static UserPrompt YouHaveThePowerPrompt(User _) => new UserPrompt() { Title = "You have the power!", Description = "Click submit when everybody is ready :)", RefreshTimeInMs = 5000, SubmitButton = true };
 
         private Func<User, UserFormSubmission, (bool, string)> FormSubmitHandler { get; set; }
-        private Func<User, UserTimeoutAction> UserTimeoutHandler { get; set; }
-        public SimplePromptUserState(Func<User, UserPrompt> promptGenerator = null, TimeSpan? maxPromptDuration = null, Func<User, UserFormSubmission, (bool, string)> formSubmitHandler = null, StateEntrance entrance = null, StateExit exit = null, Func<User, UserTimeoutAction> userTimeoutHandler = null)
+        private Func<User, UserFormSubmission, UserTimeoutAction> UserTimeoutHandler { get; set; }
+        public SimplePromptUserState(Func<User, UserPrompt> promptGenerator = null, TimeSpan? maxPromptDuration = null, Func<User, UserFormSubmission, (bool, string)> formSubmitHandler = null, StateEntrance entrance = null, StateExit exit = null, Func<User, UserFormSubmission, UserTimeoutAction> userTimeoutHandler = null)
             : base(maxPromptDuration, promptGenerator ?? DefaultWaitingPrompt, entrance: entrance, exit: exit)
         {
             if (userTimeoutHandler != null)
@@ -35,12 +35,12 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             this.Entrance.Transition(new WaitForUserInput_BlackholeInletConnector(HandleUserTimeout));
         }
 
-        public override UserTimeoutAction HandleUserTimeout(User user)
+        public override UserTimeoutAction HandleUserTimeout(User user, UserFormSubmission userInput)
         {
             var toReturn = UserTimeoutAction.None;
             if (this.UserTimeoutHandler != null)
             {
-                toReturn = this.UserTimeoutHandler(user);
+                toReturn = this.UserTimeoutHandler(user, userInput);
             }
 
             // TODO: UserTimeoutAction doesnt work if we call exit.inlet prior to returning it
@@ -50,15 +50,12 @@ namespace RoystonGame.TV.DataModels.States.UserStates
 
         public override bool HandleUserFormInput(User user, UserFormSubmission userInput, out string error)
         {
+            error = string.Empty;
+
             // If the user is being hurried they cant submit forms.
             if (user.StatesTellingMeToHurry.Count != 0)
             {
                 error = "You are too late to submit that";
-                return false;
-            }
-
-            if (!base.HandleUserFormInput(user, userInput, out error))
-            {
                 return false;
             }
 

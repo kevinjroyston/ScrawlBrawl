@@ -77,7 +77,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic
 
                                     DisplayOriginal_GS displayGS = new DisplayOriginal_GS(
                                         lobby: lobby,
-                                        displayTimeDurration: TimeSpan.FromSeconds(memorizeTimerLength),
+                                        displayTimeDuration: TimeSpan.FromSeconds(memorizeTimerLength),
                                         displayDrawing: originalDrawing);
                                     CreateMimics_GS mimicsGS = new CreateMimics_GS(
                                         lobby: lobby,

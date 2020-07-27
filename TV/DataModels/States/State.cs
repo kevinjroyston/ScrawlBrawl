@@ -44,7 +44,7 @@ namespace RoystonGame.TV.DataModels
 
         public State(TimeSpan? stateTimeoutDuration, StateEntrance entrance, StateExit exit) : base(stateExit: exit)
         {
-            this.StateTimeoutDuration = stateTimeoutDuration;
+            this.StateTimeoutDuration = stateTimeoutDuration?.Add(Constants.AutoSubmitBuffer);
             this.Entrance = entrance ?? new StateEntrance();
 
             this.Entrance.AddPerUserExitListener((User user) =>
@@ -147,9 +147,15 @@ namespace RoystonGame.TV.DataModels
                     // Kick all the users into motion so they can hurry through the states.
                     if (user.Status == UserStatus.AnsweringPrompts)
                     {
-                        user.UserState.HandleUserTimeout(user);
+                        user.UserState.HandleUserTimeout(user, new UserFormSubmission());
                     }
                 }
+            }
+
+            // Hacky: If the attached StateExit is specifically a "WaitForStateTimeoutDuration_StateExit", invoke it here.
+            if (this.Exit is WaitForStateTimeoutDuration_StateExit)
+            {
+                ((WaitForStateTimeoutDuration_StateExit)this.Exit).Trigger();
             }
         }
     }

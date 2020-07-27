@@ -25,7 +25,7 @@ namespace RoystonGame.TV.ControlFlows.Exit
                   waitingPromptGenerator: waitingPromptGenerator)
         {
             this.PartyLeaderUserState = new SimplePromptUserState(
-                userTimeoutHandler: (User user) => throw new Exception("Cant time out the party leader!"),
+                userTimeoutHandler: (User user, UserFormSubmission input) => throw new Exception("Cant time out the party leader!"),
                 promptGenerator: partyLeaderPromptGenerator ?? SimplePromptUserState.YouHaveThePowerPrompt,
                 formSubmitHandler: partyLeaderFormSubmitListener);
             this.PartyLeaderUserState.Transition(new InletConnector(base.Inlet));

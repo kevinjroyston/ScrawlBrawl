@@ -17,8 +17,8 @@ namespace RoystonGame.TV.ControlFlows
     /// </summary>
     public class WaitForUserInput_BlackholeInletConnector : IInlet
     {
-        private Func<User, UserTimeoutAction> HandleUserTimeout { get; }
-        public WaitForUserInput_BlackholeInletConnector(Func<User, UserTimeoutAction> handleUserTimeout)
+        private Func<User, UserFormSubmission, UserTimeoutAction> HandleUserTimeout { get; }
+        public WaitForUserInput_BlackholeInletConnector(Func<User, UserFormSubmission, UserTimeoutAction> handleUserTimeout)
         {
             HandleUserTimeout = handleUserTimeout;
         }
@@ -37,7 +37,7 @@ namespace RoystonGame.TV.ControlFlows
             }
             else
             {
-                HandleUserTimeout(user);
+                HandleUserTimeout(user, new UserFormSubmission());
             }
         }
 

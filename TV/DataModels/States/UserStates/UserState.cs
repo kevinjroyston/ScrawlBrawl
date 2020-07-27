@@ -98,7 +98,14 @@ namespace RoystonGame.TV.DataModels.States.UserStates
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public abstract UserTimeoutAction HandleUserTimeout(User user);
+        public abstract UserTimeoutAction HandleUserTimeout(User user, UserFormSubmission partialFormSubmission);
+
+        /// <summary>
+        /// This implementation validates user input, and should be overridden (with a call to base.HandlerUserFormInput)
+        /// </summary>
+        /// <param name="userInput">Validates the users form input and decides what UserStateResult to return to StatecompletedCallback.</param>
+        /// <returns>True if the user input was accepted, false if there was an issue.</returns>
+        public abstract bool HandleUserFormInput(User user, UserFormSubmission userInput, out string error);
 
         /// <summary>
         /// Applies a function to all users who have entered this state, and users who enter this state in the future.
@@ -121,32 +128,54 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             }
         }
 
-        /// <summary>
-        /// This implementation validates user input, and should be overridden (with a call to base.HandlerUserFormInput)
-        /// </summary>
-        /// <param name="userInput">Validates the users form input and decides what UserStateResult to return to StatecompletedCallback.</param>
-        /// <returns>True if the user input was accepted, false if there was an issue.</returns>
-        public virtual bool HandleUserFormInput(User user, UserFormSubmission userInput, out string error)
+        public enum CleanUserFormInputResult
+        {
+            Valid,   // Both will continue
+            Cleaned, // AutoSubmit will continue and use the null-replaced clean input.
+            Invalid  // Neither AutoSubmit or Submit will continue
+        }
+
+        public CleanUserFormInputResult CleanUserFormInput(User user, ref UserFormSubmission userInput, out string error)
         {
             UserPrompt userPrompt = GetUserPromptHolder(user).Prompt;
 
+            // No data submitted / requested
+            if (userInput == null || userPrompt == null)
+            {
+                error = "Try again or try refreshing the page.";
+                userInput = new UserFormSubmission();
+                return CleanUserFormInputResult.Invalid;
+            }
+
+            // Old data submitted.
             if (userInput.Id != userPrompt.Id)
             {
                 error = "Outdated form submitted, try again or try refreshing the page.";
-                return false;
+                userInput.SubForms = null;
+                return CleanUserFormInputResult.Invalid;
             }
 
-            if (userInput?.SubForms == null)
+            // No prompts requested.
+            if (userPrompt?.SubPrompts == null || userPrompt.SubPrompts.Length == 0)
+            {
+                userInput.SubForms = null;
+                error = "";
+                return CleanUserFormInputResult.Invalid;
+            }
+
+            if (userInput?.SubForms == null || (userPrompt.SubPrompts.Length != userInput.SubForms.Count))
             {
                 error = "Error in submission, try again or try refreshing the page.";
-                return false;
+                userInput.SubForms = null;
+                return CleanUserFormInputResult.Invalid;
             }
 
             int i = 0;
+            CleanUserFormInputResult result = CleanUserFormInputResult.Valid;
+            error = string.Empty;
             foreach (SubPrompt prompt in userPrompt?.SubPrompts ?? new SubPrompt[0])
             {
-                if ((userInput.SubForms.Count() <= i)
-                    || ((prompt.Drawing != null) == string.IsNullOrWhiteSpace(userInput.SubForms[i].Drawing))
+                if (((prompt.Drawing != null) == string.IsNullOrWhiteSpace(userInput.SubForms[i].Drawing))
                     || (prompt.ShortAnswer == string.IsNullOrWhiteSpace(userInput.SubForms[i].ShortAnswer))
                     || (prompt.ColorPicker == string.IsNullOrWhiteSpace(userInput.SubForms[i].Color))
                     || ((prompt.Answers != null && prompt.Answers.Length > 0) == (!userInput.SubForms[i].RadioAnswer.HasValue || userInput.SubForms[i].RadioAnswer.Value < 0 || userInput.SubForms[i].RadioAnswer.Value >= prompt.Answers.Length))
@@ -154,15 +183,16 @@ namespace RoystonGame.TV.DataModels.States.UserStates
                     || ((prompt.Dropdown != null && prompt.Dropdown.Length > 0) == (!userInput.SubForms[i].DropdownChoice.HasValue || userInput.SubForms[i].DropdownChoice.Value < 0 || userInput.SubForms[i].DropdownChoice.Value >= prompt.Dropdown.Length)))
                 {
                     error = "Not all form fields have been filled out";
-                    return false;
+                    result = CleanUserFormInputResult.Cleaned;
+
+                    // Invalid fields get set to null (used in autosubmit partial submission flows).
+                    userInput.SubForms[i] = null;
                 }
 
                 i++;
             }
 
-            // As this is an abstract class this function serves only to validate the user input rather than initiate flows.
-            error = string.Empty;
-            return true;
+            return result;
         }
 
         /// <summary>
@@ -173,16 +203,28 @@ namespace RoystonGame.TV.DataModels.States.UserStates
         {
             UserPromptHolder userPrompt = GetUserPromptHolder(user);
 
+            // Set the Auto submit datetime
+            userPrompt.Prompt.AutoSubmitAtTime = user.EarliestStateTimeout?.Subtract(Constants.AutoSubmitBuffer);
+
             // Refresh at the normal cadence unless the DontRefreshLaterThan time is coming up.
             if (this.DontRefreshLaterThan.HasValue)
             {
                 userPrompt.Prompt.RefreshTimeInMs = Math.Min(userPrompt.RefreshTimeInMs, (int)this.DontRefreshLaterThan.Value.Subtract(DateTime.Now).TotalMilliseconds);
-                userPrompt.Prompt.RefreshTimeInMs = Math.Max(userPrompt.Prompt.RefreshTimeInMs, 0);
+                userPrompt.Prompt.RefreshTimeInMs = Math.Max(userPrompt.Prompt.RefreshTimeInMs, 100);
             }
             else
             {
                 userPrompt.Prompt.RefreshTimeInMs = userPrompt.RefreshTimeInMs;
             }
+
+            // If user hasn't submitted in a while, stop requesting content.
+            if (DateTime.UtcNow.Subtract(user.LastSubmitTime) > Constants.UserSubmitInactivityTimer)
+            {
+                userPrompt.Prompt.RefreshTimeInMs = int.MaxValue;
+
+                // TODO: nuke user object.
+            }
+
             return userPrompt.Prompt;
         }
 

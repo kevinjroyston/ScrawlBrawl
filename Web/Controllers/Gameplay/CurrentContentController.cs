@@ -31,7 +31,7 @@ namespace RoystonGame.Web.Controllers
             const bool tempDebug = false;
             if (!tempDebug)
             {
-                if (!Sanitize.SanitizeString(id, out string error, "^([0-9A-Fa-f]){50}$"))
+                if (!Sanitize.SanitizeString(id, out string error, "^([0-9A-Fa-f]){50}$",50,50))
                 {
                     return BadRequest(error);
                 }
@@ -39,7 +39,7 @@ namespace RoystonGame.Web.Controllers
                 User user = GameManager.MapIdentifierToUser(id, out bool newUser);
                 if (user != null)
                 {
-                    user.LastHeardFrom = DateTime.UtcNow;
+                    user.LastPingTime = DateTime.UtcNow;
                 }
 
                 if (user?.UserState == null)

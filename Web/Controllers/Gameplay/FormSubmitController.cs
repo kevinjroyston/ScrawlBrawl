@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Web;
 using static System.FormattableString;
+using RoystonGame.TV.DataModels.States.UserStates;
 
 namespace RoystonGame.Web.Controllers
 {
@@ -33,7 +34,7 @@ namespace RoystonGame.Web.Controllers
             [FromBody] UserFormSubmission formData,
             string id)
         {
-            if (!Sanitize.SanitizeString(id, out string error, "^([0-9A-Fa-f]){50}$"))
+            if (!Sanitize.SanitizeString(id, out string error, "^([0-9A-Fa-f]){50}$",50,50))
             {
                 return BadRequest(error);
             }
@@ -42,7 +43,7 @@ namespace RoystonGame.Web.Controllers
 
             if (user != null)
             {
-                user.LastHeardFrom = DateTime.UtcNow;
+                user.LastSubmitTime = DateTime.UtcNow;
             }
 
             if (user?.UserState == null || newUser)
@@ -56,12 +57,16 @@ namespace RoystonGame.Web.Controllers
             }
 
             // Make sure HandleUserFormInput is never called concurrently for the same user.
-            bool success;
+            bool success = false;
             try
             {
                 lock (user.LockObject)
                 {
-                    success = user.UserState.HandleUserFormInput(user, formData, out error);
+                    // If user form input was valid, handle it, else return the error.
+                    if (user.UserState.CleanUserFormInput(user, ref formData, out error) == UserState.CleanUserFormInputResult.Valid)
+                    {
+                        success = user.UserState.HandleUserFormInput(user, formData, out error);
+                    }
                 }
             }
             catch (Exception e)
