@@ -42,7 +42,9 @@ namespace RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels
             Color? backgroundColor = null,
             string imageIdentifier = null,
             string title = null,
-            string header = null)
+            string header = null,
+            int? voteCount = null,
+            UnityImageVoteRevealOptions voteRevealOptions = null)
         {
             backgroundColor = backgroundColor ?? UnityImageBackGroundColor;
             imageIdentifier = imageIdentifier ?? UnityImageIdentifier;
@@ -64,6 +66,7 @@ namespace RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels
                 ImageIdentifier = new StaticAccessor<string> { Value = imageIdentifier},
                 Title = new StaticAccessor<string> { Value = title },
                 Header = new StaticAccessor<string> { Value = header },
+                VoteRevealOptions = new StaticAccessor<UnityImageVoteRevealOptions> { Value = voteRevealOptions },
             };
             
         }

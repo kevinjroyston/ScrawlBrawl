@@ -15,6 +15,8 @@ using System;
 using System.Linq;
 using RoystonGame.TV.DataModels.States.StateGroups;
 using System.Collections.Concurrent;
+using RoystonGame.TV.GameModes.Common.DataModels;
+using RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
 {
@@ -162,22 +164,24 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                     StateChain voting = new StateChain(
                         stateGenerator: (int counter) =>
                         {
-                            int round = counter / 2;
-                            int type = counter % 2; // Even rounds are Voting, Odd rounds are reveals
-                            if (round < roundPrompts.Count)
+                            if (counter < roundPrompts.Count)
                             {
-                                if (type == 0)
+                                Prompt roundPrompt = roundPrompts[counter];
+                                List<User> randomizedUsersToDisplay = roundPrompt.UsersToUserHands.Keys.OrderBy(_ => Rand.Next()).ToList();
+                                List<Person> peopleToVoteOn = randomizedUsersToDisplay.Select(user => roundPrompt.UsersToUserHands[user].Contestant).ToList();
+                                List<string> imageTitles = randomizedUsersToDisplay.Select(user => roundPrompt.UsersToUserHands[user].Contestant.Name).ToList();
+                                Action<User, int> voteHandler = (User user, int answer) =>
                                 {
-                                    return new Voting_GS(
-                                        lobby: lobby,
-                                        prompt: roundPrompts[round]);
-                                }
-                                else
-                                {
-                                    return new VoteRevealed_GS(
-                                        lobby: lobby,
-                                        prompt: roundPrompts[round]);
-                                }
+                                    peopleToVoteOn[answer].Owner.AddScore(BattleReadyConstants.PointsForVote);
+                                };
+                                return new ThreePartPersonVoteAndRevealGameState(
+                                    lobby: lobby,
+                                    peopleToVoteOn: peopleToVoteOn,
+                                    voteExitHandler: voteHandler,
+                                    title: roundPrompt.Text,
+                                    imageTitles: imageTitles,
+                                    showImageTitlesForVote: true,
+                                    votingTime: null);
                             }
                             else
                             {
@@ -227,7 +231,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             this.Entrance.Transition(Setup);
            
         }
-
+    
         public void ValidateOptions(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             /*if(gameLobby.GetAllUsers().Count%2==1 && int.Parse(gameModeOptions[1].ShortAnswer)%2==1)

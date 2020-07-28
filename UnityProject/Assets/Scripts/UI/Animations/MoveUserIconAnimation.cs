@@ -108,7 +108,7 @@ public class MoveUserIconAnimation : AnimationBase
             .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.IncreaseScore, id = targetId });
         if (IconOrder == IconCountTotal)
         {
-            targetScaleDown.SetCallEventOnComplete(new GameEvent() { eventType = GameEvent.EventEnum.ShakeRevealImages });
+            targetScaleDown.SetCallEventOnComplete(new GameEvent() { eventType = GameEvent.EventEnum.CallShakeRevealImages });
         }
 
 

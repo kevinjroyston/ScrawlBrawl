@@ -22,6 +22,7 @@ public class GameEvent
         TenSecondsLeft,
         PlayPop,
         ShakeRevealImages,
+        CallShakeRevealImages,
         RevealImages,
         CallRevealImages,
         PlayDrumRoll,

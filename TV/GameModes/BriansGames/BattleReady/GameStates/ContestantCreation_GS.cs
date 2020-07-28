@@ -105,7 +105,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                                 {DrawingType.Body, prompt.UsersToUserHands[user].Bodies[(int)input.SubForms[1].Selector] },
                                 {DrawingType.Legs, prompt.UsersToUserHands[user].Legs[(int)input.SubForms[2].Selector] }
                             },
-                            Name = input.SubForms[3].ShortAnswer
+                            Name = input.SubForms[3].ShortAnswer,
+                            Owner = user
                         };
                         return (true, String.Empty);
                     }

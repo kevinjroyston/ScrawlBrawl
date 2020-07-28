@@ -22,10 +22,12 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
             Action<User, UserFormSubmission> votingTimeoutHandler,
             Action votingExitListener,
             UnityView votingUnityView,
+            List<User> votingUsers,
             Func<User, UserPrompt> waitingPromptGenerator = null,
             TimeSpan? votingTime = null) : base(lobby)
         {
-            SimplePromptUserState votingUserState = new SimplePromptUserState(
+            SelectivePromptUserState votingUserState = new SelectivePromptUserState(
+                usersToPrompt: votingUsers ?? lobby.GetAllUsers().ToList(),
                 promptGenerator: votingUserPromptGenerator,
                 formSubmitHandler: votingFormSubmitHandler,
                 //userTimeoutHandler: votingTimeoutHandler,

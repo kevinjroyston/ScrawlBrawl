@@ -412,6 +412,7 @@ MonoBehaviour:
   - {r: 0.48235297, g: 0.8588236, b: 0.30588236, a: 1}
   - {r: 0.93725497, g: 0.4039216, b: 0.49803925, a: 1}
   - {r: 0.35686275, g: 0.3137255, b: 0.86274517, a: 1}
+  AssignedColor: {r: 0, g: 0, b: 0, a: 0}
   TargetImage: {fileID: 8488411182022539769}
 --- !u!1 &2909047539371038702
 GameObject:
@@ -673,8 +674,8 @@ MonoBehaviour:
   m_IgnoreLayout: 0
   m_MinWidth: -1
   m_MinHeight: -1
-  m_PreferredWidth: 169.46155
-  m_PreferredHeight: 84.730774
+  m_PreferredWidth: 107.153854
+  m_PreferredHeight: 53.576927
   m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -991,6 +992,7 @@ MonoBehaviour:
   - {r: 0.48235297, g: 0.8588236, b: 0.30588236, a: 1}
   - {r: 0.93725497, g: 0.4039216, b: 0.49803925, a: 1}
   - {r: 0.35686275, g: 0.3137255, b: 0.86274517, a: 1}
+  AssignedColor: {r: 0, g: 0, b: 0, a: 0}
   TargetImage: {fileID: 6203358530472352964}
 --- !u!1 &5595063685439255488
 GameObject:
@@ -1211,7 +1213,7 @@ RectTransform:
   m_GameObject: {fileID: 5878494561059324834}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 0}
   m_Children:
   - {fileID: 3286403506070961695}
   m_Father: {fileID: 0}
@@ -1245,9 +1247,9 @@ MonoBehaviour:
   TextId: {fileID: 2315911091733758670}
   Title: {fileID: 7390720299657812033}
   Header: {fileID: 4087474518712477883}
-  VerticleScore: {fileID: 1753972902076843536}
+  VerticalScore: {fileID: 0}
   TextIdHolder: {fileID: 4597520629173235866}
-  VerticleScoreHolder: {fileID: 5758750915726501479}
+  VerticalScoreHolder: {fileID: 0}
   VoteCount: {fileID: 3654449415599826411}
   Footer: {fileID: 5197578043087591377}
   ScoreHolder: {fileID: 7776041938833789476}
@@ -1266,11 +1268,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startEvent:
     eventType: 0
+    id: 
   endEvent:
     eventType: 0
+    id: 
   startDelay: 0
-  endDelay: 0
-  rampDownTime: 0
+  endDurration: 0
+  registerOnEnable: 1
+  persistant: 0
+  oneShot: 1
 --- !u!1 &6324512909692666740
 GameObject:
   m_ObjectHideFlags: 0
@@ -1810,6 +1816,7 @@ MonoBehaviour:
   - {r: 0.48235297, g: 0.8588236, b: 0.30588236, a: 1}
   - {r: 0.93725497, g: 0.4039216, b: 0.49803925, a: 1}
   - {r: 0.35686275, g: 0.3137255, b: 0.86274517, a: 1}
+  AssignedColor: {r: 0, g: 0, b: 0, a: 0}
   TargetImage: {fileID: 1792403338975268007}
 --- !u!1 &7706442270029474768
 GameObject:

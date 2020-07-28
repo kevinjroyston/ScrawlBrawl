@@ -158,11 +158,22 @@ public class GenericView : ITVView
             Instantiate(ImagePrefab, ImageDropZone.transform);
         }
 
+        bool isRevealingImage = false;
         // Set the image object sprites accordingly.
         for (int i = 0; i < images.Count; i++)
         {
+            if (images[i]._VoteRevealOptions?._RevealThisImage ?? false)
+            {
+                isRevealingImage = true;
+            }
             images[i].Options = UnityView._Options;
             ImageDropZone.transform.GetChild(i).GetComponent<UnityObjectHandlerInterface>().UnityImage = images[i];
+        }
+        if (isRevealingImage) // only shake the images if one of them is going to be revealed
+        {
+            EventSystem.Singleton.RegisterListener(
+                listener: (GameEvent gameEvent) => EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ShakeRevealImages }, allowDuplicates: false),
+                gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.CallShakeRevealImages });
         }
     }
 

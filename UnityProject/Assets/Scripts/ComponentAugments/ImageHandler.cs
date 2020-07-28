@@ -208,17 +208,23 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
                 {
                     VoteCountHolder.GetComponent<ScoreIncreaseManager>().registerUser(value?._VoteRevealOptions._ImageOwner);
                 }
-
-                foreach (User user in value?._VoteRevealOptions._RelevantUsers)
+                if (value?._VoteRevealOptions._RelevantUsers != null)
                 {
-                    EventSystem.Singleton.PublishEvent(new MoveToTargetGameEvent()
+                    foreach (User user in value?._VoteRevealOptions._RelevantUsers)
                     {
-                        eventType = GameEvent.EventEnum.MoveToTarget,
-                        id = user.UserId.ToString(),
-                        TargetRect = VoteCountHolder.GetComponent<RectTransform>(),
-                        TargetUserId = value?._VoteRevealOptions._ImageOwner.UserId.ToString()
-                    });
+                        if (value?._VoteRevealOptions._ImageOwner != null)
+                        {
+                            EventSystem.Singleton.PublishEvent(new MoveToTargetGameEvent()
+                            {
+                                eventType = GameEvent.EventEnum.MoveToTarget,
+                                id = user.UserId.ToString(),
+                                TargetRect = VoteCountHolder.GetComponent<RectTransform>(),
+                                TargetUserId = value?._VoteRevealOptions._ImageOwner.UserId.ToString()
+                            });
+                        }
+                    }
                 }
+                
                 VoteCount.enabled = true;
                 DummyScore.SetActive(true);
                 ScoreHolder.gameObject.SetActive(true);

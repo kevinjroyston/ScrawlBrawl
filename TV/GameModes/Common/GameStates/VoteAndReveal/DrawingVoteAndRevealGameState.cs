@@ -1,9 +1,13 @@
 ﻿using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.DataModels.Users;
+using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.Common.DataModels;
+using RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -12,102 +16,139 @@ using System.Threading.Tasks;
 
 namespace RoystonGame.TV.GameModes.Common.GameStates
 {
-    public class DrawingVoteAndRevealGameState : GameState
+    public class DrawingVoteAndRevealGameState : VoteAndRevealGameState
     {
+        private Lobby lobby;
+        private List<UserDrawing> drawingsToVoteOn;
+        private List<User> votingUsers;
+        private Action<User, int> voteExitHandler;
+        private int? idexOfCorrectChoice;
+        private string title;
+        private string instructions;
+        private string votingPromptTitle;
+        private List<string> imageTitles;
+        private bool showImageTitlesForVote;
+
         public DrawingVoteAndRevealGameState(
             Lobby lobby,
             List<UserDrawing> drawingsToVoteOn,
-            List<User> votingUsers,
-            Action<User, UserFormSubmission> votingSubmitHandler,
-            int idexOfCorrectChoice,
+            Action<User, int> voteExitHandler,
+            List<User> votingUsers = null,    
+            int? idexOfCorrectChoice = null,
+            string title = "Voting Time!",
+            string instructions = null,
+            string votingPromptTitle = null,
             List<string> imageTitles = null,
-            TimeSpan? votingTime = null) : base(lobby)
+            bool showImageTitlesForVote = false,
+            TimeSpan? votingTime = null) : base(lobby, votingUsers, votingTime)
         {
-            if (imageTitles == null)
-            {
-                imageTitles = Enumerable.Range(1, drawingsToVoteOn.Count).Select((num) => num.ToString()).ToList();
-            }
-            if (imageTitles.Count != drawingsToVoteOn.Count)
+            this.lobby = lobby;
+            this.drawingsToVoteOn = drawingsToVoteOn;
+            this.votingUsers = votingUsers;
+            this.voteExitHandler = voteExitHandler;
+            this.idexOfCorrectChoice = idexOfCorrectChoice;
+            this.votingPromptTitle = votingPromptTitle;
+            this.title = title;
+            this.instructions = instructions;
+            this.imageTitles = imageTitles;
+            this.showImageTitlesForVote = showImageTitlesForVote;
+
+            if (imageTitles != null && imageTitles.Count != drawingsToVoteOn.Count)
             {
                 //todo log error
             }
 
-            SimplePromptUserState pickOriginal = new SimplePromptUserState(
-                promptGenerator: (User user) =>
-                {
-
-                },
-                formSubmitHandler: (User user, UserFormSubmission submission) =>
-                {
-                    int userVotedFor = (int)submission.SubForms[0].RadioAnswer;
-                    usersToVoteResults.TryAdd(user, (DateTime.UtcNow, userVotedFor));
-                    return (true, string.Empty);
-                },
-                userTimeoutHandler
-                maxPromptDuration: votingTime,
-                exit: new WaitForUsers_StateExit(lobby));
-            this.Entrance.Transition(pickOriginal);
-            this.Entrance.AddExitListener(() =>
+        }
+        private ConcurrentDictionary<User, int> usersToAnswerVotedFor = new ConcurrentDictionary<User, int>();
+        private ConcurrentDictionary<int, List<User>> answersToVotingUsers = new ConcurrentDictionary<int, List<User>>();
+        public override UserPrompt VotingUserPromptGenerator(User user)
+        {
+            return new UserPrompt
             {
-                startingTime = DateTime.UtcNow;
-            });
-            pickOriginal.Transition(this.Exit);
-            pickOriginal.AddExitListener(() =>
-            {
-                foreach (User user in lobby.GetAllUsers())
+                Title = this.title,
+                SubPrompts = new SubPrompt[]
                 {
-                    if (usersToVoteResults.ContainsKey(user))
+                    new SubPrompt
                     {
-                        User userVotedFor = randomizedUserChoices[usersToVoteResults[user].Item2];
-                        roundTracker.QuestionsToUsersWhoVotedFor.AddOrUpdate(
-                            key: usersToVoteResults[user].Item2,
-                            addValue: new List<User>() { user },
-                            updateValueFactory: (int key, List<User> oldList) =>
-                            {
-                                oldList.Add(user);
-                                return oldList;
-                            });
-                        DateTime timeSubmitted = usersToVoteResults[user].Item1;
-                        userVotedFor.AddScore(MimicConstants.PointsForVote);
-                        if (userVotedFor == roundTracker.originalDrawer)
-                        {
-                            user.AddScore(CommonHelpers.PointsForSpeed(
-                                maxPoints: MimicConstants.PointsForCorrectPick(lobby.GetAllUsers().Count),
-                                minPoints: MimicConstants.PointsForCorrectPick(lobby.GetAllUsers().Count) / 10,
-                                startTime: MimicConstants.BlurDelay,
-                                endTime: MimicConstants.BlurDelay + MimicConstants.BlurLength,
-                                secondsTaken: timeSubmitted.Subtract(startingTime).TotalSeconds));
-                        }
-                        roundTracker.UserToNumVotesRecieved.AddOrUpdate(userVotedFor, 1, (User user, int numVotes) => numVotes + 1);
-                    }
-                }
-            });
-
-            this.UnityView = new UnityView(this.Lobby)
+                        Prompt = this.votingPromptTitle,
+                        Selector = new SelectorPromptMetadata() { ImageList = drawingsToVoteOn.Select(drawing => CommonHelpers.HtmlImageWrapper(drawing.Drawing)).ToArray()}
+                    },
+                },
+                SubmitButton = true,
+            };
+        }
+        public override (bool, string) VotingFormSubmitHandler(User user, UserFormSubmission submission)
+        {
+            if (submission.SubForms[0].Selector.HasValue)
+            {
+                usersToAnswerVotedFor.AddOrReplace(user, submission.SubForms[0].Selector.Value);
+            }
+            return (true, string.Empty);
+        }
+        public override void VotingTimeoutHandler(User user, UserFormSubmission submission)
+        {
+            if (submission.SubForms[0].Selector.HasValue)
+            {
+                usersToAnswerVotedFor.AddOrReplace(user, submission.SubForms[0].Selector.Value);
+            }
+        }
+        public override void VotingExitListener()
+        {
+            foreach (User user in usersToAnswerVotedFor.Keys)
+            {
+                answersToVotingUsers.AddOrAppend(usersToAnswerVotedFor[user], user);
+                this.voteExitHandler(user, usersToAnswerVotedFor[user]);
+            }    
+        }
+        public override UnityView VotingUnityViewGenerator()
+        {
+            List<UnityImage> unityImages = new List<UnityImage>();
+            for (int i = 0; i < drawingsToVoteOn.Count; i++)
+            {
+                unityImages.Add(drawingsToVoteOn[i].GetUnityImage(
+                    imageIdentifier: ""+(i+1),
+                    title: this.showImageTitlesForVote? imageTitles?[i] : null
+                    ));
+            }
+            return new UnityView(this.lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
-                Title = new StaticAccessor<string> { Value = "Find the original drawing" },
+                Title = new StaticAccessor<string> { Value = this.title },
+                Instructions = new StaticAccessor<string> { Value = this.instructions},
                 UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>>
                 {
-                    Value = randomizedUserChoices.Select((User user) =>
-                    roundTracker.UsersToUserDrawings[user].GetUnityImage(imageIdentifier: "" + (randomizedUserChoices.IndexOf(user) + 1))).ToList().AsReadOnly(),
+                    Value = unityImages,
                 },
-                Options = new StaticAccessor<UnityViewOptions>
-                {
-                    Value = new UnityViewOptions()
+            };
+        }
+        public override UnityView VoteRevealUnityViewGenerator()
+        {
+            List<UnityImage> unityImages = new List<UnityImage>();
+            for (int i = 0; i < drawingsToVoteOn.Count; i++)
+            {
+                List<User> usersWhoVotedFor = new List<User>();
+                answersToVotingUsers.TryGetValue(i, out usersWhoVotedFor);
+                unityImages.Add(drawingsToVoteOn[i].GetUnityImage(
+                    imageIdentifier: "" + (i + 1),
+                    title: imageTitles?[i],
+                    voteRevealOptions: new UnityImageVoteRevealOptions()
                     {
-                        BlurAnimate = new StaticAccessor<UnityViewAnimationOptions<float?>>
-                        {
-                            Value = new UnityViewAnimationOptions<float?>()
-                            {
-                                StartValue = new StaticAccessor<float?> { Value = 1.0f },
-                                EndValue = new StaticAccessor<float?> { Value = 0.0f },
-                                StartTime = new StaticAccessor<DateTime?> { Value = DateTime.UtcNow.AddSeconds(MimicConstants.BlurDelay) },
-                                EndTime = new StaticAccessor<DateTime?> { Value = DateTime.UtcNow.AddSeconds(MimicConstants.BlurDelay + MimicConstants.BlurLength) }
-                            }
-                        }
+                        ImageOwner = new StaticAccessor<User> { Value = drawingsToVoteOn[i].Owner},
+                        RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = usersWhoVotedFor },
+                        RevealThisImage = new StaticAccessor<bool?> { Value = (i == this.idexOfCorrectChoice)}
                     }
-                }
+                    ));
+            }
+            return new UnityView(this.lobby)
+            {
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.VoteRevealImageView },
+                Title = new StaticAccessor<string> { Value = this.title },
+                Instructions = new StaticAccessor<string> { Value = this.instructions },
+                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>>
+                {
+                    Value = unityImages,
+                },
+                VoteRevealUsers = new StaticAccessor<IReadOnlyList<User>> { Value = this.votingUsers ?? lobby.GetAllUsers() }
             };
         }
     }
