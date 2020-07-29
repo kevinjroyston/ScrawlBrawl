@@ -68,7 +68,7 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
                 {
                     if (counter == 0)
                     {
-                        return new VotingGameState(
+                        return new VotingGameState( 
                             lobby: lobby,
                             votingUsers: votingUsers,
                             votingUserPromptGenerator: VotingUserPromptGenerator,
