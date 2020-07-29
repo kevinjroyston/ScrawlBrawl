@@ -102,6 +102,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
                     Value = new UnityViewOptions()
                     {
                         PrimaryAxis = new StaticAccessor<Axis?> { Value = Axis.Vertical },
+                        PrimaryAxisMaxCount = new StaticAccessor<int?> { Value = 4},
                     }
                 }
             };

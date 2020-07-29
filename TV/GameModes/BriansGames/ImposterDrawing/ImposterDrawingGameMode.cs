@@ -62,13 +62,18 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
             Dictionary<Prompt, List<User>> promptsToPromptedUsers = new Dictionary<Prompt, List<User>>();
             Setup.AddExitListener(() =>
             {
-                promptsToPromptedUsers = CommonHelpers.EvenlyDistribute(
+                /*promptsToPromptedUsers = CommonHelpers.EvenlyDistribute(
                     groups: prompts,
                     toDistribute: lobby.GetAllUsers().ToList(),
                     maxGroupSize: numWritingsPerPrompt,
                     validDistributeCheck: (Prompt prompt, User user) => user != prompt.Owner);
                 foreach (Prompt prompt in promptsToPromptedUsers.Keys)
                 {
+                    prompt.Imposter = promptsToPromptedUsers[prompt][Rand.Next(0, promptsToPromptedUsers[prompt].Count)];
+                }*/
+                foreach (Prompt prompt in prompts) //todo fix EvenlyDistribute and return to that solution
+                {
+                    promptsToPromptedUsers.Add(prompt, lobby.GetAllUsers().Where(user => user != prompt.Owner).ToList());
                     prompt.Imposter = promptsToPromptedUsers[prompt][Rand.Next(0, promptsToPromptedUsers[prompt].Count)];
                 }
             });
