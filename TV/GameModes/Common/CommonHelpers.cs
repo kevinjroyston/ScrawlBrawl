@@ -57,7 +57,7 @@ namespace RoystonGame.TV.GameModes.Common
         /// Evenly distributes the elements of toDistribute into the groups. Will duplicate toDistribute elements
         /// until the groups have reached maxGroupSize or all elements that pass the check have been assigned for each group
         /// </summary>
-        public static Dictionary<TGroup, List<TToDistribute>> EvenlyDistribute<TGroup, TToDistribute>(
+        public static Dictionary<TGroup, List<TToDistribute>> EvenlyDistribute<TGroup, TToDistribute>( // Todo fix
             List<TGroup> groups,
             List<TToDistribute> toDistribute,
             int maxGroupSize,
