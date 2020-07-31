@@ -1,7 +1,8 @@
 ﻿using RoystonGame.TV.DataModels.States.StateGroups;
 using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.Extensions;
-using RoystonGame.TV.GameModes.Common.DataModels;
+using RoystonGame.TV.GameModes.Common.DataModels.Voting;
+using RoystonGame.Web.DataModels.UnityObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +12,12 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
 {
     public class VoteAndRevealState<T> : StateGroup
     {
-        private DateTime StartingTime { get; set; }
+        
         public VoteAndRevealState(Lobby lobby, VoteableObjectHolder<T> voteableObjectHolder, List<User> votingUsers = null, TimeSpan? votingTime = null)
         {
             this.Entrance.AddExitListener(() =>
             {
-                StartingTime = DateTime.UtcNow;
+                voteableObjectHolder.SetStartTime();
             });
 
             StateChain VoteAndRevealChainGenerator()
@@ -32,7 +33,7 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
                             votingFormSubmitHandler: voteableObjectHolder.VotingFormSubmitHandler,
                             votingTimeoutHandler: voteableObjectHolder.VotingTimeoutHandler,
                             votingExitListener: voteableObjectHolder.VotingExitListener,
-                            votingUnityView: voteableObjectHolder.VotingUnityObjectGenerator(),
+                            votingUnityView: voteableObjectHolder.VotingUnityViewGenerator(),
                             waitingPromptGenerator: voteableObjectHolder.VotingWaitingPromptGenerator,
                             votingTime: votingTime);
                     }
@@ -40,7 +41,7 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
                     {
                         return new VoteRevealGameState(
                             lobby: lobby,
-                            voteRevealUnityView: VoteRevealUnityViewGenerator(),
+                            voteRevealUnityView: voteableObjectHolder.RevealUnityViewGenerator(),
                             waitingPromptGenerator: voteableObjectHolder.RevealWaitingPromptGenerator);
                     }
                     else

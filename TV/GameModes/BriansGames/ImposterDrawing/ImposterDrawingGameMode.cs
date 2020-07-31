@@ -5,7 +5,11 @@ using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.DataModels;
 using RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.GameStates;
 using RoystonGame.TV.GameModes.Common;
+using RoystonGame.TV.GameModes.Common.DataModels;
+using RoystonGame.TV.GameModes.Common.DataModels.Voting;
 using RoystonGame.TV.GameModes.Common.GameStates;
+using RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal;
+using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using System;
 using System.Collections.Generic;
@@ -18,8 +22,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
     {
         private Setup_GS Setup { get; set; }
         private Random Rand { get; } = new Random();
+        private Lobby Lobby { get; set; }
         public ImposterDrawingGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
+            this.Lobby = lobby;
             ValidateOptions(lobby, gameModeOptions);
             int gameSpeed = (int)gameModeOptions[(int)GameModeOptionsEnum.gameSpeed].ValueParsed;
             TimeSpan? setupTimer = null;
@@ -114,6 +120,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
                         }
                         if (counter == 1)
                         {
+                            
                             return new Voting_GS(
                                 lobby: lobby,
                                 prompt: prompt,
@@ -159,6 +166,52 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
         public void ValidateOptions(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             // Empty
+        }
+
+        private State GetVotingAndRevealState(Prompt prompt, bool possibleNone)
+        {
+            int indexOfImposter = 0;
+            List<User> randomizedUsersToShow = prompt.UsersToDrawings.Keys.OrderBy(_=>Rand.Next()).ToList();
+            List<UserDrawing> drawings = randomizedUsersToShow.Select(user => prompt.UsersToDrawings[user]).ToList();
+            bool noneIsCorrect = possibleNone && !randomizedUsersToShow.Contains(prompt.Imposter);
+            if (!possibleNone || !noneIsCorrect)
+            {
+                indexOfImposter = drawings.IndexOf(prompt.UsersToDrawings[prompt.Imposter]);
+            }
+            if (possibleNone)
+            {
+                if (noneIsCorrect)
+                {
+                    indexOfImposter = drawings.Count;
+                    drawings.Add(new UserDrawing()
+                    {
+                        Owner = prompt.Imposter,
+                        Drawing = Constants.NoneUnityImage,
+                    });
+                }
+                else
+                {
+                    drawings.Add(new UserDrawing()
+                    {
+                        Owner = prompt.Owner,
+                        Drawing = Constants.NoneUnityImage,
+                    });
+                }
+            }
+            VoteableDrawingHolder drawingHolder = new VoteableDrawingHolder(
+                lobby: this.Lobby,
+                drawings: drawings,
+                voteExitListener: (Dictionary<User, int> usersToVotes ) =>
+                {
+
+                },
+                voteCountingHandler: (User user, int submission, double timeTaken) =>
+                {
+                    return new List<int>() { submission };
+                },
+                indexesOfDrawingsToReveal: new List<int>() { indexOfImposter},
+                )
+                            
         }
     }
 }
