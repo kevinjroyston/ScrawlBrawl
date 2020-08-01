@@ -54,9 +54,10 @@ namespace RoystonGame.TV.GameModes.Common.DataModels.Voting
                     new SubPrompt()
                     {
                         Prompt = VotingPromptTexts?[0] ?? null,
-                        Selector = new SelectorPromptMetadata(){ ImageList = Objects.Select(userDrawing => CommonHelpers.HtmlImageWrapper(userDrawing.Drawing)).ToArray() },
+                        Selector = new SelectorPromptMetadata(){ ImageList = Objects.Select(userDrawing => userDrawing.Drawing).ToArray() },
                     }
-                }
+                },
+                SubmitButton = true
             };
         }
         public override UnityImage VotingUnityObjectGenerator(int objectIndex)
@@ -70,6 +71,7 @@ namespace RoystonGame.TV.GameModes.Common.DataModels.Voting
             return this.Objects[objectIndex].GetUnityImage(
                 imageIdentifier: (objectIndex + 1).ToString(),
                 title: this.ImageTitles[objectIndex],
+                imageOwner: this.Objects[objectIndex].Owner,
                 voteRevealOptions: new UnityImageVoteRevealOptions() 
                 { 
                     RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = AnswersToUsersWhoVoted.ContainsKey(objectIndex) ? AnswersToUsersWhoVoted[objectIndex] : new List<User>() },

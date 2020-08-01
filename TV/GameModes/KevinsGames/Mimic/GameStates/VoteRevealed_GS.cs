@@ -44,7 +44,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
                     imageIdentifier: "" + (i + 1),
                     voteRevealOptions: new UnityImageVoteRevealOptions()
                     {
-                        ImageOwner = new StaticAccessor<User> { Value = user},
+                        //ImageOwner = new StaticAccessor<User> { Value = user},
                         RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = relevantUsers},
                         RevealThisImage = new StaticAccessor<bool?> { Value = (user == roundTracker.originalDrawer)}
                     }));

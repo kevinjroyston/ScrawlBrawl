@@ -8,7 +8,6 @@ namespace Assets.Scripts.Networking.DataModels
 {
     public class UnityImageVoteRevealOptions
     {
-        public User _ImageOwner { get; set; }
         public IReadOnlyList<User> _RelevantUsers { get; set; }
         public bool? _RevealThisImage { get; set; }
     }

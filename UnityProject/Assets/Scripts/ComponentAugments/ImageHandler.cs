@@ -200,26 +200,26 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
 
             
 
-            if (value?._VoteRevealOptions != null)
+            if (value?._VoteRevealOptions != null && value?._ImageOwner != null)
             {
                 VoteCount.text = "" + 0;
 
                 if (VoteCount.enabled)
                 {
-                    VoteCountHolder.GetComponent<ScoreIncreaseManager>().registerUser(value?._VoteRevealOptions._ImageOwner);
+                    VoteCountHolder.GetComponent<ScoreIncreaseManager>().registerUser(value?._ImageOwner);
                 }
                 if (value?._VoteRevealOptions._RelevantUsers != null)
                 {
                     foreach (User user in value?._VoteRevealOptions._RelevantUsers)
                     {
-                        if (value?._VoteRevealOptions._ImageOwner != null)
+                        if (value?._ImageOwner != null)
                         {
                             EventSystem.Singleton.PublishEvent(new MoveToTargetGameEvent()
                             {
                                 eventType = GameEvent.EventEnum.MoveToTarget,
                                 id = user.UserId.ToString(),
                                 TargetRect = VoteCountHolder.GetComponent<RectTransform>(),
-                                TargetUserId = value?._VoteRevealOptions._ImageOwner.UserId.ToString()
+                                TargetUserId = value?._ImageOwner.UserId.ToString()
                             });
                         }
                     }

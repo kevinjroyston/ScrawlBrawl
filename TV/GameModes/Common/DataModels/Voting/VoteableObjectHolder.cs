@@ -70,7 +70,7 @@ namespace RoystonGame.TV.GameModes.Common.DataModels.Voting
         }
         public virtual UnityView RevealUnityViewGenerator()
         {
-            List<UnityImage> unityObjects = Enumerable.Range(0, Objects.Count).Select(index => VotingUnityObjectGenerator(index)).ToList();
+            List<UnityImage> unityObjects = Enumerable.Range(0, Objects.Count).Select(index => RevealUnityObjectGenerator(index)).ToList();
             return new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.VoteRevealImageView },

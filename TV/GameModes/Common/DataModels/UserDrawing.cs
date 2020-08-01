@@ -20,6 +20,7 @@ namespace RoystonGame.TV.GameModes.Common.DataModels
         public UnityImage GetUnityImage(
             Color? backgroundColor = null,
             string imageIdentifier = null,
+            User imageOwner = null,
             string title = null,
             string header = null,
             int? voteCount = null,
@@ -43,6 +44,7 @@ namespace RoystonGame.TV.GameModes.Common.DataModels
                 SpriteGridWidth = new StaticAccessor<int?> { Value = 1 },
                 SpriteGridHeight = new StaticAccessor<int?> { Value = 1 },
                 ImageIdentifier = new StaticAccessor<string> { Value = imageIdentifier },
+                ImageOwner = new StaticAccessor<User> { Value = imageOwner },
                 Title = new StaticAccessor<string> { Value = title },
                 Header = new StaticAccessor<string> { Value = header },
                 VoteCount = new StaticAccessor<int?> { Value = voteCount},

@@ -13,6 +13,7 @@ using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -120,23 +121,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
                         }
                         if (counter == 1)
                         {
-                            
-                            return new Voting_GS(
-                                lobby: lobby,
-                                prompt: prompt,
-                                randomizedUsersToShow: randomizedUsers.Where((User user) => prompt.UsersToDrawings.ContainsKey(user)).ToList(),
-                                possibleNone: (prompt.UsersToDrawings.Count < randomizedUsers.Count),
-                                votingTimeDurration: votingTimer);
+                            return GetVotingAndRevealState(prompt, (prompt.UsersToDrawings.Count < randomizedUsers.Count), votingTimer);   
                         }
                         if (counter == 2)
-                        {
-                            return new VoteRevealed_GS(
-                                lobby: lobby,
-                                prompt: prompt,
-                                randomizedUsersToShow: randomizedUsers.Where((User user) => prompt.UsersToDrawings.ContainsKey(user)).ToList(),
-                                possibleNone: (prompt.UsersToDrawings.Count < randomizedUsers.Count));
-                        }
-                        if (counter == 3)
                         {
                             if (lastRound)
                             {
@@ -168,7 +155,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
             // Empty
         }
 
-        private State GetVotingAndRevealState(Prompt prompt, bool possibleNone)
+        private State GetVotingAndRevealState(Prompt prompt, bool possibleNone, TimeSpan? votingTime)
         {
             int indexOfImposter = 0;
             List<User> randomizedUsersToShow = prompt.UsersToDrawings.Keys.OrderBy(_=>Rand.Next()).ToList();
@@ -198,10 +185,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
                     });
                 }
             }
+
             VoteableDrawingHolder drawingHolder = new VoteableDrawingHolder(
                 lobby: this.Lobby,
                 drawings: drawings,
-                voteExitListener: (Dictionary<User, int> usersToVotes ) =>
+                voteExitListener: (Dictionary<User, int> usersToVotes) =>
                 {
 
                 },
@@ -209,9 +197,16 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
                 {
                     return new List<int>() { submission };
                 },
-                indexesOfDrawingsToReveal: new List<int>() { indexOfImposter},
-                )
-                            
+                indexesOfDrawingsToReveal: new List<int>() { indexOfImposter })
+            {
+                VotingTitle = "Find the Imposter!",
+                VotingInstructions = possibleNone ? "Someone didn't finish so there may not be an imposter in this group" : "",
+            };
+
+            return new VoteAndRevealState<UserDrawing>(
+                lobby: this.Lobby,
+                voteableObjectHolder: drawingHolder,
+                votingTime: votingTime);
         }
     }
 }

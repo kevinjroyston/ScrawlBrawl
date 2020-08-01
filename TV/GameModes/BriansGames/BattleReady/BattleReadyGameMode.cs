@@ -17,6 +17,7 @@ using RoystonGame.TV.DataModels.States.StateGroups;
 using System.Collections.Concurrent;
 using RoystonGame.TV.GameModes.Common.DataModels;
 using RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal;
+using RoystonGame.TV.DataModels;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
 {
@@ -174,14 +175,15 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                                 {
                                     peopleToVoteOn[answer].Owner.AddScore(BattleReadyConstants.PointsForVote);
                                 };
-                                return new ThreePartPersonVoteAndRevealGameState(
+                                return null;
+                                /*return new ThreePartPersonVoteAndRevealGameState(
                                     lobby: lobby,
                                     peopleToVoteOn: peopleToVoteOn,
                                     voteExitHandler: voteHandler,
                                     title: roundPrompt.Text,
                                     imageTitles: imageTitles,
                                     showImageTitlesForVote: true,
-                                    votingTime: null);
+                                    votingTime: null);*/
                             }
                             else
                             {
