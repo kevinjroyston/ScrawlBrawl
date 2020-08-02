@@ -63,7 +63,7 @@ public class AudioController : MonoBehaviour
     {
         if (audioSource!=null && startDingClip != null)
         {
-            audioSource.PlayOneShot(startDingClip, 0.2f);
+            audioSource.PlayOneShot(startDingClip);
         }     
     }
     /*public void PlayEndDing()

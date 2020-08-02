@@ -300,7 +300,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startEvent:
-    eventType: 17
+    eventType: 18
     id: 
   endEvent:
     eventType: 2

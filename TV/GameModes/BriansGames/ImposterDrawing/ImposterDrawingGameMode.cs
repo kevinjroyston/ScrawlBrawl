@@ -186,27 +186,19 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
                 }
             }
 
-            VoteableDrawingHolder drawingHolder = new VoteableDrawingHolder(
+            return new DrawingVoteAndRevealState(
                 lobby: this.Lobby,
                 drawings: drawings,
-                voteExitListener: (Dictionary<User, int> usersToVotes) =>
+                voteCountManager: (Dictionary<User, int> usersToVotes) =>
                 {
 
                 },
-                voteCountingHandler: (User user, int submission, double timeTaken) =>
+                indexesOfDrawingsToReveal: new List<int>() { indexOfImposter },
+                votingTime: votingTime)
                 {
-                    return new List<int>() { submission };
-                },
-                indexesOfDrawingsToReveal: new List<int>() { indexOfImposter })
-            {
-                VotingTitle = "Find the Imposter!",
-                VotingInstructions = possibleNone ? "Someone didn't finish so there may not be an imposter in this group" : "",
-            };
-
-            return new VoteAndRevealState<UserDrawing>(
-                lobby: this.Lobby,
-                voteableObjectHolder: drawingHolder,
-                votingTime: votingTime);
+                    VotingTitle = "Find the Imposter!",
+                    VotingInstructions = possibleNone ? "Someone didn't finish so there may not be an imposter in this group" : "",
+                };
         }
     }
 }

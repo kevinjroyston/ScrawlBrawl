@@ -417,7 +417,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startEvent:
-    eventType: 14
+    eventType: 15
     id: 
   endEvent:
     eventType: 0

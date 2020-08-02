@@ -175,6 +175,12 @@ public class GenericView : ITVView
                 listener: (GameEvent gameEvent) => EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ShakeRevealImages }, allowDuplicates: false),
                 gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.CallShakeRevealImages });
         }
+        else
+        {
+            EventSystem.Singleton.RegisterListener(
+               listener: (GameEvent gameEvent) => EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ShowDeltaScores }, allowDuplicates: false),
+               gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.CallShakeRevealImages });
+        }
     }
 
     public override void ExitView()

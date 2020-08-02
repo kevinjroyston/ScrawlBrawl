@@ -3037,7 +3037,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 733042830}
   timerAudioSource: {fileID: 733042831}
-  startDingClip: {fileID: 8300000, guid: 0ff9cf125bcfad2498715cc78845b101, type: 3}
+  startDingClip: {fileID: 8300000, guid: 9970546d8e941794cb1f5e74ec356e6e, type: 3}
   userSubmitClip: {fileID: 8300000, guid: 1946d49b04b0ff04a95e890a4ecfce01, type: 3}
   wooshClip: {fileID: 8300000, guid: 047ddfe06eee62145afd681405336fd0, type: 3}
   popClip: {fileID: 8300000, guid: 9970546d8e941794cb1f5e74ec356e6e, type: 3}
