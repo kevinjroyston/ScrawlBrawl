@@ -38,7 +38,7 @@ const appRoutes: Routes = [
     //{ path: 'admin', component: AdminComponent} //not yet made
 ];
 
-export const protectedResourceMap: [string, string[]][] = [
+/*export const protectedResourceMap: [string, string[]][] = [
     ['https://login.microsoftonline.com', ['api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby']],
     ['/lobby/manage', ['api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby']],
     ['/Lobby/Games', ['api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby']],
@@ -47,14 +47,14 @@ export const protectedResourceMap: [string, string[]][] = [
     ['/Lobby/Configure', ['api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby']],
     ['/Lobby/Delete', ['api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby']],
     ['/Lobby/Start', ['api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby']],
-];
+];*/
 
 const isIE = window.navigator.userAgent.indexOf("MSIE ") > -1 || window.navigator.userAgent.indexOf("Trident/") > -1;
 
 function MSALConfigFactory(): Configuration {
     return {
         auth: {
-            clientId: 'f62ed1b5-3f4f-4c23-925a-0d27767707c6',
+            clientId: '5c59c94a-140d-4c49-a4ed-772a55c52d57',
             authority: "https://login.microsoftonline.com/common/",
             validateAuthority: true,
             navigateToLoginRequestUrl: true,
@@ -70,10 +70,10 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     return {
         popUp: !isIE,
         consentScopes: [
-            "api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby"
+           // "api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby"
         ],
         unprotectedResources: ["/currentContent", "/FormSubmit", "/User/Delete"],
-        protectedResourceMap,
+        //protectedResourceMap,
         extraQueryParameters: {}
     };
 }

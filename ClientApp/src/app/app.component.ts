@@ -15,7 +15,8 @@ export class AppComponent implements OnInit {
     ngOnInit() {
         const requestObj = {
             scopes: [
-                "api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby"]
+                //"api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby"
+            ]
         };
 
         const sub = this.broadcastService.subscribe('msal:acquireTokenFailure', () => {
