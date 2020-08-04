@@ -46,7 +46,7 @@ namespace RoystonGame.Web.Controllers.Other
         public ActionResult WellKnown(string filename)
         {
             var file = Path.Combine(Env.ContentRootPath, ".well-known", filename);
-            return PhysicalFile(file, "text/plain");
+            return PhysicalFile(file, "application/json");
         }
     }
 }
