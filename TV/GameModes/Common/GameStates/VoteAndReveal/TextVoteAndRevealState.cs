@@ -8,6 +8,6 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
 {
     public class TextVoteAndRevealState //: VoteAndRevealState<UserText>
     {
-
+        //todo
     }
 }

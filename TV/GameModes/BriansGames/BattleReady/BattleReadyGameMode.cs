@@ -240,8 +240,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             List<Person> peopleToVoteOn = randomizedUsersToDisplay.Select(user => prompt.UsersToUserHands[user].Contestant).ToList();
             List<string> imageTitles = randomizedUsersToDisplay.Select(user => prompt.UsersToUserHands[user].Contestant.Name).ToList();
 
-            CommonHelpers.ResetAllRevealDeltas(this.Lobby.GetAllUsers().ToList());
-
             return new ThreePartPersonVoteAndRevealState(
                 lobby: this.Lobby,
                 people: peopleToVoteOn,

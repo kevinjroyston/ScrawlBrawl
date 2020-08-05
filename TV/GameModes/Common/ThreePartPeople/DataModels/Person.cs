@@ -68,6 +68,7 @@ namespace RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels
                 ImageOwnerId = new StaticAccessor<Guid?> { Value = imageOwnerId},
                 Title = new StaticAccessor<string> { Value = title },
                 Header = new StaticAccessor<string> { Value = header },
+                VoteCount = new StaticAccessor<int?> { Value = voteCount},
                 VoteRevealOptions = new StaticAccessor<UnityImageVoteRevealOptions> { Value = voteRevealOptions },
             };
             

@@ -29,7 +29,7 @@ namespace RoystonGame.TV.DataModels.Users
         public DateTime LobbyJoinTime { get; private set; }
         public DateTime CreationTime { get; } = DateTime.UtcNow;
 
-        public void SetJoinTime()
+        public void SetLobbyJoinTime()
         {
             LobbyJoinTime = DateTime.UtcNow;
         }

@@ -40,6 +40,8 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
                 {
                     if (counter == 0)
                     {
+                        CommonHelpers.ResetAllRevealDeltas(this.Lobby.GetAllUsers().ToList());
+
                         return new VotingGameState(
                             lobby: lobby,
                             votingUsers: votingUsers,

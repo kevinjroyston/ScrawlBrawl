@@ -44,18 +44,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
                 {
                     if (counter < challenges.Count)
                     {
-                        State votingState = GetVotingAndRevealState(challenges[counter], null);
-                        ScoreBoardGameState scoreBoardState;
-                        if (counter == challenges.Count - 1)
+                        return new StateChain(states: new List<State>
                         {
-                            scoreBoardState = new ScoreBoardGameState(lobby);
-                        }
-                        else
-                        {
-                            scoreBoardState = new ScoreBoardGameState(lobby, "Final Scores");
-                        }
-                        votingState.Transition(scoreBoardState);
-                        return votingState;
+                            GetVotingAndRevealState(challenges[counter], null),
+                            (counter == challenges.Count - 1) ? new ScoreBoardGameState(lobby, "Final Scores") : new ScoreBoardGameState(lobby),
+                        });
                     }
                     else
                     {
