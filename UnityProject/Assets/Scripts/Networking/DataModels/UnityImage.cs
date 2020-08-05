@@ -25,7 +25,7 @@ public class UnityImage
     public string _Header { get; set; }
     public string _Footer { get; set; }
     public string _ImageIdentifier { get; set; }
-    public User _ImageOwner { get; set; }
+    public Guid? _ImageOwnerId { get; set; }
     public int? _VoteCount { get; set; }
     public UnityImageVoteRevealOptions _VoteRevealOptions { get; set; }
     public IReadOnlyList<int> _BackgroundColor { get; set; }

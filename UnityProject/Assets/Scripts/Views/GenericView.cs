@@ -82,10 +82,12 @@ public class GenericView : ITVView
         if (VoteReavealBar?.GetComponent<VoteRevealUserImageHandler>() != null)
         {
             var voteRevealHandler = VoteReavealBar.GetComponent<VoteRevealUserImageHandler>();
-            if (UnityView?._VoteRevealUsers != null && UnityView._VoteRevealUsers.Count > 0)
+            if (UnityView?._VoteRevealUsers != null 
+                && UnityView._VoteRevealUsers.Count > 0
+                && UnityView._UserIdToDeltaScores != null)
             {
                 voteRevealBar = true;
-                voteRevealHandler.HandleUsers(UnityView._VoteRevealUsers);
+                voteRevealHandler.HandleUsers(UnityView._VoteRevealUsers, UnityView._UserIdToDeltaScores);
                 VoteReavealBar.SetActive(true);
             }
             else

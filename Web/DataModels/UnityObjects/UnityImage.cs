@@ -27,7 +27,7 @@ namespace RoystonGame.Web.DataModels.UnityObjects
             modified |= this.ImageIdentifier?.Refresh() ?? false;
             modified |= this.SpriteGridWidth?.Refresh() ?? false;
             modified |= this.SpriteGridHeight?.Refresh() ?? false;
-            modified |= this.ImageOwner?.Refresh() ?? false;
+            modified |= this.ImageOwnerId?.Refresh() ?? false;
             modified |= this.VoteRevealOptions?.Refresh() ?? false;
             return modified;
         }
@@ -46,7 +46,7 @@ namespace RoystonGame.Web.DataModels.UnityObjects
             hash.Add(_Footer);
             hash.Add(_VoteCount);
             hash.Add(_ImageIdentifier);
-            hash.Add(_ImageOwner);
+            hash.Add(_ImageOwnerId);
             hash.Add(_VoteRevealOptions);
             foreach(int i in _BackgroundColor ?? new List<int>())
             {
@@ -97,8 +97,8 @@ namespace RoystonGame.Web.DataModels.UnityObjects
 
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public IAccessor<User> ImageOwner { private get; set; }
-        public User _ImageOwner { get => ImageOwner?.Value; }
+        public IAccessor<Guid?> ImageOwnerId { private get; set; }
+        public Guid? _ImageOwnerId { get => ImageOwnerId?.Value; }
 
         public Guid _UnityImageId { get; } = Guid.NewGuid();
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using RoystonGame.TV.DataModels.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,14 @@ namespace RoystonGame.TV.GameModes.Common
         public static string HtmlImageWrapper(string image, int width = 240, int height = 240)
         {
             return Invariant($"<img width=\"{width}\" height=\"{height}\" src=\"{image}\"/>");
+        }
+
+        public static void ResetAllRevealDeltas(List<User> users)
+        {
+            foreach (User user in users)
+            {
+                user.ResetScoreDeltaReveal();
+            }
         }
 
         public static int PointsForSpeed(int maxPoints, int minPoints, double startTime, double endTime, double secondsTaken)

@@ -11,34 +11,41 @@ using System.Threading.Tasks;
 
 namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
 {
-    public class DrawingVoteAndRevealState : VoteAndRevealState<UserDrawing>
+    public class StackedDrawingVoteAndRevealState : VoteAndRevealState<List<UserDrawing>>
     {
         private List<int> IndexesOfDrawingsToReveal { get; set; } = new List<int>();
         private List<string> ImageTitles { get; set; }
+        private Func<User, int, string> PromptAnswerAddOnGenerator { get; set; } 
         private bool ShowImageTitlesForVoting { get; set; }
         private Action<Dictionary<User, int>> VoteCountingManager { get; set; }
-        public DrawingVoteAndRevealState(
+        public StackedDrawingVoteAndRevealState(
             Lobby lobby,
-            List<UserDrawing> drawings,
+            List<List<UserDrawing>> stackedDrawings,
             Action<Dictionary<User, int>> voteCountManager,
+            Func<User, int, string> promptAnswerAddOnGenerator = null,
             List<User> votingUsers = null,
             TimeSpan? votingTime = null,
             List<int> indexesOfDrawingsToReveal = null,
             List<string> imageTitles = null,
-            bool showImageTitlesForVoting = false) : base(lobby, drawings, votingUsers, votingTime)
+            bool showImageTitlesForVoting = false) : base(lobby, stackedDrawings, votingUsers, votingTime)
         {
             this.VoteCountingManager = voteCountManager;
+            this.PromptAnswerAddOnGenerator = promptAnswerAddOnGenerator;
+            if (promptAnswerAddOnGenerator == null)
+            {
+                this.PromptAnswerAddOnGenerator = (User user, int answer) => "";
+            }
             if (indexesOfDrawingsToReveal != null)
             {
                 this.IndexesOfDrawingsToReveal = indexesOfDrawingsToReveal;
             }
             if (imageTitles == null)
             {
-                this.ImageTitles = drawings.Select(drawing => "").ToList(); // sets it to a list of empty string same length as drawings
+                this.ImageTitles = stackedDrawings.Select(drawing => "").ToList(); // sets it to a list of empty string same length as drawings
             }
             else
             {
-                Debug.Assert(imageTitles.Count == drawings.Count, "Titles must be the same length as drawings");
+                Debug.Assert(imageTitles.Count == stackedDrawings.Count, "Titles must be the same length as drawings");
 
                 this.ImageTitles = imageTitles;
             }
@@ -55,7 +62,7 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
                     new SubPrompt()
                     {
                         Prompt = VotingPromptTexts?[0] ?? null,
-                        Selector = new SelectorPromptMetadata(){ ImageList = Objects.Select(userDrawing => userDrawing.Drawing).ToArray() },
+                        Answers = Enumerable.Range(1, this.Objects.Count).Select(num => num.ToString() + PromptAnswerAddOnGenerator(user, num -1)).ToArray(),
                     }
                 },
                 SubmitButton = true
@@ -63,32 +70,41 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
         }
         public override UnityImage VotingUnityObjectGenerator(int objectIndex)
         {
-            return this.Objects[objectIndex].GetUnityImage(
-                imageIdentifier: (objectIndex + 1).ToString(),
-                title: this.ShowImageTitlesForVoting ? this.ImageTitles[objectIndex] : null);
+            return new UnityImage()
+            {
+                Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = Objects[objectIndex].Select(userDrawing => userDrawing.Drawing).ToList() },
+                ImageIdentifier = new StaticAccessor<string> { Value = (objectIndex + 1).ToString() },
+                Title = new StaticAccessor<string> { Value = this.ShowImageTitlesForVoting ? this.ImageTitles[objectIndex] : null}
+            };
         }
         public override UnityImage RevealUnityObjectGenerator(int objectIndex)
         {
-            return this.Objects[objectIndex].GetUnityImage(
-                imageIdentifier: (objectIndex + 1).ToString(),
-                title: this.ImageTitles[objectIndex],
-                imageOwnerId: this.Objects[objectIndex].Owner.UserId,
-                voteRevealOptions: new UnityImageVoteRevealOptions()
+            return new UnityImage()
+            {
+                Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = this.Objects[objectIndex].Select(userDrawing => userDrawing.Drawing).ToList() },
+                ImageIdentifier = new StaticAccessor<string> { Value = (objectIndex + 1).ToString() },
+                Title = new StaticAccessor<string> { Value = this.ShowImageTitlesForVoting ? this.ImageTitles[objectIndex] : null },
+                ImageOwnerId = new StaticAccessor<Guid?> { Value = this.Objects[objectIndex][0].Owner?.UserId },
+                VoteRevealOptions = new StaticAccessor<UnityImageVoteRevealOptions>
                 {
-                    RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = AnswersToUsersWhoVoted.ContainsKey(objectIndex) ? AnswersToUsersWhoVoted[objectIndex] : new List<User>() },
-                    RevealThisImage = new StaticAccessor<bool?> { Value = IndexesOfDrawingsToReveal.Contains(objectIndex) }
-                });
+                    Value = new UnityImageVoteRevealOptions()
+                    {
+                        RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = AnswersToUsersWhoVoted.ContainsKey(objectIndex) ? AnswersToUsersWhoVoted[objectIndex] : new List<User>() },
+                        RevealThisImage = new StaticAccessor<bool?> { Value = IndexesOfDrawingsToReveal?.Contains(objectIndex) }
+                    }
+                },
+            };
         }
         public override List<int> VotingFormSubmitManager(User user, UserFormSubmission submission)
         {
-            return new List<int>() { submission.SubForms[0].Selector.Value };
+            return new List<int>() { submission.SubForms[0].RadioAnswer.Value };
         }
         public override List<int> VotingTimeoutManager(User user, UserFormSubmission submission)
         {
             if (submission.SubForms.Count > 0
-                && submission.SubForms[0].Selector != null)
+               && submission.SubForms[0].RadioAnswer != null)
             {
-                return new List<int>() { submission.SubForms[0].Selector.Value };
+                return new List<int>() { submission.SubForms[0].RadioAnswer.Value };
             }
             else
             {

@@ -6,7 +6,6 @@ using RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.DataModels;
 using RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.GameStates;
 using RoystonGame.TV.GameModes.Common;
 using RoystonGame.TV.GameModes.Common.DataModels;
-using RoystonGame.TV.GameModes.Common.DataModels.Voting;
 using RoystonGame.TV.GameModes.Common.GameStates;
 using RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal;
 using RoystonGame.Web.DataModels.Requests;
@@ -191,7 +190,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
                 drawings: drawings,
                 voteCountManager: (Dictionary<User, int> usersToVotes) =>
                 {
-
+                    CountVotes(usersToVotes, prompt, randomizedUsersToShow);
                 },
                 indexesOfDrawingsToReveal: new List<int>() { indexOfImposter },
                 votingTime: votingTime)
@@ -199,6 +198,43 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
                     VotingTitle = "Find the Imposter!",
                     VotingInstructions = possibleNone ? "Someone didn't finish so there may not be an imposter in this group" : "",
                 };
+        }
+
+        private void CountVotes(Dictionary<User, int> usersToVotes, Prompt prompt, List<User> randomizedUsers)
+        {
+            List<User> correctUsers = new List<User>();
+            foreach (User user in usersToVotes.Keys)
+            {
+                if (randomizedUsers[usersToVotes[user]] == prompt.Imposter)
+                {
+                    correctUsers.Add(user);
+                }
+                else
+                {
+                    if (randomizedUsers[usersToVotes[user]] != user)
+                    {
+                        randomizedUsers[usersToVotes[user]].AddScore(ImposterDrawingConstants.PointsToLooseForWrongVote); // user was voted for when they weren't the imposter so they lose points
+                    }
+                }
+            }
+
+            int totalPointsToAward = usersToVotes.Count * ImposterDrawingConstants.TotalPointsToAwardPerVote; // determine the total number of points to distribute
+            foreach (User user in correctUsers)
+            {
+                user.AddScore(totalPointsToAward / correctUsers.Count); //distribute those evenly to the correct users
+            }
+
+            // If EVERYBODY figures out the diff, the owner loses some points but not as many.
+            if (correctUsers.Where(user => user != prompt.Owner).Count() == (this.Lobby.GetAllUsers().Count - 1))
+            {
+                prompt.Owner.AddScore(totalPointsToAward / -4);
+            }
+
+            // If the owner couldnt find the diff, they lose a bunch of points.
+            if (!correctUsers.Contains(prompt.Owner))
+            {
+                prompt.Owner.AddScore(totalPointsToAward / -2);
+            }
         }
     }
 }

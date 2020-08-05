@@ -19,6 +19,9 @@ using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.DataModels;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Server.IIS.Core;
+using Microsoft.Identity.Client;
+using RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal;
+using RoystonGame.TV.GameModes.Common;
 
 namespace RoystonGame.TV.GameModes.KevinsGames.Mimic
 {
@@ -26,6 +29,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic
     {
         private ConcurrentBag<UserDrawing> Drawings { get; set; } = new ConcurrentBag<UserDrawing>();
         private GameState Setup { get; set; }
+        private Lobby Lobby { get; set; }
         private Random Rand { get; } = new Random();
         public MimicGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
@@ -37,6 +41,8 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic
             int maxDrawingsBeforeVoteInput = (int)gameModeOptions[(int)GameModeOptions.MaxDrawingsBeforeVote].ValueParsed;
             int numSets = (int)gameModeOptions[(int)GameModeOptions.NumSets].ValueParsed;
             int maxVoteDrawings = (int)gameModeOptions[(int)GameModeOptions.MaxVoteDrawings].ValueParsed;
+
+            this.Lobby = lobby;
 
             Setup = new Setup_GS(
                 lobby: lobby,
@@ -102,26 +108,9 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic
                                     });
                                     return new StateChain(states: new List<State>() { displayGS, mimicsGS }, entrance: null, exit: null);
                                 }
-                                else if (counter >= maxDrawingsBeforeVote && counter - maxDrawingsBeforeVote < maxDrawingsBeforeVote * 2)
+                                else if (counter < maxDrawingsBeforeVote * 2)
                                 {
-                                    if ((counter - maxDrawingsBeforeVote) % 2 == 0)
-                                    {
-                                        RoundTracker votingRoundTracker = roundTrackers[(counter - maxDrawingsBeforeVote) / 2];
-
-                                        return new Voting_GS(
-                                            lobby: lobby,
-                                            roundTracker: votingRoundTracker,
-                                            votingTime: TimeSpan.FromSeconds(votingTimerLength));
-                                    }
-
-                                    else
-                                    {
-                                        RoundTracker votingRoundTracker = roundTrackers[(counter - maxDrawingsBeforeVote) / 2];
-                                        return new VoteRevealed_GS(
-                                            lobby: lobby,
-                                            roundTracker: votingRoundTracker);
-                                    }
-
+                                    return GetVotingAndRevealState(roundTrackers[counter - maxDrawingsBeforeVote], TimeSpan.FromSeconds(votingTimerLength));
                                 }
                                 else
                                 {
@@ -153,6 +142,44 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic
             
             this.Entrance.Transition(Setup);
             Setup.Transition(CreateGamePlayLoop);
+        }
+        private State GetVotingAndRevealState(RoundTracker roundTracker, TimeSpan? votingTime)
+        {
+            List<UserDrawing> drawings = roundTracker.UsersToDisplay.Select(user => roundTracker.UsersToUserDrawings[user]).ToList();
+            int indexOfOriginal = roundTracker.UsersToDisplay.IndexOf(roundTracker.originalDrawer);
+
+            return new BlurredImageVoteAndRevealState(
+                lobby: this.Lobby,
+                drawings: drawings,
+                blurRevealDelay: MimicConstants.BlurDelay,
+                blurRevealLength: MimicConstants.BlurLength,
+                voteCountManager: (Dictionary<User, (int, double)> usersToVotes) =>
+                {
+                    CountVotes(usersToVotes, roundTracker);
+                },
+                indexesOfDrawingsToReveal: new List<int>() { indexOfOriginal },
+                votingTime: votingTime)
+            {
+                VotingTitle = "Find the Original!",
+            };
+        }
+        private void CountVotes(Dictionary<User, (int, double)> usersToVotes, RoundTracker roundTracker)
+        {
+            foreach (User user in usersToVotes.Keys)
+            {
+                User userVotedFor = roundTracker.UsersToDisplay[usersToVotes[user].Item1];
+                userVotedFor.AddScore(MimicConstants.PointsForVote);
+
+                if (userVotedFor == roundTracker.originalDrawer)
+                {
+                    user.AddScore(CommonHelpers.PointsForSpeed(
+                                maxPoints: MimicConstants.PointsForCorrectPick(this.Lobby.GetAllUsers().Count),
+                                minPoints: MimicConstants.PointsForCorrectPick(this.Lobby.GetAllUsers().Count) / 10,
+                                startTime: MimicConstants.BlurDelay,
+                                endTime: MimicConstants.BlurDelay + MimicConstants.BlurLength,
+                                secondsTaken: usersToVotes[user].Item2));
+                }
+            }
         }
         public void ValidateOptions(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {

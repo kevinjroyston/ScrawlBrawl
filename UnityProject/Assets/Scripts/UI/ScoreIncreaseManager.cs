@@ -8,11 +8,11 @@ using UnityEngine.UI;
 public class ScoreIncreaseManager : MonoBehaviour
 {
     public Text scoreText;
-    public void registerUser(User user)
+    public void registerUser(Guid? userId)
     {
-        if (user != null)
+        if (userId != null)
         {
-            EventSystem.Singleton.RegisterListener(IncreaseScore, new GameEvent() { eventType = GameEvent.EventEnum.IncreaseScore, id = user.UserId.ToString() }, oneShot: false);
+            EventSystem.Singleton.RegisterListener(IncreaseScore, new GameEvent() { eventType = GameEvent.EventEnum.IncreaseScore, id = userId.ToString() }, oneShot: false);
         }
     }
         

@@ -69,9 +69,9 @@ public class ShowScoreDeltaAnimation : AnimationBase
         };
     }
 
-    public void AssignUserAndRegister(User relevantUser)
+    public void AssignUserAndRegister(int scoreDeltaInt)
     {
-        scoreDelta = "+" + relevantUser.ScoreDeltaReveal;
+        scoreDelta = "+" + scoreDeltaInt;
         //startEvent.id = relevantUser.UserId.ToString();
         CallRegisterForAnimation();    
     }

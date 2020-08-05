@@ -32,6 +32,8 @@ namespace RoystonGame.Web.DataModels.UnityObjects
             modified |= this.Users?.Refresh() ?? false;
             modified |= this.Title?.Refresh() ?? false;
             modified |= this.Instructions?.Refresh() ?? false;
+            modified |= this.VoteRevealUsers?.Refresh() ?? false;
+            modified |= this.UserIdToDeltaScores?.Refresh() ?? false;
             modified |= this.UnityImages?.Refresh() ?? false;
             modified |= this.UnityImages?.Value?.Select(image => image?.Refresh() ?? false).ToList().Any(val => val) ?? false;
             return modified;
@@ -74,6 +76,11 @@ namespace RoystonGame.Web.DataModels.UnityObjects
         public IAccessor<IReadOnlyList<User>> Users { private get; set; }
         public IReadOnlyList<User> _Users { get => Users?.Value; }
 
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public IAccessor<IDictionary<string, int>> UserIdToDeltaScores { private get; set; }
+        public IDictionary<string, int> _UserIdToDeltaScores { get => UserIdToDeltaScores?.Value; }
+        
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public IAccessor<IReadOnlyList<User>> VoteRevealUsers { private get; set; }
