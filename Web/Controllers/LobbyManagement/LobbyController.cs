@@ -15,7 +15,7 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+    [Authorize(Policy = "LobbyManagement")]
     public class LobbyController : ControllerBase
     {
         public LobbyController(ILogger<LobbyController> logger, GameManager gameManager)
@@ -27,15 +27,10 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
         private GameManager GameManager { get; set; }
         private ILogger<LobbyController> Logger { get; set; }
 
-        // The Web API will only accept tokens 1) for users, and 
-        // 2) having the access_as_user scope for this API
-        static readonly string[] scopeRequiredByApi = new string[] { "ManageLobby" };
-
         [HttpGet]
         [Route("Get")]
         public IActionResult GetLobby()
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
 
             if (user == null)
@@ -55,7 +50,6 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
         [Route("Create")]
         public IActionResult CreateLobby()
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
 
             if (user == null)
@@ -95,7 +89,6 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
         [Route("Delete")]
         public IActionResult DeleteLobby()
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
             if (user == null)
             {
@@ -116,7 +109,6 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
         [Route("Configure")]
         public IActionResult ConfigureLobby([FromBody]ConfigureLobbyRequest request)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
             if (user == null)
             {
@@ -140,7 +132,6 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
         [Route("Start")]
         public IActionResult StartLobby()
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
             if (user == null)
             {
@@ -164,7 +155,6 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
         [Route("Games")]
         public IActionResult GetGames()
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             return new OkObjectResult(Lobby.GameModes);
         }
     }

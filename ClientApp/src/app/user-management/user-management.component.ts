@@ -2,6 +2,7 @@ import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { API } from '../api';
 import { NgForm } from '@angular/forms';
+import { MsalService, BroadcastService } from '@azure/msal-angular';
 
 @Component({
     selector: 'app-user-management',
@@ -17,8 +18,12 @@ export class UserManagementComponent {
     constructor(
         private http: HttpClient,
         @Inject('BASE_URL') baseUrl: string,
-        @Inject('userId') userId: string) {
-        this.api = new API(http, baseUrl, userId);
+        @Inject('userId') userId: string,
+        @Inject(MsalService) authService: MsalService,
+        @Inject(BroadcastService) broadcastService: BroadcastService
+    ) {
+        // TODO. Broadcast API through DI so dont have to pass through 4 values.
+        this.api = new API(http, baseUrl, userId, authService, broadcastService);
     }
 
     async onDeleteUser() {

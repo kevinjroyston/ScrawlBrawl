@@ -116,11 +116,11 @@
           },
           "configurations": {
             "dev": {
+              "extractLicenses": true,
+              "namedChunks": false,
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "namedChunks": false,
-              "extractLicenses": true,
               "vendorChunk": true
             },
             "production": {

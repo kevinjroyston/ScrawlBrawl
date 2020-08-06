@@ -39,14 +39,5 @@ namespace RoystonGame.Web.Controllers.Other
             var file = Path.Combine(Env.ContentRootPath, ".well-known", "acme-challenge", id);
             return PhysicalFile(file, "text/plain");
         }
-
-        // Temporary
-        [HttpGet]
-        [Route(".well-known/{filename}")]
-        public ActionResult WellKnown(string filename)
-        {
-            var file = Path.Combine(Env.ContentRootPath, ".well-known", filename);
-            return PhysicalFile(file, "application/json");
-        }
     }
 }
