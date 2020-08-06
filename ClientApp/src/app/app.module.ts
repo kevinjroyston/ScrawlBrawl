@@ -30,9 +30,12 @@ import { FeedbackComponent} from './feedback/feedback.component';
 import { DrawingBoard } from './drawingboard/drawingboard.component';
 import { Configuration } from 'msal';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { environment } from '../environments/environment';
+
+const guards: any[] = environment.enableMsal ? [MsalGuard] : [];
 
 const appRoutes: Routes = [
-    { path: 'lobby/manage', component: LobbyManagementComponent, canActivate: [MsalGuard] },
+    { path: 'lobby/manage', component: LobbyManagementComponent, canActivate: guards },
     { path: 'user/manage', component: UserManagementComponent },
     { path: '', component: FetchDataComponent },
     { path: 'feedback', component: FeedbackComponent}

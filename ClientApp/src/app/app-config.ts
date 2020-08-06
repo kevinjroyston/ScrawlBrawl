@@ -60,8 +60,8 @@ export const msalConfig: Configuration = {
     auth: {
         clientId: "5c59c94a-140d-4c49-a4ed-772a55c52d57",
         authority: b2cPolicies.authorities.signUpSignIn.authority,
-        redirectUri:  "http://localhost:50403/lobby/manage",//https://scrawlbrawl.tv/",
-        postLogoutRedirectUri: "http://localhost:50403",//https://scrawlbrawl.tv/",
+        redirectUri:  "https://scrawlbrawl.tv/lobby/manage",
+        postLogoutRedirectUri: "https://scrawlbrawl.tv/",
         navigateToLoginRequestUrl: true,
         validateAuthority: false,
     },
