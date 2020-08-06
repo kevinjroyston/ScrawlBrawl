@@ -12,10 +12,10 @@ public abstract class AnimationBase: MonoBehaviour
     public GameEvent endEvent = new GameEvent() { eventType = GameEvent.EventEnum.None, id = null };
 
     public float startDelay = 0f;
-    public float endDurration = 0f;
+    public float endDuration = 0f;
     protected RectTransform rect;
     public bool registerOnEnable = true;
-    private bool missedRegistation = false;
+    private bool missedRegistration = false;
     public User relevantUser;
     public bool persistant = false;
     public bool oneShot = true;
@@ -27,9 +27,9 @@ public abstract class AnimationBase: MonoBehaviour
     }
     public void OnEnable()
     {     
-        if (registerOnEnable || missedRegistation)
+        if (registerOnEnable || missedRegistration)
         {
-            missedRegistation = false;
+            missedRegistration = false;
             CallRegisterForAnimation();
         }        
     }
@@ -104,7 +104,7 @@ public abstract class AnimationBase: MonoBehaviour
         }
         else
         {
-            missedRegistation = true;
+            missedRegistration = true;
         }
     }
 }

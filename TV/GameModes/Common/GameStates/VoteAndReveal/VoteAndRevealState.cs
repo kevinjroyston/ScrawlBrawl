@@ -21,6 +21,11 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
         public virtual Func<User, UserPrompt> RevealWaitingPromptGenerator { get; set; } = null;
         public string VotingTitle { get; set; } = "Voting Time!";
         public string VotingInstructions { get; set; } = "";
+        public List<int> IndexesOfObjectsToReveal { get; set; } = new List<int>();
+        public List<string> ObjectTitles { get; set; }
+        public bool ShowObjectTitlesForVoting { get; set; } = false;
+        public List<string> ObjectHeaders { get; set; }
+        public bool ShowObjectHeadersForVoting { get; set; } = false;
         public List<string> VotingPromptTexts { get; set; } = null;
         protected virtual ConcurrentDictionary<User, (List<int>, double)> UsersToAnswersVotedFor { get; set; } = new ConcurrentDictionary<User, (List<int>, double)>();
         protected virtual ConcurrentDictionary<int, List<User>> AnswersToUsersWhoVoted { get; set; } = new ConcurrentDictionary<int, List<User>>();

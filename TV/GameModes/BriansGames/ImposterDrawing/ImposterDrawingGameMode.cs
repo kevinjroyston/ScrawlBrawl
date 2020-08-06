@@ -192,10 +192,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
                 {
                     CountVotes(usersToVotes, prompt, randomizedUsersToShow);
                 },
-                indexesOfDrawingsToReveal: new List<int>() { indexOfImposter },
                 votingTime: votingTime)
                 {
                     VotingTitle = "Find the Imposter!",
+                    IndexesOfObjectsToReveal = new List<int>() { indexOfImposter },
                     VotingInstructions = possibleNone ? "Someone didn't finish so there may not be an imposter in this group" : "",
                 };
         }

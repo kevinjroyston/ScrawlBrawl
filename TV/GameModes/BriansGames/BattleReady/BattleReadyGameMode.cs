@@ -247,11 +247,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 {
                     CountVotes(usersToVotes, prompt, randomizedUsersToDisplay);
                 },
-                imageTitles: imageTitles,
-                showImageTitlesForVoting: true,
                 votingTime: votingTime)
             {
                 VotingTitle = prompt.Text,
+                ObjectTitles = imageTitles,
+                ShowObjectTitlesForVoting = true,
             };
         }
         private void CountVotes(Dictionary<User, int> usersToVotes, Prompt prompt, List<User> answerUsers)

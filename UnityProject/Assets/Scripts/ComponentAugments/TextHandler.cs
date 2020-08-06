@@ -40,7 +40,7 @@ public class TextHandler : MonoBehaviour, UnityObjectHandlerInterface
             {
                 this.UnityImageId = value._UnityImageId;
                 EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ImageCreated });
-                this.GetComponent<ScaleInAnimation>().StartAnimation(new GameEvent() { eventType = GameEvent.EventEnum.None });
+                this.GetComponent<ScaleInAnimation>().StartAnimation(null);
             }
 
             if (Background != null)

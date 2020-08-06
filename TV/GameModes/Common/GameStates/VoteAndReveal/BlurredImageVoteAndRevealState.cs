@@ -14,9 +14,6 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
 {
     public class BlurredImageVoteAndRevealState : VoteAndRevealState<UserDrawing>
     {
-        private List<int> IndexesOfDrawingsToReveal { get; set; } = new List<int>();
-        private List<string> ImageTitles { get; set; }
-        private bool ShowImageTitlesForVoting { get; set; }
         private double BlurRevealDelay { get; set; }
         private double BlurRevealLength { get; set; }
         private Action<Dictionary<User, (int, double)>> VoteCountingManager { get; set; }
@@ -27,29 +24,11 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
             double blurRevealDelay,
             double blurRevealLength,
             List<User> votingUsers = null,
-            TimeSpan? votingTime = null,
-            List<int> indexesOfDrawingsToReveal = null,
-            List<string> imageTitles = null,
-            bool showImageTitlesForVoting = false) : base(lobby, drawings, votingUsers, votingTime)
+            TimeSpan? votingTime = null) : base(lobby, drawings, votingUsers, votingTime)
         {
             this.VoteCountingManager = voteCountManager;
             this.BlurRevealDelay = blurRevealDelay;
             this.BlurRevealLength = blurRevealLength;
-            if (indexesOfDrawingsToReveal != null)
-            {
-                this.IndexesOfDrawingsToReveal = indexesOfDrawingsToReveal;
-            }
-            if (imageTitles == null)
-            {
-                this.ImageTitles = drawings.Select(drawing => "").ToList(); // sets it to a list of empty string same length as drawings
-            }
-            else
-            {
-                Debug.Assert(imageTitles.Count == drawings.Count, "Titles must be the same length as drawings");
-
-                this.ImageTitles = imageTitles;
-            }
-            this.ShowImageTitlesForVoting = showImageTitlesForVoting;
         }
 
         public override UserPrompt VotingPromptGenerator(User user)
@@ -72,7 +51,8 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
         {
             return this.Objects[objectIndex].GetUnityImage(
                 imageIdentifier: (objectIndex + 1).ToString(),
-                title: this.ShowImageTitlesForVoting ? this.ImageTitles[objectIndex] : null);
+                title: this.ShowObjectTitlesForVoting ? this.ObjectTitles[objectIndex] : null,
+                header: this.ShowObjectHeadersForVoting ? this.ObjectHeaders[objectIndex] : null);
         }
         public override UnityView VotingUnityViewGenerator()
         {
@@ -99,12 +79,13 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
         {
             return this.Objects[objectIndex].GetUnityImage(
                 imageIdentifier: (objectIndex + 1).ToString(),
-                title: this.ImageTitles[objectIndex],
+                title: this.ObjectTitles[objectIndex],
+                header: this.ObjectHeaders[objectIndex],
                 imageOwnerId: this.Objects[objectIndex].Owner.UserId,
                 voteRevealOptions: new UnityImageVoteRevealOptions()
                 {
                     RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = AnswersToUsersWhoVoted.ContainsKey(objectIndex) ? AnswersToUsersWhoVoted[objectIndex] : new List<User>() },
-                    RevealThisImage = new StaticAccessor<bool?> { Value = IndexesOfDrawingsToReveal.Contains(objectIndex) }
+                    RevealThisImage = new StaticAccessor<bool?> { Value = IndexesOfObjectsToReveal.Contains(objectIndex) }
                 });
         }
         public override List<int> VotingFormSubmitManager(User user, UserFormSubmission submission)

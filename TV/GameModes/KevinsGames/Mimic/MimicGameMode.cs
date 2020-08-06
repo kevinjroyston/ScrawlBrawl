@@ -157,10 +157,10 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic
                 {
                     CountVotes(usersToVotes, roundTracker);
                 },
-                indexesOfDrawingsToReveal: new List<int>() { indexOfOriginal },
                 votingTime: votingTime)
             {
                 VotingTitle = "Find the Original!",
+                IndexesOfObjectsToReveal = new List<int>() { indexOfOriginal },
             };
         }
         private void CountVotes(Dictionary<User, (int, double)> usersToVotes, RoundTracker roundTracker)

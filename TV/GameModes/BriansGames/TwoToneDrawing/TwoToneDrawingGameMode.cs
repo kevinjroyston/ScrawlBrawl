@@ -73,24 +73,24 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
             return new StackedDrawingVoteAndRevealState(
                 lobby: this.Lobby,
                 stackedDrawings: stackedDrawings,
-                promptAnswerAddOnGenerator: (User user, int answer) =>
-                {
-                    if (challenge.TeamIdToDrawingMapping[randomizedTeamIds[answer]].Values.Any(drawing => drawing.Owner == user))
-                    {
-                        return " - You helped make this";
-                    }
-                    else
-                    {
-                        return "";
-                    }    
-                },
                 voteCountManager: (Dictionary<User, int> usersToVotes) =>
                 {
                     CountVotes(usersToVotes, challenge, randomizedTeamIds);
                 },
                 votingTime: votingTime)
                 {
-                    VotingTitle = Invariant($"Which one is the best \"{challenge.Prompt}\"?")
+                    VotingTitle = Invariant($"Which one is the best \"{challenge.Prompt}\"?"),
+                    PromptAnswerAddOnGenerator = (User user, int answer) =>
+                    {
+                        if (challenge.TeamIdToDrawingMapping[randomizedTeamIds[answer]].Values.Any(drawing => drawing.Owner == user))
+                        {
+                            return " - You helped make this";
+                        }
+                        else
+                        {
+                            return "";
+                        }
+                    },
                 };
         }
         private void CountVotes(Dictionary<User, int> usersToVotes, ChallengeTracker challenge, List<string> randomizedTeamIds)
