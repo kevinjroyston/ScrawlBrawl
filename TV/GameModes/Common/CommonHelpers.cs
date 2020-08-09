@@ -2,6 +2,7 @@
 using RoystonGame.TV.DataModels.Users;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using static System.FormattableString;
 
@@ -24,6 +25,10 @@ namespace RoystonGame.TV.GameModes.Common
 
         public static int PointsForSpeed(int maxPoints, int minPoints, double startTime, double endTime, double secondsTaken)
         {
+            Debug.Assert(maxPoints >= minPoints);
+            Debug.Assert(endTime >= startTime);
+            Debug.Assert(secondsTaken >= 0);
+
             if (secondsTaken <= startTime)
             {
                 return maxPoints;
@@ -59,6 +64,11 @@ namespace RoystonGame.TV.GameModes.Common
         }
         public static double Lerp(double a, double b, double t)
         {
+            return (b - a) * t + a;
+        }
+        public static double ClampedLerp(double a, double b, double t)
+        {
+            t = Math.Clamp(t, 0.0, 1.0);
             return (b - a) * t + a;
         }
 
