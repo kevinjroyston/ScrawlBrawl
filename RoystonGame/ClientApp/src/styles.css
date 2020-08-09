@@ -1,0 +1,38 @@
+@import "./../node_modules/bootstrap/dist/css/bootstrap.min.css";
+@import "./../node_modules/ngx-ui-switch/ui-switch.component.css";
+
+.Error {
+  color: red;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.leftImg {
+  opacity: 0.4;
+  max-width: 24%;
+  height: auto;
+  max-width: calc(24% * (var(--n) / 100))
+}
+
+.rightImg {
+  opacity: 0.4;
+  max-width: 24%;
+  height: auto;
+  max-width: calc(24% * (var(--n) / 100))
+}
+
+.mainImg {
+  border: 2px solid blue;
+  max-width: 50%;
+  height: auto;
+  max-width: calc(50% * (var(--n) / 100))
+}
+
+.color-box {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  background-color: #ccc;
+  position: relative;
+  top: 5px;
+}
