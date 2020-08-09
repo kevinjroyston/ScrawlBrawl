@@ -76,7 +76,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.StoryTime.GameStates
                     User userVotedFor = usersToVoteResults[user].Owner;
                     if(userVotedFor != user)
                     {
-                        userVotedFor.Score += StoryTimeConstants.PointsForVote;
+                        userVotedFor.AddScore( StoryTimeConstants.PointsForVote);
                     }
                     usersToVoteResults[user].VotesRecieved++;
 

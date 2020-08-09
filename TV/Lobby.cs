@@ -535,6 +535,7 @@ namespace RoystonGame.TV
                 user.IsPartyLeader = true;
             }
             this.UsersInLobby.Add(user);
+            user.SetLobbyJoinTime();
             user.LobbyId = LobbyId;
 
             return true;

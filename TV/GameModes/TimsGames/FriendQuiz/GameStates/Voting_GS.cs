@@ -69,7 +69,7 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.GameStates
                             {
                                 if (questionsToUserAnswers[question][user] == question.UsersToAnswers[userToShow])
                                 {
-                                    user.Score += FriendQuizConstants.PointsForCorrectAnswer;
+                                    user.AddScore( FriendQuizConstants.PointsForCorrectAnswer);
                                 }
                             }
                         }

@@ -30,10 +30,19 @@ public class TextHandler : MonoBehaviour, UnityObjectHandlerInterface
     /// </summary>
     public GameObject DummyScore;
 
+    public Guid UnityImageId = Guid.Empty;
+
     public UnityImage UnityImage
     {
         set
         {
+            if (value._UnityImageId != this.UnityImageId)
+            {
+                this.UnityImageId = value._UnityImageId;
+                EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ImageCreated });
+                this.GetComponent<ScaleInAnimation>().StartAnimation(null);
+            }
+
             if (Background != null)
             {
                 Background.preserveAspect = true;

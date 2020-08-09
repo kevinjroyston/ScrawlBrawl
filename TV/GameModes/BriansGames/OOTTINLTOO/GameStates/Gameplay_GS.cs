@@ -114,26 +114,26 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
             int voteCount = 0;
             foreach (User user in this.SubChallenge.UsersWhoConfusedWhichUsers.Keys)
             {
-                user.Score -= 50 * this.SubChallenge.UsersWhoConfusedWhichUsers[user].Where(val => val != user).ToList().Count;
+                user.AddScore( -50 * this.SubChallenge.UsersWhoConfusedWhichUsers[user].Where(val => val != user).ToList().Count);
                 voteCount += this.SubChallenge.UsersWhoConfusedWhichUsers[user].Count;
             }
             voteCount += this.SubChallenge.UsersWhoFoundOOO.Count;
             int totalPointsToAward = TotalPointsToAward(voteCount);
             foreach (User user in this.SubChallenge.UsersWhoFoundOOO)
             {
-                user.Score += totalPointsToAward / this.SubChallenge.UsersWhoFoundOOO.Count;
+                user.AddScore(totalPointsToAward / this.SubChallenge.UsersWhoFoundOOO.Count);
             }
 
             // If EVERYBODY figures out the diff, the owner loses some points but not as many.
             if (this.SubChallenge.UsersWhoFoundOOO.Where(user => user != this.SubChallenge.Owner).Count() == (this.Lobby.GetAllUsers().Count - 1))
             {
-                this.SubChallenge.Owner.Score -= totalPointsToAward / 4;
+                this.SubChallenge.Owner.AddScore( -totalPointsToAward / 4);
             }
 
             // If the owner couldnt find the diff, they lose a bunch of points.
             if (!this.SubChallenge.UsersWhoFoundOOO.Contains(this.SubChallenge.Owner))
             {
-                this.SubChallenge.Owner.Score -= totalPointsToAward / 2;
+                this.SubChallenge.Owner.AddScore(-totalPointsToAward / 2);
             }
         }
     }

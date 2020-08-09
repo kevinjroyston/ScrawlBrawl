@@ -56,7 +56,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                 foreach (User user in lobby.GetAllUsers())
                 {
                     User userVotedFor = usersToVoteResults[user];
-                    userVotedFor.Score += BattleReadyConstants.PointsForVote;
+                    userVotedFor.AddScore(BattleReadyConstants.PointsForVote);
                     prompt.UsersToUserHands[userVotedFor].VotesForContestant++;
                     if (prompt.Winner == null || prompt.UsersToUserHands[userVotedFor].VotesForContestant > prompt.UsersToUserHands[prompt.Winner].VotesForContestant)
                     {

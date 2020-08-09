@@ -14,5 +14,6 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.DataModels
         public User originalDrawer { get; set; }
         public ConcurrentDictionary<User, int> UserToNumVotesRecieved { get; set; } = new ConcurrentDictionary<User, int>();
         public List<User> UsersToDisplay { get; set; } = new List<User>();
+        public ConcurrentDictionary<int, List<User>> QuestionsToUsersWhoVotedFor { get; set; } = new ConcurrentDictionary<int, List<User>>();
     }
 }

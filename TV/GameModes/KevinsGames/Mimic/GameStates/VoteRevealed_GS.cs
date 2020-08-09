@@ -30,24 +30,31 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
         {
             List<User> randomizedUserChoices = roundTracker.UsersToDisplay;
             this.Entrance.Transition(this.Exit);
-
+            List<UnityImage> unityImages = new List<UnityImage>();
+            for (int i = 0; i< randomizedUserChoices.Count; i++)
+            {
+                User user = randomizedUserChoices[i];
+                List<User> relevantUsers = new List<User>();
+                if (roundTracker.QuestionsToUsersWhoVotedFor.ContainsKey(i))
+                {
+                    relevantUsers = roundTracker.QuestionsToUsersWhoVotedFor[i];
+                }
+                unityImages.Add(roundTracker.UsersToUserDrawings[user].GetUnityImage(
+                    header: user.DisplayName,
+                    imageIdentifier: "" + (i + 1),
+                    voteRevealOptions: new UnityImageVoteRevealOptions()
+                    {
+                        //ImageOwner = new StaticAccessor<User> { Value = user},
+                        RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = relevantUsers},
+                        RevealThisImage = new StaticAccessor<bool?> { Value = (user == roundTracker.originalDrawer)}
+                    }));
+            }
             this.UnityView = new UnityView(this.Lobby)
             {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
+                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.VoteRevealImageView },
                 Title = new StaticAccessor<string> { Value = "Voting results!" },
-                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = randomizedUserChoices.Select((User user)=>
-                {
-                    int voteCount = 0;
-                    roundTracker.UserToNumVotesRecieved.TryGetValue(user, out voteCount);
-                    if (user == roundTracker.originalDrawer)
-                    {                   
-                        return roundTracker.UsersToUserDrawings[user].GetUnityImage(header: user.DisplayName, voteCount: voteCount, backgroundColor: Color.LightGreen, imageIdentifier: "" + (randomizedUserChoices.IndexOf(user) + 1));
-                    }
-                    else
-                    {
-                        return roundTracker.UsersToUserDrawings[user].GetUnityImage(header: user.DisplayName, voteCount: voteCount, imageIdentifier: "" + (randomizedUserChoices.IndexOf(user) + 1));
-                    }
-                }).ToList().AsReadOnly()},      
+                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages.AsReadOnly() },
+                VoteRevealUsers = new StaticAccessor<IReadOnlyList<User>> { Value = lobby.GetAllUsers() },
             };
         }
     }

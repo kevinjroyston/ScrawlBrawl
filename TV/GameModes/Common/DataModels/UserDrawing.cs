@@ -20,9 +20,11 @@ namespace RoystonGame.TV.GameModes.Common.DataModels
         public UnityImage GetUnityImage(
             Color? backgroundColor = null,
             string imageIdentifier = null,
+            Guid? imageOwnerId = null,
             string title = null,
             string header = null,
-            int? voteCount = null)
+            int? voteCount = null,
+            UnityImageVoteRevealOptions voteRevealOptions = null)
         {
             backgroundColor = backgroundColor ?? UnityImageBackGroundColor;
             imageIdentifier = imageIdentifier ?? UnityImageIdentifier;
@@ -42,9 +44,11 @@ namespace RoystonGame.TV.GameModes.Common.DataModels
                 SpriteGridWidth = new StaticAccessor<int?> { Value = 1 },
                 SpriteGridHeight = new StaticAccessor<int?> { Value = 1 },
                 ImageIdentifier = new StaticAccessor<string> { Value = imageIdentifier },
+                ImageOwnerId = new StaticAccessor<Guid?> { Value = imageOwnerId },
                 Title = new StaticAccessor<string> { Value = title },
                 Header = new StaticAccessor<string> { Value = header },
-                VoteCount = new StaticAccessor<int?> { Value = voteCount}
+                VoteCount = new StaticAccessor<int?> { Value = voteCount},
+                VoteRevealOptions = new StaticAccessor<UnityImageVoteRevealOptions> { Value = voteRevealOptions},
             };
 
         }

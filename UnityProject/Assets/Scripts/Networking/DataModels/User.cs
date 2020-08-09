@@ -31,7 +31,9 @@ public class User
     private Sprite InternalSelfPortraitSprite = null;
 
     public int Score { get; set; }
- 
+    public int ScoreDeltaReveal { get; set; }
+    public int ScoreDeltaScoreboard { get; set; }
+
     public UserActivity Activity { get; set; }
  
     public UserStatus Status { get; set; }

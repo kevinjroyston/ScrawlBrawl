@@ -5,10 +5,14 @@ using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.DataModels;
 using RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.GameStates;
 using RoystonGame.TV.GameModes.Common;
+using RoystonGame.TV.GameModes.Common.DataModels;
 using RoystonGame.TV.GameModes.Common.GameStates;
+using RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal;
+using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,8 +22,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
     {
         private Setup_GS Setup { get; set; }
         private Random Rand { get; } = new Random();
+        private Lobby Lobby { get; set; }
         public ImposterDrawingGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
+            this.Lobby = lobby;
             ValidateOptions(lobby, gameModeOptions);
             int gameSpeed = (int)gameModeOptions[(int)GameModeOptionsEnum.gameSpeed].ValueParsed;
             TimeSpan? setupTimer = null;
@@ -114,22 +120,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
                         }
                         if (counter == 1)
                         {
-                            return new Voting_GS(
-                                lobby: lobby,
-                                prompt: prompt,
-                                randomizedUsersToShow: randomizedUsers.Where((User user) => prompt.UsersToDrawings.ContainsKey(user)).ToList(),
-                                possibleNone: (prompt.UsersToDrawings.Count < randomizedUsers.Count),
-                                votingTimeDurration: votingTimer);
+                            return GetVotingAndRevealState(prompt, (prompt.UsersToDrawings.Count < randomizedUsers.Count), votingTimer);   
                         }
                         if (counter == 2)
-                        {
-                            return new VoteRevealed_GS(
-                                lobby: lobby,
-                                prompt: prompt,
-                                randomizedUsersToShow: randomizedUsers.Where((User user) => prompt.UsersToDrawings.ContainsKey(user)).ToList(),
-                                possibleNone: (prompt.UsersToDrawings.Count < randomizedUsers.Count));
-                        }
-                        if (counter == 3)
                         {
                             if (lastRound)
                             {
@@ -159,6 +152,89 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
         public void ValidateOptions(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             // Empty
+        }
+
+        private State GetVotingAndRevealState(Prompt prompt, bool possibleNone, TimeSpan? votingTime)
+        {
+            int indexOfImposter = 0;
+            List<User> randomizedUsersToShow = prompt.UsersToDrawings.Keys.OrderBy(_=>Rand.Next()).ToList();
+            List<UserDrawing> drawings = randomizedUsersToShow.Select(user => prompt.UsersToDrawings[user]).ToList();
+            bool noneIsCorrect = possibleNone && !randomizedUsersToShow.Contains(prompt.Imposter);
+            if (!possibleNone || !noneIsCorrect)
+            {
+                indexOfImposter = drawings.IndexOf(prompt.UsersToDrawings[prompt.Imposter]);
+            }
+            if (possibleNone)
+            {
+                if (noneIsCorrect)
+                {
+                    indexOfImposter = drawings.Count;
+                    drawings.Add(new UserDrawing()
+                    {
+                        Owner = prompt.Imposter,
+                        Drawing = Constants.NoneUnityImage,
+                    });
+                }
+                else
+                {
+                    drawings.Add(new UserDrawing()
+                    {
+                        Owner = prompt.Owner,
+                        Drawing = Constants.NoneUnityImage,
+                    });
+                }
+            }
+
+            return new DrawingVoteAndRevealState(
+                lobby: this.Lobby,
+                drawings: drawings,
+                voteCountManager: (Dictionary<User, int> usersToVotes) =>
+                {
+                    CountVotes(usersToVotes, prompt, randomizedUsersToShow);
+                },
+                votingTime: votingTime)
+                {
+                    VotingTitle = "Find the Imposter!",
+                    IndexesOfObjectsToReveal = new List<int>() { indexOfImposter },
+                    VotingInstructions = possibleNone ? "Someone didn't finish so there may not be an imposter in this group" : "",
+                };
+        }
+
+        private void CountVotes(Dictionary<User, int> usersToVotes, Prompt prompt, List<User> randomizedUsers)
+        {
+            List<User> correctUsers = new List<User>();
+            foreach (User user in usersToVotes.Keys)
+            {
+                if (randomizedUsers[usersToVotes[user]] == prompt.Imposter)
+                {
+                    correctUsers.Add(user);
+                }
+                else
+                {
+                    if (randomizedUsers[usersToVotes[user]] != user)
+                    {
+                        randomizedUsers[usersToVotes[user]].AddScore(ImposterDrawingConstants.PointsToLooseForWrongVote); // user was voted for when they weren't the imposter so they lose points
+                    }
+                }
+            }
+
+            int totalPointsToAward = usersToVotes.Count * ImposterDrawingConstants.TotalPointsToAwardPerVote; // determine the total number of points to distribute
+            foreach (User user in correctUsers)
+            {
+                user.AddScore(totalPointsToAward / correctUsers.Count); //distribute those evenly to the correct users
+            }
+
+            // If EVERYBODY figures out the diff, the owner loses some points but not as many.
+            if (correctUsers.Where(user => user != prompt.Owner).Count() == (this.Lobby.GetAllUsers().Count - 1))
+            {
+                prompt.Owner.AddScore(totalPointsToAward / -4);
+            }
+
+            // If the owner couldnt find the diff, they lose a bunch of points.
+            if (!correctUsers.Contains(prompt.Owner))
+            {
+                prompt.Owner.AddScore(totalPointsToAward / -2);
+            }
         }
     }
 }

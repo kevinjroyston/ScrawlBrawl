@@ -15,12 +15,17 @@ using System;
 using System.Linq;
 using RoystonGame.TV.DataModels.States.StateGroups;
 using System.Collections.Concurrent;
+using RoystonGame.TV.GameModes.Common.DataModels;
+using RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal;
+using RoystonGame.TV.DataModels;
+using RoystonGame.TV.GameModes.Common;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
 {
     public class BattleReadyGameMode : IGameMode
     {
         private ConcurrentBag<PeopleUserDrawing> Drawings { get; set; } = new ConcurrentBag<PeopleUserDrawing>();
+        private Lobby Lobby { get; set; }
         private List<Prompt> Prompts { get;} = new List<Prompt>();
         private GameState Setup { get; set; }
         private RoundTracker RoundTracker { get; } = new RoundTracker();
@@ -29,6 +34,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
         {
             ValidateOptions(gameModeOptions);
 
+            this.Lobby = lobby;
             ConcurrentBag<(User, string)> promptTuples = new ConcurrentBag<(User, string)>();
             List<Prompt> promptsCopy = new List<Prompt>();
             int numRounds = (int)gameModeOptions[0].ValueParsed;
@@ -162,22 +168,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                     StateChain voting = new StateChain(
                         stateGenerator: (int counter) =>
                         {
-                            int round = counter / 2;
-                            int type = counter % 2; // Even rounds are Voting, Odd rounds are reveals
-                            if (round < roundPrompts.Count)
+                            if (counter < roundPrompts.Count)
                             {
-                                if (type == 0)
-                                {
-                                    return new Voting_GS(
-                                        lobby: lobby,
-                                        prompt: roundPrompts[round]);
-                                }
-                                else
-                                {
-                                    return new VoteRevealed_GS(
-                                        lobby: lobby,
-                                        prompt: roundPrompts[round]);
-                                }
+                                Prompt roundPrompt = roundPrompts[counter];
+
+                                return GetVotingAndRevealState(roundPrompt, null);         
                             }
                             else
                             {
@@ -227,7 +222,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             this.Entrance.Transition(Setup);
            
         }
-
+    
         public void ValidateOptions(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             /*if(gameLobby.GetAllUsers().Count%2==1 && int.Parse(gameModeOptions[1].ShortAnswer)%2==1)
@@ -237,6 +232,40 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             if ((int)gameModeOptions[1].ValueParsed % 2 == 1)
             {
                 throw new GameModeInstantiationException("Numer of prompts per round must even");
+            }
+        }
+        private State GetVotingAndRevealState(Prompt prompt, TimeSpan? votingTime)
+        {
+            List<User> randomizedUsersToDisplay = prompt.UsersToUserHands.Keys.OrderBy(_ => Rand.Next()).ToList();
+            List<Person> peopleToVoteOn = randomizedUsersToDisplay.Select(user => prompt.UsersToUserHands[user].Contestant).ToList();
+            List<string> imageTitles = randomizedUsersToDisplay.Select(user => prompt.UsersToUserHands[user].Contestant.Name).ToList();
+
+            return new ThreePartPersonVoteAndRevealState(
+                lobby: this.Lobby,
+                people: peopleToVoteOn,
+                voteCountManager: (Dictionary<User, int> usersToVotes) =>
+                {
+                    CountVotes(usersToVotes, prompt, randomizedUsersToDisplay);
+                },
+                votingTime: votingTime)
+            {
+                VotingTitle = prompt.Text,
+                ObjectTitles = imageTitles,
+                ShowObjectTitlesForVoting = true,
+            };
+        }
+        private void CountVotes(Dictionary<User, int> usersToVotes, Prompt prompt, List<User> answerUsers)
+        {
+
+            foreach (User user in usersToVotes.Keys)
+            {
+                User userVotedFor = answerUsers[usersToVotes[user]];
+                userVotedFor.AddScore(BattleReadyConstants.PointsForVote);
+                prompt.UsersToUserHands[userVotedFor].VotesForContestant++;
+                if (prompt.Winner == null || prompt.UsersToUserHands[userVotedFor].VotesForContestant > prompt.UsersToUserHands[prompt.Winner].VotesForContestant)
+                {
+                    prompt.Winner = userVotedFor;
+                }
             }
         }
     }

@@ -25,7 +25,7 @@ public class TimerUI : MonoBehaviour
         if(timeRemainingInSeconds <= 10 && !startedTimerSound)
         {
             startedTimerSound = true;
-            AudioController.Singleton.PlayTimer();
+            EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.TenSecondsLeft });
         }
         if(timeRemainingInSeconds >= 0)
         {

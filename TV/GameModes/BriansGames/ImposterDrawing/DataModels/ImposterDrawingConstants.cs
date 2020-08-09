@@ -8,7 +8,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.DataModels
     public static class ImposterDrawingConstants
     {
         public const int TotalPointsToAwardPerVote = 100;
-        public const int PointsToLooseForWrongVote = 50;
+        public const int PointsToLooseForWrongVote = -50;
 
         public const double SetupTimerMin = 45;
         public const double SetupTimerAve = 120;

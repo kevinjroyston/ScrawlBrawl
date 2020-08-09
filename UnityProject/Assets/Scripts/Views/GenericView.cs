@@ -13,6 +13,7 @@ public class GenericView : ITVView
     public GameObject ImageDropZone = null;
     public GameObject ImagePrefab = null;
     public GameObject PlayerBar = null;
+    public GameObject VoteReavealBar = null;
     public GameObject TimerUI = null;
     public Camera BlurCamera = null;
 
@@ -77,10 +78,28 @@ public class GenericView : ITVView
             ImageDropZone.SetActive(false);
         }
 
+        bool voteRevealBar = false;
+        if (VoteReavealBar?.GetComponent<VoteRevealUserImageHandler>() != null)
+        {
+            var voteRevealHandler = VoteReavealBar.GetComponent<VoteRevealUserImageHandler>();
+            if (UnityView?._VoteRevealUsers != null 
+                && UnityView._VoteRevealUsers.Count > 0
+                && UnityView._UserIdToDeltaScores != null)
+            {
+                voteRevealBar = true;
+                voteRevealHandler.HandleUsers(UnityView._VoteRevealUsers, UnityView._UserIdToDeltaScores);
+                VoteReavealBar.SetActive(true);
+            }
+            else
+            {
+                VoteReavealBar.SetActive(false);
+            }
+        }
+
         if (PlayerBar?.GetComponent<PlayerBarHandler>() != null)
         {
             var playerBar = PlayerBar.GetComponent<PlayerBarHandler>();
-            if (UnityView?._Users != null && UnityView._Users.Count > 0)
+            if (UnityView?._Users != null && UnityView._Users.Count > 0 && !voteRevealBar)
             {
                 playerBar.HandleUsers(UnityView._Users);
                 PlayerBar.SetActive(true);
@@ -107,7 +126,7 @@ public class GenericView : ITVView
 
         if(BlurCamera?.GetComponent<BlurController>() != null)
         {
-            if (UnityView._Options != null && UnityView._Options._BlurAnimate != null)
+            if (UnityView?._Options != null && UnityView?._Options._BlurAnimate != null)
             {
                 BlurCamera.GetComponent<BlurController>().UpdateBlur(
                     startValue: UnityView._Options._BlurAnimate._StartValue,
@@ -141,11 +160,28 @@ public class GenericView : ITVView
             Instantiate(ImagePrefab, ImageDropZone.transform);
         }
 
+        bool isRevealingImage = false;
         // Set the image object sprites accordingly.
         for (int i = 0; i < images.Count; i++)
         {
+            if (images[i]._VoteRevealOptions?._RevealThisImage ?? false)
+            {
+                isRevealingImage = true;
+            }
             images[i].Options = UnityView._Options;
             ImageDropZone.transform.GetChild(i).GetComponent<UnityObjectHandlerInterface>().UnityImage = images[i];
+        }
+        if (isRevealingImage) // only shake the images if one of them is going to be revealed
+        {
+            EventSystem.Singleton.RegisterListener(
+                listener: (GameEvent gameEvent) => EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ShakeRevealImages }, allowDuplicates: false),
+                gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.CallShakeRevealImages });
+        }
+        else
+        {
+            EventSystem.Singleton.RegisterListener(
+               listener: (GameEvent gameEvent) => EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ShowDeltaScores }, allowDuplicates: false),
+               gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.CallShakeRevealImages });
         }
     }
 

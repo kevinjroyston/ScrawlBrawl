@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,13 +18,15 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
     public Text Title;
     public Text Header;
 
-    // Set to be the Image of the first SpriteGrid
-    private Image Background = null;
     public GameObject SpriteZone;
     public GameObject ImageIdHolder;
+    public GameObject VoteCountHolder;
 
     public Text VoteCount;
     public Text Footer;
+
+    public Image BackgroundImage;
+    public Image BlurMask;
 
     /// <summary>
     /// Score overlaps half on half off the card. This gameObject is the part hanging off the card.
@@ -34,15 +37,34 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
     /// </summary>
     public GameObject DummyScore;
 
+    public Guid UnityImageId = Guid.Empty;
+
     /// <summary>
     /// first float is inner(image grid) aspect ratio, second float is outer(entire card w/o padding) aspect ratio for perfect fit UI
     /// </summary>
     private List<Action<float, float>> AspectRatioListeners = new List<Action<float, float>>();
 
+    public void OnDestroy()
+    {
+        BlurController.Singleton.blurMasks.Remove(this.BlurMask);
+    }
+    public void Update()
+    {
+        
+    }
     public UnityImage UnityImage
     {
         set
         {
+            if (value._UnityImageId != this.UnityImageId)
+            {
+                this.UnityImageId = value._UnityImageId;
+                EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ImageCreated });
+                this.GetComponent<ScaleInAnimation>().StartAnimation(new GameEvent() { eventType = GameEvent.EventEnum.None });
+            }       
+            BlurController.Singleton.blurMasks.Add(BlurMask);
+            BlurMask.enabled = false;
+
             int gridCapacity = value._SpriteGridWidth.GetValueOrDefault(1) * value._SpriteGridHeight.GetValueOrDefault(1);
             // This instantiates 1 extra grid in some scenarios but that doesn't matter.
             int requiredGridCount = (value?.PngSprites?.Count ?? 0) / gridCapacity;
@@ -65,13 +87,24 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
                 ImageGrids = ImageGrids.GetRange(0, Math.Min(ImageGrids.Count, requiredGridCount));
             }
 
-            if (Background!= null)
+            if (BackgroundImage != null)
+            {
+                if (value?._BackgroundColor != null)
+                {
+                    BackgroundImage.color = value?._BackgroundColor.ToColor() ?? Color.clear;
+                }
+                else
+                {
+                    BackgroundImage.color = Color.clear;
+                }
+            }
+            /*if (Background!= null)
             {
                 Background.preserveAspect = true;
 
                 // Default to invisible background, overridden if subimages present.
                 Background.color = new Color(0f, 0f, 0f, 0f);
-            }
+            }*/
 
             int gridColCount = value._SpriteGridWidth.GetValueOrDefault(1);
             int gridRowCount = value._SpriteGridHeight.GetValueOrDefault(1);
@@ -96,10 +129,10 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
                     var autoScaleScript = ImageGrids[i].GetComponent<FixedDimensionAutoScaleGridLayoutGroup>();
                     autoScaleScript.aspectRatio = aspectRatio;
                     autoScaleScript.fixedDimensions = new Vector2(gridColCount, gridRowCount);
-                    if (i == 0)
+                    /*if (i == 0)
                     {
                         Background = ImageGrids[0].GetComponent<Image>();
-                    }
+                    }*/
                 }
 
                 for (int i = 0; i < value.PngSprites.Count; i++)
@@ -118,7 +151,7 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
                     Sprite sprite = value.PngSprites[i];
 
                     // Set background if we have any sub images.
-                    if (i == 0 && Background != null)
+                    /*if (i == 0 && Background != null)
                     {
                         Background.sprite = Sprite.Create(
                             new Texture2D(
@@ -131,7 +164,7 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
                             SpriteMeshType.FullRect);
                         Background.color = value?._BackgroundColor?.ToColor() ?? Color.white;
                         Background.preserveAspect = true;
-                    }
+                    }*/
 
                     image.preserveAspect = true;
                     image.sprite = value.PngSprites[i];
@@ -148,6 +181,10 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
             Title.text = value?._Title ?? string.Empty;
             Title.enabled = value?._Title != null;
             Title.gameObject.SetActive(!string.IsNullOrWhiteSpace(value?._Title));
+            if (Title != null)
+            {
+                Title.color = Color.black;
+            }
 
             Header.text = value?._Header ?? string.Empty;
             Header.enabled = value?._Header != null;
@@ -161,11 +198,51 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
             ImageId.enabled = value?._ImageIdentifier != null;
             ImageIdHolder.SetActive(!string.IsNullOrWhiteSpace(value?._ImageIdentifier));
 
-            //bool relevantUsers = value?._RelevantUsers != null && value._RelevantUsers.Any();
-            VoteCount.text = value?._VoteCount?.ToString() ?? string.Empty;
-            VoteCount.enabled = value?._VoteCount != null;
-            DummyScore.SetActive(value?._VoteCount != null);
-            ScoreHolder.gameObject.SetActive(value?._VoteCount != null);
+            
+
+            if (value?._VoteRevealOptions != null && value?._ImageOwnerId != null)
+            {
+                VoteCount.text = "" + 0;
+
+                if (VoteCount.enabled)
+                {
+                    VoteCountHolder.GetComponent<ScoreIncreaseManager>().registerUser(value?._ImageOwnerId);
+                }
+                if (value?._VoteRevealOptions._RelevantUsers != null)
+                {
+                    foreach (User user in value?._VoteRevealOptions._RelevantUsers)
+                    {
+                        EventSystem.Singleton.PublishEvent(new MoveToTargetGameEvent()
+                        {
+                            eventType = GameEvent.EventEnum.MoveToTarget,
+                            id = user.UserId.ToString(),
+                            TargetRect = VoteCountHolder.GetComponent<RectTransform>(),
+                            TargetUserId = value?._ImageOwnerId.ToString()
+                        });
+                    }
+                }
+                
+                VoteCount.enabled = true;
+                DummyScore.SetActive(true);
+                ScoreHolder.gameObject.SetActive(true);
+                gameObject.GetComponent<RevealImageAnimation>().AssignIdAndRegister(value?._UnityImageId.ToString());
+                if (value?._VoteRevealOptions._RevealThisImage ?? false)
+                {
+                    EventSystem.Singleton.RegisterListener(
+                      listener: (GameEvent gameEvent) =>
+                      {
+                          EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.RevealImages, id = value?._UnityImageId.ToString() });
+                      },
+                      gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.CallRevealImages });
+                }         
+            }
+            else
+            {
+                VoteCount.text = (value?._VoteCount ?? 0).ToString();
+                VoteCount.enabled = value?._VoteCount != null;
+                DummyScore.SetActive(value?._VoteCount != null);
+                ScoreHolder.gameObject.SetActive(value?._VoteCount != null);
+            }
 
 
             // Used by Colorizer to deterministically color UI objects.

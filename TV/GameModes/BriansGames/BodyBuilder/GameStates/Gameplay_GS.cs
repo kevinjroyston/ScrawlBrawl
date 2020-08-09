@@ -285,7 +285,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 {
                     RoundTracker.AssignedPeople[user].BeenScored = true;
                     RoundTracker.AssignedPeople[user].FinishedPosition = Invariant($"{CurrentFinishingPosition}");
-                    user.Score += WinningScoresByPlace[CurrentFinishingPosition];
+                    user.AddScore(WinningScoresByPlace[CurrentFinishingPosition]);
                     someoneFinished = true;
                 }
             }

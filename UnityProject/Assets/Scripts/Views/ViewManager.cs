@@ -3,28 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewManager
+public class ViewManager : MonoBehaviour
 {
-    private static ViewManager InternalSingleton;
+    public static ViewManager Singleton;
+    public ViewManager()
+    {
+        Singleton = this;
+    }
     private TVScreenId? CurrentView = null;
     private Dictionary<TVScreenId, ITVView> AvailableTVViews { get; } = new Dictionary<TVScreenId, ITVView>();
     private ITVView DefaultView = null;
 
     private Guid lastGuid = Guid.Empty;
 
-    public static ViewManager Singleton { get
-        {
-            if (InternalSingleton == null)
-            {
-                InternalSingleton = new ViewManager();
-            }
-            return InternalSingleton;
-        }
-    }
-
-    private ViewManager()
-    {
-    }
 
     public void RegisterTVView(TVScreenId id, ITVView view)
     {
@@ -36,6 +27,33 @@ public class ViewManager
     }
 
     public void SwitchToView(TVScreenId? id, UnityView view)
+    {
+        if (view != null &&  view._Id != lastGuid)
+        {
+            lastGuid = view._Id;
+            EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ExitingState });
+            AnimationManagerScript.Singleton.SendAnimationWrapUp(0.6f);
+            StartCoroutine(TransitionSceneCoroutine(0.6f, id, view));
+        }
+        else
+        {
+            ChangeView(id, view);
+            EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.UserSubmitted });
+        }       
+    }
+
+    IEnumerator TransitionSceneCoroutine(float delay, TVScreenId? id, UnityView view)
+    {
+        yield return new WaitForSeconds(delay);
+        AnimationManagerScript.Singleton.ResetAndStopAllAnimations();
+        EventSystem.Singleton.ResetDataStructures();
+        BlurController.Singleton.ResetMasks();
+
+        ChangeView(id, view);
+        EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.EnteredState });
+    }
+
+    public void ChangeView(TVScreenId? id, UnityView view)
     {
         if (CurrentView.HasValue)
         {
@@ -55,16 +73,5 @@ public class ViewManager
             DefaultView?.EnterView(null);
         }
         CurrentView = id;
-
-        if(view._Id != lastGuid)
-        {
-            lastGuid = view._Id;
-            AudioController.Singleton.PlayStartDing();
-            AudioController.Singleton.StopTimer();
-        }
-        else
-        {
-            AudioController.Singleton.PlayUserSubmit();
-        }
     }
 }

@@ -16,7 +16,7 @@ namespace RoystonGame.TV.DataModels.Users
     /// </summary>
     public class User : IAccessorHashable
     {
-        public Guid UserId { get; set; } = Guid.NewGuid();
+        public Guid UserId { get; } = Guid.NewGuid();
 
         /// <summary>
         /// The lobby id the user is a part of. Null indicates the user is unregistered.
@@ -26,7 +26,13 @@ namespace RoystonGame.TV.DataModels.Users
         /// <summary>
         /// Used for monitoring user age.
         /// </summary>
+        public DateTime LobbyJoinTime { get; private set; }
         public DateTime CreationTime { get; } = DateTime.UtcNow;
+
+        public void SetLobbyJoinTime()
+        {
+            LobbyJoinTime = DateTime.UtcNow;
+        }
 
         /// <summary>
         /// If populated, contains the user's authenticated username.
@@ -56,7 +62,8 @@ namespace RoystonGame.TV.DataModels.Users
         public string SelfPortrait { get; set; }
 
         public int Score { get; set; }
-        public int ScoreChange { get; private set; } = 0;
+        public int ScoreDeltaReveal { get; private set; } = 0;
+        public int ScoreDeltaScoreboard { get; private set; } = 0;
 
         /// <summary>
         /// Gets the activity level of the user by looking at their <see cref="LastPingTime"/>.
@@ -149,17 +156,24 @@ namespace RoystonGame.TV.DataModels.Users
             hash.Add(Activity);
             hash.Add(Status);
             hash.Add(Identifier);
+            hash.Add(ScoreDeltaReveal);
+            hash.Add(ScoreDeltaScoreboard);
             return hash.ToHashCode();
         }
-        public void ResetScoreChange()
+        public void ResetScoreDeltaReveal()
         {
-            this.ScoreChange = 0;
+            this.ScoreDeltaReveal = 0;
+        }
+        public void ResetScoreDeltaScoreBoard()
+        {
+            this.ScoreDeltaScoreboard = 0;
         }
 
         public void AddScore(int amount)
         {
             this.Score += amount;
-            this.ScoreChange += amount;
+            this.ScoreDeltaReveal += amount;
+            this.ScoreDeltaScoreboard += amount;
         }
     }
 }

@@ -40,7 +40,7 @@ namespace RoystonGame.TV.DataModels.States.GameStates
             {
                 throw new Exception("Unity View not defined for this game state!!");
             }
-            return UnityView;
+             return UnityView;
         }
         #endregion
     }
