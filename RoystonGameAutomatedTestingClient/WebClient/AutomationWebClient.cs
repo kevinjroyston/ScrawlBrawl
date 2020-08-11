@@ -20,10 +20,21 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
     {
         private Uri TargetBaseUri { get; } = new Uri("http://localhost:50403");
         private HttpClient HttpClient { get; set; }
+        private Random Rand { get; } = new Random();
 
         public AutomationWebClient()
         {
             this.HttpClient = new HttpClient();
+        }
+
+        public async Task<UserPrompt> GetUserPrompt(string userId)
+        {
+            HttpResponseMessage currentContentResponse = await MakeWebRequest(
+                path: Constants.Path.CurrentContent,
+                userId: userId,
+                method: HttpMethod.Get);
+
+            return JsonConvert.DeserializeObject<UserPrompt>(await currentContentResponse.Content.ReadAsStringAsync());
         }
 
         public async Task SubmitUserForm ( Func<UserPrompt, UserFormSubmission> handler, string userId)
@@ -61,7 +72,7 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
             await SubmitUserForm(
                 handler: (UserPrompt prompt) =>
                 {
-                    if (prompt == null)
+                    if (prompt == null || !prompt.SubmitButton)
                         return null;
                     return new UserFormSubmission
                     {
@@ -89,6 +100,135 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
                 userId: userId);
         }
 
+        public async Task SubmitSingleDrawing(string userId, string drawing = null)
+        {
+            Debug.Assert(userId.Length == 50);
+            drawing ??= Constants.Drawings.GrayDot;
+
+            await SubmitUserForm(
+                handler: (UserPrompt prompt) =>
+                {
+                    if (prompt == null || !prompt.SubmitButton)
+                        return null;
+                    return new UserFormSubmission
+                    {
+                        Id = prompt.Id,
+                        SubForms = new List<UserSubForm>()
+                        {
+                            new UserSubForm()
+                            {
+                                Id = prompt.SubPrompts?[0]?.Id ?? Guid.Empty,
+                                Drawing = drawing,
+                            }
+                        }
+                    };
+                },
+                userId: userId);
+        }
+
+        public async Task SubmitSingleText(string userId, string text = null)
+        {
+            Debug.Assert(userId.Length == 50);
+            text ??= Guid.NewGuid().ToString();
+
+            await SubmitUserForm(
+                handler: (UserPrompt prompt) =>
+                {
+                    if (prompt == null || !prompt.SubmitButton)
+                        return null;
+                    return new UserFormSubmission
+                    {
+                        Id = prompt.Id,
+                        SubForms = new List<UserSubForm>()
+                        {
+                            new UserSubForm()
+                            {
+                                Id = prompt.SubPrompts?[0]?.Id ?? Guid.Empty,
+                                ShortAnswer = text,
+                            }
+                        }
+                    };
+                },
+                userId: userId);
+        }
+
+        public async Task SubmitSingleRadio(string userId, int? answer = null)
+        {
+            Debug.Assert(userId.Length == 50);
+
+            await SubmitUserForm(
+                handler: (UserPrompt prompt) =>
+                {
+                    if (prompt == null || !prompt.SubmitButton)
+                        return null;
+                    if (answer == null || answer >= prompt.SubPrompts[0].Answers.Length)
+                    {
+                        answer = Rand.Next(0, prompt.SubPrompts[0].Answers.Length);
+                    }
+                    
+                    return new UserFormSubmission
+                    {
+                        Id = prompt.Id,
+                        SubForms = new List<UserSubForm>()
+                        {
+                            new UserSubForm()
+                            {
+                                Id = prompt.SubPrompts?[0]?.Id ?? Guid.Empty,
+                                RadioAnswer = answer
+                            }
+                        }
+                    };
+                },
+                userId: userId);
+        }
+
+        public async Task SubmitSingleSelector(string userId, int? answer = null)
+        {
+            Debug.Assert(userId.Length == 50);
+
+            await SubmitUserForm(
+                handler: (UserPrompt prompt) =>
+                {
+                    if (prompt == null || !prompt.SubmitButton)
+                        return null;
+                    if (answer == null || answer >= prompt.SubPrompts[0].Selector.ImageList.Length)
+                    {
+                        answer = Rand.Next(0, prompt.SubPrompts[0].Selector.ImageList.Length);
+                    }
+
+                    return new UserFormSubmission
+                    {
+                        Id = prompt.Id,
+                        SubForms = new List<UserSubForm>()
+                        {
+                            new UserSubForm()
+                            {
+                                Id = prompt.SubPrompts?[0]?.Id ?? Guid.Empty,
+                                Selector = answer
+                            }
+                        }
+                    };
+                },
+                userId: userId);
+        }
+
+        public async Task SubmitSkipReveal(string userId)
+        {
+            Debug.Assert(userId.Length == 50);
+
+            await SubmitUserForm(
+                handler: (UserPrompt prompt) =>
+                {
+                    if (prompt == null || !prompt.SubmitButton)
+                        return null;
+
+                    return new UserFormSubmission
+                    {
+                        Id = prompt.Id,
+                    };
+                },
+                userId: userId);
+        }
 
         public async Task<HttpResponseMessage> MakeWebRequest(string path, string userId, HttpMethod method, HttpContent content = null)
         {

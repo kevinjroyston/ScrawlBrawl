@@ -44,15 +44,15 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
         {
             return this.Objects[objectIndex].GetUnityImage(
                 imageIdentifier: (objectIndex + 1).ToString(),
-                title: this.ShowObjectTitlesForVoting ? this.ObjectTitles[objectIndex] : null,
-                header: this.ShowObjectHeadersForVoting ? this.ObjectHeaders[objectIndex] : null);
+                title: this.ShowObjectTitlesForVoting ? this.ObjectTitles?[objectIndex] : null,
+                header: this.ShowObjectHeadersForVoting ? this.ObjectHeaders?[objectIndex] : null);
         }
         public override UnityImage RevealUnityObjectGenerator(int objectIndex)
         {
             return this.Objects[objectIndex].GetUnityImage(
                 imageIdentifier: (objectIndex + 1).ToString(),
-                title: this.ObjectTitles[objectIndex],
-                header: this.ObjectHeaders[objectIndex],
+                title: this.ObjectTitles?[objectIndex],
+                header: this.ObjectHeaders?[objectIndex],
                 imageOwnerId: this.Objects[objectIndex].Owner.UserId,
                 voteRevealOptions: new UnityImageVoteRevealOptions()
                 {

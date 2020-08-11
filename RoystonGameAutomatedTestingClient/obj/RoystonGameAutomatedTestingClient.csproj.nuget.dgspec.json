@@ -1,26 +1,21 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Kevin\\Desktop\\Life\\GameDev\\Hackbox\\RoystonGame\\RoystonGameAutomatedTestingClient\\RoystonGameAutomatedTestingClient.csproj": {}
+    "C:\\Me\\KevDev\\RoystonGame\\RoystonGameAutomatedTestingClient\\RoystonGameAutomatedTestingClient.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Kevin\\Desktop\\Life\\GameDev\\Hackbox\\RoystonGame\\RoystonGameAutomatedTestingClient\\RoystonGameAutomatedTestingClient.csproj": {
+    "C:\\Me\\KevDev\\RoystonGame\\RoystonGameAutomatedTestingClient\\RoystonGameAutomatedTestingClient.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Kevin\\Desktop\\Life\\GameDev\\Hackbox\\RoystonGame\\RoystonGameAutomatedTestingClient\\RoystonGameAutomatedTestingClient.csproj",
+        "projectUniqueName": "C:\\Me\\KevDev\\RoystonGame\\RoystonGameAutomatedTestingClient\\RoystonGameAutomatedTestingClient.csproj",
         "projectName": "RoystonGameAutomatedTestingClient",
-        "projectPath": "C:\\Users\\Kevin\\Desktop\\Life\\GameDev\\Hackbox\\RoystonGame\\RoystonGameAutomatedTestingClient\\RoystonGameAutomatedTestingClient.csproj",
-        "packagesPath": "C:\\Users\\Kevin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Kevin\\Desktop\\Life\\GameDev\\Hackbox\\RoystonGame\\RoystonGameAutomatedTestingClient\\obj\\",
+        "projectPath": "C:\\Me\\KevDev\\RoystonGame\\RoystonGameAutomatedTestingClient\\RoystonGameAutomatedTestingClient.csproj",
+        "packagesPath": "C:\\Users\\brian\\.nuget\\packages\\",
+        "outputPath": "C:\\Me\\KevDev\\RoystonGame\\RoystonGameAutomatedTestingClient\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Kevin\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\brian\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
@@ -32,8 +27,8 @@
         "frameworks": {
           "netcoreapp3.1": {
             "projectReferences": {
-              "C:\\Users\\Kevin\\Desktop\\Life\\GameDev\\Hackbox\\RoystonGame\\RoystonGame\\RoystonGame.csproj": {
-                "projectPath": "C:\\Users\\Kevin\\Desktop\\Life\\GameDev\\Hackbox\\RoystonGame\\RoystonGame\\RoystonGame.csproj"
+              "C:\\Me\\KevDev\\RoystonGame\\RoystonGame\\RoystonGame.csproj": {
+                "projectPath": "C:\\Me\\KevDev\\RoystonGame\\RoystonGame\\RoystonGame.csproj"
               }
             }
           }
@@ -50,6 +45,10 @@
             "Microsoft.AspNet.WebApi.Client": {
               "target": "Package",
               "version": "[5.2.7, )"
+            },
+            "Microsoft.AspNetCore.SignalR.Client": {
+              "target": "Package",
+              "version": "[3.1.7, )"
             },
             "Newtonsoft.Json": {
               "target": "Package",
@@ -78,23 +77,18 @@
         }
       }
     },
-    "C:\\Users\\Kevin\\Desktop\\Life\\GameDev\\Hackbox\\RoystonGame\\RoystonGame\\RoystonGame.csproj": {
+    "C:\\Me\\KevDev\\RoystonGame\\RoystonGame\\RoystonGame.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Kevin\\Desktop\\Life\\GameDev\\Hackbox\\RoystonGame\\RoystonGame\\RoystonGame.csproj",
+        "projectUniqueName": "C:\\Me\\KevDev\\RoystonGame\\RoystonGame\\RoystonGame.csproj",
         "projectName": "RoystonGame",
-        "projectPath": "C:\\Users\\Kevin\\Desktop\\Life\\GameDev\\Hackbox\\RoystonGame\\RoystonGame\\RoystonGame.csproj",
-        "packagesPath": "C:\\Users\\Kevin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Kevin\\Desktop\\Life\\GameDev\\Hackbox\\RoystonGame\\RoystonGame\\obj\\",
+        "projectPath": "C:\\Me\\KevDev\\RoystonGame\\RoystonGame\\RoystonGame.csproj",
+        "packagesPath": "C:\\Users\\brian\\.nuget\\packages\\",
+        "outputPath": "C:\\Me\\KevDev\\RoystonGame\\RoystonGame\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Kevin\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\brian\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
