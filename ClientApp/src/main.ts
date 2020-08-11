@@ -12,9 +12,21 @@ export function getBaseUrl() {
     return document.getElementsByTagName('base')[0].href;
 }
 
+export function getUserIdOverrideQueryParameter() {
+  const params = location.search.slice(1).split('&').reduce((acc, s) => {
+    const [k, v] = s.split('=')
+    return Object.assign(acc, { [k]: v })
+  }, {})
+  return params["idOverride"];
+}
+
 export function getUserIdQueryParameter() {
     const idKeyName: string = 'roystonGameUserId';
     var userId = localStorage.getItem(idKeyName);
+    if (getUserIdOverrideQueryParameter() != "")
+    {
+      userId = getUserIdOverrideQueryParameter();
+    }
     if (!userId) {
         userId = genHexString(50);
         localStorage.setItem(idKeyName, userId);

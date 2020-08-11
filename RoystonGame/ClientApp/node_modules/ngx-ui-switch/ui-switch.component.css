@@ -1,0 +1,128 @@
+.switch.switch-small {
+  min-width: 33px; }
+
+.switch.switch-medium {
+  min-width: 50px; }
+
+.switch.switch-large {
+  min-width: 60px; }
+
+.switch.switch-small > .switch-pane > span {
+  font-size: 9px; }
+
+.switch.switch-medium > .switch-pane > span {
+  font-size: 16px; }
+
+.switch.switch-large > .switch-pane > span {
+  font-size: 16px; }
+
+.switch {
+  border: 1px solid #dfdfdf;
+  position: relative;
+  display: inline-block;
+  box-sizing: content-box;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  box-shadow: #dfdfdf 0 0 0 0 inset;
+  transition: 0.3s ease-out all;
+  -webkit-transition: 0.3s ease-out all;
+  white-space: nowrap; }
+  .switch small {
+    border-radius: 100%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    position: absolute;
+    top: 0;
+    right: calc(100% - 30px);
+    transition: 0.3s ease-out all;
+    -webkit-transition: 0.3s ease-out all;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center; }
+  .switch.switch-small {
+    height: 20px;
+    border-radius: 20px; }
+    .switch.switch-small small {
+      width: 20px;
+      height: 20px;
+      right: calc(100% - 20px); }
+    .switch.switch-small > .switch-pane > span {
+      line-height: 20px; }
+    .switch.switch-small > .switch-pane .switch-label-checked {
+      padding-right: 25px;
+      padding-left: 10px; }
+    .switch.switch-small > .switch-pane .switch-label-unchecked {
+      padding-left: 25px;
+      padding-right: 10px; }
+  .switch.switch-medium {
+    height: 30px;
+    border-radius: 30px; }
+    .switch.switch-medium small {
+      width: 30px;
+      height: 30px;
+      right: calc(100% - 30px); }
+    .switch.switch-medium > .switch-pane > span {
+      line-height: 30px; }
+    .switch.switch-medium > .switch-pane .switch-label-checked {
+      padding-right: 35px;
+      padding-left: 15px; }
+    .switch.switch-medium > .switch-pane .switch-label-unchecked {
+      padding-left: 35px;
+      padding-right: 15px; }
+  .switch.switch-large {
+    height: 40px;
+    border-radius: 40px; }
+    .switch.switch-large small {
+      width: 40px;
+      height: 40px;
+      right: calc(100% - 40px); }
+    .switch.switch-large > .switch-pane > span {
+      line-height: 40px; }
+    .switch.switch-large > .switch-pane .switch-label-checked {
+      padding-right: 45px;
+      padding-left: 20px; }
+    .switch.switch-large > .switch-pane .switch-label-unchecked {
+      padding-left: 45px;
+      padding-right: 20px; }
+  .switch.checked {
+    background: #64bd63; }
+    .switch.checked small {
+      right: 0;
+      left: auto; }
+    .switch.checked .switch-pane {
+      top: 0; }
+      .switch.checked .switch-pane .switch-label-checked {
+        display: block; }
+      .switch.checked .switch-pane .switch-label-unchecked {
+        display: none; }
+  .switch.disabled {
+    opacity: 0.5;
+    cursor: not-allowed; }
+  .switch .switch-pane {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 100%;
+    justify-content: flex-start;
+    align-items: center;
+    top: 0;
+    position: relative;
+    pointer-events: none; }
+    .switch .switch-pane > span {
+      display: block;
+      min-height: 100%; }
+    .switch .switch-pane .switch-label {
+      color: black; }
+      .switch .switch-pane .switch-label-checked {
+        display: none; }
+      .switch .switch-pane .switch-label-unchecked {
+        display: block; }
+  .switch.loading {
+    background-color: #f1f1f1; }
+    .switch.loading small {
+      background-color: transparent;
+      border: none;
+      box-shadow: none;
+      right: 50%;
+      transform: translateX(50%); }

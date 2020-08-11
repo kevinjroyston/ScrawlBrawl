@@ -48,8 +48,8 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
             {
                 Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = Objects[objectIndex].Select(userDrawing => userDrawing.Drawing).ToList() },
                 ImageIdentifier = new StaticAccessor<string> { Value = (objectIndex + 1).ToString() },
-                Title = new StaticAccessor<string> { Value = this.ShowObjectTitlesForVoting ? this.ObjectTitles[objectIndex] : null},
-                Header = new StaticAccessor<string> { Value = this.ShowObjectHeadersForVoting ? this.ObjectHeaders[objectIndex] : null },
+                Title = new StaticAccessor<string> { Value = this.ShowObjectTitlesForVoting ? this.ObjectTitles?[objectIndex] : null},
+                Header = new StaticAccessor<string> { Value = this.ShowObjectHeadersForVoting ? this.ObjectHeaders?[objectIndex] : null },
             };
         }
         public override UnityImage RevealUnityObjectGenerator(int objectIndex)
@@ -58,8 +58,8 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
             {
                 Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = this.Objects[objectIndex].Select(userDrawing => userDrawing.Drawing).ToList() },
                 ImageIdentifier = new StaticAccessor<string> { Value = (objectIndex + 1).ToString() },
-                Title = new StaticAccessor<string> { Value = this.ObjectTitles[objectIndex] },
-                Header = new StaticAccessor<string> { Value = this.ObjectTitles[objectIndex] },
+                Title = new StaticAccessor<string> { Value = this.ObjectTitles?[objectIndex] },
+                Header = new StaticAccessor<string> { Value = this.ObjectTitles?[objectIndex] },
                 ImageOwnerId = new StaticAccessor<Guid?> { Value = this.Objects[objectIndex][0].Owner?.UserId },
                 VoteRevealOptions = new StaticAccessor<UnityImageVoteRevealOptions>
                 {

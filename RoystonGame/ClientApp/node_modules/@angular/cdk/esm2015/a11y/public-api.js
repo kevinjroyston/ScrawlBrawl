@@ -1,0 +1,25 @@
+/**
+ * @fileoverview added by tsickle
+ * Generated from: src/cdk/a11y/public-api.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+export { MESSAGES_CONTAINER_ID, CDK_DESCRIBEDBY_ID_PREFIX, CDK_DESCRIBEDBY_HOST_ATTRIBUTE, AriaDescriber } from './aria-describer/aria-describer';
+export { ActiveDescendantKeyManager } from './key-manager/activedescendant-key-manager';
+export { FocusKeyManager } from './key-manager/focus-key-manager';
+export { ListKeyManager } from './key-manager/list-key-manager';
+export { FocusTrap, FocusTrapFactory, CdkTrapFocus } from './focus-trap/focus-trap';
+export { InteractivityChecker } from './interactivity-checker/interactivity-checker';
+export { LiveAnnouncer, CdkAriaLive } from './live-announcer/live-announcer';
+export { LIVE_ANNOUNCER_ELEMENT_TOKEN_FACTORY, LIVE_ANNOUNCER_ELEMENT_TOKEN, LIVE_ANNOUNCER_DEFAULT_OPTIONS } from './live-announcer/live-announcer-tokens';
+export { TOUCH_BUFFER_MS, FocusMonitor, CdkMonitorFocus } from './focus-monitor/focus-monitor';
+export { isFakeMousedownFromScreenReader } from './fake-mousedown';
+export { A11yModule } from './a11y-module';
+export { HighContrastModeDetector, } from './high-contrast-mode/high-contrast-mode-detector';
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicHVibGljLWFwaS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uLy4uL3NyYy9jZGsvYTExeS9wdWJsaWMtYXBpLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7OztBQU9BLGdIQUFjLGlDQUFpQyxDQUFDO0FBQ2hELDJDQUFjLDRDQUE0QyxDQUFDO0FBQzNELGdDQUFjLGlDQUFpQyxDQUFDO0FBQ2hELCtCQUFjLGdDQUFnQyxDQUFDO0FBQy9DLDBEQUFjLHlCQUF5QixDQUFDO0FBQ3hDLHFDQUFjLCtDQUErQyxDQUFDO0FBQzlELDJDQUFjLGlDQUFpQyxDQUFDO0FBQ2hELG1IQUFjLHdDQUF3QyxDQUFDO0FBQ3ZELCtEQUFjLCtCQUErQixDQUFDO0FBQzlDLGdEQUFjLGtCQUFrQixDQUFDO0FBQ2pDLDJCQUFjLGVBQWUsQ0FBQztBQUM5QixPQUFPLEVBQ0wsd0JBQXdCLEdBRXpCLE1BQU0sa0RBQWtELENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIEBsaWNlbnNlXG4gKiBDb3B5cmlnaHQgR29vZ2xlIExMQyBBbGwgUmlnaHRzIFJlc2VydmVkLlxuICpcbiAqIFVzZSBvZiB0aGlzIHNvdXJjZSBjb2RlIGlzIGdvdmVybmVkIGJ5IGFuIE1JVC1zdHlsZSBsaWNlbnNlIHRoYXQgY2FuIGJlXG4gKiBmb3VuZCBpbiB0aGUgTElDRU5TRSBmaWxlIGF0IGh0dHBzOi8vYW5ndWxhci5pby9saWNlbnNlXG4gKi9cbmV4cG9ydCAqIGZyb20gJy4vYXJpYS1kZXNjcmliZXIvYXJpYS1kZXNjcmliZXInO1xuZXhwb3J0ICogZnJvbSAnLi9rZXktbWFuYWdlci9hY3RpdmVkZXNjZW5kYW50LWtleS1tYW5hZ2VyJztcbmV4cG9ydCAqIGZyb20gJy4va2V5LW1hbmFnZXIvZm9jdXMta2V5LW1hbmFnZXInO1xuZXhwb3J0ICogZnJvbSAnLi9rZXktbWFuYWdlci9saXN0LWtleS1tYW5hZ2VyJztcbmV4cG9ydCAqIGZyb20gJy4vZm9jdXMtdHJhcC9mb2N1cy10cmFwJztcbmV4cG9ydCAqIGZyb20gJy4vaW50ZXJhY3Rpdml0eS1jaGVja2VyL2ludGVyYWN0aXZpdHktY2hlY2tlcic7XG5leHBvcnQgKiBmcm9tICcuL2xpdmUtYW5ub3VuY2VyL2xpdmUtYW5ub3VuY2VyJztcbmV4cG9ydCAqIGZyb20gJy4vbGl2ZS1hbm5vdW5jZXIvbGl2ZS1hbm5vdW5jZXItdG9rZW5zJztcbmV4cG9ydCAqIGZyb20gJy4vZm9jdXMtbW9uaXRvci9mb2N1cy1tb25pdG9yJztcbmV4cG9ydCAqIGZyb20gJy4vZmFrZS1tb3VzZWRvd24nO1xuZXhwb3J0ICogZnJvbSAnLi9hMTF5LW1vZHVsZSc7XG5leHBvcnQge1xuICBIaWdoQ29udHJhc3RNb2RlRGV0ZWN0b3IsXG4gIEhpZ2hDb250cmFzdE1vZGUsXG59IGZyb20gJy4vaGlnaC1jb250cmFzdC1tb2RlL2hpZ2gtY29udHJhc3QtbW9kZS1kZXRlY3Rvcic7XG4iXX0=
