@@ -88,5 +88,7 @@ public class EventSystem : MonoBehaviour
     {
         EventStorage = new List<GameEvent>();
         eventListenerPairs = eventListenerPairs.Where(pair => pair.Persists).ToList();
+        print("Events: " + EventStorage.Count);
+        print("Listeners: " + eventListenerPairs.Count);
     }
 }

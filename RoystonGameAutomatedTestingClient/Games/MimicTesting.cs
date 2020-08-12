@@ -1,4 +1,6 @@
-﻿using RoystonGameAutomatedTestingClient.cs.WebClient;
+﻿using RoystonGame.TV.DataModels.Users;
+using RoystonGame.Web.DataModels.Responses;
+using RoystonGameAutomatedTestingClient.cs.WebClient;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -8,60 +10,41 @@ using System.Threading.Tasks;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    class MimicTesting
+    class MimicTesting : GameTest
     {
-        public static async Task RunGame(List<string> userIds)
+        protected override Task AutomatedSubmitter(UserPrompt userPrompt, string userId)
         {
-            for (int i = 0; i < 500; i ++)
+            if (userPrompt.SubmitButton)
             {
-                Console.WriteLine("[0]: Exit");
-                Console.WriteLine("[1]: Submit Drawings");
-                Console.WriteLine("[2]: Vote");
-                Console.WriteLine("[3]: Skip Reveal");
-                int selection = Convert.ToInt32(Console.ReadLine());
-                if (selection == 1)
+                if (userPrompt.SubPrompts?.Length > 0)
                 {
-                    await MakeDrawings(userIds);
-                }
-                else if (selection == 2)
-                {
-                    await Vote(userIds);
-                }
-                else if (selection == 3)
-                {
-                    await SkipReveal(userIds);
+                    if (userPrompt.SubPrompts[0].Drawing != null)
+                    {
+                        return MakeDrawing(userId);
+                    }
+                    else if (userPrompt.SubPrompts[0].Answers?.Length > 0)
+                    {
+                        return Vote(userId);
+                    }
                 }
                 else
                 {
-                    break;
+                    return SkipReveal(userId);
                 }
             }
+            return Task.CompletedTask;
         }
-        private static async Task MakeDrawings(List<string> userIds)
+        private async Task MakeDrawing(string userId)
         {
-            AutomationWebClient webClient = new AutomationWebClient();
-            foreach (string userId in userIds)
-            {
-                await webClient.SubmitSingleDrawing(userId);
-                Thread.Sleep(100);
-            }
+             await WebClient.SubmitSingleDrawing(userId);
         }
-        private static async Task Vote(List<string> userIds)
+        private async Task Vote(string userId)
         {
-            AutomationWebClient webClient = new AutomationWebClient();
-            foreach (string userId in userIds)
-            {
-                await webClient.SubmitSingleRadio(userId);
-                Thread.Sleep(100);
-            }
+             await WebClient.SubmitSingleRadio(userId);
         }
-        private static async Task SkipReveal(List<string> userIds)
+        private async Task SkipReveal(string userId)
         {
-            AutomationWebClient webClient = new AutomationWebClient();
-            foreach (string userId in userIds)
-            {
-                await webClient.SubmitSkipReveal(userId);
-            }
+            await WebClient.SubmitSkipReveal(userId);
         }
     }
 }

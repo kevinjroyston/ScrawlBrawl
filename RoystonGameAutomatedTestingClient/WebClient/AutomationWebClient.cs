@@ -129,7 +129,7 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
         public async Task SubmitSingleText(string userId, string text = null)
         {
             Debug.Assert(userId.Length == 50);
-            text ??= Guid.NewGuid().ToString();
+            text ??= Helpers.GetRandomString();
 
             await SubmitUserForm(
                 handler: (UserPrompt prompt) =>

@@ -48,10 +48,12 @@ namespace RoystonGameAutomatedTestingClient.cs
                 Thread.Sleep(Math.Clamp(500 - 5*i,1, 100));
             }
 
-            Dictionary<string, Func<List<string>, Task>> gamesToRunFunc = new Dictionary<string, Func<List<string>, Task>>()
+            Dictionary<string,  GameTest> gamesToRunFunc = new Dictionary<string, GameTest>()
             {
-                { "Mimic", MimicTesting.RunGame },
-                { "Battle Ready", BattleReadyTest.RunGame }
+                { "Mimic", new MimicTesting() },
+                { "Battle Ready", new BattleReadyTest() },
+                { "Imposter Syndrome", new ImposterTest() },
+                { "Two Tone", new TwoToneTest() },
             };
 
             List<string> games = gamesToRunFunc.Keys.ToList();
@@ -61,7 +63,7 @@ namespace RoystonGameAutomatedTestingClient.cs
             }
             int selection = Convert.ToInt32(Console.ReadLine());
 
-            await gamesToRunFunc[games[selection - 1]](userIds);
+            await gamesToRunFunc[games[selection - 1]].RunGame(userIds);
 
             Console.WriteLine("Done");
         }

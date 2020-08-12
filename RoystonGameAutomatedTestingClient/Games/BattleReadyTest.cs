@@ -6,85 +6,65 @@ using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using RoystonGameAutomatedTestingClient.cs;
 using RoystonGameAutomatedTestingClient.cs.WebClient;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static System.FormattableString;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    class BattleReadyTest
+    class BattleReadyTest : GameTest
     {
-        private static AutomationWebClient webClient = new AutomationWebClient();
-        public static async Task RunGame(List<string> userIds)
+        protected override Task AutomatedSubmitter(UserPrompt userPrompt, string userId)
         {
-            for (int i = 0; i < 500; i++)
+            if (userPrompt.SubmitButton)
             {
-                Console.WriteLine("Press Enter to continue");
-                Console.WriteLine("Type Exit to exit");
-                Console.WriteLine("Type Browser to open browsers");
-                string selection = Console.ReadLine();
-                if (selection.FuzzyEquals("exit"))
+                if (userPrompt.SubPrompts?.Length > 0)
                 {
-                    break;
-                }
-                else if(selection.FuzzyEquals("browser"))
-                {
-                    
+                    if (userPrompt.SubPrompts[0].Drawing != null)
+                    {
+                        return MakeDrawing(userId);
+                    }
+                    else if (userPrompt.SubPrompts[0].ShortAnswer)
+                    {
+                        return MakePrompt(userId);
+                    }
+                    else if (userPrompt.SubPrompts.Length == 4)
+                    {
+                        return MakePerson(userId, "TestPerson");
+                    }
+                    else if (userPrompt.SubPrompts[0].Answers?.Length > 0)
+                    {
+                        return Vote(userId);
+                    }
                 }
                 else
                 {
-                    int personNameCount = 0;
-                    foreach (string userId in userIds)
-                    {
-                        UserPrompt userPrompt = await webClient.GetUserPrompt(userId);
-                        if (userPrompt.SubmitButton)
-                        {
-                            if (userPrompt.SubPrompts?.Length > 0)
-                            {
-                                if (userPrompt.SubPrompts[0].Drawing != null)
-                                {
-                                    await MakeDrawing(userId);
-                                }
-                                else if (userPrompt.SubPrompts[0].ShortAnswer)
-                                {
-                                    await MakePrompt(userId);
-                                }
-                                else if (userPrompt.SubPrompts.Length == 4)
-                                {
-                                    personNameCount++;
-                                    await MakePerson(userId, "TestPerson" + personNameCount);
-                                }
-                                else if (userPrompt.SubPrompts[0].Answers?.Length > 0)
-                                {
-                                    await Vote(userId);
-                                }
-                            }
-                            else
-                            {
-                                await SkipReveal(userId);
-                            }
-                        }
-                    }
+                    return SkipReveal(userId);
                 }
             }
+            return Task.CompletedTask;
         }
-        private static async Task MakeDrawing(string userId)
+        private async Task MakeDrawing(string userId)
         {
-            await webClient.SubmitSingleDrawing(userId); 
+            await WebClient.SubmitSingleDrawing(userId); 
         }
-        private static async Task MakePrompt(string userId)
+        private async Task MakePrompt(string userId)
         {
-            await webClient.SubmitSingleText(userId);
+            await WebClient.SubmitSingleText(userId);
         }
-        private static async Task MakePerson(string userId, string personName = "TestPerson")
+        private async Task MakePerson(string userId, string personName = "TestPerson")
         {
             Debug.Assert(userId.Length == 50);
 
-            await webClient.SubmitUserForm(
+            await WebClient.SubmitUserForm(
                 handler: (UserPrompt prompt) =>
                 {
                     if (prompt == null || !prompt.SubmitButton)
@@ -120,13 +100,13 @@ namespace RoystonGameAutomatedTestingClient.Games
                 },
                 userId: userId);  
         }
-        private static async Task Vote(string userId)
+        private async Task Vote(string userId)
         {
-            await webClient.SubmitSingleRadio(userId);
+            await WebClient.SubmitSingleRadio(userId);
         }
-        private static async Task SkipReveal(string userId)
+        private async Task SkipReveal(string userId)
         {
-            await webClient.SubmitSkipReveal(userId);
+            await WebClient.SubmitSkipReveal(userId);
         }
     }
 }
