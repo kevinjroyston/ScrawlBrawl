@@ -53,7 +53,7 @@ namespace RoystonGameAutomatedTestingClient.Games
                 }
                 else if (submission.FuzzyEquals("browser"))
                 {
-                    Console.WriteLine(Invariant($"/n There are currently {userIds.Count} users. How many browsers would you like to open?"));
+                    Console.WriteLine(Invariant($"There are currently {userIds.Count} users. How many browsers would you like to open?"));
 
                     int numBrowsers = Convert.ToInt32(Console.ReadLine());
 
