@@ -66,7 +66,7 @@ public class ViewManager : MonoBehaviour
 
         if (id.HasValue && AvailableTVViews.ContainsKey(id.Value))
         {
-            AvailableTVViews[id.Value].EnterView(view, newScene);
+            AvailableTVViews[id.Value].EnterView(view);
         }
         else
         {

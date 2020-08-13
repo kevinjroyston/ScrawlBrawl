@@ -54,13 +54,7 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
     {
         
     }
-    public bool IsNewScene
-    {
-        set
-        {
-            NewScene = value;
-        }
-    }
+    
     public UnityImage UnityImage
     {
         set
@@ -209,7 +203,7 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
 
             
 
-            if (value?._VoteRevealOptions != null && value?._ImageOwnerId != null && NewScene)
+            if (value?._VoteRevealOptions != null && value?._ImageOwnerId != null)
             {
                 VoteCount.text = "" + 0;
 

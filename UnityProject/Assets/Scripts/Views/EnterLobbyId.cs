@@ -17,7 +17,7 @@ public class EnterLobbyId : ITVView
         TestClient.ConnectToLobby(UserInput.text.Trim());
     }
 
-    public override void EnterView(UnityView currentView, bool newScene = false)
+    public override void EnterView(UnityView currentView)
     {
         base.EnterView(currentView);
         gameObject.SetActive(true);

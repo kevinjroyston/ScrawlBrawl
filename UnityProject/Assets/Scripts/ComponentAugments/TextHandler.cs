@@ -18,8 +18,6 @@ public class TextHandler : MonoBehaviour, UnityObjectHandlerInterface
     public GameObject TextIdHolder;
     public GameObject VerticalScoreHolder;
 
-    public bool NewScene;
-
     public Text VoteCount;
     public Text Footer;
 
@@ -34,13 +32,6 @@ public class TextHandler : MonoBehaviour, UnityObjectHandlerInterface
 
     public Guid UnityImageId = Guid.Empty;
 
-    public bool IsNewScene
-    {
-        set
-        {
-            NewScene = value;
-        }
-    }
     public UnityImage UnityImage
     {
         set

@@ -31,7 +31,7 @@ public class GenericView : ITVView
     {
     }
 
-    public override void EnterView(UnityView view, bool newScene = false)
+    public override void EnterView(UnityView view)
     {
         base.EnterView(view);
         UnityView = view;
@@ -71,7 +71,7 @@ public class GenericView : ITVView
         if (ImagePrefab != null && ImageDropZone != null && (UnityView?._UnityImages?.Any() ?? false))
         {
             // TODO: below causes sprite to be created an extra time. consider caching all the base64 sprites or using RawImage.
-            LoadAllImages(UnityView._UnityImages.ToList(), newScene);
+            LoadAllImages(UnityView._UnityImages.ToList());
             ImageDropZone.SetActive(true);
         }
         else
@@ -143,7 +143,7 @@ public class GenericView : ITVView
         }
     }
 
-    private void LoadAllImages(List<UnityImage> images,  bool newScene = false)
+    private void LoadAllImages(List<UnityImage> images)
     {
         for (int i = images.Count; i < ImageDropZone.transform.childCount; i++)
         {
@@ -170,7 +170,6 @@ public class GenericView : ITVView
                 isRevealingImage = true;
             }
             images[i].Options = UnityView._Options;
-            ImageDropZone.transform.GetChild(i).GetComponent<UnityObjectHandlerInterface>().IsNewScene = newScene;
             ImageDropZone.transform.GetChild(i).GetComponent<UnityObjectHandlerInterface>().UnityImage = images[i];
         }
         if (isRevealingImage) // only shake the images if one of them is going to be revealed
