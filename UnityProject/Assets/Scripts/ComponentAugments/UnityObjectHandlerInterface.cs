@@ -6,4 +6,5 @@ public interface UnityObjectHandlerInterface
 {
     UnityImage UnityImage {set; }
 
+    bool IsNewScene { set; }
 }

@@ -7,7 +7,7 @@ using UnityEngine.Events;
 public abstract class ITVView : MonoBehaviour
 {
     public List<Action<UnityViewOptions>> Listeners { get; private set; } = new List<Action<UnityViewOptions>>();
-    public virtual void EnterView(UnityView currentView)
+    public virtual void EnterView(UnityView currentView, bool newScene = false)
     {
         foreach (Action<UnityViewOptions> listener in Listeners)
         {

@@ -49,11 +49,11 @@ public class ViewManager : MonoBehaviour
         EventSystem.Singleton.ResetDataStructures();
         BlurController.Singleton.ResetMasks();
 
-        ChangeView(id, view);
+        ChangeView(id, view, true);
         EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.EnteredState });
     }
 
-    public void ChangeView(TVScreenId? id, UnityView view)
+    public void ChangeView(TVScreenId? id, UnityView view, bool newScene = false)
     {
         if (CurrentView.HasValue)
         {
@@ -66,7 +66,7 @@ public class ViewManager : MonoBehaviour
 
         if (id.HasValue && AvailableTVViews.ContainsKey(id.Value))
         {
-            AvailableTVViews[id.Value].EnterView(view);
+            AvailableTVViews[id.Value].EnterView(view, newScene);
         }
         else
         {

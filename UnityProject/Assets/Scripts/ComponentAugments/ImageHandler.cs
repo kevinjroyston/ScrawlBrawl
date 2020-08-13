@@ -18,6 +18,8 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
     public Text Title;
     public Text Header;
 
+    public bool NewScene;
+
     public GameObject SpriteZone;
     public GameObject ImageIdHolder;
     public GameObject VoteCountHolder;
@@ -51,6 +53,13 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
     public void Update()
     {
         
+    }
+    public bool IsNewScene
+    {
+        set
+        {
+            NewScene = value;
+        }
     }
     public UnityImage UnityImage
     {
@@ -200,7 +209,7 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
 
             
 
-            if (value?._VoteRevealOptions != null && value?._ImageOwnerId != null)
+            if (value?._VoteRevealOptions != null && value?._ImageOwnerId != null && NewScene)
             {
                 VoteCount.text = "" + 0;
 
