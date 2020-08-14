@@ -18,6 +18,8 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
     public Text Title;
     public Text Header;
 
+    public bool NewScene;
+
     public GameObject SpriteZone;
     public GameObject ImageIdHolder;
     public GameObject VoteCountHolder;
@@ -52,6 +54,7 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
     {
         
     }
+    
     public UnityImage UnityImage
     {
         set

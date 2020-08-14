@@ -5,5 +5,4 @@ using UnityEngine;
 public interface UnityObjectHandlerInterface
 {
     UnityImage UnityImage {set; }
-
 }
