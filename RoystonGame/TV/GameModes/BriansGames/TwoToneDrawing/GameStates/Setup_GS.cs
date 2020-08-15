@@ -149,12 +149,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             this.ShowColors = showColors;
 
             TimeSpan? multipliedDrawingTimer = null;
-            if (drawingTimer != null)
-            {
-                multipliedDrawingTimer = TimeSpan.FromSeconds(((TimeSpan)drawingTimer).TotalSeconds * this.SubChallenges.Count);
-            }
+
             State getChallenges = GetChallengesUserState();
-            MultiStateChain getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby), stateDurration: multipliedDrawingTimer);
+            MultiStateChain getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby), stateDurration: drawingTimer);
 
             this.Entrance.Transition(getChallenges);
             getChallenges.AddExitListener(() => this.AssignPrompts());
