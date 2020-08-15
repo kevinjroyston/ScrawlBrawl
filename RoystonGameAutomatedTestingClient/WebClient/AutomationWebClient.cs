@@ -20,10 +20,26 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
     {
         private Uri TargetBaseUri { get; } = new Uri("http://localhost:50403");
         private HttpClient HttpClient { get; set; }
+        private Random Rand { get; } = new Random();
 
         public AutomationWebClient()
         {
             this.HttpClient = new HttpClient();
+        }
+
+        public async Task<UserPrompt> GetUserPrompt(string userId)
+        {
+            HttpResponseMessage currentContentResponse = await MakeWebRequest(
+                path: Constants.Path.CurrentContent,
+                userId: userId,
+                method: HttpMethod.Get);
+
+            return JsonConvert.DeserializeObject<UserPrompt>(await currentContentResponse.Content.ReadAsStringAsync());
+        }
+
+        public async Task CreateUserFormSubmission(Func<UserPrompt, UserFormSubmission> handler, string userId)
+        {
+
         }
 
         public async Task SubmitUserForm ( Func<UserPrompt, UserFormSubmission> handler, string userId)
@@ -36,6 +52,11 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
             UserPrompt prompt = JsonConvert.DeserializeObject<UserPrompt>(await currentContentResponse.Content.ReadAsStringAsync());
 
             UserFormSubmission submission = handler(prompt);
+            submission.Id = prompt.Id;
+            for (int i = 0; i < (submission.SubForms?.Count ?? 0); i++)
+            {
+                submission.SubForms[i].Id = prompt.SubPrompts?[i]?.Id ?? Guid.Empty;
+            }
 
             if (submission == null)
             {
@@ -51,44 +72,6 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
                     Encoding.UTF8,
                     Constants.MediaType.ApplicationJson));
         }
-
-        public async Task JoinLobby(string userId, string lobbyId, string name = null, string drawing = null)
-        {
-            Debug.Assert(userId.Length == 50);
-            name ??= "TestUser";
-            drawing ??= Constants.Drawings.GrayDot;
-
-            await SubmitUserForm(
-                handler: (UserPrompt prompt) =>
-                {
-                    if (prompt == null)
-                        return null;
-                    return new UserFormSubmission
-                    {
-                        Id = prompt.Id,
-                        SubForms = new List<UserSubForm>()
-                        {
-                            new UserSubForm()
-                            {
-                                Id = prompt.SubPrompts?[0]?.Id ?? Guid.Empty,
-                                ShortAnswer = name,
-                            },
-                            new UserSubForm()
-                            {
-                                Id = prompt.SubPrompts?[1]?.Id ?? Guid.Empty,
-                                ShortAnswer = lobbyId,
-                            },
-                            new UserSubForm()
-                            {
-                                Id = prompt.SubPrompts?[2]?.Id ?? Guid.Empty,
-                                Drawing = drawing,
-                            }
-                        }
-                    };
-                },
-                userId: userId);
-        }
-
 
         public async Task<HttpResponseMessage> MakeWebRequest(string path, string userId, HttpMethod method, HttpContent content = null)
         {

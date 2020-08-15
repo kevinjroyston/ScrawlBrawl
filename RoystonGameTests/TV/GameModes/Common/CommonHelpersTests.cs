@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoystonGame.TV.GameModes.Common;
 using System;
 
@@ -13,11 +13,6 @@ namespace RoystonGameTests.TV.GameModes.Common
         [DataRow(200, 10, 1.0, 2.0, 2.1, 10)]
         [DataRow(100, 50, 1.0, 3.0, 2.0, 75)]
         [DataRow(100, 1, 0.0, 1.0, 0.2, 80)]
-        [DataRow(0, 20, 5.0, 1.0, 0.0, null)]
-        [DataRow(20, 40, 5.0, 1.0, 0.0, null)]
-        [DataRow(0, 20, -1.0, 0.0, 0.0, null)]
-        [DataRow(-20, 0, 0.0, 2.0, 1.0, null)]
-        [DataRow(-20, 0, 0.0, 2.0, 1.0, 1999)]
         [DataTestMethod]
         public void PointsForSpeedTest(int maxPoints, int minPoints, double startTime, double endTime, double secondsTaken, int? expectedValue)
         {
