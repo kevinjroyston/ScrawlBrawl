@@ -14,8 +14,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.DataModels
         public const double SetupTimerAve = 120;
         public const double SetupTimerMax = 240;
 
-        public const double AnsweringTimerMin = 30;
-        public const double AnsweringTimerAve = 90;
+        public const double AnsweringTimerMin = 45;
+        public const double AnsweringTimerAve = 120;
         public const double AnsweringTimerMax = 240;
 
         public const double VotingTimerMin = 30;

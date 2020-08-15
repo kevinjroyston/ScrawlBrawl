@@ -57,7 +57,8 @@ namespace RoystonGame.TV
         #region GameModes
         public static IReadOnlyList<GameModeMetadata> GameModes { get; set; } = new List<GameModeMetadata>
         {
-            #region Imposter Syndrome
+            #region Imposter Syndrome (OLD Removed)
+            /*
             new GameModeMetadata
             {
                 Title = "Imposter Syndrome",
@@ -75,10 +76,10 @@ namespace RoystonGame.TV
                         MinValue = 3
                     },
                 }
-            },
+            },*/
             #endregion
-            #region Imposter Syndrome Text
-            new GameModeMetadata
+            #region Imposter Syndrome Text (Removed)
+            /*new GameModeMetadata
             {
                 Title = "Imposter Syndrome (Text)",
                 Description = "Come up with a difference only you'll be able to spot!",
@@ -96,12 +97,12 @@ namespace RoystonGame.TV
                         MaxValue = 10,
                     }
                 }
-            },
+            },*/
             #endregion
             #region Imposter Syndrome Drawing
             new GameModeMetadata
             {
-                Title = "Imposter Syndrome (Drawing)",
+                Title = "Imposter Syndrome",
                 Description = "Come up with a difference only you'll be able to spot!",
                 MinPlayers = 4,
                 MaxPlayers = null,
@@ -151,6 +152,14 @@ namespace RoystonGame.TV
                         DefaultValue = true,
                         ResponseType = ResponseType.Boolean
                     },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 5,
+                        MinValue = 0,
+                        MaxValue = 10,
+                    }
                 }
             },
             #endregion
@@ -194,11 +203,12 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Seconds per turn",
+                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
-                        DefaultValue = -1,
-                        MaxValue = 60,
-                    },
+                        DefaultValue = 5,
+                        MinValue = 0,
+                        MaxValue = 10,
+                    }
                 }
             },
             #endregion
@@ -236,6 +246,14 @@ namespace RoystonGame.TV
                         MinValue = 2,
                         MaxValue = 30,
                     },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 5,
+                        MinValue = 0,
+                        MaxValue = 10,
+                    }
                 }
             },
             #endregion
@@ -256,30 +274,6 @@ namespace RoystonGame.TV
                         DefaultValue = 2,
                         MinValue = 1,
                         MaxValue = 30,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "length of timer for memorizing the drawings",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 10,
-                        MinValue = 2,
-                        MaxValue = 60,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "length of timer for each drawing",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 45,
-                        MinValue = 10,
-                        MaxValue = 120,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "length of timer for voting",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 30,
-                        MinValue = 5,
-                        MaxValue = 60,
                     },
                     new GameModeOptionResponse
                     {
@@ -304,6 +298,14 @@ namespace RoystonGame.TV
                         DefaultValue = 10,
                         MinValue = 2,
                         MaxValue = 36,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 5,
+                        MinValue = 0,
+                        MaxValue = 10,
                     },
                 }
             },
@@ -342,33 +344,17 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "length of timer for coming up with questions",
+                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
-                        DefaultValue = 60,
-                        MinValue = 30,
-                        MaxValue = 120,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "length of timer for answering each question",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 45,
-                        MinValue = 5,
-                        MaxValue = 60,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "length of timer for voting",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 30,
-                        MinValue = 5,
-                        MaxValue = 60,
-                    },                
+                        DefaultValue = 5,
+                        MinValue = 0,
+                        MaxValue = 10,
+                    }
                 }
             },
             #endregion
-            #region StoryTime
-            new GameModeMetadata
+            #region StoryTime (Removed)
+            /*new GameModeMetadata
             {
                 Title = "StoryTime",
                 Description = "Work together to make the best story that fits set of rapidly changing genres",
@@ -418,7 +404,7 @@ namespace RoystonGame.TV
                         MaxValue = 200,
                     },
                 }
-            },
+            },*/
             #endregion
         }.AsReadOnly();
         #endregion

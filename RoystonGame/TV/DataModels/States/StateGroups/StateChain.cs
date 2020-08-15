@@ -9,7 +9,7 @@ namespace RoystonGame.TV.DataModels.States.StateGroups
 {
     public class StateChain : StateGroup
     {
-        public StateChain(List<State> states, StateEntrance entrance = null, StateExit exit = null) : base(firstState:states.First(),lastState:states.Last(),entrance: entrance, exit: exit)
+        public StateChain(List<State> states, StateEntrance entrance = null, StateExit exit = null, TimeSpan? stateDurration = null) : base(firstState:states.First(),lastState:states.Last(),entrance: entrance, exit: exit, stateTimeoutDuration: stateDurration)
         {
             for (int i = 1; i < states.Count; i++)
             {
@@ -17,7 +17,7 @@ namespace RoystonGame.TV.DataModels.States.StateGroups
             }
         }
 
-        public StateChain(Func<int, State> stateGenerator, StateEntrance entrance = null, StateExit exit = null) : base(entrance: entrance, exit: exit)
+        public StateChain(Func<int, State> stateGenerator, StateEntrance entrance = null, StateExit exit = null, TimeSpan? stateDurration = null) : base(entrance: entrance, exit: exit, stateTimeoutDuration: stateDurration)
         {
             this.Entrance.Transition(ChainCounter(counter: 0, stateGenerator: stateGenerator));
         }

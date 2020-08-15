@@ -25,13 +25,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
     {
         private RoundTracker RoundTracker { get; set; }
 
-        public ContestantCreation_GS(Lobby lobby, RoundTracker roundTracker)
+        public ContestantCreation_GS(Lobby lobby, RoundTracker roundTracker, TimeSpan? creationDurration)
             : base(
                   lobby:lobby,
                   exit: new WaitForUsers_StateExit(lobby))
         {
             this.RoundTracker = roundTracker;
-            MultiStateChain contestantsMultiStateChain = new MultiStateChain(MakePeopleUserStateChain);
+            MultiStateChain contestantsMultiStateChain = new MultiStateChain(MakePeopleUserStateChain, stateDurration: creationDurration);
 
             this.Entrance.Transition(contestantsMultiStateChain);
             contestantsMultiStateChain.Transition(this.Exit);

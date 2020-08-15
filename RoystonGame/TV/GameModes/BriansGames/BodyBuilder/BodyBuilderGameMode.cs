@@ -10,6 +10,7 @@ using RoystonGame.TV.GameModes.BriansGames.Common.GameStates;
 using RoystonGame.TV.GameModes.Common.GameStates;
 using RoystonGame.TV.DataModels.States.StateGroups;
 using System;
+using RoystonGame.TV.GameModes.Common;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
 {
@@ -22,16 +23,35 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
         {
             ValidateOptions(gameModeOptions);
 
-            int numRounds = (int)gameModeOptions[0].ValueParsed;
-            Setup = new Setup_GS(lobby: lobby, peopleList: this.PeopleList, gameModeOptions: gameModeOptions);
-            int countRounds = 0;
-            // TODO: make this an optional param and bring back minvalue 3 instead of having this invisible constraint.
-            int roundTimeoutInSeconds = (int)gameModeOptions[4].ValueParsed;
-            TimeSpan? roundTimeout = null;
-            if (roundTimeoutInSeconds >= 3)
+            int numRounds = (int)gameModeOptions[(int)GameModeOptionsEnum.numRounds].ValueParsed;
+            int turnsForTimeout = (int)gameModeOptions[(int)GameModeOptionsEnum.turnsForTimeout].ValueParsed;
+            bool displayNames = (bool)gameModeOptions[(int)GameModeOptionsEnum.displayNames].ValueParsed;
+            bool displayImages = (bool)gameModeOptions[(int)GameModeOptionsEnum.displayImages].ValueParsed;
+            int gameSpeed = (int)gameModeOptions[(int)GameModeOptionsEnum.gameSpeed].ValueParsed;
+            TimeSpan? setupTimer = null;
+            TimeSpan? drawingTimer = null;
+            TimeSpan? roundTimer = null;
+            if (gameSpeed > 0)
             {
-                roundTimeout = TimeSpan.FromSeconds(roundTimeoutInSeconds);
+                setupTimer = CommonHelpers.GetTimerFromSpeed(
+                    speed: (double)gameSpeed,
+                    minTimerLength: BodyBuilderConstants.SetupTimerMin,
+                    aveTimerLength: BodyBuilderConstants.SetupTimerAve,
+                    maxTimerLength: BodyBuilderConstants.SetupTimerMax);
+                drawingTimer = CommonHelpers.GetTimerFromSpeed(
+                    speed: (double)gameSpeed,
+                    minTimerLength: BodyBuilderConstants.DrawingTimerMin,
+                    aveTimerLength: BodyBuilderConstants.DrawingTimerAve,
+                    maxTimerLength: BodyBuilderConstants.DrawingTimerMax);
+                roundTimer = CommonHelpers.GetTimerFromSpeed(
+                    speed: (double)gameSpeed,
+                    minTimerLength: BodyBuilderConstants.RoundTimerMin,
+                    aveTimerLength: BodyBuilderConstants.RoundTimerAve,
+                    maxTimerLength: BodyBuilderConstants.RoundTimerMax);
             }
+
+            Setup = new Setup_GS(lobby: lobby, peopleList: this.PeopleList, setupTimeDurration: setupTimer);
+            int countRounds = 0;
 
             GameState CreateGameplayGamestate()
             {
@@ -39,10 +59,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                         lobby: lobby,
                         setup_PeopleList: this.PeopleList,
                         roundTracker: RoundTracker,
-                        gameModeOptions: gameModeOptions,
+                        roundTimeoutLimit: turnsForTimeout,
                         displayPool: (bool)gameModeOptions[2].ValueParsed,
                         displayNames: (bool)gameModeOptions[1].ValueParsed,
-                        perRoundTimeoutDuration: roundTimeout);
+                        perRoundTimeoutDuration: roundTimer);
                 gameplay.Transition(CreateRevealAndScore);
                 return gameplay;
             }

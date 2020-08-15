@@ -33,30 +33,21 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
             TimeSpan? votingTimer = null;
             if (gameSpeed > 0)
             {
-                setupTimer = TimeSpan.FromSeconds(CommonHelpers.ThreePointLerp(
-                    minX: 1,
-                    aveX: 5,
-                    maxX: 10,
-                    x: (double)gameSpeed,
-                    minValue: ImposterDrawingConstants.SetupTimerMin,
-                    aveValue: ImposterDrawingConstants.SetupTimerAve,
-                    maxValue: ImposterDrawingConstants.SetupTimerMax));
-                answeringTimer = TimeSpan.FromSeconds(CommonHelpers.ThreePointLerp(
-                    minX: 1,
-                    aveX: 5,
-                    maxX: 10,
-                    x: (double)gameSpeed,
-                    minValue: ImposterDrawingConstants.AnsweringTimerMin,
-                    aveValue: ImposterDrawingConstants.AnsweringTimerAve,
-                    maxValue: ImposterDrawingConstants.AnsweringTimerMax));
-                votingTimer = TimeSpan.FromSeconds(CommonHelpers.ThreePointLerp(
-                    minX: 1,
-                    aveX: 5,
-                    maxX: 10,
-                    x: (double)gameSpeed,
-                    minValue: ImposterDrawingConstants.VotingTimerMin,
-                    aveValue: ImposterDrawingConstants.VotingTimerAve,
-                    maxValue: ImposterDrawingConstants.VotingTimerMax));
+                setupTimer = CommonHelpers.GetTimerFromSpeed(
+                    speed: (double)gameSpeed,
+                    minTimerLength: ImposterDrawingConstants.SetupTimerMin,
+                    aveTimerLength: ImposterDrawingConstants.SetupTimerAve,
+                    maxTimerLength: ImposterDrawingConstants.SetupTimerMax);
+                answeringTimer = CommonHelpers.GetTimerFromSpeed(
+                    speed: (double)gameSpeed,
+                    minTimerLength: ImposterDrawingConstants.AnsweringTimerMin,
+                    aveTimerLength: ImposterDrawingConstants.AnsweringTimerAve,
+                    maxTimerLength: ImposterDrawingConstants.AnsweringTimerMax);
+                votingTimer = CommonHelpers.GetTimerFromSpeed(
+                    speed: (double)gameSpeed,
+                    minTimerLength: ImposterDrawingConstants.VotingTimerMin,
+                    aveTimerLength: ImposterDrawingConstants.VotingTimerAve,
+                    maxTimerLength: ImposterDrawingConstants.VotingTimerMax);
             }
             int numWritingsPerPrompt = lobby.GetAllUsers().Count - 1;
             List<Prompt> prompts = new List<Prompt>();

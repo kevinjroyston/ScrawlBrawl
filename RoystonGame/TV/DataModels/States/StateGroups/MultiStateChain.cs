@@ -9,7 +9,7 @@ namespace RoystonGame.TV.DataModels.States.StateGroups
 {
     public class MultiStateChain : StateGroup
     {
-        public MultiStateChain(Func<User, StateChain> stateChainGenerator, StateEntrance entrance = null, StateExit exit = null) : base(entrance: entrance, exit: exit)
+        public MultiStateChain(Func<User, StateChain> stateChainGenerator, StateEntrance entrance = null, StateExit exit = null, TimeSpan? stateDurration = null) : base(entrance: entrance, exit: exit, stateTimeoutDuration: stateDurration)
         {
             this.Entrance.Transition((User user) =>
             {
@@ -18,7 +18,7 @@ namespace RoystonGame.TV.DataModels.States.StateGroups
                 return toReturn;
             });
         }
-        public MultiStateChain(Func<User, List<State>> stateChainGenerator, StateEntrance entrance = null, StateExit exit = null) : base(entrance: entrance, exit: exit)
+        public MultiStateChain(Func<User, List<State>> stateChainGenerator, StateEntrance entrance = null, StateExit exit = null, TimeSpan? stateDurration = null) : base(entrance: entrance, exit: exit, stateTimeoutDuration: stateDurration)
         {
             this.Entrance.Transition((User user) =>
             {

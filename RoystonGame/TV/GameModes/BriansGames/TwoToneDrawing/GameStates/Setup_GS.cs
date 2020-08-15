@@ -26,6 +26,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
         private int ColorsPerTeam { get; set; }
         private int TeamsPerPrompt { get; set; }
         private bool ShowColors { get; set; }
+        private TimeSpan? PromptTimer { get; set; }
+        private TimeSpan? DrawingTimer { get; set; }
 
         private UserState GetChallengesUserState()
         {
@@ -73,7 +75,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                     });
                     return (true, string.Empty);
                 },
-                exit: new WaitForUsers_StateExit(this.Lobby));
+                exit: new WaitForUsers_StateExit(this.Lobby),
+                maxPromptDuration: this.PromptTimer);
             return toReturn;
         }
 
@@ -130,21 +133,28 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             return stateChain;
         }
 
-        public Setup_GS(Lobby lobby, List<ChallengeTracker> challengeTrackers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions) : base(lobby)
+        public Setup_GS(Lobby lobby, List<ChallengeTracker> challengeTrackers, int numColorsPerTeam, int numTeamsPerPrompt, bool showColors, TimeSpan? setupTimer = null, TimeSpan? drawingTimer = null) : base(lobby)
         {
             this.SubChallenges = challengeTrackers;
 
-            this.ColorsPerTeam = (int)gameModeOptions[0].ValueParsed;
-            this.TeamsPerPrompt = (int)gameModeOptions[1].ValueParsed;
+            this.ColorsPerTeam = numColorsPerTeam;
+            this.TeamsPerPrompt = numTeamsPerPrompt;
+            this.PromptTimer = setupTimer;
+            this.DrawingTimer = drawingTimer;
 
             // Cap the values at 2 teams using maximal colors (attempts to use all players).
             this.ColorsPerTeam = Math.Min(this.ColorsPerTeam, this.Lobby.GetAllUsers().Count() / 2);
             this.TeamsPerPrompt = Math.Min(this.TeamsPerPrompt, this.Lobby.GetAllUsers().Count() / this.ColorsPerTeam);
 
-            this.ShowColors = (bool)gameModeOptions[2].ValueParsed;
+            this.ShowColors = showColors;
 
+            TimeSpan? multipliedDrawingTimer = null;
+            if (drawingTimer != null)
+            {
+                multipliedDrawingTimer = TimeSpan.FromSeconds(((TimeSpan)drawingTimer).TotalSeconds * this.SubChallenges.Count);
+            }
             State getChallenges = GetChallengesUserState();
-            MultiStateChain getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby));
+            MultiStateChain getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby), stateDurration: multipliedDrawingTimer);
 
             this.Entrance.Transition(getChallenges);
             getChallenges.AddExitListener(() => this.AssignPrompts());
