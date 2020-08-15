@@ -6,7 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { NgxBootstrapSliderModule } from 'ngx-bootstrap-slider';
 import {
     MsalModule,
     MsalGuard,
@@ -26,9 +26,12 @@ import { LobbyManagementComponent } from './lobby-management/lobby-management.co
 import { UserManagementComponent } from './user-management/user-management.component';
 import { SelectorDirective } from './fetch-data/fetch-data.selectordirective.component';
 import { FeedbackComponent} from './feedback/feedback.component';
+import { Slider } from './slider/slider.component';
 import { DrawingBoard } from './drawingboard/drawingboard.component';
 import { Configuration } from 'msal';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
+//import { MatSlider } from '@angular/material/slider';
 
 const appRoutes: Routes = [
     { path: 'lobby/manage', component: LobbyManagementComponent, canActivate: [MsalGuard] },
@@ -88,6 +91,7 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     SelectorDirective,
     LobbyManagementComponent,
     UserManagementComponent,
+    Slider,
     DrawingBoard,
     Safe,
   ],
@@ -95,6 +99,7 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     BrowserAnimationsModule,
     ColorPickerModule,
+    NgxBootstrapSliderModule,
     FormsModule,
     HttpClientModule,
     MaterialModule,
@@ -105,7 +110,9 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     UiSwitchModule,
   ],
   exports: [
-    ColorPickerModule
+    ColorPickerModule,
+    Slider
+    
   ],
     providers: [
     {

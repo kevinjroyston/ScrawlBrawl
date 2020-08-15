@@ -18,6 +18,14 @@
   margin: 0.5em 0 0.5em 0
 }
 
+.slider .slider-horizontal {
+  width: 98%;
+}
+
+.sliderHolder {
+  width: 98%
+}
+
 .SubmitButton:hover {
   background: #5F4EA4;
 }
