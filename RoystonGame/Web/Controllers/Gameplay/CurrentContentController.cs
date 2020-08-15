@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Localization.Internal;
 using RoystonGame.TV;
 using RoystonGame.TV.DataModels.Users;
 using RoystonGame.Web.DataModels.Enums;
@@ -70,6 +72,44 @@ namespace RoystonGame.Web.Controllers
                     RefreshTimeInMs = 1000,
                     SubPrompts = new SubPrompt[]
                     {
+                    new SubPrompt
+                    {
+                        Prompt = "this is a simple slider",
+                        Slider = new SliderPromptMetadata
+                        {
+                            Min=0,
+                            Max=300,
+                            Range=false,
+                            Value=0,
+                            Ticks=new int[]{0,100,200,300},
+                            TicksLabels= new string[]
+                            {
+                                "No Way",
+                                "Meh",
+                                "Probably",
+                                "Sure!"
+                            }
+                        }
+                    },
+                    new SubPrompt
+                    {
+                        Prompt = "this is a range slider",
+                        Slider = new SliderPromptMetadata
+                        {
+                            Min=0,
+                            Max=300,
+                            Range=true,
+                            Value=0,
+                            Ticks=new int[]{0,100,200,300},
+                            TicksLabels= new string[]
+                            {
+                                "No Way",
+                                "Meh",
+                                "Probably",
+                                "Sure!"
+                            }
+                        }
+                    },
                     new SubPrompt
                     {
                         Prompt = "this is a selector",
@@ -163,7 +203,7 @@ namespace RoystonGame.Web.Controllers
 
                     },
                     SubmitButton = true
-                });
+                }) ;
             }
         }
     }

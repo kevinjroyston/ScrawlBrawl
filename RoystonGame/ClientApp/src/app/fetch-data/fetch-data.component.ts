@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { Time } from '@angular/common';
 import { DomSanitizer, SafeHtml, SafeStyle, SafeScript, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
+import { MatSlider } from '@angular/material/slider';
 
 @Pipe({ name: 'safe' })
 export class Safe {
@@ -147,7 +148,8 @@ export class FetchDataComponent
             radioAnswer: '',
             shortAnswer: '',
             color: '',
-            drawing: '',
+          drawing: '',
+            slider: '',
             selector: '',
         });
     }
@@ -177,7 +179,8 @@ interface SubPrompt {
     answers: string[];
     colorPicker: boolean;
     shortAnswer: boolean;
-    drawing: DrawingPromptMetadata;
+  drawing: DrawingPromptMetadata;
+  slider: SliderPromptMetadata;
     selector: SelectorPromptMetadata;
 }
 interface DrawingPromptMetadata {
@@ -186,6 +189,14 @@ interface DrawingPromptMetadata {
     heightInPx: number;
     premadeDrawing: string;
     canvasBackground: string;
+}
+interface SliderPromptMetadata {
+  min: number;
+  max: number;
+  value: string;
+  ticks: number[];
+  range: boolean;
+  ticksLabels: string[];
 }
 interface SelectorPromptMetadata {
   widthInPx: number;

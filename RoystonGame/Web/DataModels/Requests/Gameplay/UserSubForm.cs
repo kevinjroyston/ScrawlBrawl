@@ -18,6 +18,7 @@ namespace RoystonGame.Web.DataModels.Requests
         public string Drawing { get; set; }
 
         public int? Selector { get; set; }
+        public int? Slider { get; set; }
 
         public int? DropdownChoice { get; set; }
         public int? RadioAnswer { get; set; }

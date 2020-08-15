@@ -1,0 +1,73 @@
+.mv-slider {
+  width: 90%;
+}
+.sliderHolder {
+    width:98%
+}
+.sliderFrame {
+  width: 90%;
+  max-width: 700px;
+}
+.sliderlabel {
+  width: 100%;
+  padding-bottom:10px;
+  text-align: center;
+  font-size: large;
+  color: blue;
+}
+.tooltip.in {
+  opacity: 1;
+}
+.tooltip.max {
+  opacity: 1;
+}
+
+.tooltip.top .tooltip-arrow {
+  bottom: 0;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px 5px 0;
+  border-top-color: #000;
+}
+
+.tooltip-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+}
+
+.slider .tooltip.top {
+  padding: 5px 0;
+}
+.mat-slider.mat-slider-horizontal .mat-slider-wrapper {
+  top: 18px;
+}
+
+.mat-slider.mat-slider-horizontal .mat-slider-track-wrapper {
+  height: 12px;
+  border-radius: 10px
+}
+
+.mat-slider.mat-slider-horizontal .mat-slider-track-background,
+.mat-slider.mat-slider-horizontal .mat-slider-track-fill {
+  height: 100%;
+}
+
+mat-slider.mat-slider-horizontal .mat-slider-track-fill {
+  background-color: blue;
+}
+
+.mat-accent .mat-slider-thumb {
+  height: 30px;
+  width: 30px;
+  background-color: white;
+  border: solid 2px gray;
+  bottom: -20px;
+  right: -20px;
+}
+
+.mat-slider-min-value:not(.mat-slider-thumb-label-showing) .mat-slider-thumb {
+  background-color: white;
+}
