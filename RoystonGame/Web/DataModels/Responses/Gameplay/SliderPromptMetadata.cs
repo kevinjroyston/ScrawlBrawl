@@ -12,7 +12,7 @@
         /// </summary>
         public int Min { get; set; } = 0;
         public int Max { get; set; } = 100;
-        public int Value { get; set; } = 0;
+        public int[] Value { get; set; } = new int[] { 50 };
         public bool Range { get; set; }
         public int[] Ticks { get; set; }
 

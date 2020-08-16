@@ -1,6 +1,6 @@
 <div class="sliderFrame">
   <mv-slider
-              [min]="sliderParameters.min" [max]="sliderParameters.max"
+             [min]="sliderParameters.min" [max]="sliderParameters.max"
              [range]="sliderParameters.range"
              tooltip="show"
              [tooltipSplit]="true"
@@ -11,6 +11,7 @@
              [ticks]="sliderParameters.ticks"
              handle="round"
              [ticksTooltip]="true"
+             [value]="sliderParameters.value"
              [ticksLabels]="sliderParameters.ticksLabels"
              (valueChange)="valueChange($event)"
         ></mv-slider>
