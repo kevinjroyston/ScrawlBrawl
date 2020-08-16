@@ -80,7 +80,7 @@ namespace RoystonGame.Web.Controllers
                             Min=0,
                             Max=300,
                             Range=false,
-                            Value=0,
+                            Value= new int[] { 0 },
                             Ticks=new int[]{0,100,200,300},
                             TicksLabels= new string[]
                             {
@@ -99,7 +99,7 @@ namespace RoystonGame.Web.Controllers
                             Min=0,
                             Max=300,
                             Range=true,
-                            Value=0,
+                            Value= new int[] { 0 },
                             Ticks=new int[]{0,100,200,300},
                             TicksLabels= new string[]
                             {

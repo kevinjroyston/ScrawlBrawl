@@ -129,7 +129,7 @@ export class Slider implements ControlValueAccessor {
 interface SliderPromptMetadata {
   min: number;
   max: number;
-  value: string;
+  value: number[];
   ticks: number[];
   range: boolean;
   ticksLabels: string[];
