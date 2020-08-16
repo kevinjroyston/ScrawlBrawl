@@ -30,7 +30,7 @@ namespace RoystonGame.Web.Controllers
         [HttpGet]
         public IActionResult Get(string id)
         {
-            const bool tempDebug = true;
+            const bool tempDebug = false;
             if (!tempDebug)
             {
                 if (!Sanitize.SanitizeString(id, out string error, "^([0-9A-Fa-f]){50}$",50,50))
