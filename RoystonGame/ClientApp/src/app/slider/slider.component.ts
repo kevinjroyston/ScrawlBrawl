@@ -90,8 +90,12 @@ export class Slider implements ControlValueAccessor {
   registerOnChange(fn: any): void {
     this.onChange = fn;
     console.log("slider register onChange");
-    // Default to 0, needs a delay due to buggy form implementation.
-    setTimeout(() => fn('0'), 200)
+      // Default to 0, needs a delay due to buggy form implementation.
+      if (this.sliderParameters.range) {
+          setTimeout(() => fn([this.sliderParameters.min, this.sliderParameters.max]), 20)
+      } else {
+          setTimeout(() => fn([this.sliderParameters.value]), 20)
+      }
   }
   registerOnTouched(fn: any): void {
   }
@@ -103,10 +107,19 @@ export class Slider implements ControlValueAccessor {
     //    this.element = element.nativeElement;
   }
 
+    valueChange(val: any) {
+        if (this.sliderParameters.range) {
+            this.onChange(val);
+        } else {
+            this.onChange([val]);
+        }
+    }
 
   ngOnInit() {
     console.log("on init - slider");
-    console.log(this.sliderParameters);
+      console.log(this.sliderParameters);
+
+
     /*
         this.createRotatorImages(this.sliderParameters.widthInPx, this.sliderParameters.heightInPx);
         for (let i = 0; i < this.sliderParameters.imageList.length; i++) {

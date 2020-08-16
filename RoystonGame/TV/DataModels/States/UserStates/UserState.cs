@@ -4,6 +4,7 @@ using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.Users;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using RoystonGame.Web.Helpers.Validation;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -121,7 +122,7 @@ namespace RoystonGame.TV.DataModels.States.UserStates
 
             foreach ((User user, (bool entered, bool exited)) in this.UsersEnteredAndExitedState.ToList())
             {
-                if ( entered && !exited)
+                if (entered && !exited)
                 {
                     specialCallback(user);
                 }
@@ -138,7 +139,11 @@ namespace RoystonGame.TV.DataModels.States.UserStates
         public CleanUserFormInputResult CleanUserFormInput(User user, ref UserFormSubmission userInput, out string error)
         {
             UserPrompt userPrompt = GetUserPromptHolder(user).Prompt;
+            return CleanUserFormInput(userPrompt, ref userInput, out error);
+        }
 
+        public static CleanUserFormInputResult CleanUserFormInput(UserPrompt userPrompt, ref UserFormSubmission userInput, out string error)
+        {
             // No data submitted / requested
             if (userInput == null || userPrompt == null)
             {
@@ -175,12 +180,14 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             error = string.Empty;
             foreach (SubPrompt prompt in userPrompt?.SubPrompts ?? new SubPrompt[0])
             {
-                if (((prompt.Drawing != null) == string.IsNullOrWhiteSpace(userInput.SubForms[i].Drawing))
-                    || (prompt.ShortAnswer == string.IsNullOrWhiteSpace(userInput.SubForms[i].ShortAnswer))
-                    || (prompt.ColorPicker == string.IsNullOrWhiteSpace(userInput.SubForms[i].Color))
-                    || ((prompt.Answers != null && prompt.Answers.Length > 0) == (!userInput.SubForms[i].RadioAnswer.HasValue || userInput.SubForms[i].RadioAnswer.Value < 0 || userInput.SubForms[i].RadioAnswer.Value >= prompt.Answers.Length))
-                    || ((prompt.Selector?.ImageList != null && prompt.Selector.ImageList.Length > 0) == (!userInput.SubForms[i].Selector.HasValue || userInput.SubForms[i].Selector.Value < 0 || userInput.SubForms[i].Selector.Value >= (prompt.Selector?.ImageList?.Length ?? 0)))
-                    || ((prompt.Dropdown != null && prompt.Dropdown.Length > 0) == (!userInput.SubForms[i].DropdownChoice.HasValue || userInput.SubForms[i].DropdownChoice.Value < 0 || userInput.SubForms[i].DropdownChoice.Value >= prompt.Dropdown.Length)))
+                UserSubForm subForm = userInput.SubForms[i];
+                if (!(PromptInputValidation.Validate_Drawing(prompt, subForm)
+                    && PromptInputValidation.Validate_ShortAnswer(prompt, subForm)
+                    && PromptInputValidation.Validate_ColorPicker(prompt, subForm)
+                    && PromptInputValidation.Validate_Answers(prompt, subForm)
+                    && PromptInputValidation.Validate_Selector(prompt, subForm)
+                    && PromptInputValidation.Validate_Dropdown(prompt, subForm)
+                    && PromptInputValidation.Validate_Slider(prompt, subForm)))
                 {
                     error = "Not all form fields have been filled out";
                     result = CleanUserFormInputResult.Cleaned;
