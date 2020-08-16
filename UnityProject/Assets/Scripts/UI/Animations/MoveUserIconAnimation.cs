@@ -21,14 +21,16 @@ public class MoveUserIconAnimation : AnimationBase
         string targetId = targetGameEvent.TargetUserId;
         RectTransform markerRect = createdMarker.rectTransform;
 
-        Vector2 targetRadiusVector = targetScoreRect.localToWorldMatrix.MultiplyVector(new Vector2(targetScoreRect.rect.width, targetScoreRect.rect.height));
-        float targetRadius = Mathf.Min(targetRadiusVector.x, targetRadiusVector.y);
-        Vector2 markerRadiusVector = markerRect.localToWorldMatrix.MultiplyVector(new Vector2(markerRect.rect.width, markerRect.rect.height));
-        float markerRadius = Mathf.Min(markerRadiusVector.x, markerRadiusVector.y);
+        Vector2 iconRadiusVector = rect.localToWorldMatrix.MultiplyVector(new Vector2(rect.rect.width, rect.rect.height));
+        float iconRadius = Mathf.Min(iconRadiusVector.x, iconRadiusVector.y) / 2;
+        Vector2 targetDiameterVector = targetScoreRect.localToWorldMatrix.MultiplyVector(new Vector2(targetScoreRect.rect.width, targetScoreRect.rect.height));
+        float targetDiameter = Mathf.Min(targetDiameterVector.x, targetDiameterVector.y);
+        Vector2 markerDiameterVector = markerRect.localToWorldMatrix.MultiplyVector(new Vector2(markerRect.rect.width, markerRect.rect.height));
+        float markerDiameter = Mathf.Min(markerDiameterVector.x, markerDiameterVector.y);
 
         markerRect.localScale = Vector3.zero;
         #region calculating tangent
-        float r = targetRadius * 1.1f;
+        float r = targetDiameter / 2 * 1.1f;
         float x = rect.position.x;
         float y = rect.position.y + 1;
 
@@ -64,7 +66,7 @@ public class MoveUserIconAnimation : AnimationBase
             .PlayAfter(iconScaleDown);
         LTDescr markerMoveUp = LeanTweenHelper.Singleton.UIMoveRelative(
                 rectTransform: markerRect,
-                to: new Vector3(0, 1, 0),
+                to: new Vector3(0, iconRadius + markerDiameter + 0.1f, 0),
                 time: 0.2f)
             .setEaseOutBack()
             .PlayAfter(iconScaleDown);
@@ -76,15 +78,15 @@ public class MoveUserIconAnimation : AnimationBase
             .PlayAfter(markerMoveUp, IconCountTotal * OrderOffset + 0.0f);
         LTDescr markerScaleUpToTarget = LeanTween.scale(
             rectTrans: markerRect,
-            to: new Vector3(targetRadius / markerRadius * 0.5f, targetRadius / markerRadius * 0.5f, targetRadius / markerRadius * 0.5f),
+            to: new Vector3(targetDiameter / markerDiameter * 0.5f, targetDiameter / markerDiameter * 0.5f, targetDiameter / markerDiameter * 0.5f),
             time: 0.5f)
             .PlayAfter(markerMoveUp, IconCountTotal * OrderOffset + 0.0f);
         LTDescr markerOrbit = LeanTweenHelper.Singleton.DynamicOrbitAroundPoint(
                 rectTransform: markerRect,
                 center: targetScoreRect.position,
-                radiusValueTween: LeanTween.value(targetRadius * 1.1f, targetRadius * 0.6f, 2).PlayAfter(markerMoveToTarget),
-                radians: speed * (IconCountTotal * OrderOffset + 0.5f) * targetRadius * 1.1f,
-                time: (IconCountTotal * OrderOffset + 0.5f) * targetRadius * 1.1f)
+                radiusValueTween: LeanTween.value(targetDiameter * 1.1f, targetDiameter * 0.6f, 2).PlayAfter(markerMoveToTarget),
+                radians: speed * (IconCountTotal * OrderOffset + 0.5f) * targetDiameter * 1.1f,
+                time: (IconCountTotal * OrderOffset + 0.5f) * targetDiameter * 1.1f)
             .PlayAfter(markerMoveToTarget);
         LTDescr markerFall = LeanTweenHelper.Singleton.UIMove(
                 rectTransform: markerRect,

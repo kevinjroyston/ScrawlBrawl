@@ -13,6 +13,8 @@ public class ShowScoreDeltaAnimation : AnimationBase
         createdText.text = scoreDelta;
         RectTransform textTransform = createdText.rectTransform;
         textTransform.localScale = Vector3.zero;
+        Vector2 iconRadiusVector = rect.localToWorldMatrix.MultiplyVector(new Vector2(rect.rect.width, rect.rect.height));
+        float iconRadius = Mathf.Min(iconRadiusVector.x, iconRadiusVector.y) / 2;
 
         LTDescr iconScaleDown = LeanTween.scale(
                     rectTrans: rect,
@@ -33,7 +35,7 @@ public class ShowScoreDeltaAnimation : AnimationBase
             .PlayAfter(iconScaleDown);
         LTDescr moveTextUp = LeanTweenHelper.Singleton.UIMoveRelative(
                 rectTransform: textTransform,
-                to: new Vector3(0, 1.5f, 0),
+                to: new Vector3(0, iconRadius + 0.2f, 0),
                 time: 0.2f)
             .setEaseOutBack()
             .PlayAfter(iconScaleDown);
