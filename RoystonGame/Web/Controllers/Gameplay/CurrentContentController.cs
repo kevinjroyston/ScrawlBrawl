@@ -30,6 +30,11 @@ namespace RoystonGame.Web.Controllers
         [HttpGet]
         public IActionResult Get(string id)
         {
+            if (!ModelState.IsValid)
+            {
+                return new BadRequestResult();
+            }
+
             const bool tempDebug = false;
             if (!tempDebug)
             {

@@ -141,6 +141,7 @@ export class DrawingDirective {
         if (event.changedTouches) { // only for touch
             currentX = event.changedTouches[0].pageX - this.element.offsetLeft - this.element.clientLeft;
             currentY = event.changedTouches[0].pageY - this.element.offsetTop - this.element.clientTop;
+
         }
         else if (event.offsetX !== undefined) {
             currentX = event.offsetX;
@@ -151,6 +152,6 @@ export class DrawingDirective {
             currentY = event.layerY - event.currentTarget.offsetTop;
         }
 
-        return [currentX, currentY];
+        return [currentX * (this.element.width / this.element.clientWidth), currentY * (this.element.height / this.element.clientHeight)];
     }
 }

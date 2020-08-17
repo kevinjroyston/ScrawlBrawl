@@ -35,6 +35,11 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
         [Route("Get")]
         public IActionResult GetLobby()
         {
+            if (!ModelState.IsValid)
+            {
+                return new BadRequestResult();
+            }
+
             HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
 
@@ -55,6 +60,11 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
         [Route("Create")]
         public IActionResult CreateLobby()
         {
+            if (!ModelState.IsValid)
+            {
+                return new BadRequestResult();
+            }
+
             HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
 
@@ -95,6 +105,11 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
         [Route("Delete")]
         public IActionResult DeleteLobby()
         {
+            if (!ModelState.IsValid)
+            {
+                return new BadRequestResult();
+            }
+
             HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
             if (user == null)
@@ -116,6 +131,11 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
         [Route("Configure")]
         public IActionResult ConfigureLobby([FromBody]ConfigureLobbyRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return new BadRequestResult();
+            }
+
             HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
             if (user == null)
@@ -130,7 +150,7 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
 
             if (!user.OwnedLobby.ConfigureLobby(request, out string error))
             {
-                return StatusCode(500, error);
+                return StatusCode(400, error);
             }
 
             return new AcceptedResult();
@@ -140,6 +160,11 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
         [Route("Start")]
         public IActionResult StartLobby()
         {
+            if (!ModelState.IsValid)
+            {
+                return new BadRequestResult();
+            }
+
             HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
             if (user == null)
@@ -154,7 +179,7 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
 
             if (!user.OwnedLobby.StartGame(out string error))
             {
-                return StatusCode(500, error);
+                return StatusCode(400, error);
             }
 
             return new AcceptedResult();
@@ -164,6 +189,11 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
         [Route("Games")]
         public IActionResult GetGames()
         {
+            if (!ModelState.IsValid)
+            {
+                return new BadRequestResult();
+            }
+
             HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             return new OkObjectResult(Lobby.GameModes);
         }

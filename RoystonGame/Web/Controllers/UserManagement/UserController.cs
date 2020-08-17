@@ -20,6 +20,11 @@ namespace RoystonGame.Web.Controllers.UserManagement
         [Route("Delete")]
         public IActionResult ResetUser(string id)
         {
+            if (!ModelState.IsValid)
+            {
+                return new BadRequestResult();
+            }
+
             if (!Sanitize.SanitizeString(id, out string error, "^([0-9A-Fa-f]){50}$"))
             {
                 return BadRequest(error);

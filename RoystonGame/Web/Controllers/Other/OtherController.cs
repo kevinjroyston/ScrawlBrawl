@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,11 @@ namespace RoystonGame.Web.Controllers.Other
         [Route("Feedback-Api")]
         public IActionResult SubmitFeedback(FeedbackRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return new BadRequestResult();
+            }
+
             Console.WriteLine(request);
             if (!string.IsNullOrWhiteSpace(request?.Feedback))
             {
@@ -36,6 +42,16 @@ namespace RoystonGame.Web.Controllers.Other
         [Route(".well-known/acme-challenge/{id}")]
         public ActionResult LetsEncrypt(string id)
         {
+            if (!ModelState.IsValid)
+            {
+                return new BadRequestResult();
+            }
+
+            if (!Regex.IsMatch(id, "^[0-9a-zA-Z]+$"))
+            {
+                return new BadRequestResult();
+            }
+
             var file = Path.Combine(Env.ContentRootPath, ".well-known", "acme-challenge", id);
             return PhysicalFile(file, "text/plain");
         }
