@@ -23,7 +23,7 @@ export function getUserIdOverrideQueryParameter() {
 export function getUserIdQueryParameter() {
     const idKeyName: string = 'roystonGameUserId';
     var userId = localStorage.getItem(idKeyName);
-    if (getUserIdOverrideQueryParameter() != "")
+    if (getUserIdOverrideQueryParameter())
     {
       userId = getUserIdOverrideQueryParameter();
     }
