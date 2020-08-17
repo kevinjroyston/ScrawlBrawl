@@ -36,7 +36,7 @@ public class TestClient : MonoBehaviour
         #if DEBUG
             .WithUrl("http://localhost:50403/signalr")
         #else
-            .WithUrl("https://game.royston.com/signalr")
+            .WithUrl("https://scrawlbrawl.tv/signalr")
         #endif
             .ConfigureLogging(logging =>
             {
