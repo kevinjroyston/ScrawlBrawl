@@ -50,7 +50,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
                     maxTimerLength: BodyBuilderConstants.RoundTimerMax);
             }
 
-            Setup = new Setup_GS(lobby: lobby, peopleList: this.PeopleList, setupTimeDurration: setupTimer);
+            Setup = new Setup_GS(lobby: lobby, peopleList: this.PeopleList, setupTimeDuration: setupTimer);
             int countRounds = 0;
 
             GameState CreateGameplayGamestate()

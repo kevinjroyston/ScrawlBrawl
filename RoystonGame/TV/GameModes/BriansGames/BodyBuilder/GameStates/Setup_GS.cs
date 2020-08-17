@@ -129,11 +129,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             return stateChain;
         }
 
-        public Setup_GS(Lobby lobby, List<Setup_Person> peopleList, TimeSpan? setupTimeDurration = null, TimeSpan? drawingTimeDurration = null) : base(lobby)
+        public Setup_GS(Lobby lobby, List<Setup_Person> peopleList, TimeSpan? setupTimeDuration = null, TimeSpan? drawingTimeDuration = null) : base(lobby)
         {
             this.PeopleList = peopleList;
 
-            State getPeoplePrompts = GetPeoplePrompts_State(setupTimeDurration);
+            State getPeoplePrompts = GetPeoplePrompts_State(setupTimeDuration);
             this.Entrance.Transition(getPeoplePrompts);
             getPeoplePrompts.Transition(() => 
             {
@@ -141,7 +141,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 MultiStateChain drawingsStateChains = new MultiStateChain(
                     GetDrawingsUserStateChain,
                     exit: new WaitForUsers_StateExit(this.Lobby),
-                    stateDurration: drawingTimeDurration);
+                    stateDuration: drawingTimeDuration);
                 drawingsStateChains.Transition(this.Exit);
                 return drawingsStateChains;
             });

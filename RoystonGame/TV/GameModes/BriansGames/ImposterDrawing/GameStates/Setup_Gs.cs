@@ -19,7 +19,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.GameStates
 {
     public class Setup_GS : GameState
     {
-        public Setup_GS(Lobby lobby, List<Prompt> promptsToPopulate, TimeSpan? setupTimeDurration)
+        public Setup_GS(Lobby lobby, List<Prompt> promptsToPopulate, TimeSpan? setupTimeDuration)
             : base(
                   lobby: lobby,
                   exit: new WaitForUsers_StateExit(lobby))
@@ -56,7 +56,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.GameStates
                     return (true, string.Empty);
                 },
                 exit: new WaitForUsers_StateExit(lobby: this.Lobby, usersToWaitFor: WaitForUsersType.All),
-                maxPromptDuration: setupTimeDurration);
+                maxPromptDuration: setupTimeDuration);
 
             this.Entrance.Transition(getPromptsState);
             getPromptsState.Transition(this.Exit);

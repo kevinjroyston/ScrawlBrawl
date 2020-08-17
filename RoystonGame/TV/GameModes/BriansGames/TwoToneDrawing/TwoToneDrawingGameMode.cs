@@ -51,9 +51,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
                     maxTimerLength: TwoToneDrawingConstants.SetupTimerMax);
                 drawingTimer = CommonHelpers.GetTimerFromSpeed(
                     speed: (double)gameSpeed,
-                    minTimerLength: TwoToneDrawingConstants.DrawingTimerMin,
-                    aveTimerLength: TwoToneDrawingConstants.DrawingTimerAve,
-                    maxTimerLength: TwoToneDrawingConstants.DrawingTimerMax);
+                    minTimerLength: TwoToneDrawingConstants.PerDrawingTimerMin,
+                    aveTimerLength: TwoToneDrawingConstants.PerDrawingTimerAve,
+                    maxTimerLength: TwoToneDrawingConstants.PerDrawingTimerMax);
                 votingTimer = CommonHelpers.GetTimerFromSpeed(
                     speed: (double)gameSpeed,
                     minTimerLength: TwoToneDrawingConstants.VotingTimerMin,

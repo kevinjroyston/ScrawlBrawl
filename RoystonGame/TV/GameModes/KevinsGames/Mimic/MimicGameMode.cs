@@ -44,11 +44,6 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic
             TimeSpan? votingTimer = null;
             if (gameSpeed > 0)
             {
-                setupTimer = CommonHelpers.GetTimerFromSpeed(
-                    speed: (double)gameSpeed,
-                    minTimerLength: MimicConstants.SetupTimerMin,
-                    aveTimerLength: MimicConstants.SetupTimerAve,
-                    maxTimerLength: MimicConstants.SetupTimerMax);
                 drawingTimer = CommonHelpers.GetTimerFromSpeed(
                     speed: (double)gameSpeed,
                     minTimerLength: MimicConstants.DrawingTimerMin,
@@ -72,7 +67,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic
                 lobby: lobby,
                 drawings: Drawings,
                 numDrawingsPerUser: numStartingDrawingsPerUser,
-                drawingTimeDurration: drawingTimer);
+                drawingTimeDuration: drawingTimer);
             List<UserDrawing> randomizedDrawings = new List<UserDrawing>();
             Setup.AddExitListener(() =>
             {
@@ -112,7 +107,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic
                                     CreateMimics_GS mimicsGS = new CreateMimics_GS(
                                         lobby: lobby,
                                         roundTracker: roundTrackers.Last(),
-                                        drawingTimeDurration: extendedDrawingTimer
+                                        drawingTimeDuration: extendedDrawingTimer
                                         );
                                     mimicsGS.AddExitListener(() =>
                                     {

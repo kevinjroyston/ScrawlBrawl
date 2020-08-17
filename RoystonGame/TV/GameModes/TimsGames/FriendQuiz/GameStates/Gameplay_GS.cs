@@ -20,7 +20,7 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.GameStates
 {
     public class Gameplay_GS : GameState
     {
-        public Gameplay_GS(Lobby lobby, List<Question> questions, TimeSpan? answerTimeDurration = null) : base(lobby)
+        public Gameplay_GS(Lobby lobby, List<Question> questions, TimeSpan? answerTimeDuration = null) : base(lobby)
         {
             List<State> GetAsnwerUserStateChain(User user)
             {

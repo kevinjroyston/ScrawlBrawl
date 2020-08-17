@@ -20,6 +20,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.DataModels
 
         public const double VotingTimerMin = 30;
         public const double VotingTimerAve = 60;
-        public const double VotingTimerMax = 240;
+        public const double VotingTimerMax = 120;
     }
 }

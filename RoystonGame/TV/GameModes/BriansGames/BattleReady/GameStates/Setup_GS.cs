@@ -124,7 +124,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         }
      
 
-        public Setup_GS(Lobby lobby, ConcurrentBag<PeopleUserDrawing> drawings, ConcurrentBag<(User, string)> prompts, int numDrawingsPerUserPerPart, int numPromptsPerUser, TimeSpan? setupDurration)
+        public Setup_GS(Lobby lobby, ConcurrentBag<PeopleUserDrawing> drawings, ConcurrentBag<(User, string)> prompts, int numDrawingsPerUserPerPart, int numPromptsPerUser, TimeSpan? setupDuration)
             : base(
                   lobby: lobby,
                   exit: new WaitForUsers_StateExit(lobby))
@@ -134,7 +134,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                 numPromptsPerUser: numPromptsPerUser,
                 drawings: drawings,
                 prompts: prompts),
-                stateDurration: setupDurration);
+                stateDuration: setupDuration);
             this.Entrance.Transition(stateChain);
             stateChain.Transition(this.Exit);
             this.UnityView = new UnityView(this.Lobby)

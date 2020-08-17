@@ -75,7 +75,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 prompts: promptTuples,
                 numDrawingsPerUserPerPart: numDrawingsPerPersonPerPart,
                 numPromptsPerUser: numPromptsNeededFromUser,
-                setupDurration: setupTimer);
+                setupDuration: setupTimer);
 
             Setup.AddExitListener(() =>
             {
@@ -182,7 +182,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 GameState toReturn = new ContestantCreation_GS(
                         lobby: lobby,
                         roundTracker: RoundTracker,
-                        creationDurration: creationTimer);
+                        creationDuration: creationTimer);
                 toReturn.Transition(CreateVotingGameStates(roundPrompts));
                 return toReturn;
             }

@@ -19,7 +19,7 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.GameStates
     public class Setup_GS: GameState
     {
         private Random Rand { get; } = new Random();
-        public Setup_GS(Lobby lobby, RoundTracker roundTracker, TimeSpan? writingDurration = null) : base(lobby)
+        public Setup_GS(Lobby lobby, RoundTracker roundTracker, TimeSpan? writingDuration = null) : base(lobby)
         {
             List<string> answerTypeStrings = new List<string>();
             foreach(Question.AnswerTypes answerType in Enum.GetValues(typeof(Question.AnswerTypes)))
@@ -63,7 +63,7 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.GameStates
                 exit: new WaitForUsers_StateExit(
                     lobby: lobby,
                     usersToWaitFor: WaitForUsersType.All),
-                maxPromptDuration: writingDurration);
+                maxPromptDuration: writingDuration);
             this.Entrance.Transition(writingUserState);
             writingUserState.Transition(this.Exit);
 

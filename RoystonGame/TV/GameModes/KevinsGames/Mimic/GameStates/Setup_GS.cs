@@ -28,7 +28,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
         /// <param name="user">The user to build a chain for.</param>
         /// <param name="outlet">The state to link the end of the chain to.</param>
         /// <returns>A list of user states designed for a given user.</returns>
-        private List<State> GetDrawingsUserStateChain(int numDrawingsPerUser, ConcurrentBag<UserDrawing> drawings, TimeSpan? drawingTimeDurration)
+        private List<State> GetDrawingsUserStateChain(int numDrawingsPerUser, ConcurrentBag<UserDrawing> drawings, TimeSpan? drawingTimeDuration)
         {
             List<State> stateChain = new List<State>();
             for(int i =1; i<= numDrawingsPerUser; i++)
@@ -57,14 +57,14 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
                     return (true, String.Empty);
                 },
                 exit: new WaitForUsers_StateExit(lobby: this.Lobby, usersToWaitFor: WaitForUsersType.All),
-                maxPromptDuration: drawingTimeDurration
+                maxPromptDuration: drawingTimeDuration
                 ));
             }
             return stateChain;
         }
 
 
-        public Setup_GS(Lobby lobby, ConcurrentBag<UserDrawing> drawings, int numDrawingsPerUser, TimeSpan? drawingTimeDurration)
+        public Setup_GS(Lobby lobby, ConcurrentBag<UserDrawing> drawings, int numDrawingsPerUser, TimeSpan? drawingTimeDuration)
             : base(
                   lobby: lobby,
                   exit: new WaitForUsers_StateExit(lobby))
@@ -72,7 +72,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
             StateChain stateChain = new StateChain(GetDrawingsUserStateChain(
                 numDrawingsPerUser: numDrawingsPerUser,
                 drawings: drawings,
-                drawingTimeDurration: drawingTimeDurration));
+                drawingTimeDuration: drawingTimeDuration));
             this.Entrance.Transition(stateChain);
             stateChain.Transition(this.Exit);
             this.UnityView = new UnityView(this.Lobby)

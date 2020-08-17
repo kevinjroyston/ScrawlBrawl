@@ -19,7 +19,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.GameStates
 {
     public class MakeDrawings_GS : GameState
     {
-        public MakeDrawings_GS(Lobby lobby, Prompt promptToDraw, List<User> usersToPrompt, TimeSpan? writingTimeDurration)
+        public MakeDrawings_GS(Lobby lobby, Prompt promptToDraw, List<User> usersToPrompt, TimeSpan? writingTimeDuration)
            : base(
                  lobby: lobby,
                  exit: new WaitForUsers_StateExit(lobby))
@@ -59,7 +59,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.GameStates
                             return SimplePromptUserState.DefaultWaitingPrompt(user);
                         }
                     }),
-                maxPromptDuration: writingTimeDurration);
+                maxPromptDuration: writingTimeDuration);
 
             this.Entrance.Transition(getDrawingsUserState);
             getDrawingsUserState.Transition(this.Exit);

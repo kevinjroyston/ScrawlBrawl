@@ -54,7 +54,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
             Setup = new Setup_GS(
                 lobby: lobby,
                 promptsToPopulate: prompts,
-                setupTimeDurration: setupTimer);
+                setupTimeDuration: setupTimer);
 
             Dictionary<Prompt, List<User>> promptsToPromptedUsers = new Dictionary<Prompt, List<User>>();
             Setup.AddExitListener(() =>
@@ -107,7 +107,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
                                 lobby: lobby,
                                 promptToDraw: prompt,
                                 usersToPrompt: randomizedUsers,
-                                writingTimeDurration: answeringTimer);
+                                writingTimeDuration: answeringTimer);
                         }
                         if (counter == 1)
                         {

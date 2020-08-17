@@ -44,7 +44,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.StoryTime
                 lobby: lobby,
                 prompt: setupPrompt,
                 roundTracker: setupTracker,
-                writingDurration: TimeSpan.FromSeconds(writingTimerLength));
+                writingDuration: TimeSpan.FromSeconds(writingTimerLength));
             
             StateChain CreateSetupVoting()
             {
@@ -101,7 +101,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.StoryTime
                                     prompt: prompt,
                                     oldText: oldText,
                                     roundTracker: roundTracker,
-                                    writingDurration: TimeSpan.FromSeconds(writingTimerLength));
+                                    writingDuration: TimeSpan.FromSeconds(writingTimerLength));
                             }
                             else if (counter == 1)
                             {
