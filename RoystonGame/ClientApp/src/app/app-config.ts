@@ -1,5 +1,6 @@
 import { Configuration } from 'msal';
 import { MsalAngularConfiguration } from '@azure/msal-angular';
+import { environment } from '../environments/environment';
 
 // Copied with minor modifications from: https://github.com/Azure-Samples/active-directory-b2c-javascript-angular-spa/blob/master/src/app/app-config.ts
 
@@ -89,7 +90,7 @@ export const tokenRequest: { scopes: string[] } = {
 
 // #region 4) MSAL-Angular Configuration
 // here you can define the coordinates and required permissions for your protected resources
-export const protectedResourceMap: [string, string[]][] = [
+export const protectedResourceMap: [string, string[]][] = environment.enableMsal ? [
     [apiConfig.webApi, apiConfig.b2cScopes],
     ['/lobby/manage', apiConfig.b2cScopes],
     ['/Lobby/Games', apiConfig.b2cScopes],
@@ -98,7 +99,7 @@ export const protectedResourceMap: [string, string[]][] = [
     ['/Lobby/Configure', apiConfig.b2cScopes],
     ['/Lobby/Delete', apiConfig.b2cScopes],
     ['/Lobby/Start', apiConfig.b2cScopes],
-];
+] : [];
 
 /** 
  * MSAL-Angular specific authentication parameters. For a full list of available options,
