@@ -15,7 +15,9 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+#if !DEBUG
+    [Authorize(Policy = "LobbyManagement")]
+#endif
     public class LobbyController : ControllerBase
     {
         public LobbyController(ILogger<LobbyController> logger, GameManager gameManager)
@@ -27,10 +29,6 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
         private GameManager GameManager { get; set; }
         private ILogger<LobbyController> Logger { get; set; }
 
-        // The Web API will only accept tokens 1) for users, and 
-        // 2) having the access_as_user scope for this API
-        static readonly string[] scopeRequiredByApi = new string[] { "ManageLobby" };
-
         [HttpGet]
         [Route("Get")]
         public IActionResult GetLobby()
@@ -39,8 +37,6 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
             {
                 return new BadRequestResult();
             }
-
-            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
 
             if (user == null)
@@ -64,8 +60,6 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
             {
                 return new BadRequestResult();
             }
-
-            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
 
             if (user == null)
@@ -109,8 +103,6 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
             {
                 return new BadRequestResult();
             }
-
-            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
             if (user == null)
             {
@@ -135,8 +127,6 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
             {
                 return new BadRequestResult();
             }
-
-            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
             if (user == null)
             {
@@ -164,8 +154,6 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
             {
                 return new BadRequestResult();
             }
-
-            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
             if (user == null)
             {
@@ -193,8 +181,6 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
             {
                 return new BadRequestResult();
             }
-
-            HttpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
             return new OkObjectResult(Lobby.GameModes);
         }
     }

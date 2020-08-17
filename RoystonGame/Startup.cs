@@ -14,6 +14,9 @@ using Microsoft.Extensions.Logging;
 using RoystonGame.TV;
 using Microsoft.ApplicationInsights.Extensibility.EventCounterCollector;
 using RoystonGame.Web.Helpers.Telemetry;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Logging;
+using RoystonGame.Web.AuthorizationPolicies;
 
 namespace RoystonGame
 {
@@ -31,6 +34,26 @@ namespace RoystonGame
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+#if DEBUG
+            IdentityModelEventSource.ShowPII = true;
+#endif
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                 .AddMicrosoftWebApi(options =>
+                 { 
+                     Configuration.Bind("AzureAdB2C", options);
+
+                     options.TokenValidationParameters.NameClaimType = "name";
+                 },
+                options => { Configuration.Bind("AzureAdB2C", options); });
+
+            services.AddAuthorization(options =>
+            {
+                // Create policy to check for the scope 'read'
+                options.AddPolicy("LobbyManagement",
+                    policy => policy.Requirements.Add(new ScopesRequirement("LobbyManagement")));
+            });
+
             // The following line enables Application Insights telemetry collection.
             services.AddApplicationInsightsTelemetry();
             // The following code shows several customizations done to EventCounterCollectionModule.
@@ -52,7 +75,6 @@ namespace RoystonGame
             services.AddSingleton(typeof(RgEventSource));
             services.AddSingleton(typeof(GameManager));
 
-            services.AddProtectedWebApi(Configuration);
             services.AddSignalR(hubOptions =>
             {
                 hubOptions.EnableDetailedErrors = true;
@@ -67,7 +89,7 @@ namespace RoystonGame
                 options.AddDefaultPolicy(
                     builder =>
                     {
-                        builder.WithOrigins("https://login.microsoftonline.com");
+                        builder.WithOrigins("https://scrawlbrawl.b2clogin.com/");
                     });
             });
 
@@ -106,8 +128,10 @@ namespace RoystonGame
             app.UseRouting();
             app.UseCors();
 
+#if !DEBUG
             app.UseAuthentication();
             app.UseAuthorization();
+#endif
 
             // SPAs, Sockets, and Endpoints oh my!
             app.UseWebSockets(new WebSocketOptions()

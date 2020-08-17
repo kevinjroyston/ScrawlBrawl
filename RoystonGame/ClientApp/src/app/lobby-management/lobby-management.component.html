@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
@@ -30,7 +30,7 @@
               <span class="d-inline-flex">Selected game mode:<b class="pl-1">{{ gameModes[lobby.selectedGameMode].title }}</b></span>
             </div>
           </div>
-          <div id="gameModes" [ngbCollapse]="gameModeCollapse">
+          <div id="gameModes" [ngbCollapse]="gameModeCollapse" (ngbCollapse)="refreshGameModes()">
             <div *ngFor="let gameMode of gameModes; let i = index" >
               <span class="fake-link" (click)="onSelectGameMode(i)">{{ gameMode.title }}</span>
             </div>
