@@ -42,7 +42,7 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz
             Setup = new Setup_GS(
                 lobby: lobby,
                 roundTracker: RoundTracker,
-                writingDurration: TimeSpan.FromSeconds(setupTimerLength));
+                writingDuration: TimeSpan.FromSeconds(setupTimerLength));
 
             StateChain CreateGamePlayLoop()
             {
@@ -124,7 +124,7 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz
                             return new Gameplay_GS(
                                 lobby: lobby,
                                 questions: randomizedQuestions,
-                                answerTimeDurration: TimeSpan.FromSeconds(answerTimerLength * randomizedQuestions.Count));
+                                answerTimeDuration: TimeSpan.FromSeconds(answerTimerLength * randomizedQuestions.Count));
                         }
                         else
                         {

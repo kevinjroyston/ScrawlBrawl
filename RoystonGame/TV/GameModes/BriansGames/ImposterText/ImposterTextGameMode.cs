@@ -58,7 +58,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
             Setup = new Setup_GS(
                 lobby: lobby,
                 promptsToPopulate: prompts,
-                setupTimeDurration: setupTimer);
+                setupTimeDuration: setupTimer);
 
             Dictionary<Prompt, List<User>> promptsToPromptedUsers = new Dictionary<Prompt, List<User>>();
             Setup.AddExitListener(() =>
@@ -111,7 +111,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
                                 lobby: lobby,
                                 promptToDraw: prompt,
                                 usersToPrompt: randomizedUsers,
-                                writingTimeDurration: answeringTimer);
+                                writingTimeDuration: answeringTimer);
                         }
                         if (counter == 1)
                         {
@@ -120,7 +120,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
                                 prompt: prompt,
                                 randomizedUsersToShow: randomizedUsers.Where((User user) => prompt.UsersToAnswers.ContainsKey(user)).ToList(),
                                 possibleNone: (prompt.UsersToAnswers.Count < randomizedUsers.Count),
-                                votingTimeDurration: votingTimer);
+                                votingTimeDuration: votingTimer);
                         }
                         if (counter == 2)
                         {

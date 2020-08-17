@@ -24,7 +24,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
     public class Setup_GS : GameState
     {
 
-        private UserState GetPeoplePrompts_State()
+        private UserState GetPeoplePrompts_State(TimeSpan? setupTimer)
         {
             return new SimplePromptUserState((User user) => new UserPrompt()
             {
@@ -74,7 +74,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 });
                 return (true, String.Empty);
             },
-            exit: new WaitForUsers_StateExit(this.Lobby));
+            exit: new WaitForUsers_StateExit(this.Lobby),
+            maxPromptDuration: setupTimer);
         }
 
 
@@ -128,18 +129,19 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             return stateChain;
         }
 
-        public Setup_GS(Lobby lobby, List<Setup_Person> peopleList, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions) : base(lobby)
+        public Setup_GS(Lobby lobby, List<Setup_Person> peopleList, TimeSpan? setupTimeDuration = null, TimeSpan? drawingTimeDuration = null) : base(lobby)
         {
             this.PeopleList = peopleList;
 
-            State getPeoplePrompts = GetPeoplePrompts_State();
+            State getPeoplePrompts = GetPeoplePrompts_State(setupTimeDuration);
             this.Entrance.Transition(getPeoplePrompts);
             getPeoplePrompts.Transition(() => 
             {
                 this.AssignPrompts();
                 MultiStateChain drawingsStateChains = new MultiStateChain(
                     GetDrawingsUserStateChain,
-                    exit: new WaitForUsers_StateExit(this.Lobby));
+                    exit: new WaitForUsers_StateExit(this.Lobby),
+                    stateDuration: drawingTimeDuration);
                 drawingsStateChains.Transition(this.Exit);
                 return drawingsStateChains;
             });

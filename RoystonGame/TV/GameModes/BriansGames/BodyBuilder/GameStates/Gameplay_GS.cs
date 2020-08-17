@@ -75,14 +75,14 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             {2, 800},    // Second Place
             {3, 600}     // Third Place
         };
-        public Gameplay_GS(Lobby lobby, List<Setup_Person> setup_PeopleList, RoundTracker roundTracker, bool displayPool, bool displayNames, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, TimeSpan? perRoundTimeoutDuration = null) : base(lobby)
+        public Gameplay_GS(Lobby lobby, List<Setup_Person> setup_PeopleList, RoundTracker roundTracker, bool displayPool, bool displayNames, int roundTimeoutLimit, TimeSpan? perRoundTimeoutDuration = null) : base(lobby)
         {
             this.RoundTracker = roundTracker;
             this.AssignPeople(setup_PeopleList);
             this.AssignSeats();
             this.TurnTimeLimit = perRoundTimeoutDuration;
+            this.RoundMaxTurnLimit = roundTimeoutLimit;
             this.Entrance.Transition(AddGameplayCycle());
-            RoundMaxTurnLimit = (int)gameModeOptions[3].ValueParsed;
             var unityImages = new List<UnityImage>();
             string instructions = null;
             string title = null;

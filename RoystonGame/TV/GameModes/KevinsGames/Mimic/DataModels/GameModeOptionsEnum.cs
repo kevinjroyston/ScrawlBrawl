@@ -8,14 +8,10 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.DataModels
     public enum GameModeOptions 
     {
         NumStartingDrawingsPerUser,
-        MemorizeTimerLength,
-        DrawingTimerLength, 
-        VotingTimerLength,
         MaxDrawingsBeforeVote,
         NumSets,
         MaxVoteDrawings,
-        BlurredReveal,
-        SpeedBasedScoring,
+        GameSpeed
     };
     
 }

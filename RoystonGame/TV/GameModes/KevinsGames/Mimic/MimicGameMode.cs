@@ -35,12 +35,31 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic
         {
             ValidateOptions(gameModeOptions);
             int numStartingDrawingsPerUser = (int)gameModeOptions[(int)GameModeOptions.NumStartingDrawingsPerUser].ValueParsed;
-            int memorizeTimerLength = (int)gameModeOptions[(int)GameModeOptions.MemorizeTimerLength].ValueParsed;
-            int drawingTimerLength = (int)gameModeOptions[(int)GameModeOptions.DrawingTimerLength].ValueParsed;
-            int votingTimerLength = (int)gameModeOptions[(int)GameModeOptions.VotingTimerLength].ValueParsed;
             int maxDrawingsBeforeVoteInput = (int)gameModeOptions[(int)GameModeOptions.MaxDrawingsBeforeVote].ValueParsed;
             int numSets = (int)gameModeOptions[(int)GameModeOptions.NumSets].ValueParsed;
             int maxVoteDrawings = (int)gameModeOptions[(int)GameModeOptions.MaxVoteDrawings].ValueParsed;
+            int gameSpeed = (int)gameModeOptions[(int)GameModeOptions.GameSpeed].ValueParsed;
+            TimeSpan? setupTimer = null;
+            TimeSpan? drawingTimer = null;
+            TimeSpan? votingTimer = null;
+            if (gameSpeed > 0)
+            {
+                drawingTimer = CommonHelpers.GetTimerFromSpeed(
+                    speed: (double)gameSpeed,
+                    minTimerLength: MimicConstants.DrawingTimerMin,
+                    aveTimerLength: MimicConstants.DrawingTimerAve,
+                    maxTimerLength: MimicConstants.DrawingTimerMax);
+                votingTimer = CommonHelpers.GetTimerFromSpeed(
+                    speed: (double)gameSpeed,
+                    minTimerLength: MimicConstants.VotingTimerMin,
+                    aveTimerLength: MimicConstants.VotingTimerAve,
+                    maxTimerLength: MimicConstants.VotingTimerMax);
+            }
+            TimeSpan? extendedDrawingTimer = null;
+            if (drawingTimer != null)
+            {
+                extendedDrawingTimer = TimeSpan.FromSeconds(((TimeSpan)drawingTimer).TotalSeconds * MimicConstants.MimicTimerMultiplier);
+            }
 
             this.Lobby = lobby;
 
@@ -48,7 +67,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic
                 lobby: lobby,
                 drawings: Drawings,
                 numDrawingsPerUser: numStartingDrawingsPerUser,
-                drawingTimeDurration: TimeSpan.FromSeconds(drawingTimerLength));
+                drawingTimeDuration: drawingTimer);
             List<UserDrawing> randomizedDrawings = new List<UserDrawing>();
             Setup.AddExitListener(() =>
             {
@@ -83,12 +102,12 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic
 
                                     DisplayOriginal_GS displayGS = new DisplayOriginal_GS(
                                         lobby: lobby,
-                                        displayTimeDuration: TimeSpan.FromSeconds(memorizeTimerLength),
+                                        displayTimeDuration: TimeSpan.FromSeconds(MimicConstants.MemorizeTimerLength),
                                         displayDrawing: originalDrawing);
                                     CreateMimics_GS mimicsGS = new CreateMimics_GS(
                                         lobby: lobby,
                                         roundTracker: roundTrackers.Last(),
-                                        drawingTimeDurration: TimeSpan.FromSeconds(drawingTimerLength * MimicConstants.MimicTimerMultiplier)
+                                        drawingTimeDuration: extendedDrawingTimer
                                         );
                                     mimicsGS.AddExitListener(() =>
                                     {
@@ -110,7 +129,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic
                                 }
                                 else if (counter < maxDrawingsBeforeVote * 2)
                                 {
-                                    return GetVotingAndRevealState(roundTrackers[counter - maxDrawingsBeforeVote], TimeSpan.FromSeconds(votingTimerLength));
+                                    return GetVotingAndRevealState(roundTrackers[counter - maxDrawingsBeforeVote], votingTimer);
                                 }
                                 else
                                 {

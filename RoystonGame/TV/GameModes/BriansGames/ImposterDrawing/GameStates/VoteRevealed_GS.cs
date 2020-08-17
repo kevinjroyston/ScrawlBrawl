@@ -24,7 +24,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.GameStates
             SubmitButton = true
         };
 
-        public VoteRevealed_GS(Lobby lobby, Prompt prompt, List<User> randomizedUsersToShow, bool possibleNone, TimeSpan? voteRevealTimeDurration = null)
+        public VoteRevealed_GS(Lobby lobby, Prompt prompt, List<User> randomizedUsersToShow, bool possibleNone, TimeSpan? voteRevealTimeDuration = null)
            : base(
                  lobby: lobby,
                  exit: new WaitForPartyLeader_StateExit(

@@ -19,7 +19,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.GameStates
 {
     public class Voting_GS : GameState
     {
-        public Voting_GS(Lobby lobby, Prompt prompt, List<User> randomizedUsersToShow, bool possibleNone, TimeSpan? votingTimeDurration)
+        public Voting_GS(Lobby lobby, Prompt prompt, List<User> randomizedUsersToShow, bool possibleNone, TimeSpan? votingTimeDuration)
            : base(
                  lobby: lobby,
                  exit: new WaitForUsers_StateExit(lobby))
@@ -95,7 +95,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.GameStates
                 exit: new WaitForUsers_StateExit(
                     lobby: this.Lobby,
                     usersToWaitFor: WaitForUsersType.All),
-                maxPromptDuration: votingTimeDurration);
+                maxPromptDuration: votingTimeDuration);
 
             this.Entrance.Transition(votingUserState);
             votingUserState.Transition(this.Exit);

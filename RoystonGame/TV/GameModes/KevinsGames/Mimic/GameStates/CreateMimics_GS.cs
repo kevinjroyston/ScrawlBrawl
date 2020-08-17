@@ -25,7 +25,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
 {
     public class CreateMimics_GS : GameState
     { 
-        public CreateMimics_GS(Lobby lobby, RoundTracker roundTracker, TimeSpan? drawingTimeDurration = null) : base(lobby)
+        public CreateMimics_GS(Lobby lobby, RoundTracker roundTracker, TimeSpan? drawingTimeDuration = null) : base(lobby)
         {
             SelectivePromptUserState createMimics = new SelectivePromptUserState(
                 usersToPrompt: lobby.GetAllUsers().Where((User user) => user != roundTracker.originalDrawer).ToList(),
@@ -55,7 +55,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
                 exit: new WaitForUsers_StateExit(
                     lobby: this.Lobby,
                     usersToWaitFor: WaitForUsersType.All),
-                maxPromptDuration: drawingTimeDurration);
+                maxPromptDuration: drawingTimeDuration);
 
             this.Entrance.Transition(createMimics);
             createMimics.Transition(this.Exit);

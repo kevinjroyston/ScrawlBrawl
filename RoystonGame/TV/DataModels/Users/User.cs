@@ -152,8 +152,7 @@ namespace RoystonGame.TV.DataModels.Users
             hash.Add(IsPartyLeader);
             hash.Add(DisplayName);
             hash.Add(SelfPortrait);
-            hash.Add(Score);
-            hash.Add(Activity);
+            hash.Add(Score); 
             hash.Add(Status);
             hash.Add(Identifier);
             hash.Add(ScoreDeltaReveal);

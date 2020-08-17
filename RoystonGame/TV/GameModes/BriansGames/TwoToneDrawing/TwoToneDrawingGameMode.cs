@@ -6,6 +6,7 @@ using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels;
 using RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates;
+using RoystonGame.TV.GameModes.Common;
 using RoystonGame.TV.GameModes.Common.DataModels;
 using RoystonGame.TV.GameModes.Common.GameStates;
 using RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal;
@@ -33,8 +34,41 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
         {
             ValidateOptions(lobby, gameModeOptions);
             this.Lobby = lobby;
-            //ToDo Refactor to move to vote reveal after the votes are done and scrambled 
-            Setup = new Setup_GS(lobby, this.SubChallenges, gameModeOptions);
+
+            int numColors = (int)gameModeOptions[(int)GameModeOptionsEnum.numColors].ValueParsed;
+            int numTeams = (int)gameModeOptions[(int)GameModeOptionsEnum.numTeams].ValueParsed;
+            bool showOtherColors = (bool)gameModeOptions[(int)GameModeOptionsEnum.showOtherColors].ValueParsed;
+            int gameSpeed = (int)gameModeOptions[(int)GameModeOptionsEnum.gameSpeed].ValueParsed;
+            TimeSpan? setupTimer = null;
+            TimeSpan? drawingTimer = null;
+            TimeSpan? votingTimer = null;
+            if (gameSpeed > 0)
+            {
+                setupTimer = CommonHelpers.GetTimerFromSpeed(
+                    speed: (double)gameSpeed,
+                    minTimerLength: TwoToneDrawingConstants.SetupTimerMin,
+                    aveTimerLength: TwoToneDrawingConstants.SetupTimerAve,
+                    maxTimerLength: TwoToneDrawingConstants.SetupTimerMax);
+                drawingTimer = CommonHelpers.GetTimerFromSpeed(
+                    speed: (double)gameSpeed,
+                    minTimerLength: TwoToneDrawingConstants.PerDrawingTimerMin,
+                    aveTimerLength: TwoToneDrawingConstants.PerDrawingTimerAve,
+                    maxTimerLength: TwoToneDrawingConstants.PerDrawingTimerMax);
+                votingTimer = CommonHelpers.GetTimerFromSpeed(
+                    speed: (double)gameSpeed,
+                    minTimerLength: TwoToneDrawingConstants.VotingTimerMin,
+                    aveTimerLength: TwoToneDrawingConstants.VotingTimerAve,
+                    maxTimerLength: TwoToneDrawingConstants.VotingTimerMax);
+            }
+
+            Setup = new Setup_GS(
+                lobby: lobby,
+                challengeTrackers: this.SubChallenges,
+                numColorsPerTeam: numColors,
+                numTeamsPerPrompt: numTeams,
+                showColors: showOtherColors,
+                setupTimer: setupTimer,
+                drawingTimer: drawingTimer);
 
             StateChain GamePlayLoopGenerator()
             {
@@ -46,7 +80,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
                     {
                         return new StateChain(states: new List<State>
                         {
-                            GetVotingAndRevealState(challenges[counter], null),
+                            GetVotingAndRevealState(challenges[counter], votingTimer),
                             (counter == challenges.Count - 1) ? new ScoreBoardGameState(lobby, "Final Scores") : new ScoreBoardGameState(lobby),
                         });
                     }

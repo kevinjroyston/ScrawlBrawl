@@ -37,21 +37,45 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             this.Lobby = lobby;
             ConcurrentBag<(User, string)> promptTuples = new ConcurrentBag<(User, string)>();
             List<Prompt> promptsCopy = new List<Prompt>();
-            int numRounds = (int)gameModeOptions[0].ValueParsed;
-            int numPromptForEachUsersPerRound = (int)gameModeOptions[1].ValueParsed;
-            int numDrawingsPerPersonPerPart = (int)gameModeOptions[2].ValueParsed;
+            int numRounds = (int)gameModeOptions[(int)GameModeOptionsEnum.numRounds].ValueParsed;
+            int numPromptsForEachUserPerRound = (int)gameModeOptions[(int)GameModeOptionsEnum.numPrompts].ValueParsed;
+            int numDrawingsPerPersonPerPart = (int)gameModeOptions[(int)GameModeOptionsEnum.numToDraw].ValueParsed;
+            int gameSpeed = (int)gameModeOptions[(int)GameModeOptionsEnum.gameSpeed].ValueParsed;
+            TimeSpan? setupTimer = null;
+            TimeSpan? creationTimer = null;
+            TimeSpan? votingTimer = null;
+            if (gameSpeed > 0)
+            {
+                setupTimer = CommonHelpers.GetTimerFromSpeed(
+                    speed: (double)gameSpeed,
+                    minTimerLength: BattleReadyConstants.SetupTimerMin,
+                    aveTimerLength: BattleReadyConstants.SetupTimerAve,
+                    maxTimerLength: BattleReadyConstants.SetupTimerMax);
+                creationTimer = CommonHelpers.GetTimerFromSpeed(
+                    speed: (double)gameSpeed,
+                    minTimerLength: BattleReadyConstants.CreationTimerMin,
+                    aveTimerLength: BattleReadyConstants.CreationTimerAve,
+                    maxTimerLength: BattleReadyConstants.CreationTimerMax);
+                votingTimer = CommonHelpers.GetTimerFromSpeed(
+                    speed: (double)gameSpeed,
+                    minTimerLength: BattleReadyConstants.VotingTimerMin,
+                    aveTimerLength: BattleReadyConstants.VotingTimerAve,
+                    maxTimerLength: BattleReadyConstants.VotingTimerMax);
+            }
+
             int numOfEachPartInHand = 3;
             int numUsersPerPrompt = 2;
 
-            int numPromptsEachRound = numPromptForEachUsersPerRound * lobby.GetAllUsers().Count / numUsersPerPrompt;
-            int numPromptsNeededFromUser = numRounds * numPromptForEachUsersPerRound / numUsersPerPrompt;
+            int numPromptsEachRound = numPromptsForEachUserPerRound * lobby.GetAllUsers().Count / numUsersPerPrompt;
+            int numPromptsNeededFromUser = numRounds * numPromptsForEachUserPerRound / numUsersPerPrompt;
 
             Setup = new Setup_GS(
                 lobby: lobby, 
                 drawings: Drawings,
                 prompts: promptTuples,
                 numDrawingsPerUserPerPart: numDrawingsPerPersonPerPart,
-                numPromptsPerUser: numPromptsNeededFromUser);
+                numPromptsPerUser: numPromptsNeededFromUser,
+                setupDuration: setupTimer);
 
             Setup.AddExitListener(() =>
             {
@@ -91,7 +115,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                     throw new Exception("Something went wrong while setting up the game");
                 }
 
-                for (int i = 0; i < numPromptForEachUsersPerRound; i++)
+                for (int i = 0; i < numPromptsForEachUserPerRound; i++)
                 {
                     foreach (User user in lobby.GetAllUsers())
                     {
@@ -157,7 +181,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 }
                 GameState toReturn = new ContestantCreation_GS(
                         lobby: lobby,
-                        roundTracker: RoundTracker);
+                        roundTracker: RoundTracker,
+                        creationDuration: creationTimer);
                 toReturn.Transition(CreateVotingGameStates(roundPrompts));
                 return toReturn;
             }
@@ -172,7 +197,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                             {
                                 Prompt roundPrompt = roundPrompts[counter];
 
-                                return GetVotingAndRevealState(roundPrompt, null);         
+                                return GetVotingAndRevealState(roundPrompt, votingTimer);         
                             }
                             else
                             {

@@ -20,7 +20,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.StoryTime.GameStates
     public class Setup_GS : GameState
     {
         private Random Rand { get; } = new Random();
-        public Setup_GS(Lobby lobby, string prompt, RoundTracker roundTracker, TimeSpan? writingDurration = null) : base(lobby)
+        public Setup_GS(Lobby lobby, string prompt, RoundTracker roundTracker, TimeSpan? writingDuration = null) : base(lobby)
         {
             SimplePromptUserState writingUserState = new SimplePromptUserState(
                 promptGenerator: (User user) => new UserPrompt()
@@ -46,7 +46,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.StoryTime.GameStates
                 exit: new WaitForUsers_StateExit(
                     lobby: lobby,
                     usersToWaitFor: WaitForUsersType.All),
-                maxPromptDuration: writingDurration);
+                maxPromptDuration: writingDuration);
             this.Entrance.Transition(writingUserState);
             writingUserState.Transition(this.Exit);
 
