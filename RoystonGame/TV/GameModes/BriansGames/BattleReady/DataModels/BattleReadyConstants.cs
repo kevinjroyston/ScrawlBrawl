@@ -10,9 +10,9 @@
         public const double SetupTimerAve = 180;
         public const double SetupTimerMax = 360;
 
-        public const double CreationTimerMin = 120;
-        public const double CreationTimerAve = 240;
-        public const double CreationTimerMax = 480;
+        public const double CreationTimerMin = 45;
+        public const double CreationTimerAve = 120;
+        public const double CreationTimerMax = 240;
 
         public const double VotingTimerMin = 30;
         public const double VotingTimerAve = 60;
