@@ -13,15 +13,14 @@ export class AppComponent implements OnInit {
         private broadcastService: BroadcastService) {
     }
     ngOnInit() {
-        const requestObj = {
-            scopes: [
-                "api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby"]
-        };
+        this.broadcastService.subscribe('msal:acquireTokenSuccess', (payload) => {
+            console.log('access token acquired at: ' + new Date().toString());
+            console.log(payload);
+        });
 
-        const sub = this.broadcastService.subscribe('msal:acquireTokenFailure', () => {
-            sub.unsubscribe();
-            //this.msalService.loginPopup();
-            this.msalService.acquireTokenPopup(requestObj);
+        this.broadcastService.subscribe('msal:acquireTokenFailure', (payload) => {
+            console.log('access token acquisition fails');
+            console.log(payload);
         });
     }
 }

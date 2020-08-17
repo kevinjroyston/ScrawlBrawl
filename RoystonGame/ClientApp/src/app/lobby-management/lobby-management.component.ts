@@ -2,6 +2,7 @@ import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { API } from '../api';
 import { NgForm } from '@angular/forms';
+import { BroadcastService, MsalService } from '@azure/msal-angular';
 
 @Component({
     selector: 'app-lobby-management',
@@ -22,9 +23,13 @@ export class LobbyManagementComponent {
     constructor(
         private http: HttpClient,
         @Inject('BASE_URL') baseUrl: string,
-        @Inject('userId') userId: string) {
+        @Inject('userId') userId: string,
+        @Inject(MsalService) authService: MsalService,
+        @Inject(BroadcastService) broadcastService: BroadcastService
+    )
+    {
         this.baseUrl = baseUrl;
-        this.api = new API(http, baseUrl, userId)
+        this.api = new API(http, baseUrl, userId, authService, broadcastService)
         this.getGames().then(()=>this.onGetLobby())
     }
 
@@ -37,65 +42,59 @@ export class LobbyManagementComponent {
         var bodyString = JSON.stringify(body); 
         console.log(bodyString);
         this.error = "";
-        await this.api.request({ type: "Lobby", path: "Configure", body: bodyString })
-            .catch(error => this.error = error.error)
-            .then(async () =>
-            {
-                if (this.error == "") {
-                    await this.onGetLobby()
-                }
-            });
+        await this.api.request({ type: "Lobby", path: "Configure", body: bodyString }).subscribe({
+            next: async () => { await this.onGetLobby() },
+            error: async (error) => { this.error = error.error; await this.onGetLobby(); }
+        })
     }
 
     async onStartLobby() {
         await this.onConfigure().then(async () => {
             if (this.error == "") {
-                await this.api.request({ type: "Lobby", path: "Start" })
-                    .catch(error => this.error = error.error)
-                    .then(async () => {
-                        if (this.error == "") {
-                            await this.onGetLobby()
-                        }
-                    });
+                await this.api.request({ type: "Lobby", path: "Start" }).subscribe({
+                    next: async () => { await this.onGetLobby() },
+                    error: async (error) => { this.error = error.error; await this.onGetLobby() }
+                })
             }
         });
     }
 
     async onGetLobby() {
-        await this.api.request({ type: "Lobby", path: "Get" })
-            .catch(() => {this.lobby = null})
-            .then((result) =>
-            {
-                this.lobby = result;
-                if (this.lobby != null && this.lobby.selectedGameMode != null && this.lobby.gameModeSettings != null)
-                {
+        this.api.request({ type: "Lobby", path: "Get" }).subscribe({
+            next: async (result) => {
+                this.lobby = result as LobbyMetadata;
+                if (this.lobby != null && this.lobby.selectedGameMode != null && this.lobby.gameModeSettings != null) {
                     this.lobby.gameModeSettings.options.forEach((value: GameModeOptionResponse, index: number, array: GameModeOptionResponse[]) => {
                         if (value != null && value.value != null) {
                             this.gameModes[this.lobby.selectedGameMode].options[index].value = value.value;
                         }
                     });
                 }
-            });
+            },
+            error: () => { this.lobby = null; }
+        });
     }
 
     async onCreateLobby() {
-        await this.api.request({ type: "Lobby", path: "Create" }).then(async (result) => {
-            this.lobby = result;
-            console.log(`current lobby: ${this.lobby}`);
-            await this.onGetLobby();
+        await this.api.request({ type: "Lobby", path: "Create" }).subscribe({
+            next: async (result) => {
+                this.lobby = result as LobbyMetadata;
+                await this.onGetLobby()
+            },
+            error: async (error) => { this.error = error.error; await this.onGetLobby(); }
         });
     }
 
     async onDeleteLobby() {
-        await this.api.request({ type: "Lobby", path: "Delete" }).then(async (result) => {
-            await this.onGetLobby();
+        await this.api.request({ type: "Lobby", path: "Delete" }).subscribe({
+            next: async () => { await this.onGetLobby() },
+            error: async (error) => { this.error = error.error; await this.onGetLobby(); }
         });
     }
 
     async getGames() {
-        await this.api.request({ type: "Lobby", path: "Games" }).then((result) =>
-        {
-            this.gameModes = result
+        await this.api.request({ type: "Lobby", path: "Games" }).subscribe({
+            next: (result) => { this.gameModes = result as GameModeMetadata[] }
         });
     }
 
@@ -103,6 +102,11 @@ export class LobbyManagementComponent {
         this.lobby.selectedGameMode = game;
         this.gameModeCollapse = true;
         this.error = "";
+    }
+    refreshGameModes() {
+        if (this.gameModes.length <= 0) {
+            this.getGames();
+        }
     }
 }
 

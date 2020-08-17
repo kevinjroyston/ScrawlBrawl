@@ -7,6 +7,8 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxBootstrapSliderModule } from 'ngx-bootstrap-slider';
+import { msalConfig, msalAngularConfig } from './app-config';
+
 import {
     MsalModule,
     MsalGuard,
@@ -30,55 +32,26 @@ import { Slider } from './slider/slider.component';
 import { DrawingBoard } from './drawingboard/drawingboard.component';
 import { Configuration } from 'msal';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { environment } from '../environments/environment';
+
+const guards: any[] = environment.enableMsal ? [MsalGuard] : [];
 
 //import { MatSlider } from '@angular/material/slider';
 
 const appRoutes: Routes = [
-    { path: 'lobby/manage', component: LobbyManagementComponent, canActivate: [MsalGuard] },
+    { path: 'lobby/manage', component: LobbyManagementComponent, canActivate: guards },
     { path: 'user/manage', component: UserManagementComponent },
     { path: '', component: FetchDataComponent },
     { path: 'feedback', component: FeedbackComponent}
     //{ path: 'admin', component: AdminComponent} //not yet made
 ];
 
-export const protectedResourceMap: [string, string[]][] = [
-    ['https://login.microsoftonline.com', ['api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby']],
-    ['/lobby/manage', ['api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby']],
-    ['/Lobby/Games', ['api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby']],
-    ['/Lobby/Get', ['api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby']],
-    ['/Lobby/Create', ['api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby']],
-    ['/Lobby/Configure', ['api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby']],
-    ['/Lobby/Delete', ['api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby']],
-    ['/Lobby/Start', ['api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby']],
-];
-
-const isIE = window.navigator.userAgent.indexOf("MSIE ") > -1 || window.navigator.userAgent.indexOf("Trident/") > -1;
-
 function MSALConfigFactory(): Configuration {
-    return {
-        auth: {
-            clientId: 'f62ed1b5-3f4f-4c23-925a-0d27767707c6',
-            authority: "https://login.microsoftonline.com/common/",
-            validateAuthority: true,
-            navigateToLoginRequestUrl: true,
-        },
-        cache: {
-            cacheLocation: "localStorage",
-            storeAuthStateInCookie: isIE, // set to true for IE 11
-        },
-    };
+    return msalConfig;
 }
 
 function MSALAngularConfigFactory(): MsalAngularConfiguration {
-    return {
-        popUp: !isIE,
-        consentScopes: [
-            "api://f62ed1b5-3f4f-4c23-925a-0d27767707c6/ManageLobby"
-        ],
-        unprotectedResources: ["/currentContent", "/FormSubmit", "/User/Delete"],
-        protectedResourceMap,
-        extraQueryParameters: {}
-    };
+    return msalAngularConfig;
 }
 
 @NgModule({

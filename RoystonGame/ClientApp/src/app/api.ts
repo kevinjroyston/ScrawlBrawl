@@ -1,5 +1,8 @@
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, Subject, Subscriber } from 'rxjs';
+import { AuthError, InteractionRequiredAuthError } from 'msal';
+import { MsalService, BroadcastService } from '@azure/msal-angular';
 
 //TODO: Change all "any" types to concrete, importable data types.
 //TODO: clean up this class to simplify usage / logging of responses/errors to consoles is not done correctly.
@@ -19,8 +22,6 @@ type LobbyRequest = {
 }
 
 export class API {
-    private http: HttpClient
-    private baseUrl: string
 
     private getHttpOptions = {
         params: {
@@ -37,12 +38,11 @@ export class API {
     };
 
     // TODO: instantiate api via dependency injection / make it injectable.
-    constructor(http: HttpClient, baseUrl: string,  userId: string) {
-        this.http = http;
-        this.baseUrl = baseUrl;
+    constructor(private http: HttpClient, private baseUrl: string,  userId: string, private authService: MsalService, private broadcastService: BroadcastService) {
         this.postHttpOptions.params.id = userId;
         this.getHttpOptions.params.id = userId;
     }
+
 
     logRequest = (r: APIRequest) => {
     return (data: any) => {
@@ -56,42 +56,105 @@ export class API {
         }
     }
 
-    request = async (r: APIRequest): Promise<any> => {
+    request = (r: APIRequest): Observable<Object> => {
         console.log(`[APIRequest] ${r.type}/${r.path}`, r.body)
-        let p: Promise<any> = null;
+        let obs: Observable<Object> = null;
         switch (r.type) {
             case "Lobby":
                 switch (r.path) {
                     case "Get":
                     case "Start":
                     case "Delete":
-                    case "Games": p = this.Get(r);
+                    case "Games": obs = this.Get(r);
                         break;
                     case "Configure":
-                    case "Create": p = this.Post(r);
+                    case "Create": obs = this.Post(r);
                         break;
                     default: return;
                 }
                 break;
             case "User":
                 switch (r.path) {
-                    case "Delete": p = this.Get(r);
+                    case "Delete": obs = this.Get(r);
                         break;
                     default: return;
                 }
                 break;
             default: "return"
         }
-        return await p;
+        return obs;
     } 
-    
-    async Get(r: APIRequest) {
-        return await this.http.get(this.getAPIPath(r), this.getHttpOptions).toPromise();
+
+    Get(r: APIRequest): Observable<Object> {
+        var url = this.getAPIPath(r);
+
+        // I do not like this sam I am.
+        var observable = new Observable(subscriber =>
+        {
+            this.http.get(url, this.getHttpOptions).subscribe(
+            {
+                next: (x) => {
+                    subscriber.next(x);
+                },
+                error: (err: AuthError) => {
+                    // If there is an interaction required error,
+                    // call one of the interactive methods and then make the request again.
+                    if (InteractionRequiredAuthError.isInteractionRequiredError(err.errorCode)) {
+                        this.authService.acquireTokenPopup({
+                            scopes: this.authService.getScopesForEndpoint(url)
+                        }).then(() => {
+                            this.http.get(url, this.getHttpOptions).subscribe({
+                                next: (x) => subscriber.next(x),
+                                error: (err) => subscriber.error(err),
+                                complete: () => subscriber.complete()
+                            });
+                        });
+                    } else {
+                        subscriber.error(err);
+                    }
+                },
+                complete: () => {
+                    subscriber.complete();
+                }
+            });
+        });
+        return observable;
     }
 
-    async Post(r: APIRequest): Promise<any> {
-        return await this.http.post(this.getAPIPath(r), r.body, this.postHttpOptions).toPromise()
-    }
+    Post(r: APIRequest): Observable<Object> {
+        var url = this.getAPIPath(r);
+
+        // I do not like this sam I am.
+        var observable = new Observable(subscriber => {
+            this.http.post(url, r.body, this.postHttpOptions).subscribe(
+                {
+                    next: (x) => {
+                        subscriber.next(x);
+                    },
+                    error: (err: AuthError) => {
+                        // If there is an interaction required error,
+                        // call one of the interactive methods and then make the request again.
+                        if (InteractionRequiredAuthError.isInteractionRequiredError(err.errorCode)) {
+                            this.authService.acquireTokenPopup({
+                                scopes: this.authService.getScopesForEndpoint(url)
+                            }).then(() => {
+                                this.http.post(url, r.body, this.postHttpOptions).subscribe({
+                                    next: (x) => subscriber.next(x),
+                                    error: (err) => subscriber.error(err),
+                                    complete: () => subscriber.complete()
+                                });
+                            });
+                        } else {
+                            subscriber.error(err);
+                        }
+                    },
+                    complete: () => {
+                        subscriber.complete();
+                    }
+                });
+        });
+        return observable;
+    }    
 
     getAPIPath = (r: APIRequest): string => {
         return `${this.baseUrl}${r.type}/${r.path}`;
