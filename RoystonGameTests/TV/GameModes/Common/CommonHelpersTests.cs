@@ -1,6 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.GameModes.Common;
 using System;
+using System.Collections.Generic;
 
 namespace RoystonGameTests.TV.GameModes.Common
 {
@@ -25,6 +27,13 @@ namespace RoystonGameTests.TV.GameModes.Common
                 // Testing it does not error, do not care about return value.
                 CommonHelpers.PointsForSpeed(maxPoints, minPoints, startTime, endTime, secondsTaken);
             }
+        }
+
+        [DataRow()]
+        [DataTestMethod]
+        public void TrimUserInputListTest<T>(List<(User, T)> userInputs, int numInputsWanted, List<(User, T)> expectedList)
+        {
+
         }
     }
 }

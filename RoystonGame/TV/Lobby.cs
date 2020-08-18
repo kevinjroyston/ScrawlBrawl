@@ -163,10 +163,10 @@ namespace RoystonGame.TV
                 }
             },
             #endregion
-            #region BodyBuilder
+            #region BodySwap
             new GameModeMetadata
             {
-                Title = "Body Builder",
+                Title = "Body Swap", // in code references as Body Builder
                 Description = "Try to make a complete character before your opponents can.",
                 MinPlayers = 3,
                 MaxPlayers = null,
@@ -212,10 +212,10 @@ namespace RoystonGame.TV
                 }
             },
             #endregion
-            #region BattleReady
+            #region BodyBuilder
             new GameModeMetadata
             {
-                Title = "Battle Ready",
+                Title = "Body Builder", // in code refered to as Battle Ready
                 Description = "Go head to head body to body and legs to legs with other players to try to make the best constestant for each challenge.",
                 MinPlayers = 3,
                 MaxPlayers = null,
@@ -240,11 +240,11 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Number of each body part to draw",
+                        Description = "Number of drawings expected per user",
                         ResponseType = ResponseType.Integer,
-                        DefaultValue = 2,
+                        DefaultValue = 4,
                         MinValue = 2,
-                        MaxValue = 30,
+                        MaxValue = 10,
                     },
                     new GameModeOptionResponse
                     {

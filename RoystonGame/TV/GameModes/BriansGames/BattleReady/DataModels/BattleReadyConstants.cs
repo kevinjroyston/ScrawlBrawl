@@ -6,9 +6,13 @@
         public const int PointsForPartUsed = 100;
         public const int PointMultiplierForPromptRating = 50; // ranges from * -2 to  * 2
 
-        public const double SetupTimerMin = 60;
-        public const double SetupTimerAve = 180;
-        public const double SetupTimerMax = 360;
+        public const double SetupDrawingTimerMin = 120;
+        public const double SetupDrawingTimerAve = 240;
+        public const double SetupDrawingTimerMax = 480;
+
+        public const double SetupPromptTimerMin = 60;
+        public const double SetupPromptTimerAve = 180;
+        public const double SetupPromptTimerMax = 360;
 
         public const double CreationTimerMin = 45;
         public const double CreationTimerAve = 120;

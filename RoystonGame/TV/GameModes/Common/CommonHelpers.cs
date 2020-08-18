@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.IdentityModel.Tokens;
 using RoystonGame.TV.DataModels.Users;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace RoystonGame.TV.GameModes.Common
 {
     public static class CommonHelpers
     {
+        private static Random Rand = new Random();
         public static string HtmlImageWrapper(string image, int width = 240, int height = 240)
         {
             return Invariant($"<img width=\"{width}\" height=\"{height}\" src=\"{image}\"/>");
@@ -23,6 +25,46 @@ namespace RoystonGame.TV.GameModes.Common
             }
         }
 
+        public static List<(User, T)> TrimUserInputList<T>(List<(User, T)> userInputs, int numInputsWanted)
+        {
+            Dictionary<User, List<T>> usersToInputs = new Dictionary<User, List<T>>();
+            foreach ((User, T) userInput in userInputs)
+            {
+                if (!usersToInputs.ContainsKey(userInput.Item1))
+                {
+                    usersToInputs.Add(userInput.Item1, new List<T>());
+                }
+                usersToInputs[userInput.Item1].Add(userInput.Item2);
+            }
+            List<(User, T)> trimmedUserInputs = userInputs.ToList();
+            while (trimmedUserInputs.Count > numInputsWanted)
+            {
+                User userWithMostInputs = GetUserWithMostInputs();
+                int indexToRemove = Rand.Next(0, usersToInputs[userWithMostInputs].Count);
+                trimmedUserInputs.Remove((userWithMostInputs, usersToInputs[userWithMostInputs][indexToRemove]));
+                usersToInputs[userWithMostInputs].RemoveAt(indexToRemove);
+            }
+
+            return trimmedUserInputs;
+
+            User GetUserWithMostInputs()
+            {
+                User userWithMostInputs = usersToInputs.Keys.ToList()[0];
+                foreach (User user in usersToInputs.Keys)
+                {
+                    if (usersToInputs[user].Count > usersToInputs[userWithMostInputs].Count)
+                    {
+                        userWithMostInputs = user;
+                    }
+                }
+                return userWithMostInputs;
+            }
+        }
+
+        public static int GetMaxInputsFromExpected(int numExpected)
+        {
+            return (int)Math.Ceiling(numExpected * 1.3);
+        }
         public static int PointsForSpeed(int maxPoints, int minPoints, double startTime, double endTime, double secondsTaken)
         {
             Debug.Assert(maxPoints >= minPoints);
