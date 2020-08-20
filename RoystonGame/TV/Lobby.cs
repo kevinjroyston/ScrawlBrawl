@@ -248,6 +248,14 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
+                        Description = "Number of players per prompt",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 2,
+                        MinValue = 2,
+                        MaxValue = 10,
+                    },
+                    new GameModeOptionResponse
+                    {
                         Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 5,

@@ -20,28 +20,38 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
 {
     public class ExtraSetupGameState : GameState
     {
-        public ExtraSetupGameState(Lobby lobby, Func<User, UserPrompt> promptGenerator, Func<User, UserFormSubmission, (bool, string)> formSubmitHandler, int numExtraObjectsNeeded) : base(lobby: lobby, exit: new WaitForUsers_StateExit(lobby))
+        public ExtraSetupGameState(
+            Lobby lobby,
+            Func<User, int, UserPrompt> countingPromptGenerator,
+            Func<User, UserFormSubmission, int, (bool, string)> countingFormSubmitHandler,
+            int numExtraObjectsNeeded)
+            : base(lobby: lobby, exit: new WaitForUsers_StateExit(lobby))
         {
             int numLeft = numExtraObjectsNeeded;
+            ConcurrentDictionary<User, int> usersToNumSubmitted = new ConcurrentDictionary<User, int>();
+            foreach (User user in lobby.GetAllUsers())
+            {
+                usersToNumSubmitted.AddOrReplace(user, 0);
+            }
             StateChain extraChain = new StateChain(
                 stateGenerator: (int counter) =>
                 {
                     if (numLeft > 0)
                     {
                         return new SimplePromptUserState(
-                            promptGenerator: promptGenerator,
+                            promptGenerator: (User user) =>
+                            {
+                                return countingPromptGenerator(user, usersToNumSubmitted[user]);
+                            },
                             formSubmitHandler: (User user, UserFormSubmission input) =>
                             {
-                                if (numLeft > 0)
+                                (bool, string) handlerResponse = countingFormSubmitHandler(user, input, usersToNumSubmitted[user]);
+                                if (handlerResponse.Item1)
                                 {
-                                    (bool, string) handlerResponse = formSubmitHandler(user, input);
-                                    if (handlerResponse.Item1)
-                                    {
-                                        numLeft--;
-                                    }
-                                    return handlerResponse;
+                                    numLeft--;
+                                    usersToNumSubmitted[user]++;
                                 }
-                                return (true, string.Empty);
+                                return handlerResponse;
                             });
                     }
                     else

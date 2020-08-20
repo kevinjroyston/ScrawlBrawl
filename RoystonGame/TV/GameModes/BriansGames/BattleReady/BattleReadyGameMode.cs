@@ -43,6 +43,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             int numRounds = (int)gameModeOptions[(int)GameModeOptionsEnum.numRounds].ValueParsed;
             int numPromptsForEachUserPerRound = (int)gameModeOptions[(int)GameModeOptionsEnum.numPrompts].ValueParsed;
             int numDrawingsPerPerson = (int)gameModeOptions[(int)GameModeOptionsEnum.numToDraw].ValueParsed;
+            int numUsersPerPrompt = (int)gameModeOptions[(int)GameModeOptionsEnum.numPlayersPerPrompt].ValueParsed;
             int gameSpeed = (int)gameModeOptions[(int)GameModeOptionsEnum.gameSpeed].ValueParsed;
             TimeSpan? setupDrawingTimer = null;
             TimeSpan? setupPromptTimer = null;
@@ -73,7 +74,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             }
 
             int numOfEachPartInHand = 3;
-            int numUsersPerPrompt = 2;
 
             int numPromptsEachRound = numPromptsForEachUserPerRound * lobby.GetAllUsers().Count / numUsersPerPrompt;
 
@@ -90,20 +90,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                     {
                         return GetSetupDrawingGameState(expectedDrawingsPerUser);
                     }
-                    else if (counter == 1) // todo figure out some way to do the different body parts all in one state
+                    if (counter == 1)
                     {
-                        List<PeopleUserDrawing> drawnHeads = this.Drawings.Where(drawing => drawing.Type == DrawingType.Head).ToList();
-                        return GetExtraSetupDrawingGameState(DrawingType.Head, minDrawingsRequired - drawnHeads.Count());
-                    }
-                    else if (counter == 2) // todo figure out some way to do the different body parts all in one state
-                    {
-                        List<PeopleUserDrawing> drawnBodies = this.Drawings.Where(drawing => drawing.Type == DrawingType.Body).ToList();
-                        return GetExtraSetupDrawingGameState(DrawingType.Head, minDrawingsRequired - drawnBodies.Count());
-                    }
-                    else if (counter == 3) // todo figure out some way to do the different body parts all in one state
-                    {
-                        List<PeopleUserDrawing> drawnLegs = this.Drawings.Where(drawing => drawing.Type == DrawingType.Legs).ToList();
-                        return GetExtraSetupDrawingGameState(DrawingType.Head, minDrawingsRequired - drawnLegs.Count());
+                        return GetExtraSetupDrawingGameState();
                     }
                     else
                     {
@@ -135,7 +124,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             {
                 List<(User, PeopleUserDrawing)> drawingTuples = this.Drawings.Select(drawing => (drawing.Owner, drawing)).ToList();
                 List<(User, PeopleUserDrawing)> trimmedDrawings = CommonHelpers.TrimUserInputList<PeopleUserDrawing>(drawingTuples, expectedDrawingsPerUser * lobby.GetAllUsers().Count);
-                this.Drawings = (ConcurrentBag<PeopleUserDrawing>)trimmedDrawings.Select(drawingTuple => drawingTuple.Item2);
+                this.Drawings = new ConcurrentBag<PeopleUserDrawing>(trimmedDrawings.Select(drawingTuple => drawingTuple.Item2));
             });
             setupPrompt.AddExitListener(() =>
             {
@@ -173,10 +162,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 List<PeopleUserDrawing> headDrawingsCopy = headDrawings.ToList();
                 List<PeopleUserDrawing> bodyDrawingsCopy = bodyDrawings.ToList();
                 List<PeopleUserDrawing> legsDrawingsCopy = legsDrawings.ToList();
-                if(headDrawings.Count != bodyDrawings.Count || bodyDrawings.Count != legsDrawings.Count)
-                {
-                    throw new Exception("Something went wrong while setting up the game");
-                }
 
                 for (int i = 0; i < numPromptsForEachUserPerRound; i++)
                 {
@@ -353,46 +338,74 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                     unityInstructions: "Complete as many prompts as possible before the time runs out",
                     setupDurration: setupPromptTimer);
             }
-            GameState GetExtraSetupDrawingGameState(DrawingType drawingType, int numNeeded)
+            GameState GetExtraSetupDrawingGameState()
             {
-                return new ExtraSetupGameState(
-                    lobby: lobby,
-                    promptGenerator: (User user) => new UserPrompt()
+                List<DrawingType> drawingTypesStillNeeded = new List<DrawingType>();
+                for (int i = 0; i < 3; i++)
+                {
+                    DrawingType type = (DrawingType)i;
+                    List<PeopleUserDrawing> drawnPart = this.Drawings.Where(drawing => drawing.Type == type).ToList();
+                    for (int j = 0; j < minDrawingsRequired / 3 - drawnPart.Count; j++)
                     {
-                        Title = "Time to draw!",
-                        Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",
-                        SubPrompts = new SubPrompt[]
+                        drawingTypesStillNeeded.Add(type);
+                    }
+                }
+
+                if (drawingTypesStillNeeded.Count > 0)
+                {
+                    Dictionary<User, List<DrawingType>> usersToRandomizedDrawingTypes = new Dictionary<User, List<DrawingType>>();
+                    foreach (User user in lobby.GetAllUsers())
+                    {
+                        usersToRandomizedDrawingTypes.Add(user, drawingTypesStillNeeded.OrderBy(_ => Rand.Next()).ToList());
+                    }
+                    return new ExtraSetupGameState(
+                        lobby: lobby,
+                        countingPromptGenerator: (User user, int counter) =>
                         {
-                            new SubPrompt
+                            DrawingType drawingType = usersToRandomizedDrawingTypes[user][counter];
+                            return new UserPrompt()
                             {
-                                Prompt = Invariant($"Draw any \"{drawingType.ToString()}\""),
-                                Drawing = new DrawingPromptMetadata()
+                                Title = "Time to draw!",
+                                Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",
+                                SubPrompts = new SubPrompt[]
                                 {
-                                    WidthInPx = ThreePartPeopleConstants.Widths[drawingType],
-                                    HeightInPx = ThreePartPeopleConstants.Heights[drawingType],
-                                    CanvasBackground = ThreePartPeopleConstants.Backgrounds[drawingType],
+                                    new SubPrompt
+                                    {
+                                        Prompt = Invariant($"Draw any \"{drawingType.ToString()}\""),
+                                        Drawing = new DrawingPromptMetadata()
+                                        {
+                                            WidthInPx = ThreePartPeopleConstants.Widths[drawingType],
+                                            HeightInPx = ThreePartPeopleConstants.Heights[drawingType],
+                                            CanvasBackground = ThreePartPeopleConstants.Backgrounds[drawingType],
+                                        },
+                                    },
                                 },
-                            },
+                                SubmitButton = true
+                            };
                         },
-                        SubmitButton = true
-                    },
-                    formSubmitHandler: (User user, UserFormSubmission input) =>
-                    {
-                        this.Drawings.Add(new PeopleUserDrawing
+                        countingFormSubmitHandler: (User user, UserFormSubmission input, int counter) =>
                         {
-                            Drawing = input.SubForms[0].Drawing,
-                            Owner = user,
-                            Type = drawingType
-                        });
-                        return (true, string.Empty);
-                    },
-                    numExtraObjectsNeeded: numNeeded);
+                            DrawingType drawingType = usersToRandomizedDrawingTypes[user][counter];
+                            this.Drawings.Add(new PeopleUserDrawing
+                            {
+                                Drawing = input.SubForms[0].Drawing,
+                                Owner = user,
+                                Type = drawingType
+                            });
+                            return (true, string.Empty);
+                        },
+                        numExtraObjectsNeeded: drawingTypesStillNeeded.Count);
+                }
+                else
+                {
+                    return null;
+                }
             }
             GameState GetExtraSetupPromptGameState (ConcurrentBag<(User, string)> promptTuples, int numNeeded)
             {
                 return new ExtraSetupGameState(
                     lobby: lobby,
-                    promptGenerator: (User user) => new UserPrompt()
+                    countingPromptGenerator: (User user, int counter) => new UserPrompt()
                     {
                         Title = "Now lets make some battle prompts!",
                         Description = "Examples: Who would win in a fight, Who would make the best actor, Etc.",
@@ -406,7 +419,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                         },
                         SubmitButton = true
                     },
-                    formSubmitHandler: (User user, UserFormSubmission input) =>
+                    countingFormSubmitHandler: (User user, UserFormSubmission input, int counter) =>
                     {
                         if (promptTuples.Select((tuple) => tuple.Item2).Contains(input.SubForms[0].ShortAnswer))
                         {
