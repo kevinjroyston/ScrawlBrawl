@@ -7,7 +7,7 @@ namespace RoystonGameAutomatedTestingClient.DataModels
     static class GameConstants
     {
         #region Default Option Values
-        public const int defaultDelayBetweenSubmissions = 100;
+        public const int defaultDelayBetweenSubmissions = 0;
         #endregion
     }
 }

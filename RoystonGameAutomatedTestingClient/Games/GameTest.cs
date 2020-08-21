@@ -43,7 +43,7 @@ namespace RoystonGameAutomatedTestingClient.Games
                 else if (submission.FuzzyEquals("options"))
                 {
                     Console.WriteLine("\n Options:");
-                    Console.WriteLine("[0]: Delay Between Auto Submissions");
+                    Console.WriteLine("[1]: Delay Between Auto Submissions");
 
                     int optionChoice = Convert.ToInt32(Console.ReadLine());
 

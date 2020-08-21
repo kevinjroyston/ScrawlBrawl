@@ -248,7 +248,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                         DrawingType drawingType = randomizedDrawingTypes[counter % 3];
                         return new UserPrompt()
                         {
-                            Title = "Time to draw!",
+                            Title = Invariant($"Time to draw! Drawing {counter + 1} of {numExpectedPerUser} expected"),
                             Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",
                             SubPrompts = new SubPrompt[]
                             {
@@ -302,7 +302,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                     {
                         return new UserPrompt()
                         {
-                            Title = "Now lets make some battle prompts!",
+                            Title = Invariant($"Now lets make some prompts! Prompt {counter + 1} of {numExpectedPerUser} expected"),
                             Description = "Examples: Who would win in a fight, Who would make the best actor, Etc.",
                             SubPrompts = new SubPrompt[]
                             {
@@ -496,6 +496,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
     
         public void ValidateOptions(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
+            //todo when this can check number of players in lobby check that num prompts and num players per prompt can work with the lobby size
+
+
             /*if(gameLobby.GetAllUsers().Count%2==1 && int.Parse(gameModeOptions[1].ShortAnswer)%2==1)
             {
                 throw new GameModeInstantiationException("Numer of prompts per round must even if you have an odd number of players");
@@ -510,6 +513,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             List<User> randomizedUsersToDisplay = prompt.UsersToUserHands.Keys.OrderBy(_ => Rand.Next()).ToList();
             List<Person> peopleToVoteOn = randomizedUsersToDisplay.Select(user => prompt.UsersToUserHands[user].Contestant).ToList();
             List<string> imageTitles = randomizedUsersToDisplay.Select(user => prompt.UsersToUserHands[user].Contestant.Name).ToList();
+            List<string> imageHeaders = randomizedUsersToDisplay.Select(user => user.DisplayName).ToList();
 
             return new ThreePartPersonVoteAndRevealState(
                 lobby: this.Lobby,
@@ -523,6 +527,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 VotingTitle = prompt.Text,
                 ObjectTitles = imageTitles,
                 ShowObjectTitlesForVoting = true,
+                ObjectHeaders = imageHeaders,
+                ShowObjectHeadersForVoting = false
             };
         }
         private void CountVotes(Dictionary<User, int> usersToVotes, Prompt prompt, List<User> answerUsers)
