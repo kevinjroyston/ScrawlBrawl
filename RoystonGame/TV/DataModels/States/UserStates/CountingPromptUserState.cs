@@ -15,7 +15,7 @@ namespace RoystonGame.TV.DataModels.States.UserStates
     public class CountingPromptUserState : SimplePromptUserState
     {
         private static int counter = -1;
-        public CountingPromptUserState(
+        public CountingPromptUserState( // not working not used
             Func<User, int, UserPrompt> countingPromptGenerator = null,
             TimeSpan? maxPromptDuration = null,
             Func<User, UserFormSubmission, int, (bool, string)> countingFormSubmitHandler = null,

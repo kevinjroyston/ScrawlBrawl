@@ -19,14 +19,14 @@ using System.Threading.Tasks;
 
 namespace RoystonGame.TV.GameModes.Common.GameStates
 {
-    public class SetupGameState : GameState
+    public abstract class SetupGameState : GameState
     {
+        public abstract UserPrompt CountingPromptGenerator(User user, int counter);
+        public abstract (bool, string) CountingFormSubmitHandler(User user, UserFormSubmission input, int counter);
+        public abstract UserTimeoutAction CountingUserTimeoutHandler(User user, UserFormSubmission input, int counter);
         public SetupGameState(
             Lobby lobby,
-            Func<User, int, UserPrompt> countingPromptGenerator,
-            Func<User, UserFormSubmission, int, (bool, string)> countingFormSubmitHandler,
-            Func<User, UserFormSubmission, int, UserTimeoutAction> countingUserTimeoutHandler,
-            int perUserExpectedAmount,
+            int numExpectedPerUser,
             string optionalInputTitleOverride = "Optional",
             string optionalInputDescriptionOverride = "You did it! keep going if you want. These will be used if someone else didnt make enough.",
             string unityTitle = "Setup Time!",
@@ -34,7 +34,7 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
             TimeSpan? setupDurration = null) 
             : base(lobby: lobby, exit: new WaitForUsers_StateExit(lobby))
         {
-            int perUserInputLimit = CommonHelpers.GetMaxInputsFromExpected(perUserExpectedAmount);
+            int perUserInputLimit = CommonHelpers.GetMaxInputsFromExpected(numExpectedPerUser);
             ConcurrentDictionary<User, int> usersToNumSubmitted = new ConcurrentDictionary<User, int>();
             foreach (User user in lobby.GetAllUsers())
             {
@@ -43,16 +43,16 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
             StateChain setupChain = new StateChain(
                 stateGenerator: (int counter) =>
                 {
-                    if (counter < perUserExpectedAmount)
+                    if (counter < numExpectedPerUser)
                     {
                         return new SimplePromptUserState(
                             promptGenerator: (User user) =>
                             {
-                                return countingPromptGenerator(user, usersToNumSubmitted[user]);
+                                return CountingPromptGenerator(user, usersToNumSubmitted[user]);
                             },
                             formSubmitHandler: (User user, UserFormSubmission input) =>
                             {
-                                (bool, string) handlerResponse = countingFormSubmitHandler(user, input, usersToNumSubmitted[user]);
+                                (bool, string) handlerResponse = CountingFormSubmitHandler(user, input, usersToNumSubmitted[user]);
                                 if (handlerResponse.Item1)
                                 {
                                     usersToNumSubmitted[user]++;
@@ -61,24 +61,24 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
                             },
                             userTimeoutHandler: (User user, UserFormSubmission input) =>
                             {
-                                return countingUserTimeoutHandler(user, input, usersToNumSubmitted[user]);
+                                return CountingUserTimeoutHandler(user, input, usersToNumSubmitted[user]);
                             });
                     }
                     else if (counter < perUserInputLimit)
                     {
-                        if (usersToNumSubmitted.Any(kvp => kvp.Value < perUserExpectedAmount)) // only goes to optional inputs if there is anyone who hasnt submitted the expected amount yet
+                        if (usersToNumSubmitted.Any(kvp => kvp.Value < numExpectedPerUser)) // only goes to optional inputs if there is anyone who hasnt submitted the expected amount yet
                         {
                             return new SimplePromptUserState(
                                 promptGenerator: (User user) =>
                                 {
-                                    UserPrompt optionalInputPrompt = countingPromptGenerator(user, usersToNumSubmitted[user]);
+                                    UserPrompt optionalInputPrompt = CountingPromptGenerator(user, usersToNumSubmitted[user]);
                                     optionalInputPrompt.Title = optionalInputTitleOverride;
                                     optionalInputPrompt.Description = optionalInputDescriptionOverride;
                                     return optionalInputPrompt;
                                 },
                                 formSubmitHandler: (User user, UserFormSubmission input) =>
                                 {
-                                    (bool, string) handlerResponse = countingFormSubmitHandler(user, input, usersToNumSubmitted[user]);
+                                    (bool, string) handlerResponse = CountingFormSubmitHandler(user, input, usersToNumSubmitted[user]);
                                     if (handlerResponse.Item1)
                                     {
                                         usersToNumSubmitted[user]++;
@@ -87,7 +87,7 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
                                 },
                                 userTimeoutHandler: (User user, UserFormSubmission input) =>
                                 {
-                                    return countingUserTimeoutHandler(user, input, usersToNumSubmitted[user]);
+                                    return CountingUserTimeoutHandler(user, input, usersToNumSubmitted[user]);
                                 });
                         }
                         else

@@ -1,4 +1,6 @@
-﻿namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels
+﻿using System.Collections.Generic;
+
+namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels
 {
     public static class BattleReadyConstants
     {

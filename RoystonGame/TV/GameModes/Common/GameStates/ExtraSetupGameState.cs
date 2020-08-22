@@ -18,12 +18,12 @@ using static System.FormattableString;
 
 namespace RoystonGame.TV.GameModes.Common.GameStates
 {
-    public class ExtraSetupGameState : GameState
+    public abstract class ExtraSetupGameState : GameState
     {
+        public abstract UserPrompt CountingPromptGenerator(User user, int counter);
+        public abstract (bool, string) CountingFormSubmitHandler(User user, UserFormSubmission input, int counter);
         public ExtraSetupGameState(
             Lobby lobby,
-            Func<User, int, UserPrompt> countingPromptGenerator,
-            Func<User, UserFormSubmission, int, (bool, string)> countingFormSubmitHandler,
             int numExtraObjectsNeeded)
             : base(lobby: lobby, exit: new WaitForUsers_StateExit(lobby))
         {
@@ -41,11 +41,11 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
                         return new SimplePromptUserState(
                             promptGenerator: (User user) =>
                             {
-                                return countingPromptGenerator(user, usersToNumSubmitted[user]);
+                                return CountingPromptGenerator(user, usersToNumSubmitted[user]);
                             },
                             formSubmitHandler: (User user, UserFormSubmission input) =>
                             {
-                                (bool, string) handlerResponse = countingFormSubmitHandler(user, input, usersToNumSubmitted[user]);
+                                (bool, string) handlerResponse = CountingFormSubmitHandler(user, input, usersToNumSubmitted[user]);
                                 if (handlerResponse.Item1)
                                 {
                                     numLeft--;

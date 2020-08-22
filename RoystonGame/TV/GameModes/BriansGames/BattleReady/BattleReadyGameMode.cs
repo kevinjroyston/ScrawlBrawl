@@ -88,11 +88,36 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 {
                     if (counter == 0)
                     {
-                        return GetSetupDrawingGameState(expectedDrawingsPerUser);
+                        return new SetupDrawings_GS(
+                            lobby: lobby,
+                            drawings: this.Drawings,
+                            numExpectedPerUser: expectedDrawingsPerUser,
+                            setupDurration: setupDrawingTimer);
                     }
                     if (counter == 1)
                     {
-                        return GetExtraSetupDrawingGameState();
+                        List<DrawingType> drawingTypesStillNeeded = new List<DrawingType>();
+                        for (int i = 0; i < 3; i++)
+                        {
+                            DrawingType type = (DrawingType)i;
+                            List<PeopleUserDrawing> drawnPart = this.Drawings.Where(drawing => drawing.Type == type).ToList();
+                            for (int j = 0; j < minDrawingsRequired / 3 - drawnPart.Count; j++)
+                            {
+                                drawingTypesStillNeeded.Add(type);
+                            }
+                        }
+
+                        if (drawingTypesStillNeeded.Count > 0)
+                        {
+                            return new ExtraSetupDrawing_GS(
+                                lobby: lobby,
+                                drawings: this.Drawings,
+                                typesOfDrawingsStillNeeded: drawingTypesStillNeeded);
+                        }
+                        else
+                        {
+                            return null;
+                        }
                     }
                     else
                     {
@@ -105,13 +130,20 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 {
                     if (counter == 0)
                     {
-                        return GetSetupPromptGameState(expectedPromptsPerUser);
+                        return new SetupPrompts_GS(
+                            lobby: lobby,
+                            promptTuples: promptTuples,
+                            numExpectedPerUser: expectedPromptsPerUser,
+                            setupDurration: setupPromptTimer);
                     }
                     else if (counter == 1)
                     {
                         if (promptTuples.Count < minPromptsRequired)
                         {
-                            return GetExtraSetupPromptGameState(promptTuples, minDrawingsRequired - promptTuples.Count);
+                            return new ExtraSetupPrompt_GS(
+                                lobby: lobby,
+                                promptTuples: promptTuples,
+                                numExtraNeeded: minPromptsRequired - promptTuples.Count);
                         }
                         return null;
                     }
@@ -233,202 +265,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                         creationDuration: creationTimer);
                 toReturn.Transition(CreateVotingGameStates(roundPrompts));
                 return toReturn;
-            }
-            GameState GetSetupDrawingGameState(int numExpectedPerUser)
-            {
-                List<DrawingType> randomizedDrawingTypes = new List<DrawingType>() { DrawingType.Head, DrawingType.Body, DrawingType.Legs };
-                return new SetupGameState(
-                    lobby: lobby,
-                    countingPromptGenerator: (User user, int counter) =>
-                    {
-                        if (counter % 3 == 0)
-                        {
-                            randomizedDrawingTypes = randomizedDrawingTypes.OrderBy(_ => Rand.Next()).ToList();
-                        }
-                        DrawingType drawingType = randomizedDrawingTypes[counter % 3];
-                        return new UserPrompt()
-                        {
-                            Title = Invariant($"Time to draw! Drawing {counter + 1} of {numExpectedPerUser} expected"),
-                            Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",
-                            SubPrompts = new SubPrompt[]
-                            {
-                                new SubPrompt
-                                {
-                                    Prompt = Invariant($"Draw any \"{drawingType.ToString()}\""),
-                                    Drawing = new DrawingPromptMetadata()
-                                    {
-                                        WidthInPx = ThreePartPeopleConstants.Widths[drawingType],
-                                        HeightInPx = ThreePartPeopleConstants.Heights[drawingType],
-                                        CanvasBackground = ThreePartPeopleConstants.Backgrounds[drawingType],
-                                    },
-                                },
-                            },
-                            SubmitButton = true
-                        };
-                    },
-                    countingFormSubmitHandler: (User user, UserFormSubmission input, int counter) =>
-                    {
-                        this.Drawings.Add(new PeopleUserDrawing
-                        {
-                            Drawing = input.SubForms[0].Drawing,
-                            Owner = user,
-                            Type = randomizedDrawingTypes[counter % 3]
-                        });
-                        return (true, string.Empty);
-                    },
-                    countingUserTimeoutHandler: (User user, UserFormSubmission input, int counter) =>
-                    {
-                        if (input?.SubForms?[0]?.Drawing != null)
-                        {
-                            Drawings.Add(new PeopleUserDrawing
-                            {
-                                Drawing = input.SubForms[0].Drawing,
-                                Owner = user,
-                                Type = randomizedDrawingTypes[counter % 3]
-                            });
-                        }
-                        return UserTimeoutAction.None;
-                    },
-                    perUserExpectedAmount: numExpectedPerUser,
-                    unityTitle: "",
-                    unityInstructions: "Complete as many drawings as possible before the time runs out",
-                    setupDurration: setupDrawingTimer);
-            }
-            GameState GetSetupPromptGameState(int numExpectedPerUser)
-            {
-                return new SetupGameState(
-                    lobby: lobby,
-                    countingPromptGenerator: (User user, int counter) =>
-                    {
-                        return new UserPrompt()
-                        {
-                            Title = Invariant($"Now lets make some prompts! Prompt {counter + 1} of {numExpectedPerUser} expected"),
-                            Description = "Examples: Who would win in a fight, Who would make the best actor, Etc.",
-                            SubPrompts = new SubPrompt[]
-                            {
-                                new SubPrompt
-                                {
-                                    Prompt="Prompt",
-                                    ShortAnswer=true
-                                },
-                            },
-                            SubmitButton = true
-                        };
-                    },
-                    countingFormSubmitHandler: (User user, UserFormSubmission input, int counter) =>
-                    {
-                        if (promptTuples.Select((tuple) => tuple.Item2).Contains(input.SubForms[0].ShortAnswer))
-                        {
-                            return (false, "Someone has already entered that prompt");
-                        }
-                        promptTuples.Add((user, input.SubForms[0].ShortAnswer));
-                        return (true, String.Empty);
-                    },
-                    countingUserTimeoutHandler: (User user, UserFormSubmission input, int counter) =>
-                    {
-                        if (input?.SubForms?[0]?.ShortAnswer != null
-                        && !promptTuples.Select((tuple) => tuple.Item2).Contains(input.SubForms[0].ShortAnswer))
-                        {
-                            promptTuples.Add((user, input.SubForms[0].ShortAnswer));
-                        }
-                        return UserTimeoutAction.None;
-                    },
-                    perUserExpectedAmount: numExpectedPerUser,
-                    unityTitle: "",
-                    unityInstructions: "Complete as many prompts as possible before the time runs out",
-                    setupDurration: setupPromptTimer);
-            }
-            GameState GetExtraSetupDrawingGameState()
-            {
-                List<DrawingType> drawingTypesStillNeeded = new List<DrawingType>();
-                for (int i = 0; i < 3; i++)
-                {
-                    DrawingType type = (DrawingType)i;
-                    List<PeopleUserDrawing> drawnPart = this.Drawings.Where(drawing => drawing.Type == type).ToList();
-                    for (int j = 0; j < minDrawingsRequired / 3 - drawnPart.Count; j++)
-                    {
-                        drawingTypesStillNeeded.Add(type);
-                    }
-                }
-
-                if (drawingTypesStillNeeded.Count > 0)
-                {
-                    Dictionary<User, List<DrawingType>> usersToRandomizedDrawingTypes = new Dictionary<User, List<DrawingType>>();
-                    foreach (User user in lobby.GetAllUsers())
-                    {
-                        usersToRandomizedDrawingTypes.Add(user, drawingTypesStillNeeded.OrderBy(_ => Rand.Next()).ToList());
-                    }
-                    return new ExtraSetupGameState(
-                        lobby: lobby,
-                        countingPromptGenerator: (User user, int counter) =>
-                        {
-                            DrawingType drawingType = usersToRandomizedDrawingTypes[user][counter];
-                            return new UserPrompt()
-                            {
-                                Title = "Time to draw!",
-                                Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",
-                                SubPrompts = new SubPrompt[]
-                                {
-                                    new SubPrompt
-                                    {
-                                        Prompt = Invariant($"Draw any \"{drawingType.ToString()}\""),
-                                        Drawing = new DrawingPromptMetadata()
-                                        {
-                                            WidthInPx = ThreePartPeopleConstants.Widths[drawingType],
-                                            HeightInPx = ThreePartPeopleConstants.Heights[drawingType],
-                                            CanvasBackground = ThreePartPeopleConstants.Backgrounds[drawingType],
-                                        },
-                                    },
-                                },
-                                SubmitButton = true
-                            };
-                        },
-                        countingFormSubmitHandler: (User user, UserFormSubmission input, int counter) =>
-                        {
-                            DrawingType drawingType = usersToRandomizedDrawingTypes[user][counter];
-                            this.Drawings.Add(new PeopleUserDrawing
-                            {
-                                Drawing = input.SubForms[0].Drawing,
-                                Owner = user,
-                                Type = drawingType
-                            });
-                            return (true, string.Empty);
-                        },
-                        numExtraObjectsNeeded: drawingTypesStillNeeded.Count);
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            GameState GetExtraSetupPromptGameState (ConcurrentBag<(User, string)> promptTuples, int numNeeded)
-            {
-                return new ExtraSetupGameState(
-                    lobby: lobby,
-                    countingPromptGenerator: (User user, int counter) => new UserPrompt()
-                    {
-                        Title = "Now lets make some battle prompts!",
-                        Description = "Examples: Who would win in a fight, Who would make the best actor, Etc.",
-                        SubPrompts = new SubPrompt[]
-                        {
-                            new SubPrompt
-                            {
-                                Prompt="Prompt",
-                                ShortAnswer=true
-                            },
-                        },
-                        SubmitButton = true
-                    },
-                    countingFormSubmitHandler: (User user, UserFormSubmission input, int counter) =>
-                    {
-                        if (promptTuples.Select((tuple) => tuple.Item2).Contains(input.SubForms[0].ShortAnswer))
-                        {
-                            return (false, "Someone has already entered that prompt");
-                        }
-                        promptTuples.Add((user, input.SubForms[0].ShortAnswer));
-                        return (true, String.Empty);
-                    },
-                    numExtraObjectsNeeded: numNeeded);
             }
             Func<StateChain> CreateVotingGameStates(List<Prompt> roundPrompts)
             {

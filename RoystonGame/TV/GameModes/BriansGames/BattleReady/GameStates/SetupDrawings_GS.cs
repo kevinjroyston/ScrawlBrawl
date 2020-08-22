@@ -18,85 +18,86 @@ using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.TV.DataModels.Enums;
+using RoystonGame.TV.GameModes.Common.GameStates;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
 {
-    public class SetupDrawings_GS : GameState
+    public class SetupDrawings_GS : SetupGameState
     {
-        private State GetDrawingState(ConcurrentBag<PeopleUserDrawing> drawings)
+        private Random Rand { get; } = new Random();
+        private Dictionary<User, List<DrawingType>> UsersToRandomizedDrawingTypes { get; set; } = new Dictionary<User, List<DrawingType>>();
+        private int NumExpectedPerUser { get; set; }
+        private ConcurrentBag<PeopleUserDrawing> Drawings { get; set; }
+        public SetupDrawings_GS(
+            Lobby lobby,
+            ConcurrentBag<PeopleUserDrawing> drawings,
+            int numExpectedPerUser,
+            TimeSpan? setupDurration = null)
+            : base(
+                lobby: lobby,
+                numExpectedPerUser: numExpectedPerUser,
+                unityTitle: "",
+                unityInstructions: "Complete as many drawings as possible before the time runs out",
+                setupDurration: setupDurration)
         {
-            DrawingType drawingType = (DrawingType)Rand.Next(0, 3);
-            return new SimplePromptUserState(
-                promptGenerator: (User user) => new UserPrompt()
+            this.NumExpectedPerUser = numExpectedPerUser;
+            this.Drawings = drawings;
+            
+            foreach(User user in lobby.GetAllUsers())
+            {
+                UsersToRandomizedDrawingTypes.Add(user, ThreePartPeopleConstants.DrawingTypesList.OrderBy(_ => Rand.Next()).ToList());
+            }
+        }
+
+        public override UserPrompt CountingPromptGenerator(User user, int counter)
+        {
+            if (counter % 3 == 0)
+            {
+                UsersToRandomizedDrawingTypes[user] = ThreePartPeopleConstants.DrawingTypesList.OrderBy(_ => Rand.Next()).ToList();
+            }
+            DrawingType drawingType = UsersToRandomizedDrawingTypes[user][counter % 3];
+            return new UserPrompt()
+            {
+                Title = Invariant($"Time to draw! Drawing {counter + 1} of {NumExpectedPerUser} expected"),
+                Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",
+                SubPrompts = new SubPrompt[]
                 {
-                    Title = "Time to draw!",
-                    Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",
-                    SubPrompts = new SubPrompt[]
+                    new SubPrompt
                     {
-                        new SubPrompt
+                        Prompt = Invariant($"Draw any \"{drawingType.ToString()}\""),
+                        Drawing = new DrawingPromptMetadata()
                         {
-                            Prompt = Invariant($"Draw any \"{drawingType.ToString()}\""),
-                            Drawing = new DrawingPromptMetadata()
-                            {
-                                WidthInPx = ThreePartPeopleConstants.Widths[drawingType],
-                                HeightInPx = ThreePartPeopleConstants.Heights[drawingType],
-                                CanvasBackground = ThreePartPeopleConstants.Backgrounds[drawingType],
-                            },
+                            WidthInPx = ThreePartPeopleConstants.Widths[drawingType],
+                            HeightInPx = ThreePartPeopleConstants.Heights[drawingType],
+                            CanvasBackground = ThreePartPeopleConstants.Backgrounds[drawingType],
                         },
                     },
-                    SubmitButton = true
                 },
-                formSubmitHandler: (User user, UserFormSubmission input) =>
-                {
-                    drawings.Add(new PeopleUserDrawing
-                    {
-                        Drawing = input.SubForms[0].Drawing,
-                        Owner = user,
-                        Type = drawingType
-                    });
-                    return (true, string.Empty);
-                },
-                userTimeoutHandler: (User user, UserFormSubmission input) =>
-                {
-                    if (input?.SubForms?[0]?.Drawing != null)
-                    {
-                        drawings.Add(new PeopleUserDrawing
-                        {
-                            Drawing = input.SubForms[0].Drawing,
-                            Owner = user,
-                            Type = drawingType
-                        });
-                    }
-                    return UserTimeoutAction.None;
-                });
-        }
-        private Random Rand = new Random();
-        public SetupDrawings_GS(Lobby lobby, ConcurrentBag<PeopleUserDrawing> drawings, TimeSpan? setupDrawingDurration, int perUserDrawingLimit)
-            : base(
-                  lobby: lobby,
-                  exit: new WaitForUsers_StateExit(lobby))
-        {
-            StateChain drawingStateChain = new StateChain(
-                stateGenerator: (int counter) =>
-                {
-                    if (counter < perUserDrawingLimit)
-                    {
-                        return GetDrawingState(drawings);
-                    }
-                    else
-                    {
-                        return null;
-                    }   
-                },
-                stateDuration: setupDrawingDurration);
-
-            this.Entrance.Transition(drawingStateChain);
-            drawingStateChain.Transition(this.Exit);
-            this.UnityView = new UnityView(lobby)
-            {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
-                Instructions = new StaticAccessor<string> { Value = "Complete as many drawings as possible before the time runs out" },
+                SubmitButton = true
             };
+        }
+        public override (bool, string) CountingFormSubmitHandler(User user, UserFormSubmission input, int counter)
+        {
+            this.Drawings.Add(new PeopleUserDrawing
+            {
+                Drawing = input.SubForms[0].Drawing,
+                Owner = user,
+                Type = UsersToRandomizedDrawingTypes[user][counter % 3]
+            });
+            return (true, string.Empty);
+        }
+        public override UserTimeoutAction CountingUserTimeoutHandler(User user, UserFormSubmission input, int counter)
+        {
+            if (input?.SubForms?[0]?.Drawing != null)
+            {
+                Drawings.Add(new PeopleUserDrawing
+                {
+                    Drawing = input.SubForms[0].Drawing,
+                    Owner = user,
+                    Type = UsersToRandomizedDrawingTypes[user][counter % 3]
+                });
+            }
+            return UserTimeoutAction.None;
         }
     }
 }
