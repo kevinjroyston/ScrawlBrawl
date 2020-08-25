@@ -30,7 +30,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
     {
         private ConcurrentBag<PeopleUserDrawing> Drawings { get; set; } = new ConcurrentBag<PeopleUserDrawing>();
         private Lobby Lobby { get; set; }
-        private List<Prompt> Prompts { get;} = new List<Prompt>();
+        private ConcurrentBag<Prompt> Prompts { get; set; } = new ConcurrentBag<Prompt>();
         private RoundTracker RoundTracker { get; } = new RoundTracker();
         private Random Rand { get; } = new Random();
         public BattleReadyGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
@@ -132,7 +132,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                     {
                         return new SetupPrompts_GS(
                             lobby: lobby,
-                            promptTuples: promptTuples,
+                            prompts: this.Prompts,
                             numExpectedPerUser: expectedPromptsPerUser,
                             setupDurration: setupPromptTimer);
                     }
@@ -154,21 +154,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 });
             setupDrawing.AddExitListener(() =>
             {
-                List<(User, PeopleUserDrawing)> drawingTuples = this.Drawings.Select(drawing => (drawing.Owner, drawing)).ToList();
-                List<(User, PeopleUserDrawing)> trimmedDrawings = CommonHelpers.TrimUserInputList<PeopleUserDrawing>(drawingTuples, expectedDrawingsPerUser * lobby.GetAllUsers().Count);
-                this.Drawings = new ConcurrentBag<PeopleUserDrawing>(trimmedDrawings.Select(drawingTuple => drawingTuple.Item2));
+                this.Drawings = new ConcurrentBag<PeopleUserDrawing>(CommonHelpers.TrimUserInputList(this.Drawings.ToList(), expectedDrawingsPerUser * lobby.GetAllUsers().Count).Cast<PeopleUserDrawing>());
             });
             setupPrompt.AddExitListener(() =>
             {
-                List<(User, string)> trimmedPrompts = CommonHelpers.TrimUserInputList<string>(promptTuples.ToList(), expectedPromptsPerUser * lobby.GetAllUsers().Count);
-                foreach ((User, string) promptTuple in trimmedPrompts)
-                {
-                    Prompts.Add(new Prompt
-                    {
-                        Owner = promptTuple.Item1,
-                        Text = promptTuple.Item2
-                    });
-                }
+                this.Prompts = new ConcurrentBag<Prompt>(CommonHelpers.TrimUserInputList(this.Prompts.ToList(), expectedPromptsPerUser * lobby.GetAllUsers().Count).Cast<Prompt>());
+
                 promptsCopy = Prompts.ToList();
             });
 
@@ -211,7 +202,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                         }
                         if(randPrompt == null)
                         {
-                            throw new Exception("Something went wrong while setting up the game");
+                            continue;
+                            //throw new Exception("Something went wrong while setting up the game");
                         }
 
                         List<PeopleUserDrawing> headDrawingsToAdd = new List<PeopleUserDrawing>();

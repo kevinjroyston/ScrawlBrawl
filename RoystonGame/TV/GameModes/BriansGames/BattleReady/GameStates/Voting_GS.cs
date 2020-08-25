@@ -67,7 +67,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
             this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
-                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = prompt.UsersToUserHands.Values.Select((userHand) => userHand.Contestant.GetPersonImage()).ToList() },
+                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = prompt.UsersToUserHands.Values.Select((userHand) => userHand.Contestant.GetUnityImage()).ToList() },
                 Title = new StaticAccessor<string> { Value = prompt.Text },
             };
           

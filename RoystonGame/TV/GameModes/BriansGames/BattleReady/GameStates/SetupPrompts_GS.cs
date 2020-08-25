@@ -6,6 +6,8 @@ using RoystonGame.TV.DataModels.States.StateGroups;
 using RoystonGame.TV.DataModels.States.UserStates;
 using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.Extensions;
+using RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels;
+using RoystonGame.TV.GameModes.Common.DataModels.UserCreatedObjects;
 using RoystonGame.TV.GameModes.Common.GameStates;
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
@@ -24,10 +26,10 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
     {
         private Random Rand { get; } = new Random();
         private int NumExpectedPerUser { get; set; }
-        private ConcurrentBag<(User, string)> PromptTuples { get; set; }
+        private ConcurrentBag<Prompt> Prompts { get; set; }
         public SetupPrompts_GS(
             Lobby lobby,
-            ConcurrentBag<(User, string)> promptTuples,
+            ConcurrentBag<Prompt> prompts,
             int numExpectedPerUser,
             TimeSpan? setupDurration = null)
             : base(
@@ -38,7 +40,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                 setupDurration: setupDurration)
         {
             this.NumExpectedPerUser = numExpectedPerUser;
-            this.PromptTuples = promptTuples;
+            this.Prompts = prompts;
         }
 
         public override UserPrompt CountingPromptGenerator(User user, int counter)
@@ -60,19 +62,29 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         }
         public override (bool, string) CountingFormSubmitHandler(User user, UserFormSubmission input, int counter)
         {
-            if (PromptTuples.Select((tuple) => tuple.Item2).Contains(input.SubForms[0].ShortAnswer))
+            if (Prompts.Select((prompt) => prompt.Text).Contains(input.SubForms[0].ShortAnswer))
             {
                 return (false, "Someone has already entered that prompt");
             }
-            PromptTuples.Add((user, input.SubForms[0].ShortAnswer));
+            Prompts.Add( 
+                new Prompt()
+                {
+                    Owner = user,
+                    Text = input.SubForms[0].ShortAnswer
+                });
             return (true, String.Empty);
         }
         public override UserTimeoutAction CountingUserTimeoutHandler(User user, UserFormSubmission input, int counter)
         {
             if (input?.SubForms?[0]?.ShortAnswer != null
-            && !PromptTuples.Select((tuple) => tuple.Item2).Contains(input.SubForms[0].ShortAnswer))
+            && !Prompts.Select((prompt) => prompt.Text).Contains(input.SubForms[0].ShortAnswer))
             {
-                PromptTuples.Add((user, input.SubForms[0].ShortAnswer));
+                Prompts.Add(
+                    new Prompt()
+                    {
+                        Owner = user,
+                        Text = input.SubForms[0].ShortAnswer
+                    });
             }
             return UserTimeoutAction.None;
         }

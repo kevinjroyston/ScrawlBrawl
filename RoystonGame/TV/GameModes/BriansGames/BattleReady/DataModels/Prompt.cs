@@ -1,4 +1,5 @@
 ﻿using RoystonGame.TV.DataModels.Users;
+using RoystonGame.TV.GameModes.Common.DataModels;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -6,9 +7,8 @@ using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels
 {
-    public class Prompt
+    public class Prompt : UserCreatedObject
     {
-        public User Owner { get; set; }
         public string Text { get; set; }
         public User Winner { get; set; }
         public class UserHand

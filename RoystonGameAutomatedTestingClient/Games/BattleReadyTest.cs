@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Identity.Client;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.Web.CodeGeneration.Design;
 using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.DataModels.Users;
@@ -17,6 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 using static System.FormattableString;
 
 namespace RoystonGameAutomatedTestingClient.Games
@@ -31,7 +33,23 @@ namespace RoystonGameAutomatedTestingClient.Games
                 {
                     if (userPrompt.SubPrompts[0].Drawing != null) //first prompt is drawing, must be drawing state
                     {
-                        return MakeDrawing(userId);
+                        string promptTitle = userPrompt.SubPrompts[0].Prompt;
+                        if (promptTitle.Contains("Head", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return MakeDrawing(userId, DrawingType.Head);
+                        }
+                        else if (promptTitle.Contains("Body", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return MakeDrawing(userId, DrawingType.Body);
+                        }
+                        else if (promptTitle.Contains("Legs", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return MakeDrawing(userId, DrawingType.Legs);
+                        }
+                        else
+                        {
+                            Debug.Fail("Couldnt find drawing type");
+                        }
                     }
                     else if (userPrompt.SubPrompts[0].ShortAnswer) //first prompt is shortasnwer, must be prompt state
                     {
@@ -53,9 +71,20 @@ namespace RoystonGameAutomatedTestingClient.Games
             }
             return Task.CompletedTask;
         }
-        private async Task MakeDrawing(string userId)
+        private async Task MakeDrawing(string userId, DrawingType type)
         {
-            await CommonSubmissions.SubmitSingleDrawing(userId); 
+            if (type == DrawingType.Head)
+            {
+                await CommonSubmissions.SubmitSingleDrawing(userId, Constants.Drawings.Head );
+            }
+            else if (type == DrawingType.Body)
+            {
+                await CommonSubmissions.SubmitSingleDrawing(userId, Constants.Drawings.Body );
+            }
+            else if (type == DrawingType.Legs)
+            {
+                await CommonSubmissions.SubmitSingleDrawing(userId, Constants.Drawings.Legs );
+            }
         }
         private async Task MakePrompt(string userId)
         {

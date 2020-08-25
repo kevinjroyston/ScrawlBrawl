@@ -38,7 +38,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
             DrawingType drawingType = UsersToDrawingTypesStillNeeded[user][counter];
             return new UserPrompt()
             {
-                Title = "Time to draw!",
+                Title = Constants.UIStrings.DrawingPromptTitle,
                 Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",
                 SubPrompts = new SubPrompt[]
                 {

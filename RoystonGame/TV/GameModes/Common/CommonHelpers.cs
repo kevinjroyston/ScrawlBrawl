@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.IdentityModel.Tokens;
 using RoystonGame.TV.DataModels.Users;
+using RoystonGame.TV.GameModes.Common.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,24 +26,28 @@ namespace RoystonGame.TV.GameModes.Common
             }
         }
 
-        public static List<(User, T)> TrimUserInputList<T>(List<(User, T)> userInputs, int numInputsWanted)
+        public static IEnumerable<UserCreatedObject> TrimUserInputList(IEnumerable<UserCreatedObject> userInputs, int numInputsWanted)
         {
-            Dictionary<User, List<T>> usersToInputs = new Dictionary<User, List<T>>();
-            foreach ((User, T) userInput in userInputs)
+            Dictionary<User, List<UserCreatedObject>> usersToInputs = new Dictionary<User, List<UserCreatedObject>>();
+            foreach (UserCreatedObject userInput in userInputs)
             {
-                if (!usersToInputs.ContainsKey(userInput.Item1))
+                if (!usersToInputs.ContainsKey(userInput.Owner))
                 {
-                    usersToInputs.Add(userInput.Item1, new List<T>());
+                    usersToInputs.Add(userInput.Owner, new List<UserCreatedObject>());
                 }
-                usersToInputs[userInput.Item1].Add(userInput.Item2);
+                usersToInputs[userInput.Owner].Add(userInput);
             }
-            List<(User, T)> trimmedUserInputs = userInputs.ToList();
+            List<User> keys = usersToInputs.Keys.ToList();
+            foreach (User user in keys)
+            {
+                usersToInputs[user] = usersToInputs[user].OrderBy(input => input.CreationTime).ToList();
+            }
+            List<UserCreatedObject> trimmedUserInputs = userInputs.ToList();
             while (trimmedUserInputs.Count > numInputsWanted)
             {
                 User userWithMostInputs = GetUserWithMostInputs();
-                int indexToRemove = Rand.Next(0, usersToInputs[userWithMostInputs].Count);
-                trimmedUserInputs.Remove((userWithMostInputs, usersToInputs[userWithMostInputs][indexToRemove]));
-                usersToInputs[userWithMostInputs].RemoveAt(indexToRemove);
+                trimmedUserInputs.Remove(usersToInputs[userWithMostInputs].Last());
+                usersToInputs[userWithMostInputs].RemoveAt(usersToInputs[userWithMostInputs].Count - 1);
             }
 
             return trimmedUserInputs;
@@ -61,9 +66,9 @@ namespace RoystonGame.TV.GameModes.Common
             }
         }
 
-        public static int GetMaxInputsFromExpected(int numExpected)
+        public static int GetMaxInputsFromExpected(int numExpected, float multiplier = 1.3f, int minExtra = 2)
         {
-            return (int)Math.Ceiling(numExpected * 1.3);
+            return Math.Max((int)Math.Ceiling(numExpected * multiplier), numExpected + minExtra);
         }
         public static int PointsForSpeed(int maxPoints, int minPoints, double startTime, double endTime, double secondsTaken)
         {

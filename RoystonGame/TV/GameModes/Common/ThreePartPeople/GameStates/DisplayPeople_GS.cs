@@ -47,7 +47,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.Common.GameStates
             var unityImages = new List<UnityImage>();
             foreach(Person person in peopleList)
             {
-                unityImages.Add(person.GetPersonImage(
+                unityImages.Add(person.GetUnityImage(
                     backgroundColor: backgroundColor(person),
                     imageIdentifier: imageIdentifier(person),
                     title: imageTitle(person),

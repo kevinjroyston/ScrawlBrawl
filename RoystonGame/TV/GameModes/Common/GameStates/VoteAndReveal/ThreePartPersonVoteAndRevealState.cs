@@ -42,14 +42,14 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
         }
         public override UnityImage VotingUnityObjectGenerator(int objectIndex)
         {
-            return this.Objects[objectIndex].GetPersonImage(
+            return this.Objects[objectIndex].GetUnityImage(
                 imageIdentifier: (objectIndex + 1).ToString(),
                 title: this.ShowObjectTitlesForVoting ? this.ObjectTitles?[objectIndex] : null,
                 header: this.ShowObjectHeadersForVoting ? this.ObjectHeaders?[objectIndex] : null);
         }
         public override UnityImage RevealUnityObjectGenerator(int objectIndex)
         {
-            return this.Objects[objectIndex].GetPersonImage(
+            return this.Objects[objectIndex].GetUnityImage(
                 imageIdentifier: (objectIndex + 1).ToString(),
                 title: this.ObjectTitles?[objectIndex],
                 header: this.ObjectHeaders?[objectIndex],
