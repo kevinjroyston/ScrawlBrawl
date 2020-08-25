@@ -26,6 +26,15 @@ namespace RoystonGame.TV.GameModes.Common
             }
         }
 
+        public static TimeSpan? GetMultipliedTimeSpan(TimeSpan? originalTimeSpan, double multiplier)
+        {
+            if (originalTimeSpan == null)
+            {
+                return null;
+            }
+            return TimeSpan.FromSeconds(((TimeSpan)originalTimeSpan).TotalSeconds * multiplier);
+        }
+
         public static IEnumerable<UserCreatedObject> TrimUserInputList(IEnumerable<UserCreatedObject> userInputs, int numInputsWanted)
         {
             Dictionary<User, List<UserCreatedObject>> usersToInputs = new Dictionary<User, List<UserCreatedObject>>();

@@ -41,46 +41,46 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             List<Prompt> promptsCopy = new List<Prompt>();
             int numRounds = (int)gameModeOptions[(int)GameModeOptionsEnum.numRounds].ValueParsed;
             int numPromptsPerUserPerRound = (int)gameModeOptions[(int)GameModeOptionsEnum.numPromptsPerUserPerRound].ValueParsed;
-            int numDrawingsPerPerson = (int)gameModeOptions[(int)GameModeOptionsEnum.numToDraw].ValueParsed;
+            int expectedDrawingsPerUser = (int)gameModeOptions[(int)GameModeOptionsEnum.numToDraw].ValueParsed;
             int numUsersPerPrompt = (int)gameModeOptions[(int)GameModeOptionsEnum.numPlayersPerPrompt].ValueParsed;
             int gameSpeed = (int)gameModeOptions[(int)GameModeOptionsEnum.gameSpeed].ValueParsed;
             TimeSpan? setupDrawingTimer = null;
             TimeSpan? setupPromptTimer = null;
             TimeSpan? creationTimer = null;
             TimeSpan? votingTimer = null;
+            
+            int numOfEachPartInHand = 3;
+
+            int numPromptsPerRound = (int)Math.Ceiling((double)numPromptsPerUserPerRound * lobby.GetAllUsers().Count / numUsersPerPrompt);
+
+            int minDrawingsRequired = numOfEachPartInHand * 3; // the amount to make one playerHand to give everyone
+
+            int expectedPromptsPerUser = numPromptsPerRound * numRounds / lobby.GetAllUsers().Count;
+            int minPromptsRequired = numPromptsPerRound * numRounds; // the exact amount of prompts needed for the game
+
             if (gameSpeed > 0)
             {
                 setupDrawingTimer = CommonHelpers.GetTimerFromSpeed(
                     speed: (double)gameSpeed,
-                    minTimerLength: BattleReadyConstants.SetupDrawingTimerMin,
-                    aveTimerLength: BattleReadyConstants.SetupDrawingTimerAve,
-                    maxTimerLength: BattleReadyConstants.SetupDrawingTimerMax);
+                    minTimerLength: BattleReadyConstants.SetupPerDrawingTimerMin * expectedDrawingsPerUser,
+                    aveTimerLength: BattleReadyConstants.SetupPerDrawingTimerAve * expectedDrawingsPerUser,
+                    maxTimerLength: BattleReadyConstants.SetupPerDrawingTimerMax * expectedDrawingsPerUser);
                 setupPromptTimer = CommonHelpers.GetTimerFromSpeed(
                     speed: (double)gameSpeed,
-                    minTimerLength: BattleReadyConstants.SetupPromptTimerMin,
-                    aveTimerLength: BattleReadyConstants.SetupPromptTimerAve,
-                    maxTimerLength: BattleReadyConstants.SetupPromptTimerMax);
+                    minTimerLength: BattleReadyConstants.SetupPerPromptTimerMin * expectedPromptsPerUser,
+                    aveTimerLength: BattleReadyConstants.SetupPerPromptTimerAve * expectedPromptsPerUser,
+                    maxTimerLength: BattleReadyConstants.SetupPerPromptTimerMax * expectedPromptsPerUser);
                 creationTimer = CommonHelpers.GetTimerFromSpeed(
                     speed: (double)gameSpeed,
-                    minTimerLength: BattleReadyConstants.CreationTimerMin,
-                    aveTimerLength: BattleReadyConstants.CreationTimerAve,
-                    maxTimerLength: BattleReadyConstants.CreationTimerMax);
+                    minTimerLength: BattleReadyConstants.PerCreationTimerMin * numPromptsPerUserPerRound,
+                    aveTimerLength: BattleReadyConstants.PerCreationTimerAve * numPromptsPerUserPerRound,
+                    maxTimerLength: BattleReadyConstants.PerCreationTimerMax * numPromptsPerUserPerRound);
                 votingTimer = CommonHelpers.GetTimerFromSpeed(
                     speed: (double)gameSpeed,
                     minTimerLength: BattleReadyConstants.VotingTimerMin,
                     aveTimerLength: BattleReadyConstants.VotingTimerAve,
                     maxTimerLength: BattleReadyConstants.VotingTimerMax);
             }
-
-            int numOfEachPartInHand = 3;
-
-            int numPromptsPerRound = (int)Math.Ceiling((double)numPromptsPerUserPerRound * lobby.GetAllUsers().Count / numUsersPerPrompt);
-
-            int expectedDrawingsPerUser = numDrawingsPerPerson;
-            int minDrawingsRequired = numOfEachPartInHand * 3; // the amount to make one playerHand to give everyone
-
-            int expectedPromptsPerUser = numPromptsPerRound * numRounds / lobby.GetAllUsers().Count;
-            int minPromptsRequired = numPromptsPerRound * numRounds; // the exact amount of prompts needed for the game
 
             StateChain setupDrawing = new StateChain(
                 stateGenerator: (int counter) =>

@@ -18,6 +18,7 @@ using static System.FormattableString;
 using RoystonGame.TV.DataModels;
 using RoystonGame.TV.ControlFlows.Exit;
 using RoystonGame.TV.DataModels.States.StateGroups;
+using RoystonGame.TV.GameModes.Common;
 
 namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 {
@@ -148,11 +149,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 
             this.ShowColors = showColors;
 
-            TimeSpan? multipliedDrawingTimer = null;
-            if (drawingTimer != null)
-            {
-                multipliedDrawingTimer = TimeSpan.FromSeconds(((TimeSpan)drawingTimer).TotalSeconds * challengeTrackers.Count);
-            }
+            TimeSpan? multipliedDrawingTimer = CommonHelpers.GetMultipliedTimeSpan(drawingTimer, challengeTrackers.Count);
+
 
             State getChallenges = GetChallengesUserState();
             MultiStateChain getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby), stateDuration: drawingTimer);
