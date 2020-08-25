@@ -1,4 +1,5 @@
 ﻿using RoystonGame.TV.DataModels.Users;
+using RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels;
 using RoystonGame.TV.GameModes.Common.GameStates;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
@@ -14,18 +15,18 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
     public class ExtraSetupPrompt_GS : ExtraSetupGameState
     {
         private Random Rand = new Random();
-        private ConcurrentBag<(User, string)> PromptTuples { get; set; }
+        private ConcurrentBag<Prompt> Prompts { get; set; }
         private int NumExtraNeeded { get; set; }
 
         public ExtraSetupPrompt_GS(
             Lobby lobby,
-            ConcurrentBag<(User, string)> promptTuples,
+            ConcurrentBag<Prompt> prompts,
             int numExtraNeeded)
             : base(
                   lobby: lobby,
                   numExtraObjectsNeeded: numExtraNeeded)
         {
-            this.PromptTuples = promptTuples;
+            this.Prompts = prompts;
             this.NumExtraNeeded = numExtraNeeded;
         }
         public override UserPrompt CountingPromptGenerator(User user, int counter)
@@ -47,11 +48,16 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         }
         public override (bool, string) CountingFormSubmitHandler(User user, UserFormSubmission input, int counter)
         {
-            if (PromptTuples.Select((tuple) => tuple.Item2).Contains(input.SubForms[0].ShortAnswer))
+            if (Prompts.Select((prompt) => prompt.Text).Contains(input.SubForms[0].ShortAnswer))
             {
                 return (false, "Someone has already entered that prompt");
             }
-            PromptTuples.Add((user, input.SubForms[0].ShortAnswer));
+            Prompts.Add(
+                new Prompt()
+                {
+                    Owner = user,
+                    Text = input.SubForms[0].ShortAnswer
+                });
             return (true, String.Empty);
         }
     }

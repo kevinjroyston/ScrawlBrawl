@@ -38,10 +38,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             ValidateOptions(gameModeOptions);
 
             this.Lobby = lobby;
-            ConcurrentBag<(User, string)> promptTuples = new ConcurrentBag<(User, string)>();
             List<Prompt> promptsCopy = new List<Prompt>();
             int numRounds = (int)gameModeOptions[(int)GameModeOptionsEnum.numRounds].ValueParsed;
-            int numPromptsForEachUserPerRound = (int)gameModeOptions[(int)GameModeOptionsEnum.numPrompts].ValueParsed;
+            int numPromptsPerUserPerRound = (int)gameModeOptions[(int)GameModeOptionsEnum.numPromptsPerUserPerRound].ValueParsed;
             int numDrawingsPerPerson = (int)gameModeOptions[(int)GameModeOptionsEnum.numToDraw].ValueParsed;
             int numUsersPerPrompt = (int)gameModeOptions[(int)GameModeOptionsEnum.numPlayersPerPrompt].ValueParsed;
             int gameSpeed = (int)gameModeOptions[(int)GameModeOptionsEnum.gameSpeed].ValueParsed;
@@ -75,13 +74,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
 
             int numOfEachPartInHand = 3;
 
-            int numPromptsEachRound = numPromptsForEachUserPerRound * lobby.GetAllUsers().Count / numUsersPerPrompt;
+            int numPromptsPerRound = (int)Math.Ceiling((double)numPromptsPerUserPerRound * lobby.GetAllUsers().Count / numUsersPerPrompt);
 
             int expectedDrawingsPerUser = numDrawingsPerPerson;
             int minDrawingsRequired = numOfEachPartInHand * 3; // the amount to make one playerHand to give everyone
 
-            int expectedPromptsPerUser = numPromptsEachRound * numRounds / lobby.GetAllUsers().Count;
-            int minPromptsRequired = numPromptsEachRound * numRounds; // the exact amount of prompts needed for the game
+            int expectedPromptsPerUser = numPromptsPerRound * numRounds / lobby.GetAllUsers().Count;
+            int minPromptsRequired = numPromptsPerRound * numRounds; // the exact amount of prompts needed for the game
 
             StateChain setupDrawing = new StateChain(
                 stateGenerator: (int counter) =>
@@ -132,18 +131,18 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                     {
                         return new SetupPrompts_GS(
                             lobby: lobby,
-                            prompts: this.Prompts,
+                            prompts: Prompts,
                             numExpectedPerUser: expectedPromptsPerUser,
                             setupDurration: setupPromptTimer);
                     }
                     else if (counter == 1)
                     {
-                        if (promptTuples.Count < minPromptsRequired)
+                        if (Prompts.Count < minPromptsRequired)
                         {
                             return new ExtraSetupPrompt_GS(
                                 lobby: lobby,
-                                promptTuples: promptTuples,
-                                numExtraNeeded: minPromptsRequired - promptTuples.Count);
+                                prompts: Prompts,
+                                numExtraNeeded: minPromptsRequired - Prompts.Count);
                         }
                         return null;
                     }
@@ -176,8 +175,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             {
                 RoundTracker.ResetRoundVariables();
                 promptsCopy = promptsCopy.OrderBy(_ => Rand.Next()).ToList();
-                List<Prompt> roundPrompts = promptsCopy.GetRange(0, numPromptsEachRound);
-                promptsCopy.RemoveRange(0, numPromptsEachRound);
+                List<Prompt> roundPrompts = promptsCopy.GetRange(0, numPromptsPerRound).OrderBy(_ => Rand.Next()).ToList();
+                promptsCopy.RemoveRange(0, numPromptsPerRound);
 
                 List<PeopleUserDrawing> headDrawings = Drawings.ToList().FindAll((drawing) => drawing.Type == DrawingType.Head).OrderBy(_ => Rand.Next()).ToList();
                 List<PeopleUserDrawing> bodyDrawings = Drawings.ToList().FindAll((drawing) => drawing.Type == DrawingType.Body).OrderBy(_ => Rand.Next()).ToList();
@@ -186,33 +185,35 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                 List<PeopleUserDrawing> bodyDrawingsCopy = bodyDrawings.ToList();
                 List<PeopleUserDrawing> legsDrawingsCopy = legsDrawings.ToList();
 
-                for (int i = 0; i < numPromptsForEachUserPerRound; i++)
+                Dictionary<User, int> usersToNumPromptsAssignedTo = new Dictionary<User, int>();
+
+                List<User> randomizedUsers = lobby.GetAllUsers().OrderBy(_ => Rand.Next()).ToList();
+                foreach (User user in randomizedUsers)
                 {
-                    foreach (User user in lobby.GetAllUsers())
+                    for (int i = 0; i < numPromptsPerUserPerRound; i++)
                     {
-                        List<Prompt> roundPromptsCopy = roundPrompts.ToList();
                         Prompt randPrompt = null;
                         foreach (Prompt prompt in roundPrompts.OrderBy(_ => Rand.Next()).ToList())
-                        {
-                            if(!prompt.UsersToUserHands.Keys.Contains(user) && prompt.UsersToUserHands.Keys.Count() < numUsersPerPrompt)
+                        {     
+                            if (!prompt.UsersToUserHands.Keys.Contains(user) 
+                                && prompt.UsersToUserHands.Keys.Count() < numUsersPerPrompt)
                             {
                                 randPrompt = prompt;
                                 break;
                             }
                         }
-                        if(randPrompt == null)
+                        if (randPrompt == null)
                         {
-                            continue;
-                            //throw new Exception("Something went wrong while setting up the game");
+                            throw new Exception("Something went wrong while setting up the game");
                         }
 
                         List<PeopleUserDrawing> headDrawingsToAdd = new List<PeopleUserDrawing>();
                         List<PeopleUserDrawing> bodyDrawingsToAdd = new List<PeopleUserDrawing>();
-                        List<PeopleUserDrawing> legsDrawingsToAdd = new List<PeopleUserDrawing>();    
-                        
-                        for(int j = 0; j < numOfEachPartInHand; j++)
+                        List<PeopleUserDrawing> legsDrawingsToAdd = new List<PeopleUserDrawing>();
+
+                        for (int j = 0; j < numOfEachPartInHand; j++)
                         {
-                            if(headDrawingsCopy.Count<headDrawings.Count)
+                            if (headDrawingsCopy.Count < headDrawings.Count)
                             {
                                 headDrawingsCopy.AddRange(headDrawings.OrderBy(_ => Rand.Next()));
                             }
@@ -241,16 +242,15 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                             Legs = legsDrawingsToAdd,
                             Contestant = new Person()
                         });
-                        
-                        roundPromptsCopy.Remove(randPrompt);
+
                         if (!RoundTracker.UsersToAssignedPrompts.ContainsKey(user))
                         {
                             RoundTracker.UsersToAssignedPrompts.Add(user, new List<Prompt>());
                         }
                         RoundTracker.UsersToAssignedPrompts[user].Add(randPrompt);
                     }
-
                 }
+
                 GameState toReturn = new ContestantCreation_GS(
                         lobby: lobby,
                         roundTracker: RoundTracker,

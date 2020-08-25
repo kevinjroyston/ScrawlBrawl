@@ -232,7 +232,7 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Number of prompts for each player per round",
+                        Description = "Max number of prompts for each user per round",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 2,
                         MinValue = 1,
