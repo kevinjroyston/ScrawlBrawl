@@ -99,13 +99,13 @@ namespace RoystonGame.TV.GameModes.Common
             }
         }
 
-        public static TimeSpan GetTimerFromSpeed(double speed, double minTimerLength, double aveTimerLength, double maxTimerLength, double minSpeed = 0, double aveSpeed = 5, double maxSpeed = 10)
+        public static TimeSpan GetTimerFromLength(double length, double minTimerLength, double aveTimerLength, double maxTimerLength, double minLength = 0, double aveLength = 5, double maxLength = 10)
         {
             return TimeSpan.FromSeconds(ThreePointLerp(
-                minX: minSpeed,
-                aveX: aveSpeed,
-                maxX: maxSpeed,
-                x: speed,
+                minX: minLength,
+                aveX: aveLength,
+                maxX: maxLength,
+                x: length,
                 minValue: minTimerLength,
                 aveValue: aveTimerLength,
                 maxValue: maxTimerLength));

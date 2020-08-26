@@ -11,6 +11,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels
         numPromptsPerUserPerRound,
         numToDraw,
         numPlayersPerPrompt,
-        gameSpeed
+        GameLength
     }
 }

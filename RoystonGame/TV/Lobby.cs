@@ -90,7 +90,7 @@ namespace RoystonGame.TV
                 {
                     new GameModeOptionResponse
                     {
-                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 5,
                         MinValue = 0,
@@ -111,7 +111,7 @@ namespace RoystonGame.TV
                 {
                     new GameModeOptionResponse
                     {
-                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 5,
                         MinValue = 0,
@@ -154,7 +154,7 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 5,
                         MinValue = 0,
@@ -203,7 +203,7 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 5,
                         MinValue = 0,
@@ -256,7 +256,7 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 5,
                         MinValue = 0,
@@ -309,7 +309,7 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 5,
                         MinValue = 0,
@@ -352,7 +352,7 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 5,
                         MinValue = 0,

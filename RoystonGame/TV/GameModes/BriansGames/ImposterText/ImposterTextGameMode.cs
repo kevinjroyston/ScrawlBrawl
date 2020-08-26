@@ -22,17 +22,17 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
         public ImposterTextGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             ValidateOptions(lobby, gameModeOptions);
-            int gameSpeed = (int)gameModeOptions[(int)GameModeOptionsEnum.gameSpeed].ValueParsed;
+            int gameLength = (int)gameModeOptions[(int)GameModeOptionsEnum.GameLength].ValueParsed;
             TimeSpan? setupTimer = null;
             TimeSpan? answeringTimer = null;
             TimeSpan? votingTimer = null;
-            if (gameSpeed > 0)
+            if (gameLength > 0)
             {
                 setupTimer = TimeSpan.FromSeconds(CommonHelpers.ThreePointLerp(
                     minX: 1,
                     aveX: 5,
                     maxX: 10,
-                    x: (double)gameSpeed,
+                    x: (double)gameLength,
                     minValue: ImposterTextConstants.SetupTimerMin,
                     aveValue: ImposterTextConstants.SetupTimerAve,
                     maxValue: ImposterTextConstants.SetupTimerMax));
@@ -40,7 +40,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
                     minX: 1,
                     aveX: 5,
                     maxX: 10,
-                    x: (double)gameSpeed,
+                    x: (double)gameLength,
                     minValue: ImposterTextConstants.AnsweringTimerMin,
                     aveValue: ImposterTextConstants.AnsweringTimerAve,
                     maxValue: ImposterTextConstants.AnsweringTimerMax));
@@ -48,7 +48,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText
                     minX: 1,
                     aveX: 5,
                     maxX: 10,
-                    x: (double)gameSpeed,
+                    x: (double)gameLength,
                     minValue: ImposterTextConstants.VotingTimerMin,
                     aveValue: ImposterTextConstants.VotingTimerAve,
                     maxValue: ImposterTextConstants.VotingTimerMax));

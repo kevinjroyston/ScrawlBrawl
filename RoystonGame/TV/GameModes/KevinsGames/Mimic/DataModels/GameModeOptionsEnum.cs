@@ -11,7 +11,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.DataModels
         MaxDrawingsBeforeVote,
         NumSets,
         MaxVoteDrawings,
-        GameSpeed
+        GameLength
     };
     
 }

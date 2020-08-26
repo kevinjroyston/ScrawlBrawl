@@ -11,6 +11,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.DataModels
         displayNames,
         displayImages,
         turnsForTimeout,
-        gameSpeed
+        GameLength
     }
 }

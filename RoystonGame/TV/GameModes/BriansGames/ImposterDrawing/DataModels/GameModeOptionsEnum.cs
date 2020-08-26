@@ -7,6 +7,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.DataModels
 {
     public enum GameModeOptionsEnum
     {
-        gameSpeed
+        GameLength
     }
 }

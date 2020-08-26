@@ -10,6 +10,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.DataModels
         numColors,
         numTeams,
         showOtherColors,
-        gameSpeed,
+        GameLength,
     }
 }

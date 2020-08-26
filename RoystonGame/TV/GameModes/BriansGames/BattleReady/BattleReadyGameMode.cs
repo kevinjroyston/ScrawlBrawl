@@ -43,7 +43,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             int numPromptsPerUserPerRound = (int)gameModeOptions[(int)GameModeOptionsEnum.numPromptsPerUserPerRound].ValueParsed;
             int expectedDrawingsPerUser = (int)gameModeOptions[(int)GameModeOptionsEnum.numToDraw].ValueParsed;
             int numUsersPerPrompt = (int)gameModeOptions[(int)GameModeOptionsEnum.numPlayersPerPrompt].ValueParsed;
-            int gameSpeed = (int)gameModeOptions[(int)GameModeOptionsEnum.gameSpeed].ValueParsed;
+            int gameLength = (int)gameModeOptions[(int)GameModeOptionsEnum.GameLength].ValueParsed;
             TimeSpan? setupDrawingTimer = null;
             TimeSpan? setupPromptTimer = null;
             TimeSpan? creationTimer = null;
@@ -58,25 +58,25 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             int expectedPromptsPerUser = numPromptsPerRound * numRounds / lobby.GetAllUsers().Count;
             int minPromptsRequired = numPromptsPerRound * numRounds; // the exact amount of prompts needed for the game
 
-            if (gameSpeed > 0)
+            if (gameLength > 0)
             {
-                setupDrawingTimer = CommonHelpers.GetTimerFromSpeed(
-                    speed: (double)gameSpeed,
+                setupDrawingTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
                     minTimerLength: BattleReadyConstants.SetupPerDrawingTimerMin * expectedDrawingsPerUser,
                     aveTimerLength: BattleReadyConstants.SetupPerDrawingTimerAve * expectedDrawingsPerUser,
                     maxTimerLength: BattleReadyConstants.SetupPerDrawingTimerMax * expectedDrawingsPerUser);
-                setupPromptTimer = CommonHelpers.GetTimerFromSpeed(
-                    speed: (double)gameSpeed,
+                setupPromptTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
                     minTimerLength: BattleReadyConstants.SetupPerPromptTimerMin * expectedPromptsPerUser,
                     aveTimerLength: BattleReadyConstants.SetupPerPromptTimerAve * expectedPromptsPerUser,
                     maxTimerLength: BattleReadyConstants.SetupPerPromptTimerMax * expectedPromptsPerUser);
-                creationTimer = CommonHelpers.GetTimerFromSpeed(
-                    speed: (double)gameSpeed,
+                creationTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
                     minTimerLength: BattleReadyConstants.PerCreationTimerMin * numPromptsPerUserPerRound,
                     aveTimerLength: BattleReadyConstants.PerCreationTimerAve * numPromptsPerUserPerRound,
                     maxTimerLength: BattleReadyConstants.PerCreationTimerMax * numPromptsPerUserPerRound);
-                votingTimer = CommonHelpers.GetTimerFromSpeed(
-                    speed: (double)gameSpeed,
+                votingTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
                     minTimerLength: BattleReadyConstants.VotingTimerMin,
                     aveTimerLength: BattleReadyConstants.VotingTimerAve,
                     maxTimerLength: BattleReadyConstants.VotingTimerMax);
