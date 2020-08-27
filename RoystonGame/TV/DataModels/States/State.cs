@@ -27,6 +27,8 @@ namespace RoystonGame.TV.DataModels
 
         private bool Entered = false;
 
+        private bool UsersHurried = false;
+
         /// <summary>
         /// The total time to spend in the state.
         /// </summary>
@@ -74,8 +76,8 @@ namespace RoystonGame.TV.DataModels
                     user.StateStack.Clear();
                 }
 
-                // If we have a timeout and we told this user to hurry. Tell them not to hurry.
-                if (this.StateTimeoutDuration.HasValue && user.StatesTellingMeToHurry.Count > 0 && user.StatesTellingMeToHurry.Contains(this))
+                // If we told this user to hurry. Tell them not to hurry.
+                if (this.UsersHurried && user.StatesTellingMeToHurry.Count > 0 && user.StatesTellingMeToHurry.Contains(this))
                 {
                     user.StatesTellingMeToHurry.Remove(this);
                 }
@@ -112,6 +114,12 @@ namespace RoystonGame.TV.DataModels
             {
                 listener?.Invoke(user);
             }
+
+            if (this.UsersHurried)
+            {
+                this.HurryUser(user);
+            }
+
             this.Entrance.Inlet(user, stateResult, formSubmission);
         }
 
@@ -125,6 +133,40 @@ namespace RoystonGame.TV.DataModels
             PerUserEntranceListeners.Add(listener);
         }
 
+        /// <summary>
+        /// Put all users currently (and in the future) in this state into "hurried" mode. Which means they will automatically call
+        /// "HandleUserTimeout" rather than be given a chance to submit.
+        /// </summary>
+        public void HurryUsers()
+        {
+            this.UsersHurried = true;
+
+            // For any users currently within this state, hurry them up.
+            foreach (User user in this.UsersEnteredAndExitedState.Keys)
+            {
+                HurryUser(user);
+            }
+        }
+
+        private void HurryUser(User user)
+        {
+            if (!this.UsersEnteredAndExitedState.ContainsKey(user))
+            {
+                return;
+            }
+
+            (bool entered, bool exited) = this.UsersEnteredAndExitedState[user];
+            if (entered && !exited)
+            {
+                // Set user to hurry mode first!
+                user.StatesTellingMeToHurry.Add(this);
+                // Kick the user into motion so they can hurry through the states.
+                if (user.Status == UserStatus.AnsweringPrompts)
+                {
+                    user.UserState.HandleUserTimeout(user, new UserFormSubmission());
+                }
+            }
+        }
 
         /// <summary>
         /// Timeout for the state.
@@ -137,20 +179,7 @@ namespace RoystonGame.TV.DataModels
                 await Task.Delay(millisecondsDelay).ConfigureAwait(false);
             }
 
-            // For any users currently within this state, hurry them up.
-            foreach ((User user, (bool entered, bool exited)) in this.UsersEnteredAndExitedState)
-            {
-                if (entered && !exited)
-                {
-                    // Set user to hurry mode first!
-                    user.StatesTellingMeToHurry.Add(this);
-                    // Kick all the users into motion so they can hurry through the states.
-                    if (user.Status == UserStatus.AnsweringPrompts)
-                    {
-                        user.UserState.HandleUserTimeout(user, new UserFormSubmission());
-                    }
-                }
-            }
+            this.HurryUsers();
 
             // Hacky: If the attached StateExit is specifically a "WaitForStateTimeoutDuration_StateExit", invoke it here.
             if (this.Exit is WaitForStateTimeoutDuration_StateExit)
