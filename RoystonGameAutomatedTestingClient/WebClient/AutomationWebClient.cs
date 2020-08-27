@@ -37,11 +37,6 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
             return JsonConvert.DeserializeObject<UserPrompt>(await currentContentResponse.Content.ReadAsStringAsync());
         }
 
-        public async Task CreateUserFormSubmission(Func<UserPrompt, UserFormSubmission> handler, string userId)
-        {
-
-        }
-
         public async Task SubmitUserForm ( Func<UserPrompt, UserFormSubmission> handler, string userId)
         {
             HttpResponseMessage currentContentResponse = await MakeWebRequest(

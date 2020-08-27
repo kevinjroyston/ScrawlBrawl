@@ -32,6 +32,7 @@ namespace RoystonGameAutomatedTestingClient.cs
 
         public static async Task AsyncMain()
         {
+
             Console.WriteLine("Enter number of players for the lobby");
             int numPlayers = Convert.ToInt32(Console.ReadLine());
             Console.WriteLine("Enter the lobby ID");
