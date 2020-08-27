@@ -96,9 +96,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                     }
                     if (counter == 1)
                     {
-                        int numHeadsNeeded = this.Drawings.Where(drawing => drawing.Type == DrawingType.Head).ToList().Count;
-                        int numBodiesNeeded = this.Drawings.Where(drawing => drawing.Type == DrawingType.Body).ToList().Count;
-                        int numLegsNeeded = this.Drawings.Where(drawing => drawing.Type == DrawingType.Legs).ToList().Count;
+                        int numHeadsNeeded = Math.Max(0, minDrawingsRequired / 3 - this.Drawings.Where(drawing => drawing.Type == DrawingType.Head).ToList().Count);
+                        int numBodiesNeeded = Math.Max(0, minDrawingsRequired / 3 - this.Drawings.Where(drawing => drawing.Type == DrawingType.Body).ToList().Count);
+                        int numLegsNeeded = Math.Max(0, minDrawingsRequired / 3 - this.Drawings.Where(drawing => drawing.Type == DrawingType.Legs).ToList().Count);
 
                         if (numHeadsNeeded + numBodiesNeeded + numLegsNeeded > 0)
                         {

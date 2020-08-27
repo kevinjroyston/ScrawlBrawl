@@ -17,8 +17,8 @@ namespace RoystonGameAutomatedTestingClient.Games
 {
     abstract class GameTest
     {
-        //private int delayBetweenSubmissions = GameConstants.DefaultDelayBetweenSubmissions;
-        //private int numToTimeOut = GameConstants.DefaultNumToTimeOut;
+        private int delayBetweenSubmissions = GameConstants.DefaultDelayBetweenSubmissions;
+        private int numToTimeOut = GameConstants.DefaultNumToTimeOut;
         private Random Rand = new Random();
         protected abstract Task AutomatedSubmitter(UserPrompt userPrompt, string userId);
         protected AutomationWebClient WebClient = new AutomationWebClient();
