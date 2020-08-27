@@ -442,6 +442,11 @@ namespace RoystonGame.TV
         {
             return this.CurrentGameState;
         }
+
+        public void CloseLobbyWithError(Exception error = null)
+        {
+            GameManager.ReportGameError(type: Web.DataModels.Enums.ErrorType.GetContent, lobbyId: LobbyId, error: error);
+        }
         public bool ConfigureLobby(ConfigureLobbyRequest request, out string errorMsg)
         {
             errorMsg = string.Empty;

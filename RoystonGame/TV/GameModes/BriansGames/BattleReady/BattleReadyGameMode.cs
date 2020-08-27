@@ -23,6 +23,7 @@ using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople;
 using RoystonGame.TV.DataModels.Enums;
+using Microsoft.CodeAnalysis;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
 {
@@ -95,23 +96,21 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
                     }
                     if (counter == 1)
                     {
-                        List<DrawingType> drawingTypesStillNeeded = new List<DrawingType>();
-                        for (int i = 0; i < 3; i++)
-                        {
-                            DrawingType type = (DrawingType)i;
-                            List<PeopleUserDrawing> drawnPart = this.Drawings.Where(drawing => drawing.Type == type).ToList();
-                            for (int j = 0; j < minDrawingsRequired / 3 - drawnPart.Count; j++)
-                            {
-                                drawingTypesStillNeeded.Add(type);
-                            }
-                        }
+                        int numHeadsNeeded = this.Drawings.Where(drawing => drawing.Type == DrawingType.Head).ToList().Count;
+                        int numBodiesNeeded = this.Drawings.Where(drawing => drawing.Type == DrawingType.Body).ToList().Count;
+                        int numLegsNeeded = this.Drawings.Where(drawing => drawing.Type == DrawingType.Legs).ToList().Count;
 
-                        if (drawingTypesStillNeeded.Count > 0)
+                        if (numHeadsNeeded + numBodiesNeeded + numLegsNeeded > 0)
                         {
-                            return new ExtraSetupDrawing_GS(
+                            lobby.CloseLobbyWithError(new Exception("Not enough drawings submitted"));
+                            return null;
+                            //todo re add when single user skip is available
+                            /*return new ExtraSetupDrawing_GS( 
                                 lobby: lobby,
                                 drawings: this.Drawings,
-                                typesOfDrawingsStillNeeded: drawingTypesStillNeeded);
+                                numHeadsNeeded: numHeadsNeeded,
+                                numBodiesNeeded: numBodiesNeeded,
+                                numLegsNeeded: numLegsNeeded);*/
                         }
                         else
                         {

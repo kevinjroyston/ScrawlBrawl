@@ -51,6 +51,11 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
                                     numLeft--;
                                     usersToNumSubmitted[user]++;
                                 }
+                                
+                                if (numLeft <= 0)
+                                {
+                                    this.HurryUsers();
+                                }
                                 return handlerResponse;
                             });
                     }

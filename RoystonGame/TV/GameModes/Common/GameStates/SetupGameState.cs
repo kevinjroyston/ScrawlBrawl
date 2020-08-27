@@ -57,6 +57,11 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
                                 {
                                     usersToNumSubmitted[user]++;
                                 }
+
+                                if (usersToNumSubmitted.All(kvp => kvp.Value >= numExpectedPerUser)) // if after this users submission everyone has finished the expected amount it rushes everyone through
+                                {
+                                    this.HurryUsers();
+                                }                                    
                                 return handlerResponse;
                             },
                             userTimeoutHandler: (User user, UserFormSubmission input) =>

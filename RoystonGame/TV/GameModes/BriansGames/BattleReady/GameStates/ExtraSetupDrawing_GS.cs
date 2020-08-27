@@ -1,4 +1,5 @@
 ﻿using RoystonGame.TV.DataModels.Users;
+using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.Common.GameStates;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople;
 using RoystonGame.Web.DataModels.Requests;
@@ -17,25 +18,30 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
     {
         private Random Rand = new Random();
         private ConcurrentBag<PeopleUserDrawing> Drawings { get; set; }
-        private Dictionary<User, List<DrawingType>> UsersToDrawingTypesStillNeeded { get; set; }
+        private ConcurrentDictionary<User, DrawingType> UsersToTypeDrawing { get; set; } = new ConcurrentDictionary<User, DrawingType>();
+
+        private ConcurrentDictionary<DrawingType, int> DrawingTypeToNumNeeded { get; set; } = new ConcurrentDictionary<DrawingType, int>();
+
         public ExtraSetupDrawing_GS(
             Lobby lobby,
             ConcurrentBag<PeopleUserDrawing> drawings,
-            List<DrawingType> typesOfDrawingsStillNeeded)
+            int numHeadsNeeded,
+            int numBodiesNeeded,
+            int numLegsNeeded)
             : base(
                   lobby: lobby,
-                  numExtraObjectsNeeded: typesOfDrawingsStillNeeded.Count)
+                  numExtraObjectsNeeded: numHeadsNeeded + numBodiesNeeded + numLegsNeeded)
         {
             this.Drawings = drawings;
 
-            foreach (User user in lobby.GetAllUsers())
-            {
-                UsersToDrawingTypesStillNeeded.Add(user, typesOfDrawingsStillNeeded.OrderBy(_ => Rand.Next()).ToList());
-            }
+            DrawingTypeToNumNeeded.AddOrReplace(DrawingType.Head, numHeadsNeeded);
+            DrawingTypeToNumNeeded.AddOrReplace(DrawingType.Body, numBodiesNeeded);
+            DrawingTypeToNumNeeded.AddOrReplace(DrawingType.Legs, numLegsNeeded);
         }
         public override UserPrompt CountingPromptGenerator(User user, int counter)
         {
-            DrawingType drawingType = UsersToDrawingTypesStillNeeded[user][counter];
+            DrawingType drawingType = GetNeededDrawingType();
+            UsersToTypeDrawing.AddOrReplace(user, drawingType);
             return new UserPrompt()
             {
                 Title = Constants.UIStrings.DrawingPromptTitle,
@@ -58,14 +64,55 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         }
         public override (bool, string) CountingFormSubmitHandler(User user, UserFormSubmission input, int counter)
         {
-            DrawingType drawingType = UsersToDrawingTypesStillNeeded[user][counter];
+            DrawingType drawingType = UsersToTypeDrawing[user];
             this.Drawings.Add(new PeopleUserDrawing
             {
                 Drawing = input.SubForms[0].Drawing,
                 Owner = user,
                 Type = drawingType
             });
+
+            List<DrawingType> drawingTypes = new List<DrawingType>() { DrawingType.Head, DrawingType.Body, DrawingType.Legs };
+            foreach (DrawingType baseType in drawingTypes)
+            {
+                if (drawingType == baseType)
+                {
+                    DrawingTypeToNumNeeded[drawingType]--;
+                    
+                    if (DrawingTypeToNumNeeded[drawingType] <= 0)
+                    {
+                        List<User> usersDrawingThisType = UsersToTypeDrawing.Keys.Where(user => UsersToTypeDrawing[user] == drawingType).ToList();
+                        foreach (User userDrawingType in usersDrawingThisType)
+                        {
+                            userDrawingType.UserState.HurryUsers();
+                        }
+                    }
+                }
+            }
+
             return (true, string.Empty);
+        }
+
+        private DrawingType GetNeededDrawingType()
+        {
+            int numHeadsNeeded = DrawingTypeToNumNeeded[DrawingType.Head];
+            int numBodiesNeeded = DrawingTypeToNumNeeded[DrawingType.Body];
+            int numLegsNeeded = DrawingTypeToNumNeeded[DrawingType.Legs];
+
+            int random = Rand.Next(0, numHeadsNeeded + numBodiesNeeded + numLegsNeeded);
+
+            if (random < numHeadsNeeded)
+            {
+                return DrawingType.Head;
+            }
+            else if (random < numHeadsNeeded + numBodiesNeeded)
+            {
+                return DrawingType.Body;
+            }
+            else
+            {
+                return DrawingType.Legs;
+            }
         }
     }
 }
