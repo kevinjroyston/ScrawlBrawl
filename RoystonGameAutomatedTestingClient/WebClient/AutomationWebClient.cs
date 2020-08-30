@@ -47,15 +47,14 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
             UserPrompt prompt = JsonConvert.DeserializeObject<UserPrompt>(await currentContentResponse.Content.ReadAsStringAsync());
 
             UserFormSubmission submission = handler(prompt);
+            if (submission == null)
+            {
+                return;
+            }
             submission.Id = prompt.Id;
             for (int i = 0; i < (submission.SubForms?.Count ?? 0); i++)
             {
                 submission.SubForms[i].Id = prompt.SubPrompts?[i]?.Id ?? Guid.Empty;
-            }
-
-            if (submission == null)
-            {
-                return;
             }
 
             await MakeWebRequest(

@@ -7,6 +7,15 @@ using System.Threading.Tasks;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGameAutomatedTestingClient.cs;
+using System.Net.Http;
+using Newtonsoft.Json;
+using System.IO;
+using RoystonGame.Web.DataModels;
+using System.Linq;
+using RoystonGame.Web.DataModels.Requests.LobbyManagement;
+using System.Threading;
+using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
 
 namespace RoystonGameAutomatedTestingClient.WebClient
 {
@@ -14,6 +23,57 @@ namespace RoystonGameAutomatedTestingClient.WebClient
     {
         private static AutomationWebClient WebClient = new AutomationWebClient();
         private static Random Rand = new Random();
+        
+        public static async Task<string> MakeLobby(string userId)
+        {
+            await WebClient.MakeWebRequest(
+                path: Constants.Path.LobbyCreate,
+                userId: userId,
+                method: HttpMethod.Post);
+
+            Thread.Sleep(100);
+            HttpResponseMessage getLobbyResponse = await WebClient.MakeWebRequest(
+                path: Constants.Path.LobbyGet,
+                userId: userId,
+                method: HttpMethod.Get);
+
+            LobbyMetadataResponse lobbyGetResponse = JsonConvert.DeserializeObject<LobbyMetadataResponse>(await getLobbyResponse.Content.ReadAsStringAsync());
+
+            return lobbyGetResponse.LobbyId;
+        }
+        public static async Task<List<GameModeMetadata>> GetGames(string userId)
+        {
+            HttpResponseMessage getGamesResponse = await WebClient.MakeWebRequest(
+                path: Constants.Path.Games,
+                userId: userId,
+                method: HttpMethod.Get);
+
+            return JsonConvert.DeserializeObject<IReadOnlyList<GameModeMetadata>>(await getGamesResponse.Content.ReadAsStringAsync()).ToList();
+        }
+        public static async Task ConfigureLobby(ConfigureLobbyRequest request, string userId)
+        {
+            await WebClient.MakeWebRequest(
+                path: Constants.Path.LobbyConfigure,
+                userId: userId,
+                method: HttpMethod.Post,
+                content: new StringContent(
+                    JsonConvert.SerializeObject(request),
+                    Encoding.UTF8,
+                    Constants.MediaType.ApplicationJson));
+
+            await WebClient.MakeWebRequest(
+                path: Constants.Path.LobbyStart,
+                userId: userId,
+                method: HttpMethod.Get);
+        }
+        public static async Task DeleteLobby(string userId)
+        {
+            await WebClient.MakeWebRequest(
+                path: Constants.Path.LobbyDelete,
+                userId: userId,
+                method: HttpMethod.Get);
+        }
+        
         public static async Task JoinLobby(string userId, string lobbyId, string name = null, string drawing = null)
         {
             Debug.Assert(userId.Length == 50);
