@@ -9,7 +9,6 @@ using RoystonGame.Web.DataModels.Requests.Other;
 
 namespace RoystonGame.Web.Controllers.Other
 {
-
     public class OtherController : ControllerBase
 
     {
@@ -22,7 +21,7 @@ namespace RoystonGame.Web.Controllers.Other
         private IWebHostEnvironment Env { get; set; }
 
         [HttpGet]
-        [Route("Feedback-Api")]
+        [Route("api/v1/Feedback/Submit")]
         public IActionResult SubmitFeedback(FeedbackRequest request)
         {
             if (!ModelState.IsValid)

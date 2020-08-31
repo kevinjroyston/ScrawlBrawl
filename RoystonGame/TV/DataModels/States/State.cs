@@ -139,8 +139,6 @@ namespace RoystonGame.TV.DataModels
         /// </summary>
         public void HurryUsers()
         {
-            this.UsersHurried = true;
-
             // For any users currently within this state, hurry them up.
             foreach (User user in this.UsersEnteredAndExitedState.Keys)
             {
@@ -148,7 +146,7 @@ namespace RoystonGame.TV.DataModels
             }
         }
 
-        private void HurryUser(User user)
+        public void HurryUser(User user)
         {
             if (!this.UsersEnteredAndExitedState.ContainsKey(user))
             {
@@ -158,6 +156,8 @@ namespace RoystonGame.TV.DataModels
             (bool entered, bool exited) = this.UsersEnteredAndExitedState[user];
             if (entered && !exited)
             {
+                this.UsersHurried = true;
+
                 // Set user to hurry mode first!
                 user.StatesTellingMeToHurry.Add(this);
                 // Kick the user into motion so they can hurry through the states.

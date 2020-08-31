@@ -19,7 +19,7 @@ using RoystonGame.TV.DataModels.States.UserStates;
 namespace RoystonGame.Web.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/v1/Game/[controller]")]
     public class AutoFormSubmitController : ControllerBase
     {
         public AutoFormSubmitController(GameManager gameManager)

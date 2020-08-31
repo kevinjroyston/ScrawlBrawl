@@ -14,7 +14,7 @@ using System;
 namespace RoystonGame.Web.Controllers.LobbyManagement
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/v1/[controller]")]
 #if !DEBUG
     [Authorize(Policy = "LobbyManagement")]
 #endif

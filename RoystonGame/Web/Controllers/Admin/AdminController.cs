@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 namespace RoystonGame.Web.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/v1/[controller]")]
     [Authorize]
     public class AdminController : ControllerBase
     {

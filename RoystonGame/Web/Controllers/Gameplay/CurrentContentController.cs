@@ -15,7 +15,7 @@ using System.Diagnostics;
 namespace RoystonGame.Web.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/v1/Game/[controller]")]
     public class CurrentContentController : ControllerBase
     {
         private ILogger<CurrentContentController> Logger { get; set; }

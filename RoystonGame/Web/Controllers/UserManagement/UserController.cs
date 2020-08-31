@@ -6,7 +6,7 @@ using RoystonGame.Web.Helpers.Validation;
 namespace RoystonGame.Web.Controllers.UserManagement
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/v1/[controller]")]
     public class UserController : ControllerBase
     {
         public UserController(GameManager gameManager)
