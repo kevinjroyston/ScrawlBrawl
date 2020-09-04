@@ -1,11 +1,11 @@
 * {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    background-color: #FFFFFF;
-    color: #210F4C;
-    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-  }
+  margin: 0;
+  padding: 0;
+  border: 0;
+  /* background-color: #FFFFFF;*/
+  color: #210F4C;
+  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
 
 input {
   border: 1px solid black;
