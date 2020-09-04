@@ -45,7 +45,7 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
                 {
                     if (counter < numExpectedPerUser)
                     {
-                        return new SimplePromptUserState(
+                        SimplePromptUserState setupUserState = new SimplePromptUserState(
                             promptGenerator: (User user) =>
                             {
                                 return CountingPromptGenerator(user, usersToNumSubmitted[user]);
@@ -56,18 +56,23 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
                                 if (handlerResponse.Item1)
                                 {
                                     usersToNumSubmitted[user]++;
-                                }
-
-                                if (usersToNumSubmitted.All(kvp => kvp.Value >= numExpectedPerUser)) // if after this users submission everyone has finished the expected amount it rushes everyone through
-                                {
-                                    this.HurryUsers();
-                                }                                    
+                                }                                  
                                 return handlerResponse;
                             },
                             userTimeoutHandler: (User user, UserFormSubmission input) =>
                             {
                                 return CountingUserTimeoutHandler(user, input, usersToNumSubmitted[user]);
                             });
+
+                        setupUserState.AddPerUserExitListener((User user) =>
+                        {
+                            if (usersToNumSubmitted.All(kvp => kvp.Value >= numExpectedPerUser)) // if after this users submission everyone has finished the expected amount it rushes everyone through
+                            {
+                                this.HurryUsers();
+                            }
+                        });
+
+                        return setupUserState;
                     }
                     else if (counter < perUserInputLimit)
                     {

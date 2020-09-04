@@ -2,7 +2,7 @@
 
 namespace RoystonGame.TV.Extensions
 {
-    public static class StringExtentions
+    public static class StringExtensions
     {
         public static bool FuzzyEquals(this string a, string b)
         {

@@ -1,5 +1,6 @@
 ﻿using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.Extensions;
+using RoystonGame.TV.GameModes.Common;
 using RoystonGame.TV.GameModes.Common.GameStates;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople;
 using RoystonGame.Web.DataModels.Requests;
@@ -40,7 +41,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         }
         public override UserPrompt CountingPromptGenerator(User user, int counter)
         {
-            DrawingType drawingType = GetNeededDrawingType();
+            DrawingType drawingType = CommonHelpers.GetWeightedRandom(DrawingTypeToNumNeeded);
+
             UsersToTypeDrawing.AddOrReplace(user, drawingType);
             return new UserPrompt()
             {
@@ -72,9 +74,12 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                 Type = drawingType
             });
 
-            List<DrawingType> drawingTypes = new List<DrawingType>() { DrawingType.Head, DrawingType.Body, DrawingType.Legs };
-            foreach (DrawingType baseType in drawingTypes)
+            foreach (DrawingType baseType in Enum.GetValues(typeof(DrawingType)))
             {
+                if (baseType == DrawingType.None)
+                {
+                    continue;
+                }
                 if (drawingType == baseType)
                 {
                     DrawingTypeToNumNeeded[drawingType]--;
@@ -91,28 +96,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
             }
 
             return (true, string.Empty);
-        }
-
-        private DrawingType GetNeededDrawingType()
-        {
-            int numHeadsNeeded = DrawingTypeToNumNeeded[DrawingType.Head];
-            int numBodiesNeeded = DrawingTypeToNumNeeded[DrawingType.Body];
-            int numLegsNeeded = DrawingTypeToNumNeeded[DrawingType.Legs];
-
-            int random = Rand.Next(0, numHeadsNeeded + numBodiesNeeded + numLegsNeeded);
-
-            if (random < numHeadsNeeded)
-            {
-                return DrawingType.Head;
-            }
-            else if (random < numHeadsNeeded + numBodiesNeeded)
-            {
-                return DrawingType.Body;
-            }
-            else
-            {
-                return DrawingType.Legs;
-            }
         }
     }
 }

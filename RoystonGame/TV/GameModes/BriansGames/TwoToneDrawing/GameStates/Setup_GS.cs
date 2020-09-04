@@ -149,7 +149,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 
             this.ShowColors = showColors;
 
-            TimeSpan? multipliedDrawingTimer = CommonHelpers.GetMultipliedTimeSpan(drawingTimer, challengeTrackers.Count);
+            TimeSpan? multipliedDrawingTimer = drawingTimer.MultipliedBy(challengeTrackers.Count);
 
 
             State getChallenges = GetChallengesUserState();

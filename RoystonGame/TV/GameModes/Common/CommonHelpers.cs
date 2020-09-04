@@ -26,15 +26,23 @@ namespace RoystonGame.TV.GameModes.Common
             }
         }
 
-        public static TimeSpan? GetMultipliedTimeSpan(TimeSpan? originalTimeSpan, double multiplier)
+        public static T GetWeightedRandom<T>(IDictionary<T, int> valueToWeight)
         {
-            if (originalTimeSpan == null)
+            int totalWeight = valueToWeight.Values.Sum();
+            int random = Rand.Next(0, totalWeight);
+            foreach (T value in valueToWeight.Keys)
             {
-                return null;
+                if (random <= valueToWeight[value])
+                {
+                    return value;
+                }
+                else
+                {
+                    random -= valueToWeight[value];
+                }
             }
-            return TimeSpan.FromSeconds(((TimeSpan)originalTimeSpan).TotalSeconds * multiplier);
+            throw new Exception("Something went wrong getting weighted random");
         }
-
         public static IEnumerable<UserCreatedObject> TrimUserInputList(IEnumerable<UserCreatedObject> userInputs, int numInputsWanted)
         {
             Dictionary<User, List<UserCreatedObject>> usersToInputs = new Dictionary<User, List<UserCreatedObject>>();

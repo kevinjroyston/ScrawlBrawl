@@ -38,7 +38,7 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
                 {
                     if (numLeft > 0)
                     {
-                        return new SimplePromptUserState(
+                        SimplePromptUserState setupUserState = new SimplePromptUserState(
                             promptGenerator: (User user) =>
                             {
                                 return CountingPromptGenerator(user, usersToNumSubmitted[user]);
@@ -51,13 +51,18 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
                                     numLeft--;
                                     usersToNumSubmitted[user]++;
                                 }
-                                
-                                if (numLeft <= 0)
-                                {
-                                    this.HurryUsers();
-                                }
                                 return handlerResponse;
                             });
+
+                        setupUserState.AddPerUserExitListener((User user) =>
+                        {
+                            if (numLeft <= 0)
+                            {
+                                this.HurryUsers();
+                            }
+                        });
+
+                        return setupUserState;
                     }
                     else
                     {

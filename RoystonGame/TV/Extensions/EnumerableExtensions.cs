@@ -7,9 +7,16 @@ namespace RoystonGame.TV.Extensions
 {
     public static class EnumerableExtensions
     {
-        public static bool HasSameElements<T>(this IEnumerable<T> thisEnumerable, IEnumerable<T> otherEnumerable)
+        public static bool HasSameElements<T>(this IEnumerable<T> thisEnumerable, IEnumerable<T> otherEnumerable, IComparer<T> comparer = null)
         {
-            return thisEnumerable.All(element => otherEnumerable.Contains(element)) && otherEnumerable.All(element => thisEnumerable.Contains(element));
+            if (comparer != null)
+            {
+                return thisEnumerable.OrderBy(item => item, comparer).Equals(otherEnumerable.OrderBy(item => item, comparer));
+            }
+            else
+            {
+                return thisEnumerable.OrderBy(item => item).Equals(otherEnumerable.OrderBy(item => item));
+            }
         }
     }
 }

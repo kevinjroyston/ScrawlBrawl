@@ -12,7 +12,7 @@ namespace RoystonGame.TV.GameModes.Common.DataModels
 
         public Guid Id { get; set; }
         public User Owner { get; set; }
-        public DateTime CreationTime { get; set; }
+        public DateTime CreationTime { get; }
 
         public UserCreatedObject()
         {

@@ -55,7 +55,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic
                     aveTimerLength: MimicConstants.VotingTimerAve,
                     maxTimerLength: MimicConstants.VotingTimerMax);
             }
-            TimeSpan? extendedDrawingTimer = CommonHelpers.GetMultipliedTimeSpan(drawingTimer, MimicConstants.MimicTimerMultiplier);
+            TimeSpan? extendedDrawingTimer = drawingTimer.MultipliedBy(MimicConstants.MimicTimerMultiplier);
             
 
             this.Lobby = lobby;
