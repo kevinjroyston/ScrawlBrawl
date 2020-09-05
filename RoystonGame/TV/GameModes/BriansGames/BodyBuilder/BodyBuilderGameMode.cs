@@ -27,24 +27,24 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder
             int turnsForTimeout = (int)gameModeOptions[(int)GameModeOptionsEnum.turnsForTimeout].ValueParsed;
             bool displayNames = (bool)gameModeOptions[(int)GameModeOptionsEnum.displayNames].ValueParsed;
             bool displayImages = (bool)gameModeOptions[(int)GameModeOptionsEnum.displayImages].ValueParsed;
-            int gameSpeed = (int)gameModeOptions[(int)GameModeOptionsEnum.gameSpeed].ValueParsed;
+            int gameLength = (int)gameModeOptions[(int)GameModeOptionsEnum.GameLength].ValueParsed;
             TimeSpan? setupTimer = null;
             TimeSpan? drawingTimer = null;
             TimeSpan? roundTimer = null;
-            if (gameSpeed > 0)
+            if (gameLength > 0)
             {
-                setupTimer = CommonHelpers.GetTimerFromSpeed(
-                    speed: (double)gameSpeed,
+                setupTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
                     minTimerLength: BodyBuilderConstants.SetupTimerMin,
                     aveTimerLength: BodyBuilderConstants.SetupTimerAve,
                     maxTimerLength: BodyBuilderConstants.SetupTimerMax);
-                drawingTimer = CommonHelpers.GetTimerFromSpeed(
-                    speed: (double)gameSpeed,
+                drawingTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
                     minTimerLength: BodyBuilderConstants.DrawingTimerMin,
                     aveTimerLength: BodyBuilderConstants.DrawingTimerAve,
                     maxTimerLength: BodyBuilderConstants.DrawingTimerMax);
-                roundTimer = CommonHelpers.GetTimerFromSpeed(
-                    speed: (double)gameSpeed,
+                roundTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
                     minTimerLength: BodyBuilderConstants.RoundTimerMin,
                     aveTimerLength: BodyBuilderConstants.RoundTimerAve,
                     maxTimerLength: BodyBuilderConstants.RoundTimerMax);

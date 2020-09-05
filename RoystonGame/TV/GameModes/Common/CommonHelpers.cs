@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.IdentityModel.Tokens;
 using RoystonGame.TV.DataModels.Users;
+using RoystonGame.TV.GameModes.Common.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,6 +12,7 @@ namespace RoystonGame.TV.GameModes.Common
 {
     public static class CommonHelpers
     {
+        private static Random Rand = new Random();
         public static string HtmlImageWrapper(string image, int width = 240, int height = 240)
         {
             return Invariant($"<img width=\"{width}\" height=\"{height}\" src=\"{image}\"/>");
@@ -23,6 +26,67 @@ namespace RoystonGame.TV.GameModes.Common
             }
         }
 
+        public static T GetWeightedRandom<T>(IDictionary<T, int> valueToWeight)
+        {
+            int totalWeight = valueToWeight.Values.Sum();
+            int random = Rand.Next(0, totalWeight);
+            foreach (T value in valueToWeight.Keys)
+            {
+                if (random <= valueToWeight[value])
+                {
+                    return value;
+                }
+                else
+                {
+                    random -= valueToWeight[value];
+                }
+            }
+            throw new Exception("Something went wrong getting weighted random");
+        }
+        public static IEnumerable<UserCreatedObject> TrimUserInputList(IEnumerable<UserCreatedObject> userInputs, int numInputsWanted)
+        {
+            Dictionary<User, List<UserCreatedObject>> usersToInputs = new Dictionary<User, List<UserCreatedObject>>();
+            foreach (UserCreatedObject userInput in userInputs)
+            {
+                if (!usersToInputs.ContainsKey(userInput.Owner))
+                {
+                    usersToInputs.Add(userInput.Owner, new List<UserCreatedObject>());
+                }
+                usersToInputs[userInput.Owner].Add(userInput);
+            }
+            List<User> keys = usersToInputs.Keys.ToList();
+            foreach (User user in keys)
+            {
+                usersToInputs[user] = usersToInputs[user].OrderBy(input => input.CreationTime).ToList();
+            }
+            List<UserCreatedObject> trimmedUserInputs = userInputs.ToList();
+            while (trimmedUserInputs.Count > numInputsWanted)
+            {
+                User userWithMostInputs = GetUserWithMostInputs();
+                trimmedUserInputs.Remove(usersToInputs[userWithMostInputs].Last());
+                usersToInputs[userWithMostInputs].RemoveAt(usersToInputs[userWithMostInputs].Count - 1);
+            }
+
+            return trimmedUserInputs;
+
+            User GetUserWithMostInputs()
+            {
+                User userWithMostInputs = usersToInputs.Keys.ToList()[0];
+                foreach (User user in usersToInputs.Keys)
+                {
+                    if (usersToInputs[user].Count > usersToInputs[userWithMostInputs].Count)
+                    {
+                        userWithMostInputs = user;
+                    }
+                }
+                return userWithMostInputs;
+            }
+        }
+
+        public static int GetMaxInputsFromExpected(int numExpected, float multiplier = 1.3f, int minExtra = 2)
+        {
+            return Math.Max((int)Math.Ceiling(numExpected * multiplier), numExpected + minExtra);
+        }
         public static int PointsForSpeed(int maxPoints, int minPoints, double startTime, double endTime, double secondsTaken)
         {
             Debug.Assert(maxPoints >= minPoints);
@@ -43,13 +107,13 @@ namespace RoystonGame.TV.GameModes.Common
             }
         }
 
-        public static TimeSpan GetTimerFromSpeed(double speed, double minTimerLength, double aveTimerLength, double maxTimerLength, double minSpeed = 0, double aveSpeed = 5, double maxSpeed = 10)
+        public static TimeSpan GetTimerFromLength(double length, double minTimerLength, double aveTimerLength, double maxTimerLength, double minLength = 0, double aveLength = 5, double maxLength = 10)
         {
             return TimeSpan.FromSeconds(ThreePointLerp(
-                minX: minSpeed,
-                aveX: aveSpeed,
-                maxX: maxSpeed,
-                x: speed,
+                minX: minLength,
+                aveX: aveLength,
+                maxX: maxLength,
+                x: length,
                 minValue: minTimerLength,
                 aveValue: aveTimerLength,
                 maxValue: maxTimerLength));

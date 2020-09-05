@@ -7,20 +7,10 @@ using System.Drawing;
 
 namespace RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels
 {
-    public class Person
+    public class Person : UserCreatedUnityObject
     {
-        /// <summary>
-        /// The user who came up with this challenge
-        /// </summary>
-        public User Owner { get; set; }
-        public Guid Id { get; set; } = Guid.NewGuid();
+
         public string Name { get; set; }
-        #region UnityFields
-        protected virtual string UnityImageIdentifier { get { return null; } }
-        protected virtual string UnityImageTitle { get { return Name; } }
-        protected virtual string UnityImageHeader { get { return null; } }
-        protected virtual Color? UnityImageBackGroundColor { get { return Color.White; } }
-        #endregion
         public Dictionary<DrawingType, PeopleUserDrawing> BodyPartDrawings { get; set; } = new Dictionary<DrawingType, PeopleUserDrawing>();
 
         public enum DrawingType
@@ -38,7 +28,7 @@ namespace RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels
             return new List<string> { BodyPartDrawings[DrawingType.Head].Drawing, BodyPartDrawings[DrawingType.Body].Drawing, BodyPartDrawings[DrawingType.Legs].Drawing }.AsReadOnly();
         }
        
-        public UnityImage GetPersonImage(
+        public override UnityImage GetUnityImage(
             Color? backgroundColor = null,
             string imageIdentifier = null,
             Guid? imageOwnerId = null,
@@ -47,10 +37,8 @@ namespace RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels
             int? voteCount = null,
             UnityImageVoteRevealOptions voteRevealOptions = null)
         {
-            backgroundColor = backgroundColor ?? UnityImageBackGroundColor;
-            imageIdentifier = imageIdentifier ?? UnityImageIdentifier;
-            title = title ?? UnityImageTitle;
-            header = header ?? UnityImageHeader;
+            backgroundColor ??= Color.White;
+
             List<int> backgroundColorList = new List<int>
             {
                 Convert.ToInt32(backgroundColor.Value.R),

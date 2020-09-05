@@ -8,8 +8,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels
     public enum GameModeOptionsEnum
     {
         numRounds,
-        numPrompts,
+        numPromptsPerUserPerRound,
         numToDraw,
-        gameSpeed
+        numPlayersPerPrompt,
+        GameLength
     }
 }

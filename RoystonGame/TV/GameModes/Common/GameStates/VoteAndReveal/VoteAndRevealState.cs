@@ -19,7 +19,7 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
         public List<T> Objects { get; private set; }
         public virtual Func<User, UserPrompt> VotingWaitingPromptGenerator { get; set; } = null;
         public virtual Func<User, UserPrompt> RevealWaitingPromptGenerator { get; set; } = null;
-        public string VotingTitle { get; set; } = "Voting Time!";
+        public string VotingTitle { get; set; } = Constants.UIStrings.VotingUnityTitle;
         public string VotingInstructions { get; set; } = "";
         public List<int> IndexesOfObjectsToReveal { get; set; } = new List<int>();
         public List<string> ObjectTitles { get; set; }

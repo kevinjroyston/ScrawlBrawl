@@ -31,11 +31,8 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                   exit: new WaitForUsers_StateExit(lobby))
         {
             this.RoundTracker = roundTracker;
-            TimeSpan? multipliedCreationDuration = null;
-            if (creationDuration != null)
-            {
-                multipliedCreationDuration = TimeSpan.FromSeconds(((TimeSpan)creationDuration).TotalSeconds * roundTracker.UsersToAssignedPrompts.Values.ToList()[0].Count); // will be cleaned up in the upcoming refactor of this game
-            }
+            TimeSpan? multipliedCreationDuration = creationDuration.MultipliedBy(roundTracker.UsersToAssignedPrompts.Values.ToList()[0].Count);
+            
             MultiStateChain contestantsMultiStateChain = new MultiStateChain(MakePeopleUserStateChain, stateDuration: multipliedCreationDuration);
 
             this.Entrance.Transition(contestantsMultiStateChain);

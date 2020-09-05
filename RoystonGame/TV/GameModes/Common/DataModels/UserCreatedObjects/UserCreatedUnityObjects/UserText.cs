@@ -8,20 +8,10 @@ using System.Threading.Tasks;
 
 namespace RoystonGame.TV.GameModes.Common.DataModels
 {
-    public class UserText
+    public class UserText : UserCreatedUnityObject
     {
         public string Text { get; set; }
-        public Guid Id { get; set; }
-        public User Owner { get; set; }
-
-        #region UnityFields
-        protected virtual string UnityImageIdentifier { get { return null; } }
-        protected virtual string UnityImageTitle { get { return null; } }
-        protected virtual string UnityImageHeader { get { return null; } }
-        protected virtual Color? UnityImageBackGroundColor { get { return Color.White; } }
-        #endregion
-
-        public UnityImage GetUnityImage(
+        public override UnityImage GetUnityImage(
             Color? backgroundColor = null,
             string imageIdentifier = null,
             Guid? imageOwnerId = null,
@@ -30,10 +20,6 @@ namespace RoystonGame.TV.GameModes.Common.DataModels
             int? voteCount = null,
             UnityImageVoteRevealOptions voteRevealOptions = null)
         {
-            backgroundColor = backgroundColor ?? UnityImageBackGroundColor;
-            imageIdentifier = imageIdentifier ?? UnityImageIdentifier;
-            title = title ?? UnityImageTitle;
-            header = header ?? UnityImageHeader;
             List<int> backgroundColorList = new List<int>
             {
                 Convert.ToInt32(backgroundColor.Value.R),

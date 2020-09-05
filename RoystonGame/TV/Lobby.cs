@@ -90,7 +90,7 @@ namespace RoystonGame.TV
                 {
                     new GameModeOptionResponse
                     {
-                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 5,
                         MinValue = 0,
@@ -111,7 +111,7 @@ namespace RoystonGame.TV
                 {
                     new GameModeOptionResponse
                     {
-                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 5,
                         MinValue = 0,
@@ -154,7 +154,7 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 5,
                         MinValue = 0,
@@ -163,10 +163,10 @@ namespace RoystonGame.TV
                 }
             },
             #endregion
-            #region BodyBuilder
+            #region BodySwap
             new GameModeMetadata
             {
-                Title = "Body Builder",
+                Title = "Body Swap", // in code references as Body Builder
                 Description = "Try to make a complete character before your opponents can.",
                 MinPlayers = 3,
                 MaxPlayers = null,
@@ -203,7 +203,7 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 5,
                         MinValue = 0,
@@ -212,10 +212,10 @@ namespace RoystonGame.TV
                 }
             },
             #endregion
-            #region BattleReady
+            #region BodyBuilder
             new GameModeMetadata
             {
-                Title = "Battle Ready",
+                Title = "Body Builder", // in code refered to as Battle Ready
                 Description = "Go head to head body to body and legs to legs with other players to try to make the best constestant for each challenge.",
                 MinPlayers = 3,
                 MaxPlayers = null,
@@ -232,7 +232,7 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Number of prompts for each player per round",
+                        Description = "Number of prompts for each user per round",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 2,
                         MinValue = 1,
@@ -240,15 +240,23 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Number of each body part to draw",
+                        Description = "Number of drawings expected per user",
                         ResponseType = ResponseType.Integer,
-                        DefaultValue = 2,
+                        DefaultValue = 4,
                         MinValue = 2,
-                        MaxValue = 30,
+                        MaxValue = 10,
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        Description = "Number of players per prompt",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 2,
+                        MinValue = 2,
+                        MaxValue = 10,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 5,
                         MinValue = 0,
@@ -301,7 +309,7 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 5,
                         MinValue = 0,
@@ -344,7 +352,7 @@ namespace RoystonGame.TV
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Speed of the game (10 for fastest 1 for slowest 0 for no timer)",
+                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 5,
                         MinValue = 0,
@@ -433,6 +441,11 @@ namespace RoystonGame.TV
         public GameState GetCurrentGameState()
         {
             return this.CurrentGameState;
+        }
+
+        public void CloseLobbyWithError(Exception error = null)
+        {
+            GameManager.ReportGameError(type: Web.DataModels.Enums.ErrorType.GetContent, lobbyId: LobbyId, error: error);
         }
         public bool ConfigureLobby(ConfigureLobbyRequest request, out string errorMsg)
         {

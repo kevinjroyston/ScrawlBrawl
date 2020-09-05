@@ -5,6 +5,12 @@ namespace RoystonGame.TV.GameModes.Common.ThreePartPeople
 {
     public static class ThreePartPeopleConstants
     {
+        public static IReadOnlyList<DrawingType> DrawingTypesList { get; } = new List<DrawingType>()
+        {
+            DrawingType.Head,
+            DrawingType.Body,
+            DrawingType.Legs
+        };
         public static IReadOnlyDictionary<DrawingType, int> Widths { get; } = new Dictionary<DrawingType, int>()
         {
             {DrawingType.Head, 360},

@@ -38,28 +38,25 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic
             int maxDrawingsBeforeVoteInput = (int)gameModeOptions[(int)GameModeOptions.MaxDrawingsBeforeVote].ValueParsed;
             int numSets = (int)gameModeOptions[(int)GameModeOptions.NumSets].ValueParsed;
             int maxVoteDrawings = (int)gameModeOptions[(int)GameModeOptions.MaxVoteDrawings].ValueParsed;
-            int gameSpeed = (int)gameModeOptions[(int)GameModeOptions.GameSpeed].ValueParsed;
+            int gameLength = (int)gameModeOptions[(int)GameModeOptions.GameLength].ValueParsed;
             TimeSpan? setupTimer = null;
             TimeSpan? drawingTimer = null;
             TimeSpan? votingTimer = null;
-            if (gameSpeed > 0)
+            if (gameLength > 0)
             {
-                drawingTimer = CommonHelpers.GetTimerFromSpeed(
-                    speed: (double)gameSpeed,
+                drawingTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
                     minTimerLength: MimicConstants.DrawingTimerMin,
                     aveTimerLength: MimicConstants.DrawingTimerAve,
                     maxTimerLength: MimicConstants.DrawingTimerMax);
-                votingTimer = CommonHelpers.GetTimerFromSpeed(
-                    speed: (double)gameSpeed,
+                votingTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
                     minTimerLength: MimicConstants.VotingTimerMin,
                     aveTimerLength: MimicConstants.VotingTimerAve,
                     maxTimerLength: MimicConstants.VotingTimerMax);
             }
-            TimeSpan? extendedDrawingTimer = null;
-            if (drawingTimer != null)
-            {
-                extendedDrawingTimer = TimeSpan.FromSeconds(((TimeSpan)drawingTimer).TotalSeconds * MimicConstants.MimicTimerMultiplier);
-            }
+            TimeSpan? extendedDrawingTimer = drawingTimer.MultipliedBy(MimicConstants.MimicTimerMultiplier);
+            
 
             this.Lobby = lobby;
 

@@ -27,24 +27,24 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
         {
             this.Lobby = lobby;
             ValidateOptions(lobby, gameModeOptions);
-            int gameSpeed = (int)gameModeOptions[(int)GameModeOptionsEnum.gameSpeed].ValueParsed;
+            int gameLength = (int)gameModeOptions[(int)GameModeOptionsEnum.GameLength].ValueParsed;
             TimeSpan? setupTimer = null;
             TimeSpan? answeringTimer = null;
             TimeSpan? votingTimer = null;
-            if (gameSpeed > 0)
+            if (gameLength > 0)
             {
-                setupTimer = CommonHelpers.GetTimerFromSpeed(
-                    speed: (double)gameSpeed,
+                setupTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
                     minTimerLength: ImposterDrawingConstants.SetupTimerMin,
                     aveTimerLength: ImposterDrawingConstants.SetupTimerAve,
                     maxTimerLength: ImposterDrawingConstants.SetupTimerMax);
-                answeringTimer = CommonHelpers.GetTimerFromSpeed(
-                    speed: (double)gameSpeed,
+                answeringTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
                     minTimerLength: ImposterDrawingConstants.AnsweringTimerMin,
                     aveTimerLength: ImposterDrawingConstants.AnsweringTimerAve,
                     maxTimerLength: ImposterDrawingConstants.AnsweringTimerMax);
-                votingTimer = CommonHelpers.GetTimerFromSpeed(
-                    speed: (double)gameSpeed,
+                votingTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
                     minTimerLength: ImposterDrawingConstants.VotingTimerMin,
                     aveTimerLength: ImposterDrawingConstants.VotingTimerAve,
                     maxTimerLength: ImposterDrawingConstants.VotingTimerMax);

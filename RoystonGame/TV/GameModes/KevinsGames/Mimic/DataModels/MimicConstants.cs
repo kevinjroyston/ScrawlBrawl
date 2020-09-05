@@ -16,7 +16,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.DataModels
         {
             return numberOfPLayersInLobby * 20;
         }
-        public const double MimicTimerMultiplier = 2.0;
+        public const float MimicTimerMultiplier = 2.0f;
 
         public const double MemorizeTimerLength = 10;
 

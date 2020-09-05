@@ -38,24 +38,24 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
             int numColors = (int)gameModeOptions[(int)GameModeOptionsEnum.numColors].ValueParsed;
             int numTeams = (int)gameModeOptions[(int)GameModeOptionsEnum.numTeams].ValueParsed;
             bool showOtherColors = (bool)gameModeOptions[(int)GameModeOptionsEnum.showOtherColors].ValueParsed;
-            int gameSpeed = (int)gameModeOptions[(int)GameModeOptionsEnum.gameSpeed].ValueParsed;
+            int gameLength = (int)gameModeOptions[(int)GameModeOptionsEnum.GameLength].ValueParsed;
             TimeSpan? setupTimer = null;
             TimeSpan? drawingTimer = null;
             TimeSpan? votingTimer = null;
-            if (gameSpeed > 0)
+            if (gameLength > 0)
             {
-                setupTimer = CommonHelpers.GetTimerFromSpeed(
-                    speed: (double)gameSpeed,
+                setupTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
                     minTimerLength: TwoToneDrawingConstants.SetupTimerMin,
                     aveTimerLength: TwoToneDrawingConstants.SetupTimerAve,
                     maxTimerLength: TwoToneDrawingConstants.SetupTimerMax);
-                drawingTimer = CommonHelpers.GetTimerFromSpeed(
-                    speed: (double)gameSpeed,
+                drawingTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
                     minTimerLength: TwoToneDrawingConstants.PerDrawingTimerMin,
                     aveTimerLength: TwoToneDrawingConstants.PerDrawingTimerAve,
                     maxTimerLength: TwoToneDrawingConstants.PerDrawingTimerMax);
-                votingTimer = CommonHelpers.GetTimerFromSpeed(
-                    speed: (double)gameSpeed,
+                votingTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
                     minTimerLength: TwoToneDrawingConstants.VotingTimerMin,
                     aveTimerLength: TwoToneDrawingConstants.VotingTimerAve,
                     maxTimerLength: TwoToneDrawingConstants.VotingTimerMax);

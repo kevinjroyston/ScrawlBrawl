@@ -53,8 +53,8 @@ namespace RoystonGameAutomatedTestingClient.cs
             {
                 { "Imposter Syndrome", new ImposterTest() },
                 { "Two Tone", new TwoToneTest() },
-                { "Body Builder", new BodyBuilderTest() },
-                { "Battle Ready", new BattleReadyTest() },
+                { "Body Swap", new BodyBuilderTest() },
+                { "Body Builder", new BattleReadyTest() },
                 { "Mimic", new MimicTesting() },
             };
 
