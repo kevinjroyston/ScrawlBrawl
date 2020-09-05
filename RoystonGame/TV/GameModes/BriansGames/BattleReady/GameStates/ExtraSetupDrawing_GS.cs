@@ -74,13 +74,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                 Type = drawingType
             });
 
-            if (baseType != DrawingType.None)
+            if (drawingType != DrawingType.None)
             {
-                DrawingTypeToNumNeeded[baseType]--;
+                DrawingTypeToNumNeeded[drawingType]--;
 
-                if (DrawingTypeToNumNeeded[baseType] <= 0)
+                if (DrawingTypeToNumNeeded[drawingType] <= 0)
                 {
-                    List<User> usersDrawingThisType = UsersToTypeDrawing.Keys.Where(user => UsersToTypeDrawing[user] == baseType).ToList();
+                    List<User> usersDrawingThisType = UsersToTypeDrawing.Keys.Where(user => UsersToTypeDrawing[user] == drawingType).ToList();
                     foreach (User userDrawingType in usersDrawingThisType)
                     {
                         userDrawingType.UserState.HurryUsers();
