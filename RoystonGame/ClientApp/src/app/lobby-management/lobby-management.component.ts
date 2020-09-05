@@ -33,30 +33,24 @@ export class LobbyManagementComponent {
         this.getGames().then(()=>this.onGetLobby())
     }
 
-    async onConfigure() {
-        // TODO: clean up promise/move .then usage to api.ts
-        // TODO: configuration error handling
+    async onStartLobby() {
         var body = new ConfigureLobbyRequest();
         body.gameMode = this.lobby.selectedGameMode;
         body.options = JSON.parse(JSON.stringify(this.gameModes[this.lobby.selectedGameMode].options, ['value']));
-        var bodyString = JSON.stringify(body); 
+        var bodyString = JSON.stringify(body);
         console.log(bodyString);
         this.error = "";
         await this.api.request({ type: "Lobby", path: "Configure", body: bodyString }).subscribe({
-            next: async () => { await this.onGetLobby() },
+            next: async () => {
+                if (this.error == "") {
+                    await this.api.request({ type: "Lobby", path: "Start" }).subscribe({
+                        next: async () => { await this.onGetLobby() },
+                        error: async (error) => { this.error = error.error; await this.onGetLobby() }
+                    })
+                }
+            },
             error: async (error) => { this.error = error.error; await this.onGetLobby(); }
         })
-    }
-
-    async onStartLobby() {
-        await this.onConfigure().then(async () => {
-            if (this.error == "") {
-                await this.api.request({ type: "Lobby", path: "Start" }).subscribe({
-                    next: async () => { await this.onGetLobby() },
-                    error: async (error) => { this.error = error.error; await this.onGetLobby() }
-                })
-            }
-        });
     }
 
     async onGetLobby() {

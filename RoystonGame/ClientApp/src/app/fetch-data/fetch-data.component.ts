@@ -4,6 +4,9 @@ import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@ang
 import { Time } from '@angular/common';
 import { DomSanitizer, SafeHtml, SafeStyle, SafeScript, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
 import { MatSlider } from '@angular/material/slider';
+import { MsalService, BroadcastService } from '@azure/msal-angular';
+import { API } from '../api';
+import { isNullOrUndefined } from 'util';
 
 @Pipe({ name: 'safe' })
 export class Safe {
@@ -36,12 +39,14 @@ export class Safe {
 
 export class FetchDataComponent
 {
+    public api: API;
     public userPrompt: UserPrompt;
     public userForm;
     public http: HttpClient;
     public baseUrl: string;
     private formBuilder: FormBuilder;
     private userPromptTimerId;
+    private autoSubmitTimerId;
     private currentPromptId;
     private userId: string;
 
@@ -49,96 +54,124 @@ export class FetchDataComponent
         http: HttpClient,
         formBuilder: FormBuilder,
         @Inject('BASE_URL') baseUrl: string,
-        @Inject('userId') userId: string)
+        @Inject('userId') userId: string,
+        @Inject(MsalService) authService: MsalService,
+        @Inject(BroadcastService) broadcastService: BroadcastService
+    )
     {
+      this.api = new API(http, baseUrl, userId, authService, broadcastService)
       this.formBuilder = formBuilder;
       this.http = http;
       this.baseUrl = baseUrl;
       this.userId = userId;
-
-
       this.fetchUserPrompt();
     }
 
-    fetchUserPrompt(): void {
-      const httpOptions = {
-          params: {
-              id: this.userId
-          }
-      };
-      // poor attempt at removing race condition on submit + regular fetch cycle.
-      // might actually work if my understanding of setTmeout is correct.
-      if (this.userPromptTimerId) {
-        clearTimeout(this.userPromptTimerId);
-      }
-      // fetch the current content from the server
-        this.http.get<UserPrompt>(this.baseUrl + 'currentContent', httpOptions).subscribe(result => {
-        // if the current content has the same as id as the current, return
-        if (this.userPrompt && this.userPrompt.id == result.id) {
-          this.refreshUserPromptTimer(this.userPrompt.refreshTimeInMs);
-          return;
-          }
+    async fetchUserPrompt() {
+        if (this.userPromptTimerId) {
+          clearTimeout(this.userPromptTimerId);
+        }
 
-        // Clear whatever was in the old form.
-        if (this.userForm) {
-            this.userForm.reset();
-        }
-        // Store the new user prompt and populate the corresponding formControls
-        this.userPrompt = result;
-        let subFormCount: number = 0;
-        if (result && result.subPrompts && result.subPrompts.length > 0) {
-            subFormCount = result.subPrompts.length;
-        }
-        this.userForm = this.formBuilder.group({
-            id: '',
-            subForms: this.formBuilder.array(this.makeSubForms(subFormCount))
+        // fetch the current content from the server
+        await this.api.request({ type: "Game", path: "CurrentContent"}).subscribe({
+            next: async data => {
+                var prompt = data as UserPrompt;
+
+                // Too lazy to figure out how to properly deserialize things.
+                prompt.autoSubmitAtTime = isNullOrUndefined(prompt.autoSubmitAtTime) ? null : new Date(prompt.autoSubmitAtTime);
+                prompt.currentServerTime = isNullOrUndefined(prompt.currentServerTime) ? null : new Date(prompt.currentServerTime);
+
+                console.log('Fetched Prompt', prompt);
+
+                // if the current content has the same as id as the current, return
+                if (this.userPrompt && this.userPrompt.id == prompt.id) {
+                    this.refreshUserPromptTimer(prompt.refreshTimeInMs);
+                    return;
+                }
+
+                // If you have reached this far it means we have switched to a new prompt, time to cleanup!
+
+                // Clear the autosubmit timer
+                if (this.autoSubmitTimerId) {
+                  clearTimeout(this.autoSubmitTimerId);
+                }
+
+                // Start a new autosubmit timer
+                if (prompt && !isNullOrUndefined(prompt.autoSubmitAtTime)) {
+                    this.autoSubmitUserPromptTimer(prompt.autoSubmitAtTime.getTime() - prompt.currentServerTime.getTime());
+                }
+
+                // Clear whatever was in the old form.
+                if (this.userForm) {
+                    this.userForm.reset();
+                }
+                // Store the new user prompt and populate the corresponding formControls
+                this.userPrompt = prompt;
+                let subFormCount: number = 0;
+                if (prompt && prompt.subPrompts && prompt.subPrompts.length > 0) {
+                    subFormCount = prompt.subPrompts.length;
+                }
+                this.userForm = this.formBuilder.group({
+                    id: '',
+                    subForms: this.formBuilder.array(this.makeSubForms(subFormCount))
+                });
+                // reset the timer to call again
+                this.refreshUserPromptTimer(this.userPrompt.refreshTimeInMs);
+
+                // Reset the form again because you are a bad coder
+                if (this.userForm) {
+                    this.userForm.reset();
+                }
+            },
+            error: async (error) => {
+                console.error(error);
+            }
         });
-        // reset the timer to call again
-        this.refreshUserPromptTimer(this.userPrompt.refreshTimeInMs);
-
-        // Reset the form again because you are a bad coder
-        if (this.userForm) {
-            this.userForm.reset();
-        }
-      }, error => {
-        console.error(error);
-        this.refreshUserPromptTimer(10000);
-      });
     }
-    refreshUserPromptTimer(ms:number):void {
+    refreshUserPromptTimer(ms: number): void {
         this.userPromptTimerId = setTimeout(() => this.fetchUserPrompt(), ms);
     }
-
-    onSubmit(userSubmitData) {
-      const httpOptions = {
-        headers: new HttpHeaders({
-            'Content-Type': 'application/json',
-        }),          
-        params: {
-          id: this.userId
+    autoSubmitUserPromptTimer(ms: number): void {
+        if (ms <= 0) {
+            this.onSubmit(this.userForm?.value, true)
+            return;
         }
-      };
-      // Populate IDs.
-      userSubmitData.id = this.userPrompt.id;
-      for (let i = 0; i < userSubmitData.subForms.length; i++) {
-          userSubmitData.subForms[i].id = this.userPrompt.subPrompts[i].id;
-      }
+        this.autoSubmitTimerId = setTimeout(() => this.onSubmit(this.userForm?.value, true), ms);
+    }
 
-      var body = JSON.stringify(userSubmitData);
+  async onSubmit(userSubmitData, autoSubmit = false) {
+        // Clear auto refresh timer as well as auto submit timer since we will be calling get after
+        // the submission and both will get set there
+        if (this.userPromptTimerId) {
+          clearTimeout(this.userPromptTimerId);
+        }
+        if (this.autoSubmitTimerId) {
+          clearTimeout(this.autoSubmitTimerId);
+        }
+
+        // Populate IDs.
+        userSubmitData.id = this.userPrompt.id;
+        for (let i = 0; i < userSubmitData.subForms.length; i++) {
+            userSubmitData.subForms[i].id = this.userPrompt.subPrompts[i].id;
+        }
+
+        var body = JSON.stringify(userSubmitData);
         console.warn('Submitting response', body);
         var response;
-        this.http.post(this.baseUrl + "FormSubmit", body, httpOptions).subscribe(
-            data => {
+
+        await this.api.request({ type: "Game", path: autoSubmit ? "AutoFormSubmit" : "FormSubmit", body: body }).subscribe({
+            next: async (data) => {
                 console.log("POST Request is successful ", data);
                 this.fetchUserPrompt();
             },
-            error => {
+            error: async (error) => {
                 console.log("Error", error);
                 this.fetchUserPrompt();
                 if (error && error.error) {
                     this.userPrompt.error = error.error;
                 }
-            });
+            }
+        });
     }
 
     createSubForm(): FormGroup {
@@ -148,7 +181,7 @@ export class FetchDataComponent
             radioAnswer: '',
             shortAnswer: '',
             color: '',
-          drawing: '',
+            drawing: '',
             slider: '',
             selector: '',
         });
@@ -165,6 +198,8 @@ export class FetchDataComponent
 interface UserPrompt {
     id: string;
     refreshTimeInMs: number;
+    currentServerTime: Date;
+    autoSubmitAtTime: Date;
     submitButton: boolean;
     title: string;
     description: string;
@@ -179,8 +214,8 @@ interface SubPrompt {
     answers: string[];
     colorPicker: boolean;
     shortAnswer: boolean;
-  drawing: DrawingPromptMetadata;
-  slider: SliderPromptMetadata;
+    drawing: DrawingPromptMetadata;
+    slider: SliderPromptMetadata;
     selector: SelectorPromptMetadata;
 }
 interface DrawingPromptMetadata {

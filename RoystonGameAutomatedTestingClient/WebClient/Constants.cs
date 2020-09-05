@@ -13,8 +13,9 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
 
         public static class Path
         {
-            public const string FormSubmit = "FormSubmit";
-            public const string CurrentContent = "CurrentContent";
+            public const string AutoFormSubmit = "api/v1/Game/AutoFormSubmit";
+            public const string FormSubmit = "api/v1/Game/FormSubmit";
+            public const string CurrentContent = "api/v1/Game/CurrentContent";
         }
 
         public static class MediaType

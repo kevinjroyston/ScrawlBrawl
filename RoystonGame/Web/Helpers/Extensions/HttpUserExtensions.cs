@@ -7,10 +7,10 @@ namespace RoystonGame.Web.Helpers.Extensions
 {
     public static class HttpUserExtensions
     {
-        public static string GetUserId(this IPrincipal principal)
+        public static string GetUserId(this IPrincipal principal, string testHookId)
         {
 #if DEBUG
-            return "default";
+            return testHookId;
 #else
             if (principal == null)
             {

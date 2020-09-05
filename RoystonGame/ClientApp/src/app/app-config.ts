@@ -92,13 +92,13 @@ export const tokenRequest: { scopes: string[] } = {
 // here you can define the coordinates and required permissions for your protected resources
 export const protectedResourceMap: [string, string[]][] = environment.enableMsal ? [
     [apiConfig.webApi, apiConfig.b2cScopes],
-    ['/lobby/manage', apiConfig.b2cScopes],
-    ['/Lobby/Games', apiConfig.b2cScopes],
-    ['/Lobby/Get', apiConfig.b2cScopes],
-    ['/Lobby/Create', apiConfig.b2cScopes],
-    ['/Lobby/Configure', apiConfig.b2cScopes],
-    ['/Lobby/Delete', apiConfig.b2cScopes],
-    ['/Lobby/Start', apiConfig.b2cScopes],
+    ['lobby/manage', apiConfig.b2cScopes],
+    ['api/v1/Lobby/Games', apiConfig.b2cScopes],
+    ['api/v1/Lobby/Get', apiConfig.b2cScopes],
+    ['api/v1/Lobby/Create', apiConfig.b2cScopes],
+    ['api/v1/Lobby/Configure', apiConfig.b2cScopes],
+    ['api/v1/Lobby/Delete', apiConfig.b2cScopes],
+    ['api/v1/Lobby/Start', apiConfig.b2cScopes],
 ] : [];
 
 /** 
@@ -111,8 +111,8 @@ export const msalAngularConfig: MsalAngularConfiguration = {
         ...loginRequest.scopes,
         ...tokenRequest.scopes,
     ],
-    unprotectedResources: ["/currentContent", "/FormSubmit", "/User/Delete"], // API calls to these coordinates will NOT activate MSALGuard
-    protectedResourceMap,     // API calls to these coordinates will activate MSALGuard
+    unprotectedResources: ["api/v1/Game/CurrentContent", "api/v1/Game/FormSubmit", "api/v1/Game/AutoFormSubmit", "api/v1/User/Delete"], // API calls to these coordinates will NOT activate MSALGuard
+    protectedResourceMap,     // Scopes to use
     extraQueryParameters: {}
 }
 // #endregion

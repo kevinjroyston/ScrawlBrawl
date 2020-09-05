@@ -140,6 +140,10 @@ namespace RoystonGame.TV.DataModels.Users
         public void TransitionUserState(UserState newState)
         {
             this.UserState = newState;
+        }
+
+        public void RefreshStateTimeoutTracker()
+        {
             this.EarliestStateTimeout = this.StateStack.Select(state => state.ApproximateStateEndTime).Min();
         }
 

@@ -16,7 +16,7 @@
         <div class="d-inline-flex">Lobby ID: {{ lobby.lobbyId.toUpperCase() }}</div>
         <div class="d-inline-flex">Players Joined: {{ lobby.playerCount }}</div>
         <button type="button" class="btn btn-sm btn-outline-secondary" (click)="onDeleteLobby()">Delete Lobby</button>
-        <a class="btn btn-sm btn-outline-secondary" href="https://github.com/kevinjroyston/RoystonGame/releases/">Download Game Viewer</a>
+        <a class="btn btn-sm btn-outline-secondary" href="https://github.com/kevinjroyston/RoystonGame/releases/latest/download/ScrawlBrawlClient.zip">Download Game Viewer</a>
       </div>
 
       <div *ngIf="!lobby.gameInProgress" class="p-2">
