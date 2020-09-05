@@ -11,11 +11,11 @@ namespace RoystonGame.TV.Extensions
         {
             if (comparer != null)
             {
-                return thisEnumerable.OrderBy(item => item, comparer).Equals(otherEnumerable.OrderBy(item => item, comparer));
+                return thisEnumerable.OrderBy(item => item, comparer).SequenceEqual(otherEnumerable.OrderBy(item => item, comparer));
             }
             else
             {
-                return thisEnumerable.OrderBy(item => item).Equals(otherEnumerable.OrderBy(item => item));
+                return thisEnumerable.OrderBy(item => item).SequenceEqual(otherEnumerable.OrderBy(item => item));
             }
         }
     }
