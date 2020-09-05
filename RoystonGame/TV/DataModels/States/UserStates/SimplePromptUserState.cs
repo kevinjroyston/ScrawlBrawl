@@ -83,7 +83,6 @@ namespace RoystonGame.TV.DataModels.States.UserStates
             {
                 return false;
             }
-
             this.Exit.Inlet(user, UserStateResult.Success, userInput);
             return true;
         }

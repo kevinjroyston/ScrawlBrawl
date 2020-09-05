@@ -61,13 +61,13 @@ namespace RoystonGame.TV.DataModels
 
                 user.StateStack.Push(this);
                 user.RefreshStateTimeoutTracker();
-
-                // Any time a user exits a state they should be set to Waiting.
-                user.Status = UserStatus.Waiting;
             });
 
             this.Exit.AddPerUserEntranceListener((User user) =>
             {
+                // Any time a state is being exited, set user back to waiting.
+                user.Status = UserStatus.Waiting;
+
                 // User has exited state.
                 this.UsersEnteredAndExitedState[user] = (true, true);
 
