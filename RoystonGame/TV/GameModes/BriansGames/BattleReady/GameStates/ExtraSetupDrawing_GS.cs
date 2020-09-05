@@ -74,23 +74,16 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                 Type = drawingType
             });
 
-            foreach (DrawingType baseType in Enum.GetValues(typeof(DrawingType)))
+            if (baseType != DrawingType.None)
             {
-                if (baseType == DrawingType.None)
+                DrawingTypeToNumNeeded[baseType]--;
+
+                if (DrawingTypeToNumNeeded[baseType] <= 0)
                 {
-                    continue;
-                }
-                if (drawingType == baseType)
-                {
-                    DrawingTypeToNumNeeded[drawingType]--;
-                    
-                    if (DrawingTypeToNumNeeded[drawingType] <= 0)
+                    List<User> usersDrawingThisType = UsersToTypeDrawing.Keys.Where(user => UsersToTypeDrawing[user] == baseType).ToList();
+                    foreach (User userDrawingType in usersDrawingThisType)
                     {
-                        List<User> usersDrawingThisType = UsersToTypeDrawing.Keys.Where(user => UsersToTypeDrawing[user] == drawingType).ToList();
-                        foreach (User userDrawingType in usersDrawingThisType)
-                        {
-                            userDrawingType.UserState.HurryUsers();
-                        }
+                        userDrawingType.UserState.HurryUsers();
                     }
                 }
             }
