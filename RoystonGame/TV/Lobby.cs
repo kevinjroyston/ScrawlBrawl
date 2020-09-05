@@ -636,12 +636,12 @@ namespace RoystonGame.TV
         public void PrepareToRestartGame(EndOfGameRestartType restartType)
         {
             GameState previousEndOfGameRestart = this.EndOfGameRestart;
+            this.Game = null;
             switch (restartType)
             {
                 case EndOfGameRestartType.Disband:
                     UnregisterAllUsers();
                     InitializeAllGameStates();
-                    this.SelectedGameMode = null;
                     break;
                 case EndOfGameRestartType.ResetScore:
                     InitializeAllGameStates();

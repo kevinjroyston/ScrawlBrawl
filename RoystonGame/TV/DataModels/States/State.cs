@@ -18,8 +18,9 @@ namespace RoystonGame.TV.DataModels
     /// <summary>
     /// A state has an inlet and outlet.
     /// </summary>
-    public abstract class State : StateOutlet, IInlet
+    public abstract class State : StateOutlet, IInlet, IComparable, Identifiable
     {
+        public Guid Id { get; } = Guid.NewGuid();
         public StateEntrance Entrance { get; private set; }
 
         private List<Action> EntranceListeners { get; } = new List<Action>();
@@ -59,6 +60,7 @@ namespace RoystonGame.TV.DataModels
                 this.UsersEnteredAndExitedState[user] = (true, false);
 
                 user.StateStack.Push(this);
+                user.RefreshStateTimeoutTracker();
 
                 // Any time a user exits a state they should be set to Waiting.
                 user.Status = UserStatus.Waiting;
@@ -76,8 +78,10 @@ namespace RoystonGame.TV.DataModels
                     user.StateStack.Clear();
                 }
 
+                user.RefreshStateTimeoutTracker();
+
                 // If we told this user to hurry. Tell them not to hurry.
-                if (this.UsersHurried && user.StatesTellingMeToHurry.Count > 0 && user.StatesTellingMeToHurry.Contains(this))
+                if (user.StatesTellingMeToHurry.Count > 0 && user.StatesTellingMeToHurry.Contains(this))
                 {
                     user.StatesTellingMeToHurry.Remove(this);
                 }
@@ -139,6 +143,8 @@ namespace RoystonGame.TV.DataModels
         /// </summary>
         public void HurryUsers()
         {
+            this.UsersHurried = true;
+
             // For any users currently within this state, hurry them up.
             foreach (User user in this.UsersEnteredAndExitedState.Keys)
             {
@@ -156,8 +162,6 @@ namespace RoystonGame.TV.DataModels
             (bool entered, bool exited) = this.UsersEnteredAndExitedState[user];
             if (entered && !exited)
             {
-                this.UsersHurried = true;
-
                 // Set user to hurry mode first!
                 user.StatesTellingMeToHurry.Add(this);
                 // Kick the user into motion so they can hurry through the states.
@@ -182,10 +186,20 @@ namespace RoystonGame.TV.DataModels
             this.HurryUsers();
 
             // Hacky: If the attached StateExit is specifically a "WaitForStateTimeoutDuration_StateExit", invoke it here.
-            if (this.Exit is WaitForStateTimeoutDuration_StateExit)
+            if (this.Exit is WaitForStateTimeoutDuration_StateExit exit)
             {
-                ((WaitForStateTimeoutDuration_StateExit)this.Exit).Trigger();
+                exit.Trigger();
             }
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (!(obj is Identifiable identifiable))
+            {
+                return -1;
+            }
+
+            return this.Id.CompareTo(identifiable.Id);
         }
     }
 

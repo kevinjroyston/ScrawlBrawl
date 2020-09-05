@@ -31,13 +31,13 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
 
         [HttpGet]
         [Route("Get")]
-        public IActionResult GetLobby()
+        public IActionResult GetLobby([FromQuery(Name = "Id")]string testHookId)
         {
             if (!ModelState.IsValid)
             {
                 return new BadRequestResult();
             }
-            AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
+            AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId(testHookId));
 
             if (user == null)
             {
@@ -54,13 +54,13 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
 
         [HttpPost]
         [Route("Create")]
-        public IActionResult CreateLobby()
+        public IActionResult CreateLobby([FromQuery(Name = "Id")]string testHookId)
         {
             if (!ModelState.IsValid)
             {
                 return new BadRequestResult();
             }
-            AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
+            AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId(testHookId));
 
             if (user == null)
             {
@@ -97,13 +97,13 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
 
         [HttpGet]
         [Route("Delete")]
-        public IActionResult DeleteLobby()
+        public IActionResult DeleteLobby([FromQuery(Name = "Id")]string testHookId)
         {
             if (!ModelState.IsValid)
             {
                 return new BadRequestResult();
             }
-            AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
+            AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId(testHookId));
             if (user == null)
             {
                 return StatusCode(500, "Something went wrong finding that user, try again");
@@ -121,13 +121,13 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
 
         [HttpPost]
         [Route("Configure")]
-        public IActionResult ConfigureLobby([FromBody]ConfigureLobbyRequest request)
+        public IActionResult ConfigureLobby([FromBody]ConfigureLobbyRequest request, [FromQuery(Name ="Id")]string testHookId)
         {
             if (!ModelState.IsValid)
             {
                 return new BadRequestResult();
             }
-            AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
+            AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId(testHookId));
             if (user == null)
             {
                 return StatusCode(500, "Something went wrong finding that user, try again");
@@ -148,13 +148,13 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
 
         [HttpGet]
         [Route("Start")]
-        public IActionResult StartLobby()
+        public IActionResult StartLobby([FromQuery(Name = "Id")]string testHookId)
         {
             if (!ModelState.IsValid)
             {
                 return new BadRequestResult();
             }
-            AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId());
+            AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId(testHookId));
             if (user == null)
             {
                 return StatusCode(500, "Something went wrong finding that user, try again");

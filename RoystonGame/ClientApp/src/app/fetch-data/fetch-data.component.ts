@@ -6,6 +6,7 @@ import { DomSanitizer, SafeHtml, SafeStyle, SafeScript, SafeUrl, SafeResourceUrl
 import { MatSlider } from '@angular/material/slider';
 import { MsalService, BroadcastService } from '@azure/msal-angular';
 import { API } from '../api';
+import { isNullOrUndefined } from 'util';
 
 @Pipe({ name: 'safe' })
 export class Safe {
@@ -67,22 +68,37 @@ export class FetchDataComponent
     }
 
     async fetchUserPrompt() {
-        this.clearTimers();
+        if (this.userPromptTimerId) {
+          clearTimeout(this.userPromptTimerId);
+        }
 
         // fetch the current content from the server
         await this.api.request({ type: "Game", path: "CurrentContent"}).subscribe({
             next: async data => {
-                var result = data as UserPrompt;
+                var prompt = data as UserPrompt;
+
+                // Too lazy to figure out how to properly deserialize things.
+                prompt.autoSubmitAtTime = isNullOrUndefined(prompt.autoSubmitAtTime) ? null : new Date(prompt.autoSubmitAtTime);
+                prompt.currentServerTime = isNullOrUndefined(prompt.currentServerTime) ? null : new Date(prompt.currentServerTime);
+
+                console.log('Fetched Prompt', prompt);
 
                 // if the current content has the same as id as the current, return
-                if (this.userPrompt && this.userPrompt.id == result.id) {
-                    this.refreshUserPromptTimer(this.userPrompt.refreshTimeInMs);
+                if (this.userPrompt && this.userPrompt.id == prompt.id) {
+                    this.refreshUserPromptTimer(prompt.refreshTimeInMs);
                     return;
                 }
 
-                // Start the autosubmit timer
-                if (this.userPrompt && this.userPrompt.autoSubmitAtTime) {
-                    this.refreshUserPromptTimer(this.userPrompt.refreshTimeInMs);
+                // If you have reached this far it means we have switched to a new prompt, time to cleanup!
+
+                // Clear the autosubmit timer
+                if (this.autoSubmitTimerId) {
+                  clearTimeout(this.autoSubmitTimerId);
+                }
+
+                // Start a new autosubmit timer
+                if (prompt && !isNullOrUndefined(prompt.autoSubmitAtTime)) {
+                    this.autoSubmitUserPromptTimer(prompt.autoSubmitAtTime.getTime() - prompt.currentServerTime.getTime());
                 }
 
                 // Clear whatever was in the old form.
@@ -90,10 +106,10 @@ export class FetchDataComponent
                     this.userForm.reset();
                 }
                 // Store the new user prompt and populate the corresponding formControls
-                this.userPrompt = result;
+                this.userPrompt = prompt;
                 let subFormCount: number = 0;
-                if (result && result.subPrompts && result.subPrompts.length > 0) {
-                    subFormCount = result.subPrompts.length;
+                if (prompt && prompt.subPrompts && prompt.subPrompts.length > 0) {
+                    subFormCount = prompt.subPrompts.length;
                 }
                 this.userForm = this.formBuilder.group({
                     id: '',
@@ -116,11 +132,22 @@ export class FetchDataComponent
         this.userPromptTimerId = setTimeout(() => this.fetchUserPrompt(), ms);
     }
     autoSubmitUserPromptTimer(ms: number): void {
-        this.autoSubmitTimerId = setTimeout(() => this.onSubmit(this.userForm.value, true), ms);
+        if (ms <= 0) {
+            this.onSubmit(this.userForm?.value, true)
+            return;
+        }
+        this.autoSubmitTimerId = setTimeout(() => this.onSubmit(this.userForm?.value, true), ms);
     }
 
-    async onSubmit(userSubmitData, autoSubmit = false) {
-        this.clearTimers();
+  async onSubmit(userSubmitData, autoSubmit = false) {
+        // Clear auto refresh timer as well as auto submit timer since we will be calling get after
+        // the submission and both will get set there
+        if (this.userPromptTimerId) {
+          clearTimeout(this.userPromptTimerId);
+        }
+        if (this.autoSubmitTimerId) {
+          clearTimeout(this.autoSubmitTimerId);
+        }
 
         // Populate IDs.
         userSubmitData.id = this.userPrompt.id;
@@ -145,15 +172,6 @@ export class FetchDataComponent
                 }
             }
         });
-    }
-
-    clearTimers() {
-        if (this.userPromptTimerId) {
-            clearTimeout(this.userPromptTimerId);
-        }
-        if (this.autoSubmitTimerId) {
-            clearTimeout(this.autoSubmitTimerId);
-        }
     }
 
     createSubForm(): FormGroup {
