@@ -46,6 +46,9 @@ export class DrawingDirective {
     onmousedown(event) {
         console.log("down/start");
         event.preventDefault();
+
+        if (document.activeElement instanceof HTMLElement)  // pull focus from any input so it hides the keyboard on mobile
+          document.activeElement.blur();
        
         [this.lastX, this.lastY] = this.getCoords(event);
 
