@@ -6,6 +6,7 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
 {
     public static class Constants
     {
+  
         public static class QueryString
         {
             public const string Id = "Id";
