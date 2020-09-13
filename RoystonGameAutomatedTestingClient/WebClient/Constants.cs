@@ -16,12 +16,12 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
             public const string AutoFormSubmit = "api/v1/Game/AutoFormSubmit";
             public const string FormSubmit = "api/v1/Game/FormSubmit";
             public const string CurrentContent = "api/v1/Game/CurrentContent";
-            public const string LobbyCreate = "Lobby/Create";
-            public const string LobbyGet = "Lobby/Get";
-            public const string LobbyDelete = "Lobby/Delete";
-            public const string LobbyConfigure = "Lobby/Configure";
-            public const string LobbyStart = "Lobby/Start";
-            public const string Games = "Lobby/Games";
+            public const string LobbyCreate = "api/v1/Lobby/Create";
+            public const string LobbyGet = "api/v1/Lobby/Get";
+            public const string LobbyDelete = "api/v1/Lobby/Delete";
+            public const string LobbyConfigure = "api/v1/Lobby/Configure";
+            public const string LobbyStart = "api/v1/Lobby/Start";
+            public const string Games = "api/v1/Lobby/Games";
 
         }
 

@@ -33,6 +33,7 @@ namespace RoystonGameAutomatedTestingClient.Games
                 {
                     if (userPrompt.SubPrompts[0].Drawing != null) //first prompt is drawing, must be drawing state
                     {
+                        Console.WriteLine("Submitting Drawing");
                         string promptTitle = userPrompt.SubPrompts[0].Prompt;
                         if (promptTitle.Contains("Head", StringComparison.OrdinalIgnoreCase))
                         {
@@ -53,19 +54,28 @@ namespace RoystonGameAutomatedTestingClient.Games
                     }
                     else if (userPrompt.SubPrompts[0].ShortAnswer) //first prompt is shortasnwer, must be prompt state
                     {
+                        Console.WriteLine("Submitting Prompt");
                         return MakePrompt(userId);
                     }
                     else if (userPrompt.SubPrompts.Length == 4) //4 prompts, must be contestant creation
                     {
+                        Console.WriteLine("Submitting Contestant");
                         return MakePerson(userId, "TestPerson");
                     }
-                    else if (userPrompt.SubPrompts[0].Answers?.Length > 0) //first prompt is radio answer must be voting
+                    else if (userPrompt.SubPrompts[0].Answers?.Length > 0 && userPrompt.SubPrompts.Count() == 1) //first prompt is radio answer must be voting
                     {
+                        Console.WriteLine("Submitting Voting");
                         return Vote(userId);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Finished");
+                        GameEndingListener();
                     }
                 }
                 else //no subprompts must be skip reveal
                 {
+                    Console.WriteLine("Submitting Skip");
                     return SkipReveal(userId);
                 }
             }

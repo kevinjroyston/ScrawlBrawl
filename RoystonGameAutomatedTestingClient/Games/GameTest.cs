@@ -19,6 +19,9 @@ namespace RoystonGameAutomatedTestingClient.Games
     {
         private int delayBetweenSubmissions = GameConstants.DefaultDelayBetweenSubmissions;
         private int numToTimeOut = GameConstants.DefaultNumToTimeOut;
+        private int timeToWaitForUpdate = GameConstants.DefaultTimeToWaitForUpdate;
+        private int numUpdateChecks = GameConstants.DefauleNumUpdateChecks;
+        private bool finished = false;
         private Random Rand = new Random();
         protected abstract Task AutomatedSubmitter(UserPrompt userPrompt, string userId);
         protected AutomationWebClient WebClient = new AutomationWebClient();
@@ -73,6 +76,10 @@ namespace RoystonGameAutomatedTestingClient.Games
             
             for (int i = 0; i < 500; i++)
             {
+                if (finished)
+                {
+                    break;
+                }
                 if (manual)
                 {
                     for (int j = 0; j < 100; j++)
@@ -126,25 +133,44 @@ namespace RoystonGameAutomatedTestingClient.Games
                 {
                     userIdsToPrompts.Add(userId, await WebClient.GetUserPrompt(userId));
                 }
+
                 foreach (string userId in userIdsNotTimingOut)
                 {
                     UserPrompt userPrompt = userIdsToPrompts[userId];
-                    if (userPrompt == await WebClient.GetUserPrompt(userId)) // only submit if userprompt hasnt changed
+                    if (userPrompt.Id == (await WebClient.GetUserPrompt(userId)).Id) // only submit if userprompt hasnt changed
                     {
                         await AutomatedSubmitter(userPrompt, userId);
                         Thread.Sleep(delayBetweenSubmissions);
                     }  
                 }
-                Console.WriteLine("here");
-                /*while (true)
+
+                Console.WriteLine("===============================");
+
+                int firstCheckDelay = Helpers.CalcFirstCheckDelay(timeToWaitForUpdate * 1000, numUpdateChecks);
+                bool updated = false;
+                for (int j = 0; j < numUpdateChecks; j++)
                 {
-                    if (userIdsNotTimingOut.Any(userId => WebClient.GetUserPrompt(userId).Result != null))
+                    if (userIds.Any(userId => WebClient.GetUserPrompt(userId).Result != null))
                     {
+                        updated = true;
                         break;
                     }
-                }*/
-            }
-            
+                    Thread.Sleep(Helpers.GetDelayFromIndex(firstCheckDelay, j));
+                }
+                if (!updated && userIds.Any(userId => WebClient.GetUserPrompt(userId).Result != null))
+                {
+                    updated = true;
+                }
+
+                if (!updated)
+                {
+                    Console.WriteLine("Timed out");
+                }
+            }     
+        }
+        protected void GameEndingListener()
+        {
+            finished = true;
         }
     }
 }

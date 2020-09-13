@@ -38,7 +38,7 @@ namespace RoystonGameAutomatedTestingClient.cs
         public static async Task AsyncMain()
         {
             Console.WriteLine("Scrawl Brawl Automated Testing Client");
-            await CommonSubmissions.DeleteLobby(Helpers.GenerateUserId(1));
+            //await CommonSubmissions.DeleteLobby(Helpers.GenerateUserId(1));
             AutomationWebClient webClient = new AutomationWebClient();
             List<string> userIds = new List<string>();
             string lobbyId;
@@ -112,7 +112,7 @@ namespace RoystonGameAutomatedTestingClient.cs
                 #endregion
                 #region Body Swap 
                 new GameTestHolder(
-                    title: "Body Builder",
+                    title: "Body Swap",
                     test: new BodyBuilderTest(),
                     optionsList: new List<GameTestHolder.TestOption>()
                     {
@@ -131,7 +131,7 @@ namespace RoystonGameAutomatedTestingClient.cs
                 #endregion
                 #region Body Builder
                 new GameTestHolder(
-                    title: "Battle Ready",
+                    title: "Body Builder",
                     test: new BattleReadyTest(),
                     optionsList: new List<GameTestHolder.TestOption>()
                     {
@@ -141,7 +141,8 @@ namespace RoystonGameAutomatedTestingClient.cs
                             {
                                 new GameModeOptionRequest(){ Value = "3" }, // num rounds
                                 new GameModeOptionRequest(){ Value = "2" }, //num prompts
-                                new GameModeOptionRequest(){ Value = "2"}, // num each part
+                                new GameModeOptionRequest(){ Value = "4"}, // num drawings expected
+                                new GameModeOptionRequest(){ Value = "2"}, // num players per prompt
                                 new GameModeOptionRequest(){ Value = "5" } // game speed
                             },
                             numToTimeOut: 0)
@@ -256,8 +257,8 @@ namespace RoystonGameAutomatedTestingClient.cs
                     Console.WriteLine(Invariant($"[{i + 1}]: {games[i].Title}"));
                 }
                 int selection = Convert.ToInt32(Console.ReadLine());
-                GameModeMetadata game = games[selection];
-
+                GameModeMetadata game = games[selection - 1];
+                Console.WriteLine(game.Title);
                 GameTestHolder gameTestHolder = gameTests.Find(testHolder => testHolder.Title == game.Title);
 
                 foreach (GameTestHolder.TestOption options in gameTestHolder.OptionsList)

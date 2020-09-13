@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RoystonGame.Web.DataModels.Responses;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -38,6 +39,15 @@ namespace RoystonGameAutomatedTestingClient.cs
             string id = Invariant($"{ZeroIdString}{userIndex}");
             id = id.Substring(id.Length - 50, 50);
             return id;
+        }
+
+        public static int CalcFirstCheckDelay(int maxTotalTime, int numChecks)
+        {
+            return (int)((maxTotalTime - 1) / Math.Pow(2, numChecks - 1));
+        }
+        public static int GetDelayFromIndex(int firstDelay, int index)
+        {
+            return (int)(firstDelay * Math.Pow(2, index));
         }
     }
 }
