@@ -28,6 +28,8 @@ import { LobbyManagementComponent } from './lobby-management/lobby-management.co
 import { UserManagementComponent } from './user-management/user-management.component';
 import { SelectorDirective } from './fetch-data/fetch-data.selectordirective.component';
 import { FeedbackComponent} from './feedback/feedback.component';
+import { HomepageComponent } from './homepage/homepage.component';
+import { AboutUsComponent } from './aboutus/aboutus.component';
 import { Slider } from './slider/slider.component';
 import { DrawingBoard } from './drawingboard/drawingboard.component';
 import { Configuration } from 'msal';
@@ -41,7 +43,9 @@ const guards: any[] = environment.enableMsal ? [MsalGuard] : [];
 const appRoutes: Routes = [
     { path: 'lobby/manage', component: LobbyManagementComponent, canActivate: guards },
     { path: 'user/manage', component: UserManagementComponent },
-    { path: '', component: FetchDataComponent },
+    { path: 'game/play', component: FetchDataComponent},
+    { path: '', component: HomepageComponent },
+    { path: 'about/us', component: AboutUsComponent },
     { path: 'feedback', component: FeedbackComponent}
     //{ path: 'admin', component: AdminComponent} //not yet made
 ];
@@ -60,6 +64,8 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     NavMenuComponent,
     FetchDataComponent,
     FeedbackComponent,
+    HomepageComponent,
+    AboutUsComponent,
     DrawingDirective,
     SelectorDirective,
     LobbyManagementComponent,
