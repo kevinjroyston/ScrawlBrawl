@@ -14,7 +14,8 @@ namespace RoystonGame.Web
             Colors.LightGreen,
             Colors.Peach,
             Colors.Purple,
-            Colors.Yellow
+            Colors.Yellow,
+            Colors.Brown,
         };
         public static IReadOnlyList<string> RestrictedColorPalette { get; } = new List<string>()
         {
@@ -25,6 +26,7 @@ namespace RoystonGame.Web
 
         public static class Colors
         {
+            public static string Brown = "rgb(117,86,41)";
             public static string DarkGray = "rgb(66,66,66)";
             public static string LightBlue = "rgb(78,193,219)";
             public static string LightGreen = "rgb(123,219,78)";
