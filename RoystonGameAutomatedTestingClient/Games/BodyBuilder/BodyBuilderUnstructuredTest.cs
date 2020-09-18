@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    class BodyBuilderTest : GameTest
+    class BodyBuilderUnstructuredTest : UnstructuredGameTest
     {
         private Random Rand = new Random();
         protected override Task AutomatedSubmitter(UserPrompt userPrompt, string userId)
@@ -40,66 +40,49 @@ namespace RoystonGameAutomatedTestingClient.Games
             }
             return Task.CompletedTask;
         }
-        private async Task MakePrompts(string userId)
+        private UserFormSubmission MakePrompts(string userId)
         {
             Debug.Assert(userId.Length == 50);
 
-            await WebClient.SubmitUserForm(
-                handler: (UserPrompt prompt) =>
+            return new UserFormSubmission
+            {
+                SubForms = new List<UserSubForm>()
                 {
-                    if (prompt == null || !prompt.SubmitButton)
-                        return null;
-
-                    return new UserFormSubmission
+                    new UserSubForm()
                     {
-                        Id = prompt.Id,
-                        SubForms = new List<UserSubForm>()
-                        {
-                            new UserSubForm()
-                            {
-                                Id = prompt.SubPrompts?[0]?.Id ?? Guid.Empty,
-                                ShortAnswer = Helpers.GetRandomString()
-                            },
-                            new UserSubForm()
-                            {
-                                Id = prompt.SubPrompts?[1]?.Id ?? Guid.Empty,
-                                ShortAnswer = Helpers.GetRandomString()
-                            },
-                        }
-                    };
-                },
-                userId: userId);
+                        ShortAnswer = Helpers.GetRandomString()
+                    },
+                    new UserSubForm()
+                    {
+                        ShortAnswer = Helpers.GetRandomString()
+                    },
+                }
+            };
+           
         }
         private async Task MakeDrawing(string userId)
         {
             await CommonSubmissions.SubmitSingleDrawing(userId);
         }
-        private async Task Swap(string userId)
+        private UserFormSubmission Swap(string userId)
         {
-            await WebClient.SubmitUserForm(
-                handler: (UserPrompt prompt) =>
+            int answer = Rand.Next(0, prompt.SubPrompts[1].Answers.Length);
+
+            return new UserFormSubmission
+            {
+                SubForms = new List<UserSubForm>()
                 {
-                    if (prompt == null || !prompt.SubmitButton)
-                        return null;
-
-                    int answer = Rand.Next(0, prompt.SubPrompts[1].Answers.Length);
-
-                    return new UserFormSubmission
+                    new UserSubForm()
                     {
-                        SubForms = new List<UserSubForm>()
-                        {
-                            new UserSubForm()
-                            {
-                            },
-                            new UserSubForm()
-                            {
-                                RadioAnswer = answer
-                            }
-                        }
-                    };
-                },
-                userId: userId);
+                    },
+                    new UserSubForm()
+                    {
+                        RadioAnswer = answer
+                    }
+                }
+            };
         }
+
         private async Task SkipReveal(string userId)
         {
             await CommonSubmissions.SubmitSkipReveal(userId);

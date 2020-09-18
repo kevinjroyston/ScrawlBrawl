@@ -23,7 +23,7 @@ using static System.FormattableString;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    class BattleReadyTest : GameTest
+    class BattleReadyUnstructuredTest : UnstructuredGameTest
     {
         protected override Task AutomatedSubmitter(UserPrompt userPrompt, string userId)
         {
@@ -100,40 +100,33 @@ namespace RoystonGameAutomatedTestingClient.Games
         {
             await CommonSubmissions.SubmitSingleText(userId);
         }
-        private async Task MakePerson(string userId, string personName = "TestPerson")
+        private UserFormSubmission MakePerson(string userId, string personName = "TestPerson")
         {
             Debug.Assert(userId.Length == 50);
 
-            await WebClient.SubmitUserForm(
-                handler: (UserPrompt prompt) =>
+            return new UserFormSubmission
+            {
+                SubForms = new List<UserSubForm>()
                 {
-                    if (prompt == null || !prompt.SubmitButton)
-                        return null;
-
-                    return new UserFormSubmission
+                    new UserSubForm()
                     {
-                        SubForms = new List<UserSubForm>()
-                        {
-                            new UserSubForm()
-                            {
-                                Selector = 0
-                            },
-                            new UserSubForm()
-                            {
-                                Selector = 0
-                            },
-                            new UserSubForm()
-                            {
-                                Selector = 0
-                            },
-                            new UserSubForm()
-                            {
-                                ShortAnswer = personName
-                            }
-                        }
-                    };
-                },
-                userId: userId);  
+                        Selector = 0
+                    },
+                    new UserSubForm()
+                    {
+                        Selector = 0
+                    },
+                    new UserSubForm()
+                    {
+                        Selector = 0
+                    },
+                    new UserSubForm()
+                    {
+                        ShortAnswer = personName
+                    }
+                }
+            };
+           
         }
         private async Task Vote(string userId)
         {

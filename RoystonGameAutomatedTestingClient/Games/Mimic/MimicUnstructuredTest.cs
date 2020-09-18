@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    class MimicTesting : GameTest
+    class MimicUnstructuredTest : UnstructuredGameTest
     {
         protected override Task AutomatedSubmitter(UserPrompt userPrompt, string userId)
         {

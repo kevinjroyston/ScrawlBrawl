@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    class TwoToneTest : GameTest
+    class TwoToneUnstructuredTest : UnstructuredGameTest
     {
         protected override Task AutomatedSubmitter(UserPrompt userPrompt, string userId)
         {
@@ -44,36 +44,30 @@ namespace RoystonGameAutomatedTestingClient.Games
         {
             await CommonSubmissions.SubmitSingleDrawing(userId);
         }
-        private async Task MakePrompt(string userId)
+        private UserFormSubmission MakePrompt(string userId)
         {
             Debug.Assert(userId.Length == 50);
 
-            await WebClient.SubmitUserForm(
-                handler: (UserPrompt prompt) =>
-                {
-                    if (prompt == null || !prompt.SubmitButton)
-                        return null;
 
-                    return new UserFormSubmission
+            return new UserFormSubmission
+            {
+                SubForms = new List<UserSubForm>()
+                {
+                    new UserSubForm()
                     {
-                        SubForms = new List<UserSubForm>()
-                        {
-                            new UserSubForm()
-                            {
-                                ShortAnswer = Helpers.GetRandomString()
-                            },
-                            new UserSubForm()
-                            {
-                                Color = Constants.Colors.Black
-                            },
-                            new UserSubForm()
-                            {
-                                Color = Constants.Colors.Red
-                            }
-                        }
-                    };
-                },
-                userId: userId);
+                        ShortAnswer = Helpers.GetRandomString()
+                    },
+                    new UserSubForm()
+                    {
+                        Color = Constants.Colors.Black
+                    },
+                    new UserSubForm()
+                    {
+                        Color = Constants.Colors.Red
+                    }
+                }
+            };
+
         }
         private async Task Vote(string userId)
         {

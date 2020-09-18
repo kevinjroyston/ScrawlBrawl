@@ -1,373 +1,121 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using RoystonGame.TV;
-using RoystonGame.TV.DataModels.Users;
-using RoystonGame.TV.Extensions;
-using RoystonGame.Web.DataModels;
-using RoystonGame.Web.DataModels.Requests.LobbyManagement;
-using RoystonGame.Web.DataModels.Responses;
-using RoystonGame.Web.DataModels.UnityObjects;
-using RoystonGameAutomatedTestingClient.cs.WebClient;
-using RoystonGameAutomatedTestingClient.Games;
-using RoystonGameAutomatedTestingClient.WebClient;
-using RoystonGameAutomatedTestingClient.TestClient;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using static RoystonGame.Web.DataModels.Requests.LobbyManagement.ConfigureLobbyRequest;
-using static System.FormattableString;
+using McMaster.Extensions.CommandLineUtils;
+using RoystonGame.Web.DataModels;
+using RoystonGameAutomatedTestingClient.TestFramework;
+using RoystonGameAutomatedTestingClient.WebClient;
 
 namespace RoystonGameAutomatedTestingClient.cs
-{
-    class Program
+{   
+    [HelpOption]
+    public class Program
     {
-        static void Main(string[] args)
+        /*
+         * Command Line Execution
+         * [x] - Param - DisableCleanupOnFailure default false if true (not close lobby print stuff to console, and open browsers)
+         * [x] - Param - Parallel (Parallel vs Sequential)
+         * [x] - Param - GameMode(Required) If without TestName run in unstructured test mode (how many users) <- make maybe required flags if no test name provided
+         * [x] - Param - Test Name(Optional) -> At some point list of tests 
+         * [x] - Param - Open Browsers
+         * [] - Param - Text File of Tests (Optional) (text file game mode, test name -> only structured tests)
+         * 
+         * Notes
+         * [x] - Unique user ids, lobbyOwnerUserId for each test (generateRandom)
+         * [x] - Constants File for links, ints
+         * [x] - Each test, create userids, lobby id, lobbyOwnerId, TestParameters object
+         * [x] - Potentially Interface that gives fields relevant, above params
+         * [x] - For each game test, generate all user ids, generate lobbyOwnerUserId, track lobby
+         * 
+         * - For any game mode, there will be a list of structured tests(text file) and unstructured test mode
+         *   (can change game params, cant check much validation) Debug vs Normal mode
+         * - 1. Running a test, lobby created for specific game with specific settings
+         * - 2. Create lobby yourself, passing in lobby id and game mode that was made.  Wait for you to hit start 
+         * - Maybe create lobby manually for manual test
+         * 
+         * Design Doc
+         * - Figure out Interface
+         * - Command Line params
+         * - Abstractions
+         * - How Game Tests will look
+         * 
+         * Todo Later
+         * - Write tests for test framework, given different inputs doesnt crash, parallel
+         * - Validate command line params logic
+         * 
+         * Comment out DebugTestRunner
+         * Only for unstructured - Make a lobby for them, Ask for num users (prompt or command line), Open up browser of lobbyowner pointed at lobby creation page
+         * Remove Debug
+         * 
+         * Goal
+         * Implement rest of features/infrastructure/parameters
+         * Convert Existing game tests to unstructured games (implement handleTimeout)
+         * Mock up structured Test (mock enums)
+         * pull request
+         */
+
+        [Option("-d|--debug")]
+        public bool IsDebug { get; }
+
+        [Option("-p|-parallel")]
+        public bool IsParallel { get; }
+
+        [Option("-b|-browsers")]
+        public bool IsBrowsers { get; }
+
+        [Option("-c|-disablecleanup")]
+        public bool DisableCleanup { get; }
+
+        [Option("-u|-users")]
+        public int numUsers { get; }
+
+        [Option("-g|--game")]
+        public string Game { get; }
+
+        [Argument(0)]
+        public string[] Tests { get; }
+
+        private TestRunner runner;
+
+        public static void Main(string[] args)
         {
-            Console.WriteLine(args.Length);
-            try
-            {
-                Console.WriteLine("hello");
-                RunTestClient().GetAwaiter().GetResult();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            CommandLineApplication.ExecuteAsync<Program>(args).GetAwaiter().GetResult();
         }
 
-        public static async Task RunTestClient()
+        private async Task OnExecuteAsync()
         {
-            //AutomationWebClient webClient = new AutomationWebClient();
-            OnTestStart();
-            DetermineTestModeAndRunTests();
-            OnTestFinish();
-        }
-        public static void OnTestStart()
-        {
-            Console.WriteLine("Scrawl Brawl Automated Testing Client!");
-            Console.WriteLine("Type \"Help\" for list of commands");
-            Console.WriteLine("Press Enter to run all automated tests");
-        }
-        public static async void DetermineTestModeAndRunTests()
-        {
-            List<GameModeMetadata> games = await CommonSubmissions.GetGames(Helpers.GenerateUserId(1));
-            games = games.Where(gameData => gameTests.Any(testHolder => testHolder.Title == gameData.Title)).ToList();
-
-            while (true)
-            {
-                string UserInput = Console.ReadLine();
-
-                if (UserInput.FuzzyEquals(TestClient.Constants.TestRunnerModes.Manual))
-                {
-                    RunManual(games);
-                    break;
-                }
-                else if (UserInput.FuzzyEquals(TestClient.Constants.TestRunnerModes.AutomatedSingle))
-                {
-                    RunAutomaticSingle(games);
-                    break;
-                }
-                else if (UserInput.FuzzyEquals("") || UserInput.FuzzyEquals(TestClient.Constants.TestRunnerModes.AutomatedAll))
-                {
-                    RunAutomaticAll(games);
-                    break;
-                }
-                else if (UserInput.FuzzyEquals("help"))
-                {
-                    OutputHelpCommands();
-                }
-                else
-                {
-                    Console.WriteLine("Not a valid input. Try again or type help to get a list of commands.");
-                }
-            }
+            await RunTestsWithMode();
         }
 
-        public static void OnTestFinish()
+        public Dictionary<string, object> CollectParams()
         {
-            Console.WriteLine("Done");
+            Dictionary<string, object> Params = new Dictionary<string, object>();
+            Params.Add("Game", Game);
+            Params.Add("IsBrowsers", IsBrowsers);
+            Params.Add("Tests", Tests);
+            Params.Add("numUsers", numUsers);
+            Params.Add("IsParallel", IsParallel);
+            Params.Add("DisableCleanup", DisableCleanup);
+
+            return Params;
         }
 
-        public static async void RunManual(List<GameModeMetadata> games)
+        public async Task RunTestsWithMode()
         {
-            List<string> userIds = new List<string>();
-            string lobbyId = await CommonSubmissions.MakeLobby(Helpers.GenerateUserId(1));
-            Console.WriteLine("Lobby Id: " + lobbyId);
-            Console.WriteLine("Enter number of players for the lobby");
-            int numPlayers = Convert.ToInt32(Console.ReadLine());
+            List<GameModeMetadata> Games = await CommonSubmissions.GetGames(Helpers.GenerateRandomId());
+            Dictionary<string, object> Params = CollectParams();
 
-            for (int i = 1; i <= numPlayers; i++)
+            if (IsDebug)
             {
-                userIds.Add(Helpers.GenerateUserId(i));
-                await CommonSubmissions.JoinLobby(
-                    userId: Helpers.GenerateUserId(i),
-                    lobbyId: lobbyId,
-                    name: "TestUser" + i);
-                Thread.Sleep(Math.Clamp(500 - 5 * i, 1, 100));
+                runner = new DebugTestRunner(Games, Params);
+            } 
+            else
+            {
+                runner = new NormalTestRunner(Games, Params);
             }
-            for (int i = 0; i < games.Count; i++)
-            {
-                Console.WriteLine(Invariant($"[{i + 1}]: {games[i].Title}"));
-            }
-            int selection = Convert.ToInt32(Console.ReadLine());
-            GameModeMetadata game = games[selection];
-            List<GameModeOptionResponse> options = game.Options;
-            List<GameModeOptionRequest> optionRequests = new List<GameModeOptionRequest>();
 
-            GameTestHolder gameTestHolder = gameTests.Find(testHolder => testHolder.Title == game.Title);
-
-            for (int i = 0; i < 50; i++)
-            {
-                Console.WriteLine("Press Enter to run with default parameters, Type override to set your own");
-                string submission = Console.ReadLine();
-                if (submission.FuzzyEquals("override"))
-                {
-                    Console.WriteLine("Type in a value to override or press enter to go with default");
-                    foreach (GameModeOptionResponse option in options)
-                    {
-                        Console.WriteLine(option.Description);
-
-                        if (option.MinValue != null)
-                            Console.WriteLine("Min: " + option.MinValue);
-                        if (option.MaxValue != null)
-                            Console.WriteLine("Max: " + option.MaxValue);
-
-                        Console.WriteLine("Default: " + option.DefaultValue);
-                        Console.WriteLine("Type: " + option.ResponseType.ToString());
-                        string submission2 = Console.ReadLine();
-
-                        if (submission2.FuzzyEquals(""))
-                        {
-                            optionRequests.Add(new GameModeOptionRequest() { Value = option.DefaultValue.ToString() });
-                        }
-                        else
-                        {
-                            optionRequests.Add(new GameModeOptionRequest() { Value = submission2 });
-                        }
-                    }
-                }
-                else if (submission.FuzzyEquals(""))
-                {
-                    foreach (GameModeOptionResponse option in options)
-                    {
-                        optionRequests.Add(new GameModeOptionRequest() { Value = option.DefaultValue.ToString() });
-                    }
-                }
-                else
-                {
-                    Console.WriteLine(Invariant($"\"{submission}\" is not a valid command. Press Enter to run with default parameters, Type override to set your own"));
-                }
-            }
-            ConfigureLobbyRequest configLobby = new ConfigureLobbyRequest()
-            {
-                GameMode = games.FindIndex(gameData => gameData.Title == gameTestHolder.Title),
-                Options = optionRequests
-            };
-            await CommonSubmissions.ConfigureLobby(configLobby, Helpers.GenerateUserId(1));
-            await gameTestHolder.Test.RunGame(userIds, true);
+            await runner.Run();
         }
-
-        public static async void RunAutomaticSingle(List<GameModeMetadata> games)
-        {
-            List<string> userIds = new List<string>();
-            for (int i = 0; i < games.Count; i++)
-            {
-                Console.WriteLine(Invariant($"[{i + 1}]: {games[i].Title}"));
-            }
-            int selection = Convert.ToInt32(Console.ReadLine());
-            GameModeMetadata game = games[selection - 1];
-            Console.WriteLine(game.Title);
-            GameTestHolder gameTestHolder = gameTests.Find(testHolder => testHolder.Title == game.Title);
-
-            foreach (GameTestHolder.TestOption options in gameTestHolder.OptionsList)
-            {
-                string lobbyId = await CommonSubmissions.MakeLobby(Helpers.GenerateUserId(1));
-                userIds = new List<string>();
-                for (int i = 0; i < options.NumPlayers; i++)
-                {
-                    userIds.Add(Helpers.GenerateUserId(i));
-                    await CommonSubmissions.JoinLobby(
-                        userId: Helpers.GenerateUserId(i),
-                        lobbyId: lobbyId,
-                        name: "TestUser" + i);
-                }
-                ConfigureLobbyRequest configLobby = new ConfigureLobbyRequest()
-                {
-                    GameMode = games.FindIndex(gameData => gameData.Title == gameTestHolder.Title),
-                    Options = options.GameModeOptions
-                };
-                await CommonSubmissions.ConfigureLobby(configLobby, Helpers.GenerateUserId(1));
-                await gameTestHolder.Test.RunGame(userIds, false);
-                await CommonSubmissions.DeleteLobby(Helpers.GenerateUserId(1));
-            }
-        }
-
-        public static async void RunAutomaticAll(List<GameModeMetadata> games)
-        {
-            List<string> userIds = new List<string>();
-            foreach (GameModeMetadata game in games)
-            {
-                GameTestHolder gameTestHolder = gameTests.Find(testHolder => testHolder.Title == game.Title);
-
-                int count = 0;
-                foreach (GameTestHolder.TestOption options in gameTestHolder.OptionsList)
-                {
-                    Console.WriteLine(game.Title + " Test #" + count);
-                    string lobbyId = await CommonSubmissions.MakeLobby(Helpers.GenerateUserId(1));
-                    Console.WriteLine("Lobby Id: " + lobbyId);
-                    userIds = new List<string>();
-                    for (int i = 1; i <= options.NumPlayers; i++)
-                    {
-                        userIds.Add(Helpers.GenerateUserId(i));
-                        await CommonSubmissions.JoinLobby(
-                            userId: Helpers.GenerateUserId(i),
-                            lobbyId: lobbyId,
-                            name: "TestUser" + i);
-                    }
-                    ConfigureLobbyRequest configLobby = new ConfigureLobbyRequest()
-                    {
-                        GameMode = games.FindIndex(gameData => gameData.Title == gameTestHolder.Title),
-                        Options = options.GameModeOptions
-                    };
-                    await CommonSubmissions.ConfigureLobby(configLobby, Helpers.GenerateUserId(1));
-                    await gameTestHolder.Test.RunGame(userIds, false);
-                    await CommonSubmissions.DeleteLobby(Helpers.GenerateUserId(1));
-                    count++;
-                }
-            }
-        }
-
-        public static void OutputHelpCommands()
-        {
-            Console.WriteLine("\nCommands:");
-            Console.WriteLine("Solo     : automated test of a single game");
-            Console.WriteLine("Manual   : maunual test of a single game");
-        }
-
-        class GameTestHolder
-        {
-            public class TestOption
-            {
-                public int NumPlayers { get; }
-                public List<GameModeOptionRequest> GameModeOptions { get; }
-                public int NumToTimeOut { get; }
-                
-                public TestOption(
-                    int numPlayers, 
-                    List<GameModeOptionRequest> gameModeOptions,
-                    int numToTimeOut = 0)
-                {
-                    this.NumPlayers = numPlayers;
-                    this.GameModeOptions = gameModeOptions;
-                    this.NumToTimeOut = Math.Min(numToTimeOut, numPlayers);
-                }
-            }
-            public string Title { get; }
-            public GameTest Test { get; }
-            public List<TestOption> OptionsList { get; }
-            public GameTestHolder(string title, GameTest test, List<TestOption> optionsList = null)
-            {
-                this.Title = title;
-                this.Test = test;
-                this.OptionsList = optionsList;
-            }
-        }
-
-        private static List<GameTestHolder> gameTests = new List<GameTestHolder>()
-         {
-                #region ImposterSyndrome
-                new GameTestHolder(
-                    title: "Imposter Syndrome",
-                    test: new ImposterTest(),
-                    optionsList: new List<GameTestHolder.TestOption>()
-                    {
-                        new GameTestHolder.TestOption(
-                            numPlayers: 10,
-                            gameModeOptions: new List<GameModeOptionRequest>()
-                            {
-                                new GameModeOptionRequest(){ Value = ""+5 } // game speed
-                            },
-                            numToTimeOut: 0)
-                    }),
-                #endregion
-                #region Two Tone
-                new GameTestHolder(
-                    title: "Chaotic Cooperation",
-                    test: new TwoToneTest(),
-                    optionsList: new List<GameTestHolder.TestOption>()
-                    {
-                        new GameTestHolder.TestOption(
-                            numPlayers: 10,
-                            gameModeOptions: new List<GameModeOptionRequest>()
-                            {
-                                new GameModeOptionRequest(){ Value = "2" }, // max num colors
-                                new GameModeOptionRequest(){ Value = "4" }, // max num teams per prompt
-                                new GameModeOptionRequest(){ Value = "true"}, // show other colors
-                                new GameModeOptionRequest(){ Value = "5" } // game speed
-                            },
-                            numToTimeOut: 0)
-                    }),
-                #endregion
-                #region Body Swap 
-                new GameTestHolder(
-                    title: "Body Swap",
-                    test: new BodyBuilderTest(),
-                    optionsList: new List<GameTestHolder.TestOption>()
-                    {
-                        new GameTestHolder.TestOption(
-                            numPlayers: 10,
-                            gameModeOptions: new List<GameModeOptionRequest>()
-                            {
-                                new GameModeOptionRequest(){ Value = "2" }, // num rounds
-                                new GameModeOptionRequest(){ Value = "true" }, //show names
-                                new GameModeOptionRequest(){ Value = "false"}, // show images
-                                new GameModeOptionRequest(){ Value = "25"}, //num turns before timeout
-                                new GameModeOptionRequest(){ Value = "5" } // game speed
-                            },
-                            numToTimeOut: 0)
-                    }),
-                #endregion
-                #region Body Builder
-                new GameTestHolder(
-                    title: "Body Builder",
-                    test: new BattleReadyTest(),
-                    optionsList: new List<GameTestHolder.TestOption>()
-                    {
-                        new GameTestHolder.TestOption(
-                            numPlayers: 10,
-                            gameModeOptions: new List<GameModeOptionRequest>()
-                            {
-                                new GameModeOptionRequest(){ Value = "3" }, // num rounds
-                                new GameModeOptionRequest(){ Value = "2" }, //num prompts
-                                new GameModeOptionRequest(){ Value = "4"}, // num drawings expected
-                                new GameModeOptionRequest(){ Value = "2"}, // num players per prompt
-                                new GameModeOptionRequest(){ Value = "5" } // game speed
-                            },
-                            numToTimeOut: 0)
-                    }),
-                #endregion
-                #region Mimic
-                new GameTestHolder(
-                    title: "Mimic",
-                    test: new MimicTesting(),
-                    optionsList: new List<GameTestHolder.TestOption>()
-                    {
-                        new GameTestHolder.TestOption(
-                            numPlayers: 10,
-                            gameModeOptions: new List<GameModeOptionRequest>()
-                            {
-                                new GameModeOptionRequest(){ Value = "2" }, // num starting drawings
-                                new GameModeOptionRequest(){ Value = "5" }, // num drawings before vote
-                                new GameModeOptionRequest(){ Value = "3" }, // num sets
-                                new GameModeOptionRequest(){ Value = "10"}, // max for vote
-                                new GameModeOptionRequest(){ Value = "5" } // game speed
-                            },
-                            numToTimeOut: 0)
-                    }),
-                #endregion 
-        };
     }
 }

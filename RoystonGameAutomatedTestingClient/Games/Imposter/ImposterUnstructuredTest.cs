@@ -10,8 +10,12 @@ using System.Threading.Tasks;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    class ImposterTest : GameTest
+    class ImposterUnstructuredTest : UnstructuredGameTest
     {
+        // Refactor if -> switch
+        // Keep current if logic
+        // Implement handleUserPrompt instead of this
+
         protected override Task AutomatedSubmitter(UserPrompt userPrompt, string userId)
         {
             if (userPrompt.SubmitButton)
@@ -45,32 +49,25 @@ namespace RoystonGameAutomatedTestingClient.Games
         {
             await CommonSubmissions.SubmitSingleDrawing(userId);
         }
-        private async Task MakePrompts(string userId)
+        private UserFormSubmission MakePrompts(string userId)
         {
             Debug.Assert(userId.Length == 50);
 
-            await WebClient.SubmitUserForm(
-                handler: (UserPrompt prompt) =>
+            return new UserFormSubmission
+            {
+                SubForms = new List<UserSubForm>()
                 {
-                    if (prompt == null || !prompt.SubmitButton)
-                        return null;
-
-                    return new UserFormSubmission
+                    new UserSubForm()
                     {
-                        SubForms = new List<UserSubForm>()
-                        {
-                            new UserSubForm()
-                            {
-                                ShortAnswer = Helpers.GetRandomString()
-                            },
-                            new UserSubForm()
-                            {
-                                ShortAnswer = Helpers.GetRandomString()
-                            }
-                        }
-                    };
-                },
-                userId: userId);
+                        ShortAnswer = Helpers.GetRandomString()
+                    },
+                    new UserSubForm()
+                    {
+                        ShortAnswer = Helpers.GetRandomString()
+                    }
+                }
+            };
+    
         }
         private async Task Vote(string userId)
         {

@@ -14,7 +14,7 @@ using RoystonGame.Web.DataModels.Responses;
 using System.IO;
 using System.Net.Http.Formatting;
 
-namespace RoystonGameAutomatedTestingClient.cs.WebClient
+namespace RoystonGameAutomatedTestingClient.WebClient
 {
     public class AutomationWebClient
     {
@@ -47,9 +47,15 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
             UserPrompt prompt = JsonConvert.DeserializeObject<UserPrompt>(await currentContentResponse.Content.ReadAsStringAsync());
 
             UserFormSubmission submission = handler(prompt);
+            await SubmitUserFormNoValidation(prompt, submission, userId);
+        }
+
+        public async Task<HttpResponseMessage> SubmitUserFormNoValidation(UserPrompt prompt, UserFormSubmission submission, string userId)
+        {
+ 
             if (submission == null)
             {
-                return;
+                return null;
             }
             submission.Id = prompt.Id;
             for (int i = 0; i < (submission.SubForms?.Count ?? 0); i++)
@@ -57,7 +63,7 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
                 submission.SubForms[i].Id = prompt.SubPrompts?[i]?.Id ?? Guid.Empty;
             }
 
-            await MakeWebRequest(
+            return await MakeWebRequest(
                 path: Constants.Path.FormSubmit,
                 userId: userId,
                 method: HttpMethod.Post,

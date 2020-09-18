@@ -10,7 +10,7 @@ namespace RoystonGameAutomatedTestingClient.DataModels
         public const int DefaultDelayBetweenSubmissions = 0;
         public const int DefaultNumToTimeOut = 0;
         public const int DefaultTimeToWaitForUpdate = 120;
-        public const int DefauleNumUpdateChecks = 10;
+        public const int DefaultNumUpdateChecks = 10;
         #endregion
     }
 }

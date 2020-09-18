@@ -2,11 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace RoystonGameAutomatedTestingClient.cs.WebClient
+namespace RoystonGameAutomatedTestingClient.WebClient
 {
     public static class Constants
     {
-  
+        public static class UniqueChars
+        {
+            public const string AlphaNum = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        }
+
         public static class QueryString
         {
             public const string Id = "Id";
@@ -23,7 +27,7 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
             public const string LobbyConfigure = "api/v1/Lobby/Configure";
             public const string LobbyStart = "api/v1/Lobby/Start";
             public const string Games = "api/v1/Lobby/Games";
-
+            public const string BrowserStart = "http://localhost:50403?idOverride=";
         }
 
         public static class MediaType

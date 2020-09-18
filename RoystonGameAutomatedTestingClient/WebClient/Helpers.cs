@@ -2,16 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 using static System.FormattableString;
 
-namespace RoystonGameAutomatedTestingClient.cs
+namespace RoystonGameAutomatedTestingClient.WebClient
 {
     public static class Helpers
     {
         private static Random Rand = new Random();
-        public static string ZeroIdString { get; } = new string('0', 50);
 
         public static string GetRandomString(int length = 10)
         {
@@ -26,7 +26,7 @@ namespace RoystonGameAutomatedTestingClient.cs
         {
             foreach (string userId in userIds)
             {
-                ProcessStartInfo startInfo = new ProcessStartInfo("http://localhost:50403?idOverride="+userId)
+                ProcessStartInfo startInfo = new ProcessStartInfo(Constants.Path.BrowserStart + userId)
                 {
                     UseShellExecute = true,
                     Verb = "open"
@@ -34,17 +34,18 @@ namespace RoystonGameAutomatedTestingClient.cs
                 Process.Start(startInfo);
             }
         }
-        public static string GenerateUserId(int userIndex)
+
+        public static string GenerateRandomId()
         {
-            string id = Invariant($"{ZeroIdString}{userIndex}");
-            id = id.Substring(id.Length - 50, 50);
-            return id;
+            return new string(Enumerable.Repeat(Constants.UniqueChars.AlphaNum, 5)
+              .Select(s => s[Rand.Next(s.Length)]).ToArray());
         }
 
         public static int CalcFirstCheckDelay(int maxTotalTime, int numChecks)
         {
             return (int)((maxTotalTime - 1) / Math.Pow(2, numChecks - 1));
         }
+
         public static int GetDelayFromIndex(int firstDelay, int index)
         {
             return (int)(firstDelay * Math.Pow(2, index));

@@ -38,7 +38,7 @@ namespace RoystonGameAutomatedTestingClient.WebClient
                 method: HttpMethod.Get);
 
             LobbyMetadataResponse lobbyGetResponse = JsonConvert.DeserializeObject<LobbyMetadataResponse>(await getLobbyResponse.Content.ReadAsStringAsync());
-
+            Console.WriteLine("Lobby Id: " + lobbyGetResponse.LobbyId);
             return lobbyGetResponse.LobbyId;
         }
         public static async Task<List<GameModeMetadata>> GetGames(string userId)
@@ -107,126 +107,81 @@ namespace RoystonGameAutomatedTestingClient.WebClient
                 userId: userId);
         }
 
-        public static async Task SubmitSingleDrawing(string userId, string drawing = null)
+        public static UserFormSubmission SubmitSingleDrawing(string userId, string drawing = null)
         {
             Debug.Assert(userId.Length == 50);
             drawing ??= Constants.Drawings.GrayDot;
 
-            await WebClient.SubmitUserForm(
-                handler: (UserPrompt prompt) =>
+            return new UserFormSubmission
+            {
+                SubForms = new List<UserSubForm>()
                 {
-                    if (prompt == null || !prompt.SubmitButton)
-                        return null;
-                    return new UserFormSubmission
+                    new UserSubForm()
                     {
-                        SubForms = new List<UserSubForm>()
-                        {
-                            new UserSubForm()
-                            {
-                                Drawing = drawing,
-                            }
-                        }
-                    };
-                },
-                userId: userId);
+                        Drawing = drawing,
+                    }
+                }
+            };
+               
         }
 
-        public static async Task SubmitSingleText(string userId, string text = null)
+        public static UserFormSubmission SubmitSingleText(string userId, string text = null)
         {
             Debug.Assert(userId.Length == 50);
             text ??= Helpers.GetRandomString();
 
-            await WebClient.SubmitUserForm(
-                handler: (UserPrompt prompt) =>
+            return new UserFormSubmission
+            {
+                SubForms = new List<UserSubForm>()
                 {
-                    if (prompt == null || !prompt.SubmitButton)
-                        return null;
-                    return new UserFormSubmission
+                    new UserSubForm()
                     {
-                        SubForms = new List<UserSubForm>()
-                        {
-                            new UserSubForm()
-                            {
-                                ShortAnswer = text,
-                            }
-                        }
-                    };
-                },
-                userId: userId);
-        }
-
-        public static async Task SubmitSingleRadio(string userId, int? answer = null)
-        {
-            Debug.Assert(userId.Length == 50);
-
-            await WebClient.SubmitUserForm(
-                handler: (UserPrompt prompt) =>
-                {
-                    if (prompt == null || !prompt.SubmitButton)
-                        return null;
-                    if (answer == null || answer >= prompt.SubPrompts[0].Answers.Length)
-                    {
-                        answer = Rand.Next(0, prompt.SubPrompts[0].Answers.Length);
+                        ShortAnswer = text,
                     }
-
-                    return new UserFormSubmission
-                    {
-                        SubForms = new List<UserSubForm>()
-                        {
-                            new UserSubForm()
-                            {
-                                RadioAnswer = answer
-                            }
-                        }
-                    };
-                },
-                userId: userId);
+                }
+            };
         }
 
-        public static async Task SubmitSingleSelector(string userId, int? answer = null)
+        public static UserFormSubmission SubmitSingleRadio(string userId, int? answer = null)
         {
             Debug.Assert(userId.Length == 50);
 
-            await WebClient.SubmitUserForm(
-                handler: (UserPrompt prompt) =>
+            return new UserFormSubmission
+            {
+                SubForms = new List<UserSubForm>()
                 {
-                    if (prompt == null || !prompt.SubmitButton)
-                        return null;
-                    if (answer == null || answer >= prompt.SubPrompts[0].Selector.ImageList.Length)
+                    new UserSubForm()
                     {
-                        answer = Rand.Next(0, prompt.SubPrompts[0].Selector.ImageList.Length);
+                        RadioAnswer = answer
                     }
-
-                    return new UserFormSubmission
-                    {
-                        SubForms = new List<UserSubForm>()
-                        {
-                            new UserSubForm()
-                            {
-                                Selector = answer
-                            }
-                        }
-                    };
-                },
-                userId: userId);
+                }
+            };
         }
 
-        public static async Task SubmitSkipReveal(string userId)
+        public static UserFormSubmission SubmitSingleSelector(string userId, int? answer = null)
         {
             Debug.Assert(userId.Length == 50);
 
-            await WebClient.SubmitUserForm(
-                handler: (UserPrompt prompt) =>
+            return new UserFormSubmission
+            {
+                SubForms = new List<UserSubForm>()
                 {
-                    if (prompt == null || !prompt.SubmitButton)
-                        return null;
-
-                    return new UserFormSubmission
+                    new UserSubForm()
                     {
+                        Selector = answer
+                    }
+                }
+            };
+        }
 
-                    };
-                },
-                userId: userId);
+        public static UserFormSubmission SubmitSkipReveal(string userId)
+        {
+            Debug.Assert(userId.Length == 50);
+
+            return new UserFormSubmission
+            {
+
+            };
         }
     }
 }

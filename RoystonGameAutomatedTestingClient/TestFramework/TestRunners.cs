@@ -1,0 +1,264 @@
+﻿using System;
+using System.Collections.Generic;
+using static RoystonGame.Web.DataModels.Requests.LobbyManagement.ConfigureLobbyRequest;
+using System.Threading.Tasks;
+using RoystonGame.TV.Extensions;
+using RoystonGame.Web.DataModels;
+using RoystonGame.Web.DataModels.Requests.LobbyManagement;
+using RoystonGame.Web.DataModels.Responses;
+using RoystonGameAutomatedTestingClient.WebClient;
+using System.Linq;
+using System.Threading;
+using static System.FormattableString;
+using RoystonGameAutomatedTestingClient.Games;
+using McMaster.Extensions.CommandLineUtils;
+
+namespace RoystonGameAutomatedTestingClient.TestFramework
+{   
+    abstract class TestRunner
+    {
+        public string Game;
+        public bool IsBrowsers;
+        public bool IsStructuredMode;
+        public int NumUsers;
+        public List<GameTest> Tests;
+        public List<GameModeMetadata> Games;
+
+        abstract public Task Run();
+  
+        public class GameTestHolder
+        {
+            public class TestOption
+            {
+                public int NumPlayers { get; }
+                public List<GameModeOptionRequest> GameModeOptions { get; }
+                public int NumToTimeOut { get; }
+
+                public TestOption(
+                    int numPlayers,
+                    List<GameModeOptionRequest> gameModeOptions,
+                    int numToTimeOut = 0)
+                {
+                    this.NumPlayers = numPlayers;
+                    this.GameModeOptions = gameModeOptions;
+                    this.NumToTimeOut = Math.Min(numToTimeOut, numPlayers);
+                }
+            }
+            public string Title { get; }
+            public GameTest Test { get; }
+            public List<TestOption> OptionsList { get; }
+            public GameTestHolder(string title, GameTest test, List<TestOption> optionsList = null)
+            {
+                this.Title = title;
+                this.Test = test;
+                this.Test.testHolder = this;
+                this.OptionsList = optionsList;
+            }
+        }
+        public List<GameTestHolder> gameTestHolders = new List<GameTestHolder>()
+         {
+                #region ImposterSyndrome
+                new GameTestHolder(
+                    title: "Imposter Syndrome",
+                    test: new ImposterTest(),
+                    optionsList: new List<GameTestHolder.TestOption>()
+                    {
+                        new GameTestHolder.TestOption(
+                            numPlayers: 10,
+                            gameModeOptions: new List<GameModeOptionRequest>()
+                            {
+                                new GameModeOptionRequest(){ Value = ""+5 } // game speed
+                            },
+                            numToTimeOut: 0)
+                    }),
+                #endregion
+                #region Two Tone
+                new GameTestHolder(
+                    title: "Chaotic Cooperation",
+                    test: new TwoToneTest(),
+                    optionsList: new List<GameTestHolder.TestOption>()
+                    {
+                        new GameTestHolder.TestOption(
+                            numPlayers: 10,
+                            gameModeOptions: new List<GameModeOptionRequest>()
+                            {
+                                new GameModeOptionRequest(){ Value = "2" }, // max num colors
+                                new GameModeOptionRequest(){ Value = "4" }, // max num teams per prompt
+                                new GameModeOptionRequest(){ Value = "true"}, // show other colors
+                                new GameModeOptionRequest(){ Value = "5" } // game speed
+                            },
+                            numToTimeOut: 0)
+                    }),
+                #endregion
+                #region Body Swap 
+                new GameTestHolder(
+                    title: "Body Swap",
+                    test: new BodyBuilderTest(),
+                    optionsList: new List<GameTestHolder.TestOption>()
+                    {
+                        new GameTestHolder.TestOption(
+                            numPlayers: 10,
+                            gameModeOptions: new List<GameModeOptionRequest>()
+                            {
+                                new GameModeOptionRequest(){ Value = "2" }, // num rounds
+                                new GameModeOptionRequest(){ Value = "true" }, //show names
+                                new GameModeOptionRequest(){ Value = "false"}, // show images
+                                new GameModeOptionRequest(){ Value = "25"}, //num turns before timeout
+                                new GameModeOptionRequest(){ Value = "5" } // game speed
+                            },
+                            numToTimeOut: 0)
+                    }),
+                #endregion
+                #region Body Builder
+                new GameTestHolder(
+                    title: "Body Builder",
+                    test: new BattleReadyTest(),
+                    optionsList: new List<GameTestHolder.TestOption>()
+                    {
+                        new GameTestHolder.TestOption(
+                            numPlayers: 10,
+                            gameModeOptions: new List<GameModeOptionRequest>()
+                            {
+                                new GameModeOptionRequest(){ Value = "3" }, // num rounds
+                                new GameModeOptionRequest(){ Value = "2" }, //num prompts
+                                new GameModeOptionRequest(){ Value = "4"}, // num drawings expected
+                                new GameModeOptionRequest(){ Value = "2"}, // num players per prompt
+                                new GameModeOptionRequest(){ Value = "5" } // game speed
+                            },
+                            numToTimeOut: 0)
+                    }),
+                #endregion
+                #region Mimic
+                new GameTestHolder(
+                    title: "Mimic",
+                    test: new MimicTesting(),
+                    optionsList: new List<GameTestHolder.TestOption>()
+                    {
+                        new GameTestHolder.TestOption(
+                            numPlayers: 10,
+                            gameModeOptions: new List<GameModeOptionRequest>()
+                            {
+                                new GameModeOptionRequest(){ Value = "2" }, // num starting drawings
+                                new GameModeOptionRequest(){ Value = "5" }, // num drawings before vote
+                                new GameModeOptionRequest(){ Value = "3" }, // num sets
+                                new GameModeOptionRequest(){ Value = "10"}, // max for vote
+                                new GameModeOptionRequest(){ Value = "5" } // game speed
+                            },
+                            numToTimeOut: 0)
+                    }),
+                #endregion 
+        };
+
+        protected TestRunner(List<GameModeMetadata> Games, Dictionary<string, object> Params)
+        {
+            this.Game = (string) Params["Game"];
+            this.IsBrowsers = (bool) Params["IsBrowsers"];
+            this.IsStructuredMode =  DetermineStructuredMode((string[]) Params["Tests"]);
+            this.Tests = DetermineGameTests((string[]) Params["Tests"]);
+            this.Games = Games;
+        }
+        public bool DetermineStructuredMode(string[] CommandLineTests)
+        {
+            return CommandLineTests.Length > 0;
+        }
+
+        public List<GameTest> DetermineGameTests(string[] SpecifiedTests)
+        {
+            List<GameTest> testsToRun = new List<GameTest>();
+            string[] gameTestTitles = gameTestHolders.Select(holder => holder.Title).ToArray();
+
+            foreach (string specifiedTest in SpecifiedTests)
+            {
+                int gameTestIndex = Array.IndexOf(gameTestTitles, specifiedTest);
+                if (gameTestIndex > -1){
+                    GameTestHolder gameTestHolder = gameTestHolders[gameTestIndex];
+                    int gameMode = Games.FindIndex(gameData => gameData.Title == gameTestHolder.Title);
+                    GameTest gameTest = gameTestHolder.Test;
+                    gameTest.GameMode = gameMode;
+                    gameTest.Game = Games[gameMode];
+                    testsToRun.Add(gameTest);
+                }
+            }
+
+            return testsToRun;
+        }
+    }
+
+    class NormalTestRunner : TestRunner
+    {
+        public bool IsParallel;
+        public NormalTestRunner(List<GameModeMetadata> Games, Dictionary<string, object> Params) : base(Games, Params) {
+            this.IsParallel = (bool) Params["IsParallel"];
+        }
+        public override async Task Run()
+        {
+
+            if (IsParallel)
+            {
+                await RunParallel();
+            }
+            else
+            {
+                await RunSequential();
+            }
+        }
+        public async Task RunParallel()
+        {
+            List<Task> tasks = new List<Task>();
+            foreach (GameTest test in Tests)
+            {
+                tasks.Add(RunTest(test));
+            }
+
+            await Task.WhenAll(tasks);
+        }
+
+        public async Task RunSequential()
+        {
+            foreach (GameTest test in Tests)
+            {
+                await RunTest(test);
+            }
+        }
+
+        public async Task RunTest(GameTest test)
+        {
+            await test.Setup(this);
+            await test.Run();
+            await test.Cleanup();
+        }
+    }
+
+    class DebugTestRunner : TestRunner
+    {
+        public DebugTestRunner(List<GameModeMetadata> Games, Dictionary<string, object> Params) : base(Games, Params) {
+            this.NumUsers = (int) Params["numUsers"];
+        }
+
+        public override async Task Run()
+        {
+            GameTestHolder testHolder = ChooseGameToTest(gameTestHolders);
+            GameTest test = testHolder.Test;
+            await RunTest(test);
+        }
+
+        public GameTestHolder ChooseGameToTest(List<GameTestHolder> gameTestHolders)
+        {
+            for (int i = 0; i < gameTestHolders.Count; i++)
+            {
+                GameTestHolder holder = gameTestHolders[i];
+                Console.WriteLine(Invariant($"[{i + 1}]: {holder.Title}"));
+            }
+            int selection = Prompt.GetInt("Press number of which test to run");
+
+            return gameTestHolders[selection];
+        }
+
+        public async Task RunTest(GameTest test)
+        {
+            await test.Setup(this);
+            await test.Run();
+            await test.Cleanup();
+        }
+    }
+}
