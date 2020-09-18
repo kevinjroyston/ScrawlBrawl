@@ -1,5 +1,4 @@
 ﻿using System;
-using RoystonGameAutomatedTestingClient.cs.WebClient;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -38,7 +37,7 @@ namespace RoystonGameAutomatedTestingClient.WebClient
                 method: HttpMethod.Get);
 
             LobbyMetadataResponse lobbyGetResponse = JsonConvert.DeserializeObject<LobbyMetadataResponse>(await getLobbyResponse.Content.ReadAsStringAsync());
-            Console.WriteLine("Lobby Id: " + lobbyGetResponse.LobbyId);
+            
             return lobbyGetResponse.LobbyId;
         }
         public static async Task<List<GameModeMetadata>> GetGames(string userId)

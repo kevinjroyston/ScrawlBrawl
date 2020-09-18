@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using RoystonGame.Web.DataModels;
@@ -34,12 +35,6 @@ namespace RoystonGameAutomatedTestingClient.cs
          * - 2. Create lobby yourself, passing in lobby id and game mode that was made.  Wait for you to hit start 
          * - Maybe create lobby manually for manual test
          * 
-         * Design Doc
-         * - Figure out Interface
-         * - Command Line params
-         * - Abstractions
-         * - How Game Tests will look
-         * 
          * Todo Later
          * - Write tests for test framework, given different inputs doesnt crash, parallel
          * - Validate command line params logic
@@ -55,9 +50,6 @@ namespace RoystonGameAutomatedTestingClient.cs
          * pull request
          */
 
-        [Option("-d|--debug")]
-        public bool IsDebug { get; }
-
         [Option("-p|-parallel")]
         public bool IsParallel { get; }
 
@@ -68,7 +60,7 @@ namespace RoystonGameAutomatedTestingClient.cs
         public bool DisableCleanup { get; }
 
         [Option("-u|-users")]
-        public int numUsers { get; }
+        public int NumUsers { get; }
 
         [Option("-g|--game")]
         public string Game { get; }
@@ -85,7 +77,7 @@ namespace RoystonGameAutomatedTestingClient.cs
 
         private async Task OnExecuteAsync()
         {
-            await RunTestsWithMode();
+            await RunTests();
         }
 
         public Dictionary<string, object> CollectParams()
@@ -94,27 +86,18 @@ namespace RoystonGameAutomatedTestingClient.cs
             Params.Add("Game", Game);
             Params.Add("IsBrowsers", IsBrowsers);
             Params.Add("Tests", Tests);
-            Params.Add("numUsers", numUsers);
+            Params.Add("NumUsers", NumUsers);
             Params.Add("IsParallel", IsParallel);
             Params.Add("DisableCleanup", DisableCleanup);
 
             return Params;
         }
 
-        public async Task RunTestsWithMode()
+        public async Task RunTests()
         {
             List<GameModeMetadata> Games = await CommonSubmissions.GetGames(Helpers.GenerateRandomId());
             Dictionary<string, object> Params = CollectParams();
-
-            if (IsDebug)
-            {
-                runner = new DebugTestRunner(Games, Params);
-            } 
-            else
-            {
-                runner = new NormalTestRunner(Games, Params);
-            }
-
+            runner = new NormalTestRunner(Games, Params);
             await runner.Run();
         }
     }

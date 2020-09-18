@@ -39,7 +39,7 @@ namespace RoystonGame.Web.Controllers
                 return new BadRequestResult();
             }
             
-            if (!Sanitize.SanitizeString(id, out string error, "^([0-9A-Fa-f]){50}$",50,50))
+            if (!Sanitize.SanitizeString(id, out string error, "^([0-9A-Za-z]){50}$",50,50))
             {
                 return BadRequest(error);
             }

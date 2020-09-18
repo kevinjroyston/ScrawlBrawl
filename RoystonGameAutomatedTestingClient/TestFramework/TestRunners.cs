@@ -12,6 +12,7 @@ using System.Threading;
 using static System.FormattableString;
 using RoystonGameAutomatedTestingClient.Games;
 using McMaster.Extensions.CommandLineUtils;
+using System.Drawing.Printing;
 
 namespace RoystonGameAutomatedTestingClient.TestFramework
 {   
@@ -60,7 +61,7 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
                 #region ImposterSyndrome
                 new GameTestHolder(
                     title: "Imposter Syndrome",
-                    test: new ImposterTest(),
+                    test: new ImposterUnstructuredTest(),
                     optionsList: new List<GameTestHolder.TestOption>()
                     {
                         new GameTestHolder.TestOption(
@@ -75,7 +76,7 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
                 #region Two Tone
                 new GameTestHolder(
                     title: "Chaotic Cooperation",
-                    test: new TwoToneTest(),
+                    test: new TwoToneUnstructuredTest(),
                     optionsList: new List<GameTestHolder.TestOption>()
                     {
                         new GameTestHolder.TestOption(
@@ -93,7 +94,7 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
                 #region Body Swap 
                 new GameTestHolder(
                     title: "Body Swap",
-                    test: new BodyBuilderTest(),
+                    test: new BodyBuilderUnstructuredTest(),
                     optionsList: new List<GameTestHolder.TestOption>()
                     {
                         new GameTestHolder.TestOption(
@@ -112,7 +113,7 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
                 #region Body Builder
                 new GameTestHolder(
                     title: "Body Builder",
-                    test: new BattleReadyTest(),
+                    test: new BattleReadyUnstructuredTest(),
                     optionsList: new List<GameTestHolder.TestOption>()
                     {
                         new GameTestHolder.TestOption(
@@ -131,7 +132,7 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
                 #region Mimic
                 new GameTestHolder(
                     title: "Mimic",
-                    test: new MimicTesting(),
+                    test: new MimicUnstructuredTest(),
                     optionsList: new List<GameTestHolder.TestOption>()
                     {
                         new GameTestHolder.TestOption(
@@ -151,35 +152,55 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
 
         protected TestRunner(List<GameModeMetadata> Games, Dictionary<string, object> Params)
         {
+            Console.WriteLine("\nCommand Line Arguments: ");
+            int count = 1;
+            foreach (KeyValuePair<string, object> kvp in Params)
+            {
+                Console.WriteLine($"{count}. {kvp.Key} --> {kvp.Value} ");
+                count += 1;
+            }
+            Console.WriteLine("\nExisting Games:\n" + string.Join("\n", Games.Select((game, i) => (i+1) + ". " + game.Title)));
             this.Game = (string) Params["Game"];
             this.IsBrowsers = (bool) Params["IsBrowsers"];
             this.IsStructuredMode =  DetermineStructuredMode((string[]) Params["Tests"]);
-            this.Tests = DetermineGameTests((string[]) Params["Tests"]);
+            this.Tests = DetermineGameTests((string[]) Params["Tests"], Games);
+            this.NumUsers = (int) Params["NumUsers"];
             this.Games = Games;
         }
         public bool DetermineStructuredMode(string[] CommandLineTests)
         {
-            return CommandLineTests.Length > 0;
+            return CommandLineTests != null && CommandLineTests.Length > 0;
         }
 
-        public List<GameTest> DetermineGameTests(string[] SpecifiedTests)
+        public List<GameTest> DetermineGameTests(string[] SpecifiedTests, List<GameModeMetadata> games)
         {
             List<GameTest> testsToRun = new List<GameTest>();
-            string[] gameTestTitles = gameTestHolders.Select(holder => holder.Title).ToArray();
 
+            if (SpecifiedTests == null)
+            {
+                return testsToRun;
+            }
+            Console.WriteLine("\nSpecified Tests");
+            Console.WriteLine(string.Join("\n-", SpecifiedTests));
+
+            string[] gameTestTitles = gameTestHolders.Select(holder => holder.Title).ToArray();
+            Console.WriteLine("\nChosen Tests");
             foreach (string specifiedTest in SpecifiedTests)
             {
                 int gameTestIndex = Array.IndexOf(gameTestTitles, specifiedTest);
-                if (gameTestIndex > -1){
+                if (gameTestIndex > -1)
+                {
                     GameTestHolder gameTestHolder = gameTestHolders[gameTestIndex];
-                    int gameMode = Games.FindIndex(gameData => gameData.Title == gameTestHolder.Title);
+                    int gameMode = games.FindIndex(gameData => gameData.Title == gameTestHolder.Title);
                     GameTest gameTest = gameTestHolder.Test;
                     gameTest.GameMode = gameMode;
-                    gameTest.Game = Games[gameMode];
+                    gameTest.Game = games[gameMode];
+                    Console.WriteLine("-"+gameTestHolder.Title);
                     testsToRun.Add(gameTest);
                 }
+                
             }
-
+            Console.WriteLine("");
             return testsToRun;
         }
     }
@@ -217,48 +238,52 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
         {
             foreach (GameTest test in Tests)
             {
+                Console.WriteLine("======================================================");
+                Console.WriteLine($"Current Test: {test.testHolder.Title}\n");
                 await RunTest(test);
+                Console.WriteLine("\nFinished Test");
+                Console.WriteLine("======================================================");
             }
         }
 
         public async Task RunTest(GameTest test)
         {
             await test.Setup(this);
-            await test.Run();
+            //await test.Run();
             await test.Cleanup();
         }
     }
 
-    class DebugTestRunner : TestRunner
-    {
-        public DebugTestRunner(List<GameModeMetadata> Games, Dictionary<string, object> Params) : base(Games, Params) {
-            this.NumUsers = (int) Params["numUsers"];
-        }
+    //class DebugTestRunner : TestRunner
+    //{
+    //    public DebugTestRunner(List<GameModeMetadata> Games, Dictionary<string, object> Params) : base(Games, Params) {
+    //        this.NumUsers = (int) Params["numUsers"];
+    //    }
 
-        public override async Task Run()
-        {
-            GameTestHolder testHolder = ChooseGameToTest(gameTestHolders);
-            GameTest test = testHolder.Test;
-            await RunTest(test);
-        }
+    //    public override async Task Run()
+    //    {
+    //        GameTestHolder testHolder = ChooseGameToTest(gameTestHolders);
+    //        GameTest test = testHolder.Test;
+    //        await RunTest(test);
+    //    }
 
-        public GameTestHolder ChooseGameToTest(List<GameTestHolder> gameTestHolders)
-        {
-            for (int i = 0; i < gameTestHolders.Count; i++)
-            {
-                GameTestHolder holder = gameTestHolders[i];
-                Console.WriteLine(Invariant($"[{i + 1}]: {holder.Title}"));
-            }
-            int selection = Prompt.GetInt("Press number of which test to run");
+    //    public GameTestHolder ChooseGameToTest(List<GameTestHolder> gameTestHolders)
+    //    {
+    //        for (int i = 0; i < gameTestHolders.Count; i++)
+    //        {
+    //            GameTestHolder holder = gameTestHolders[i];
+    //            Console.WriteLine(Invariant($"[{i + 1}]: {holder.Title}"));
+    //        }
+    //        int selection = Prompt.GetInt("Press number of which test to run");
 
-            return gameTestHolders[selection];
-        }
+    //        return gameTestHolders[selection];
+    //    }
 
-        public async Task RunTest(GameTest test)
-        {
-            await test.Setup(this);
-            await test.Run();
-            await test.Cleanup();
-        }
-    }
+    //    public async Task RunTest(GameTest test)
+    //    {
+    //        await test.Setup(this);
+    //        await test.Run();
+    //        await test.Cleanup();
+    //    }
+    //}
 }

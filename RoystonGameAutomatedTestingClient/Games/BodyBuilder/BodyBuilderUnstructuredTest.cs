@@ -14,7 +14,7 @@ namespace RoystonGameAutomatedTestingClient.Games
     class BodyBuilderUnstructuredTest : UnstructuredGameTest
     {
         private Random Rand = new Random();
-        protected override Task AutomatedSubmitter(UserPrompt userPrompt, string userId)
+        public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player)
         {
             if (userPrompt.SubmitButton)
             {
@@ -22,27 +22,27 @@ namespace RoystonGameAutomatedTestingClient.Games
                 {
                     if (userPrompt.SubPrompts.Length == 2 && userPrompt.SubPrompts[0].ShortAnswer) // 2 prompts 1st is short answer must be prompt state
                     {
-                        return MakePrompts(userId);
+                        return MakePrompts(player);
                     }
                     else if (userPrompt.SubPrompts[0].Drawing != null) // first prompt is drawing must be drawing state
                     {
-                        return MakeDrawing(userId);
+                        return MakeDrawing(player);
                     }
                     else if (userPrompt.SubPrompts.Length == 2 && userPrompt.SubPrompts[1].Answers != null) // 2 promtps 2nd is radio answer must be swap
                     {
-                        return Swap(userId);
+                        return Swap(userPrompt, player);
                     }
                 }
                 else //no subprompts must be skip reveal
                 {
-                    return SkipReveal(userId);
+                    return SkipReveal(player);
                 }
             }
-            return Task.CompletedTask;
+            return null;
         }
-        private UserFormSubmission MakePrompts(string userId)
+        private UserFormSubmission MakePrompts(LobbyPlayer player)
         {
-            Debug.Assert(userId.Length == 50);
+            Debug.Assert(player.UserId.Length == 50);
 
             return new UserFormSubmission
             {
@@ -60,11 +60,12 @@ namespace RoystonGameAutomatedTestingClient.Games
             };
            
         }
-        private async Task MakeDrawing(string userId)
+
+        private UserFormSubmission MakeDrawing(LobbyPlayer player)
         {
-            await CommonSubmissions.SubmitSingleDrawing(userId);
+            return CommonSubmissions.SubmitSingleDrawing(player.UserId);
         }
-        private UserFormSubmission Swap(string userId)
+        private UserFormSubmission Swap(UserPrompt prompt, LobbyPlayer player)
         {
             int answer = Rand.Next(0, prompt.SubPrompts[1].Answers.Length);
 
@@ -83,9 +84,9 @@ namespace RoystonGameAutomatedTestingClient.Games
             };
         }
 
-        private async Task SkipReveal(string userId)
+        private UserFormSubmission SkipReveal(LobbyPlayer player)
         {
-            await CommonSubmissions.SubmitSkipReveal(userId);
+            return CommonSubmissions.SubmitSkipReveal(player.UserId);
         }
     }
 }

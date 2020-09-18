@@ -1,14 +1,6 @@
-﻿using Microsoft.Identity.Client;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualStudio.Web.CodeGeneration.Design;
-using RoystonGame.TV.DataModels.States.GameStates;
-using RoystonGame.TV.DataModels.Users;
-using RoystonGame.TV.Extensions;
-using RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels;
-using RoystonGame.Web.DataModels.Requests;
+﻿using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGameAutomatedTestingClient.cs;
-using RoystonGameAutomatedTestingClient.cs.WebClient;
 using RoystonGameAutomatedTestingClient.WebClient;
 using System;
 using System.Collections.Generic;
@@ -19,13 +11,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
-using static System.FormattableString;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
     class BattleReadyUnstructuredTest : UnstructuredGameTest
     {
-        protected override Task AutomatedSubmitter(UserPrompt userPrompt, string userId)
+        public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player)
         {
             if (userPrompt.SubmitButton)
             {
@@ -37,15 +28,15 @@ namespace RoystonGameAutomatedTestingClient.Games
                         string promptTitle = userPrompt.SubPrompts[0].Prompt;
                         if (promptTitle.Contains("Head", StringComparison.OrdinalIgnoreCase))
                         {
-                            return MakeDrawing(userId, DrawingType.Head);
+                            return MakeDrawing(player, DrawingType.Head);
                         }
                         else if (promptTitle.Contains("Body", StringComparison.OrdinalIgnoreCase))
                         {
-                            return MakeDrawing(userId, DrawingType.Body);
+                            return MakeDrawing(player, DrawingType.Body);
                         }
                         else if (promptTitle.Contains("Legs", StringComparison.OrdinalIgnoreCase))
                         {
-                            return MakeDrawing(userId, DrawingType.Legs);
+                            return MakeDrawing(player, DrawingType.Legs);
                         }
                         else
                         {
@@ -55,54 +46,56 @@ namespace RoystonGameAutomatedTestingClient.Games
                     else if (userPrompt.SubPrompts[0].ShortAnswer) //first prompt is shortasnwer, must be prompt state
                     {
                         Console.WriteLine("Submitting Prompt");
-                        return MakePrompt(userId);
+                        return MakePrompt(player);
                     }
                     else if (userPrompt.SubPrompts.Length == 4) //4 prompts, must be contestant creation
                     {
                         Console.WriteLine("Submitting Contestant");
-                        return MakePerson(userId, "TestPerson");
+                        return MakePerson(player, "TestPerson");
                     }
                     else if (userPrompt.SubPrompts[0].Answers?.Length > 0 && userPrompt.SubPrompts.Count() == 1) //first prompt is radio answer must be voting
                     {
                         Console.WriteLine("Submitting Voting");
-                        return Vote(userId);
+                        return Vote(player);
                     }
                     else
                     {
                         Console.WriteLine("Finished");
-                        GameEndingListener();
+                        return null;
                     }
                 }
                 else //no subprompts must be skip reveal
                 {
                     Console.WriteLine("Submitting Skip");
-                    return SkipReveal(userId);
+                    return SkipReveal(player);
                 }
             }
-            return Task.CompletedTask;
+            return null;
         }
-        private async Task MakeDrawing(string userId, DrawingType type)
+        private UserFormSubmission MakeDrawing(LobbyPlayer player, DrawingType type)
         {
             if (type == DrawingType.Head)
             {
-                await CommonSubmissions.SubmitSingleDrawing(userId, Constants.Drawings.Head );
+                return CommonSubmissions.SubmitSingleDrawing(player.UserId, Constants.Drawings.Head );
             }
             else if (type == DrawingType.Body)
             {
-                await CommonSubmissions.SubmitSingleDrawing(userId, Constants.Drawings.Body );
+                return CommonSubmissions.SubmitSingleDrawing(player.UserId, Constants.Drawings.Body );
             }
             else if (type == DrawingType.Legs)
             {
-                await CommonSubmissions.SubmitSingleDrawing(userId, Constants.Drawings.Legs );
+                return CommonSubmissions.SubmitSingleDrawing(player.UserId, Constants.Drawings.Legs );
             }
+
+            return null;
         }
-        private async Task MakePrompt(string userId)
+        private UserFormSubmission MakePrompt(LobbyPlayer player)
         {
-            await CommonSubmissions.SubmitSingleText(userId);
+            return CommonSubmissions.SubmitSingleText(player.UserId);
         }
-        private UserFormSubmission MakePerson(string userId, string personName = "TestPerson")
+        private UserFormSubmission MakePerson(LobbyPlayer player, string personName = "TestPerson")
         {
-            Debug.Assert(userId.Length == 50);
+            Debug.Assert(player.UserId.Length == 50);
 
             return new UserFormSubmission
             {
@@ -128,13 +121,13 @@ namespace RoystonGameAutomatedTestingClient.Games
             };
            
         }
-        private async Task Vote(string userId)
+        private UserFormSubmission Vote(LobbyPlayer player)
         {
-            await CommonSubmissions.SubmitSingleRadio(userId);
+            return CommonSubmissions.SubmitSingleRadio(player.UserId);
         }
-        private async Task SkipReveal(string userId)
+        private UserFormSubmission SkipReveal(LobbyPlayer player)
         {
-            await CommonSubmissions.SubmitSkipReveal(userId);
+            return CommonSubmissions.SubmitSkipReveal(player.UserId);
         }
     }
 }

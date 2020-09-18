@@ -19,6 +19,8 @@ using static RoystonGame.Web.DataModels.Requests.LobbyManagement.ConfigureLobbyR
 using static RoystonGameAutomatedTestingClient.TestFramework.TestRunner;
 using static RoystonGameAutomatedTestingClient.TestFramework.TestRunner.GameTestHolder;
 using RoystonGame.Web.DataModels;
+using RoystonGame.Web.Controllers.LobbyManagement;
+using RoystonGame.Web.DataModels.Requests;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
@@ -67,6 +69,7 @@ namespace RoystonGameAutomatedTestingClient.Games
                     userId: newPlayer.UserId,
                     lobbyId: Id,
                     name: "TestUser" + i);
+                Console.WriteLine($"Player {newPlayer.UserId} joined lobby");
                 Thread.Sleep(Math.Clamp(500 - 5 * i, 1, 100));
             }
         }
@@ -109,14 +112,14 @@ namespace RoystonGameAutomatedTestingClient.Games
     abstract class GameTest : GameTestParameters
     {
         private int delayBetweenSubmissions;
-        private int numToTimeOut;
-        private int timeToWaitForUpdate;
-        private int numUpdateChecks;
+
         protected AutomationWebClient WebClient = new AutomationWebClient();
         public int GameMode { get; set; }
         public GameModeMetadata Game { get; set; }
         public GameTestHolder testHolder { get; set; }
         public Lobby Lobby { get; set; }
+
+        public abstract UserFormSubmission HandleUserPrompt(UserPrompt prompt, LobbyPlayer player);
         
         protected GameTest()
         {
@@ -125,20 +128,27 @@ namespace RoystonGameAutomatedTestingClient.Games
 
         abstract public Task Setup(TestRunner runner);
         abstract public Task Cleanup();
+
+        public virtual async Task RunTest(List<LobbyPlayer> players)
+        {
+            //While Game doesnt end
+            for (int i = 0; i < 500; i++)
+            {
+                Console.WriteLine(Invariant($"Auto-Submission Delay is currently {delayBetweenSubmissions}ms. What would you like to set it to?"));
+                delayBetweenSubmissions = Convert.ToInt32(Console.ReadLine());
+            }
+        }
     }
 
-    class StructuredGameTest : GameTest
+    abstract class StructuredGameTest : GameTest
     {
         public int delayBetweenSubmissions = GameConstants.DefaultDelayBetweenSubmissions;
-        public int numToTimeOut = GameConstants.DefaultNumToTimeOut;
-        public int timeToWaitForUpdate = GameConstants.DefaultTimeToWaitForUpdate;
-        public int numUpdateChecks = GameConstants.DefaultNumUpdateChecks;
 
         public override async Task Setup(TestRunner runner)
         {
             await Lobby.Delete();
             await Lobby.Create();
-            //Maybe change how options list works
+            Console.WriteLine("Created Lobby: " + Lobby.Id);
             TestOption option = testHolder.OptionsList[0];
             await Lobby.Populate(option.NumPlayers);
             await Lobby.Configure(option.GameModeOptions, GameMode);
@@ -146,24 +156,40 @@ namespace RoystonGameAutomatedTestingClient.Games
 
         public override async Task Cleanup()
         {
+            Console.WriteLine("\nCleaning up Test");
             await Lobby.Delete();
         }
     }
 
-    class UnstructuredGameTest : GameTest
+    abstract class UnstructuredGameTest : GameTest
     {
 
         public override async Task Setup(TestRunner runner)
         {
             await Lobby.Delete();
             await Lobby.Create();
+            Console.WriteLine("Created Lobby: " + Lobby.Id);
             List<GameModeOptionRequest> optionRequests = SetUpGameTestOptions();
+            ValidateNumUsers(runner.NumUsers);
             await Lobby.Populate(runner.NumUsers);
             await Lobby.Configure(optionRequests, GameMode);
         }
 
+        public void ValidateNumUsers(int NumUsers)
+        {
+            if (NumUsers < Game.MinPlayers)
+            {
+                throw new Exception($"Number of users specified [{NumUsers}] doesn't meet minimum user amount [{Game.MinPlayers}]");
+            }
+            else if (NumUsers > Game.MaxPlayers)
+            {
+                throw new Exception($"Number of users specified [{NumUsers}] exceeds maximum user amount [{Game.MaxPlayers}]");
+            }
+        }
+
         public override async Task Cleanup()
         {
+            Console.WriteLine("\nCleaning up Test");
             await Lobby.Delete();
         }
 
@@ -175,129 +201,51 @@ namespace RoystonGameAutomatedTestingClient.Games
 
             if (defaultParams)
             {
-                foreach (GameModeOptionResponse option in Game.Options)
-                {
-                    optionRequests.Add(new GameModeOptionRequest() { Value = option.DefaultValue.ToString() });
-                }
+                optionRequests = HandleDefaultGameTestOptions(optionRequests);
             }
             else
             {
                 Console.WriteLine("Type in a value to override or press enter to go with default");
-                foreach (GameModeOptionResponse option in Game.Options)
-                {
-                    Console.WriteLine(option.Description);
-
-                    if (option.MinValue != null)
-                        Console.WriteLine("Min: " + option.MinValue);
-                    if (option.MaxValue != null)
-                        Console.WriteLine("Max: " + option.MaxValue);
-
-                    Console.WriteLine("Default: " + option.DefaultValue);
-                    Console.WriteLine("Type: " + option.ResponseType.ToString());
-                    string value = Prompt.GetString("Type value: ");
-
-                    if (value.FuzzyEquals(""))
-                    {
-                        optionRequests.Add(new GameModeOptionRequest() { Value = option.DefaultValue.ToString() });
-                    }
-                    else
-                    {
-                        optionRequests.Add(new GameModeOptionRequest() { Value = value });
-                    }
-                }
+                optionRequests = HandleCustomGameTestOptions(optionRequests);
             }
 
             return optionRequests;
         }
 
-        
-        public virtual async Task RunGame(List<string> userIds, bool manual)
+        public List<GameModeOptionRequest> HandleDefaultGameTestOptions(List<GameModeOptionRequest> optionRequests)
         {
-            Console.WriteLine("Type Help for a list of commands");
-            for (int i = 0; i < 500; i++)
+            foreach (GameModeOptionResponse option in Game.Options)
             {
-                Console.WriteLine("\nPress Enter to start");
-                string submission = Console.ReadLine();
-                if (submission.FuzzyEquals("help"))
-                {
-                    Console.WriteLine("\nCommands:");
-                    Console.WriteLine("Options");
-                    Console.WriteLine("Browser");
-                }
-                else if (submission.FuzzyEquals("options"))
-                {
-                    Console.WriteLine("\n Options:");
-                    Console.WriteLine("[1]: Delay Between Auto Submissions");
-                    Console.WriteLine("[2]: Number Of Users To Time Out");
-
-
-                    int optionChoice = Convert.ToInt32(Console.ReadLine());
-
-                    if (optionChoice == 1)
-                    {
-                        Console.WriteLine(Invariant($"Auto-Submission Delay is currently {delayBetweenSubmissions}ms. What would you like to set it to?"));
-                        delayBetweenSubmissions = Convert.ToInt32(Console.ReadLine());
-                    }
-                    if (optionChoice == 2)
-                    {
-                        Console.WriteLine(Invariant($"Num To Time Out is currently {numToTimeOut} users. There are currently {userIds.Count} usersWhat would you like to set it to?"));
-                        numToTimeOut = Math.Min(Convert.ToInt32(Console.ReadLine()), userIds.Count);
-                    }
-                }
-                else if (submission.FuzzyEquals("browser"))
-                {
-                    Console.WriteLine(Invariant($"There are currently {userIds.Count} users. How many browsers would you like to open?"));
-
-                    int numBrowsers = Math.Min(Convert.ToInt32(Console.ReadLine()), userIds.Count);
-
-                    List<string> randomizedIds = userIds.OrderBy(_ => Rand.Next()).ToList().GetRange(0, numBrowsers);
-                    Helpers.OpenBrowsers(randomizedIds);
-                }
+                optionRequests.Add(new GameModeOptionRequest() { Value = option.DefaultValue.ToString() });
             }
-
-            for (int i = 0; i < 500; i++)
-            {
-
-                List<string> userIdsNotTimingOut = userIds.OrderBy(_ => Rand.Next()).ToList().GetRange(0, userIds.Count - numToTimeOut);
-                Dictionary<string, UserPrompt> userIdsToPrompts = new Dictionary<string, UserPrompt>();
-                foreach (string userId in userIdsNotTimingOut)
-                {
-                    userIdsToPrompts.Add(userId, await WebClient.GetUserPrompt(userId));
-                }
-
-                foreach (string userId in userIdsNotTimingOut)
-                {
-                    UserPrompt userPrompt = userIdsToPrompts[userId];
-                    if (userPrompt.Id == (await WebClient.GetUserPrompt(userId)).Id) // only submit if userprompt hasnt changed
-                    {
-                        await AutomatedSubmitter(userPrompt, userId);
-                        Thread.Sleep(delayBetweenSubmissions);
-                    }
-                }
-
-
-                int firstCheckDelay = Helpers.CalcFirstCheckDelay(timeToWaitForUpdate * 1000, numUpdateChecks);
-                bool updated = false;
-                for (int j = 0; j < numUpdateChecks; j++)
-                {
-                    if (userIds.Any(userId => WebClient.GetUserPrompt(userId).Result != null))
-                    {
-                        updated = true;
-                        break;
-                    }
-                    Thread.Sleep(Helpers.GetDelayFromIndex(firstCheckDelay, j));
-                }
-                if (!updated && userIds.Any(userId => WebClient.GetUserPrompt(userId).Result != null))
-                {
-                    updated = true;
-                }
-
-                if (!updated)
-                {
-                    Console.WriteLine("Timed out");
-                }
-            }
+            return optionRequests;
         }
 
+        public List<GameModeOptionRequest> HandleCustomGameTestOptions(List<GameModeOptionRequest> optionRequests) 
+        {
+            foreach (GameModeOptionResponse option in Game.Options)
+            {
+                Console.WriteLine(option.Description);
+
+                if (option.MinValue != null)
+                    Console.WriteLine("Min: " + option.MinValue);
+                if (option.MaxValue != null)
+                    Console.WriteLine("Max: " + option.MaxValue);
+
+                Console.WriteLine("Default: " + option.DefaultValue);
+                Console.WriteLine("Type: " + option.ResponseType.ToString());
+                string value = Prompt.GetString("Type value: ");
+                Console.WriteLine(value);
+                if (String.IsNullOrWhiteSpace(value))
+                {
+                    optionRequests.Add(new GameModeOptionRequest() { Value = option.DefaultValue.ToString() });
+                }
+                else
+                {
+                    optionRequests.Add(new GameModeOptionRequest() { Value = value });
+                }
+            }
+            return optionRequests;
+        }
     }
 }

@@ -12,11 +12,9 @@ namespace RoystonGameAutomatedTestingClient.Games
 {
     class ImposterUnstructuredTest : UnstructuredGameTest
     {
-        // Refactor if -> switch
+        // Refactor if -> switch later
         // Keep current if logic
-        // Implement handleUserPrompt instead of this
-
-        protected override Task AutomatedSubmitter(UserPrompt userPrompt, string userId)
+        public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player)
         {
             if (userPrompt.SubmitButton)
             {
@@ -24,34 +22,34 @@ namespace RoystonGameAutomatedTestingClient.Games
                 {
                     if (userPrompt.SubPrompts[0].Drawing != null) // first prompt is drawing must be drawing state
                     {
-                        return MakeDrawing(userId);
+                        return MakeDrawing(player);
                     }
                     else if (userPrompt.SubPrompts.Length == 2
                     && userPrompt.SubPrompts[0].ShortAnswer
                     && userPrompt.SubPrompts[1].ShortAnswer) // 2 prompts, both are short answer must be prompt state
                     {
-                        return MakePrompts(userId);
+                        return MakePrompts(player);
                     }
                     else if (userPrompt.SubPrompts[0].Selector != null) // first prompt is radio must be voting
                     {
-                        return Vote(userId);
+                        return Vote(player);
                     }
                 }
                 else //no subprompts must be skip reveal
                 {
-                    return SkipReveal(userId);
+                    return SkipReveal(player);
                 }
             }
-            return Task.CompletedTask;
+            return null;
         }
 
-        private async Task MakeDrawing(string userId)
+        private UserFormSubmission MakeDrawing(LobbyPlayer player)
         {
-            await CommonSubmissions.SubmitSingleDrawing(userId);
+            return CommonSubmissions.SubmitSingleDrawing(player.UserId);
         }
-        private UserFormSubmission MakePrompts(string userId)
+        private UserFormSubmission MakePrompts(LobbyPlayer player)
         {
-            Debug.Assert(userId.Length == 50);
+            Debug.Assert(player.UserId.Length == 50);
 
             return new UserFormSubmission
             {
@@ -69,13 +67,13 @@ namespace RoystonGameAutomatedTestingClient.Games
             };
     
         }
-        private async Task Vote(string userId)
+        private UserFormSubmission Vote(LobbyPlayer player)
         {
-            await CommonSubmissions.SubmitSingleSelector(userId);
+            return CommonSubmissions.SubmitSingleSelector(player.UserId);
         }
-        private async Task SkipReveal(string userId)
+        private UserFormSubmission SkipReveal(LobbyPlayer player)
         {
-            await CommonSubmissions.SubmitSkipReveal(userId);
+            return CommonSubmissions.SubmitSkipReveal(player.UserId);
         }
     }
 }

@@ -37,7 +37,7 @@ namespace RoystonGameAutomatedTestingClient.WebClient
 
         public static string GenerateRandomId()
         {
-            return new string(Enumerable.Repeat(Constants.UniqueChars.AlphaNum, 5)
+            return new string(Enumerable.Repeat(Constants.UniqueChars.AlphaNum, 50)
               .Select(s => s[Rand.Next(s.Length)]).ToArray());
         }
 

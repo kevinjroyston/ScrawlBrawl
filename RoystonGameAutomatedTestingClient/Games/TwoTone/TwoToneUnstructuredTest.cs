@@ -1,7 +1,6 @@
 ﻿using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGameAutomatedTestingClient.cs;
-using RoystonGameAutomatedTestingClient.cs.WebClient;
 using RoystonGameAutomatedTestingClient.WebClient;
 using System;
 using System.Collections.Generic;
@@ -13,7 +12,7 @@ namespace RoystonGameAutomatedTestingClient.Games
 {
     class TwoToneUnstructuredTest : UnstructuredGameTest
     {
-        protected override Task AutomatedSubmitter(UserPrompt userPrompt, string userId)
+        public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player)
         {
             if (userPrompt.SubmitButton)
             {
@@ -21,32 +20,32 @@ namespace RoystonGameAutomatedTestingClient.Games
                 {
                     if (userPrompt.SubPrompts[0].Drawing != null) // first prompt is drawing must be drawing state
                     {
-                        return MakeDrawing(userId);
+                        return MakeDrawing(player);
                     }
                     else if (userPrompt.SubPrompts[0].ShortAnswer) // first prompt is short answer must be prompt state
                     {
-                        return MakePrompt(userId);
+                        return MakePrompt(player);
                     }
                     else if (userPrompt.SubPrompts[0].Answers?.Length > 0) // first prompt is radio must be voting
                     {
-                        return Vote(userId);
+                        return Vote(player);
                     }
                 }
                 else // no subprompts must be skip reveal
                 {
-                    return SkipReveal(userId);
+                    return SkipReveal(player);
                 }
             }
-            return Task.CompletedTask;
+            return null;
         }
 
-        private async Task MakeDrawing(string userId)
+        private UserFormSubmission MakeDrawing(LobbyPlayer player)
         {
-            await CommonSubmissions.SubmitSingleDrawing(userId);
+            return CommonSubmissions.SubmitSingleDrawing(player.UserId);
         }
-        private UserFormSubmission MakePrompt(string userId)
+        private UserFormSubmission MakePrompt(LobbyPlayer player)
         {
-            Debug.Assert(userId.Length == 50);
+            Debug.Assert(player.UserId.Length == 50);
 
 
             return new UserFormSubmission
@@ -69,13 +68,13 @@ namespace RoystonGameAutomatedTestingClient.Games
             };
 
         }
-        private async Task Vote(string userId)
+        private UserFormSubmission Vote(LobbyPlayer player)
         {
-            await CommonSubmissions.SubmitSingleRadio(userId);
+            return CommonSubmissions.SubmitSingleRadio(player.UserId);
         }
-        private async Task SkipReveal(string userId)
+        private UserFormSubmission SkipReveal(LobbyPlayer player)
         {
-            await CommonSubmissions.SubmitSkipReveal(userId);
+            return CommonSubmissions.SubmitSkipReveal(player.UserId);
         }
     }
 }
