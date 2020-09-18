@@ -1,28 +1,31 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
     <title>ScrawlBrawl.tv</title>
     <style type="text/css">
-	.auto-style1 {
-		text-align: center;
-	}
-	.auto-style2 {
-		text-align: center;
-		font-family: Arial, Helvetica, sans-serif;
-	}
+      .style1 {
+        text-align: center;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .style2 {
+        text-align: center;
+        font-family: Arial, Helvetica, sans-serif;
+        max-width: 560px;
+        width: 90%;
+      }
 	</style>
   </head>
   <body>
-    <div class="auto-style1">
-    <h1 class="auto-style2">Coming Soon!</h1>
-    <p class="auto-style1">
+    <div class="style1">
+    <h1 class="style1">Coming Soon!</h1>
+    <p class="style1">
       <a [routerLink]="['/game/play']">
-        <img alt="Scrawl Brawl" height="224" src="/assets/SB_Logo_Transp_Shadow.png" width="469">
+        <img class="style2" alt="Scrawl Brawl" src="/assets/SB_Logo_Transp_Shadow.png">
       </a>
     </p>
-  <h1 class="auto-style2">Drawn Together<br>Polled Apart</h1>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/UtIlhgQW_lM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>  
+  <h1 class="style1">Drawn Together<br>Polled Apart</h1>
+<iframe class="style2" height="315" src="https://www.youtube.com/embed/UtIlhgQW_lM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>  
     </div>
   </body>
 </html>
