@@ -8,7 +8,7 @@ using static RoystonGame.Web.DataModels.Requests.LobbyManagement.ConfigureLobbyR
 namespace RoystonGameAutomatedTestingClient.Games
 {
     [EndToEndGameTest("TwoTone_Struct1")]
-    public class StructuredTwoToneTest1 : ImposterTest, IStructuredTest
+    public class StructuredTwoToneTest1 : TwoToneTest, IStructuredTest
     {
         public TestOptions TestOptions =>
             new TestOptions

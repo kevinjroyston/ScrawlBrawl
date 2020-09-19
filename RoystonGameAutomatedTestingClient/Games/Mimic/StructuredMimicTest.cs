@@ -8,7 +8,7 @@ using static RoystonGame.Web.DataModels.Requests.LobbyManagement.ConfigureLobbyR
 namespace RoystonGameAutomatedTestingClient.Games
 {
     [EndToEndGameTest("Mimic_Struct1")]
-    public class StructuredMimicTest1 : ImposterTest, IStructuredTest
+    public class StructuredMimicTest1 : MimicTest, IStructuredTest
     {
         public TestOptions TestOptions =>
             new TestOptions

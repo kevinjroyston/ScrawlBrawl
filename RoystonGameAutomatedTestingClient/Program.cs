@@ -10,6 +10,12 @@ using RoystonGameAutomatedTestingClient.WebClient;
 
 namespace RoystonGameAutomatedTestingClient.cs
 {   
+    public enum ExitCodes
+    {
+        Success = 0,
+        Fail = 1
+    }
+
     [HelpOption]
     public class Program
     {
@@ -48,16 +54,21 @@ namespace RoystonGameAutomatedTestingClient.cs
         [Argument(0)]
         public string[] Tests { get; }
 
+        public int ExitCode { get; set; } = (int) ExitCodes.Success;
+
         private TestRunner runner;
 
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
-            CommandLineApplication.ExecuteAsync<Program>(args).GetAwaiter().GetResult();
+            int ExitCode = CommandLineApplication.ExecuteAsync<Program>(args).GetAwaiter().GetResult();
+            Console.WriteLine(ExitCode);
+            return ExitCode;
         }
 
-        private async Task OnExecuteAsync()
+        private async Task<int> OnExecuteAsync()
         {
             await RunTests();
+            return ExitCode;
         }
 
         public Dictionary<string, object> CollectParams()
@@ -73,11 +84,16 @@ namespace RoystonGameAutomatedTestingClient.cs
             return Params;
         }
 
+        public void OnFailHandler()
+        {
+            this.ExitCode = (int) ExitCodes.Fail;
+        }
+
         public async Task RunTests()
         {
             List<GameModeMetadata> Games = await CommonSubmissions.GetGames(Helpers.GenerateRandomId());
             Dictionary<string, object> Params = CollectParams();
-            runner = new TestRunner(Games, Params);
+            runner = new TestRunner(Games, Params, OnFailHandler);
             await runner.Run();
         }
     }

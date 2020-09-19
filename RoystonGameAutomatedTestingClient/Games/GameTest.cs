@@ -99,7 +99,7 @@ namespace RoystonGameAutomatedTestingClient.Games
         {
             List<GameModeOptionRequest> optionRequests = new List<GameModeOptionRequest>();
 
-            bool defaultParams = Prompt.GetYesNo("Do you want to run with default parameters?", defaultAnswer: true);
+            bool defaultParams = Prompt.GetYesNo("Do you want to run with default parameters?", defaultAnswer: true, promptColor: ConsoleColor.Black, promptBgColor: ConsoleColor.White);
 
             if (defaultParams)
             {
