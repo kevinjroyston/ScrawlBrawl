@@ -13,153 +13,29 @@ using static System.FormattableString;
 using RoystonGameAutomatedTestingClient.Games;
 using McMaster.Extensions.CommandLineUtils;
 using System.Drawing.Printing;
+using System.Reflection;
+using RoystonGameAutomatedTestingClient.DataModels;
 
 namespace RoystonGameAutomatedTestingClient.TestFramework
 {   
-    public abstract class TestRunner
+    public class TestRunner
     {
-        public string Game;
-        public bool IsBrowsers;
-        public bool IsStructuredMode;
-        public int NumUsers;
-        public List<GameTest> Tests;
-        public List<GameModeMetadata> Games;
+        // TODO [Daniel]: Add try-catch to runner and spit out % of tests succeded. Info about which tests failed. etc
+        // TODO [Daniel]: Make the console app return an error code if tests fail and no error code if tests succeed
+        // TODO [Daniel]: Code hasn't been tested... lol. It compiles though!
+        // TODO [Daniel]: Structured tests will need to be created (requires game-specific knowledge though)
+        public bool IsParallel { get; }
+        public string Game { get; }
+        public bool OpenBrowsers { get; }
+        public int NumUsers { get; }
+        private Dictionary<string, GameTest> SelectedTests { get; set; }
+        private List<GameModeMetadata> Games { get; }
 
-        public abstract Task Run();
-  
-        public class GameTestHolder
-        {
-            public class TestOption
-            {
-                public int NumPlayers { get; }
-                public List<GameModeOptionRequest> GameModeOptions { get; }
-                public int NumToTimeOut { get; }
-
-                public TestOption(
-                    int numPlayers,
-                    List<GameModeOptionRequest> gameModeOptions,
-                    int numToTimeOut = 0)
-                {
-                    this.NumPlayers = numPlayers;
-                    this.GameModeOptions = gameModeOptions;
-                    this.NumToTimeOut = Math.Min(numToTimeOut, numPlayers);
-                }
-            }
-            public string Title { get; }
-            public GameTest unstructuredTest { get; }
-            public GameTest structuredTest { get; }
-            public List<TestOption> OptionsList { get; }
-            public GameTestHolder(string title, GameTest unstructuredTest, GameTest structuredTest, List<TestOption> optionsList = null)
-            {
-                this.Title = title;
-                this.unstructuredTest = unstructuredTest;
-                this.unstructuredTest.testHolder = this;
-                this.structuredTest = structuredTest;
-                this.structuredTest.testHolder = this;
-                this.OptionsList = optionsList;
-            }
-        }
-
-        public List<GameTestHolder> gameTestHolders = new List<GameTestHolder>()
-        {
-                #region ImposterSyndrome
-                new GameTestHolder(
-                    title: "Imposter Syndrome",
-                    unstructuredTest: new ImposterTest(),
-                    structuredTest: null,
-                    optionsList: new List<GameTestHolder.TestOption>()
-                    {
-                        new GameTestHolder.TestOption(
-                            numPlayers: 10,
-                            gameModeOptions: new List<GameModeOptionRequest>()
-                            {
-                                new GameModeOptionRequest(){ Value = ""+5 } // game speed
-                            },
-                            numToTimeOut: 0)
-                    }),
-                #endregion
-                #region Two Tone
-                new GameTestHolder(
-                    title: "Chaotic Cooperation",
-                    unstructuredTest: new TwoToneUnstructuredTest(),
-                    structuredTest: null,
-                    optionsList: new List<GameTestHolder.TestOption>()
-                    {
-                        new GameTestHolder.TestOption(
-                            numPlayers: 10,
-                            gameModeOptions: new List<GameModeOptionRequest>()
-                            {
-                                new GameModeOptionRequest(){ Value = "2" }, // max num colors
-                                new GameModeOptionRequest(){ Value = "4" }, // max num teams per prompt
-                                new GameModeOptionRequest(){ Value = "true"}, // show other colors
-                                new GameModeOptionRequest(){ Value = "5" } // game speed
-                            },
-                            numToTimeOut: 0)
-                    }),
-                #endregion
-                #region Body Swap 
-                new GameTestHolder(
-                    title: "Body Swap",
-                    unstructuredTest: new BodyBuilderTest(),
-                    structuredTest: null,
-                    optionsList: new List<GameTestHolder.TestOption>()
-                    {
-                        new GameTestHolder.TestOption(
-                            numPlayers: 10,
-                            gameModeOptions: new List<GameModeOptionRequest>()
-                            {
-                                new GameModeOptionRequest(){ Value = "2" }, // num rounds
-                                new GameModeOptionRequest(){ Value = "true" }, //show names
-                                new GameModeOptionRequest(){ Value = "false"}, // show images
-                                new GameModeOptionRequest(){ Value = "25"}, //num turns before timeout
-                                new GameModeOptionRequest(){ Value = "5" } // game speed
-                            },
-                            numToTimeOut: 0)
-                    }),
-                #endregion
-                #region Body Builder
-                new GameTestHolder(
-                    title: "Body Builder",
-                    structuredTest: null,
-                    unstructuredTest: new BattleReadyTest(),
-                    optionsList: new List<GameTestHolder.TestOption>()
-                    {
-                        new GameTestHolder.TestOption(
-                            numPlayers: 10,
-                            gameModeOptions: new List<GameModeOptionRequest>()
-                            {
-                                new GameModeOptionRequest(){ Value = "3" }, // num rounds
-                                new GameModeOptionRequest(){ Value = "2" }, //num prompts
-                                new GameModeOptionRequest(){ Value = "4"}, // num drawings expected
-                                new GameModeOptionRequest(){ Value = "2"}, // num players per prompt
-                                new GameModeOptionRequest(){ Value = "5" } // game speed
-                            },
-                            numToTimeOut: 0)
-                    }),
-                #endregion
-                #region Mimic
-                new GameTestHolder(
-                    title: "Mimic",
-                    structuredTest: null,
-                    unstructuredTest: new MimicUnstructuredTest(),
-                    optionsList: new List<GameTestHolder.TestOption>()
-                    {
-                        new GameTestHolder.TestOption(
-                            numPlayers: 10,
-                            gameModeOptions: new List<GameModeOptionRequest>()
-                            {
-                                new GameModeOptionRequest(){ Value = "2" }, // num starting drawings
-                                new GameModeOptionRequest(){ Value = "5" }, // num drawings before vote
-                                new GameModeOptionRequest(){ Value = "3" }, // num sets
-                                new GameModeOptionRequest(){ Value = "10"}, // max for vote
-                                new GameModeOptionRequest(){ Value = "5" } // game speed
-                            },
-                            numToTimeOut: 0)
-                    }),
-                #endregion 
-        };
-
-        protected TestRunner(List<GameModeMetadata> Games, Dictionary<string, object> Params)
+        /// <summary>
+        /// Populated via presence of <see cref="EndToEndGameTestAttribute"/>
+        /// </summary>
+        private IReadOnlyDictionary<string, Func<GameTest>> TestNameToTestGenerator { get; } = FindAllTestsWithAttribute();
+        public TestRunner(List<GameModeMetadata> Games, Dictionary<string, object> Params)
         {
             Console.WriteLine("\nCommand Line Arguments: ");
             int count = 1;
@@ -169,67 +45,16 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
                 count += 1;
             }
             Console.WriteLine("\nExisting Games:\n" + string.Join("\n", Games.Select((game, i) => (i+1) + ". " + game.Title)));
+            this.Games = Games; 
             this.Game = (string) Params["Game"];
-            this.IsBrowsers = (bool) Params["IsBrowsers"];
-            this.IsStructuredMode =  !DetermineUnStructuredMode((string[]) Params["Tests"]);
-            this.Tests = DetermineGameTests((string[]) Params["Tests"], Games, this.IsStructuredMode);
+            this.OpenBrowsers = (bool) Params["OpenBrowsers"];
+            this.SelectedTests = DetermineGameTests((string[]) Params["Tests"], Games);
             this.NumUsers = (int) Params["NumUsers"];
-            this.Games = Games;
+            this.IsParallel = (bool)Params["IsParallel"];
         }
-        public bool DetermineUnStructuredMode(string[] CommandLineTests)
+        public async Task Run()
         {
-            return CommandLineTests != null && CommandLineTests.Length > 0;
-        }
-
-        public List<GameTest> DetermineGameTests(string[] SpecifiedTests, List<GameModeMetadata> games, bool structuredMode)
-        {
-            List<GameTest> testsToRun = new List<GameTest>();
-
-            if (SpecifiedTests == null)
-            {
-                return testsToRun;
-            }
-            Console.WriteLine("\nSpecified Tests");
-            Console.WriteLine(string.Join("\n-", SpecifiedTests));
-
-            string[] gameTestTitles = gameTestHolders.Select(holder => holder.Title).ToArray();
-            Console.WriteLine("\nChosen Tests");
-            foreach (string specifiedTest in SpecifiedTests)
-            {
-                int gameTestIndex = Array.IndexOf(gameTestTitles, specifiedTest);
-                if (gameTestIndex > -1)
-                {
-                    GameTestHolder gameTestHolder = gameTestHolders[gameTestIndex];
-                    int gameMode = games.FindIndex(gameData => gameData.Title == gameTestHolder.Title);
-                    GameTest gameTest;
-                    if (structuredMode)
-                    {
-                        gameTest = gameTestHolder.structuredTest;
-                    } else
-                    {
-                        gameTest = gameTestHolder.unstructuredTest;
-                    }
-                    gameTest.GameMode = gameMode;
-                    gameTest.Game = games[gameMode];
-                    Console.WriteLine("-"+gameTestHolder.Title);
-                    testsToRun.Add(gameTest);
-                }
-            }
-            Console.WriteLine("");
-            return testsToRun;
-        }
-    }
-
-    public class NormalTestRunner : TestRunner
-    {
-        public bool IsParallel;
-        public NormalTestRunner(List<GameModeMetadata> Games, Dictionary<string, object> Params) : base(Games, Params) {
-            this.IsParallel = (bool) Params["IsParallel"];
-        }
-        public override async Task Run()
-        {
-
-            if (IsParallel && IsStructuredMode)
+            if (IsParallel)
             {
                 await RunParallel();
             }
@@ -238,10 +63,10 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
                 await RunSequential();
             }
         }
-        public async Task RunParallel()
+        private async Task RunParallel()
         {
             List<Task> tasks = new List<Task>();
-            foreach (GameTest test in Tests)
+            foreach ((string name, GameTest test) in SelectedTests)
             {
                 tasks.Add(RunTest(test));
             }
@@ -249,12 +74,12 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
             await Task.WhenAll(tasks);
         }
 
-        public async Task RunSequential()
+        private async Task RunSequential()
         {
-            foreach (GameTest test in Tests)
+            foreach ((string name, GameTest test) in SelectedTests)
             {
                 Console.WriteLine("======================================================");
-                Console.WriteLine($"Current Test: {test.testHolder.Title}\n");
+                Console.WriteLine($"Current Test: {name}\n");
                 await RunTest(test);
                 Console.WriteLine("\nFinished Test");
                 Console.WriteLine("======================================================");
@@ -264,8 +89,58 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
         public async Task RunTest(GameTest test)
         {
             await test.Setup(this);
-            //await test.Run();
+            await test.RunTest();
             await test.Cleanup();
+        }
+
+        /// <summary>
+        /// Reflection witchcraft which finds all objects with <see cref="EndToEndGameTestAttribute"/>
+        /// </summary>
+        private static IReadOnlyDictionary<string, Func<GameTest>> FindAllTestsWithAttribute()
+        {
+            var gameTests =
+               from type in Assembly.GetExecutingAssembly().GetTypes()
+               where type.GetCustomAttributes<EndToEndGameTestAttribute>().Any()
+               select type;
+
+            Dictionary<string, Func<GameTest>> toReturn = new Dictionary<string, Func<GameTest>>();
+
+            foreach (Type type in gameTests)
+            {
+                // TODO: below might need to be .Last()
+                EndToEndGameTestAttribute attr = type.GetCustomAttributes<EndToEndGameTestAttribute>().First();
+                toReturn.Add(attr.TestName, () => (GameTest)Activator.CreateInstance(type));
+            }
+
+            return toReturn;
+        }
+
+        private Dictionary<string, GameTest> DetermineGameTests(string[] SpecifiedTests, List<GameModeMetadata> games)
+        {
+            Dictionary<string, GameTest> testsToRun = new Dictionary<string, GameTest>();
+
+            if (SpecifiedTests == null)
+            {
+                return testsToRun;
+            }
+            Console.WriteLine("\nSpecified Tests");
+            Console.WriteLine(string.Join("\n-", SpecifiedTests));
+
+            Console.WriteLine("\nChosen Tests");
+            foreach (string specifiedTest in SpecifiedTests)
+            {
+                if (TestNameToTestGenerator.ContainsKey(specifiedTest))
+                {
+                    GameTest test = TestNameToTestGenerator[specifiedTest].Invoke();
+                    int gameMode = games.FindIndex(gameData => gameData.Title == test.GameModeTitle);
+                    test.GameModeIndex = gameMode;
+                    test.Game = games[gameMode];
+                    Console.WriteLine("-"+specifiedTest);
+                    testsToRun.Add(specifiedTest, test);
+                }
+            }
+            Console.WriteLine("");
+            return testsToRun;
         }
     }
 

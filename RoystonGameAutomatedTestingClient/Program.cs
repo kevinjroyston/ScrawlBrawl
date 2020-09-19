@@ -31,7 +31,7 @@ namespace RoystonGameAutomatedTestingClient.cs
         public bool IsParallel { get; }
 
         [Option("-b|-browsers")]
-        public bool IsBrowsers { get; }
+        public bool OpenBrowsers { get; }
 
         //DisableCleanupOnFailure default false if true (not close lobby print stuff to console, and open browsers)
         [Option("-c|-disablecleanup")]
@@ -64,7 +64,7 @@ namespace RoystonGameAutomatedTestingClient.cs
         {
             Dictionary<string, object> Params = new Dictionary<string, object>();
             Params.Add("Game", Game);
-            Params.Add("IsBrowsers", IsBrowsers);
+            Params.Add("OpenBrowsers", OpenBrowsers);
             Params.Add("Tests", Tests);
             Params.Add("NumUsers", NumUsers);
             Params.Add("IsParallel", IsParallel);
@@ -77,7 +77,7 @@ namespace RoystonGameAutomatedTestingClient.cs
         {
             List<GameModeMetadata> Games = await CommonSubmissions.GetGames(Helpers.GenerateRandomId());
             Dictionary<string, object> Params = CollectParams();
-            runner = new NormalTestRunner(Games, Params);
+            runner = new TestRunner(Games, Params);
             await runner.Run();
         }
     }

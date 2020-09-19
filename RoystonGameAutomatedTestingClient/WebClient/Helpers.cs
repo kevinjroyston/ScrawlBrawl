@@ -22,7 +22,7 @@ namespace RoystonGameAutomatedTestingClient.WebClient
             }
             return randomizedString;
         }
-        public static void OpenBrowsers(List<string> userIds)
+        public static void OpenBrowsers(IEnumerable<string> userIds)
         {
             foreach (string userId in userIds)
             {

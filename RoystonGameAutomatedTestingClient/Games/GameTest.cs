@@ -17,7 +17,6 @@ using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using RoystonGameAutomatedTestingClient.TestFramework;
 using static RoystonGame.Web.DataModels.Requests.LobbyManagement.ConfigureLobbyRequest;
 using static RoystonGameAutomatedTestingClient.TestFramework.TestRunner;
-using static RoystonGameAutomatedTestingClient.TestFramework.TestRunner.GameTestHolder;
 using RoystonGame.Web.DataModels;
 using RoystonGame.Web.Controllers.LobbyManagement;
 using RoystonGame.Web.DataModels.Requests;
@@ -25,22 +24,17 @@ using System.Net.Http;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    interface GameTestParameters
+    public abstract class GameTest
     {
-        Lobby Lobby { get; set; }
-    }
-
-    public abstract class GameTest : GameTestParameters
-    {
-        private TimeSpan DelayBetweenSubmissions { get; set; } = TimeSpan.FromMilliseconds(250);
-        private TimeSpan PollingDelay { get; set; } = TimeSpan.FromMilliseconds(500);
-        private TimeSpan MaxTotalPollingTime { get; set; } = TimeSpan.FromSeconds(5);
-
         protected AutomationWebClient WebClient = new AutomationWebClient();
-        public int GameMode { get; set; }
         public GameModeMetadata Game { get; set; }
-        public GameTestHolder testHolder { get; set; }
-        public Lobby Lobby { get; set; }
+        protected Lobby Lobby { get; }
+
+        public int GameModeIndex { get; set; } = -1;
+        public abstract string GameModeTitle { get; }
+        public virtual TimeSpan DelayBetweenSubmissions { get; } = TimeSpan.FromMilliseconds(250);
+        public virtual TimeSpan PollingDelay { get; } = TimeSpan.FromMilliseconds(500);
+        public virtual TimeSpan MaxTotalPollingTime { get; } = TimeSpan.FromSeconds(5);
 
         public abstract UserFormSubmission HandleUserPrompt(UserPrompt prompt, LobbyPlayer player, int gameStep);
 
@@ -54,18 +48,32 @@ namespace RoystonGameAutomatedTestingClient.Games
             await Lobby.Delete();
             await Lobby.Create();
             Console.WriteLine("Created Lobby: " + Lobby.Id);
-            if (structured)
+
+            // Heheheh, don't mind me. Just using some questionable patterns.
+            if (this is IStructuredTest)
             {
-                TestOption option = testHolder.OptionsList[0];
-                await Lobby.Populate(option.NumPlayers);
-                await Lobby.Configure(option.GameModeOptions, GameMode);
+                // TODO: Validate these shenanigans actually work.
+                await Lobby.Populate(((IStructuredTest)this).TestOptions.NumPlayers);
+                await Lobby.Configure(((IStructuredTest)this).TestOptions.GameModeOptions, this.GameModeIndex);
             }
             else
             {
+                if (runner.IsParallel)
+                {
+                    throw new Exception("Cannot run unstructured tests in parallel");
+                }
+
                 List<GameModeOptionRequest> optionRequests = SetUpGameTestOptions();
                 ValidateNumUsers(runner.NumUsers);
                 await Lobby.Populate(runner.NumUsers);
-                await Lobby.Configure(optionRequests, GameMode);
+                await Lobby.Configure(optionRequests, this.GameModeIndex);
+            }
+
+            if (runner.OpenBrowsers)
+            {
+                // TODO: open lobby owner to management page.
+                Helpers.OpenBrowsers(new List<string> { Lobby.Owner.UserId });
+                Helpers.OpenBrowsers(Lobby.Players.Select(player => player.UserId));
             }
         }
 
@@ -144,7 +152,7 @@ namespace RoystonGameAutomatedTestingClient.Games
 
         // TODO: configure delayBetweenSubmissions? - Command line arg.
 
-        public virtual async Task RunTest(List<LobbyPlayer> players)
+        public virtual async Task RunTest()
         {
             //While Game doesnt end  <-- TODO - determine game end  (expected vs unexpected)
             for (int i = 0; i < 500; i++)

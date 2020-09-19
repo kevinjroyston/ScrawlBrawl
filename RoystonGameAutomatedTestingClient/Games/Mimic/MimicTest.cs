@@ -2,6 +2,7 @@
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
+using RoystonGameAutomatedTestingClient.DataModels;
 using RoystonGameAutomatedTestingClient.WebClient;
 using System;
 using System.Collections.Generic;
@@ -12,16 +13,22 @@ using System.Threading.Tasks;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    class MimicTest : GameTest
+    [EndToEndGameTest("Mimic")]
+    public class MimicTest : GameTest
     {
+        public override string GameModeTitle => "Mimic";
         public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player, int gameStep)
         {
             switch (userPrompt.UserPromptId) {
                 case UserPromptId.Voting:
+                    Console.WriteLine("Submitting Voting");
                     return Vote(player);
                 case UserPromptId.Mimic_DrawAnything:
+                    Console.WriteLine("Submitting Drawing");
                     return MakeDrawing(player);
                 case UserPromptId.PartyLeader_SkipReveal:
+                case UserPromptId.PartyLeader_SkipScoreboard:
+                    Console.WriteLine("Submitting Skip");
                     return SkipReveal(player);
                 case UserPromptId.Waiting:
                     return null;
@@ -30,15 +37,15 @@ namespace RoystonGameAutomatedTestingClient.Games
             }
         }
 
-        private UserFormSubmission MakeDrawing(LobbyPlayer player)
+        protected virtual UserFormSubmission MakeDrawing(LobbyPlayer player)
         {
             return CommonSubmissions.SubmitSingleDrawing(player.UserId);
         }
-        private UserFormSubmission Vote(LobbyPlayer player)
+        protected virtual UserFormSubmission Vote(LobbyPlayer player)
         {
             return CommonSubmissions.SubmitSingleRadio(player.UserId);
         }
-        private UserFormSubmission SkipReveal(LobbyPlayer player)
+        protected virtual UserFormSubmission SkipReveal(LobbyPlayer player)
         {
             return CommonSubmissions.SubmitSkipReveal(player.UserId);
         }

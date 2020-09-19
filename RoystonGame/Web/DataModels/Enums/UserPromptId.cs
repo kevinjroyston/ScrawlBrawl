@@ -13,8 +13,7 @@ namespace RoystonGame.Web.DataModels.Enums
         PartyLeader_DefaultPrompt = 10,
         PartyLeader_GameEnd = 11,
         PartyLeader_SkipReveal = 12,
-        PartyLeader_SkipVoting = 13,
-        PartyLeader_SkipScoreboard = 14,
+        PartyLeader_SkipScoreboard = 13,
 
         BattleReady_ContestantCreation = 20,
         BattleReady_BodyPartDrawing = 21,
@@ -28,7 +27,7 @@ namespace RoystonGame.Web.DataModels.Enums
         BodyBuilder_DrawBodyPart = 33,
 
         ImposterSyndrome_Draw = 40,
-        ImposterSnydrome_AnswerPrompt = 41,
+        ImposterSyndrome_AnswerPrompt = 41,
         ImposterSyndrome_CreatePrompt = 42,
 
         ChaoticCooperation_Setup = 50,

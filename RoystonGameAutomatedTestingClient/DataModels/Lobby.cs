@@ -3,11 +3,16 @@ using RoystonGame.Web.DataModels.Requests.LobbyManagement;
 using RoystonGameAutomatedTestingClient.TestFramework;
 using static RoystonGame.Web.DataModels.Requests.LobbyManagement.ConfigureLobbyRequest;
 using static RoystonGameAutomatedTestingClient.TestFramework.TestRunner;
-using static RoystonGameAutomatedTestingClient.TestFramework.TestRunner.GameTestHolder;
 using RoystonGame.Web.DataModels;
 using RoystonGame.Web.Controllers.LobbyManagement;
 using RoystonGame.Web.DataModels.Requests;
 using System.Net.Http;
+using System.Threading.Tasks;
+using RoystonGameAutomatedTestingClient.WebClient;
+using System.Collections.Generic;
+using System;
+using System.Threading;
+using System.Linq;
 
 namespace RoystonGameAutomatedTestingClient.DataModels
 {
@@ -56,12 +61,12 @@ namespace RoystonGameAutomatedTestingClient.DataModels
             }
         }
 
-        public async Task Configure(List<GameModeOptionRequest> options, int GameMode)
+        public async Task Configure(IEnumerable<GameModeOptionRequest> options, int GameMode)
         {
             ConfigureLobbyRequest configLobby = new ConfigureLobbyRequest()
             {
                 GameMode = GameMode,
-                Options = options
+                Options = options.ToList()
             };
             await CommonSubmissions.ConfigureLobby(configLobby, Owner.UserId);
         }

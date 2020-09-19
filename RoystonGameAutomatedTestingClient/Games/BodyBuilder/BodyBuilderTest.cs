@@ -1,46 +1,92 @@
-﻿using RoystonGame.TV.DataModels.Users;
+﻿using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGameAutomatedTestingClient.cs;
+using RoystonGameAutomatedTestingClient.DataModels;
 using RoystonGameAutomatedTestingClient.WebClient;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    class BodyBuilderTest : GameTest
+    [EndToEndGameTest("BodyBuilder")]
+    public class BodyBuilderTest : GameTest
     {
-        private Random Rand = new Random();
+        public override string GameModeTitle => "Body Builder";
         public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player, int gameStep)
         {
-            if (userPrompt.SubmitButton)
+            switch (userPrompt.UserPromptId)
             {
-                if (userPrompt.SubPrompts?.Length > 0)
-                {
-                    if (userPrompt.SubPrompts.Length == 2 && userPrompt.SubPrompts[0].ShortAnswer) // 2 prompts 1st is short answer must be prompt state
+                case UserPromptId.BattleReady_BattlePrompts:
+                case UserPromptId.BattleReady_ExtraBattlePrompts:
+                    Console.WriteLine("Submitting Prompt");
+                    return MakePrompt(player);
+                case UserPromptId.BattleReady_BodyPartDrawing:
+                case UserPromptId.BattleReady_ExtraBodyPartDrawing:
+                    Console.WriteLine("Submitting Drawing");
+                    string promptTitle = userPrompt.SubPrompts[0].Prompt;
+                    if (promptTitle.Contains("Head", StringComparison.OrdinalIgnoreCase))
                     {
-                        return MakePrompts(player);
+                        return MakeDrawing(player, DrawingType.Head);
                     }
-                    else if (userPrompt.SubPrompts[0].Drawing != null) // first prompt is drawing must be drawing state
+                    else if (promptTitle.Contains("Body", StringComparison.OrdinalIgnoreCase))
                     {
-                        return MakeDrawing(player);
+                        return MakeDrawing(player, DrawingType.Body);
                     }
-                    else if (userPrompt.SubPrompts.Length == 2 && userPrompt.SubPrompts[1].Answers != null) // 2 promtps 2nd is radio answer must be swap
+                    else if (promptTitle.Contains("Legs", StringComparison.OrdinalIgnoreCase))
                     {
-                        return Swap(userPrompt, player);
+                        return MakeDrawing(player, DrawingType.Legs);
                     }
-                }
-                else //no subprompts must be skip reveal
-                {
+                    else
+                    {
+                        throw new Exception("Couldnt find drawing type");
+                    }
+                case UserPromptId.BattleReady_ContestantCreation:
+                    Console.WriteLine("Submitting Contestant");
+                    return MakePerson(player, "TestPerson");
+                case UserPromptId.PartyLeader_SkipReveal:
+                case UserPromptId.PartyLeader_SkipScoreboard:
+                    Console.WriteLine("Submitting Skip");
                     return SkipReveal(player);
-                }
+                case UserPromptId.Voting:
+                    Console.WriteLine("Submitting Voting");
+                    return Vote(player);
+                case UserPromptId.Waiting:
+                    return null;
+                default:
+                    throw new Exception($"Unexpected UserPromptId '{userPrompt.UserPromptId}', userId='{player.UserId}'");
             }
+        }
+
+        protected virtual UserFormSubmission MakeDrawing(LobbyPlayer player, DrawingType type)
+        {
+            if (type == DrawingType.Head)
+            {
+                return CommonSubmissions.SubmitSingleDrawing(player.UserId, Constants.Drawings.Head );
+            }
+            else if (type == DrawingType.Body)
+            {
+                return CommonSubmissions.SubmitSingleDrawing(player.UserId, Constants.Drawings.Body );
+            }
+            else if (type == DrawingType.Legs)
+            {
+                return CommonSubmissions.SubmitSingleDrawing(player.UserId, Constants.Drawings.Legs );
+            }
+
             return null;
         }
-        private UserFormSubmission MakePrompts(LobbyPlayer player)
+        protected virtual UserFormSubmission MakePrompt(LobbyPlayer player)
+        {
+            return CommonSubmissions.SubmitSingleText(player.UserId);
+        }
+        protected virtual UserFormSubmission MakePerson(LobbyPlayer player, string personName = "TestPerson")
         {
             Debug.Assert(player.UserId.Length == 50);
 
@@ -50,41 +96,29 @@ namespace RoystonGameAutomatedTestingClient.Games
                 {
                     new UserSubForm()
                     {
-                        ShortAnswer = Helpers.GetRandomString()
+                        Selector = 0
                     },
                     new UserSubForm()
                     {
-                        ShortAnswer = Helpers.GetRandomString()
+                        Selector = 0
                     },
+                    new UserSubForm()
+                    {
+                        Selector = 0
+                    },
+                    new UserSubForm()
+                    {
+                        ShortAnswer = personName
+                    }
                 }
             };
            
         }
-
-        private UserFormSubmission MakeDrawing(LobbyPlayer player)
+        protected virtual UserFormSubmission Vote(LobbyPlayer player)
         {
-            return CommonSubmissions.SubmitSingleDrawing(player.UserId);
+            return CommonSubmissions.SubmitSingleRadio(player.UserId);
         }
-        private UserFormSubmission Swap(UserPrompt prompt, LobbyPlayer player)
-        {
-            int answer = Rand.Next(0, prompt.SubPrompts[1].Answers.Length);
-
-            return new UserFormSubmission
-            {
-                SubForms = new List<UserSubForm>()
-                {
-                    new UserSubForm()
-                    {
-                    },
-                    new UserSubForm()
-                    {
-                        RadioAnswer = answer
-                    }
-                }
-            };
-        }
-
-        private UserFormSubmission SkipReveal(LobbyPlayer player)
+        protected virtual UserFormSubmission SkipReveal(LobbyPlayer player)
         {
             return CommonSubmissions.SubmitSkipReveal(player.UserId);
         }

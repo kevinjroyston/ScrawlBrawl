@@ -51,7 +51,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
 
                 return new UserPrompt
                 {
-                    UserPromptId = UserPromptId.ImposterSnydrome_AnswerPrompt,
+                    UserPromptId = UserPromptId.ImposterSyndrome_AnswerPrompt,
                     Title = "Find the imposter!",
                     Description = description,
                     SubPrompts = new SubPrompt[]

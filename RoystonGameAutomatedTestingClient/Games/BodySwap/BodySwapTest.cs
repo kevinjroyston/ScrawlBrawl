@@ -1,4 +1,5 @@
-﻿using RoystonGame.Web.DataModels.Enums;
+﻿using RoystonGame.TV.DataModels.Users;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGameAutomatedTestingClient.cs;
@@ -12,40 +13,36 @@ using System.Threading.Tasks;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    [EndToEndGameTest("ImposterSyndrome")]
-    public class ImposterTest : GameTest
+    [EndToEndGameTest("BodySwap")]
+    public class BodySwapTest : GameTest
     {
-        public override string GameModeTitle => "Imposter Syndrome";
-
+        public override string GameModeTitle => "Body Swap";
+        private Random Rand = new Random();
         public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player, int gameStep)
         {
             switch (userPrompt.UserPromptId)
             {
-                case UserPromptId.ImposterSyndrome_CreatePrompt:
+                case UserPromptId.BodyBuilder_CreatePrompts:
                     Console.WriteLine("Submitting Prompt");
                     return MakePrompts(player);
-                case UserPromptId.ImposterSyndrome_Draw:
+                case UserPromptId.BodyBuilder_DrawBodyPart:
                     Console.WriteLine("Submitting Drawing");
                     return MakeDrawing(player);
+                case UserPromptId.BodyBuilder_TradeBodyPart:
+                    Console.WriteLine("Submitting Swap");
+                    return Swap(userPrompt, player);
                 case UserPromptId.PartyLeader_SkipReveal:
                 case UserPromptId.PartyLeader_SkipScoreboard:
                     Console.WriteLine("Submitting Skip");
                     return SkipReveal(player);
-                case UserPromptId.Voting:
-                    Console.WriteLine("Submitting Voting");
-                    return Vote(player);
+                case UserPromptId.BodyBuilder_FinishedPerson:
                 case UserPromptId.Waiting:
                     return null;
                 default:
                     throw new Exception($"Unexpected UserPromptId '{userPrompt.UserPromptId}', userId='{player.UserId}'");
             }
         }
-
-        protected virtual UserFormSubmission MakeDrawing(LobbyPlayer player)
-        {
-            return CommonSubmissions.SubmitSingleDrawing(player.UserId);
-        }
-        protected virtual UserFormSubmission MakePrompts(LobbyPlayer player)
+        private UserFormSubmission MakePrompts(LobbyPlayer player)
         {
             Debug.Assert(player.UserId.Length == 50);
 
@@ -60,16 +57,36 @@ namespace RoystonGameAutomatedTestingClient.Games
                     new UserSubForm()
                     {
                         ShortAnswer = Helpers.GetRandomString()
+                    },
+                }
+            };
+           
+        }
+
+        private UserFormSubmission MakeDrawing(LobbyPlayer player)
+        {
+            return CommonSubmissions.SubmitSingleDrawing(player.UserId);
+        }
+        private UserFormSubmission Swap(UserPrompt prompt, LobbyPlayer player)
+        {
+            int answer = Rand.Next(0, prompt.SubPrompts[1].Answers.Length);
+
+            return new UserFormSubmission
+            {
+                SubForms = new List<UserSubForm>()
+                {
+                    new UserSubForm()
+                    {
+                    },
+                    new UserSubForm()
+                    {
+                        RadioAnswer = answer
                     }
                 }
             };
-    
         }
-        protected virtual UserFormSubmission Vote(LobbyPlayer player)
-        {
-            return CommonSubmissions.SubmitSingleSelector(player.UserId);
-        }
-        protected virtual UserFormSubmission SkipReveal(LobbyPlayer player)
+
+        private UserFormSubmission SkipReveal(LobbyPlayer player)
         {
             return CommonSubmissions.SubmitSkipReveal(player.UserId);
         }
