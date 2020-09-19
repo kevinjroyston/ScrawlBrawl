@@ -19,18 +19,13 @@ namespace RoystonGameAutomatedTestingClient.cs
     [HelpOption]
     public class Program
     {
-        /*
+        /* 
+         * Example Commands: 
+         * - RoystonGameAutomatedTestingClient.exe -users 4 -games "Imposter Syndrome, Body Swap" -tests "ImposterSyndrome, BodySwap"
+         * - RoystonGameAutomatedTestingClient.exe -games "Imposter Syndrome, Body Swap" -structured -parallel
+         * 
+         * TODO 
          * [] - Param - Text File of Tests (Optional) (text file game mode, test name -> only structured tests)
-         * 
-         * Only for unstructured - Make a lobby for them, Ask for num users (prompt or command line), Open up browser of lobbyowner pointed at lobby creation page
-         * 
-         * implement handleTimeout of (unstructured) tests
-         * Mock up structured Test (mock enums)
-         * pull request
-         * 
-         * At game test level, attribute that we add to test (unstructure/structured). Unstructured test attribute added to mimic test for example
-         * Structured test can override methods inherits from ex mimictest
-         * Each of those structuredtests have a data structure to validate and options
          */
 
         [Option("-p|-parallel")]
@@ -46,22 +41,24 @@ namespace RoystonGameAutomatedTestingClient.cs
         [Option("-u|-users")]
         public int NumUsers { get; }
 
-        //GameMode(Required) If without TestName run in unstructured test mode (how many users) <- make maybe required flags if no test name provided
-        [Option("-g|-game")]
-        public string Game { get; }
+        [Option("-s|-structured")]
+        public bool IsStructured { get; } = false;
 
-        //Test Name(Optional) -> At some point list of tests 
-        [Argument(0)]
-        public string[] Tests { get; }
+        //Comma separated string of games e.g "Imposter Syndrome" or "Imposter Syndrome, Body Swap"
+        [Option("-g|-games")]
+        public string GameModes { get; }
+
+        //Comma separated string of tests e.g -> "ImposterSyndrome"
+        [Option("-t|-tests")]
+        public string Tests { get; }
 
         public int ExitCode { get; set; } = (int) ExitCodes.Success;
-
         private TestRunner runner;
 
         public static int Main(string[] args)
         {
             int ExitCode = CommandLineApplication.ExecuteAsync<Program>(args).GetAwaiter().GetResult();
-            Console.WriteLine(ExitCode);
+            Console.WriteLine($"Exit Code: {ExitCode}");
             return ExitCode;
         }
 
@@ -74,11 +71,12 @@ namespace RoystonGameAutomatedTestingClient.cs
         public Dictionary<string, object> CollectParams()
         {
             Dictionary<string, object> Params = new Dictionary<string, object>();
-            Params.Add("Game", Game);
+            Params.Add("GameModes", (GameModes==null) ? null : GameModes.Split(",").Select(p => p.Trim()).ToArray());
             Params.Add("OpenBrowsers", OpenBrowsers);
-            Params.Add("Tests", Tests);
+            Params.Add("Tests", (Tests==null) ? null: Tests.Split(",").Select(p => p.Trim()).ToArray());
             Params.Add("NumUsers", NumUsers);
             Params.Add("IsParallel", IsParallel);
+            Params.Add("IsStructured", IsStructured);
             Params.Add("DisableCleanup", DisableCleanup);
 
             return Params;

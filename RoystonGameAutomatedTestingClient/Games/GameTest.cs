@@ -43,6 +43,11 @@ namespace RoystonGameAutomatedTestingClient.Games
             this.Lobby = new Lobby();
         }
 
+        public bool isStructured()
+        {
+            return this is IStructuredTest;
+        }
+
         public virtual async Task Setup(TestRunner runner)
         {
             await Lobby.Delete();
@@ -50,7 +55,7 @@ namespace RoystonGameAutomatedTestingClient.Games
             Console.WriteLine("Created Lobby: " + Lobby.Id);
 
             // Heheheh, don't mind me. Just using some questionable patterns.
-            if (this is IStructuredTest)
+            if (isStructured())
             {
                 // TODO: Validate these shenanigans actually work.
                 await Lobby.Populate(((IStructuredTest)this).TestOptions.NumPlayers);

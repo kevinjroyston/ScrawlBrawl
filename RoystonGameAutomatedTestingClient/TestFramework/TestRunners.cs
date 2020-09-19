@@ -21,23 +21,15 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
 {   
     public class TestRunner
     {
-        // TODO [Daniel]: Make the console app return an error code if tests fail and no error code if tests succeed
-        // TODO [Daniel]: Code hasn't been tested... lol. It compiles though!
         // TODO [Daniel]: Structured tests will need to be created (requires game-specific knowledge though)
         public bool IsParallel { get; }
-        public string Game { get; }
         public bool OpenBrowsers { get; }
         public int NumUsers { get; }
-        private Dictionary<string, GameTest> SelectedTests { get; set; }
+        private Dictionary<string, Dictionary<string, GameTest>> SelectedTests { get; set; } = new Dictionary<string, Dictionary<string, GameTest>>();
         private Action OnFailHandler;
 
         private List<(string, string)> TestOutputs { get; } = new List<(string, string)>();
-        private List<GameModeMetadata> Games { get; }
-
-        /// <summary>
-        /// Populated via presence of <see cref="EndToEndGameTestAttribute"/>
-        /// </summary>
-        private IReadOnlyDictionary<string, Func<GameTest>> TestNameToTestGenerator { get; } = FindAllTestsWithAttribute();
+        
         public TestRunner(List<GameModeMetadata> Games, Dictionary<string, object> Params, Action OnFailHandler)
         {
             Console.WriteLine("\nCommand Line Arguments: ");
@@ -51,11 +43,9 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
             Console.WriteLine("\nExisting Games:");
             Console.WriteLine("--------------------------------------------"); 
             Console.WriteLine(string.Join("\n", Games.Select((game) => game.Title)));
-            
-            this.Games = Games; 
-            this.Game = (string) Params["Game"];
+
+            DetermineGameTests((string[])Params["Tests"], (string[])Params["GameModes"], (bool)Params["IsStructured"], Games);
             this.OpenBrowsers = (bool) Params["OpenBrowsers"];
-            this.SelectedTests = DetermineGameTests((string[]) Params["Tests"], Games);
             this.NumUsers = (int) Params["NumUsers"];
             this.IsParallel = (bool)Params["IsParallel"];
             this.OnFailHandler = OnFailHandler;
@@ -74,21 +64,31 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
         }
         private async Task RunParallel()
         {
+            Console.WriteLine($"Beginning all specified tests.\n");
             List<Task> tasks = new List<Task>();
-            foreach ((string name, GameTest test) in SelectedTests)
+            foreach ((string gameMode, Dictionary<string, GameTest> gameModeTests) in SelectedTests)
             {
-                tasks.Add(RunTest(test, name));
+                foreach((string name, GameTest test) in gameModeTests)
+                {
+                    tasks.Add(RunTest(test, name));
+                }
             }
 
             await Task.WhenAll(tasks);
+            Console.WriteLine($"Finished all tests.\n");
         }
 
         private async Task RunSequential()
         {
-            foreach ((string name, GameTest test) in SelectedTests)
+            foreach ((string gameMode, Dictionary<string, GameTest> gameModeTests) in SelectedTests)
             {
-                Console.WriteLine($"Running: {name}\n");
-                await RunTest(test, name);
+                Console.WriteLine($"Begin tests for GameMode: {gameMode}\n");
+                foreach ((string name, GameTest test) in gameModeTests)
+                {
+                    Console.WriteLine($"Running: {name}\n");
+                    await RunTest(test, name);
+                }
+                Console.WriteLine($"End tests for GameMode: {gameMode}\n");
             }
         }
 
@@ -128,44 +128,69 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
             return toReturn;
         }
 
-        private Dictionary<string, GameTest> DetermineGameTests(string[] SpecifiedTests, List<GameModeMetadata> games)
+        private void DetermineGameTests(string[] specifiedTests, string[] specifiedGameModes, bool isStructured, List<GameModeMetadata> games)
         {
-            Dictionary<string, GameTest> testsToRun = new Dictionary<string, GameTest>();
+            // Find all tests.
+            IReadOnlyDictionary<string, Func<GameTest>> allTests = FindAllTestsWithAttribute();
 
-            if (SpecifiedTests == null)
-            {
-                return testsToRun;
-            }
-
+            // Log inputs.
             Console.WriteLine("\nExisting Tests:");
             Console.WriteLine("--------------------------------------------");
-            foreach (KeyValuePair<string, Func<GameTest>> kvp in TestNameToTestGenerator)
+            foreach ((string testName, Func<GameTest> generator) in allTests)
             {
-                //textBox3.Text += ("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
-                Console.WriteLine($"{kvp.Key}");
+                Console.WriteLine($"{testName}");
             }
+
+            Console.WriteLine("\nSpecified GameMode(s):");
+            Console.WriteLine("--------------------------------------------");
+            Console.WriteLine((specifiedGameModes == null) ? "None specified" : string.Join("\n", specifiedGameModes));
+
+            Console.WriteLine("\nSpecified Test Type:");
+            Console.WriteLine("--------------------------------------------");
+            Console.WriteLine(isStructured ? "Structured" : "Unstructured");
 
             Console.WriteLine("\nSpecified Tests:");
             Console.WriteLine("--------------------------------------------");
-            Console.WriteLine(string.Join("\n", SpecifiedTests));
+            Console.WriteLine((specifiedTests == null) ? "None specified" : string.Join("\n", specifiedTests));
+
+            // Instantiate all test objects.
+            foreach ((string testName, Func<GameTest> testGenerator) in allTests)
+            { 
+                GameTest test = testGenerator.Invoke();
+                int gameMode = games.FindIndex(gameData => gameData.Title == test.GameModeTitle);
+                test.GameModeIndex = gameMode;
+                test.Game = games[gameMode];
+
+                bool gameModeConstraintSatisified = (specifiedGameModes == null) || specifiedGameModes.Contains(test.GameModeTitle);
+                bool testNameConstraintSatisfied = (specifiedTests == null) || specifiedTests.Contains(testName);
+                bool isStructuredConstraintSatisfied = isStructured == test.isStructured();
+           
+                if (gameModeConstraintSatisified && testNameConstraintSatisfied && isStructuredConstraintSatisfied)
+                {
+                    //Dictionary<GameModename, Dictionary<testname, GameTest>> 
+                    if (SelectedTests.Keys.Contains(test.GameModeTitle))
+                    {
+                        SelectedTests[test.GameModeTitle].Add(testName, test);
+                    }
+                    else
+                    {
+                        Dictionary<string, GameTest> testTracker = new Dictionary<string, GameTest>();
+                        testTracker.Add(testName, test);
+                        SelectedTests.Add(test.GameModeTitle, testTracker);
+                    }
+                }
+            }
 
             Console.WriteLine("\nChosen Tests:");
             Console.WriteLine("--------------------------------------------");
-
-            foreach (string specifiedTest in SpecifiedTests)
+            foreach ((string gameMode, Dictionary<string, GameTest> gameModeTests) in this.SelectedTests)
             {
-                if (TestNameToTestGenerator.ContainsKey(specifiedTest))
+                Console.WriteLine($"GameMode: {gameMode}");
+                foreach ((string testName, GameTest test) in gameModeTests)
                 {
-                    GameTest test = TestNameToTestGenerator[specifiedTest].Invoke();
-                    int gameMode = games.FindIndex(gameData => gameData.Title == test.GameModeTitle);
-                    test.GameModeIndex = gameMode;
-                    test.Game = games[gameMode];
-                    Console.WriteLine(specifiedTest);
-                    testsToRun.Add(specifiedTest, test);
+                    Console.WriteLine($"\t{testName}");
                 }
             }
-            Console.WriteLine("");
-            return testsToRun;
         }
 
         public void OutputTestResults()
