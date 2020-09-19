@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    class TwoToneUnstructuredTest : UnstructuredGameTest
+    class TwoToneTest : GameTest
     {
-        public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player)
+        public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player, int gameStep)
         {
             if (userPrompt.SubmitButton)
             {
@@ -38,7 +38,6 @@ namespace RoystonGameAutomatedTestingClient.Games
             }
             return null;
         }
-
         private UserFormSubmission MakeDrawing(LobbyPlayer player)
         {
             return CommonSubmissions.SubmitSingleDrawing(player.UserId);

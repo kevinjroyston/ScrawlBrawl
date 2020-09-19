@@ -21,97 +21,20 @@ using static RoystonGameAutomatedTestingClient.TestFramework.TestRunner.GameTest
 using RoystonGame.Web.DataModels;
 using RoystonGame.Web.Controllers.LobbyManagement;
 using RoystonGame.Web.DataModels.Requests;
+using System.Net.Http;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-
-    class Lobby
-    {
-        public string Id { get; set; }
-        public List<LobbyPlayer> Players { get; set; }
-        public LobbyOwner Owner { get; set; }
-        
-        public Lobby ()
-        {
-            this.Owner = new LobbyOwner();
-            this.Players = new List<LobbyPlayer>();
-        }
-        public Lobby (string lobbyId)
-        {
-            this.Id = lobbyId;
-            this.Owner = new LobbyOwner();
-            this.Players = new List<LobbyPlayer>();
-        }
-
-        public List<LobbyPlayer> GetAllPlayers()
-        {
-            return this.Players.Concat(new[] { Owner }).ToList();
-        }
-
-        public async Task Create()
-        {
-            string lobbyId = await CommonSubmissions.MakeLobby(Owner.UserId);
-            Id = lobbyId;
-        }
-
-        public async Task Delete()
-        {
-            await CommonSubmissions.DeleteLobby(Owner.UserId);
-        }
-
-        public async Task Populate(int numPlayers)
-        {
-            for (int i = 0; i < numPlayers; i ++)
-            {
-                LobbyPlayer newPlayer = new LobbyPlayer();
-                this.Players.Add(newPlayer);
-                await CommonSubmissions.JoinLobby(
-                    userId: newPlayer.UserId,
-                    lobbyId: Id,
-                    name: "TestUser" + i);
-                Console.WriteLine($"Player {newPlayer.UserId} joined lobby");
-                Thread.Sleep(Math.Clamp(500 - 5 * i, 1, 100));
-            }
-        }
-
-        public async Task Configure(List<GameModeOptionRequest> options, int GameMode)
-        {
-            ConfigureLobbyRequest configLobby = new ConfigureLobbyRequest()
-            {
-                GameMode = GameMode,
-                Options = options
-            };
-            await CommonSubmissions.ConfigureLobby(configLobby, Owner.UserId);
-        }
-    }
-
-    class LobbyPlayer
-    {
-        public string UserId { get; set; }
-        public bool Owner { get; set; }
-        public LobbyPlayer ()
-        {
-            this.UserId = Helpers.GenerateRandomId();
-            this.Owner = false;
-        }
-    }
-
-    class LobbyOwner : LobbyPlayer
-    {
-        public LobbyOwner() : base()
-        {
-            this.Owner = true;
-        }
-    }
-
     interface GameTestParameters
     {
         Lobby Lobby { get; set; }
     }
 
-    abstract class GameTest : GameTestParameters
+    public abstract class GameTest : GameTestParameters
     {
-        private int delayBetweenSubmissions;
+        private TimeSpan DelayBetweenSubmissions { get; set; } = TimeSpan.FromMilliseconds(250);
+        private TimeSpan PollingDelay { get; set; } = TimeSpan.FromMilliseconds(500);
+        private TimeSpan MaxTotalPollingTime { get; set; } = TimeSpan.FromSeconds(5);
 
         protected AutomationWebClient WebClient = new AutomationWebClient();
         public int GameMode { get; set; }
@@ -119,60 +42,37 @@ namespace RoystonGameAutomatedTestingClient.Games
         public GameTestHolder testHolder { get; set; }
         public Lobby Lobby { get; set; }
 
-        public abstract UserFormSubmission HandleUserPrompt(UserPrompt prompt, LobbyPlayer player);
-        
+        public abstract UserFormSubmission HandleUserPrompt(UserPrompt prompt, LobbyPlayer player, int gameStep);
+
         protected GameTest()
         {
             this.Lobby = new Lobby();
         }
 
-        abstract public Task Setup(TestRunner runner);
-        abstract public Task Cleanup();
-
-        public virtual async Task RunTest(List<LobbyPlayer> players)
-        {
-            //While Game doesnt end
-            for (int i = 0; i < 500; i++)
-            {
-                Console.WriteLine(Invariant($"Auto-Submission Delay is currently {delayBetweenSubmissions}ms. What would you like to set it to?"));
-                delayBetweenSubmissions = Convert.ToInt32(Console.ReadLine());
-            }
-        }
-    }
-
-    abstract class StructuredGameTest : GameTest
-    {
-        public int delayBetweenSubmissions = GameConstants.DefaultDelayBetweenSubmissions;
-
-        public override async Task Setup(TestRunner runner)
+        public virtual async Task Setup(TestRunner runner)
         {
             await Lobby.Delete();
             await Lobby.Create();
             Console.WriteLine("Created Lobby: " + Lobby.Id);
-            TestOption option = testHolder.OptionsList[0];
-            await Lobby.Populate(option.NumPlayers);
-            await Lobby.Configure(option.GameModeOptions, GameMode);
+            if (structured)
+            {
+                TestOption option = testHolder.OptionsList[0];
+                await Lobby.Populate(option.NumPlayers);
+                await Lobby.Configure(option.GameModeOptions, GameMode);
+            }
+            else
+            {
+                List<GameModeOptionRequest> optionRequests = SetUpGameTestOptions();
+                ValidateNumUsers(runner.NumUsers);
+                await Lobby.Populate(runner.NumUsers);
+                await Lobby.Configure(optionRequests, GameMode);
+            }
         }
 
-        public override async Task Cleanup()
+        public virtual async Task Cleanup()
         {
             Console.WriteLine("\nCleaning up Test");
             await Lobby.Delete();
-        }
-    }
-
-    abstract class UnstructuredGameTest : GameTest
-    {
-
-        public override async Task Setup(TestRunner runner)
-        {
-            await Lobby.Delete();
-            await Lobby.Create();
-            Console.WriteLine("Created Lobby: " + Lobby.Id);
-            List<GameModeOptionRequest> optionRequests = SetUpGameTestOptions();
-            ValidateNumUsers(runner.NumUsers);
-            await Lobby.Populate(runner.NumUsers);
-            await Lobby.Configure(optionRequests, GameMode);
         }
 
         public void ValidateNumUsers(int NumUsers)
@@ -185,12 +85,6 @@ namespace RoystonGameAutomatedTestingClient.Games
             {
                 throw new Exception($"Number of users specified [{NumUsers}] exceeds maximum user amount [{Game.MaxPlayers}]");
             }
-        }
-
-        public override async Task Cleanup()
-        {
-            Console.WriteLine("\nCleaning up Test");
-            await Lobby.Delete();
         }
 
         public List<GameModeOptionRequest> SetUpGameTestOptions()
@@ -221,7 +115,7 @@ namespace RoystonGameAutomatedTestingClient.Games
             return optionRequests;
         }
 
-        public List<GameModeOptionRequest> HandleCustomGameTestOptions(List<GameModeOptionRequest> optionRequests) 
+        public List<GameModeOptionRequest> HandleCustomGameTestOptions(List<GameModeOptionRequest> optionRequests)
         {
             foreach (GameModeOptionResponse option in Game.Options)
             {
@@ -246,6 +140,69 @@ namespace RoystonGameAutomatedTestingClient.Games
                 }
             }
             return optionRequests;
+        }
+
+        // TODO: configure delayBetweenSubmissions? - Command line arg.
+
+        public virtual async Task RunTest(List<LobbyPlayer> players)
+        {
+            //While Game doesnt end  <-- TODO - determine game end  (expected vs unexpected)
+            for (int i = 0; i < 500; i++)
+            {
+                DateTime pollingEnd = DateTime.UtcNow.Add(this.MaxTotalPollingTime);
+                // Keep polling current prompts
+                Dictionary<LobbyPlayer, Task<UserPrompt>> playerPrompts = new Dictionary<LobbyPlayer, Task<UserPrompt>>();
+                while (!playerPrompts.Values.Any(val=> val.Result.SubmitButton))
+                {
+                    if (DateTime.UtcNow > pollingEnd)
+                    {
+                        throw new Exception("Ran out of time polling, did game soft-lock?");
+                    }
+
+                    // Sleep if not first polling cycle
+                    if(playerPrompts.Count > 0)
+                    {
+                        Thread.Sleep((int) this.PollingDelay.TotalMilliseconds);
+                    }
+
+                    playerPrompts = new Dictionary<LobbyPlayer, Task<UserPrompt>>();
+                    foreach (LobbyPlayer player in Lobby.Players)
+                    {
+                        playerPrompts.Add(player, this.WebClient.GetUserPrompt(player.UserId));
+                    }
+
+                    await Task.WhenAll(playerPrompts.Values);
+                }
+
+                // TODO: Per-test validation of which prompts each user is receiving.
+
+                List<Task<HttpResponseMessage>> playerSubmissions = new List<Task<HttpResponseMessage>>();
+                foreach ((LobbyPlayer player, Task<UserPrompt> promptTask) in playerPrompts)
+                {
+                    Thread.Sleep((int) this.DelayBetweenSubmissions.TotalMilliseconds);
+                    UserPrompt prompt = promptTask.Result;
+                    // TODO: might want to move this above so that tests know their users that are waiting.
+                    // TODO: might need a counter here so tests can track where they are / what is expected
+                    UserFormSubmission submission = HandleUserPrompt(prompt, player, i);
+
+                    bool providedSubmission = submission != null;
+                    if (!prompt.SubmitButton && providedSubmission)
+                    {
+                        throw new Exception($"Test's 'HandleUserPrompt' provided a UserFormSubmission when it was not expected. UserId='{player.UserId}'");
+                    }
+
+                    if (prompt.SubmitButton && !providedSubmission)
+                    {
+                        throw new Exception($"Test's 'HandleUserPrompt' did not provide a UserFormSubmission when one was expected. UserId='{player.UserId}'");
+                    }
+
+                    if (submission != null)
+                    {
+                        playerSubmissions.Add(this.WebClient.SubmitUserForm(prompt, submission, player.UserId));
+                    }
+                }
+                await Task.WhenAll(playerSubmissions);
+            }
         }
     }
 }

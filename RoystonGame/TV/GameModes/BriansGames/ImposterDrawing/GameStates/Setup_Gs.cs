@@ -27,6 +27,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.GameStates
             UserState getPromptsState = new SimplePromptUserState(
                 promptGenerator: (User user) => new UserPrompt()
                 {
+                    UserPromptId = UserPromptId.ImposterSyndrome_CreatePrompt,
                     Title = "Game setup",
                     Description = "In the boxes below, enter two drawing prompts such that only you will be able to tell the drawings apart.",
                     SubPrompts = new SubPrompt[]

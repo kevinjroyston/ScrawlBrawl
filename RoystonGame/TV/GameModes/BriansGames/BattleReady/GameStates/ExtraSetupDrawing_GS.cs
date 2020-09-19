@@ -3,6 +3,7 @@ using RoystonGame.TV.Extensions;
 using RoystonGame.TV.GameModes.Common;
 using RoystonGame.TV.GameModes.Common.GameStates;
 using RoystonGame.TV.GameModes.Common.ThreePartPeople;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
@@ -46,6 +47,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
             UsersToTypeDrawing.AddOrReplace(user, drawingType);
             return new UserPrompt()
             {
+                UserPromptId = UserPromptId.BattleReady_ExtraBodyPartDrawing,
                 Title = Constants.UIStrings.DrawingPromptTitle,
                 Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",
                 SubPrompts = new SubPrompt[]

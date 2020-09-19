@@ -28,6 +28,7 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.GameStates
                 usersToPrompt: lobby.GetAllUsers().Where((User user) => user != userToShow).ToList(),
                 promptGenerator: (User user) => new UserPrompt()
                 {
+                    UserPromptId = UserPromptId.Voting,
                     Title = userToShow.DisplayName,
                     Description = Invariant($"How do you think {userToShow.DisplayName} answered these questions?"),
                     SubPrompts = questionsToShow.Select((Question question) =>

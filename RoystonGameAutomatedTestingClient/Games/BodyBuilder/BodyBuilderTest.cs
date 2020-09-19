@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    class BodyBuilderUnstructuredTest : UnstructuredGameTest
+    class BodyBuilderTest : GameTest
     {
         private Random Rand = new Random();
-        public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player)
+        public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player, int gameStep)
         {
             if (userPrompt.SubmitButton)
             {

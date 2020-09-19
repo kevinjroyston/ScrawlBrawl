@@ -16,7 +16,7 @@ using System.Drawing.Printing;
 
 namespace RoystonGameAutomatedTestingClient.TestFramework
 {   
-    abstract class TestRunner
+    public abstract class TestRunner
     {
         public string Game;
         public bool IsBrowsers;
@@ -25,7 +25,7 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
         public List<GameTest> Tests;
         public List<GameModeMetadata> Games;
 
-        abstract public Task Run();
+        public abstract Task Run();
   
         public class GameTestHolder
         {
@@ -46,22 +46,27 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
                 }
             }
             public string Title { get; }
-            public GameTest Test { get; }
+            public GameTest unstructuredTest { get; }
+            public GameTest structuredTest { get; }
             public List<TestOption> OptionsList { get; }
-            public GameTestHolder(string title, GameTest test, List<TestOption> optionsList = null)
+            public GameTestHolder(string title, GameTest unstructuredTest, GameTest structuredTest, List<TestOption> optionsList = null)
             {
                 this.Title = title;
-                this.Test = test;
-                this.Test.testHolder = this;
+                this.unstructuredTest = unstructuredTest;
+                this.unstructuredTest.testHolder = this;
+                this.structuredTest = structuredTest;
+                this.structuredTest.testHolder = this;
                 this.OptionsList = optionsList;
             }
         }
+
         public List<GameTestHolder> gameTestHolders = new List<GameTestHolder>()
-         {
+        {
                 #region ImposterSyndrome
                 new GameTestHolder(
                     title: "Imposter Syndrome",
-                    test: new ImposterUnstructuredTest(),
+                    unstructuredTest: new ImposterTest(),
+                    structuredTest: null,
                     optionsList: new List<GameTestHolder.TestOption>()
                     {
                         new GameTestHolder.TestOption(
@@ -76,7 +81,8 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
                 #region Two Tone
                 new GameTestHolder(
                     title: "Chaotic Cooperation",
-                    test: new TwoToneUnstructuredTest(),
+                    unstructuredTest: new TwoToneUnstructuredTest(),
+                    structuredTest: null,
                     optionsList: new List<GameTestHolder.TestOption>()
                     {
                         new GameTestHolder.TestOption(
@@ -94,7 +100,8 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
                 #region Body Swap 
                 new GameTestHolder(
                     title: "Body Swap",
-                    test: new BodyBuilderUnstructuredTest(),
+                    unstructuredTest: new BodyBuilderTest(),
+                    structuredTest: null,
                     optionsList: new List<GameTestHolder.TestOption>()
                     {
                         new GameTestHolder.TestOption(
@@ -113,7 +120,8 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
                 #region Body Builder
                 new GameTestHolder(
                     title: "Body Builder",
-                    test: new BattleReadyUnstructuredTest(),
+                    structuredTest: null,
+                    unstructuredTest: new BattleReadyTest(),
                     optionsList: new List<GameTestHolder.TestOption>()
                     {
                         new GameTestHolder.TestOption(
@@ -132,7 +140,8 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
                 #region Mimic
                 new GameTestHolder(
                     title: "Mimic",
-                    test: new MimicUnstructuredTest(),
+                    structuredTest: null,
+                    unstructuredTest: new MimicUnstructuredTest(),
                     optionsList: new List<GameTestHolder.TestOption>()
                     {
                         new GameTestHolder.TestOption(
@@ -162,17 +171,17 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
             Console.WriteLine("\nExisting Games:\n" + string.Join("\n", Games.Select((game, i) => (i+1) + ". " + game.Title)));
             this.Game = (string) Params["Game"];
             this.IsBrowsers = (bool) Params["IsBrowsers"];
-            this.IsStructuredMode =  DetermineStructuredMode((string[]) Params["Tests"]);
-            this.Tests = DetermineGameTests((string[]) Params["Tests"], Games);
+            this.IsStructuredMode =  !DetermineUnStructuredMode((string[]) Params["Tests"]);
+            this.Tests = DetermineGameTests((string[]) Params["Tests"], Games, this.IsStructuredMode);
             this.NumUsers = (int) Params["NumUsers"];
             this.Games = Games;
         }
-        public bool DetermineStructuredMode(string[] CommandLineTests)
+        public bool DetermineUnStructuredMode(string[] CommandLineTests)
         {
             return CommandLineTests != null && CommandLineTests.Length > 0;
         }
 
-        public List<GameTest> DetermineGameTests(string[] SpecifiedTests, List<GameModeMetadata> games)
+        public List<GameTest> DetermineGameTests(string[] SpecifiedTests, List<GameModeMetadata> games, bool structuredMode)
         {
             List<GameTest> testsToRun = new List<GameTest>();
 
@@ -192,20 +201,26 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
                 {
                     GameTestHolder gameTestHolder = gameTestHolders[gameTestIndex];
                     int gameMode = games.FindIndex(gameData => gameData.Title == gameTestHolder.Title);
-                    GameTest gameTest = gameTestHolder.Test;
+                    GameTest gameTest;
+                    if (structuredMode)
+                    {
+                        gameTest = gameTestHolder.structuredTest;
+                    } else
+                    {
+                        gameTest = gameTestHolder.unstructuredTest;
+                    }
                     gameTest.GameMode = gameMode;
                     gameTest.Game = games[gameMode];
                     Console.WriteLine("-"+gameTestHolder.Title);
                     testsToRun.Add(gameTest);
                 }
-                
             }
             Console.WriteLine("");
             return testsToRun;
         }
     }
 
-    class NormalTestRunner : TestRunner
+    public class NormalTestRunner : TestRunner
     {
         public bool IsParallel;
         public NormalTestRunner(List<GameModeMetadata> Games, Dictionary<string, object> Params) : base(Games, Params) {
@@ -214,7 +229,7 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
         public override async Task Run()
         {
 
-            if (IsParallel)
+            if (IsParallel && IsStructuredMode)
             {
                 await RunParallel();
             }

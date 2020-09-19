@@ -33,6 +33,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.StoryTime.GameStates
                 usersToPrompt: usersWriting,
                 promptGenerator: (User user) => new UserPrompt()
                 {
+                    UserPromptId = UserPromptId.StoryTime_ContinuePromptChain,
                     Title = "Time To Write",
                     Description = Invariant($"Write a new sentence to put before or after \"{oldText}\" in order to make it the best \"{prompt}\""),
                     SubPrompts = new SubPrompt[]

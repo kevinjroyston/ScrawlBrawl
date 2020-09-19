@@ -25,6 +25,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.StoryTime.GameStates
             SimplePromptUserState writingUserState = new SimplePromptUserState(
                 promptGenerator: (User user) => new UserPrompt()
                 {
+                    UserPromptId = UserPromptId.StoryTime_StartPromptChain,
                     Title = "Time To Write",
                     Description = Invariant($"Write the first sentence for a \"{prompt}\""),
                     SubPrompts = new SubPrompt[]

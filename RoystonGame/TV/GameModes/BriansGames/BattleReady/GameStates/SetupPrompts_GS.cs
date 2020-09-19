@@ -47,6 +47,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         {
             return new UserPrompt()
             {
+                UserPromptId = UserPromptId.BattleReady_BattlePrompts,
                 Title = Invariant($"Now lets make some prompts! Prompt {counter + 1} of {NumExpectedPerUser} expected"),
                 Description = "Examples: Who would win in a fight, Who would make the best actor, Etc.",
                 SubPrompts = new SubPrompt[]

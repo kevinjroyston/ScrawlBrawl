@@ -23,6 +23,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         {
             return new UserPrompt
             {
+                UserPromptId = UserPromptId.Voting,
                 Title = "Vote for the best drawing!",
                 SubPrompts = new SubPrompt[]
                 {

@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    class ImposterUnstructuredTest : UnstructuredGameTest
+    class ImposterTest : GameTest
     {
         // Refactor if -> switch later
         // Keep current if logic
-        public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player)
+        public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player, int gameStep)
         {
             if (userPrompt.SubmitButton)
             {

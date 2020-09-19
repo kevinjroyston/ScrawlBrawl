@@ -51,16 +51,17 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
 
                 return new UserPrompt
                 {
+                    UserPromptId = UserPromptId.ImposterSnydrome_AnswerPrompt,
                     Title = "Find the imposter!",
                     Description = description,
                     SubPrompts = new SubPrompt[]
-                {
-                    new SubPrompt
                     {
-                        Prompt = $"Which answer is the fake?",
-                        Answers = detailedChoices.ToArray()
-                    }
-                },
+                        new SubPrompt
+                        {
+                            Prompt = $"Which answer is the fake?",
+                            Answers = detailedChoices.ToArray()
+                        }
+                    },
                     SubmitButton = true,
                 };
             }

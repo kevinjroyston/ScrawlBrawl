@@ -14,9 +14,9 @@ using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    class BattleReadyUnstructuredTest : UnstructuredGameTest
+    class BattleReadyTest : GameTest
     {
-        public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player)
+        public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player, int gameStep)
         {
             if (userPrompt.SubmitButton)
             {
@@ -72,6 +72,7 @@ namespace RoystonGameAutomatedTestingClient.Games
             }
             return null;
         }
+
         private UserFormSubmission MakeDrawing(LobbyPlayer player, DrawingType type)
         {
             if (type == DrawingType.Head)

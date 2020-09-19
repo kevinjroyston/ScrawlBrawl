@@ -54,6 +54,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 
                     return new UserPrompt()
                     {
+                        UserPromptId = UserPromptId.ChaoticCooperation_Setup,
                         Title = "Game setup",
                         Description = "In the boxes below, enter a drawing prompt and the colors which will be given to different players.",
                         SubPrompts = subPrompts.ToArray(),
@@ -106,6 +107,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                 stateChain.Add(new SimplePromptUserState(
                     promptGenerator: (User user) => new UserPrompt()
                     {
+                        UserPromptId = UserPromptId.ChaoticCooperation_Draw,
                         Title = Invariant($"Drawing { lambdaSafeIndex + 1} of {stateChain.Count()}"),
                         Description = "Draw the prompt below. Keep in mind you are only drawing part of the picture!",
                         SubPrompts = new SubPrompt[]

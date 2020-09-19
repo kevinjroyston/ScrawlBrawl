@@ -79,7 +79,7 @@ namespace RoystonGameAutomatedTestingClient.WebClient
             name ??= "TestUser";
             drawing ??= Constants.Drawings.GrayDot;
 
-            await WebClient.SubmitUserForm(
+            await WebClient.GetPromptAndSubmitUserForm(
                 handler: (UserPrompt prompt) =>
                 {
                     if (prompt == null || !prompt.SubmitButton)

@@ -30,6 +30,7 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.GameStates
                     stateChain.Add(new SimplePromptUserState(
                         promptGenerator: (User user) => new UserPrompt()
                         {
+                            UserPromptId = UserPromptId.FriendQuiz_AnswerQuestion,
                             Title = "Answer this question as truthfully as you can",
                             Description = question.Text,
                             SubPrompts = new SubPrompt[]

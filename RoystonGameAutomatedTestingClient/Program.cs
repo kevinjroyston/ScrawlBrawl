@@ -14,40 +14,17 @@ namespace RoystonGameAutomatedTestingClient.cs
     public class Program
     {
         /*
-         * Command Line Execution
-         * [x] - Param - DisableCleanupOnFailure default false if true (not close lobby print stuff to console, and open browsers)
-         * [x] - Param - Parallel (Parallel vs Sequential)
-         * [x] - Param - GameMode(Required) If without TestName run in unstructured test mode (how many users) <- make maybe required flags if no test name provided
-         * [x] - Param - Test Name(Optional) -> At some point list of tests 
-         * [x] - Param - Open Browsers
          * [] - Param - Text File of Tests (Optional) (text file game mode, test name -> only structured tests)
          * 
-         * Notes
-         * [x] - Unique user ids, lobbyOwnerUserId for each test (generateRandom)
-         * [x] - Constants File for links, ints
-         * [x] - Each test, create userids, lobby id, lobbyOwnerId, TestParameters object
-         * [x] - Potentially Interface that gives fields relevant, above params
-         * [x] - For each game test, generate all user ids, generate lobbyOwnerUserId, track lobby
-         * 
-         * - For any game mode, there will be a list of structured tests(text file) and unstructured test mode
-         *   (can change game params, cant check much validation) Debug vs Normal mode
-         * - 1. Running a test, lobby created for specific game with specific settings
-         * - 2. Create lobby yourself, passing in lobby id and game mode that was made.  Wait for you to hit start 
-         * - Maybe create lobby manually for manual test
-         * 
-         * Todo Later
-         * - Write tests for test framework, given different inputs doesnt crash, parallel
-         * - Validate command line params logic
-         * 
-         * Comment out DebugTestRunner
          * Only for unstructured - Make a lobby for them, Ask for num users (prompt or command line), Open up browser of lobbyowner pointed at lobby creation page
-         * Remove Debug
          * 
-         * Goal
-         * Implement rest of features/infrastructure/parameters
-         * Convert Existing game tests to unstructured games (implement handleTimeout)
+         * implement handleTimeout of (unstructured) tests
          * Mock up structured Test (mock enums)
          * pull request
+         * 
+         * At game test level, attribute that we add to test (unstructure/structured). Unstructured test attribute added to mimic test for example
+         * Structured test can override methods inherits from ex mimictest
+         * Each of those structuredtests have a data structure to validate and options
          */
 
         [Option("-p|-parallel")]
@@ -56,15 +33,18 @@ namespace RoystonGameAutomatedTestingClient.cs
         [Option("-b|-browsers")]
         public bool IsBrowsers { get; }
 
+        //DisableCleanupOnFailure default false if true (not close lobby print stuff to console, and open browsers)
         [Option("-c|-disablecleanup")]
         public bool DisableCleanup { get; }
 
         [Option("-u|-users")]
         public int NumUsers { get; }
 
-        [Option("-g|--game")]
+        //GameMode(Required) If without TestName run in unstructured test mode (how many users) <- make maybe required flags if no test name provided
+        [Option("-g|-game")]
         public string Game { get; }
 
+        //Test Name(Optional) -> At some point list of tests 
         [Argument(0)]
         public string[] Tests { get; }
 

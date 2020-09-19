@@ -20,6 +20,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.GameStates
     {
         private static UserPrompt PartyLeaderSkipButton(User user) => new UserPrompt()
         {
+            UserPromptId = UserPromptId.PartyLeader_SkipReveal,
             Title = "Skip Reveal",
             SubmitButton = true
         };

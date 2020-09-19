@@ -2,6 +2,7 @@
 using RoystonGame.TV.DataModels.States.GameStates;
 using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.Extensions;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
 using System;
@@ -15,6 +16,7 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
     {
         private static UserPrompt PartyLeaderSkipButton(User user) => new UserPrompt()
         {
+            UserPromptId = UserPromptId.PartyLeader_SkipReveal,
             Title = "Skip Reveal",
             SubmitButton = true
         };

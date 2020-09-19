@@ -17,6 +17,7 @@ namespace RoystonGame.TV.DataModels.States.GameStates
         public static UserPrompt ContinuePrompt(User user) => new UserPrompt()
         {
             Title = "What shall we do next?",
+            UserPromptId = UserPromptId.PartyLeader_GameEnd,
             RefreshTimeInMs = 5000,
             SubPrompts = new SubPrompt[]
             {

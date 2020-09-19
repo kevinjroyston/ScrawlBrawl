@@ -1,5 +1,6 @@
 ﻿using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.GameModes.Common.DataModels;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using RoystonGame.Web.DataModels.UnityObjects;
@@ -28,6 +29,7 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
         {
             return new UserPrompt()
             {
+                UserPromptId = UserPromptId.Voting,
                 Title = VotingTitle,
                 SubPrompts = new SubPrompt[]
                 {
