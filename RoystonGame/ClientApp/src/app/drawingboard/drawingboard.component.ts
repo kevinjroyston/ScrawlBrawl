@@ -1,5 +1,6 @@
-import { Component, ViewEncapsulation, Input, Output, forwardRef } from '@angular/core';
+import { Component, ViewEncapsulation, Input, Output, forwardRef, AfterViewInit, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { DrawingDirective } from '../fetch-data/fetch-data.drawingdirective.component';
 
 @Component({
     selector: 'drawingboard',
@@ -12,11 +13,13 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     }],
     encapsulation: ViewEncapsulation.Emulated
 })
-export class DrawingBoard implements ControlValueAccessor {
+
+export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     @Input() drawingPrompt: DrawingPromptMetadata;
     @Input() showColorSelector: boolean = true;
     @Input() showEraser: boolean = true;
     @Input() showBrushSizeSelector: boolean = true;
+    @ViewChild(DrawingDirective) drawingDirective;
 
     onChange;
     selectedColor: string;
@@ -30,6 +33,13 @@ export class DrawingBoard implements ControlValueAccessor {
         }
     }
 
+  ngAfterViewInit() {
+    // use this if you need to reference any data in drawing directive
+  }
+onPerformUndo(): void {
+    
+    alert('undo')
+  }
     writeValue(obj: any): void {
     }
     registerOnChange(fn: any): void {

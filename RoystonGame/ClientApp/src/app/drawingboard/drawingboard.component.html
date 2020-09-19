@@ -14,10 +14,11 @@
 
 <!-- Drawing Settings -->
 <div *ngIf="showEraser">
-    <mat-radio-group class="radio-group" [(ngModel)]="eraserMode">
-        <mat-radio-button class="radio-button" [value]="false">Brush</mat-radio-button>
-        <mat-radio-button class="radio-button" [value]="true">Erase</mat-radio-button>
-    </mat-radio-group>
+  <mat-radio-group class="radio-group" [(ngModel)]="eraserMode">
+    <mat-radio-button class="radio-button" [value]="false">Brush</mat-radio-button>
+    <mat-radio-button class="radio-button" [value]="true">Erase</mat-radio-button>
+    <button type="button" class="btn btn-primary d-inline-flex" (click)="drawingDirective.onPerformUndo()"> Undo</button>
+  </mat-radio-group>
 </div>
 
 <button type="button" class="btn btn-primary d-inline-flex" (click)="drawingOptionsCollapse = !drawingOptionsCollapse" [attr.aria-expanded]="!drawingOptionsCollapse">
