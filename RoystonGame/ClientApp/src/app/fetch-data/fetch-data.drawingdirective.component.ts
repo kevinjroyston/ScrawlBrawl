@@ -120,7 +120,7 @@ export class DrawingDirective {
     if (this.userIsDrawing) {
       // stop drawing
       this.userIsDrawing = false;
-     // this.storeImage();   we might want to call store image, we might want to revert / undo drawings since gesture started, needs testing
+      this.storeImage();  // we might want to call undo here? needs testing
     }
   }
 
@@ -155,6 +155,14 @@ export class DrawingDirective {
 */
     }
 
+  @HostListener('window:scroll', ['$event']) onScrollEvent($event) {
+    console.log("scrolling");
+    if (this.userIsDrawing) {
+      // stop drawing
+      this.userIsDrawing = false;
+      this.storeImage();
+    }
+  } 
     drawLine(lX, lY, cX, cY): void {
         if (this.eraserMode)
             this.ctx.globalCompositeOperation = "destination-out";
