@@ -58,6 +58,11 @@ export class DrawingDirective {
     this.lastActionWasStoreImage = true;
   }
 
+  stopDrawing() {
+    this.userIsDrawing = false;
+    this.storeImage();
+  }
+
   onPerformUndo() {
     if (this.undoArray.length > 0) {
       if ((this.lastActionWasStoreImage) && (this.undoArray.length>1)) { this.undoArray.pop(); }  // the first call to undo would have the value we just stored, we want to go one back
@@ -79,12 +84,17 @@ export class DrawingDirective {
     @HostListener('mousedown', ['$event'])
     @HostListener('touchstart', ['$event'])
     onmousedown(event) {
-        console.log("down/start");
 //        event.preventDefault(); not needed since canvas does not care about mouse movements, and preventing affects gestures
+
+      if (this.userIsDrawing) {
+        console.log("down but already drawing");
+        this.stopDrawing();
+      }
+      else {
 
         if (document.activeElement instanceof HTMLElement)  // pull focus from any input so it hides the keyboard on mobile
           document.activeElement.blur();
-       
+
         [this.lastX, this.lastY] = this.getCoords(event);
 
         // begins new line
@@ -92,6 +102,7 @@ export class DrawingDirective {
         this.drawCircle(this.lastX, this.lastY);
 
         this.userIsDrawing = true;
+      }
     }
 
     @HostListener('mousemove', ['$event'])
@@ -118,9 +129,8 @@ export class DrawingDirective {
   ongesturestart() {
     console.log("gesture start");
     if (this.userIsDrawing) {
-      // stop drawing
-      this.userIsDrawing = false;
-      this.storeImage();  // we might want to call undo here? needs testing
+      this.stopDrawing();
+      // we might want to call undo here? needs testing
     }
   }
 
@@ -133,9 +143,7 @@ export class DrawingDirective {
       if (this.userIsDrawing) {
 //        event.preventDefault(); not needed since canvas does not care about mouse movements, and preventing affects gestures
 
-        // stop drawing
-        this.userIsDrawing = false;
-        this.storeImage();
+        this.stopDrawing();
       }
     }
 
@@ -147,9 +155,7 @@ export class DrawingDirective {
       if (this.userIsDrawing) {
         event.preventDefault();
 
-        // stop drawing
-        this.userIsDrawing = false;
-        this.storeImage();
+        this.stopDrawing();
       }
 
 */
@@ -158,9 +164,7 @@ export class DrawingDirective {
   @HostListener('window:scroll', ['$event']) onScrollEvent($event) {
     console.log("scrolling");
     if (this.userIsDrawing) {
-      // stop drawing
-      this.userIsDrawing = false;
-      this.storeImage();
+      this.stopDrawing();
     }
   } 
     drawLine(lX, lY, cX, cY): void {
