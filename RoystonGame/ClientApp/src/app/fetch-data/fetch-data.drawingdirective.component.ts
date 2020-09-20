@@ -97,8 +97,8 @@ export class DrawingDirective {
     @HostListener('mousemove', ['$event'])
     @HostListener('touchmove', ['$event'])
     onmousemove(event) {
-        //event.preventDefault();  not needed since canvas does not care about mouse movements, and preventing affects gestures
         if (this.userIsDrawing) {
+            event.preventDefault(); 
             // get current mouse position
             let [currentX, currentY] = this.getCoords(event);
 
