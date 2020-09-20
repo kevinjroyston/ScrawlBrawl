@@ -9,14 +9,19 @@ export class DrawingDirective {
     userIsDrawing:boolean;
     lastX:number;
     lastY: number;
-    ctx: any;
+  ctx: any;
+  lastActionWasStoreImage: boolean = false;
     @Input() lineColor: string;
     @Input() lineWidth: number;
     @Input() premadeDrawing: string;
-    @Input() eraserMode: boolean;
+  @Input() eraserMode: boolean;
     @Output() drawingEmitter = new EventEmitter();
     defaultLineColor: string = "rgba(87,0,132,255)";
     element;
+
+  undoArray: string[] = [];
+
+
 
     constructor(element: ElementRef) {
         console.log("Instantiating canvas");
@@ -38,9 +43,39 @@ export class DrawingDirective {
             };
             console.log("Loading premade drawing");
             img.src = this.premadeDrawing;
-        }
+      }
+      this.storeImage();
     }
 
+  storeImage() {
+    let imgStr = this.element.toDataURL();
+    // write the data to the emitter
+    this.drawingEmitter.emit(imgStr);
+
+    // store it for an undo
+    if (this.undoArray.length >= 20) { this.undoArray.shift(); }
+    this.undoArray.push(imgStr);
+    this.lastActionWasStoreImage = true;
+  }
+
+  onPerformUndo() {
+    if (this.undoArray.length > 0) {
+      if ((this.lastActionWasStoreImage) && (this.undoArray.length>1)) { this.undoArray.pop(); }  // the first call to undo would have the value we just stored, we want to go one back
+      this.lastActionWasStoreImage = false;
+      var img = new Image;
+      var ctx = this.ctx;
+      img.onload = function () {
+          console.log("Drawing undo to canvas");
+          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+          ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
+        };
+      console.log("Loading undo drawing");
+      let imgStr = (this.undoArray.length == 1) ? this.undoArray[0] : this.undoArray.pop();
+      img.src = imgStr;
+      this.drawingEmitter.emit(imgStr);
+    }
+
+  }
     @HostListener('mousedown', ['$event'])
     @HostListener('touchstart', ['$event'])
     onmousedown(event) {
@@ -77,25 +112,47 @@ export class DrawingDirective {
         }
     }
 
+
+  @HostListener('document:gesturestart')
+  @HostListener('document:gestureend')
+  ongesturestart() {
+    console.log("gesture start");
+    if (this.userIsDrawing) {
+      // stop drawing
+      this.userIsDrawing = false;
+     // this.storeImage();   we might want to call store image, we might want to revert / undo drawings since gesture started, needs testing
+    }
+  }
+
+  @HostListener('document:mouseup')
+  @HostListener('document:touchend')
     @HostListener('mouseup')
     @HostListener('touchend')
     onmouseup() {
-        console.log("up/end");
+      console.log("up/end");
+      if (this.userIsDrawing) {
         event.preventDefault();
 
         // stop drawing
         this.userIsDrawing = false;
-        this.drawingEmitter.emit(this.element.toDataURL());
+        this.storeImage();
+      }
     }
 
     @HostListener('mouseleave')
+    @HostListener('touchleave')
     onmouseleave() {
-        console.log("mouseleave");
+      console.log("mouseleave");
+/*  we are now stopping the drawing on a global mouseup / touch end
+      if (this.userIsDrawing) {
         event.preventDefault();
 
         // stop drawing
         this.userIsDrawing = false;
-        this.drawingEmitter.emit(this.element.toDataURL());
+        this.storeImage();
+      }
+
+*/
     }
 
     drawLine(lX, lY, cX, cY): void {
