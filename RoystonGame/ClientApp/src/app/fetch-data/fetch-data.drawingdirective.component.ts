@@ -80,7 +80,7 @@ export class DrawingDirective {
     @HostListener('touchstart', ['$event'])
     onmousedown(event) {
         console.log("down/start");
-        event.preventDefault();
+//        event.preventDefault(); not needed since canvas does not care about mouse movements, and preventing affects gestures
 
         if (document.activeElement instanceof HTMLElement)  // pull focus from any input so it hides the keyboard on mobile
           document.activeElement.blur();
@@ -97,7 +97,7 @@ export class DrawingDirective {
     @HostListener('mousemove', ['$event'])
     @HostListener('touchmove', ['$event'])
     onmousemove(event) {
-        event.preventDefault();
+        //event.preventDefault();  not needed since canvas does not care about mouse movements, and preventing affects gestures
         if (this.userIsDrawing) {
             // get current mouse position
             let [currentX, currentY] = this.getCoords(event);
@@ -131,7 +131,7 @@ export class DrawingDirective {
     onmouseup() {
       console.log("up/end");
       if (this.userIsDrawing) {
-        event.preventDefault();
+//        event.preventDefault(); not needed since canvas does not care about mouse movements, and preventing affects gestures
 
         // stop drawing
         this.userIsDrawing = false;
