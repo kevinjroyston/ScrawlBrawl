@@ -21,6 +21,10 @@ using RoystonGame.Web.DataModels;
 using RoystonGame.Web.Controllers.LobbyManagement;
 using RoystonGame.Web.DataModels.Requests;
 using System.Net.Http;
+using GameStep = System.Collections.Generic.IReadOnlyDictionary<RoystonGame.Web.DataModels.Enums.UserPromptId, int>;
+using RoystonGame.Web.DataModels.Enums;
+using RoystonGameAutomatedTestingClient.Extensions;
+using Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
@@ -159,8 +163,9 @@ namespace RoystonGameAutomatedTestingClient.Games
 
         public virtual async Task RunTest()
         {
-            //While Game doesnt end  <-- TODO - determine game end  (expected vs unexpected)
-            for (int i = 0; i < 500; i++)
+            int i;
+            const int maxIters = 500;
+            for (i = 0; i < maxIters; i++)
             {
                 DateTime pollingEnd = DateTime.UtcNow.Add(this.MaxTotalPollingTime);
                 // Keep polling current prompts
@@ -187,15 +192,44 @@ namespace RoystonGameAutomatedTestingClient.Games
                     await Task.WhenAll(playerPrompts.Values);
                 }
 
-                // TODO: Per-test validation of which prompts each user is receiving.
+                // HACKY FIX. Above is checking if ANY user has a prompt. To avoid race condition. wait a little and check everybody again.
+                Thread.Sleep((int)this.PollingDelay.TotalMilliseconds);
+                playerPrompts = new Dictionary<LobbyPlayer, Task<UserPrompt>>();
+                foreach (LobbyPlayer player in Lobby.Players)
+                {
+                    playerPrompts.Add(player, this.WebClient.GetUserPrompt(player.UserId));
+                }
 
-                List<Task<HttpResponseMessage>> playerSubmissions = new List<Task<HttpResponseMessage>>();
+                await Task.WhenAll(playerPrompts.Values);
+                // END HACKY FIX
+
+                var prompts = playerPrompts.Values.Select(val => val.Result);
+
+                // Check if game end
+                if (prompts.Any(prompt => prompt.UserPromptId == UserPromptId.PartyLeader_GameEnd))
+                {
+                    Console.WriteLine("Game Finished");
+                    break;
+                }
+
+                // Validate current set is expected.
+                if (this is IStructuredTest)
+                {
+                    var validations = ((IStructuredTest)this).UserPromptIdValidations;
+                    if (i > validations.Count)
+                    {
+                        throw new Exception($"Game has gone past all structured test validations without ending. Current prompts {SummarizePrompts(prompts).PrettyPrint()}");
+                    }
+
+                    this.ValidatePrompts(validations[i], prompts);
+                }
+
+                List<Task> playerSubmissions = new List<Task>();
                 foreach ((LobbyPlayer player, Task<UserPrompt> promptTask) in playerPrompts)
                 {
                     Thread.Sleep((int) this.DelayBetweenSubmissions.TotalMilliseconds);
                     UserPrompt prompt = promptTask.Result;
-                    // TODO: might want to move this above so that tests know their users that are waiting.
-                    // TODO: might need a counter here so tests can track where they are / what is expected
+
                     UserFormSubmission submission = HandleUserPrompt(prompt, player, i);
 
                     bool providedSubmission = submission != null;
@@ -215,6 +249,55 @@ namespace RoystonGameAutomatedTestingClient.Games
                     }
                 }
                 await Task.WhenAll(playerSubmissions);
+            }
+
+            // Validate game was expected to end here
+            if (i >= maxIters)
+            {
+                throw new Exception($"Test runner exceeded ({i}) max game steps of ({maxIters})");
+            }
+
+            if ((this is IStructuredTest) && (i != ((IStructuredTest)this).UserPromptIdValidations.Count))
+            {
+                throw new Exception($"Game ended unexpectedly. Expected ({((IStructuredTest)this).UserPromptIdValidations.Count}) game steps, actual:({i})");
+            }
+        }
+
+        private Dictionary<UserPromptId, int> SummarizePrompts(IEnumerable<UserPrompt> prompts)
+        {
+            return prompts.GroupBy(prompt => prompt.UserPromptId).ToDictionary(g => g.Key, g => g.ToList().Count());
+        }
+
+        private void ValidatePrompts(GameStep validations, IEnumerable<UserPrompt> prompts)
+        {
+            var summarizedPrompts = SummarizePrompts(prompts);
+
+            string debugString = $"Prompts:\n{summarizedPrompts.PrettyPrint()}\n\nValidations:\n{validations.PrettyPrint()}";
+
+            foreach ((UserPromptId id, int count) in validations)
+            {
+                if (count > 0 && !summarizedPrompts.ContainsKey(id))
+                {
+                    throw new Exception($"Validation failure. UserStateId:{id}. Expected ({count}) but found none.\n{debugString}");
+                }
+
+                if (count > 0 && (summarizedPrompts[id] != count))
+                {
+                    throw new Exception($"Validation failure. UserStateId:{id}. Expected ({count}) but found ({summarizedPrompts[id]})\n{debugString}");
+                }
+            }
+
+            foreach((UserPromptId id, int count) in summarizedPrompts)
+            {
+                if (count > 0 && !validations.ContainsKey(id))
+                {
+                    throw new Exception($"Validation failure. UserStateId:{id}. Found ({count}) but expected none\n{debugString}");
+                }
+
+                if (count > 0 && (validations[id] != count))
+                {
+                    throw new Exception($"Validation failure. UserStateId:{id}. Found ({count}) but expected ({validations[id]})\n{debugString}");
+                }
             }
         }
     }

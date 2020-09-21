@@ -52,11 +52,11 @@ namespace RoystonGameAutomatedTestingClient.WebClient
             await SubmitUserForm(prompt, submission, userId);
         }
 
-        public async Task<HttpResponseMessage> SubmitUserForm(UserPrompt prompt, UserFormSubmission submission, string userId)
+        public async Task SubmitUserForm(UserPrompt prompt, UserFormSubmission submission, string userId)
         { 
             if (submission == null)
             {
-                return null;
+                return;
             }
             submission.Id = prompt.Id;
             for (int i = 0; i < (submission.SubForms?.Count ?? 0); i++)
@@ -74,7 +74,6 @@ namespace RoystonGameAutomatedTestingClient.WebClient
                     Constants.MediaType.ApplicationJson));
 
             await httpResponseMessage.ThrowIfNonSuccessResponse(userId);
-            return httpResponseMessage;
         }
 
         public async Task<HttpResponseMessage> MakeWebRequest(string path, string userId, HttpMethod method, HttpContent content = null)

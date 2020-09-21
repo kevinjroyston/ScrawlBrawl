@@ -21,7 +21,6 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
 {   
     public class TestRunner
     {
-        // TODO [Daniel]: Structured tests will need to be created (requires game-specific knowledge though)
         public bool IsParallel { get; }
         public bool OpenBrowsers { get; }
         public int NumUsers { get; }

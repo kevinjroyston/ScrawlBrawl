@@ -24,6 +24,7 @@ namespace RoystonGameAutomatedTestingClient.Games
                     Console.WriteLine("Submitting Voting");
                     return Vote(player);
                 case UserPromptId.Mimic_DrawAnything:
+                case UserPromptId.Mimic_RecreateDrawing:
                     Console.WriteLine("Submitting Drawing");
                     return MakeDrawing(player);
                 case UserPromptId.PartyLeader_SkipReveal:

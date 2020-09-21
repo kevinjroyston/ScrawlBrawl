@@ -141,7 +141,7 @@ namespace RoystonGameAutomatedTestingClient.WebClient
             };
         }
 
-        public static UserFormSubmission SubmitSingleRadio(string userId, int? answer = null)
+        public static UserFormSubmission SubmitSingleRadio(string userId, int? answer = 0)
         {
             Debug.Assert(userId.Length == 50);
 

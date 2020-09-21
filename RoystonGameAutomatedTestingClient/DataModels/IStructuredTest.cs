@@ -3,6 +3,7 @@ using RoystonGameAutomatedTestingClient.Games;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using GameStep = System.Collections.Generic.IReadOnlyDictionary<RoystonGame.Web.DataModels.Enums.UserPromptId, int>;
 
 namespace RoystonGameAutomatedTestingClient.DataModels
 {
@@ -10,6 +11,6 @@ namespace RoystonGameAutomatedTestingClient.DataModels
     {
         public TestOptions TestOptions { get; }
 
-        public IReadOnlyList<IReadOnlyDictionary<UserPromptId, int>> UserPromptIdValidations { get; }
+        public IReadOnlyList<GameStep> UserPromptIdValidations { get; }
     }
 }
