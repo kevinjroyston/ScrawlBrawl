@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoystonGame", "RoystonGame\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoystonGameAutomatedTestingClient", "RoystonGameAutomatedTestingClient\RoystonGameAutomatedTestingClient.csproj", "{1EDDF1F6-5A83-45D4-AC9A-E765A0E4F01C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoystonGameAutomatedTestingClientTests", "RoystonGameAutomatedTestingClientTests\RoystonGameAutomatedTestingClientTests.csproj", "{39267B2C-EE9C-4528-9265-E2A2C67676B7}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{1EDDF1F6-5A83-45D4-AC9A-E765A0E4F01C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1EDDF1F6-5A83-45D4-AC9A-E765A0E4F01C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1EDDF1F6-5A83-45D4-AC9A-E765A0E4F01C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{39267B2C-EE9C-4528-9265-E2A2C67676B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39267B2C-EE9C-4528-9265-E2A2C67676B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39267B2C-EE9C-4528-9265-E2A2C67676B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{39267B2C-EE9C-4528-9265-E2A2C67676B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

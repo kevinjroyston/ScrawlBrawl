@@ -163,26 +163,41 @@ namespace RoystonGameAutomatedTestingClient.Games
 
         public virtual async Task RunTest()
         {
-            int i;
+            int i = 0;
             const int maxIters = 500;
-            for (i = 0; i < maxIters; i++)
+            // Reset data structures so that they always show current GameStep.
+            Dictionary<LobbyPlayer, Task<UserPrompt>> playerPrompts = new Dictionary<LobbyPlayer, Task<UserPrompt>>();
+            List<Task> playerSubmissions = new List<Task>();
+            try
             {
-                DateTime pollingEnd = DateTime.UtcNow.Add(this.MaxTotalPollingTime);
-                // Keep polling current prompts
-                Dictionary<LobbyPlayer, Task<UserPrompt>> playerPrompts = new Dictionary<LobbyPlayer, Task<UserPrompt>>();
-                while (!playerPrompts.Values.Any(val=> val.Result.SubmitButton))
+                for (i = 0; i < maxIters; i++)
                 {
-                    if (DateTime.UtcNow > pollingEnd)
+                    // Reset data structures so that they always show current GameStep.
+                    playerPrompts = new Dictionary<LobbyPlayer, Task<UserPrompt>>();
+                    playerSubmissions = new List<Task>();
+
+                    DateTime pollingEnd = DateTime.UtcNow.Add(this.MaxTotalPollingTime);
+                    // Keep polling current prompts
+                    while (!playerPrompts.Values.Any(val => val.Result.SubmitButton))
                     {
-                        throw new Exception("Ran out of time polling, did game soft-lock?");
+                        if (DateTime.UtcNow > pollingEnd)
+                        {
+                            throw new Exception("Ran out of time polling, did game soft-lock?");
+                        }
+
+                        Thread.Sleep((int)this.PollingDelay.TotalMilliseconds);
+
+                        playerPrompts = new Dictionary<LobbyPlayer, Task<UserPrompt>>();
+                        foreach (LobbyPlayer player in Lobby.Players)
+                        {
+                            playerPrompts.Add(player, this.WebClient.GetUserPrompt(player.UserId));
+                        }
+
+                        await Task.WhenAll(playerPrompts.Values);
                     }
 
-                    // Sleep if not first polling cycle
-                    if(playerPrompts.Count > 0)
-                    {
-                        Thread.Sleep((int) this.PollingDelay.TotalMilliseconds);
-                    }
-
+                    // HACKY FIX. Above is checking if ANY user has a prompt. To avoid race condition. wait a little and check everybody again.
+                    Thread.Sleep((int)this.PollingDelay.TotalMilliseconds);
                     playerPrompts = new Dictionary<LobbyPlayer, Task<UserPrompt>>();
                     foreach (LobbyPlayer player in Lobby.Players)
                     {
@@ -190,76 +205,85 @@ namespace RoystonGameAutomatedTestingClient.Games
                     }
 
                     await Task.WhenAll(playerPrompts.Values);
-                }
+                    // END HACKY FIX
 
-                // HACKY FIX. Above is checking if ANY user has a prompt. To avoid race condition. wait a little and check everybody again.
-                Thread.Sleep((int)this.PollingDelay.TotalMilliseconds);
-                playerPrompts = new Dictionary<LobbyPlayer, Task<UserPrompt>>();
-                foreach (LobbyPlayer player in Lobby.Players)
-                {
-                    playerPrompts.Add(player, this.WebClient.GetUserPrompt(player.UserId));
-                }
+                    var prompts = playerPrompts.Values.Select(val => val.Result);
 
-                await Task.WhenAll(playerPrompts.Values);
-                // END HACKY FIX
-
-                var prompts = playerPrompts.Values.Select(val => val.Result);
-
-                // Check if game end
-                if (prompts.Any(prompt => prompt.UserPromptId == UserPromptId.PartyLeader_GameEnd))
-                {
-                    Console.WriteLine("Game Finished");
-                    break;
-                }
-
-                // Validate current set is expected.
-                if (this is IStructuredTest)
-                {
-                    var validations = ((IStructuredTest)this).UserPromptIdValidations;
-                    if (i > validations.Count)
+                    // Check if game end
+                    if (prompts.Any(prompt => prompt.UserPromptId == UserPromptId.PartyLeader_GameEnd))
                     {
-                        throw new Exception($"Game has gone past all structured test validations without ending. Current prompts {SummarizePrompts(prompts).PrettyPrint()}");
+                        Console.WriteLine("Game Finished");
+                        break;
                     }
 
-                    this.ValidatePrompts(validations[i], prompts);
+                    // Validate current set is expected.
+                    if (this is IStructuredTest)
+                    {
+                        var validations = ((IStructuredTest)this).UserPromptIdValidations;
+                        if (i > validations.Count)
+                        {
+                            throw new Exception($"Game has gone past all structured test validations without ending. Current prompts {SummarizePrompts(prompts).PrettyPrint()}");
+                        }
+
+                        this.ValidatePrompts(validations[i], prompts);
+                    }
+
+                    foreach ((LobbyPlayer player, Task<UserPrompt> promptTask) in playerPrompts)
+                    {
+                        Thread.Sleep((int)this.DelayBetweenSubmissions.TotalMilliseconds);
+                        UserPrompt prompt = promptTask.Result;
+
+                        UserFormSubmission submission = HandleUserPrompt(prompt, player, i);
+
+                        bool providedSubmission = submission != null;
+                        if (!prompt.SubmitButton && providedSubmission)
+                        {
+                            throw new Exception($"Test's 'HandleUserPrompt' provided a UserFormSubmission when it was not expected. UserId='{player.UserId}'");
+                        }
+
+                        if (prompt.SubmitButton && !providedSubmission)
+                        {
+                            throw new Exception($"Test's 'HandleUserPrompt' did not provide a UserFormSubmission when one was expected. UserId='{player.UserId}'");
+                        }
+
+                        if (submission != null)
+                        {
+                            playerSubmissions.Add(this.WebClient.SubmitUserForm(prompt, submission, player.UserId));
+                        }
+                    }
+                    await Task.WhenAll(playerSubmissions);
+
+                    // Validate game was expected to end here
+                    if (i >= maxIters)
+                    {
+                        throw new Exception($"Test runner exceeded ({i}) max game steps of ({maxIters})");
+                    }
                 }
 
-                List<Task> playerSubmissions = new List<Task>();
-                foreach ((LobbyPlayer player, Task<UserPrompt> promptTask) in playerPrompts)
+                if ((this is IStructuredTest) && (i != ((IStructuredTest)this).UserPromptIdValidations.Count))
                 {
-                    Thread.Sleep((int) this.DelayBetweenSubmissions.TotalMilliseconds);
-                    UserPrompt prompt = promptTask.Result;
-
-                    UserFormSubmission submission = HandleUserPrompt(prompt, player, i);
-
-                    bool providedSubmission = submission != null;
-                    if (!prompt.SubmitButton && providedSubmission)
-                    {
-                        throw new Exception($"Test's 'HandleUserPrompt' provided a UserFormSubmission when it was not expected. UserId='{player.UserId}'");
-                    }
-
-                    if (prompt.SubmitButton && !providedSubmission)
-                    {
-                        throw new Exception($"Test's 'HandleUserPrompt' did not provide a UserFormSubmission when one was expected. UserId='{player.UserId}'");
-                    }
-
-                    if (submission != null)
-                    {
-                        playerSubmissions.Add(this.WebClient.SubmitUserForm(prompt, submission, player.UserId));
-                    }
+                    throw new Exception($"Game ended unexpectedly. Expected ({((IStructuredTest)this).UserPromptIdValidations.Count}) game steps, actual:({i})");
                 }
-                await Task.WhenAll(playerSubmissions);
             }
-
-            // Validate game was expected to end here
-            if (i >= maxIters)
+            catch (Exception e)
             {
-                throw new Exception($"Test runner exceeded ({i}) max game steps of ({maxIters})");
-            }
+                e.Data.Add("GameStep", i);
 
-            if ((this is IStructuredTest) && (i != ((IStructuredTest)this).UserPromptIdValidations.Count))
-            {
-                throw new Exception($"Game ended unexpectedly. Expected ({((IStructuredTest)this).UserPromptIdValidations.Count}) game steps, actual:({i})");
+                // Try and add additional data points
+                try
+                {
+                    if ((this is IStructuredTest) && (i < ((IStructuredTest)this).UserPromptIdValidations.Count))
+                    {
+                        e.Data.Add("Validations", Environment.NewLine + ((IStructuredTest)this).UserPromptIdValidations[i].PrettyPrint());
+                    }
+
+                    e.Data.Add("Prompts", Environment.NewLine + SummarizePrompts(playerPrompts.Values.Select(task => task.Result)).PrettyPrint());
+                }
+                catch
+                {
+                    // Empty
+                }
+                throw;
             }
         }
 

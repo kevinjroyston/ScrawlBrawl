@@ -7,7 +7,9 @@ using static RoystonGame.Web.DataModels.Requests.LobbyManagement.ConfigureLobbyR
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    [EndToEndGameTest("BodySwap_Struct1")]
+    // TODO: Testing this game will require more specialized logic.
+
+    /*[EndToEndGameTest("BodySwap_Struct1")]
     public class StructuredBodySwapTest1 : BodySwapTest, IStructuredTest
     {
         public TestOptions TestOptions =>
@@ -25,5 +27,5 @@ namespace RoystonGameAutomatedTestingClient.Games
             };
 
         public IReadOnlyList<IReadOnlyDictionary<UserPromptId, int>> UserPromptIdValidations => throw new NotImplementedException();
-    }
+    }*/
 }

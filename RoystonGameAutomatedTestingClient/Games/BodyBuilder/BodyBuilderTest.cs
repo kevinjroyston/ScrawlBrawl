@@ -16,9 +16,10 @@ using static RoystonGame.TV.GameModes.Common.ThreePartPeople.DataModels.Person;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    [EndToEndGameTest("BodyBuilder")]
+    [EndToEndGameTest(TestName)]
     public class BodyBuilderTest : GameTest
     {
+        private const string TestName = "BodyBuilder";
         public override string GameModeTitle => "Body Builder";
         public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player, int gameStep)
         {
@@ -26,11 +27,11 @@ namespace RoystonGameAutomatedTestingClient.Games
             {
                 case UserPromptId.BattleReady_BattlePrompts:
                 case UserPromptId.BattleReady_ExtraBattlePrompts:
-                    Console.WriteLine("Submitting Prompt");
+                    Console.WriteLine($"{TestName}:Submitting Prompt");
                     return MakePrompt(player);
                 case UserPromptId.BattleReady_BodyPartDrawing:
                 case UserPromptId.BattleReady_ExtraBodyPartDrawing:
-                    Console.WriteLine("Submitting Drawing");
+                    Console.WriteLine($"{TestName}:Submitting Drawing");
                     string promptTitle = userPrompt.SubPrompts[0].Prompt;
                     if (promptTitle.Contains("Head", StringComparison.OrdinalIgnoreCase))
                     {
@@ -49,14 +50,14 @@ namespace RoystonGameAutomatedTestingClient.Games
                         throw new Exception("Couldnt find drawing type");
                     }
                 case UserPromptId.BattleReady_ContestantCreation:
-                    Console.WriteLine("Submitting Contestant");
+                    Console.WriteLine($"{TestName}:Submitting Contestant");
                     return MakePerson(player, "TestPerson");
                 case UserPromptId.PartyLeader_SkipReveal:
                 case UserPromptId.PartyLeader_SkipScoreboard:
-                    Console.WriteLine("Submitting Skip");
+                    Console.WriteLine($"{TestName}:Submitting Skip");
                     return SkipReveal(player);
                 case UserPromptId.Voting:
-                    Console.WriteLine("Submitting Voting");
+                    Console.WriteLine($"{TestName}:Submitting Voting");
                     return Vote(player);
                 case UserPromptId.Waiting:
                     return null;

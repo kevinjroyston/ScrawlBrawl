@@ -13,23 +13,24 @@ using System.Threading.Tasks;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    [EndToEndGameTest("Mimic")]
+    [EndToEndGameTest(TestName)]
     public class MimicTest : GameTest
     {
+        private const string TestName = "Mimic";
         public override string GameModeTitle => "Mimic";
         public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player, int gameStep)
         {
             switch (userPrompt.UserPromptId) {
                 case UserPromptId.Voting:
-                    Console.WriteLine("Submitting Voting");
+                    Console.WriteLine($"{TestName}:Submitting Voting");
                     return Vote(player);
                 case UserPromptId.Mimic_DrawAnything:
                 case UserPromptId.Mimic_RecreateDrawing:
-                    Console.WriteLine("Submitting Drawing");
+                    Console.WriteLine($"{TestName}:Submitting Drawing");
                     return MakeDrawing(player);
                 case UserPromptId.PartyLeader_SkipReveal:
                 case UserPromptId.PartyLeader_SkipScoreboard:
-                    Console.WriteLine("Submitting Skip");
+                    Console.WriteLine($"{TestName}:Submitting Skip");
                     return SkipReveal(player);
                 case UserPromptId.Waiting:
                     return null;

@@ -13,9 +13,10 @@ using System.Threading.Tasks;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    [EndToEndGameTest("BodySwap")]
+    [EndToEndGameTest(TestName)]
     public class BodySwapTest : GameTest
     {
+        private const string TestName = "BodySwap";
         public override string GameModeTitle => "Body Swap";
         private Random Rand = new Random();
         public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player, int gameStep)
@@ -23,17 +24,17 @@ namespace RoystonGameAutomatedTestingClient.Games
             switch (userPrompt.UserPromptId)
             {
                 case UserPromptId.BodyBuilder_CreatePrompts:
-                    Console.WriteLine("Submitting Prompt");
+                    Console.WriteLine($"{TestName}:Submitting Prompt");
                     return MakePrompts(player);
                 case UserPromptId.BodyBuilder_DrawBodyPart:
-                    Console.WriteLine("Submitting Drawing");
+                    Console.WriteLine($"{TestName}:Submitting Drawing");
                     return MakeDrawing(player);
                 case UserPromptId.BodyBuilder_TradeBodyPart:
-                    Console.WriteLine("Submitting Swap");
+                    Console.WriteLine($"{TestName}:Submitting Swap");
                     return Swap(userPrompt, player);
                 case UserPromptId.PartyLeader_SkipReveal:
                 case UserPromptId.PartyLeader_SkipScoreboard:
-                    Console.WriteLine("Submitting Skip");
+                    Console.WriteLine($"{TestName}:Submitting Skip");
                     return SkipReveal(player);
                 case UserPromptId.BodyBuilder_FinishedPerson:
                 case UserPromptId.Waiting:

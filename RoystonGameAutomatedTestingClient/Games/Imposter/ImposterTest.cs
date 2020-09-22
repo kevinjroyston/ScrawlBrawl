@@ -12,9 +12,10 @@ using System.Threading.Tasks;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    [EndToEndGameTest("ImposterSyndrome")]
+    [EndToEndGameTest(TestName)]
     public class ImposterTest : GameTest
     {
+        private const string TestName = "ImposterSyndrome";
         public override string GameModeTitle => "Imposter Syndrome";
 
         public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player, int gameStep)
@@ -22,18 +23,19 @@ namespace RoystonGameAutomatedTestingClient.Games
             switch (userPrompt.UserPromptId)
             {
                 case UserPromptId.ImposterSyndrome_CreatePrompt:
-                    Console.WriteLine("Submitting Prompt");
+                    Console.WriteLine($"{TestName}:Submitting Prompt");
                     return MakePrompts(player);
                 case UserPromptId.ImposterSyndrome_Draw:
-                    Console.WriteLine("Submitting Drawing");
+                    Console.WriteLine($"{TestName}:Submitting Drawing");
                     return MakeDrawing(player);
                 case UserPromptId.PartyLeader_SkipReveal:
                 case UserPromptId.PartyLeader_SkipScoreboard:
-                    Console.WriteLine("Submitting Skip");
+                    Console.WriteLine($"{TestName}:Submitting Skip");
                     return SkipReveal(player);
                 case UserPromptId.Voting:
-                    Console.WriteLine("Submitting Voting");
+                    Console.WriteLine($"{TestName}:Submitting Voting");
                     return Vote(player);
+                case UserPromptId.SitTight:
                 case UserPromptId.Waiting:
                     return null;
                 default:

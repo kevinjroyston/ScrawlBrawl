@@ -12,9 +12,10 @@ using System.Threading.Tasks;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    [EndToEndGameTest("TwoTone")]
+    [EndToEndGameTest(TestName)]
     public class TwoToneTest : GameTest
     {
+        private const string TestName = "TwoTone";
         public override string GameModeTitle => "Chaotic Cooperation" ;
 
         public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player, int gameStep)
@@ -22,17 +23,17 @@ namespace RoystonGameAutomatedTestingClient.Games
             switch (userPrompt.UserPromptId)
             {
                 case UserPromptId.Voting:
-                    Console.WriteLine("Submitting Voting");
+                    Console.WriteLine($"{TestName}:Submitting Voting");
                     return Vote(player);
                 case UserPromptId.ChaoticCooperation_Draw:
-                    Console.WriteLine("Submitting Drawing");
+                    Console.WriteLine($"{TestName}:Submitting Drawing");
                     return MakeDrawing(player);
                 case UserPromptId.ChaoticCooperation_Setup:
-                    Console.WriteLine("Submitting Setup");
+                    Console.WriteLine($"{TestName}:Submitting Setup");
                     return MakePrompt(player);
                 case UserPromptId.PartyLeader_SkipReveal:
                 case UserPromptId.PartyLeader_SkipScoreboard:
-                    Console.WriteLine("Submitting Skip");
+                    Console.WriteLine($"{TestName}:Submitting Skip");
                     return SkipReveal(player);
                 case UserPromptId.Waiting:
                     return null;

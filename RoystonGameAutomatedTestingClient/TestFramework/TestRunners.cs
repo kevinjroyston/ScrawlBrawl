@@ -16,6 +16,7 @@ using System.Drawing.Printing;
 using System.Reflection;
 using RoystonGameAutomatedTestingClient.DataModels;
 using Microsoft.Identity.Client;
+using System.Collections;
 
 namespace RoystonGameAutomatedTestingClient.TestFramework
 {   
@@ -101,7 +102,11 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
                 TestOutputs.Add((testName, "Success"));
             } catch (Exception e)
             {
-                TestOutputs.Add((testName, $"Failed. Reason: {e.Message}"));
+                TestOutputs.Add((testName, $"Failed. Reason: {e}"));
+                foreach(DictionaryEntry de in e.Data)
+                {
+                    TestOutputs.Add((testName, $"{de.Key}:{de.Value}"));
+                }
             }
         }
 
@@ -198,23 +203,29 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
 
             Console.WriteLine("\nSummary of Tests");
             Console.WriteLine("--------------------------------------------");
-            foreach ((string TestName, string TestOutput) in TestOutputs)
+            var groupedTestOutputs = TestOutputs.GroupBy(kvp => kvp.Item1).ToDictionary(g=>g.Key, g=>g.Select(kvp=>kvp.Item2).ToList());
+            foreach ((string TestName, List<string> outputs) in groupedTestOutputs)
             {
-                if (TestOutput == "Success")
+                bool succeeded = outputs.Contains("Success");
+                if (succeeded)
                 {
                     numSuccess += 1;
                 }
-                Console.WriteLine($"{TestName} - {TestOutput}");
+                Console.WriteLine($"---------[[{TestName}]]--------");
+                Console.ForegroundColor = succeeded ? ConsoleColor.Green : ConsoleColor.Red;
+                Console.WriteLine(string.Join(Environment.NewLine, outputs));
+                Console.ResetColor();
+                Console.WriteLine("--------------------------------------------");
             }
 
-            int numFailure = TestOutputs.Count - numSuccess;
+            int numFailure = groupedTestOutputs.Count - numSuccess;
 
             if (numFailure > 0)
             {
                  OnFailHandler();
             }
 
-            Console.WriteLine($"\nTests: {numFailure} failed, {numSuccess} passed, {TestOutputs.Count} total");
+            Console.WriteLine($"\nTests: {numFailure} failed, {numSuccess} passed, {groupedTestOutputs.Count} total");
         }
     }
 }

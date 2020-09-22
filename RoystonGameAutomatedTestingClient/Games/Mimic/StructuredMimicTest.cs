@@ -12,7 +12,7 @@ namespace RoystonGameAutomatedTestingClient.Games
     [EndToEndGameTest("Mimic_Struct1")]
     public class StructuredMimicTest1 : MimicTest, IStructuredTest
     {
-        private const int NumPlayers = 5;// Test should work for almost any value (if options succed, test succeds).
+        private const int NumPlayers = 3;// Test should work for almost any value (if options succed, test succeds).
         public override TimeSpan MaxTotalPollingTime => TimeSpan.FromSeconds(15); // memorization timer will be 10 seconds
         public TestOptions TestOptions { get; } =
             new TestOptions
