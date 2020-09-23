@@ -20,7 +20,7 @@ namespace RoystonGameAutomatedTestingClient.Games
     public class BodyBuilderTest : GameTest
     {
         private const string TestName = "BodyBuilder";
-        public override string GameModeTitle => "Body Builder";
+        public override string GameModeTitle { get; } = "Body Builder";
         public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player, int gameStep)
         {
             switch (userPrompt.UserPromptId)

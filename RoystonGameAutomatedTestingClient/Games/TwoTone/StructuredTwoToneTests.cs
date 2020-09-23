@@ -42,9 +42,9 @@ namespace RoystonGameAutomatedTestingClient.Games
                     {
                         TestCaseHelpers.AllPlayers(
                             numPlayers:NumPlayers,
-                            prompt: UserPromptId.ImposterSyndrome_Draw),
+                            prompt: UserPromptId.ChaoticCooperation_Draw),
                     },
-                    repeatCounter: NumPlayers);
+                    repeatCounter: TeamsPerPrompt * ColorsPerTeam);
 
                 toReturn.AppendRepetitiveGameSteps(
                     copyFrom: new List<GameStep>

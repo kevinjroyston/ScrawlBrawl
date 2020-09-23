@@ -6,6 +6,7 @@ namespace RoystonGameAutomatedTestingClient.DataModels
 {
     public class EndToEndGameTestAttribute : Attribute
     {
+        // TODO: Test name should not be in attribute, remove these 2.
         public string TestName { get; private set; }
         public string TestDescription { get; private set; }
 

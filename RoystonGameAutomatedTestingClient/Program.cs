@@ -23,9 +23,6 @@ namespace RoystonGameAutomatedTestingClient.cs
          * Example Commands: 
          * - RoystonGameAutomatedTestingClient.exe -users 4 -games "Imposter Syndrome, Body Swap" -tests "ImposterSyndrome, BodySwap"
          * - RoystonGameAutomatedTestingClient.exe -games "Imposter Syndrome, Body Swap" -structured -parallel
-         * 
-         * TODO 
-         * [] - Param - Text File of Tests (Optional) (text file game mode, test name -> only structured tests)
          */
 
         [Option("-p|-parallel")]

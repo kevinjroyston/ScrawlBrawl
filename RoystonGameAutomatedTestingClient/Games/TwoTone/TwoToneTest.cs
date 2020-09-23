@@ -15,6 +15,7 @@ namespace RoystonGameAutomatedTestingClient.Games
     [EndToEndGameTest(TestName)]
     public class TwoToneTest : GameTest
     {
+        // TODO: Let children override TestName like GameModeTitle (move to GameTest)
         private const string TestName = "TwoTone";
         public override string GameModeTitle => "Chaotic Cooperation" ;
 
@@ -30,7 +31,7 @@ namespace RoystonGameAutomatedTestingClient.Games
                     return MakeDrawing(player);
                 case UserPromptId.ChaoticCooperation_Setup:
                     Console.WriteLine($"{TestName}:Submitting Setup");
-                    return MakePrompt(player);
+                    return MakePrompt(player, userPrompt.SubPrompts.Length - 1);
                 case UserPromptId.PartyLeader_SkipReveal:
                 case UserPromptId.PartyLeader_SkipScoreboard:
                     Console.WriteLine($"{TestName}:Submitting Skip");
@@ -46,28 +47,29 @@ namespace RoystonGameAutomatedTestingClient.Games
         {
             return CommonSubmissions.SubmitSingleDrawing(player.UserId);
         }
-        protected virtual UserFormSubmission MakePrompt(LobbyPlayer player)
+        protected virtual UserFormSubmission MakePrompt(LobbyPlayer player, int colorCount)
         {
             Debug.Assert(player.UserId.Length == 50);
 
-
-            return new UserFormSubmission
-            {
-                SubForms = new List<UserSubForm>()
+            var subForms = new List<UserSubForm>()
                 {
                     new UserSubForm()
                     {
                         ShortAnswer = Helpers.GetRandomString()
                     },
-                    new UserSubForm()
-                    {
-                        Color = Constants.Colors.Black
-                    },
-                    new UserSubForm()
-                    {
-                        Color = Constants.Colors.Red
-                    }
-                }
+                };
+
+            for (int i = 0; i< colorCount; i++)
+            {
+                subForms.Add(new UserSubForm
+                {
+                    Color = Constants.RandomColors[i]
+                });
+            }
+
+            return new UserFormSubmission
+            {
+                SubForms = subForms
             };
 
         }

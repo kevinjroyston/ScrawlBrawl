@@ -10,7 +10,7 @@ namespace RoystonGameAutomatedTestingClient.Extensions
     {
         public static string PrettyPrint<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict)
         {
-            var lines = dict.Select(kvp => $"\t{kvp.Key}- {kvp.Value}");
+            var lines = dict.Select(kvp => $"{(kvp.Key.Equals(dict.Keys.First()) ? "\t" : "\t\t")}{kvp.Key}- {kvp.Value}");
             return string.Join(Environment.NewLine, lines);
         }
     }

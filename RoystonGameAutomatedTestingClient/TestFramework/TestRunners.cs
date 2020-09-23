@@ -20,6 +20,7 @@ using System.Collections;
 
 namespace RoystonGameAutomatedTestingClient.TestFramework
 {   
+    // TODO: Ability to run N copies of the selected tests (for finding rarer bugs).
     public class TestRunner
     {
         public bool IsParallel { get; }
@@ -28,7 +29,7 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
         private Dictionary<string, Dictionary<string, GameTest>> SelectedTests { get; set; } = new Dictionary<string, Dictionary<string, GameTest>>();
         private Action OnFailHandler;
 
-        private List<(string, string)> TestOutputs { get; } = new List<(string, string)>();
+        private List<(string, ConsoleColor, string)> TestOutputs { get; } = new List<(string, ConsoleColor, string)>();
         
         public TestRunner(List<GameModeMetadata> Games, Dictionary<string, object> Params, Action OnFailHandler)
         {
@@ -99,13 +100,45 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
                 await test.Setup(this);
                 await test.RunTest();
                 await test.Cleanup();
-                TestOutputs.Add((testName, "Success"));
+                TestOutputs.Add((testName, ConsoleColor.Green, "Success"));
             } catch (Exception e)
             {
-                TestOutputs.Add((testName, $"Failed. Reason: {e}"));
+                const ConsoleColor defaultDataColor = ConsoleColor.Yellow;
+                TestOutputs.Add((testName, ConsoleColor.Red, $"Failed. Reason: {e}"));
                 foreach(DictionaryEntry de in e.Data)
                 {
-                    TestOutputs.Add((testName, $"{de.Key}:{de.Value}"));
+                    // Not ideal pattern but it be what it be.
+                    switch (de.Key)
+                    {
+                        case Constants.ExceptionDataKeys.Validations:
+                            int index = 0;
+                            int gameStep = (int)e.Data[Constants.ExceptionDataKeys.GameStep];
+                            TestOutputs.Add((testName, defaultDataColor, $"{de.Key}:"));
+                            foreach (string validation in (IEnumerable<string>)de.Value)
+                            {
+                                if (index >= (gameStep + 3))
+                                {
+                                    TestOutputs.Add((testName, ConsoleColor.Gray, $"\t[{index}]...[{((IEnumerable<string>)de.Value).Count()}]"));
+                                    break;
+                                }
+                                ConsoleColor color = ConsoleColor.Green;
+                                if (index == gameStep)
+                                {
+                                    color = ConsoleColor.Red;
+                                }
+                                else if (index > gameStep)
+                                {
+                                    color = ConsoleColor.DarkGray;
+                                }
+                                TestOutputs.Add((testName, color, $"\t{((index == gameStep) ? "*" : string.Empty)}[{index}]: {validation}"));
+
+                                index++;
+                            }
+                            break;
+                        default:
+                            TestOutputs.Add((testName, defaultDataColor, $"{de.Key}: {de.Value}"));
+                            break;
+                    }
                 }
             }
         }
@@ -203,18 +236,21 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
 
             Console.WriteLine("\nSummary of Tests");
             Console.WriteLine("--------------------------------------------");
-            var groupedTestOutputs = TestOutputs.GroupBy(kvp => kvp.Item1).ToDictionary(g=>g.Key, g=>g.Select(kvp=>kvp.Item2).ToList());
-            foreach ((string TestName, List<string> outputs) in groupedTestOutputs)
+            var groupedTestOutputs = TestOutputs.GroupBy(kvp => kvp.Item1).ToDictionary(g=>g.Key, g=>g.Select(tup=>(tup.Item2, tup.Item3)).ToList());
+            foreach ((string TestName, List<(ConsoleColor, string)> outputs) in groupedTestOutputs)
             {
-                bool succeeded = outputs.Contains("Success");
-                if (succeeded)
-                {
-                    numSuccess += 1;
-                }
                 Console.WriteLine($"---------[[{TestName}]]--------");
-                Console.ForegroundColor = succeeded ? ConsoleColor.Green : ConsoleColor.Red;
-                Console.WriteLine(string.Join(Environment.NewLine, outputs));
-                Console.ResetColor();
+                foreach ((ConsoleColor color, string output) in outputs)
+                {
+                    Console.ForegroundColor = color;
+                    Console.WriteLine(output);
+                    Console.ResetColor();
+
+                    if (output == "Success")
+                    {
+                        numSuccess += 1;
+                    }
+                }
                 Console.WriteLine("--------------------------------------------");
             }
 

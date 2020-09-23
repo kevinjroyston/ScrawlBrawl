@@ -36,8 +36,8 @@ namespace RoystonGameAutomatedTestingClient.Games
 
         public int GameModeIndex { get; set; } = -1;
         public abstract string GameModeTitle { get; }
-        public virtual TimeSpan DelayBetweenSubmissions { get; } = TimeSpan.FromMilliseconds(250);
-        public virtual TimeSpan PollingDelay { get; } = TimeSpan.FromMilliseconds(500);
+        public virtual TimeSpan DelayBetweenSubmissions { get; } = TimeSpan.FromMilliseconds(10);
+        public virtual TimeSpan PollingDelay { get; } = TimeSpan.FromMilliseconds(250);
         public virtual TimeSpan MaxTotalPollingTime { get; } = TimeSpan.FromSeconds(5);
 
         public abstract UserFormSubmission HandleUserPrompt(UserPrompt prompt, LobbyPlayer player, int gameStep);
@@ -61,7 +61,6 @@ namespace RoystonGameAutomatedTestingClient.Games
             // Heheheh, don't mind me. Just using some questionable patterns.
             if (isStructured())
             {
-                // TODO: Validate these shenanigans actually work.
                 await Lobby.Populate(((IStructuredTest)this).TestOptions.NumPlayers);
                 await Lobby.Configure(((IStructuredTest)this).TestOptions.GameModeOptions, this.GameModeIndex);
             }
@@ -132,6 +131,7 @@ namespace RoystonGameAutomatedTestingClient.Games
             return optionRequests;
         }
 
+        // TODO: Console.writeline should instead be a logging callback passed in by TestRunner / Prefix the test name.
         public List<GameModeOptionRequest> HandleCustomGameTestOptions(List<GameModeOptionRequest> optionRequests)
         {
             foreach (GameModeOptionResponse option in Game.Options)
@@ -185,7 +185,11 @@ namespace RoystonGameAutomatedTestingClient.Games
                             throw new Exception("Ran out of time polling, did game soft-lock?");
                         }
 
-                        Thread.Sleep((int)this.PollingDelay.TotalMilliseconds);
+                        // Delay not needed on first iteration.
+                        if (playerPrompts.Count > 0)
+                        {
+                            Thread.Sleep((int)this.PollingDelay.TotalMilliseconds);
+                        }
 
                         playerPrompts = new Dictionary<LobbyPlayer, Task<UserPrompt>>();
                         foreach (LobbyPlayer player in Lobby.Players)
@@ -222,7 +226,7 @@ namespace RoystonGameAutomatedTestingClient.Games
                         var validations = ((IStructuredTest)this).UserPromptIdValidations;
                         if (i > validations.Count)
                         {
-                            throw new Exception($"Game has gone past all structured test validations without ending. Current prompts {SummarizePrompts(prompts).PrettyPrint()}");
+                            throw new Exception($"Game has gone past all structured test validations without ending.");
                         }
 
                         this.ValidatePrompts(validations[i], prompts);
@@ -267,17 +271,17 @@ namespace RoystonGameAutomatedTestingClient.Games
             }
             catch (Exception e)
             {
-                e.Data.Add("GameStep", i);
+                e.Data.Add(Constants.ExceptionDataKeys.GameStep, i);
 
                 // Try and add additional data points
                 try
                 {
-                    if ((this is IStructuredTest) && (i < ((IStructuredTest)this).UserPromptIdValidations.Count))
+                    if (this is IStructuredTest)
                     {
-                        e.Data.Add("Validations", Environment.NewLine + ((IStructuredTest)this).UserPromptIdValidations[i].PrettyPrint());
+                        e.Data.Add(Constants.ExceptionDataKeys.Validations, ((IStructuredTest)this).UserPromptIdValidations.Select(var => var.PrettyPrint()));
                     }
 
-                    e.Data.Add("Prompts", Environment.NewLine + SummarizePrompts(playerPrompts.Values.Select(task => task.Result)).PrettyPrint());
+                    e.Data.Add(Constants.ExceptionDataKeys.Prompts, $"*[{i}]:{SummarizePrompts(playerPrompts.Values.Select(task => task.Result)).PrettyPrint()}");
                 }
                 catch
                 {
@@ -295,19 +299,16 @@ namespace RoystonGameAutomatedTestingClient.Games
         private void ValidatePrompts(GameStep validations, IEnumerable<UserPrompt> prompts)
         {
             var summarizedPrompts = SummarizePrompts(prompts);
-
-            string debugString = $"Prompts:\n{summarizedPrompts.PrettyPrint()}\n\nValidations:\n{validations.PrettyPrint()}";
-
             foreach ((UserPromptId id, int count) in validations)
             {
                 if (count > 0 && !summarizedPrompts.ContainsKey(id))
                 {
-                    throw new Exception($"Validation failure. UserStateId:{id}. Expected ({count}) but found none.\n{debugString}");
+                    throw new Exception($"Validation failure. UserStateId:{id}. Expected ({count}) but found none.");
                 }
 
                 if (count > 0 && (summarizedPrompts[id] != count))
                 {
-                    throw new Exception($"Validation failure. UserStateId:{id}. Expected ({count}) but found ({summarizedPrompts[id]})\n{debugString}");
+                    throw new Exception($"Validation failure. UserStateId:{id}. Expected ({count}) but found ({summarizedPrompts[id]})");
                 }
             }
 
@@ -315,12 +316,12 @@ namespace RoystonGameAutomatedTestingClient.Games
             {
                 if (count > 0 && !validations.ContainsKey(id))
                 {
-                    throw new Exception($"Validation failure. UserStateId:{id}. Found ({count}) but expected none\n{debugString}");
+                    throw new Exception($"Validation failure. UserStateId:{id}. Found ({count}) but expected none");
                 }
 
                 if (count > 0 && (validations[id] != count))
                 {
-                    throw new Exception($"Validation failure. UserStateId:{id}. Found ({count}) but expected ({validations[id]})\n{debugString}");
+                    throw new Exception($"Validation failure. UserStateId:{id}. Found ({count}) but expected ({validations[id]})");
                 }
             }
         }
