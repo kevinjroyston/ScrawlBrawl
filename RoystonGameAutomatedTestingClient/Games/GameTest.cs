@@ -36,6 +36,8 @@ namespace RoystonGameAutomatedTestingClient.Games
 
         public int GameModeIndex { get; set; } = -1;
         public abstract string GameModeTitle { get; }
+
+        // TODO: Make below fields command line arguments.
         public virtual TimeSpan DelayBetweenSubmissions { get; } = TimeSpan.FromMilliseconds(10);
         public virtual TimeSpan PollingDelay { get; } = TimeSpan.FromMilliseconds(250);
         public virtual TimeSpan MaxTotalPollingTime { get; } = TimeSpan.FromSeconds(5);

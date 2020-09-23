@@ -38,7 +38,7 @@ namespace RoystonGame.Web.Controllers
             const bool tempDebug = false;
             if (!tempDebug)
             {
-                if (!Sanitize.SanitizeString(id, out string error, "^([0-9A-Za-z]){50}$",50,50))
+                if (!Sanitize.SanitizeString(id, out string error, Constants.RegexStrings.UserId,50,50))
                 {
                     return BadRequest(error);
                 }
