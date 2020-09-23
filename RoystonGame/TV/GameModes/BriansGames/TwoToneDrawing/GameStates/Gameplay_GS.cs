@@ -38,6 +38,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             // TODO: Rank several drawings rather than pick one.
             return new UserPrompt
             {
+                UserPromptId = UserPromptId.PartyLeader_SkipReveal,
                 Title = "Vote for the best drawing!",
                 Description = description,
                 SubPrompts = new SubPrompt[]

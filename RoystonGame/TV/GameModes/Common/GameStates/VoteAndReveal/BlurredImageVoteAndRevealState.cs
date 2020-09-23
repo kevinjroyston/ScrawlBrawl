@@ -35,6 +35,7 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
         {
             return new UserPrompt()
             {
+                UserPromptId = UserPromptId.Voting,
                 Title = VotingTitle,
                 SubPrompts = new SubPrompt[]
                 {

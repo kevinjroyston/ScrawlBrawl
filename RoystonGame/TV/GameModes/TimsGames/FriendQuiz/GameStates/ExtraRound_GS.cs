@@ -27,6 +27,7 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.GameStates
                 usersToPrompt: lobby.GetAllUsers().Where((User user) => !user.Equals(differentUser)).ToList(),
                 promptGenerator: (User user) => new UserPrompt()
                 {
+                    UserPromptId = UserPromptId.FriendQuiz_ExtraRoundVoting,
                     Title = "Who do you think answered this question differently?",
                     Description = question.Text,
                     SubPrompts = new SubPrompt[]

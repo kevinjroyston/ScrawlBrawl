@@ -54,6 +54,7 @@ namespace RoystonGame.TV
         }
         public static UserPrompt UserNamePrompt(User user) => new UserPrompt()
         {
+            UserPromptId = UserPromptId.JoinLobby,
             Title = "join a game:",
             RefreshTimeInMs = 5000,
             SubPrompts = new SubPrompt[]

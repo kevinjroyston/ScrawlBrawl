@@ -26,6 +26,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
         {
             return new UserPrompt
             {
+                UserPromptId = UserPromptId.Voting,
                 Title = "Let's test that memory!",
                 SubPrompts = new SubPrompt[]
                 {

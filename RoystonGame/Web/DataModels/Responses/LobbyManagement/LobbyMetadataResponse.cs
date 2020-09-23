@@ -9,15 +9,19 @@ namespace RoystonGame.Web.DataModels.Responses
 {
     public class LobbyMetadataResponse
     {
-        public string LobbyId { get; }
+        public string LobbyId { get; set; }
 
-        public int PlayerCount { get; }
-        public bool GameInProgress { get; }
+        public int PlayerCount { get; set; }
+        public bool GameInProgress { get; set; }
 
-        public GameModeMetadata GameModeSettings { get; }
+        public GameModeMetadata GameModeSettings { get; set; }
 
-        public int? SelectedGameMode { get; }
+        public int? SelectedGameMode { get; set; }
 
+        public LobbyMetadataResponse()
+        {
+            //empty
+        }
         public LobbyMetadataResponse(Lobby lobby)
         {
             this.LobbyId = lobby.LobbyId;

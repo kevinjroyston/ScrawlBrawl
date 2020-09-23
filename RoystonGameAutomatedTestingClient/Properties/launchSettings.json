@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RoystonGameAutomatedTestingClient": {
+      "commandName": "Project",
+      "commandLineArgs": "-structured -parallel"
+    }
+  }
+}

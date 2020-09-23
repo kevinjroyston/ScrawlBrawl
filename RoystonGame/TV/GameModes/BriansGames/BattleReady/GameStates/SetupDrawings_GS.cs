@@ -58,6 +58,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
             DrawingType drawingType = UsersToRandomizedDrawingTypes[user][counter % 3];
             return new UserPrompt()
             {
+                UserPromptId = UserPromptId.BattleReady_BodyPartDrawing,
                 Title = Invariant($"Time to draw! Drawing {counter + 1} of {NumExpectedPerUser} expected"),
                 Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",
                 SubPrompts = new SubPrompt[]

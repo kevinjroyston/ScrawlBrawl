@@ -323,17 +323,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
     
         public void ValidateOptions(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            //todo when this can check number of players in lobby check that num prompts and num players per prompt can work with the lobby size
-
-
-            /*if(gameLobby.GetAllUsers().Count%2==1 && int.Parse(gameModeOptions[1].ShortAnswer)%2==1)
-            {
-                throw new GameModeInstantiationException("Numer of prompts per round must even if you have an odd number of players");
-            }*/
-            if ((int)gameModeOptions[1].ValueParsed % 2 == 1)
-            {
-                throw new GameModeInstantiationException("Numer of prompts per round must even");
-            }
+            //empty
         }
         private State GetVotingAndRevealState(Prompt prompt, TimeSpan? votingTime)
         {

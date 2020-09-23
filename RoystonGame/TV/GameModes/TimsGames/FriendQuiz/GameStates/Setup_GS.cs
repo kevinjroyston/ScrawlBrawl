@@ -34,6 +34,7 @@ namespace RoystonGame.TV.GameModes.TimsGames.FriendQuiz.GameStates
             SimplePromptUserState writingUserState = new SimplePromptUserState(
                 promptGenerator: (User user) => new UserPrompt()
                 {
+                    UserPromptId = UserPromptId.FriendQuiz_CreateQuestion,
                     Title = "Let's Make Some Questions",
                     Description = "Write a question and choose an answer type for it",
                     SubPrompts = new SubPrompt[]

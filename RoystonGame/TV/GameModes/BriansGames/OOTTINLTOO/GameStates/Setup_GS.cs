@@ -82,6 +82,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.OOTTINLTOO.GameStates
                 stateChain.Add(new SimplePromptUserState(
                     promptGenerator: (User user) => new UserPrompt()
                     {
+                        UserPromptId = UserPromptId.ImposterSyndrome_Draw,
                         Title = Invariant($"Drawing {lambdaSafeIndex + 1} of {stateChain.Count()}"),
                         Description = "Draw the prompt below. Careful, if you aren't the odd one out and people think you are, you will lose points for being a terrible artist.",
                         SubPrompts = new SubPrompt[]

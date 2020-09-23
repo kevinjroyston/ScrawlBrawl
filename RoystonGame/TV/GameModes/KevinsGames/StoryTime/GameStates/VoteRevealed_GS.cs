@@ -19,6 +19,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.StoryTime.GameStates
     {
         private static UserPrompt PartyLeaderSkipButton(User user) => new UserPrompt()
         {
+            UserPromptId = UserPromptId.PartyLeader_SkipReveal,
             Title = "Skip Reveal",
             SubmitButton = true
         };

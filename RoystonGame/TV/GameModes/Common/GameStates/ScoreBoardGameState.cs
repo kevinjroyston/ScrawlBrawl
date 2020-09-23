@@ -15,6 +15,7 @@ namespace RoystonGame.TV.GameModes.Common.GameStates
     {
         private static UserPrompt PartyLeaderSkipButton(User user) => new UserPrompt()
         {
+            UserPromptId = UserPromptId.PartyLeader_SkipScoreboard,
             Title = "Skip Scoreboard",
             SubmitButton = true
         };

@@ -25,6 +25,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.StoryTime.GameStates
         {
             return new UserPrompt
             {
+                UserPromptId = UserPromptId.Voting,
                 Title = Constants.UIStrings.VotingUnityTitle,
                 SubPrompts = new SubPrompt[]
                 {

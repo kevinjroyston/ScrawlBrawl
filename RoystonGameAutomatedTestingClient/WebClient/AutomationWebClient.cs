@@ -14,7 +14,7 @@ using RoystonGame.Web.DataModels.Responses;
 using System.IO;
 using System.Net.Http.Formatting;
 
-namespace RoystonGameAutomatedTestingClient.cs.WebClient
+namespace RoystonGameAutomatedTestingClient.WebClient
 {
     public class AutomationWebClient
     {
@@ -34,15 +34,12 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
                 userId: userId,
                 method: HttpMethod.Get);
 
+            await currentContentResponse.ThrowIfNonSuccessResponse(userId);
+
             return JsonConvert.DeserializeObject<UserPrompt>(await currentContentResponse.Content.ReadAsStringAsync());
         }
 
-        public async Task CreateUserFormSubmission(Func<UserPrompt, UserFormSubmission> handler, string userId)
-        {
-
-        }
-
-        public async Task SubmitUserForm ( Func<UserPrompt, UserFormSubmission> handler, string userId)
+        public async Task GetPromptAndSubmitUserForm ( Func<UserPrompt, UserFormSubmission> handler, string userId)
         {
             HttpResponseMessage currentContentResponse = await MakeWebRequest(
                 path: Constants.Path.CurrentContent,
@@ -52,18 +49,22 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
             UserPrompt prompt = JsonConvert.DeserializeObject<UserPrompt>(await currentContentResponse.Content.ReadAsStringAsync());
 
             UserFormSubmission submission = handler(prompt);
+            await SubmitUserForm(prompt, submission, userId);
+        }
+
+        public async Task SubmitUserForm(UserPrompt prompt, UserFormSubmission submission, string userId)
+        { 
+            if (submission == null)
+            {
+                return;
+            }
             submission.Id = prompt.Id;
             for (int i = 0; i < (submission.SubForms?.Count ?? 0); i++)
             {
                 submission.SubForms[i].Id = prompt.SubPrompts?[i]?.Id ?? Guid.Empty;
             }
 
-            if (submission == null)
-            {
-                return;
-            }
-
-            await MakeWebRequest(
+            HttpResponseMessage httpResponseMessage = await MakeWebRequest(
                 path: Constants.Path.FormSubmit,
                 userId: userId,
                 method: HttpMethod.Post,
@@ -71,6 +72,8 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
                     JsonConvert.SerializeObject(submission),
                     Encoding.UTF8,
                     Constants.MediaType.ApplicationJson));
+
+            await httpResponseMessage.ThrowIfNonSuccessResponse(userId);
         }
 
         public async Task<HttpResponseMessage> MakeWebRequest(string path, string userId, HttpMethod method, HttpContent content = null)

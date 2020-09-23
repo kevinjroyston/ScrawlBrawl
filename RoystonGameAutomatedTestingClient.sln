@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoystonGame", "RoystonGame\RoystonGame.csproj", "{9A76F5C9-8AA8-4179-A7AC-3488E3058EFC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoystonGameAutomatedTestingClient.cs", "RoystonGameAutomatedTestingClient\RoystonGameAutomatedTestingClient.csproj", "{1EDDF1F6-5A83-45D4-AC9A-E765A0E4F01C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoystonGameAutomatedTestingClient", "RoystonGameAutomatedTestingClient\RoystonGameAutomatedTestingClient.csproj", "{1EDDF1F6-5A83-45D4-AC9A-E765A0E4F01C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,6 @@ Global
 		{9A76F5C9-8AA8-4179-A7AC-3488E3058EFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A76F5C9-8AA8-4179-A7AC-3488E3058EFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A76F5C9-8AA8-4179-A7AC-3488E3058EFC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{39FD3A4B-FF68-44D0-8B4B-BA2DC7BC26DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39FD3A4B-FF68-44D0-8B4B-BA2DC7BC26DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39FD3A4B-FF68-44D0-8B4B-BA2DC7BC26DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{39FD3A4B-FF68-44D0-8B4B-BA2DC7BC26DF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1EDDF1F6-5A83-45D4-AC9A-E765A0E4F01C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1EDDF1F6-5A83-45D4-AC9A-E765A0E4F01C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1EDDF1F6-5A83-45D4-AC9A-E765A0E4F01C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -28,5 +24,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D9E13DB2-8DDC-4DEC-8F51-1F6B069B0179}
 	EndGlobalSection
 EndGlobal

@@ -28,6 +28,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.GameStates
                 usersToPrompt: usersToPrompt,
                 promptGenerator: (User user) => new UserPrompt()
                 {
+                    UserPromptId = UserPromptId.ImposterSyndrome_Draw,
                     Title = "Draw the prompt below",
                     Description = "Careful, if you aren't the odd one out and people think you are, you will lose points for being a terrible artist.",
                     SubPrompts = new SubPrompt[]
@@ -52,7 +53,11 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.GameStates
                     {
                         if (user == promptToDraw.Owner)
                         {
-                            return new UserPrompt() { Description = "You won't be drawing for this one. Sit tight" };
+                            return new UserPrompt()
+                            {
+                                UserPromptId = UserPromptId.SitTight,
+                                Description = "You won't be drawing for this one. Sit tight"
+                            };
                         }
                         else
                         {

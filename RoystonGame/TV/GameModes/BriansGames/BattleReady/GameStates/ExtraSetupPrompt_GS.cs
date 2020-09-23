@@ -1,6 +1,7 @@
 ﻿using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.GameModes.BriansGames.BattleReady.DataModels;
 using RoystonGame.TV.GameModes.Common.GameStates;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
@@ -33,6 +34,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
         {
             return new UserPrompt()
             {
+                UserPromptId = UserPromptId.BattleReady_ExtraBattlePrompts,
                 Title = "Now lets make some battle prompts!",
                 Description = "Examples: Who would win in a fight, Who would make the best actor, Etc.",
                 SubPrompts = new SubPrompt[]

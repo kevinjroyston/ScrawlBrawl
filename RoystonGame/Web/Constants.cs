@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,6 +33,11 @@ namespace RoystonGame.Web
             public static string Peach = "rgb(255,101,101)";
             public static string Purple = "rgb(91,80,220)";
             public static string Yellow = "rgb(230,230,0)";
+        }
+
+        public static class RegexStrings
+        {
+            public static string UserId = "^([0-9A-Za-z]){50}$";
         }
     }
 }

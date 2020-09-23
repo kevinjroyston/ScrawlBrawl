@@ -36,6 +36,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
                 int drawingNumber = i;
                 stateChain.Add(new SimplePromptUserState((User user) => new UserPrompt()
                 {
+                    UserPromptId = UserPromptId.Mimic_DrawAnything,
                     Title = Invariant($"Time to draw! Drawing \"{drawingNumber}\" of \"{numDrawingsPerUser}\""),
                     Description = "Draw anything you want",
                     SubPrompts = new SubPrompt[]

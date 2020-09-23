@@ -56,6 +56,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady.GameStates
                     {       
                         return new UserPrompt
                         {
+                            UserPromptId = UserPromptId.BattleReady_ContestantCreation,
                             Title = Invariant($"Make the best character for this prompt: \"{prompt.Text}\""),
                             SubPrompts = new SubPrompt[]
                             {

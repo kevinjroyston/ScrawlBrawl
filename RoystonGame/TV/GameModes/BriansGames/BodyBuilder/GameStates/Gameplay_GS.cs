@@ -33,6 +33,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 
             return new UserPrompt
             {
+                UserPromptId = UserPromptId.BodyBuilder_TradeBodyPart,
                 Title = "This is your current person",
                 SubPrompts = new SubPrompt[]
                 {
@@ -178,19 +179,20 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 {
                     return new UserPrompt
                     {
+                        UserPromptId = UserPromptId.BodyBuilder_FinishedPerson,
                         Title = "You are done! This is your final person",
 
                         SubPrompts = new SubPrompt[]
-                                            {
-                        new SubPrompt
                         {
-                            StringList = new string[]
+                            new SubPrompt
+                            {
+                                StringList = new string[]
                                 {
                                     CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Head].Drawing, ThreePartPeopleConstants.Widths[DrawingType.Head], ThreePartPeopleConstants.Heights[DrawingType.Head]),
                                     CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Body].Drawing, ThreePartPeopleConstants.Widths[DrawingType.Body], ThreePartPeopleConstants.Heights[DrawingType.Body]),
                                     CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Legs].Drawing, ThreePartPeopleConstants.Widths[DrawingType.Legs], ThreePartPeopleConstants.Heights[DrawingType.Legs])
                                 },
-                        },
+                            },
                         },
                         SubmitButton = false
                     };
