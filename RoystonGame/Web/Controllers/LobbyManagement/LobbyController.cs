@@ -15,9 +15,9 @@ namespace RoystonGame.Web.Controllers.LobbyManagement
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-#if !DEBUG
-    [Authorize(Policy = "LobbyManagement")]
-#endif
+//#if !DEBUG
+ //   [Authorize(Policy = "LobbyManagement")]
+//#endif
     public class LobbyController : ControllerBase
     {
         public LobbyController(ILogger<LobbyController> logger, GameManager gameManager)

@@ -128,10 +128,10 @@ namespace RoystonGame
             app.UseRouting();
             app.UseCors();
 
-#if !DEBUG
+/*#if !DEBUG
             app.UseAuthentication();
             app.UseAuthorization();
-#endif
+#endif*/
 
             // SPAs, Sockets, and Endpoints oh my!
             app.UseWebSockets(new WebSocketOptions()

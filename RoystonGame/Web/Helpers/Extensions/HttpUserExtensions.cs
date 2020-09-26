@@ -9,9 +9,9 @@ namespace RoystonGame.Web.Helpers.Extensions
     {
         public static string GetUserId(this IPrincipal principal, string testHookId)
         {
-#if DEBUG
+//#if DEBUG
             return testHookId;
-#else
+/*#else
             if (principal == null)
             {
                 return null;
@@ -19,7 +19,7 @@ namespace RoystonGame.Web.Helpers.Extensions
             var claimsIdentity = (ClaimsIdentity)principal.Identity;
             var claim = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier);
             return claim?.Value;
-#endif
+#endif*/
         }
 
         /*public static string GetUserAgent(this HttpRequest request)

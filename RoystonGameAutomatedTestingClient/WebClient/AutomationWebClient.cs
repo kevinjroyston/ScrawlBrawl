@@ -18,7 +18,7 @@ namespace RoystonGameAutomatedTestingClient.WebClient
 {
     public class AutomationWebClient
     {
-        private Uri TargetBaseUri { get; } = new Uri("http://localhost:50403");
+        private Uri TargetBaseUri { get; } = new Uri("https://scrawlbrawl.tv");
         private HttpClient HttpClient { get; set; }
         private Random Rand { get; }
         private float AutoSubmitPercentage { get; }
