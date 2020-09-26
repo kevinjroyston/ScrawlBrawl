@@ -9,10 +9,9 @@ using GameStep = System.Collections.Generic.IReadOnlyDictionary<RoystonGame.Web.
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    [EndToEndGameTest("ImposterSyndrome_Struct1")]
-    public class StructuredImposterTest1 : ImposterTest, IStructuredTest
+    public abstract class StructuredImposterTest : ImposterTest, IStructuredTest
     {
-        private const int NumPlayers = 5;
+        protected abstract int NumPlayers { get; }
         public TestOptions TestOptions =>
             new TestOptions
             {
@@ -47,5 +46,24 @@ namespace RoystonGameAutomatedTestingClient.Games
                 return toReturn;
             }
         }
+    }
+
+
+    [EndToEndGameTest("ImposterSyndrome_Struct1")]
+    public class Struct_Imp_Test1 : StructuredImposterTest
+    {
+        protected override int NumPlayers => 5;
+    }
+
+    [EndToEndGameTest("ImposterSyndrome_Struct2")]
+    public class Struct_Imp_Test2 : StructuredImposterTest
+    {
+        protected override int NumPlayers => 4;
+    }
+
+    [EndToEndGameTest("ImposterSyndrome_Struct3")]
+    public class Struct_Imp_Test3 : StructuredImposterTest
+    {
+        protected override int NumPlayers => 10;
     }
 }

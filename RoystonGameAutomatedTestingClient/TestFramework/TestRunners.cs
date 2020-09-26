@@ -17,6 +17,7 @@ using System.Reflection;
 using RoystonGameAutomatedTestingClient.DataModels;
 using Microsoft.Identity.Client;
 using System.Collections;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace RoystonGameAutomatedTestingClient.TestFramework
 {   
@@ -26,6 +27,13 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
         public bool IsParallel { get; }
         public bool OpenBrowsers { get; }
         public int NumUsers { get; }
+        public bool UseDefaults { get; }
+
+        /// <summary>
+        /// The percentage of submits which should use the auto submit endpoint.
+        /// </summary>
+        private float? AutoSubmitPercentage { get; }
+        private int? RandomSeed { get; }
         private Dictionary<string, Dictionary<string, GameTest>> SelectedTests { get; set; } = new Dictionary<string, Dictionary<string, GameTest>>();
         private Action OnFailHandler;
 
@@ -45,11 +53,15 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
             Console.WriteLine("--------------------------------------------"); 
             Console.WriteLine(string.Join("\n", Games.Select((game) => game.Title)));
 
-            DetermineGameTests((string[])Params["Tests"], (string[])Params["GameModes"], (bool)Params["IsStructured"], Games);
-            this.OpenBrowsers = (bool) Params["OpenBrowsers"];
-            this.NumUsers = (int) Params["NumUsers"];
+            this.OpenBrowsers = (bool)Params["OpenBrowsers"];
+            this.NumUsers = (int)Params["NumUsers"];
             this.IsParallel = (bool)Params["IsParallel"];
+            this.AutoSubmitPercentage = (float)Params["AutoSubmitPercentage"];
+            this.RandomSeed = (int)Params["RandomSeed"];
             this.OnFailHandler = OnFailHandler;
+            this.UseDefaults = (bool)Params["UseDefaults"];
+
+            DetermineGameTests((string[])Params["Tests"], (string[])Params["GameModes"], (bool)Params["IsStructured"], Games);
         }
         public async Task Run()
         {
@@ -146,12 +158,9 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
         /// <summary>
         /// Reflection witchcraft which finds all objects with <see cref="EndToEndGameTestAttribute"/>
         /// </summary>
-        private static IReadOnlyDictionary<string, Func<GameTest>> FindAllTestsWithAttribute()
+        private IReadOnlyDictionary<string, Func<GameTest>> FindAllTestsWithAttribute()
         {
-            var gameTests =
-               from type in Assembly.GetExecutingAssembly().GetTypes()
-               where type.GetCustomAttributes<EndToEndGameTestAttribute>().Any()
-               select type;
+            var gameTests = Helpers.GetTypesWith<EndToEndGameTestAttribute>(inherit: false);
 
             Dictionary<string, Func<GameTest>> toReturn = new Dictionary<string, Func<GameTest>>();
 
@@ -164,7 +173,6 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
 
             return toReturn;
         }
-
         private void DetermineGameTests(string[] specifiedTests, string[] specifiedGameModes, bool isStructured, List<GameModeMetadata> games)
         {
             // Find all tests.
@@ -195,8 +203,7 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
             { 
                 GameTest test = testGenerator.Invoke();
                 int gameMode = games.FindIndex(gameData => gameData.Title == test.GameModeTitle);
-                test.GameModeIndex = gameMode;
-                test.Game = games[gameMode];
+                test.Initialize(this.AutoSubmitPercentage, this.RandomSeed, gameMode, games[gameMode]);
 
                 bool gameModeConstraintSatisified = (specifiedGameModes == null) || specifiedGameModes.Contains(test.GameModeTitle);
                 bool testNameConstraintSatisfied = (specifiedTests == null) || specifiedTests.Contains(testName);

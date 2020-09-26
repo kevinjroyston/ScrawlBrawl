@@ -18,6 +18,7 @@ namespace RoystonGameAutomatedTestingClient.Games
     {
         private const string TestName = "Mimic";
         public override string GameModeTitle => "Mimic";
+        public override TimeSpan MaxTotalPollingTime => TimeSpan.FromSeconds(15); // memorization timer will be 10 seconds
         public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player, int gameStep)
         {
             switch (userPrompt.UserPromptId) {

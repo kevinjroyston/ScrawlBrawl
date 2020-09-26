@@ -49,6 +49,18 @@ namespace RoystonGameAutomatedTestingClient.cs
         [Option("-t|-tests")]
         public string Tests { get; }
 
+        //Value from [0,1.0] indicating what percentage of requests should be timed out.
+        [Option("-tp|-timeoutpercent")]
+        public float AutoSubmitPercentage { get; }
+
+        //Sets the random seed. By default always 0
+        [Option("-seed")]
+        public int RandomSeed { get; }
+
+        //DisableCleanupOnFailure default false if true (not close lobby print stuff to console, and open browsers)
+        [Option("-d|-defaultparams")]
+        public bool UseDefaults { get; }
+
         public int ExitCode { get; set; } = (int) ExitCodes.Success;
         private TestRunner runner;
 
@@ -75,6 +87,9 @@ namespace RoystonGameAutomatedTestingClient.cs
             Params.Add("IsParallel", IsParallel);
             Params.Add("IsStructured", IsStructured);
             Params.Add("DisableCleanup", DisableCleanup);
+            Params.Add("AutoSubmitPercentage", AutoSubmitPercentage);
+            Params.Add("RandomSeed", RandomSeed);
+            Params.Add("UseDefaults", UseDefaults);
 
             return Params;
         }

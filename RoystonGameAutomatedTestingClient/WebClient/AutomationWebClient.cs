@@ -20,11 +20,17 @@ namespace RoystonGameAutomatedTestingClient.WebClient
     {
         private Uri TargetBaseUri { get; } = new Uri("http://localhost:50403");
         private HttpClient HttpClient { get; set; }
-        private Random Rand { get; } = new Random();
+        private Random Rand { get; }
+        private float AutoSubmitPercentage { get; }
 
-        public AutomationWebClient()
+        public AutomationWebClient(float? autoSubmitPercentage = null, int? randomSeed = null)
         {
+            autoSubmitPercentage = autoSubmitPercentage ?? 0.0f;
+            randomSeed = randomSeed ?? 0;
+
             this.HttpClient = new HttpClient();
+            this.Rand = new Random(randomSeed.Value);
+            this.AutoSubmitPercentage = autoSubmitPercentage.Value;
         }
 
         public async Task<UserPrompt> GetUserPrompt(string userId)
@@ -53,7 +59,7 @@ namespace RoystonGameAutomatedTestingClient.WebClient
         }
 
         public async Task SubmitUserForm(UserPrompt prompt, UserFormSubmission submission, string userId)
-        { 
+        {
             if (submission == null)
             {
                 return;
@@ -63,9 +69,15 @@ namespace RoystonGameAutomatedTestingClient.WebClient
             {
                 submission.SubForms[i].Id = prompt.SubPrompts?[i]?.Id ?? Guid.Empty;
             }
+            string path = Constants.Path.FormSubmit;
+            // If set up to auto submit and randomly selected to auto submit.
+            if ((prompt.AutoSubmitAtTime != null)&&(Rand.NextDouble() < this.AutoSubmitPercentage))
+            {
+                path = Constants.Path.AutoFormSubmit;
+            }
 
             HttpResponseMessage httpResponseMessage = await MakeWebRequest(
-                path: Constants.Path.FormSubmit,
+                path: path,
                 userId: userId,
                 method: HttpMethod.Post,
                 content: new StringContent(

@@ -25,14 +25,15 @@ using GameStep = System.Collections.Generic.IReadOnlyDictionary<RoystonGame.Web.
 using RoystonGame.Web.DataModels.Enums;
 using RoystonGameAutomatedTestingClient.Extensions;
 using Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
     public abstract class GameTest
     {
-        protected AutomationWebClient WebClient = new AutomationWebClient();
+        protected AutomationWebClient WebClient { get; private set; }
         public GameModeMetadata Game { get; set; }
-        protected Lobby Lobby { get; }
+        protected Lobby Lobby { get; private set; }
 
         public int GameModeIndex { get; set; } = -1;
         public abstract string GameModeTitle { get; }
@@ -46,7 +47,14 @@ namespace RoystonGameAutomatedTestingClient.Games
 
         protected GameTest()
         {
+        }
+
+        public void Initialize(float? autoSubmitPercentage, int? randomSeed, int gameModeIndex, GameModeMetadata game)
+        {
+            this.GameModeIndex = gameModeIndex;
+            this.Game = game;
             this.Lobby = new Lobby();
+            this.WebClient = new AutomationWebClient(autoSubmitPercentage, randomSeed);
         }
 
         public bool isStructured()
@@ -68,12 +76,12 @@ namespace RoystonGameAutomatedTestingClient.Games
             }
             else
             {
-                if (runner.IsParallel)
+                if (runner.IsParallel && !runner.UseDefaults)
                 {
-                    throw new Exception("Cannot run unstructured tests in parallel");
+                    throw new Exception("Must use default parameters if running unstructured tests in parallel");
                 }
 
-                List<GameModeOptionRequest> optionRequests = SetUpGameTestOptions();
+                List<GameModeOptionRequest> optionRequests = SetUpGameTestOptions(runner.UseDefaults);
                 ValidateNumUsers(runner.NumUsers);
                 await Lobby.Populate(runner.NumUsers);
                 await Lobby.Configure(optionRequests, this.GameModeIndex);
@@ -82,8 +90,8 @@ namespace RoystonGameAutomatedTestingClient.Games
             if (runner.OpenBrowsers)
             {
                 // TODO: open lobby owner to management page.
-                Helpers.OpenBrowsers(new List<string> { Lobby.Owner.UserId });
-                Helpers.OpenBrowsers(Lobby.Players.Select(player => player.UserId));
+                Task parallel = Helpers.OpenBrowsers(new List<string> { Lobby.Owner.UserId });
+                Task parallel2 = Helpers.OpenBrowsers(Lobby.Players.Select(player => player.UserId));
             }
         }
 
@@ -97,19 +105,19 @@ namespace RoystonGameAutomatedTestingClient.Games
         {
             if (NumUsers < Game.MinPlayers)
             {
-                throw new Exception($"Number of users specified [{NumUsers}] doesn't meet minimum user amount [{Game.MinPlayers}]");
+                throw new Exception($"Number of users specified by argument -users [{NumUsers}] doesn't meet minimum user amount [{Game.MinPlayers}]");
             }
             else if (NumUsers > Game.MaxPlayers)
             {
-                throw new Exception($"Number of users specified [{NumUsers}] exceeds maximum user amount [{Game.MaxPlayers}]");
+                throw new Exception($"Number of users specified by argument -users [{NumUsers}] exceeds maximum user amount [{Game.MaxPlayers}]");
             }
         }
 
-        public List<GameModeOptionRequest> SetUpGameTestOptions()
+        public List<GameModeOptionRequest> SetUpGameTestOptions(bool useDefaults)
         {
             List<GameModeOptionRequest> optionRequests = new List<GameModeOptionRequest>();
 
-            bool defaultParams = Prompt.GetYesNo("Do you want to run with default parameters?", defaultAnswer: true, promptColor: ConsoleColor.Black, promptBgColor: ConsoleColor.White);
+            bool defaultParams = useDefaults || Prompt.GetYesNo("Do you want to run with default parameters?", defaultAnswer: true, promptColor: ConsoleColor.Black, promptBgColor: ConsoleColor.White);
 
             if (defaultParams)
             {

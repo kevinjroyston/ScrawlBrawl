@@ -22,7 +22,14 @@ namespace RoystonGame.TV.DataModels.States.StateGroups
         {
             this.Entrance.Transition((User user) =>
             {
-                StateChain toReturn = new StateChain(stateChainGenerator(user));
+                List<State> statesList = stateChainGenerator(user);
+                if(statesList.Count <= 0)
+                {
+                    // If no states in chain, go straight to exit.
+                    return this.Exit;
+                }
+
+                StateChain toReturn = new StateChain(statesList);
                 toReturn.Transition(this.Exit);
                 return toReturn;
             });

@@ -9,12 +9,11 @@ using GameStep = System.Collections.Generic.IReadOnlyDictionary<RoystonGame.Web.
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    [EndToEndGameTest("TwoTone_Struct1")]
-    public class StructuredTwoToneTest1 : TwoToneTest, IStructuredTest
+    public abstract class StructuredTwoToneTest : TwoToneTest, IStructuredTest
     {
-        private const int NumPlayers = 7;
-        private const int TeamsPerPrompt = 2;
-        private const int ColorsPerTeam = 3;
+        protected abstract int NumPlayers { get; }
+        protected abstract int TeamsPerPrompt { get; }
+        protected abstract int ColorsPerTeam { get; }
         public TestOptions TestOptions =>
             new TestOptions
             {
@@ -58,5 +57,35 @@ namespace RoystonGameAutomatedTestingClient.Games
                 return toReturn;
             }
         }
+    }
+
+    [EndToEndGameTest("TwoTone_Struct1")]
+    public class Struct_TwoTone_Test1 : StructuredTwoToneTest
+    {
+        protected override int NumPlayers => 5;
+
+        protected override int TeamsPerPrompt => 2;
+
+        protected override int ColorsPerTeam => 2;
+    }
+
+    [EndToEndGameTest("TwoTone_Struct2")]
+    public class Struct_TwoTone_Test2 : StructuredTwoToneTest
+    {
+        protected override int NumPlayers => 12;
+
+        protected override int TeamsPerPrompt => 4;
+
+        protected override int ColorsPerTeam => 3;
+    }
+
+    [EndToEndGameTest("TwoTone_Struct3")]
+    public class Struct_TwoTone_Test3 : StructuredTwoToneTest
+    {
+        protected override int NumPlayers => 7;
+
+        protected override int TeamsPerPrompt => 3;
+
+        protected override int ColorsPerTeam => 2;
     }
 }
