@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using static System.FormattableString;
 
 namespace RoystonGameAutomatedTestingClient.WebClient
@@ -12,6 +12,15 @@ namespace RoystonGameAutomatedTestingClient.WebClient
     public static class Helpers
     {
         private static Random Rand = new Random();
+
+        public static IEnumerable<Type> GetTypesWith<TAttribute>(bool inherit)
+                              where TAttribute : System.Attribute
+        {
+            return from a in AppDomain.CurrentDomain.GetAssemblies()
+                   from t in a.GetTypes()
+                   where t.IsDefined(typeof(TAttribute), inherit)
+                   select t;
+        }
 
         public static string GetRandomString(int length = 10)
         {
@@ -22,8 +31,9 @@ namespace RoystonGameAutomatedTestingClient.WebClient
             }
             return randomizedString;
         }
-        public static void OpenBrowsers(IEnumerable<string> userIds)
+        public static async Task OpenBrowsers(IEnumerable<string> userIds)
         {
+            List<Task> tasks = new List<Task>();
             foreach (string userId in userIds)
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo(Constants.Path.BrowserStart + userId)
@@ -31,8 +41,9 @@ namespace RoystonGameAutomatedTestingClient.WebClient
                     UseShellExecute = true,
                     Verb = "open"
                 };
-                Process.Start(startInfo);
+                tasks.Add(Task.Run(()=>Process.Start(startInfo)));
             }
+            await Task.WhenAll(tasks);
         }
 
         public static string GenerateRandomId()

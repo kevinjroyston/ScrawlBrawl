@@ -10,15 +10,14 @@ using GameStep = System.Collections.Generic.IReadOnlyDictionary<RoystonGame.Web.
 
 namespace RoystonGameAutomatedTestingClient.Games
 {
-    [EndToEndGameTest("BodyBuilder_Struct1")]
-    public class StructuredBodyBuildTest1 : BodyBuilderTest, IStructuredTest
+    public abstract class StructuredBodyBuilderTest : BodyBuilderTest, IStructuredTest
     {
         // Test might not work with some param combos.
-        private int NumPlayers = 5;
-        private int NumDrawings = 4;
-        private int NumPlayersPerPrompt = 2;
-        private int NumPrompts = 2;
-        private int NumRounds = 3;
+        protected abstract int NumPlayers { get; }
+        protected abstract int NumDrawings { get; }
+        protected abstract int NumPlayersPerPrompt { get; }
+        protected abstract int NumPromptsPerUserPerRound { get; }
+        protected abstract int NumRounds { get; }
         public TestOptions TestOptions =>
             new TestOptions
             {
@@ -26,7 +25,7 @@ namespace RoystonGameAutomatedTestingClient.Games
                 GameModeOptions = new List<GameModeOptionRequest>()
                 {
                     new GameModeOptionRequest(){ Value = NumRounds + "" }, // num rounds
-                    new GameModeOptionRequest(){ Value = NumPrompts + "" }, //num prompts
+                    new GameModeOptionRequest(){ Value = NumPromptsPerUserPerRound + "" }, //num prompts per user per round
                     new GameModeOptionRequest(){ Value = NumDrawings + ""}, // num drawings expected
                     new GameModeOptionRequest(){ Value = NumPlayersPerPrompt + ""}, // num players per prompt
                     new GameModeOptionRequest(){ Value = "5" } // game speed
@@ -55,7 +54,7 @@ namespace RoystonGameAutomatedTestingClient.Games
                             numPlayers:NumPlayers,
                             prompt: UserPromptId.BattleReady_BattlePrompts),
                     },
-                    repeatCounter: NumPrompts);
+                    repeatCounter: NumRounds * (int)Math.Ceiling(1.0*NumPromptsPerUserPerRound / NumPlayersPerPrompt));
 
                 var round = new List<GameStep>();
                 round.AppendRepetitiveGameSteps(
@@ -65,21 +64,52 @@ namespace RoystonGameAutomatedTestingClient.Games
                             numPlayers:NumPlayers,
                             prompt: UserPromptId.BattleReady_ContestantCreation),
                     },
-                    repeatCounter: NumPrompts * NumPlayers / NumRounds / NumPlayersPerPrompt);
+                    repeatCounter: NumPromptsPerUserPerRound);
 
                 round.AppendRepetitiveGameSteps(
                     copyFrom: new List<GameStep>
                     {
                         TestCaseHelpers.AllPlayers(UserPromptId.Voting, NumPlayers),
                         TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipReveal, NumPlayers),
-                        TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipScoreboard, NumPlayers),
                     },
                     repeatCounter: NumPlayers);
+                round.Add(TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipReveal, NumPlayers));
+                round.Add(TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipScoreboard, NumPlayers));
 
                 toReturn.AppendRepetitiveGameSteps(round, NumRounds);
 
                 return toReturn;
             }
         }
+    }
+
+    [EndToEndGameTest("BodyBuilder_Struct1")]
+    public class Struct_BB_Test1 : StructuredBodyBuilderTest
+    {
+        protected override int NumPlayers => 5;
+        protected override int NumDrawings => 4;
+        protected override int NumPlayersPerPrompt => 2;
+        protected override int NumPromptsPerUserPerRound => 2;
+        protected override int NumRounds => 3;
+    }
+
+    [EndToEndGameTest("BodyBuilder_Struct2")]
+    public class Struct_BB_Test2 : StructuredBodyBuilderTest
+    {
+        protected override int NumPlayers => 3;
+        protected override int NumDrawings => 3;
+        protected override int NumPlayersPerPrompt => 2;
+        protected override int NumPromptsPerUserPerRound => 2;
+        protected override int NumRounds => 1;
+    }
+
+    [EndToEndGameTest("BodyBuilder_Struct3")]
+    public class Struct_BB_Test3 : StructuredBodyBuilderTest
+    {
+        protected override int NumPlayers => 4;
+        protected override int NumDrawings => 10;
+        protected override int NumPlayersPerPrompt => 3;
+        protected override int NumPromptsPerUserPerRound => 3;
+        protected override int NumRounds => 2;
     }
 }

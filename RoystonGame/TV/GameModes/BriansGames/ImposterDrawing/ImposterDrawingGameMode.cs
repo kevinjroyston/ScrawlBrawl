@@ -88,7 +88,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
                         stateList.Add(GetImposterLoop(prompt));
                     }          
                 }
-                StateChain gamePlayChain = new StateChain(states: stateList, exit: this.Exit);
+                StateChain gamePlayChain = new StateChain(states: stateList);
                 gamePlayChain.Transition(this.Exit);
                 return gamePlayChain;
             }
