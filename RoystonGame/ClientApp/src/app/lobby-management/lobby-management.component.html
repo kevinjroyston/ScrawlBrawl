@@ -12,6 +12,7 @@
     </div>
 
     <div *ngIf="lobby != null">
+      <app-lobby-description></app-lobby-description>
       <div class="row justify-content-around align-items-center p-2 border-bottom">
         <div class="d-inline-flex">Lobby ID: {{ lobby.lobbyId.toUpperCase() }}</div>
         <div class="d-inline-flex">Players Joined: {{ lobby.playerCount }}</div>
@@ -26,36 +27,39 @@
             <button class="btn btn-primary d-inline-flex" (click)="gameModeCollapse = !gameModeCollapse" [attr.aria-expanded]="!gameModeCollapse" aria-controls="gameModes">
               {{ gameModeCollapse ? "▼" : "▲" }} Select Game
             </button>
-            <div *ngif ="gameModes && gameModes.Length > 0 && lobby.selectedGameMode">
+            <div *ngIf="gameModes && (gameModes.Length > 0) && lobby.selectedGameMode">
               <span class="d-inline-flex">Selected game mode:<b class="pl-1">{{ gameModes[lobby.selectedGameMode].title }}</b></span>
             </div>
           </div>
           <div id="gameModes" [ngbCollapse]="gameModeCollapse" (ngbCollapse)="refreshGameModes()">
-            <div *ngFor="let gameMode of gameModes; let i = index" >
+            <div *ngFor="let gameMode of gameModes; let i = index">
               <span class="fake-link" (click)="onSelectGameMode(i)">{{ gameMode.title }}</span>
             </div>
           </div>
         </div>
 
         <div *ngIf="lobby.selectedGameMode != null && gameModes != null">
-            <div *ngFor="let option of gameModes[lobby.selectedGameMode].options; let i = index">
-              <div *ngIf="option.responseType === 'Integer'">
-                <label>{{ option.description }}:</label>
-                <input class="ml-1 mr-1" type="number" [(ngModel)]="option.value" />
-              </div>
-              <div *ngIf="option.responseType === 'Boolean'">
-                <label for="bool-switch-{{i}}" >{{ option.description }}:</label>
-                <ui-switch class="ml-1 mr-1" [(ngModel)]="option.value" size="small"></ui-switch>
-                <!-- <input type="checkbox" id="bool-switch-{{i}}" checked="" [(ngModel)]="option.value" > -->
-                <label>Current value: {{ option.value }}</label>
-              </div>
+          <div *ngFor="let option of gameModes[lobby.selectedGameMode].options; let i = index">
+            <div *ngIf="option.responseType === 'Integer'">
+              <label>{{ option.description }}:</label>
+              <input class="ml-1 mr-1" type="number" [(ngModel)]="option.value" />
             </div>
-            <div class="Error" *ngIf="error">{{ error }}</div>
+            <div *ngIf="option.responseType === 'Boolean'">
+              <label for="bool-switch-{{i}}">{{ option.description }}:</label>
+              <ui-switch class="ml-1 mr-1" [(ngModel)]="option.value" size="small"></ui-switch>
+              <!-- <input type="checkbox" id="bool-switch-{{i}}" checked="" [(ngModel)]="option.value" > -->
+              <label>>Current value: {{ option.value }}</label>
+            </div>
+          </div>
+          <div class="Error" *ngIf="error">{{ error }}</div>
           <button class="btn btn-primary" (click)="onStartLobby()">Start</button>
+
+          {{gameModes[lobby.selectedGameMode].identifier}}
+          <div ng-include="'/assets/'+gameModes[lobby.selectedGameMode].identifier+'/lobby-description.html'"></div>
         </div>
       </div>
 
     </div>
-    
+
   </body>
 </html>

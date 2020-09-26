@@ -5,6 +5,12 @@ import { NgForm } from '@angular/forms';
 import { BroadcastService, MsalService } from '@azure/msal-angular';
 
 @Component({
+  selector: 'app-lobby-description',
+  templateUrl: '/assets/bodybuilder/lobby-description.html'
+})
+class DeviceComponent { }
+
+@Component({
     selector: 'app-lobby-management',
     templateUrl: './lobby-management.component.html',
     styleUrls: ['./lobby-management.component.css'],
@@ -132,5 +138,6 @@ class GameModeMetadata {
     maxPlayers: number;
     title: string;
     description: string;
+    indentifier: string;
     options: GameModeOptionResponse[];
 }

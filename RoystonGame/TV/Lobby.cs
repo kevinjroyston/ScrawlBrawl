@@ -103,6 +103,7 @@ namespace RoystonGame.TV
             new GameModeMetadata
             {
                 Title = "Imposter Syndrome",
+                Identifier = "Imposter",
                 Description = "Come up with a difference only you'll be able to spot!",
                 MinPlayers = 4,
                 MaxPlayers = null,
@@ -124,6 +125,7 @@ namespace RoystonGame.TV
             new GameModeMetadata
             {
                 Title = "Chaotic Cooperation",
+                Identifier = "Chaotic",
                 Description = "Blindly collaborate on a drawing with unknown teammates.",
                 MinPlayers = 4,
                 MaxPlayers = null,
@@ -167,6 +169,7 @@ namespace RoystonGame.TV
             new GameModeMetadata
             {
                 Title = "Body Swap", // in code references as Body Builder
+                Identifier = "BodySwap",
                 Description = "Try to make a complete character before your opponents can.",
                 MinPlayers = 3,
                 MaxPlayers = null,
@@ -216,6 +219,7 @@ namespace RoystonGame.TV
             new GameModeMetadata
             {
                 Title = "Body Builder", // in code refered to as Battle Ready
+                Identifier = "BodyBuilder",
                 Description = "Go head to head body to body and legs to legs with other players to try to make the best constestant for each challenge.",
                 MinPlayers = 3,
                 MaxPlayers = null,
@@ -269,6 +273,7 @@ namespace RoystonGame.TV
             new GameModeMetadata
             {
                 Title = "Mimic",
+                Identifier = "Mimic",
                 Description = "Test your drawing and memory skills",
                 MinPlayers = 3,
                 MaxPlayers = null,
@@ -322,6 +327,7 @@ namespace RoystonGame.TV
             new GameModeMetadata
             {
                 Title = "Friend Quiz",
+                Identifier = "FriendQuiz",
                 Description = "See how well you know your fellow players",
                 MinPlayers = 3,
                 MaxPlayers = null,
