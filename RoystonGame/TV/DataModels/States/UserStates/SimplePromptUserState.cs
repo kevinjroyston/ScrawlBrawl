@@ -4,6 +4,7 @@ using RoystonGame.TV.ControlFlows.Exit;
 using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.Users;
 using RoystonGame.TV.Extensions;
+using RoystonGame.Web.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
@@ -15,8 +16,19 @@ namespace RoystonGame.TV.DataModels.States.UserStates
     /// </summary>
     public class SimplePromptUserState : UserState
     {
-        public static UserPrompt DefaultWaitingPrompt(User user) => new UserPrompt() { Description = "Waiting . . ." };
-        public static UserPrompt YouHaveThePowerPrompt(User _) => new UserPrompt() { Title = "You have the power!", Description = "Click submit when everybody is ready :)", RefreshTimeInMs = 5000, SubmitButton = true };
+        public static UserPrompt DefaultWaitingPrompt(User user) => new UserPrompt()
+        {
+            UserPromptId = UserPromptId.Waiting,
+            Description = "Waiting . . ."
+        };
+        public static UserPrompt YouHaveThePowerPrompt(User _) => new UserPrompt()
+        {
+            UserPromptId = UserPromptId.PartyLeader_DefaultPrompt,
+            Title = "You have the power!",
+            Description = "Click submit when everybody is ready :)",
+            RefreshTimeInMs = 5000,
+            SubmitButton = true
+        };
 
         private Func<User, UserFormSubmission, (bool, string)> FormSubmitHandler { get; set; }
         private Func<User, UserFormSubmission, UserTimeoutAction> UserTimeoutHandler { get; set; }

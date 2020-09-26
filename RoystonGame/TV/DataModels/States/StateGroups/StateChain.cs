@@ -9,7 +9,9 @@ namespace RoystonGame.TV.DataModels.States.StateGroups
 {
     public class StateChain : StateGroup
     {
-        public StateChain(List<State> states, StateEntrance entrance = null, StateExit exit = null, TimeSpan? stateDuration = null) : base(firstState:states.First(),lastState:states.Last(),entrance: entrance, exit: exit, stateTimeoutDuration: stateDuration)
+        // State chain constructors do not support any form of empty lists or null.
+
+        public StateChain(List<State> states, StateEntrance entrance = null, StateExit exit = null, TimeSpan? stateDuration = null) : base(firstState:states.FirstOrDefault(),lastState:states.LastOrDefault(),entrance: entrance, exit: exit, stateTimeoutDuration: stateDuration)
         {
             for (int i = 1; i < states.Count; i++)
             {

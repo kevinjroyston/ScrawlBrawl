@@ -14,17 +14,23 @@ using RoystonGame.Web.DataModels.Responses;
 using System.IO;
 using System.Net.Http.Formatting;
 
-namespace RoystonGameAutomatedTestingClient.cs.WebClient
+namespace RoystonGameAutomatedTestingClient.WebClient
 {
     public class AutomationWebClient
     {
         private Uri TargetBaseUri { get; } = new Uri("http://localhost:50403");
         private HttpClient HttpClient { get; set; }
-        private Random Rand { get; } = new Random();
+        private Random Rand { get; }
+        private float AutoSubmitPercentage { get; }
 
-        public AutomationWebClient()
+        public AutomationWebClient(float? autoSubmitPercentage = null, int? randomSeed = null)
         {
+            autoSubmitPercentage = autoSubmitPercentage ?? 0.0f;
+            randomSeed = randomSeed ?? 0;
+
             this.HttpClient = new HttpClient();
+            this.Rand = new Random(randomSeed.Value);
+            this.AutoSubmitPercentage = autoSubmitPercentage.Value;
         }
 
         public async Task<UserPrompt> GetUserPrompt(string userId)
@@ -34,15 +40,12 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
                 userId: userId,
                 method: HttpMethod.Get);
 
+            await currentContentResponse.ThrowIfNonSuccessResponse(userId);
+
             return JsonConvert.DeserializeObject<UserPrompt>(await currentContentResponse.Content.ReadAsStringAsync());
         }
 
-        public async Task CreateUserFormSubmission(Func<UserPrompt, UserFormSubmission> handler, string userId)
-        {
-
-        }
-
-        public async Task SubmitUserForm ( Func<UserPrompt, UserFormSubmission> handler, string userId)
+        public async Task GetPromptAndSubmitUserForm ( Func<UserPrompt, UserFormSubmission> handler, string userId)
         {
             HttpResponseMessage currentContentResponse = await MakeWebRequest(
                 path: Constants.Path.CurrentContent,
@@ -52,25 +55,37 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
             UserPrompt prompt = JsonConvert.DeserializeObject<UserPrompt>(await currentContentResponse.Content.ReadAsStringAsync());
 
             UserFormSubmission submission = handler(prompt);
+            await SubmitUserForm(prompt, submission, userId);
+        }
+
+        public async Task SubmitUserForm(UserPrompt prompt, UserFormSubmission submission, string userId)
+        {
+            if (submission == null)
+            {
+                return;
+            }
             submission.Id = prompt.Id;
             for (int i = 0; i < (submission.SubForms?.Count ?? 0); i++)
             {
                 submission.SubForms[i].Id = prompt.SubPrompts?[i]?.Id ?? Guid.Empty;
             }
-
-            if (submission == null)
+            string path = Constants.Path.FormSubmit;
+            // If set up to auto submit and randomly selected to auto submit.
+            if ((prompt.AutoSubmitAtTime != null)&&(Rand.NextDouble() < this.AutoSubmitPercentage))
             {
-                return;
+                path = Constants.Path.AutoFormSubmit;
             }
 
-            await MakeWebRequest(
-                path: Constants.Path.FormSubmit,
+            HttpResponseMessage httpResponseMessage = await MakeWebRequest(
+                path: path,
                 userId: userId,
                 method: HttpMethod.Post,
                 content: new StringContent(
                     JsonConvert.SerializeObject(submission),
                     Encoding.UTF8,
                     Constants.MediaType.ApplicationJson));
+
+            await httpResponseMessage.ThrowIfNonSuccessResponse(userId);
         }
 
         public async Task<HttpResponseMessage> MakeWebRequest(string path, string userId, HttpMethod method, HttpContent content = null)

@@ -1,11 +1,23 @@
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace RoystonGameAutomatedTestingClient.cs.WebClient
+namespace RoystonGameAutomatedTestingClient
 {
     public static class Constants
     {
+        public static class ExceptionDataKeys
+        {
+            public const string GameStep = "GameStep";
+            public const string Validations = "Validations";
+            public const string Prompts = "Prompts";
+        }
+        public static class UniqueChars
+        {
+            public const string AlphaNum = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        }
+
         public static class QueryString
         {
             public const string Id = "Id";
@@ -16,6 +28,13 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
             public const string AutoFormSubmit = "api/v1/Game/AutoFormSubmit";
             public const string FormSubmit = "api/v1/Game/FormSubmit";
             public const string CurrentContent = "api/v1/Game/CurrentContent";
+            public const string LobbyCreate = "api/v1/Lobby/Create";
+            public const string LobbyGet = "api/v1/Lobby/Get";
+            public const string LobbyDelete = "api/v1/Lobby/Delete";
+            public const string LobbyConfigure = "api/v1/Lobby/Configure";
+            public const string LobbyStart = "api/v1/Lobby/Start";
+            public const string Games = "api/v1/Lobby/Games";
+            public const string BrowserStart = "http://localhost:50403/game/play?idOverride=";
         }
 
         public static class MediaType
@@ -33,10 +52,27 @@ namespace RoystonGameAutomatedTestingClient.cs.WebClient
             #endregion
         }
 
+        public static IReadOnlyList<string> RandomColors { get; } = new List<string>
+        {
+            Colors.Black,
+            Colors.Red,
+            Colors.DarkGray,
+            Colors.LightBlue,
+            Colors.LightGreen,
+            Colors.Purple,
+            Colors.Peach,
+            Colors.Yellow
+        };
         public static class Colors
         {
             public const string Black = "rgb(0,0,0)";
             public const string Red = "rgb(200,0,0)";
+            public const string DarkGray = "rgb(66,66,66)";
+            public const string LightBlue = "rgb(78,193,219)";
+            public const string LightGreen = "rgb(123,219,78)";
+            public const string Peach = "rgb(255,101,101)";
+            public const string Purple = "rgb(91,80,220)";
+            public const string Yellow = "rgb(230,230,0)";
         }
     }
 }

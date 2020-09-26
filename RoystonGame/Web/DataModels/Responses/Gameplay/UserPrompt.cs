@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RoystonGame.Web.DataModels.Enums;
+using System;
 
 namespace RoystonGame.Web.DataModels.Responses
 {
@@ -8,6 +9,11 @@ namespace RoystonGame.Web.DataModels.Responses
         /// Guid to uniquely identify a prompt/formSubmit pair.
         /// </summary>
         public Guid Id { get; set; } = Guid.NewGuid();
+
+        /// <summary>
+        /// Enum representing which user prompt is being used. Mostly used in testing
+        /// </summary>
+        public UserPromptId UserPromptId { get; set; } = UserPromptId.Unknown;
 
         /// <summary>
         /// The amount of Time before calling this endpoint again.

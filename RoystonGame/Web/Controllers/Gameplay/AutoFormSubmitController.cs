@@ -34,7 +34,7 @@ namespace RoystonGame.Web.Controllers
             [FromBody] UserFormSubmission formData,
             string id)
         {
-            if (!Sanitize.SanitizeString(id, out string error, "^([0-9A-Fa-f]){50}$",50,50))
+            if (!Sanitize.SanitizeString(id, out string error, Constants.RegexStrings.UserId,50,50))
             {
                 return BadRequest(error);
             }

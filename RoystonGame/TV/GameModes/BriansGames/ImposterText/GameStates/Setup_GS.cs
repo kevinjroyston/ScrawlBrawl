@@ -27,6 +27,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterText.GameStates
             UserState getPromptsState = new SimplePromptUserState(
                 promptGenerator: (User user) => new UserPrompt()
                 {
+                    UserPromptId = UserPromptId.ImposterSyndrome_CreatePrompt,
                     Title = "Game setup",
                     Description = "In the boxes below, enter two questions such that only you will be able to tell the answers apart.",
                     SubPrompts = new SubPrompt[]

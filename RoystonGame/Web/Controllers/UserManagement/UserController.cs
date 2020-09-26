@@ -25,7 +25,7 @@ namespace RoystonGame.Web.Controllers.UserManagement
                 return new BadRequestResult();
             }
 
-            if (!Sanitize.SanitizeString(id, out string error, "^([0-9A-Fa-f]){50}$"))
+            if (!Sanitize.SanitizeString(id, out string error, Constants.RegexStrings.UserId))
             {
                 return BadRequest(error);
             }

@@ -56,6 +56,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing.GameStates
 
                 return new UserPrompt
                 {
+                    UserPromptId = UserPromptId.Voting,
                     Title = "Find the imposter!",
                     Description = description,
                     SubPrompts = new SubPrompt[]

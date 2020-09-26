@@ -456,7 +456,7 @@ namespace RoystonGame.TV
         public bool ConfigureLobby(ConfigureLobbyRequest request, out string errorMsg)
         {
             errorMsg = string.Empty;
-            if (this.Game != null)
+            if (IsGameInProgress())
             {
                 // TODO: this might need updating for replay logic.
                 errorMsg = "Cannot change configuration lobby while game is in progress!";

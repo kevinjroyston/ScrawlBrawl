@@ -31,6 +31,7 @@ namespace RoystonGame.TV.GameModes.KevinsGames.Mimic.GameStates
                 usersToPrompt: lobby.GetAllUsers().Where((User user) => user != roundTracker.originalDrawer).ToList(),
                 promptGenerator: (User user) => new UserPrompt()
                 {
+                    UserPromptId = UserPromptId.Mimic_RecreateDrawing,
                     Title = Constants.UIStrings.DrawingPromptTitle,
                     Description = "Recreate the drawing you just saw to the best of your abilities",
                     SubPrompts = new SubPrompt[]

@@ -28,6 +28,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         {
             return new SimplePromptUserState((User user) => new UserPrompt()
             {
+                UserPromptId = UserPromptId.BodyBuilder_CreatePrompts,
                 Title = "Game setup",
                 Description = "In the boxes below, enter drawing prompts which will be given to different players.",
                 RefreshTimeInMs = 1000,
@@ -102,6 +103,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 
                 stateChain.Add(new SimplePromptUserState((User user) => new UserPrompt()
                 {
+                    UserPromptId = UserPromptId.BodyBuilder_DrawBodyPart,
                     Title = "Time to draw!",
                     Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",
                     SubPrompts = new SubPrompt[]
