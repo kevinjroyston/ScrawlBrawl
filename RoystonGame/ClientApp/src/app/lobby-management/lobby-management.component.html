@@ -12,7 +12,6 @@
     </div>
 
     <div *ngIf="lobby != null">
-      <app-lobby-description></app-lobby-description>
       <div class="row justify-content-around align-items-center p-2 border-bottom">
         <div class="d-inline-flex">Lobby ID: {{ lobby.lobbyId.toUpperCase() }}</div>
         <div class="d-inline-flex">Players Joined: {{ lobby.playerCount }}</div>
@@ -21,13 +20,12 @@
       </div>
 
       <div *ngIf="!lobby.gameInProgress" class="p-2">
-
         <div>
           <div class="d-flex justify-content-between align-items-center mb-2">
             <button class="btn btn-primary d-inline-flex" (click)="gameModeCollapse = !gameModeCollapse" [attr.aria-expanded]="!gameModeCollapse" aria-controls="gameModes">
               {{ gameModeCollapse ? "▼" : "▲" }} Select Game
             </button>
-            <div *ngIf="gameModes && (gameModes.Length > 0) && lobby.selectedGameMode">
+            <div *ngIf="lobby.selectedGameMode != null && gameModes != null">
               <span class="d-inline-flex">Selected game mode:<b class="pl-1">{{ gameModes[lobby.selectedGameMode].title }}</b></span>
             </div>
           </div>
@@ -54,8 +52,11 @@
           <div class="Error" *ngIf="error">{{ error }}</div>
           <button class="btn btn-primary" (click)="onStartLobby()">Start</button>
 
-          {{gameModes[lobby.selectedGameMode].identifier}}
-          <div ng-include="'/assets/'+gameModes[lobby.selectedGameMode].identifier+'/lobby-description.html'"></div>
+          <br />
+          <img gameAsset [gameID]="gameModes[lobby.selectedGameMode].identifier"/>
+
+          <div gameAsset [gameID]="gameModes[lobby.selectedGameMode].identifier"></div>
+
         </div>
       </div>
 

@@ -23,6 +23,7 @@ import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { FetchDataComponent, Safe } from './fetch-data/fetch-data.component';
 import { DrawingDirective } from './fetch-data/fetch-data.drawingdirective.component';
+import { GameAssetDirective } from './fetch-data/fetch-data.gameassets.component';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { LobbyManagementComponent } from './lobby-management/lobby-management.component';
 import { UserManagementComponent } from './user-management/user-management.component';
@@ -55,6 +56,11 @@ function MSALConfigFactory(): Configuration {
 }
 
 function MSALAngularConfigFactory(): MsalAngularConfiguration {
+//  if (!msalAngularConfig.unprotectedResources.includes("assets/BodyBuilder")) {
+    // iterate here through all our games
+    msalAngularConfig.unprotectedResources.push("assets/BodyBuilder");
+    msalAngularConfig.unprotectedResources.push("assets/Mimic");
+//  }
     return msalAngularConfig;
 }
 
@@ -67,6 +73,7 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     HomepageComponent,
     AboutUsComponent,
     DrawingDirective,
+    GameAssetDirective,
     SelectorDirective,
     LobbyManagementComponent,
     UserManagementComponent,
