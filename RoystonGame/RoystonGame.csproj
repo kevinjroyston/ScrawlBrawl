@@ -24,14 +24,18 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Compile Remove="ClientApp\src\app\NewFolder\**" />
     <Compile Remove="TV\DataModels\States\GameStates\GameStateResultObjects\**" />
     <Compile Remove="UnityProject\**" />
     <Content Remove="$(SpaRoot)**" />
+    <Content Remove="ClientApp\src\app\NewFolder\**" />
     <Content Remove="TV\DataModels\States\GameStates\GameStateResultObjects\**" />
     <Content Remove="UnityProject\**" />
+    <EmbeddedResource Remove="ClientApp\src\app\NewFolder\**" />
     <EmbeddedResource Remove="TV\DataModels\States\GameStates\GameStateResultObjects\**" />
     <EmbeddedResource Remove="UnityProject\**" />
     <None Remove="$(SpaRoot)**" />
+    <None Remove="ClientApp\src\app\NewFolder\**" />
     <None Remove="TV\DataModels\States\GameStates\GameStateResultObjects\**" />
     <None Remove="UnityProject\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />

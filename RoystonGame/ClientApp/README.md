@@ -1,6 +1,7 @@
-# RoystonGame
-
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.0.
+## Project Structure
+- https://itnext.io/choosing-a-highly-scalable-folder-structure-in-angular-d987de65ec7
+- https://medium.com/@motcowley/angular-folder-structure-d1809be95542
+- https://github.com/mathisGarberg/angular-folder-structure
 
 ## Development server
 
@@ -25,3 +26,5 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+
