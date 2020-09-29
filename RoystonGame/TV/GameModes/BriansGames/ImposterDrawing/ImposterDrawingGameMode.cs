@@ -151,7 +151,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
             List<User> randomizedUsersToShow = prompt.UsersToDrawings.Keys.OrderBy(_=>Rand.Next()).ToList();
             List<UserDrawing> drawings = randomizedUsersToShow.Select(user => prompt.UsersToDrawings[user]).ToList();
             bool noneIsCorrect = possibleNone && !randomizedUsersToShow.Contains(prompt.Imposter);
-            if (!possibleNone || !noneIsCorrect)
+            if (!noneIsCorrect)
             {
                 indexOfImposter = drawings.IndexOf(prompt.UsersToDrawings[prompt.Imposter]);
             }
@@ -165,6 +165,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
                         Owner = prompt.Imposter,
                         Drawing = Constants.NoneUnityImage,
                     });
+                    randomizedUsersToShow.Add(prompt.Imposter);
                 }
                 else
                 {
@@ -173,6 +174,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
                         Owner = prompt.Owner,
                         Drawing = Constants.NoneUnityImage,
                     });
+                    randomizedUsersToShow.Add(prompt.Owner);
                 }
             }
 
