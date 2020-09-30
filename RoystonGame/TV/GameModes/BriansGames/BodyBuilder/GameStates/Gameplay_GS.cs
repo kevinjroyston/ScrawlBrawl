@@ -240,7 +240,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             bodies = setup_People.Select(val => val.BodyPartDrawings[DrawingType.Body]).Where(val => !string.IsNullOrWhiteSpace(val.Drawing)).OrderBy(_ => Rand.Next()).ToList();
             legs = setup_People.Select(val => val.BodyPartDrawings[DrawingType.Legs]).Where(val => !string.IsNullOrWhiteSpace(val.Drawing)).OrderBy(_ => Rand.Next()).ToList();
 
-            if (heads.Count != bodies.Count || bodies.Count != legs.Count || heads.Count != this.Lobby.GetAllUsers().Count)
+            if (heads.Count != bodies.Count || bodies.Count != legs.Count || heads.Count != 2*this.Lobby.GetAllUsers().Count)
             {
                 throw new Exception("Something Went Wrong While Setting Up Game");
             }
