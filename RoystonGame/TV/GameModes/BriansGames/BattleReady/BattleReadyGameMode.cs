@@ -174,7 +174,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BattleReady
             {
                 RoundTracker.ResetRoundVariables();
                 promptsCopy = promptsCopy.OrderBy(_ => Rand.Next()).ToList();
-                List<Prompt> roundPrompts = promptsCopy.GetRange(0, Math.Min(numPromptsPerRound, promptsCopy.Count - 1)).OrderBy(_ => Rand.Next()).ToList();
+                List<Prompt> roundPrompts = promptsCopy.Take(numPromptsPerRound).OrderBy(_ => Rand.Next()).ToList();
                 promptsCopy.RemoveRange(0, numPromptsPerRound);
 
                 List<PeopleUserDrawing> headDrawings = Drawings.ToList().FindAll((drawing) => drawing.Type == DrawingType.Head).OrderBy(_ => Rand.Next()).ToList();

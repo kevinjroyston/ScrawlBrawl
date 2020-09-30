@@ -70,20 +70,20 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                         return (true, "Server doesn't handle identical colors well, change one slightly.");
                     }
 
-                    this.SubChallenges.Enqueue(new ChallengeTracker
+                    bool success = this.SubChallenges.TryAdd(new ChallengeTracker
                     {
                         Owner = user,
                         Prompt = input.SubForms[0].ShortAnswer,
                         Colors = colors
-                    });
-                    return (true, string.Empty);
+                    }, null);
+                    return (success, success ? string.Empty : "Server error, try again");
                 },
                 exit: new WaitForUsers_StateExit(this.Lobby),
                 maxPromptDuration: this.PromptTimer);
             return toReturn;
         }
 
-        private ConcurrentQueue<ChallengeTracker> SubChallenges { get; set; }
+        private ConcurrentDictionary<ChallengeTracker, object> SubChallenges { get; set; }
 
         private Random Rand { get; set; } = new Random();
 
@@ -95,7 +95,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
         private List<State> GetDrawingsUserStateChain(User user)
         {
             List<State> stateChain = new List<State>();
-            List<ChallengeTracker> challenges = this.SubChallenges.OrderBy(_ => Rand.Next()).ToList();
+            List<ChallengeTracker> challenges = this.SubChallenges.Keys.OrderBy(_ => Rand.Next()).ToList();
             int index = 0;
             foreach (ChallengeTracker challenge in challenges)
             {
@@ -137,9 +137,9 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             return stateChain;
         }
 
-        public Setup_GS(Lobby lobby, List<ChallengeTracker> challengeTrackers, int numColorsPerTeam, int numTeamsPerPrompt, bool showColors, TimeSpan? setupTimer = null, TimeSpan? drawingTimer = null) : base(lobby)
+        public Setup_GS(Lobby lobby, ConcurrentDictionary<ChallengeTracker, object> challengeTrackers, int numColorsPerTeam, int numTeamsPerPrompt, bool showColors, TimeSpan? setupTimer = null, TimeSpan? drawingTimer = null) : base(lobby)
         {
-            this.SubChallenges = new ConcurrentQueue<ChallengeTracker>(challengeTrackers);
+            this.SubChallenges = challengeTrackers;
 
             this.ColorsPerTeam = numColorsPerTeam;
             this.TeamsPerPrompt = numTeamsPerPrompt;
@@ -178,14 +178,14 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             IReadOnlyList<User> users = this.Lobby.GetAllUsers();
-            List<ChallengeTracker> randomizedOrderChallenges = this.SubChallenges.OrderBy(_ => Rand.Next()).ToList();
+            List<ChallengeTracker> randomizedOrderChallenges = this.SubChallenges.Keys.OrderBy(_ => Rand.Next()).ToList();
 
             for (int i = 0; i < randomizedOrderChallenges.Count; i++)
             {
                 for (int j = 0; j < ColorsPerTeam * TeamsPerPrompt; j++)
                 {
                     randomizedOrderChallenges[i].UserSubmittedDrawings.Add(
-                        users[(i + j) % randomizedOrderChallenges.Count],
+                        users[(i + j) % users.Count],
                         new ChallengeTracker.TeamUserDrawing
                         {
                             TeamId = Invariant($"{(j / ColorsPerTeam)+1}"),
