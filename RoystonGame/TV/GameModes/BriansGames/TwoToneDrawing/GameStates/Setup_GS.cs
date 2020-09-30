@@ -19,6 +19,7 @@ using RoystonGame.TV.DataModels;
 using RoystonGame.TV.ControlFlows.Exit;
 using RoystonGame.TV.DataModels.States.StateGroups;
 using RoystonGame.TV.GameModes.Common;
+using System.Collections.Concurrent;
 
 namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 {
@@ -69,7 +70,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
                         return (true, "Server doesn't handle identical colors well, change one slightly.");
                     }
 
-                    this.SubChallenges.Add(new ChallengeTracker
+                    this.SubChallenges.Enqueue(new ChallengeTracker
                     {
                         Owner = user,
                         Prompt = input.SubForms[0].ShortAnswer,
@@ -82,7 +83,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             return toReturn;
         }
 
-        private List<ChallengeTracker> SubChallenges { get; set; }
+        private ConcurrentQueue<ChallengeTracker> SubChallenges { get; set; }
 
         private Random Rand { get; set; } = new Random();
 
@@ -138,7 +139,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
 
         public Setup_GS(Lobby lobby, List<ChallengeTracker> challengeTrackers, int numColorsPerTeam, int numTeamsPerPrompt, bool showColors, TimeSpan? setupTimer = null, TimeSpan? drawingTimer = null) : base(lobby)
         {
-            this.SubChallenges = challengeTrackers;
+            this.SubChallenges = new ConcurrentQueue<ChallengeTracker>(challengeTrackers);
 
             this.ColorsPerTeam = numColorsPerTeam;
             this.TeamsPerPrompt = numTeamsPerPrompt;
@@ -178,12 +179,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing.GameStates
             Stopwatch stopwatch = Stopwatch.StartNew();
             IReadOnlyList<User> users = this.Lobby.GetAllUsers();
             List<ChallengeTracker> randomizedOrderChallenges = this.SubChallenges.OrderBy(_ => Rand.Next()).ToList();
+
             for (int i = 0; i < randomizedOrderChallenges.Count; i++)
             {
                 for (int j = 0; j < ColorsPerTeam * TeamsPerPrompt; j++)
                 {
                     randomizedOrderChallenges[i].UserSubmittedDrawings.Add(
-                        randomizedOrderChallenges[(i + j) % randomizedOrderChallenges.Count].Owner,
+                        users[(i + j) % randomizedOrderChallenges.Count],
                         new ChallengeTracker.TeamUserDrawing
                         {
                             TeamId = Invariant($"{(j / ColorsPerTeam)+1}"),

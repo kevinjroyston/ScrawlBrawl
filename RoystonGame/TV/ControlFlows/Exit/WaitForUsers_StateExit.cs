@@ -3,6 +3,7 @@ using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.Web.DataModels.Requests;
 using RoystonGame.Web.DataModels.Responses;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,7 +20,7 @@ namespace RoystonGame.TV.ControlFlows.Exit
     public class WaitForUsers_StateExit : WaitForTrigger_StateExit
     {
         private Lobby Lobby { get; }
-        private HashSet<User> UsersWaiting { get; } = new HashSet<User>();
+        private ConcurrentBag<User> UsersWaiting { get; } = new ConcurrentBag<User>();
         private WaitForUsersType UsersToWaitForType { get; }
 
         /// <summary>
