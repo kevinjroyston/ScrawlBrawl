@@ -236,9 +236,15 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
             List<PeopleUserDrawing> heads;
             List<PeopleUserDrawing> bodies;
             List<PeopleUserDrawing> legs;
-            heads = setup_People.Select(val => val.BodyPartDrawings[DrawingType.Head]).OrderBy(_ => Rand.Next()).ToList();
-            bodies = setup_People.Select(val => val.BodyPartDrawings[DrawingType.Body]).OrderBy(_ => Rand.Next()).ToList();
-            legs = setup_People.Select(val => val.BodyPartDrawings[DrawingType.Legs]).OrderBy(_ => Rand.Next()).ToList();
+            heads = setup_People.Select(val => val.BodyPartDrawings[DrawingType.Head]).Where(val => !string.IsNullOrWhiteSpace(val.Drawing)).OrderBy(_ => Rand.Next()).ToList();
+            bodies = setup_People.Select(val => val.BodyPartDrawings[DrawingType.Body]).Where(val => !string.IsNullOrWhiteSpace(val.Drawing)).OrderBy(_ => Rand.Next()).ToList();
+            legs = setup_People.Select(val => val.BodyPartDrawings[DrawingType.Legs]).Where(val => !string.IsNullOrWhiteSpace(val.Drawing)).OrderBy(_ => Rand.Next()).ToList();
+
+            if (heads.Count != bodies.Count || bodies.Count != legs.Count || heads.Count != 2*this.Lobby.GetAllUsers().Count)
+            {
+                throw new Exception("Something Went Wrong While Setting Up Game");
+            }
+
             foreach (User user in this.Lobby.GetAllUsers())
             {
                 Gameplay_Person temp = new Gameplay_Person
@@ -255,10 +261,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 temp.DoneWithRound = false;
                 temp.Name = user.DisplayName;
                 RoundTracker.AssignedPeople.Add(user, temp);
-            }
-            if (heads.Count != this.Lobby.GetAllUsers().Count)
-            {
-                throw new Exception("Something Went Wrong While Setting Up Game");
             }
             while (heads.Any())
             {

@@ -28,6 +28,7 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
         public bool OpenBrowsers { get; }
         public int NumUsers { get; }
         public bool UseDefaults { get; }
+        public bool DisableCleanup { get; }
 
         /// <summary>
         /// The percentage of submits which should use the auto submit endpoint.
@@ -60,6 +61,7 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
             this.RandomSeed = (int)Params["RandomSeed"];
             this.OnFailHandler = OnFailHandler;
             this.UseDefaults = (bool)Params["UseDefaults"];
+            this.DisableCleanup = (bool)Params["DisableCleanup"];
 
             DetermineGameTests((string[])Params["Tests"], (string[])Params["GameModes"], (bool)Params["IsStructured"], Games);
         }
@@ -111,7 +113,10 @@ namespace RoystonGameAutomatedTestingClient.TestFramework
             {
                 await test.Setup(this);
                 await test.RunTest();
-                await test.Cleanup();
+                if (!this.DisableCleanup)
+                {
+                    await test.Cleanup();
+                }
                 TestOutputs.Add((testName, ConsoleColor.Green, "Success"));
             } catch (Exception e)
             {

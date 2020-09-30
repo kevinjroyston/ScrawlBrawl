@@ -23,7 +23,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
 {
     public class TwoToneDrawingGameMode : IGameMode
     {
-        private List<ChallengeTracker> SubChallenges { get; set; } = new List<ChallengeTracker>();
+        private ConcurrentDictionary<ChallengeTracker, object> SubChallenges { get; set; } = new ConcurrentDictionary<ChallengeTracker, object>();
         private Lobby Lobby {get; set;}
         private GameState Setup { get; set; }
         private List<GameState> Gameplay { get; set; } = new List<GameState>();
@@ -72,7 +72,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
 
             StateChain GamePlayLoopGenerator()
             {
-                List<ChallengeTracker> challenges = SubChallenges.OrderBy(_ => Rand.Next()).ToList();
+                List<ChallengeTracker> challenges = SubChallenges.Keys.OrderBy(_ => Rand.Next()).ToList();
                 StateChain chain = new StateChain(
                 stateGenerator: (int counter) =>
                 {
