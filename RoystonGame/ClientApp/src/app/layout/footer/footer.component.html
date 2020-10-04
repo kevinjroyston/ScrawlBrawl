@@ -1,6 +1,37 @@
-<div>
-  footer works!
-  <a class="navbar-brand" [routerLink]="['/about']">About Us</a>
-  <a class="navbar-brand" [routerLink]="['/feedback']">Feedback</a>
-  <a class="navbar-brand" [routerLink]="['/']">Join Us</a>
+<div class="footer-wrapper">
+  <div class="footer">
+    <div class="footer-links">
+      <div class="footer-section">
+        <a [routerLink]="['/']">
+          <img class="footer-brand" alt="Scrawl Brawl" src="/assets/SB_Logo_Transp_Shadow.png">
+        </a>
+      </div>
+      <div class="footer-section" *ngFor="let section of sectionsOrder">
+        <div class="footer-section-title">
+          {{section}}
+        </div>
+        <div class="footer-section-links">
+          <div class="footer-link" *ngFor="let link of sections[section]">
+            <a [routerLink]=[link.url]>{{link.name}}</a>
+          </div>
+        </div>
+      </div>
+      <div class='footer-section'>
+        <div class="footer-section-title">
+          Socials
+        </div>
+        <div class="footer-section-links">
+          <div class="footer-link" *ngFor="let link of socialLinks">
+            <a>i {{link.name}}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>Drawn Together. Polled Apart.</div>
+      <div>© 2020. All Rights Reserved.</div>
+      
+    </div>
+  </div>
 </div>
+

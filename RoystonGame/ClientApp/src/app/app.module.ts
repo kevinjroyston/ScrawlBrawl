@@ -10,6 +10,7 @@ import {
     MSAL_CONFIG,
     MSAL_CONFIG_ANGULAR,
     MsalService,
+    BroadcastService,
     MsalAngularConfiguration
 } from '@azure/msal-angular';
 
@@ -17,6 +18,7 @@ import { CoreModule } from '@core/core.module';
 import { SharedModule } from '@shared/shared.module';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './layout/nav-menu/nav-menu.component';
+import { FooterComponent} from './layout/footer/footer.component'
 import { Configuration } from 'msal';
 import { AppRoutingModule } from './app.routing';
 
@@ -31,7 +33,8 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
 @NgModule({
   declarations: [
     AppComponent,
-    NavMenuComponent
+    NavMenuComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

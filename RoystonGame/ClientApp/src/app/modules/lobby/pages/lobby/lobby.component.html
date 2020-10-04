@@ -19,14 +19,14 @@
         <a class="btn btn-sm btn-outline-secondary" href="https://github.com/kevinjroyston/RoystonGame/releases/latest/download/ScrawlBrawlClient.zip">Download Game Viewer</a>
       </div>
 
-      <div *ngIf="!lobby.gameInProgress" class="p-2">
+      <div *ngIf="!lobby.isGameInProgress" class="p-2">
 
         <div>
           <div class="d-flex justify-content-between align-items-center mb-2">
             <button class="btn btn-primary d-inline-flex" (click)="gameModeCollapse = !gameModeCollapse" [attr.aria-expanded]="!gameModeCollapse" aria-controls="gameModes">
               {{ gameModeCollapse ? "▼" : "▲" }} Select Game
             </button>
-            <div *ngif ="gameModes && gameModes.Length > 0 && lobby.selectedGameMode">
+            <div *ngIf ="gameModes && gameModes.length > 0 && lobby.selectedGameMode">
               <span class="d-inline-flex">Selected game mode:<b class="pl-1">{{ gameModes[lobby.selectedGameMode].title }}</b></span>
             </div>
           </div>
@@ -39,11 +39,11 @@
 
         <div *ngIf="lobby.selectedGameMode != null && gameModes != null">
             <div *ngFor="let option of gameModes[lobby.selectedGameMode].options; let i = index">
-              <div *ngIf="option.responseType === 'Integer'">
+              <div *ngIf="option.responseType.toString() === 'Integer'">
                 <label>{{ option.description }}:</label>
                 <input class="ml-1 mr-1" type="number" [(ngModel)]="option.value" />
               </div>
-              <div *ngIf="option.responseType === 'Boolean'">
+              <div *ngIf="option.responseType.toString() === 'Boolean'">
                 <label for="bool-switch-{{i}}" >{{ option.description }}:</label>
                 <ui-switch class="ml-1 mr-1" [(ngModel)]="option.value" size="small"></ui-switch>
                 <!-- <input type="checkbox" id="bool-switch-{{i}}" checked="" [(ngModel)]="option.value" > -->

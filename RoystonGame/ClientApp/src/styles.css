@@ -1,7 +1,38 @@
 @import "./../node_modules/bootstrap/dist/css/bootstrap.min.css";
 @import "./../node_modules/ngx-ui-switch/ui-switch.component.css";
-.Error {
-    color: red;
+
+:root {
+    --white-primary: #ffffff;
+    --white-secondary: #eaeaea;
+    --white-tertiary: #c6c6c6;
+    --black-primary: #1d1d1d;
+    --black-secondary: #352f2f;
+    --black-tertiary: #4f4f4f;
+    --green-primary: #2aac89;
+    --green-secondary: #45D7B0;
+    --green-tertiary: #6DF4D0;
+    --blue-primary: #2E53D2;
+    --blue-secondary: #5372E1;
+    --blue-tertiary: #8199F0;
+    --red-primary: #D05D5D;
+    --red-secondary: #E47272;
+    --red-tertiary: #F08181;
+    --yellow-primary: #E9E588;
+    --yellow-secondary: #F3F0A7;
+    --yellow-tertiary: #FFFDD4;
+    --purplink-primary: #D292C8;
+    --purplink-secondary: #F6CAEF;
+    --ornamental-pastelgreen: #9DF1DB;
+    --ornamental-pastelblue: #CFFCF9;
+    --ornamental-pastelred: #F9D3D3;
+    --ornamental-pastelyellow: #F6F5CC;
+    --shadow-xs: 0 0 0 1px rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
 html,
@@ -9,10 +40,85 @@ body {
     height: 100%;
 }
 
+a {
+    font-family: Montserrat;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 24px;
+}
+
+a:hover{
+    text-decoration: none;
+}
+
+.trans-link::after{
+    content: '';
+    width: 0px;
+    height: 1px;
+    display: block;
+    background: var(--blue-primary);
+    transition: all ease .3s;
+    padding-top: 3.5px;
+  }
+  
+.trans-link:hover::after{
+width: 100%;
+}
+
 body {
     margin: 0;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
 }
+
+h1 {
+    font-family: "Poppins", sans-serif;
+    font-weight: bold;
+    font-size: 40px;
+    line-height: 52px;
+}
+
+h2 {
+    font-family: "Poppins", sans-serif;
+    font-weight: bold;
+    font-size: 32px;
+    line-height: 42px;
+}
+
+h3 {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 38px;
+}
+
+h4 {
+    font-family: "Montserray", sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 32px;
+}
+
+b {
+    font-family: "Montserray", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 24px;
+}
+
+.disclaimer {
+    font-family: "Montserray", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 18px;
+}
+
+.Error {
+    color: var(--red-primary);
+}
+
 
 .slider.slider-horizontal {
     width: 98%;
@@ -43,7 +149,7 @@ body {
 }
 
 .mainImg {
-    border: 2px solid blue;
+    border: 2px solid var(--blue-primary);
     max-width: 50%;
     height: auto;
     max-width: calc(50% * (var(--n) / 100))
@@ -56,14 +162,4 @@ body {
     background-color: #ccc;
     position: relative;
     top: 5px;
-}
-
-html,
-body {
-    height: 100%;
-}
-
-body {
-    margin: 0;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
 }
