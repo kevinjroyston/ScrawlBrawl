@@ -17,10 +17,11 @@ public class GameIconHandler : MonoBehaviour
     {
         if (IconHolder != null)
         {
-            if (ScrawlBrawlLogo != null)
+            IconHolder.enabled = false;
+            /*if (ScrawlBrawlLogo != null)
             {
                 IconHolder.sprite = ScrawlBrawlLogo;
-            }
+            }*/
         }
     }
 
