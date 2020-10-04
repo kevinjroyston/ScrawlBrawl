@@ -2,7 +2,7 @@
   "profiles": {
     "RoystonGameAutomatedTestingClient": {
       "commandName": "Project",
-      "commandLineArgs": "-parallel -structured"
+      "commandLineArgs": "-structured -games \"Chaotic Cooperation\""
     }
   }
 }

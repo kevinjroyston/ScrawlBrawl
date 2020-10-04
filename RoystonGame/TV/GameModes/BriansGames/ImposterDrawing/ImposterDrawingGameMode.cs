@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using static System.FormattableString;
 
 namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
 {
@@ -150,6 +151,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
             int indexOfImposter = 0;
             List<User> randomizedUsersToShow = prompt.UsersToDrawings.Keys.OrderBy(_=>Rand.Next()).ToList();
             List<UserDrawing> drawings = randomizedUsersToShow.Select(user => prompt.UsersToDrawings[user]).ToList();
+            List<string> userNames = randomizedUsersToShow.Select(user => user.DisplayName).ToList();
             bool noneIsCorrect = possibleNone && !randomizedUsersToShow.Contains(prompt.Imposter);
             if (!noneIsCorrect)
             {
@@ -188,9 +190,13 @@ namespace RoystonGame.TV.GameModes.BriansGames.ImposterDrawing
                 votingTime: votingTime)
                 {
                     VotingTitle = "Find the Imposter!",
-                    IndexesOfObjectsToReveal = new List<int>() { indexOfImposter },
                     VotingInstructions = possibleNone ? "Someone didn't finish so there may not be an imposter in this group" : "",
-                };
+                    RevealTitle = Invariant($"<color=green>{prompt.Imposter.DisplayName}</color> was the imposter!"),
+                    RevealInstructions = Invariant($"Real: '{prompt.RealPrompt}', Imposter: <color=green>'{prompt.FakePrompt}'</color>"),
+                    IndexesOfObjectsToReveal = new List<int>() { indexOfImposter },
+                    ObjectTitles = userNames,
+                    ShowObjectTitlesForVoting = false,
+            };
         }
 
         private void CountVotes(Dictionary<User, int> usersToVotes, Prompt prompt, List<User> randomizedUsers)
