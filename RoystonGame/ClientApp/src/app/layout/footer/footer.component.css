@@ -5,7 +5,8 @@
 }
 
 .footer{
-    max-width: 850px;
+    padding: 0 2rem;
+    max-width: 1000px;
     margin: 0 auto;
 }
 
