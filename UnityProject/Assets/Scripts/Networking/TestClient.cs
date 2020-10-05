@@ -31,6 +31,8 @@ public class TestClient : MonoBehaviour
     void Awake()
     {
         Application.runInBackground = true;
+        QualitySettings.vSyncCount = 0;  // VSync must be disabled
+        Application.targetFrameRate = 60;
 
         hubConnection = new HubConnectionBuilder()
         #if DEBUG

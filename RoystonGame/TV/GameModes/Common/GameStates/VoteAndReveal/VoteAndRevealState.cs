@@ -21,6 +21,8 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
         public virtual Func<User, UserPrompt> RevealWaitingPromptGenerator { get; set; } = null;
         public string VotingTitle { get; set; } = Constants.UIStrings.VotingUnityTitle;
         public string VotingInstructions { get; set; } = "";
+        public string RevealTitle { get; set; } = null;
+        public string RevealInstructions { get; set; } = null;
         public List<int> IndexesOfObjectsToReveal { get; set; } = new List<int>();
         public List<string> ObjectTitles { get; set; }
         public bool ShowObjectTitlesForVoting { get; set; } = false;
@@ -38,7 +40,8 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
             {
                 StartingTime = DateTime.UtcNow;
             });
-
+            RevealTitle = RevealTitle ?? VotingTitle;
+            RevealInstructions = RevealInstructions ?? VotingInstructions;
             StateChain VoteAndRevealChainGenerator()
             {
                 StateChain voteAndRevealStateChain = new StateChain(stateGenerator: (int counter) =>
@@ -126,8 +129,8 @@ namespace RoystonGame.TV.GameModes.Common.GameStates.VoteAndReveal
             return new UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.VoteRevealImageView },
-                Title = new StaticAccessor<string> { Value = this.VotingTitle },
-                Instructions = new StaticAccessor<string> { Value = this.VotingInstructions },
+                Title = new StaticAccessor<string> { Value = this.RevealTitle },
+                Instructions = new StaticAccessor<string> { Value = this.RevealInstructions },
                 UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityObjects },
                 VoteRevealUsers = new StaticAccessor<IReadOnlyList<User>> { Value = Lobby.GetAllUsers() },//UsersToAnswersVotedFor.Keys.Select(user => user.UserId).ToList() },
                 UserIdToDeltaScores = new StaticAccessor<IDictionary<string, int>> { Value = usersToScoreDelta }

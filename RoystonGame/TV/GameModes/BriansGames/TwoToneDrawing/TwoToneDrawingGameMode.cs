@@ -147,6 +147,14 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
             for (int i = 0; i < usersVotedForEachAnswer.Count; i++)
             {
                 List<User> users = usersVotedForEachAnswer[i];
+                if (users.Count == mostVotes)
+                {
+                    foreach (User drawingUser in challenge.TeamIdToDrawingMapping[randomizedTeamIds[i]].Values.Select(drawing => drawing.Owner))
+                    {
+                        // 500 points if they helped draw the best drawing.
+                        drawingUser.AddScore(TwoToneDrawingConstants.PointsForMakingWinningDrawing);
+                    }
+                }
                 foreach (User user in users)
                 {
                     if (users.Count == mostVotes)
@@ -158,18 +166,6 @@ namespace RoystonGame.TV.GameModes.BriansGames.TwoToneDrawing
                     {
                         // If the drawing didn't get the most votes and the user voted for themselves subtract points
                         user.AddScore(TwoToneDrawingConstants.PointsToLoseForBadSelfVote);
-                    }
-                }
-
-                foreach (User user in usersToVotes.Keys)
-                {
-                    if (users.Count == mostVotes)
-                    {
-                        foreach (User drawingUser in challenge.TeamIdToDrawingMapping[randomizedTeamIds[i]].Values.Select(drawing => drawing.Owner))
-                        {
-                            // 500 points if they helped draw the best drawing.
-                            user.AddScore(TwoToneDrawingConstants.PointsForMakingWinningDrawing);
-                        }
                     }
                 }
             }
