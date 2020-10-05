@@ -24,21 +24,28 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Compile Remove="ClientApp\src\app\lobby-management\**" />
+    <Compile Remove="ClientApp\src\app\user-management\**" />
     <Compile Remove="TV\DataModels\States\GameStates\GameStateResultObjects\**" />
     <Compile Remove="UnityProject\**" />
     <Content Remove="$(SpaRoot)**" />
+    <Content Remove="ClientApp\src\app\lobby-management\**" />
+    <Content Remove="ClientApp\src\app\user-management\**" />
     <Content Remove="TV\DataModels\States\GameStates\GameStateResultObjects\**" />
     <Content Remove="UnityProject\**" />
+    <EmbeddedResource Remove="ClientApp\src\app\lobby-management\**" />
+    <EmbeddedResource Remove="ClientApp\src\app\user-management\**" />
     <EmbeddedResource Remove="TV\DataModels\States\GameStates\GameStateResultObjects\**" />
     <EmbeddedResource Remove="UnityProject\**" />
     <None Remove="$(SpaRoot)**" />
+    <None Remove="ClientApp\src\app\lobby-management\**" />
+    <None Remove="ClientApp\src\app\user-management\**" />
     <None Remove="TV\DataModels\States\GameStates\GameStateResultObjects\**" />
     <None Remove="UnityProject\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="ClientApp\src\app\lobby-management\lobby-management.component.ts" />
     <None Remove="WordLists\nouns.txt" />
   </ItemGroup>
 
@@ -55,11 +62,6 @@
     <Content Include="WordLists\nouns.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <TypeScriptCompile Include="ClientApp\src\app\lobby-management\lobby-management.component.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\user-management\user-management.component.ts" />
   </ItemGroup>
 
   <ItemGroup>

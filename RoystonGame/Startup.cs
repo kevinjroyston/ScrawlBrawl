@@ -160,7 +160,7 @@ namespace RoystonGame
 
                 if (env.IsDevelopment())
                 {
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:50403");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:50402");
                 }
             });
         }
