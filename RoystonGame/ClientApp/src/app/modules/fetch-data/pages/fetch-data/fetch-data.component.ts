@@ -209,6 +209,7 @@ interface UserPrompt {
 interface SubPrompt {
     id: string;
     prompt: string;
+    color: string;
     stringList: string[];
     dropdown: string[];    
     answers: string[];

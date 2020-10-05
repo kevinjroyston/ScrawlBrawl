@@ -1,0 +1,10 @@
+.body-wrapper{
+    display: flex; 
+    flex-direction: column; 
+    height: 100%;
+}
+
+.root-container {
+    display: flex; 
+    flex: 1 0 auto;
+}
