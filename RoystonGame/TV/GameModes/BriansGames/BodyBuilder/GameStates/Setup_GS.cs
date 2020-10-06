@@ -18,6 +18,7 @@ using static System.FormattableString;
 using RoystonGame.TV.DataModels;
 using RoystonGame.TV.ControlFlows.Exit;
 using RoystonGame.TV.DataModels.States.StateGroups;
+using RoystonGame.TV.DataModels.Enums;
 
 namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
 {
@@ -55,7 +56,7 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 {
                     return (false, "Please enter 2 distinct people");
                 }
-                if(PeopleList.Any(val => val.Name.FuzzyEquals(person1)))
+                if (PeopleList.Any(val => val.Name.FuzzyEquals(person1)))
                 {
                     return (false, "Somebody beat you the punch on your first prompt");
                 }
@@ -125,6 +126,15 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
                 {
                     person.UserSubmittedDrawingsByUser[user].Drawing = input.SubForms[0].Drawing;
                     return (true, String.Empty);
+                },
+                userTimeoutHandler: (User user, UserFormSubmission input) =>
+                {
+                    // If drawing was auto submitted continue.
+                    if (!string.IsNullOrWhiteSpace(input.SubForms[0].Drawing))
+                    {
+                        person.UserSubmittedDrawingsByUser[user].Drawing = input.SubForms[0].Drawing;
+                    }
+                    return UserTimeoutAction.None;
                 }));
             }
 
@@ -134,6 +144,14 @@ namespace RoystonGame.TV.GameModes.BriansGames.BodyBuilder.GameStates
         public Setup_GS(Lobby lobby, List<Setup_Person> peopleList, TimeSpan? setupTimeDuration = null, TimeSpan? drawingTimeDuration = null) : base(lobby)
         {
             this.PeopleList = peopleList;
+
+            AddExitListener(() =>
+            {
+                if (this.PeopleList.Count != 2 * this.Lobby.GetAllUsers().Count)
+                {
+                    throw new Exception("Not enough prompts submitted in order to play game.");
+                }
+            });
 
             State getPeoplePrompts = GetPeoplePrompts_State(setupTimeDuration);
             this.Entrance.Transition(getPeoplePrompts);

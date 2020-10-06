@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
-    "start": "echo Starting... && ng serve --port 50402",
+    "start": "echo Starting... && ng serve --port 50402 --host 0.0.0.0",
     "build": "ng build",
     "build:ssr": "ng run RoystonGame:server:dev",
     "test": "ng test",

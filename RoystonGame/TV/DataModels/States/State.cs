@@ -4,6 +4,7 @@ using RoystonGame.TV.DataModels.Enums;
 using RoystonGame.TV.DataModels.Users;
 using RoystonGame.Web.DataModels.Requests;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -43,7 +44,7 @@ namespace RoystonGame.TV.DataModels
         /// <summary>
         /// A mapping of users to a tuple indicating if they have (entered state, exited state).
         /// </summary>
-        protected Dictionary<User, (bool, bool)> UsersEnteredAndExitedState { get; } = new Dictionary<User, (bool, bool)>();
+        protected ConcurrentDictionary<User, (bool, bool)> UsersEnteredAndExitedState { get; } = new ConcurrentDictionary<User, (bool, bool)>();
 
         public State(TimeSpan? stateTimeoutDuration, StateEntrance entrance, StateExit exit) : base(stateExit: exit)
         {
@@ -53,7 +54,7 @@ namespace RoystonGame.TV.DataModels
             this.Entrance.AddPerUserExitListener((User user) =>
             {
                 // If the user already entered this state once fail.
-                if (this.UsersEnteredAndExitedState.ContainsKey(user) && this.UsersEnteredAndExitedState[user].Item1)
+                if (this.UsersEnteredAndExitedState.TryGetValue(user, out (bool,bool) val) && val.Item1)
                 {
                     throw new Exception("This UserState has already been entered once. Please use a new state instance.");
                 }
@@ -264,7 +265,7 @@ namespace RoystonGame.TV.DataModels
         /// <summary>
         /// A bool per user indicating this user has already called CompletedActionCallback
         /// </summary>
-        private Dictionary<User, bool> HaveAlreadyCalledOutlet { get; set; } = new Dictionary<User, bool>();
+        private ConcurrentDictionary<User, bool> HaveAlreadyCalledOutlet { get; set; } = new ConcurrentDictionary<User, bool>();
 
         /// <summary>
         /// A list of callback functions to call when the state is about to end (first user is leaving).
@@ -281,7 +282,7 @@ namespace RoystonGame.TV.DataModels
         /// <summary>
         /// A set of overrides per user for outlet.
         /// </summary>
-        private Dictionary<User, Connector> UserOutletOverrides { get; set; } = new Dictionary<User, Connector>();
+        private ConcurrentDictionary<User, Connector> UserOutletOverrides { get; set; } = new ConcurrentDictionary<User, Connector>();
 
         private Connector InternalOutlet { get; set; }
 
@@ -311,9 +312,9 @@ namespace RoystonGame.TV.DataModels
                 listener?.Invoke(user);
             }
 
-            if (this.UserOutletOverrides.ContainsKey(user))
+            if (this.UserOutletOverrides.TryGetValue(user, out Connector connector))
             {
-                this.UserOutletOverrides[user](user, result, input);
+                connector(user, result, input);
             }
             else
             {
@@ -369,12 +370,16 @@ namespace RoystonGame.TV.DataModels
             void InternalOutlet(User user, UserStateResult result, UserFormSubmission input)
             {
                 // An outlet should only ever be called once per user. Ignore extra calls (most likely a timeout thread).
-                if (this.HaveAlreadyCalledOutlet.ContainsKey(user) && this.HaveAlreadyCalledOutlet[user] == true)
+                if (this.HaveAlreadyCalledOutlet.TryUpdate(user, newValue: true, comparisonValue: true))
                 {
                     return;
                 }
 
-                this.HaveAlreadyCalledOutlet[user] = true;
+                // Throw if not able to set called outlet bit.
+                if (!this.HaveAlreadyCalledOutlet.TryAdd(user, true))
+                {
+                    throw new Exception($"Issue updating the called outlet bit for user '{user.UserId}'");
+                }
 
                 if (outletGenerator == null)
                 {
