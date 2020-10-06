@@ -1,0 +1,17 @@
+.home {
+    display: flex;
+    padding: 5% 0;
+    flex-direction: column;
+    align-items: center;
+}
+
+.vid-preview{
+    width: 100%;
+    margin-top: 3rem;
+    box-shadow: var(--shadow-lg);
+}
+
+.vid-preview > iframe{
+    width: 100%;
+    height: 600px;
+}

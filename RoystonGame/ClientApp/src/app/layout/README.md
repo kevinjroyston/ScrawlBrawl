@@ -1,0 +1,1 @@
+https://angular-folder-structure.readthedocs.io/en/latest/layout.html

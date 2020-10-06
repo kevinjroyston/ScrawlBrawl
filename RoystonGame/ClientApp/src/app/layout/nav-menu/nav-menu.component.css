@@ -1,0 +1,21 @@
+
+.navbar{
+  padding: 0;
+}
+
+.box-shadow {
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.1);
+}
+
+.nav-item {
+  margin-right: 20px;
+}
+
+.nav-item:hover{
+  cursor:pointer;
+}
+
+
+.navbar-brand {
+  max-width: 100px;
+}
