@@ -33,6 +33,7 @@ import { HomepageComponent } from './homepage/homepage.component';
 import { AboutUsComponent } from './aboutus/aboutus.component';
 import { Slider } from './slider/slider.component';
 import { DrawingBoard } from './drawingboard/drawingboard.component';
+import { ScrawlButtonComponent } from './scrawlbutton/scrawlbutton.component';
 import { Configuration } from 'msal';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '../environments/environment';
@@ -75,6 +76,7 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     DrawingDirective,
     GameAssetDirective,
     SelectorDirective,
+    ScrawlButtonComponent,
     LobbyManagementComponent,
     UserManagementComponent,
     Slider,

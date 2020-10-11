@@ -51,9 +51,11 @@
           </div>
           <div class="Error" *ngIf="error">{{ error }}</div>
           <button class="btn btn-primary" (click)="onStartLobby()">Start</button>
+          <scrawlbutton [label]="'Start'"></scrawlbutton>
+          <scrawlbutton [label]="'Stop'" color="red" width="100px"></scrawlbutton>
 
           <br />
-          <img gameAsset [gameID]="gameModes[lobby.selectedGameMode].identifier"/>
+          <img gameAsset [gameID]="gameModes[lobby.selectedGameMode].identifier" />
 
           <div gameAsset [gameID]="gameModes[lobby.selectedGameMode].identifier"></div>
 
