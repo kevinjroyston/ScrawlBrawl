@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "BackendAutomatedTestingClient": {
+      "commandName": "Project",
+      "commandLineArgs": "-parallel -structured"
+    }
+  }
+}
