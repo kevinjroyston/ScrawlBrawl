@@ -5,6 +5,8 @@
 export const environment = {
     production: false,
     enableMsal: false,
+    backendApiUrl: "http://localhost:50402/", // See proxy.conf.json, CORS shenanigans for localhost only.
+    frontendUrl: "http://localhost:50402/"
 };
 
 /*

@@ -43,7 +43,6 @@ export class FetchDataComponent
     public userPrompt: UserPrompt;
     public userForm;
     public http: HttpClient;
-    public baseUrl: string;
     private formBuilder: FormBuilder;
     private userPromptTimerId;
     private autoSubmitTimerId;
@@ -53,16 +52,14 @@ export class FetchDataComponent
     constructor(
         http: HttpClient,
         formBuilder: FormBuilder,
-        @Inject('BASE_URL') baseUrl: string,
         @Inject('userId') userId: string,
         @Inject(MsalService) authService: MsalService,
         @Inject(BroadcastService) broadcastService: BroadcastService
     )
     {
-      this.api = new API(http, baseUrl, userId, authService, broadcastService)
+      this.api = new API(http, userId, authService, broadcastService)
       this.formBuilder = formBuilder;
       this.http = http;
-      this.baseUrl = baseUrl;
       this.userId = userId;
       this.fetchUserPrompt();
     }

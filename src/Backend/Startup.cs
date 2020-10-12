@@ -68,19 +68,12 @@ namespace Backend
                 options.AddDefaultPolicy(
                     builder =>
                     {
-                        builder.WithOrigins("https://scrawlbrawl.b2clogin.com/");
+                        builder.WithOrigins("https://scrawlbrawl.b2clogin.com/", Configuration.GetValue<string>("FrontendUrl"));
                     });
             });
 
             services.AddControllers().AddNewtonsoftJson();
-
-            // In production, the Angular files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/dist";
-            });
             services.AddHostedService<GameNotifier>();
-            services.AddApplicationInsightsTelemetry();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -101,16 +94,17 @@ namespace Backend
             app.UseCookiePolicy();
 
             //app.UseLetsEncryptFolder(env);
-            app.UseStaticFiles();
-            app.UseSpaStaticFiles();
+            //app.UseStaticFiles();
+            //app.UseSpaStaticFiles();
 
             app.UseRouting();
             app.UseCors();
 
-#if !DEBUG
-            app.UseAuthentication();
-            app.UseAuthorization();
-#endif
+            if (!env.IsDevelopment())
+            {
+                app.UseAuthentication();
+                app.UseAuthorization();
+            }
 
             // SPAs, Sockets, and Endpoints oh my!
             app.UseWebSockets(new WebSocketOptions()
@@ -130,7 +124,7 @@ namespace Backend
                 });
             });
 
-            app.UseSpa(spa =>
+            /*app.UseSpa(spa =>
             {
                 // To learn more about options for serving an Angular SPA from ASP.NET Core,
                 // see https://go.microsoft.com/fwlink/?linkid=864501
@@ -141,7 +135,7 @@ namespace Backend
                 {
                     spa.UseProxyToSpaDevelopmentServer("http://localhost:50402");
                 }
-            });
+            });*/
         }
     }
 }

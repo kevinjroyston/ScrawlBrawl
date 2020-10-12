@@ -46,7 +46,7 @@ export const b2cPolicies = {
  */
 export const apiConfig: { b2cScopes: string[], webApi: string } = {
     b2cScopes: ['https://ScrawlBrawl.onmicrosoft.com/5c59c94a-140d-4c49-a4ed-772a55c52d57/LobbyManagement'],
-    webApi: 'https://scrawlbrawl.tv'
+    webApi: environment.frontendUrl
 };
 // #endregion
 
@@ -61,8 +61,8 @@ export const msalConfig: Configuration = {
     auth: {
         clientId: "5c59c94a-140d-4c49-a4ed-772a55c52d57",
         authority: b2cPolicies.authorities.signUpSignIn.authority,
-        redirectUri:  "https://scrawlbrawl.tv/lobby/manage",
-        postLogoutRedirectUri: "https://scrawlbrawl.tv/",
+        redirectUri:  environment.frontendUrl + "/lobby/manage",
+        postLogoutRedirectUri: environment.frontendUrl,
         navigateToLoginRequestUrl: true,
         validateAuthority: false,
     },

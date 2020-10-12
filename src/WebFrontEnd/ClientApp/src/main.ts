@@ -8,9 +8,6 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
-export function getBaseUrl() {
-    return document.getElementsByTagName('base')[0].href;
-}
 
 export function getUserIdOverrideQueryParameter() {
   const params = location.search.slice(1).split('&').reduce((acc, s) => {
@@ -43,7 +40,6 @@ function genHexString(len) {
 }
 
 const providers = [
-  { provide: 'BASE_URL', useFactory: getBaseUrl, deps: [] },
   { provide: 'userId', useFactory: getUserIdQueryParameter, deps: [] }
 ];
 
