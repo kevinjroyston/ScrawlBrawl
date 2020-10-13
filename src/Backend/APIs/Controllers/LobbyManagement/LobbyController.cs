@@ -6,6 +6,9 @@ using Common.DataModels.Requests.LobbyManagement;
 using Backend.APIs.Helpers.Extensions;
 using System;
 using System.Linq;
+#if !DEBUG
+using Microsoft.AspNetCore.Authorization;
+#endif
 
 namespace Backend.APIs.Controllers.LobbyManagement
 {
