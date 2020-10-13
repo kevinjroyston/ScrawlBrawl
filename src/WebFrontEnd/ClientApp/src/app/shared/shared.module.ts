@@ -11,7 +11,8 @@ import { DrawingDirective } from './components/drawingdirective.component';
 import { ScrawlButtonComponent } from './components/scrawlbutton/scrawlbutton.component';
 import { SelectorDirective } from './components/selectordirective.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import {ButtonComponent} from './components/button/button.component'
+import {FooterModule} from '@layout/footer/footer.module'
 
 @NgModule({
   imports: [
@@ -23,7 +24,7 @@ import { RouterModule } from '@angular/router';
     UiSwitchModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule
+    FooterModule
   ],
   declarations: [
     DrawingBoard,
@@ -40,12 +41,14 @@ import { RouterModule } from '@angular/router';
     NgbModule,
     ColorPickerModule,
     UiSwitchModule,
+    ButtonComponent,
     Slider,
     FormsModule,
     ReactiveFormsModule,
     DrawingDirective,
     ScrawlButtonComponent,
-    SelectorDirective
+    SelectorDirective,
+    FooterModule
   ]
 })
 export class SharedModule { }

@@ -1,13 +1,54 @@
 /* You can add global styles to this file, and also import other style files */
 
 * {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background-color: #FFFFFF;
-  color: #210F4C;
-  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  font-family: Sen;
 }
+
+scrawlbrawl-button {
+  max-width: fit-content;
+}
+
+.fetch-data {
+  display: flex;
+}
+
+.form {
+  display: flex;
+  flex-basis: 50%;
+  flex-direction: column;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  font-size: 40px;
+  line-height: 48px;
+}
+
+.text-input {
+  width: 100%;
+  font-size: 16px;
+  line-height: 19px;
+  padding: .5rem;
+}
+
+.prompt {
+  font-size: 17px;
+  line-height: 19px;
+  color: #424242;
+  font-weight: bold;
+  margin-bottom: .5rem;
+}
+
+.subprompt {
+  margin-bottom: 1.5rem;
+}
+
 .SubmitButton {
   color: rgb(61, 49, 173);
   font-size: 23px;
@@ -34,23 +75,11 @@
   background: #362C5D;
 }
 
-input.text {
-  padding: 3px;
-}
-
 input {
-  background-color: whitesmoke;
-  border: 1px solid #DEDEDE;
+  border: 2px solid rgba(66, 66, 66, 0.6);
   border-radius: 4px;
 }
-.Title {
-  font-size: 27px;
-  letter-spacing: -0.4px;
-  word-spacing: -0.8px;
-  font-weight: 700;
-  font-style: normal;
-  text-transform: none;
-}
+
 
 .Description {
   font-size: 21px;
@@ -63,27 +92,7 @@ input {
   text-transform: none;
 }
 
-.Prompt {
-  font-size: 17px;
-  letter-spacing: -0.2px;
-  word-spacing: 0.2px;
-  font-weight: 700;
-  text-decoration: none solid rgb(68, 68, 68);
-  font-style: normal;
-  font-variant: normal;
-  text-transform: none;
-}
 
-.ShortAnswer {
-  font-size: 14px;
-  letter-spacing: -0.2px;
-  word-spacing: -1.4px;
-  font-weight: 400;
-  text-decoration: none solid rgb(68, 68, 68);
-  font-style: normal;
-  font-variant: normal;
-  text-transform: none;
-}
 
 .RadioAnswer {
   font-size: 30px;
