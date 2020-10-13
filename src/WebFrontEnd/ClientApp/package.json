@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "echo Starting... && ng serve --port 50402 --host 0.0.0.0 --proxy-config proxy.conf.json",
     "build": "ng build",
+    "build-staging": "ng build --configuration=staging",
+    "build-prod": "ng build --configuration=production",
     "build:ssr": "ng run RoystonGame:server:dev",
     "test": "ng test",
     "lint": "ng lint",

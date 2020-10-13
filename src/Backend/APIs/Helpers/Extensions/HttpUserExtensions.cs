@@ -1,4 +1,7 @@
-﻿using System.Security.Principal;
+﻿#if !DEBUG
+using System.Security.Claims;
+#endif
+using System.Security.Principal;
 
 namespace Backend.APIs.Helpers.Extensions
 {
