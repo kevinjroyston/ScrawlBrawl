@@ -11,6 +11,7 @@ namespace Common.DataModels.Responses
         public int? MaxPlayers { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+        public string Identifier { get; set; } // should be unique across games, used to lookup html info pages and store offline data related to game
 
         public List<GameModeOptionResponse> Options { get; set; }
 

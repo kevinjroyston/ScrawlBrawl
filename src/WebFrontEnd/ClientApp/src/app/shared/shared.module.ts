@@ -7,9 +7,11 @@ import { Slider } from './components/slider/slider.component';
 import { NgxBootstrapSliderModule } from 'ngx-bootstrap-slider';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { UiSwitchModule } from 'ngx-ui-switch';
-import { DrawingDirective } from './components/drawingdirective.component'
-import { SelectorDirective } from './components/selectordirective.component'
+import { DrawingDirective } from './components/drawingdirective.component';
+import { ScrawlButtonComponent } from './components/scrawlbutton/scrawlbutton.component';
+import { SelectorDirective } from './components/selectordirective.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   imports: [
@@ -21,10 +23,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     UiSwitchModule,
     FormsModule,
     ReactiveFormsModule,
+    RouterModule
   ],
   declarations: [
     DrawingBoard,
     Slider,
+    ScrawlButtonComponent,
     DrawingDirective,
     SelectorDirective
   ],
@@ -40,6 +44,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     FormsModule,
     ReactiveFormsModule,
     DrawingDirective,
+    ScrawlButtonComponent,
     SelectorDirective
   ]
 })
