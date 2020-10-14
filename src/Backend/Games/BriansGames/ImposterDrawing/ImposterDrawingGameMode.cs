@@ -9,6 +9,7 @@ using Backend.Games.Common;
 using Backend.Games.Common.DataModels;
 using Backend.Games.Common.GameStates;
 using Backend.Games.Common.GameStates.VoteAndReveal;
+using Common.DataModels.Enums;
 using Common.DataModels.Requests.LobbyManagement;
 using Common.DataModels.Responses;
 using System;
@@ -24,6 +25,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing
             new GameModeMetadata
             {
                 Title = "Imposter Syndrome",
+                GameId = GameModeId.Imposter.ToString(),
                 Description = "Come up with a difference only you'll be able to spot!",
                 MinPlayers = 4,
                 MaxPlayers = null,

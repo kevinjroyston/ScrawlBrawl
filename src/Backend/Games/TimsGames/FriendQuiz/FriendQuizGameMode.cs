@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Common.DataModels.Responses;
 using Backend.GameInfrastructure;
+using Common.DataModels.Enums;
 
 namespace Backend.Games.TimsGames.FriendQuiz
 {
@@ -24,6 +25,7 @@ namespace Backend.Games.TimsGames.FriendQuiz
         public static GameModeMetadata GameModeMetadata { get; } = new GameModeMetadata
         {
             Title = "Friend Quiz",
+            GameId = GameModeId.FriendQuiz.ToString(),
             Description = "See how well you know your fellow players",
             MinPlayers = 3,
             MaxPlayers = null,

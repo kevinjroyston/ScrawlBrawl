@@ -17,6 +17,7 @@ using Backend.Games.Common;
 using Common.DataModels.Responses;
 using Backend.GameInfrastructure;
 using Common.Code.Extensions;
+using Common.DataModels.Enums;
 
 namespace Backend.Games.KevinsGames.Mimic
 {
@@ -29,6 +30,7 @@ namespace Backend.Games.KevinsGames.Mimic
         public static GameModeMetadata GameModeMetadata { get; } = new GameModeMetadata
         {
             Title = "Mimic",
+            GameId = GameModeId.Mimic.ToString(),
             Description = "Test your drawing and memory skills",
             MinPlayers = 3,
             MaxPlayers = null,
