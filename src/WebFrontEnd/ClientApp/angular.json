@@ -97,6 +97,10 @@
             },
             "staging": {
               "browserTarget": "RoystonGame:build:staging"
+            },
+            "substaging": {
+              "browserTarget": "RoystonGame:build:staging",
+              "proxyConfig": "src/proxy-substaging.conf.json"
             }
           }
         },
