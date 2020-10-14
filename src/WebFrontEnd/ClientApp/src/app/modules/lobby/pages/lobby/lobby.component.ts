@@ -13,20 +13,14 @@ import { BroadcastService, MsalService } from '@azure/msal-angular';
 })
 
 export class LobbyManagementComponent {
-    public api: API;
     public lobby!: LobbyMetadata;
     public gameModes!: GameModeMetadata[];
     public error: string = "";
     public gameModeCollapse = false;
 
     constructor(
-        private http: HttpClient,
-        @Inject('userId') userId: string,
-        @Inject(MsalService) authService: MsalService,
-        @Inject(BroadcastService) broadcastService: BroadcastService
-    )
+        @Inject(API) private api: API)
     {
-        this.api = new API(http, userId, authService, broadcastService)
         this.getGames().then(()=>this.onGetLobby())
     }
 

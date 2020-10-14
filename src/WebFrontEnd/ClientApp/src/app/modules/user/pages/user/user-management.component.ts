@@ -13,16 +13,10 @@ import { MsalService, BroadcastService } from '@azure/msal-angular';
 })
 
 export class UserManagementComponent {
-    public api: API;
-
     constructor(
-        private http: HttpClient,
-        @Inject('userId') userId: string,
-        @Inject(MsalService) authService: MsalService,
-        @Inject(BroadcastService) broadcastService: BroadcastService
-    ) {
-        // TODO. Broadcast API through DI so dont have to pass through 4 values.
-        this.api = new API(http, userId, authService, broadcastService);
+        @Inject(API) private api: API)
+    {
+
     }
 
     async onDeleteUser() {
