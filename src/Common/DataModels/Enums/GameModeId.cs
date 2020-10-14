@@ -10,7 +10,7 @@ namespace Common.DataModels.Enums
         Imposter,
         Mimic,
         ChaoticCoop,
-        Triptych,
+        BodySwap,
         FriendQuiz,
         ImposterText,
         StoryTime,

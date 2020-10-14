@@ -23,7 +23,7 @@ namespace Backend.Games.BriansGames.BodyBuilder
             Title = "Body Swap", // in code references as Body Builder
             Description = "Try to make a complete character before your opponents can.",
             MinPlayers = 3,
-            GameId = GameModeId.Triptych.ToString(),
+            GameId = GameModeId.BodySwap.ToString(),
             MaxPlayers = null,
             Options = new List<GameModeOptionResponse>
                 {
