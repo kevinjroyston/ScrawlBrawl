@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
-    "start": "echo Starting... && ng serve --port 50402 --host 0.0.0.0 --proxy-config proxy.conf.json",
+    "start": "echo Starting... && ng serve --port 50402 --host 0.0.0.0",
     "build": "ng build",
     "build-staging": "ng build --configuration=staging",
     "build-substaging": "ng build --configuration=substaging",
