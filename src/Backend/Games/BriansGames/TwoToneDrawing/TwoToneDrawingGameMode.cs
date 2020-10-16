@@ -18,6 +18,7 @@ using static Backend.Games.BriansGames.TwoToneDrawing.DataModels.ChallengeTracke
 using static System.FormattableString;
 using Backend.GameInfrastructure;
 using Common.DataModels.Responses;
+using Common.DataModels.Enums;
 
 namespace Backend.Games.BriansGames.TwoToneDrawing
 {
@@ -34,6 +35,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
         public static GameModeMetadata GameModeMetadata { get; } = new GameModeMetadata
         {
             Title = "Chaotic Cooperation",
+            GameId = GameModeId.ChaoticCoop.ToString(),
             Description = "Blindly collaborate on a drawing with unknown teammates.",
             MinPlayers = 4,
             MaxPlayers = null,

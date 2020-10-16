@@ -96,7 +96,6 @@ namespace Backend.GameInfrastructure
                 }
             },*/
             #endregion
-            #region Imposter Syndrome Drawing
             new GameModeMetadataHolder()
             {
                 GameModeMetadata = ImposterDrawingGameMode.GameModeMetadata,
@@ -127,7 +126,7 @@ namespace Backend.GameInfrastructure
                 GameModeMetadata = FriendQuizGameMode.GameModeMetadata,
                 GameModeInstantiator = (lobby, options) => new FriendQuizGameMode(lobby, options)
             },
-            #endregion
+            
             #region StoryTime (Removed)
             /*new GameModeMetadata
             {

@@ -18,7 +18,7 @@ import { CoreModule } from '@core/core.module';
 import { SharedModule } from '@shared/shared.module';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './layout/nav-menu/nav-menu.component';
-import { FooterComponent} from './layout/footer/footer.component'
+import { FooterComponent} from './layout/footer/footer.component';
 import { Configuration } from 'msal';
 import { AppRoutingModule } from './app.routing';
 
@@ -27,6 +27,11 @@ function MSALConfigFactory(): Configuration {
 }
 
 function MSALAngularConfigFactory(): MsalAngularConfiguration {
+//  if (!msalAngularConfig.unprotectedResources.includes("assets/BodyBuilder")) {
+    // iterate here through all our games
+    msalAngularConfig.unprotectedResources.push("assets/BodyBuilder");
+    msalAngularConfig.unprotectedResources.push("assets/Mimic");
+//  }
     return msalAngularConfig;
 }
 

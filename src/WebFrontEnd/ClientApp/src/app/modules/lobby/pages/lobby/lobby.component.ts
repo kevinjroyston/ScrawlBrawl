@@ -128,6 +128,7 @@ class GameModeMetadata {
     minPlayers: number;
     maxPlayers: number;
     title: string;
+    gameId: string;
     description: string;
     options: GameModeOptionResponse[];
 }
