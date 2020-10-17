@@ -123,11 +123,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 175645de0c289704581dca408d8083d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ScrawlBrawlLogo: {fileID: 21300000, guid: cb16a91d0cacef54295ed94a1efd89d0, type: 3}
-  BodyBuilderLogo: {fileID: 21300000, guid: d18b2870dd6f95141bf6617b400f0eb0, type: 3}
-  BodySwapLogo: {fileID: 0}
-  ImposterSyndromeLogo: {fileID: 21300000, guid: b85057319656bd24d8f47553800345d8,
-    type: 3}
-  ChaoticCooperationLogo: {fileID: 0}
-  MimicLogo: {fileID: 0}
   IconHolder: {fileID: 3916204169933429581}
+  ScrawlBrawlLogo: {fileID: 21300000, guid: cb16a91d0cacef54295ed94a1efd89d0, type: 3}
+  games: 0000000001000000020000000300000004000000
+  sprites:
+  - {fileID: 21300000, guid: d18b2870dd6f95141bf6617b400f0eb0, type: 3}
+  - {fileID: 21300000, guid: b85057319656bd24d8f47553800345d8, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

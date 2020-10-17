@@ -5,26 +5,25 @@ using UnityEngine.UI;
 
 public class GameIconHandler : MonoBehaviour
 {
-    public Sprite ScrawlBrawlLogo = null;
-    public Sprite BodyBuilderLogo = null;
-    public Sprite BodySwapLogo = null;
-    public Sprite ImposterSyndromeLogo = null;
-    public Sprite ChaoticCooperationLogo = null;
-    public Sprite MimicLogo = null;
     public Image IconHolder = null;
+    public Sprite ScrawlBrawlLogo = null;
+
+    public List<GameModeId> games = new List<GameModeId>();
+    public List<Sprite> sprites = new List<Sprite>();
+
     // Start is called before the first frame update
 
     private Dictionary<GameModeId, Sprite> GamesToIcons = new Dictionary<GameModeId, Sprite>();
     void Start()
     {
-        print("started");
-        #region adding to dictionary
-        GamesToIcons.Add(GameModeId.BodyBuilder, BodyBuilderLogo);
-        GamesToIcons.Add(GameModeId.BodySwap, BodySwapLogo);
-        GamesToIcons.Add(GameModeId.Imposter, ImposterSyndromeLogo);
-        GamesToIcons.Add(GameModeId.ChaoticCoop, ChaoticCooperationLogo);
-        GamesToIcons.Add(GameModeId.Mimic, MimicLogo);
-        #endregion
+        if (games.Count != sprites.Count)
+        {
+            throw new System.Exception("Games and Sprites must be the same length (items are one to one by index)");
+        }
+        for (int i = 0; i < games.Count; i++)
+        {
+            GamesToIcons.Add(games[i], sprites[i]);
+        }
         ViewManager.Singleton.RegisterIcon(SetGame);
     }
 

@@ -4164,6 +4164,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameIcon
       objectReference: {fileID: 0}
+    - target: {fileID: 3916204170621967507, guid: 2a3f671c014cb6646906d7d83282e8ef,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2a3f671c014cb6646906d7d83282e8ef, type: 3}
 --- !u!224 &728731557 stripped
@@ -4503,7 +4508,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ScreenId: 05000000
-  Title: {fileID: 0}
+  Title: {fileID: 616582809}
   Instructions: {fileID: 999931677}
   ImageDropZone: {fileID: 2128029488}
   ImagePrefab: {fileID: 958200141029690273, guid: f01a60ea2d78bc245b181d85162ab70c,
@@ -4511,7 +4516,7 @@ MonoBehaviour:
   PlayerBar: {fileID: 999931677}
   VoteReavealBar: {fileID: 999931677}
   TimerUI: {fileID: 999931677}
-  GameIcon: {fileID: 0}
+  GameIcon: {fileID: 1104598911}
   BlurCamera: {fileID: 1846907645}
 --- !u!1 &747384920
 GameObject:
