@@ -2,7 +2,7 @@
   "profiles": {
     "BackendAutomatedTestingClient": {
       "commandName": "Project",
-      "commandLineArgs": "-structured -games \"Imposter Syndrome\""
+      "commandLineArgs": "-parallel -structured"
     }
   }
 }

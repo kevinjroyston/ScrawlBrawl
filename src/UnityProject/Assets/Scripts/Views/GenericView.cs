@@ -15,7 +15,6 @@ public class GenericView : ITVView
     public GameObject PlayerBar = null;
     public GameObject VoteReavealBar = null;
     public GameObject TimerUI = null;
-    public GameObject GameIcon = null;
     public Camera BlurCamera = null;
 
     void Awake()
@@ -123,11 +122,6 @@ public class GenericView : ITVView
             {
                 TimerUI.SetActive(false);
             }
-        }
-
-        if (GameIcon?.GetComponent<GameIconHandler>() != null)
-        {
-            GameIcon.GetComponent<GameIconHandler>().SetGame(ViewManager.Singleton.ConfigMetaData.GameMode);
         }
 
         if(BlurCamera?.GetComponent<BlurController>() != null)
