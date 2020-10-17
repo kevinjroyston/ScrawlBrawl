@@ -91,7 +91,7 @@ public class TestClient : MonoBehaviour
             if (LobbyClosed)
             {
                 LobbyClosed = false;
-                ViewManager.Singleton.SwitchToView(null, null);
+                ViewManager.Singleton.OnLobbyClose();
 
             }
             else
@@ -102,9 +102,9 @@ public class TestClient : MonoBehaviour
 
         if (ConfigDirty)
         {
-            Debug.Log($"Server update");
+            Debug.Log($"Config Update");
             ConfigDirty = false;
-            
+            ViewManager.Singleton.UpdateConfigMetaData(ConfigurationMeta);
         }
 
         // If we aren't in the process of a delayed restart and the connection task failed. Begin a delayed restart.

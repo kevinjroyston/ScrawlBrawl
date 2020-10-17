@@ -16,6 +16,5 @@ public class UnityView
     public string _Instructions { get; set; }
     public DateTime ServerTime { get; set; }
     public DateTime? _StateEndTime { get; set; }
-    public GameModeId? _GameMode { get; set; }
     public UnityViewOptions _Options { get; set; }
 }

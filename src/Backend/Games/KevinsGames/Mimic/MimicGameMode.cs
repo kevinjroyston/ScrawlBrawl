@@ -30,7 +30,7 @@ namespace Backend.Games.KevinsGames.Mimic
         public static GameModeMetadata GameModeMetadata { get; } = new GameModeMetadata
         {
             Title = "Mimic",
-            GameId = GameModeId.Mimic.ToString(),
+            GameId = GameModeId.Mimic,
             Description = "Test your drawing and memory skills",
             MinPlayers = 3,
             MaxPlayers = null,

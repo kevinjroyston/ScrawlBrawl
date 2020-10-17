@@ -17,6 +17,7 @@ public class GameIconHandler : MonoBehaviour
     private Dictionary<GameModeId, Sprite> GamesToIcons = new Dictionary<GameModeId, Sprite>();
     void Start()
     {
+        print("started");
         #region adding to dictionary
         GamesToIcons.Add(GameModeId.BodyBuilder, BodyBuilderLogo);
         GamesToIcons.Add(GameModeId.BodySwap, BodySwapLogo);
@@ -24,18 +25,13 @@ public class GameIconHandler : MonoBehaviour
         GamesToIcons.Add(GameModeId.ChaoticCoop, ChaoticCooperationLogo);
         GamesToIcons.Add(GameModeId.Mimic, MimicLogo);
         #endregion
-
-        if (IconHolder != null)
-        {
-            IconHolder.enabled = false;
-        }
+        ViewManager.Singleton.RegisterIcon(SetGame);
     }
 
-    public void SetGame(GameModeId? gameMode) //TODO
+    public void SetGame(GameModeId? gameMode) 
     {
         if (IconHolder != null)
         {
-            IconHolder.enabled = true;
             if (gameMode != null 
                 && GamesToIcons.ContainsKey((GameModeId)gameMode)
                 && GamesToIcons[(GameModeId)gameMode] != null) //checking that game has an icon
@@ -48,10 +44,6 @@ public class GameIconHandler : MonoBehaviour
                 if (ScrawlBrawlLogo != null)
                 {
                     IconHolder.sprite = ScrawlBrawlLogo;
-                }
-                else
-                {
-                    IconHolder.enabled = false; // if nothing to show just hide the object
                 }
             }
         }

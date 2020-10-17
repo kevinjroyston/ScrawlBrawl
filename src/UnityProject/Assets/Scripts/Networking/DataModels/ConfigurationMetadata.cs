@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class ConfigurationMetadata
 {
-    GameModeId? GameMode;
+    public GameModeId? GameMode { get; set; }
 }

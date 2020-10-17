@@ -127,7 +127,7 @@ public class GenericView : ITVView
 
         if (GameIcon?.GetComponent<GameIconHandler>() != null)
         {
-            GameIcon.GetComponent<GameIconHandler>().SetGame(UnityView?._GameMode);
+            GameIcon.GetComponent<GameIconHandler>().SetGame(ViewManager.Singleton.ConfigMetaData.GameMode);
         }
 
         if(BlurCamera?.GetComponent<BlurController>() != null)

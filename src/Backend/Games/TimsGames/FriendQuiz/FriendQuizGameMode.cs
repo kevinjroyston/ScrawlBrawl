@@ -25,7 +25,7 @@ namespace Backend.Games.TimsGames.FriendQuiz
         public static GameModeMetadata GameModeMetadata { get; } = new GameModeMetadata
         {
             Title = "Friend Quiz",
-            GameId = GameModeId.FriendQuiz.ToString(),
+            GameId = GameModeId.FriendQuiz,
             Description = "See how well you know your fellow players",
             MinPlayers = 3,
             MaxPlayers = null,
