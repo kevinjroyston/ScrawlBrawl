@@ -63,6 +63,14 @@ namespace Backend.APIs.Hubs
                         // Push updates to all clients.
                         UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("UpdateState", view);
                     }
+
+
+                    bool needToRefreshMetadata = lobby.ConfigMetaData?.Refresh() ?? false;
+
+                    if (needToRefreshMetadata)
+                    {
+                        UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("ConfigureMetadata", lobby.ConfigMetaData);
+                    }
                 }
                 catch (Exception e)
                 {
