@@ -1,0 +1,7 @@
+{
+    "/api": {
+      "target": "https://api.test.scrawlbrawl.tv/",
+      "secure": true,
+      "changeOrigin": true
+    }
+  }

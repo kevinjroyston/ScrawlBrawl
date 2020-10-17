@@ -60,44 +60,77 @@
               "buildOptimizer": true
             },
             "staging": {
-                "budgets": [
-                  {
-                    "type": "anyComponentStyle",
-                    "maximumWarning": "6kb"
-                  }
-                ],
-                "fileReplacements": [
-                  {
-                    "replace": "src/environments/environment.ts",
-                    "with": "src/environments/environment.staging.ts"
-                  }
-                ],
-                "optimization": true,
-                "outputHashing": "all",
-                "sourceMap": false,
-                "extractCss": true,
-                "namedChunks": false,
-                "aot": true,
-                "extractLicenses": true,
-                "vendorChunk": false,
-                "buildOptimizer": true
-              }
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true
+            },
+            "substaging": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.substaging.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true
             }
-          },
+          }
+        },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "RoystonGame:build",
+            "proxyConfig": "src/proxy.conf.json",
             "ssl": false,
             "sslKey": "ssl/server.key",
             "sslCert": "ssl/server.crt"
           },
           "configurations": {
             "production": {
-              "browserTarget": "RoystonGame:build:production"
+              "ssl": true,
+              "browserTarget": "RoystonGame:build:production",
+              "proxyConfig": null
             },
             "staging": {
-              "browserTarget": "RoystonGame:build:staging"
+              "ssl": true,
+              "browserTarget": "RoystonGame:build:staging",
+              "proxyConfig": null
+            },
+            "substaging": {
+              "ssl": false,
+              "browserTarget": "RoystonGame:build:substaging",
+              "proxyConfig": "src/proxy-substaging.conf.json"
             }
           }
         },

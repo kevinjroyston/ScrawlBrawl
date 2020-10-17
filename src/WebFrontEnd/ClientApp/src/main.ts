@@ -38,8 +38,27 @@ function genHexString(len) {
     }
     return output;
 }
-
+export function getBaseFrontendUrl() {
+  if (environment.overrideUrlsWithBrowserHost){
+    return document.getElementsByTagName('base')[0].href;
+  }
+  else
+  {
+    return environment.frontendUrl;
+  }
+}
+export function getBaseBackendUrl() {
+  if (environment.overrideUrlsWithBrowserHost){
+    return document.getElementsByTagName('base')[0].href;
+  }
+  else
+  {
+    return environment.backendApiUrl;
+  }
+}
 const providers = [
+  { provide: 'BASE_FRONTEND_URL', useFactory: getBaseFrontendUrl, deps: [] },
+  { provide: 'BASE_API_URL', useFactory: getBaseBackendUrl, deps: [] },
   { provide: 'userId', useFactory: getUserIdQueryParameter, deps: [] }
 ];
 

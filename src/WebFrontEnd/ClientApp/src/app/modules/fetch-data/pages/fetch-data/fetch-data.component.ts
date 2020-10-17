@@ -39,28 +39,17 @@ export class Safe {
 
 export class FetchDataComponent
 {
-    public api: API;
     public userPrompt: UserPrompt;
     public userForm;
-    public http: HttpClient;
     private formBuilder: FormBuilder;
     private userPromptTimerId;
     private autoSubmitTimerId;
-    private currentPromptId;
-    private userId: string;
 
     constructor(
-        http: HttpClient,
         formBuilder: FormBuilder,
-        @Inject('userId') userId: string,
-        @Inject(MsalService) authService: MsalService,
-        @Inject(BroadcastService) broadcastService: BroadcastService
-    )
+        @Inject(API) private api: API)
     {
-      this.api = new API(http, userId, authService, broadcastService)
       this.formBuilder = formBuilder;
-      this.http = http;
-      this.userId = userId;
       this.fetchUserPrompt();
     }
 

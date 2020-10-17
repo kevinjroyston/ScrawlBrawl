@@ -5,6 +5,7 @@ import { AuthError, InteractionRequiredAuthError } from 'msal';
 import { MsalService, BroadcastService } from '@azure/msal-angular';
 import HttpEvent from 'msal/lib-commonjs/telemetry/HttpEvent';
 import { environment } from 'environments/environment';
+import { Inject, Injectable } from '@angular/core';
 
 //TODO: Change all "any" types to concrete, importable data types.
 //TODO: clean up this class to simplify usage / logging of responses/errors to consoles is not done correctly.
@@ -29,6 +30,9 @@ type GameRequest = {
     body?: {}
 }
 
+@Injectable({
+    providedIn: 'root'
+})
 export class API {
 
     private getHttpOptions = {
@@ -46,7 +50,12 @@ export class API {
     };
 
     // TODO: instantiate api via dependency injection / make it injectable.
-    constructor(private http: HttpClient,  userId: string, private authService: MsalService, private broadcastService: BroadcastService) {
+    constructor(
+        @Inject(HttpClient) private http: HttpClient,
+        @Inject('userId')userId: string,
+        @Inject(MsalService) private authService: MsalService,
+        @Inject('BASE_API_URL') private baseUrl: string)
+    {
         this.postHttpOptions.params.id = userId;
         this.getHttpOptions.params.id = userId;
     }
@@ -189,6 +198,6 @@ export class API {
     }    
 
     getAPIPath = (r: APIRequest): string => {
-        return `${environment.backendApiUrl}api/v1/${r.type}/${r.path}`;
+        return `${this.baseUrl}api/v1/${r.type}/${r.path}`;
     }
 }
