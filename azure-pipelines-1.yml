@@ -9,7 +9,7 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
-variables:
+env:
   PACKAGE_PATH: 'src/WebFrontEnd/ClientApp'
 
 steps:
@@ -19,7 +19,7 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
-    npm install -g @angular/cli --prefix ${{PACKAGE_PATH }}
-    npm install --prefix ${{PACKAGE_PATH }}
-    ng build --prod --prefix ${{PACKAGE_PATH }}
+    npm install -g @angular/cli --prefix ${{env.PACKAGE_PATH }}
+    npm install --prefix ${{env.PACKAGE_PATH}}
+    ng build --prod --prefix ${{env.PACKAGE_PATH}}
   displayName: 'npm install and build'
