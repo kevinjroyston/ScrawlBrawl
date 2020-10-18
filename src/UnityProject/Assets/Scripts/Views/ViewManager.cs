@@ -10,12 +10,26 @@ public class ViewManager : MonoBehaviour
     {
         Singleton = this;
     }
+    public ConfigurationMetadata ConfigMetaData { get; private set; }
+
     private TVScreenId? CurrentView = null;
     private Dictionary<TVScreenId, ITVView> AvailableTVViews { get; } = new Dictionary<TVScreenId, ITVView>();
     private ITVView DefaultView = null;
 
     private Guid lastGuid = Guid.Empty;
 
+    private List<Action<GameModeId?>> gameModeListeners = new List<Action<GameModeId?>>();
+
+    public void AddConfigurationListener_GameMode(Action<GameModeId?> gameModeListener)
+    {
+        gameModeListeners.Add(gameModeListener);
+        gameModeListener(ConfigMetaData?.GameMode);
+    }
+    public void OnLobbyClose()
+    {
+        SwitchToView(null, null);
+        ConfigMetaData = null;
+    }
 
     public void RegisterTVView(TVScreenId id, ITVView view)
     {
@@ -25,7 +39,17 @@ public class ViewManager : MonoBehaviour
     {
         DefaultView = view;
     }
-
+    public void UpdateConfigMetaData(ConfigurationMetadata newMetaData)
+    {
+        if (newMetaData.GameMode != ConfigMetaData?.GameMode)
+        {
+            foreach (Action<GameModeId?> gameModeListener in gameModeListeners)
+            {
+                gameModeListener(newMetaData.GameMode);
+            }
+        }
+        ConfigMetaData = newMetaData;
+    }
     public void SwitchToView(TVScreenId? id, UnityView view)
     {
         if (view != null &&  view._Id != lastGuid)

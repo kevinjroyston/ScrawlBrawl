@@ -34,7 +34,7 @@ namespace Backend.Games.BriansGames.BattleReady
         public static GameModeMetadata GameModeMetadata { get; } = new GameModeMetadata
         {
             Title = "Body Builder", // in code refered to as Battle Ready
-            GameId = GameModeId.BodyBuilder.ToString(),
+            GameId = GameModeId.BodyBuilder,
             Description = "Go head to head body to body and legs to legs with other players to try to make the best constestant for each challenge.",
             MinPlayers = 3,
             MaxPlayers = null,

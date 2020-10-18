@@ -22,6 +22,9 @@ public class TestClient : MonoBehaviour
     private bool LobbyClosed { get; set; } = false;
     private UnityView CurrentView { get; set; }
 
+    private bool ConfigDirty { get; set; } = false;
+    private ConfigurationMetadata ConfigurationMeta { get; set; }
+
     private bool Restarting { get; set; } = false;
     public EnterLobbyId EnterLobbyId;
 
@@ -45,6 +48,13 @@ public class TestClient : MonoBehaviour
                 logging.AddProvider(new DebugLoggerProvider());
             })
             .Build();
+
+        hubConnection.On("ConfigureMetadata",
+            new Action<ConfigurationMetadata>((configMeta) =>
+            {
+                ConfigurationMeta = configMeta;
+                ConfigDirty = true;
+            }));
 
         hubConnection.On("UpdateState",
             new Action<UnityView>((view) =>
@@ -81,12 +91,20 @@ public class TestClient : MonoBehaviour
             if (LobbyClosed)
             {
                 LobbyClosed = false;
-                ViewManager.Singleton.SwitchToView(null, null);
+                ViewManager.Singleton.OnLobbyClose();
+
             }
             else
             {
                 ViewManager.Singleton.SwitchToView(CurrentView?._ScreenId ?? TVScreenId.Unknown, CurrentView);
             }
+        }
+
+        if (ConfigDirty)
+        {
+            Debug.Log($"Config Update");
+            ConfigDirty = false;
+            ViewManager.Singleton.UpdateConfigMetaData(ConfigurationMeta);
         }
 
         // If we aren't in the process of a delayed restart and the connection task failed. Begin a delayed restart.

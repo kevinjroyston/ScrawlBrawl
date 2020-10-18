@@ -122,7 +122,7 @@ class GameModeMetadata {
     minPlayers: number;
     maxPlayers: number;
     title: string;
-    gameId: string;
+    gameIdString: string;
     description: string;
     options: GameModeOptionResponse[];
 }

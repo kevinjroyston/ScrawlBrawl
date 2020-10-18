@@ -39,6 +39,7 @@ namespace Backend.APIs.Hubs
 
                     UnityView view = lobby.GetActiveUnityView();
                     Clients.Caller.SendAsync("UpdateState", view);
+                    Clients.Caller.SendAsync("ConfigureMetadata", lobby.ConfigMetaData);
                 }
             }
             catch (Exception e)

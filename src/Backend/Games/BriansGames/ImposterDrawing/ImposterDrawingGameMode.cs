@@ -25,7 +25,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing
             new GameModeMetadata
             {
                 Title = "Imposter Syndrome",
-                GameId = GameModeId.Imposter.ToString(),
+                GameId = GameModeId.Imposter,
                 Description = "Come up with a difference only you'll be able to spot!",
                 MinPlayers = 4,
                 MaxPlayers = null,

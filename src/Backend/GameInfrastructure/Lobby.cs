@@ -23,6 +23,8 @@ using Backend.Games.TimsGames.FriendQuiz;
 using Backend.Games.BriansGames.ImposterDrawing;
 using Backend.APIs.DataModels.Enums;
 using Common.Code.Extensions;
+using Common.DataModels.UnityObjects;
+
 namespace Backend.GameInfrastructure
 {
     public class Lobby : IInlet
@@ -40,6 +42,7 @@ namespace Backend.GameInfrastructure
         public DateTime CreationTime { get; } = DateTime.Now;
         public List<ConfigureLobbyRequest.GameModeOptionRequest> GameModeOptions { get; private set; }
         public GameModeMetadataHolder SelectedGameMode { get; private set; }
+        public ConfigurationMetadata ConfigMetaData { get; } = new ConfigurationMetadata();
 
         #region GameStates
         private GameState CurrentGameState { get; set; }
@@ -253,6 +256,7 @@ namespace Backend.GameInfrastructure
 
             this.SelectedGameMode = GameModes[request.GameMode.Value];
             this.GameModeOptions = request.Options;
+            this.ConfigMetaData.GameMode = this.SelectedGameMode?.GameModeMetadata?.GameId;
 
             return true;
         }

@@ -35,7 +35,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
         public static GameModeMetadata GameModeMetadata { get; } = new GameModeMetadata
         {
             Title = "Chaotic Cooperation",
-            GameId = GameModeId.ChaoticCoop.ToString(),
+            GameId = GameModeId.ChaoticCoop,
             Description = "Blindly collaborate on a drawing with unknown teammates.",
             MinPlayers = 4,
             MaxPlayers = null,
