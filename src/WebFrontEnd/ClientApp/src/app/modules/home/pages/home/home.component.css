@@ -1,3 +1,12 @@
+:host {
+    width: 100%;
+}
+
+.home-wrapper{
+    margin-top: 1.5rem;
+    margin-bottom: 4rem;
+}
+
 .home {
     display: flex;
     padding: 5% 0;
@@ -5,8 +14,12 @@
     align-items: center;
 }
 
+.home-header{
+    margin: 0 auto;
+}
+
 .vid-preview{
-    width: 100%;
+    width: 70%;
     margin-top: 3rem;
     box-shadow: var(--shadow-lg);
 }

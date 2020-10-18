@@ -12,6 +12,7 @@ import { ScrawlButtonComponent } from './components/scrawlbutton/scrawlbutton.co
 import { SelectorDirective } from './components/selectordirective.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonComponent } from './components/button/button.component'
+import {FooterModule} from '@layout/footer/footer.module'
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import { ButtonComponent } from './components/button/button.component'
     NgbModule,
     ColorPickerModule,
     UiSwitchModule,
+    FooterModule,
     FormsModule,
     ReactiveFormsModule
   ],
@@ -41,6 +43,7 @@ import { ButtonComponent } from './components/button/button.component'
     ColorPickerModule,
     UiSwitchModule,
     ButtonComponent,
+    FooterModule,
     Slider,
     FormsModule,
     ReactiveFormsModule,

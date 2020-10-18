@@ -57,17 +57,17 @@ namespace Backend.GameInfrastructure
             {
                 new SubPrompt()
                 {
-                    Prompt = "Player nickname",
+                    Prompt = "Nickname",
                     ShortAnswer = true
                 },
                 new SubPrompt()
                 {
-                    Prompt = "Lobby code",
+                    Prompt = "Lobby Code",
                     ShortAnswer = true
                 },
                 new SubPrompt()
                 {
-                    Prompt = "Self portrait",
+                    Prompt = "Self Portrait",
                     Drawing = new DrawingPromptMetadata()
                 }
             },

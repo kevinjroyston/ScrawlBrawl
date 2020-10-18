@@ -7,6 +7,9 @@
 .root-container {
     display: flex; 
     flex: 1 0 auto;
-    padding: 1rem 0;
-    margin-bottom: 2rem;
+    overflow-x: hidden;
+
+    :host {
+        width: 100%;
+    }
 }
