@@ -13,16 +13,12 @@ scrawlbrawl-button {
   width: 100%;
   align-items: center;
   flex-direction: column;
+
+  & > * {
+    width: 100%;
+  }
 }
 
-.form > * {
-  width: 100%;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-}
 
 .title {
   margin: 1rem 0;

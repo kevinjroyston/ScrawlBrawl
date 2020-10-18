@@ -133,3 +133,22 @@ input[type=range] {
     background: var(--ornamental-pastelred);
   }
 }
+
+@media only screen and (max-width: 768px) {
+  .drawb{
+    flex-direction: column;
+  }
+
+  .drawb-settings{
+    display:flex;
+    flex-wrap: wrap;
+    border-left: 1px solid var(--white-secondary);
+  }
+
+  .drawb-setting{
+    padding: .5rem 1rem .5rem 0;
+    border-bottom: 0 !important;
+    width: 50%;
+    flex-grow: 1;
+  }
+}

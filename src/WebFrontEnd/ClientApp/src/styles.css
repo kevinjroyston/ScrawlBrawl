@@ -52,18 +52,14 @@ a:hover{
     text-decoration: none;
 }
 
-.trans-link::after{
-    content: '';
-    width: 0px;
-    height: 1px;
-    display: block;
-    background: var(--blue-primary);
-    transition: all ease .3s;
-    padding-top: 3.5px;
-  }
+.trans-link{
+    color: var(--black-primary);
+    padding: .65rem .75rem;
+}
   
-.trans-link:hover::after{
-    width: 100%;
+.trans-link:hover{
+    background-color: var(--white-secondary);
+    border-radius: 4px;
 }
 
 body {
