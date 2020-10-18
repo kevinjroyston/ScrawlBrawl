@@ -3,17 +3,19 @@
 </div>
 <div class="fetch-data">
   <form ng-app="myApp" class="form" *ngIf="userPrompt" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)">
-    <div class="title" *ngIf="userPrompt.title">
+    <h1 class="title" *ngIf="userPrompt.title">
       {{ userPrompt.title }}
-    </div>
+    </h1>
     <div class="Description" *ngIf="userPrompt.description">
       {{ userPrompt.description }}
     </div>
-    <div *ngIf="userPrompt.subPrompts">
+    <div class="subprompts" *ngIf="userPrompt.subPrompts">
       <div class="subprompt" *ngFor="let subPrompt of userPrompt.subPrompts; let j = index" formArrayName="subForms">
-        <div [formGroupName]="j">
-          <div class="prompt" *ngIf="subPrompt.prompt">
-            {{subPrompt.prompt}}
+        <div class="subprompt-inner" [formGroupName]="j">
+          <div class="prompt-wrapper">
+            <b class="prompt" *ngIf="subPrompt.prompt">
+              {{subPrompt.prompt}}
+            </b>
           </div>
           <div *ngIf="subPrompt.stringList">
             <div class="StringList" *ngFor="let iString of subPrompt.stringList">
@@ -51,15 +53,8 @@
     <div class="Error" *ngIf="userPrompt.error">
       {{ userPrompt.error }}
     </div>
-    <scrawlbrawl-button type="submit" *ngIf="userPrompt.submitButton">
+    <scrawlbrawl-button class="submit-button" type="submit" *ngIf="userPrompt.submitButton">
       Submit
     </scrawlbrawl-button>
   </form>
-  <div class="logo">
-    <svg width="117" height="58" viewBox="0 0 117 58" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M69.4178 20.7077C71.1543 20.8275 72.5879 19.4408 72.5879 17.7283V8.12592C72.5879 7.35612 73.4212 6.87499 74.0879 7.25989L114.643 30.6741C115.303 31.0555 115.311 32.0062 114.656 32.3981L74.1017 56.6844C73.4352 57.0836 72.5879 56.6034 72.5879 55.8265V46.5591C72.5879 44.9807 71.3578 43.7002 69.8263 43.5543C29.9427 39.7558 8.96958 17.3011 1.11368 2.15346C0.893231 1.72839 1.02018 1.40704 1.2776 1.20268C1.55924 0.979082 2.0202 0.894391 2.48188 1.19087C23.2729 14.5423 52.1235 19.5135 69.4178 20.7077Z" stroke="#424242" stroke-width="2"/>
-    </svg> 
-    <fetch-data-logo></fetch-data-logo>
-  </div>
-  
 </div>

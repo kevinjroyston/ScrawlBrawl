@@ -1,0 +1,10 @@
+<button 
+  class="button" 
+  type="{{type}}" 
+  [ngStyle]="hovered ? hoveredStyle() : defaultStyle()" 
+  (mouseover)="hovered = true"
+  (mouseout)="hovered = false"
+  (click)="onClickButton($event)"
+>
+  <ng-content></ng-content>
+</button>

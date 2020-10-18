@@ -1,9 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
 
-* {
-  font-family: Sen;
-}
-
 scrawlbrawl-button {
   max-width: fit-content;
 }
@@ -14,8 +10,13 @@ scrawlbrawl-button {
 
 .form {
   display: flex;
-  flex-basis: 50%;
+  width: 100%;
+  align-items: center;
   flex-direction: column;
+}
+
+.form > * {
+  width: 100%;
 }
 
 .logo {
@@ -24,10 +25,10 @@ scrawlbrawl-button {
 }
 
 .title {
-  margin-bottom: 1.5rem;
-  font-weight: bold;
-  font-size: 40px;
-  line-height: 48px;
+  margin: 1rem 0;
+  color: var(--black-primary);
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .text-input {
@@ -37,26 +38,30 @@ scrawlbrawl-button {
   padding: .5rem;
 }
 
-.prompt {
-  font-size: 17px;
-  line-height: 19px;
-  color: #424242;
-  font-weight: bold;
-  margin-bottom: .5rem;
+.prompt-wrapper{
+  display: flex;
+  justify-content: center;
+  margin-bottom: .75rem;
+  color: var(--black-tertiary);
+}
+
+.subprompts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
 }
 
 .subprompt {
+  width: 100%;
+  max-width: 700px;
   margin-bottom: 1.5rem;
 }
 
-.SubmitButton {
-  color: rgb(61, 49, 173);
-  font-size: 23px;
-  padding: 6px;
-  border: 1px solid black;
-  border-radius: 4px;
-  display: inline-block;
-  margin: 0.5em 0 0.5em 0
+
+.submit-button {
+  max-width: 700px;
+  margin-top: 1rem;
 }
 
 .slider .slider-horizontal {
@@ -66,20 +71,6 @@ scrawlbrawl-button {
 .sliderHolder {
   width: 98%
 }
-
-.SubmitButton:hover {
-  background: #5F4EA4;
-}
-
-.SubmitButton:active {
-  background: #362C5D;
-}
-
-input {
-  border: 2px solid rgba(66, 66, 66, 0.6);
-  border-radius: 4px;
-}
-
 
 .Description {
   font-size: 21px;
@@ -92,8 +83,6 @@ input {
   text-transform: none;
 }
 
-
-
 .RadioAnswer {
   font-size: 30px;
   letter-spacing: -0.2px;
@@ -104,6 +93,7 @@ input {
   font-variant: normal;
   text-transform: none;
 }
+
 #wrapper {
   width: 980px;
   text-align: left;
