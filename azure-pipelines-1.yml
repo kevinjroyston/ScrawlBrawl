@@ -18,5 +18,5 @@ steps:
 - script: |
     npm install -g @angular/cli --prefix 'src/WebFrontEnd/ClientApp'
     npm install --prefix 'src/WebFrontEnd/ClientApp'
-    ng build --prod --prefix 'src/WebFrontEnd/ClientApp'
+    npm run build --prefix src/WebFrontEnd/ClientApp
   displayName: 'npm install and build'
