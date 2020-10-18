@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "RoystonGame": {
+    "roystongame": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -120,12 +120,12 @@
             "production": {
               "ssl": true,
               "browserTarget": "RoystonGame:build:production",
-              "proxyConfig": null
+              "proxyConfig": ""
             },
             "staging": {
               "ssl": true,
               "browserTarget": "RoystonGame:build:staging",
-              "proxyConfig": null
+              "proxyConfig": ""
             },
             "substaging": {
               "ssl": false,
@@ -196,31 +196,9 @@
           }
         }
       }
-    },
-    "RoystonGame-e2e": {
-      "root": "e2e/",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "RoystonGame:serve"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": "e2e/tsconfig.e2e.json",
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        }
-      }
     }
   },
-  "defaultProject": "RoystonGame",
+  "defaultProject": "roystongame",
   "cli": {
     "analytics": false
   }

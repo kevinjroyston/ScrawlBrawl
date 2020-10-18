@@ -35,12 +35,11 @@ jobs:
         # Build and test the project, then
         # deploy to Azure Web App.
         cd ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-        npm install
-        npm run build-staging --if-present
-        #npm run test --if-present
+        npm install --prefix ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        npm run build-staging --prefix ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: 'Deploy to Azure WebApp'
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_69e3ae520dce4f7e8d2435237773b854 }}
-        package: ./dist/RoystonGame #${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
