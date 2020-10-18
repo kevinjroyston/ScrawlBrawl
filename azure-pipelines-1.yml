@@ -9,9 +9,6 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
-env:
-  PACKAGE_PATH: 'src/WebFrontEnd/ClientApp'
-
 steps:
 - task: NodeTool@0
   inputs:
@@ -19,7 +16,7 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
-    npm install -g @angular/cli --prefix ${{env.PACKAGE_PATH }}
-    npm install --prefix ${{env.PACKAGE_PATH}}
-    ng build --prod --prefix ${{env.PACKAGE_PATH}}
+    npm install -g @angular/cli --prefix 'src/WebFrontEnd/ClientApp'
+    npm install --prefix 'src/WebFrontEnd/ClientApp'
+    ng build --prod --prefix 'src/WebFrontEnd/ClientApp'
   displayName: 'npm install and build'
