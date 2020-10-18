@@ -34,7 +34,6 @@ jobs:
       run: |
         # Build and test the project, then
         # deploy to Azure Web App.
-        cd ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         npm install --prefix ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         npm run build-staging --prefix ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: 'Deploy to Azure WebApp'
