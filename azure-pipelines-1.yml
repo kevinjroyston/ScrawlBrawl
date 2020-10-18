@@ -23,9 +23,9 @@ steps:
   
 - task: CopyFiles@2
   inputs:
-    sourceFolder: '$(Build.SourcesDirectory)/src/WebFrontEnd/ClientApp/dist'
+    sourceFolder: '$(Build.SourcesDirectory)/src/WebFrontEnd/ClientApp'
     contents: '*'
-    targetFolder: '$(Build.ArtifactStagingDirectory)/dist'
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
 - task: PublishBuildArtifacts@1
   inputs:
     pathToPublish: '$(Build.ArtifactStagingDirectory)'
