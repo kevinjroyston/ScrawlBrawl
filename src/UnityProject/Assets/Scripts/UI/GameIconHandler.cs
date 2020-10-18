@@ -1,30 +1,34 @@
-﻿ using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class GameIconHandler : MonoBehaviour
 {
+    [Serializable]
+    public struct GameSpritePair
+    {
+        public GameModeId game;
+        public Sprite sprite;
+    }
+
     public Image IconHolder = null;
     public Sprite ScrawlBrawlLogo = null;
 
-    public List<GameModeId> games = new List<GameModeId>();
-    public List<Sprite> sprites = new List<Sprite>();
+    public List<GameSpritePair> GameSprites = new List<GameSpritePair>();
+
 
     // Start is called before the first frame update
 
     private Dictionary<GameModeId, Sprite> GamesToIcons = new Dictionary<GameModeId, Sprite>();
     void Start()
     {
-        if (games.Count != sprites.Count)
+        for (int i = 0; i < GameSprites.Count; i++)
         {
-            throw new System.Exception("Games and Sprites must be the same length (items are one to one by index)");
+            GamesToIcons.Add(GameSprites[i].game, GameSprites[i].sprite);
         }
-        for (int i = 0; i < games.Count; i++)
-        {
-            GamesToIcons.Add(games[i], sprites[i]);
-        }
-        ViewManager.Singleton.RegisterIcon(SetGame);
+        ViewManager.Singleton.AddConfigurationListener_GameMode(SetGame);
     }
 
     public void SetGame(GameModeId? gameMode) 

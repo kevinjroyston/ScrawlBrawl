@@ -18,12 +18,12 @@ public class ViewManager : MonoBehaviour
 
     private Guid lastGuid = Guid.Empty;
 
-    private List<Action<GameModeId?>> iconListeners = new List<Action<GameModeId?>>();
+    private List<Action<GameModeId?>> gameModeListeners = new List<Action<GameModeId?>>();
 
-    public void RegisterIcon(Action<GameModeId?> iconListener)
+    public void AddConfigurationListener_GameMode(Action<GameModeId?> gameModeListener)
     {
-        iconListeners.Add(iconListener);
-        iconListener(ConfigMetaData?.GameMode);
+        gameModeListeners.Add(gameModeListener);
+        gameModeListener(ConfigMetaData?.GameMode);
     }
     public void OnLobbyClose()
     {
@@ -43,9 +43,9 @@ public class ViewManager : MonoBehaviour
     {
         if (newMetaData.GameMode != ConfigMetaData?.GameMode)
         {
-            foreach (Action<GameModeId?> iconListener in iconListeners)
+            foreach (Action<GameModeId?> gameModeListener in gameModeListeners)
             {
-                iconListener(newMetaData.GameMode);
+                gameModeListener(newMetaData.GameMode);
             }
         }
         ConfigMetaData = newMetaData;
