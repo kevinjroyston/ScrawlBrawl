@@ -16,7 +16,7 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
-    npm install -g @angular/cli --prefix 'src/WebFrontEnd/ClientApp'
+    npm install -g @angular/cli@latest --prefix 'src/WebFrontEnd/ClientApp'
     npm install --prefix 'src/WebFrontEnd/ClientApp'
     npm run build --prefix src/WebFrontEnd/ClientApp
   displayName: 'npm install and build'
