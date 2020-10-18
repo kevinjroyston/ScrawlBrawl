@@ -19,7 +19,14 @@ steps:
     npm install -g @angular/cli@latest --prefix src/WebFrontEnd/ClientApp
     npm install --prefix src/WebFrontEnd/ClientApp
     npm run build --prefix src/WebFrontEnd/ClientApp
-    cp -R src/WebFrontEnd/ClientApp/dist $(Agent.BuildDirectory)/dist
   displayName: 'npm install and build'
-
+  
+- task: CopyFiles@2
+  inputs:
+    sourceFolder: '$(Build.SourcesDirectory)/src/WebFrontEnd/ClientApp/dist'
+    contents: '*'
+    targetFolder: '$(Build.ArtifactStagingDirectory)/dist'
 - task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: drop
