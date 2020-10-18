@@ -28,7 +28,7 @@
                 </button>
 
                 <button class="icon-button" type="button" (click)="eraserMode= true" [ngClass]="{'icon-button-active': eraserMode == true}">
-                    <ion-icon name="close-sharp"></ion-icon>
+                    <img class="icon-button-svg" src="assets/svgs/eraser.svg">
                 </button>
             </div>
         </div>
@@ -39,7 +39,7 @@
             </div> 
             <div>
                 <button class="icon-button" type="button" (click)="drawingDirective.onPerformUndo()">
-                    <ion-icon name="arrow-redo-outline"></ion-icon>
+                    <ion-icon name="arrow-back-outline"></ion-icon>
                 </button>
             </div>
         </div>
