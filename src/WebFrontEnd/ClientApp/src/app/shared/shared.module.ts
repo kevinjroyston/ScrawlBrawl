@@ -49,7 +49,8 @@ import {FooterModule} from '@layout/footer/footer.module'
     ReactiveFormsModule,
     DrawingDirective,
     ScrawlButtonComponent,
-    SelectorDirective
+    SelectorDirective,
+    FooterModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
