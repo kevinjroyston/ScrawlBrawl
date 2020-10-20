@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "roystongame": {
+    "RoystonGame": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -111,7 +111,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "RoystonGame:build",
-            "proxyConfig": "src/proxy.conf.json",
+            "proxyConfig": "proxy.conf.json",
             "ssl": false,
             "sslKey": "ssl/server.key",
             "sslCert": "ssl/server.crt"
@@ -198,7 +198,7 @@
       }
     }
   },
-  "defaultProject": "roystongame",
+  "defaultProject": "RoystonGame",
   "cli": {
     "analytics": false
   }

@@ -26,7 +26,7 @@ const routes: Routes = [
     },
     {
         path: 'lobby/manage',
-        canActivate: [guards],
+        canActivate: guards,
         loadChildren: () => import('./modules/lobby/lobby.module').then(m => m.LobbyModule)
     },
     {
