@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, Provider } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { msalConfig, msalAngularConfig } from './app-config';
@@ -21,19 +21,34 @@ import { NavMenuComponent } from './layout/nav-menu/nav-menu.component';
 import { FooterComponent} from './layout/footer/footer.component';
 import { Configuration } from 'msal';
 import { AppRoutingModule } from './app.routing';
+import { environment } from 'environments/environment';
 
 function MSALConfigFactory(): Configuration {
     return msalConfig;
 }
 
 function MSALAngularConfigFactory(): MsalAngularConfiguration {
-//  if (!msalAngularConfig.unprotectedResources.includes("assets/BodyBuilder")) {
-    // iterate here through all our games
-    msalAngularConfig.unprotectedResources.push("assets/BodyBuilder");
-    msalAngularConfig.unprotectedResources.push("assets/Mimic");
-//  }
     return msalAngularConfig;
 }
+
+export const providers : Provider[] = (<Provider[]>[
+  { 
+    provide: MSAL_CONFIG,
+    useFactory: MSALConfigFactory
+  },
+  {
+    provide: MSAL_CONFIG_ANGULAR,
+    useFactory: MSALAngularConfigFactory
+  },
+  MsalService
+]).concat(environment.enableMsal ? [
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: MsalInterceptor,    
+    multi: true
+  }
+]:[])
+
 
 @NgModule({
   declarations: [
@@ -50,22 +65,7 @@ function MSALAngularConfigFactory(): MsalAngularConfiguration {
     HttpClientModule,
     MsalModule,
   ],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: MsalInterceptor,
-      multi: true
-    },
-    {
-      provide: MSAL_CONFIG,
-      useFactory: MSALConfigFactory
-    },
-    {
-      provide: MSAL_CONFIG_ANGULAR,
-      useFactory: MSALAngularConfigFactory
-    },
-    MsalService
-  ],
+  providers: providers,
   bootstrap: [AppComponent]
 })
 export class AppModule { }
