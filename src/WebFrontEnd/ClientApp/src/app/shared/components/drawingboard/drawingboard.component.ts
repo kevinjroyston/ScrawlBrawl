@@ -5,7 +5,7 @@ import {DrawingDirective} from '@shared/components/drawingdirective.component';
 @Component({
     selector: 'drawingboard',
     templateUrl: './drawingboard.component.html',
-    styleUrls: ['./drawingboard.component.css'],
+    styleUrls: ['./drawingboard.component.scss'],
     providers: [{
         provide: NG_VALUE_ACCESSOR,
         multi: true,
@@ -52,6 +52,11 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     }
     
     setDisabledState?(isDisabled: boolean): void {
+    }
+
+    handleColorPickerOnClick(colorPicker) {
+        this.eraserMode = false
+        colorPicker.click()
     }
 }
 

@@ -1,10 +1,11 @@
 
 .navbar{
   padding: 0;
+  border-bottom: var(--border-grey);
 }
 
-.box-shadow {
-  box-shadow: 0 2px 4px 0 rgba(0,0,0,.1);
+.navbar-left {
+  padding: 0 5rem;
 }
 
 .nav-item {

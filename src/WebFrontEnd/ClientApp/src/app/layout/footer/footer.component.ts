@@ -29,9 +29,9 @@ const socialLinks = [
   styleUrls: ['./footer.component.css']
 })
 export class FooterComponent implements OnInit {
-  @Input() sections: any;
-  @Input() sectionsOrder: any;
-  @Input() socialLinks: any;
+  sections: any;
+  sectionsOrder: any;
+  socialLinks: any;
 
   constructor() { 
     this.sections = footerLinks;

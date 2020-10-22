@@ -1,0 +1,161 @@
+/* You can add global styles to this file, and also import other style files */
+
+scrawlbrawl-button {
+  max-width: fit-content;
+}
+
+:host {
+  width: 100%;
+}
+
+.fetch-data {
+  display: flex;
+  margin-top: 1.5rem;
+  margin-bottom: 4rem;
+}
+
+.form {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  flex-direction: column;
+  max-width: 700px;
+  margin: 0 auto;
+
+  & > * {
+    width: 100%;
+  }
+}
+
+
+.title {
+  margin: 1rem 0;
+  color: var(--black-primary);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.text-input {
+  width: 100%;
+  font-size: 16px;
+  line-height: 19px;
+  padding: .5rem;
+}
+
+.prompt-wrapper{
+  display: flex;
+  justify-content: center;
+  margin-bottom: .75rem;
+  color: var(--black-tertiary);
+}
+
+.subprompts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.subprompt {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+
+.submit-button {
+  max-width: 700px;
+  margin-top: 1rem;
+}
+
+.slider .slider-horizontal {
+  width: 98%;
+}
+
+.sliderHolder {
+  width: 98%
+}
+
+.Description {
+  font-size: 21px;
+  letter-spacing: 0.4px;
+  word-spacing: -0.2px;
+  font-weight: 400;
+  text-decoration: none solid rgb(68, 68, 68);
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+}
+
+.RadioAnswer {
+  font-size: 30px;
+  letter-spacing: -0.2px;
+  word-spacing: -1.4px;
+  font-weight: 400;
+  text-decoration: none solid rgb(68, 68, 68);
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+}
+
+#wrapper {
+  width: 980px;
+  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #38147C;
+}
+
+input[type='radio'] {
+  height: 45px;
+  width: 45px;
+  vertical-align: middle;
+}
+.color-box {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  background-color: #ccc;
+  position: relative;
+  top: 5px;
+}
+
+.leftImg {
+  opacity: 0.4;
+  max-width: 24%;
+  height: auto;
+  max-width: calc(24% * (var(--n) / 100))
+}
+
+.rightImg {
+  opacity: 0.4;
+  max-width: 24%;
+  height: auto;
+  max-width: calc(24% * (var(--n) / 100))
+}
+
+.mainImg {
+  border: 2px solid blue;
+  max-width: 50%;
+  height: auto;
+  max-width: calc(50% * (var(--n) / 100))
+}
+
+@media only screen and (max-width: 768px) {
+  .fetch-data {
+    padding: 0 1rem;
+    margin-top: .5rem;
+    margin-bottom: 2rem; 
+  }
+
+  .subprompts{
+    margin-top: 0;
+  }
+
+  .submit-button{
+    margin-top: 0;
+  }
+
+  .Error{
+    margin-bottom: 1rem;
+  }
+}

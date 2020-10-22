@@ -32,7 +32,7 @@ const routes: Routes = [
     {
         path: 'user/manage',
         loadChildren: () => import('./modules/user/user.module').then(m => m.UserModule)
-    }
+    },
     //{ path: 'admin', component: AdminComponent} //not yet made
 ];
 

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule,  CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from './material.module';
@@ -11,7 +11,11 @@ import { DrawingDirective } from './components/drawingdirective.component';
 import { ScrawlButtonComponent } from './components/scrawlbutton/scrawlbutton.component';
 import { SelectorDirective } from './components/selectordirective.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SimpleButtonComponent } from './components/simplebutton/simplebutton.component'
+import {FooterModule} from '@layout/footer/footer.module'
 import { RouterModule } from '@angular/router';
+import {IconButtonComponent} from './components/iconbutton/iconbutton.component'
+
 
 @NgModule({
   imports: [
@@ -21,6 +25,7 @@ import { RouterModule } from '@angular/router';
     NgbModule,
     ColorPickerModule,
     UiSwitchModule,
+    FooterModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule
@@ -29,8 +34,10 @@ import { RouterModule } from '@angular/router';
     DrawingBoard,
     Slider,
     ScrawlButtonComponent,
+    SimpleButtonComponent,
     DrawingDirective,
-    SelectorDirective
+    SelectorDirective,
+    IconButtonComponent
   ],
   exports: [
     CommonModule,
@@ -40,12 +47,17 @@ import { RouterModule } from '@angular/router';
     NgbModule,
     ColorPickerModule,
     UiSwitchModule,
+    SimpleButtonComponent,
+    FooterModule,
     Slider,
     FormsModule,
     ReactiveFormsModule,
     DrawingDirective,
     ScrawlButtonComponent,
-    SelectorDirective
-  ]
+    SelectorDirective,
+    FooterModule,
+    IconButtonComponent
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule { }

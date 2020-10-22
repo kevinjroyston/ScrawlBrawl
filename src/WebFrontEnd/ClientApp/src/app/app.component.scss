@@ -7,4 +7,9 @@
 .root-container {
     display: flex; 
     flex: 1 0 auto;
+    overflow-x: hidden;
+
+    :host {
+        width: 100%;
+    }
 }

@@ -1,46 +1,60 @@
 <div class="LoadingText" *ngIf="!userPrompt">
   <em>Loading...</em>
 </div>
-<form ng-app="myApp" style="padding:0px 20px;" *ngIf="userPrompt" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)">
-  <div class="Title" *ngIf="userPrompt.title">{{ userPrompt.title }}</div>
-  <div class="Description" *ngIf="userPrompt.description">{{ userPrompt.description }}</div>
-  <div *ngIf="userPrompt.subPrompts">
-    <div *ngFor="let subPrompt of userPrompt.subPrompts; let j = index" formArrayName="subForms">
-      <div [formGroupName]="j">
-        <div class="Prompt" *ngIf="subPrompt.prompt">{{subPrompt.prompt}}</div>
-        <div *ngIf="subPrompt.stringList">
-          <div class="StringList" *ngFor="let iString of subPrompt.stringList">
-            <div [innerHTML]="iString | safe: 'html'"></div>
+<div class="fetch-data">
+  <form ng-app="myApp" class="form" *ngIf="userPrompt" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)">
+    <h1 class="title" *ngIf="userPrompt.title">
+      {{ userPrompt.title }}
+    </h1>
+    <div class="Description" *ngIf="userPrompt.description">
+      {{ userPrompt.description }}
+    </div>
+    <div class="subprompts" *ngIf="userPrompt.subPrompts">
+      <div class="subprompt" *ngFor="let subPrompt of userPrompt.subPrompts; let j = index" formArrayName="subForms">
+        <div class="subprompt-inner" [formGroupName]="j">
+          <div class="prompt-wrapper">
+            <b class="prompt" *ngIf="subPrompt.prompt">
+              {{subPrompt.prompt}}
+            </b>
           </div>
-        </div>
-        <select class="Dropdown" formControlName="dropdownChoice" *ngIf="subPrompt.dropdown">
-          <option *ngFor="let dropdown of subPrompt.dropdown; let i = index" value="{{i}}">
-            {{dropdown}}
-          </option>
-        </select>
-
-        <div *ngIf="subPrompt.answers">
-          <div class="RadioAnswer" *ngFor="let answer of subPrompt.answers; let i = index">
-            <input type="radio" formControlName="radioAnswer" value="{{i}}" id="ra{{i}}b" /> <label for="ra{{i}}b" [innerHTML]="answer | safe: 'html'"></label>
+          <div *ngIf="subPrompt.stringList">
+            <div class="StringList" *ngFor="let iString of subPrompt.stringList">
+              <div [innerHTML]="iString | safe: 'html'"></div>
+            </div>
           </div>
+          <select class="Dropdown" formControlName="dropdownChoice" *ngIf="subPrompt.dropdown">
+            <option *ngFor="let dropdown of subPrompt.dropdown; let i = index" value="{{i}}">
+              {{dropdown}}
+            </option>
+          </select>
+  
+          <div *ngIf="subPrompt.answers">
+            <div class="RadioAnswer" *ngFor="let answer of subPrompt.answers; let i = index">
+              <input type="radio" formControlName="radioAnswer" value="{{i}}" id="ra{{i}}b" /> 
+              <label for="ra{{i}}b" [innerHTML]="answer | safe: 'html'"></label>
+            </div>
+          </div>
+  
+          <div *ngIf="subPrompt.selector" appSelector class="SelectorHolder" [selectorParameters]="subPrompt.selector" formControlName="selector">
+  
+          </div>
+  
+          <slider *ngIf="subPrompt.slider" class="SliderHolder" [sliderParameters]="subPrompt.slider" formControlName="slider"></slider>
+  
+          <input formControlName="color" [(colorPicker)]="subPrompt.color" [style.background]="subPrompt.color"
+                 [readonly]="true" [cpPosition]="'bottom'" [ngModel]="subPrompt.color" [cpOutputFormat]="'rgba'"
+                 [cpAlphaChannel]="'disabled'" *ngIf="subPrompt.colorPicker">
+          <input type="text" class="text-input" formControlName="shortAnswer" *ngIf="subPrompt.shortAnswer">
+  
+          <drawingboard *ngIf="subPrompt.drawing" [drawingPrompt]="subPrompt.drawing" formControlName="drawing"></drawingboard>
         </div>
-
-        <div *ngIf="subPrompt.selector" appSelector class="SelectorHolder" [selectorParameters]="subPrompt.selector" formControlName="selector">
-
-        </div>
-
-        <slider *ngIf="subPrompt.slider" class="SliderHolder" [sliderParameters]="subPrompt.slider" formControlName="slider"></slider>
-
-        <input formControlName="color" [(colorPicker)]="subPrompt.color" [style.background]="subPrompt.color"
-               [readonly]="true" [cpPosition]="'bottom'" [ngModel]="subPrompt.color" [cpOutputFormat]="'rgba'"
-               [cpAlphaChannel]="'disabled'" *ngIf="subPrompt.colorPicker">
-        <input type="text" class="ShortAnswer" formControlName="shortAnswer" *ngIf="subPrompt.shortAnswer">
-
-        <drawingboard *ngIf="subPrompt.drawing" [drawingPrompt]="subPrompt.drawing" formControlName="drawing"></drawingboard>
       </div>
     </div>
-  </div>
-  <div class="Error" *ngIf="userPrompt.error">{{ userPrompt.error }}</div>
-  <button class="SubmitButton" type="submit" *ngIf="userPrompt.submitButton">Submit</button>
-  <br />&nbsp;<br />
-</form>
+    <div class="Error" *ngIf="userPrompt.error">
+      {{ userPrompt.error }}
+    </div>
+    <scrawlbrawl-button class="submit-button" type="submit" *ngIf="userPrompt.submitButton">
+      Submit
+    </scrawlbrawl-button>
+  </form>
+</div>

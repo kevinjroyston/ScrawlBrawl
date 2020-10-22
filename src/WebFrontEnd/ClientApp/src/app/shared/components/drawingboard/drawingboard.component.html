@@ -1,6 +1,9 @@
-<div class="drawing-canvas-holder">
+<div class="drawb">
     <!-- Drawing Canvas -->
-    <canvas appDrawing class="drawing-canvas"
+    <div class="drawb-canvas">
+        <canvas 
+            appDrawing 
+            class="draw-canvas"
             [width]="drawingPrompt.widthInPx"
             [height]="drawingPrompt.heightInPx"
             [ngStyle]="{'background-image': 'url(' + drawingPrompt.canvasBackground + ')'}"
@@ -9,37 +12,52 @@
             [lineWidth]="selectedBrushSize"
             [eraserMode]="eraserMode"
             (drawingEmitter)="onChange($event)">
-    </canvas>
-</div>
-
-<!-- Drawing Settings -->
-<div *ngIf="showEraser">
-  <mat-radio-group class="radio-group" [(ngModel)]="eraserMode">
-    <mat-radio-button class="radio-button" [value]="false">Brush</mat-radio-button>
-    <mat-radio-button class="radio-button" [value]="true">Erase</mat-radio-button>
-    <button type="button" class="btn btn-primary d-inline-flex" (click)="drawingDirective.onPerformUndo()"> Undo</button>
-  </mat-radio-group>
-</div>
-
-<button type="button" class="btn btn-primary d-inline-flex" (click)="drawingOptionsCollapse = !drawingOptionsCollapse" [attr.aria-expanded]="!drawingOptionsCollapse">
-    {{ drawingOptionsCollapse ? "▼" : "▲" }} Brush options
-</button>
-<div [ngbCollapse]="drawingOptionsCollapse">
-    <!-- Brush Color Picker -->
-    <div *ngIf="showColorSelector && drawingPrompt.colorList && drawingPrompt.colorList.length > 1">
-        <mat-radio-group class="color-picker-group" [(ngModel)]="selectedColor" (change)="eraserMode=false">
-            <div class="color-picker-dot" *ngFor="let colorChoice of drawingPrompt.colorList; let i = index" [ngStyle]="{'background-color': colorChoice}">
-                <mat-radio-button [value]="colorChoice" [checked]="i==0"></mat-radio-button>
-            </div>
-        </mat-radio-group>
+        </canvas>
     </div>
 
-    <!-- Brush Size Picker -->
-    <div *ngIf="showBrushSizeSelector">
-        <mat-radio-group class="radio-group" [(ngModel)]="selectedBrushSize">
-            <mat-radio-button class="radio-button" [value]="5">Small</mat-radio-button>
-            <mat-radio-button class="radio-button" [value]="15">Medium</mat-radio-button>
-            <mat-radio-button class="radio-button" [value]="40">Large</mat-radio-button>
-        </mat-radio-group>
+    <!-- Drawing Settings -->
+    <div class="drawb-settings">
+
+        <div class="drawb-setting" *ngIf="showEraser">
+            <div class="drawb-setting-header">
+                Tools
+            </div> 
+            <div class="drawb-tools">
+                <scrawlbrawl-iconbutton (click)="eraserMode= false" [active]="!eraserMode">
+                    <ion-icon name="brush-outline"></ion-icon>
+                </scrawlbrawl-iconbutton>
+
+                <scrawlbrawl-iconbutton (click)="eraserMode= true" [active]="eraserMode">
+                    <img class="icon-button-svg" src="assets/svgs/eraser.svg">
+                </scrawlbrawl-iconbutton>
+            </div>
+        </div>
+
+        <div class="drawb-setting">
+            <div class="drawb-setting-header">
+                Actions
+            </div> 
+            <div>
+                <scrawlbrawl-iconbutton (click)="drawingDirective.onPerformUndo()"> 
+                    <ion-icon name="arrow-back-outline"></ion-icon>
+                </scrawlbrawl-iconbutton>
+            </div>
+        </div>
+
+        <div class="drawb-setting" *ngIf="showBrushSizeSelector">
+            <div class="drawb-setting-header">
+                Size
+            </div>         
+            <input type="range" min="5" max="40" [value]="5" [(ngModel)]="selectedBrushSize">
+        </div>
+
+        <div class="drawb-setting" *ngIf="showColorSelector && drawingPrompt.colorList"> 
+            <div class="drawb-setting-header">
+                Color
+            </div>                  
+            <div class='drawb-colors'>
+                <input type="color" (click)='handleColorPickerOnClick($event.target)' [(ngModel)]="selectedColor" [value]="selectedColor">
+            </div>
+        </div>
     </div>
 </div>

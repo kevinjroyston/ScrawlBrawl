@@ -51,23 +51,23 @@ namespace Backend.GameInfrastructure
         public static UserPrompt UserNamePrompt(User user) => new UserPrompt()
         {
             UserPromptId = UserPromptId.JoinLobby,
-            Title = "join a game:",
+            Title = "Join a game",
             RefreshTimeInMs = 5000,
             SubPrompts = new SubPrompt[]
             {
                 new SubPrompt()
                 {
-                    Prompt = "nickname",
+                    Prompt = "Nickname",
                     ShortAnswer = true
                 },
                 new SubPrompt()
                 {
-                    Prompt = "lobby code",
+                    Prompt = "Lobby Code",
                     ShortAnswer = true
                 },
                 new SubPrompt()
                 {
-                    Prompt = "self portrait",
+                    Prompt = "Self Portrait",
                     Drawing = new DrawingPromptMetadata()
                 }
             },

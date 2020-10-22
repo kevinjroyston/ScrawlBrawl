@@ -3,11 +3,13 @@
     width: 100%;
     padding: 3% 0;
     flex-shrink: 0;
+    color: #f9fafc;
+    background-color: rgba(20,28,58,0.9);
 }
 
 .footer{
     padding: 0 2rem;
-    max-width: 1000px;
+    max-width: 1100px;
     margin: 0 auto;
 }
 

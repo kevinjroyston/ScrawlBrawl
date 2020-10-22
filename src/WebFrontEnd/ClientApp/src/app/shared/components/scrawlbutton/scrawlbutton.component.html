@@ -1,10 +1,9 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
 <a [routerLink]="link" class="scrawlbutton-link">
-    <div class="scrawlbutton" style="width:{{width}}">
+    <div class="scrawlbutton" [ngStyle]="{'width': width}">
         <p class="scrawlbutton-label">
             <ng-content></ng-content>
         </p>
-        <div class="scrawlbutton-outline" style="width:{{width}}"></div>
+        <div class="scrawlbutton-outline" [ngStyle]="{'width': width}"></div>
         <div class="{{color}}-scrawlbutton-base"></div>
     </div>
 </a>

@@ -33,7 +33,7 @@ export class Safe {
 @Component({
     selector: 'app-fetch-data',
     templateUrl: './fetch-data.component.html',
-    styleUrls: ['./fetch-data.component.css'],
+    styleUrls: ['./fetch-data.component.scss'],
     encapsulation: ViewEncapsulation.Emulated
 })
 
