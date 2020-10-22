@@ -1,0 +1,20 @@
+.icon-button {
+    display: flex;
+    border: 0;
+    background-color: var(--white-primary);
+    align-items: center;
+    padding: .5rem;
+    border-radius: 4px;
+    justify-content: center;
+    border: 1px solid var(--white-secondary);
+    transition: all .3s ease;
+}
+
+.icon-button-active {
+    background-color: var(--ornamental-pastelblue);
+}
+
+.icon-button:hover{
+    box-shadow: var(--shadow);
+    border: 1px solid transparent;
+} 

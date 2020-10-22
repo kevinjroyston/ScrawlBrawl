@@ -23,13 +23,13 @@
                 Tools
             </div> 
             <div class="drawb-tools">
-                <button class="icon-button" type="button" (click)="eraserMode= false" [ngClass]="{'icon-button-active': eraserMode == false}">
+                <scrawlbrawl-iconbutton (click)="eraserMode= false" [active]="!eraserMode">
                     <ion-icon name="brush-outline"></ion-icon>
-                </button>
+                </scrawlbrawl-iconbutton>
 
-                <button class="icon-button" type="button" (click)="eraserMode= true" [ngClass]="{'icon-button-active': eraserMode == true}">
+                <scrawlbrawl-iconbutton (click)="eraserMode= true" [active]="eraserMode">
                     <img class="icon-button-svg" src="assets/svgs/eraser.svg">
-                </button>
+                </scrawlbrawl-iconbutton>
             </div>
         </div>
 
@@ -38,9 +38,9 @@
                 Actions
             </div> 
             <div>
-                <button class="icon-button" type="button" (click)="drawingDirective.onPerformUndo()">
+                <scrawlbrawl-iconbutton (click)="drawingDirective.onPerformUndo()"> 
                     <ion-icon name="arrow-back-outline"></ion-icon>
-                </button>
+                </scrawlbrawl-iconbutton>
             </div>
         </div>
 

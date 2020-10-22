@@ -13,6 +13,8 @@ import { SelectorDirective } from './components/selectordirective.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SimpleButtonComponent } from './components/simplebutton/simplebutton.component'
 import {FooterModule} from '@layout/footer/footer.module'
+import { RouterModule } from '@angular/router';
+import {IconButtonComponent} from './components/iconbutton/iconbutton.component'
 
 
 @NgModule({
@@ -25,7 +27,8 @@ import {FooterModule} from '@layout/footer/footer.module'
     UiSwitchModule,
     FooterModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterModule
   ],
   declarations: [
     DrawingBoard,
@@ -33,7 +36,8 @@ import {FooterModule} from '@layout/footer/footer.module'
     ScrawlButtonComponent,
     SimpleButtonComponent,
     DrawingDirective,
-    SelectorDirective
+    SelectorDirective,
+    IconButtonComponent
   ],
   exports: [
     CommonModule,
@@ -51,7 +55,8 @@ import {FooterModule} from '@layout/footer/footer.module'
     DrawingDirective,
     ScrawlButtonComponent,
     SelectorDirective,
-    FooterModule
+    FooterModule,
+    IconButtonComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
