@@ -11,7 +11,7 @@ import { DrawingDirective } from './components/drawingdirective.component';
 import { ScrawlButtonComponent } from './components/scrawlbutton/scrawlbutton.component';
 import { SelectorDirective } from './components/selectordirective.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ButtonComponent } from './components/button/button.component'
+import { SimpleButtonComponent } from './components/simplebutton/simplebutton.component'
 import {FooterModule} from '@layout/footer/footer.module'
 
 
@@ -31,6 +31,7 @@ import {FooterModule} from '@layout/footer/footer.module'
     DrawingBoard,
     Slider,
     ScrawlButtonComponent,
+    SimpleButtonComponent,
     DrawingDirective,
     SelectorDirective
   ],
@@ -42,7 +43,7 @@ import {FooterModule} from '@layout/footer/footer.module'
     NgbModule,
     ColorPickerModule,
     UiSwitchModule,
-    ButtonComponent,
+    SimpleButtonComponent,
     FooterModule,
     Slider,
     FormsModule,

@@ -56,7 +56,7 @@
                 Color
             </div>                  
             <div class='drawb-colors'>
-                <input type="color" [(ngModel)]="selectedColor" [value]="selectedColor">
+                <input type="color" (click)='handleColorPickerOnClick($event.target)' [(ngModel)]="selectedColor" [value]="selectedColor">
             </div>
         </div>
     </div>

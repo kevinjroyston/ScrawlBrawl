@@ -53,6 +53,11 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     
     setDisabledState?(isDisabled: boolean): void {
     }
+
+    handleColorPickerOnClick(colorPicker) {
+        this.eraserMode = false
+        colorPicker.click()
+    }
 }
 
 interface DrawingPromptMetadata {

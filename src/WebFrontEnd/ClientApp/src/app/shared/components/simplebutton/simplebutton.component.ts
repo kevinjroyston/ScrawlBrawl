@@ -2,10 +2,10 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 
 @Component({
   selector: 'scrawlbrawl-button',
-  templateUrl: './button.component.html',
-  styleUrls: ['./button.component.css']
+  templateUrl: './simplebutton.component.html',
+  styleUrls: ['./simplebutton.component.css']
 })
-export class ButtonComponent implements OnInit {
+export class SimpleButtonComponent implements OnInit {
   hovered: boolean
   style: any
   @Input() type: string = 'button';

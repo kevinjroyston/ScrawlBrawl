@@ -19,6 +19,8 @@ scrawlbrawl-button {
   width: 100%;
   align-items: center;
   flex-direction: column;
+  max-width: 700px;
+  margin: 0 auto;
 
   & > * {
     width: 100%;
@@ -56,7 +58,6 @@ scrawlbrawl-button {
 
 .subprompt {
   width: 100%;
-  max-width: 700px;
   margin-bottom: 1.5rem;
 }
 
@@ -152,5 +153,9 @@ input[type='radio'] {
 
   .submit-button{
     margin-top: 0;
+  }
+
+  .Error{
+    margin-bottom: 1rem;
   }
 }
