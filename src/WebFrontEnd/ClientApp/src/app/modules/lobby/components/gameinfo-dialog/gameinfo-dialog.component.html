@@ -7,10 +7,10 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <scrawlbrawl-button [ngStyle]="{'margin-right': '.75rem'}" size="small" color='red' (click)="close()">
+  <simplebutton [ngStyle]="{'margin-right': '.75rem'}" size="small" color='red' (click)="close()">
     Close
-  </scrawlbrawl-button>
-  <scrawlbrawl-button size="small" color='green'>
-    Start
-  </scrawlbrawl-button>
+  </simplebutton>
+  <simplebutton size="small" color='green' (click)="onProceedToSettings()">
+    Choose Settings
+  </simplebutton>
 </mat-dialog-actions>

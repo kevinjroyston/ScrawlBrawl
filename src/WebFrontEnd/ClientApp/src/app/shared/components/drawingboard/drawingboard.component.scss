@@ -29,16 +29,16 @@
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
   border-left: 0;
-
-  :not(:last-child) {
-    border-bottom: 1px solid var(--white-secondary);
-  }
 }
 
 .drawb-setting {
   display: flex;
   flex-direction: column;
   padding: 1rem 0;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--white-secondary);
+  }
 }
 
 .drawb-setting-header {

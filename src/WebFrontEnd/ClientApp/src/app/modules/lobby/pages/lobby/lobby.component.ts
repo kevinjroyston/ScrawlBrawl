@@ -10,7 +10,7 @@ import GameModes from '../../interfaces/gamemodes'
 @Component({
     selector: 'app-lobby-management',
     templateUrl: './lobby.component.html',
-    styleUrls: ['./lobby.component.scss']
+    styleUrls: ['./lobby.component.scss'],
 })
 
 export class LobbyManagementComponent {
@@ -99,10 +99,16 @@ export class LobbyManagementComponent {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.data = {
             gameModes: this.gameModes,
-            selectedGameMode: game
+            selectedGameMode: game,
+            proceedToGameSettings: () => this.proceedToGameSettings(game)
         }
         this.matDialog.open(GameInfoDialogComponent, dialogConfig);
         event.stopPropagation();
+    }
+
+    proceedToGameSettings = (game: number) => {
+        this.lobby.selectedGameMode = game;
+        this.openGameSettingsDialog()
     }
 
     openGameSettingsDialog = () => {
@@ -113,6 +119,7 @@ export class LobbyManagementComponent {
             error: this.error,
             onStart: () => this.onStartLobby()
         }
+        console.log(dialogConfig);
         this.matDialog.open(GamemodeDialogComponent, dialogConfig);
     }
 

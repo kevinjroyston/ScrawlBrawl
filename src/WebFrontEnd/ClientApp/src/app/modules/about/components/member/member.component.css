@@ -1,10 +1,13 @@
+
+
 .member-wrapper{
-    padding: 1rem;
+    padding: 1.25rem;
     height: 100%;
+    flex-basis: 33.3%;
 }
 
 .member {
-    width: 330px;
+    width: 320px;
     overflow: hidden;
     box-shadow: var(--shadow-md);
     height: 100%;

@@ -2,6 +2,13 @@
   width: 100%;
 }
 
+::ng-deep .mat-tooltip {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  font-size: 12px;
+  background: rgba(40, 40, 40, .9);
+}
+
 .lobby-wrapper{
   display: flex;
   flex-direction: column;
@@ -26,6 +33,10 @@
     border: var(--border-grey);
     border-radius: 4px;
     background: var(--white-primary);
+
+    &:first-child{
+      margin-right: 2rem;
+    }
   }
 }
 
@@ -33,9 +44,16 @@
   margin-bottom: 1rem;
 }
 
+#admin-actions{
+  display: flex;
+  font-family: Poppins;
+  font-weight: bold;
+  justify-content: space-between;
+}
+
 .lobby-actions {
   display: flex;
-  scrawlbrawl-button {
+  simplebutton {
     flex-basis: 33.3%;
     margin-right: 10px;
     font-size: .9rem;
@@ -52,6 +70,7 @@
 .game-option-wrapper{
   padding: 1rem;
   flex-basis: 50%;
+  flex-grow: 1;
 }
 
 .game-option {
@@ -61,6 +80,7 @@
   border: var(--border-grey);
   background-color: var(--white-primary);
   transition: all .25s ease;
+  overflow: hidden;
 
   & > div {
     flex-basis: 50%;
@@ -75,11 +95,42 @@
 }
 
 .game-option-info {
-  border-left: var(--border-grey);
   padding: .5rem;
 }
 
 .game-option-img{
   max-width: 380px;
+}
+
+.game-option-title{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+@media only screen and (max-width: 768px) { 
+  .lobby-header-sections{
+    flex-direction: column;
+    margin-top: 1rem;
+    padding: 0;
+  }
+
+  .lobby-header-section{
+    margin-right: 0 !important;
+
+    &:first-child{
+      margin-bottom: 1rem;
+    }
+  }
+
+  .lobby-wrapper {
+    padding: 0 1rem;
+  }
+
+
+  .game-option-wrapper{
+    padding: .5rem 0;
+  }
 }
 

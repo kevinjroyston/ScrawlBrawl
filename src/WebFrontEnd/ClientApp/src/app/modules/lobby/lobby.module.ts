@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { SharedModule } from '@shared/shared.module';
 import { LobbyManagementComponent as LobbyComponent } from './pages/lobby/lobby.component';
 import { LobbyRoutes } from './lobby.routing';
@@ -15,5 +15,6 @@ import {GameInfoDialogComponent} from './components/gameinfo-dialog/gameinfo-dia
     GamemodeDialogComponent,
     GameInfoDialogComponent
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class LobbyModule { }

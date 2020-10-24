@@ -5,6 +5,7 @@ import GameModes from '../../interfaces/gamemodes';
 interface GameInfoDialogData {
   gameModes: GameModes.GameModeMetadata
   selectedGameMode: number
+  proceedToGameSettings: () => void
 }
 
 @Component({
@@ -15,12 +16,19 @@ interface GameInfoDialogData {
 export class GameInfoDialogComponent implements OnInit {
   gameModes: GameModes.GameModeMetadata
   selectedGameMode: number
+  proceedToGameSettings: () => void
 
   constructor(
     private dialogRef: MatDialogRef<GameInfoDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: GameInfoDialogData) {
     this.gameModes = data.gameModes;
     this.selectedGameMode = data.selectedGameMode;
+    this.proceedToGameSettings = data.proceedToGameSettings;
+  }
+
+  onProceedToSettings = () => {
+    this.dialogRef.close();
+    this.proceedToGameSettings()
   }
 
   ngOnInit() {

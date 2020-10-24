@@ -18,16 +18,18 @@
         </div>
       </div>
       <div class="lobby-header-section">
-        <div class="section-title">
+        <div class="section-title" id="admin-actions">
           Admin Actions
+          <a href="https://github.com/kevinjroyston/RoystonGame/releases/latest/download/ScrawlBrawlClient.zip">
+            <scrawlbrawl-iconbutton matTooltip="Download Game Viewer" [mdTooltipClass]="{'tooltip': true}" >
+              <ion-icon name="cloud-download-outline"></ion-icon>
+            </scrawlbrawl-iconbutton>
+          </a>
         </div>
         <div class="lobby-actions">
-          <scrawlbrawl-button href="https://github.com/kevinjroyston/RoystonGame/releases/latest/download/ScrawlBrawlClient.zip">
-            Download Game Viewer
-          </scrawlbrawl-button>
-          <scrawlbrawl-button (click)="onDeleteLobby()">
+          <simplebutton size='small' color='red' (click)="onDeleteLobby()">
             Delete Lobby
-          </scrawlbrawl-button>
+          </simplebutton>
         </div>
       </div>
     </div>  
@@ -47,12 +49,9 @@
           <div class="game-option-info">
             <div class="game-option-title">
               {{ gameMode.title }}
-              <ion-icon 
-                (click)="openGameInfoDialog($event, i)" 
-                matTooltip="Click for Game Info"
-                name="information-circle-outline"
-              >
-              </ion-icon>
+              <scrawlbrawl-iconbutton matTooltip="Game Info" [mdTooltipClass]="{'tooltip': true}" (click)="openGameInfoDialog($event, i)">
+                <ion-icon name="information-circle-outline"></ion-icon>
+              </scrawlbrawl-iconbutton>
             </div>
           </div>
         </div>

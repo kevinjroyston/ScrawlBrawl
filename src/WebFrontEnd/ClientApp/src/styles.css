@@ -52,7 +52,13 @@ a:hover{
     text-decoration: none;
 }
 
+button {
+    white-space: nowrap;
+    text-align: center;
+}
+
 .trans-link{
+    transition: all .25s ease;
     color: var(--black-primary);
     padding: .65rem .75rem;
 }
@@ -133,12 +139,12 @@ input {
 }
 
 ion-icon {
-    font-size: 35px;
+    font-size: 30px;
 }
 
 .icon-button-svg {
-    width: 35px;
-    height: 35px;
+    width: 30px;
+    height: 30px;
 }
 
 /* Remove */
