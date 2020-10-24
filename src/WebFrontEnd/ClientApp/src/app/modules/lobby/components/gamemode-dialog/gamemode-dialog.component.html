@@ -1,0 +1,29 @@
+<h2 [ngStyle]="{'margin-bottom': '1.5rem'}">
+  {{gameModes[lobby.selectedGameMode].title}}
+</h2>
+
+<mat-dialog-content>
+  <div *ngFor="let option of gameModes[lobby.selectedGameMode].options; let i = index">
+    <div class="gamemode-option" *ngIf="option.responseType.toString() === 'Integer'">
+      <span>{{ option.description }}</span>
+      <input type="number" [(ngModel)]="option.value" />
+    </div>
+    <div class="gamemode-option" *ngIf="option.responseType.toString() === 'Boolean'">
+      <span>{{ option.description }}</span>
+      <ui-switch [(ngModel)]="option.value" size="small"></ui-switch>
+      <!-- <input type="checkbox" id="bool-switch-{{i}}" checked="" [(ngModel)]="option.value" > -->
+    </div>
+  </div>
+  <div class="Error" *ngIf="error">
+    {{ error }}
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <scrawlbrawl-button [ngStyle]="{'margin-right': '.75rem'}" size="small" color='red' (click)="close()">
+    Close
+  </scrawlbrawl-button>
+  <scrawlbrawl-button size="small" color='green' (click)="onStartLobby()">
+    Start
+  </scrawlbrawl-button>
+</mat-dialog-actions>

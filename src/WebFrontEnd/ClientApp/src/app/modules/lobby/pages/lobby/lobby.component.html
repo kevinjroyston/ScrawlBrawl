@@ -1,49 +1,62 @@
-<div *ngIf="lobby == null">
+<!--Create Lobby button shows on load-->
+<div *ngIf="!lobby">
   <button (click)="onCreateLobby()">Create Lobby</button>
 </div>
 
-<div *ngIf="lobby != null">
-  <div class="row justify-content-around align-items-center p-2 border-bottom">
-    <div class="d-inline-flex">Lobby ID: {{ lobby.lobbyId.toUpperCase() }}</div>
-    <div class="d-inline-flex">Players Joined: {{ lobby.playerCount }}</div>
-    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="onDeleteLobby()">Delete Lobby</button>
-    <a class="btn btn-sm btn-outline-secondary" href="https://github.com/kevinjroyston/RoystonGame/releases/latest/download/ScrawlBrawlClient.zip">Download Game Viewer</a>
-  </div>
+<div class="lobby-wrapper" *ngIf="lobby">
+  <div class="lobby-header">
+    <h2 class="lobby-id">
+      Lobby ID: {{ lobby.lobbyId.toUpperCase() }}
+    </h2>
+    <div class="lobby-header-sections">
+      <div class="lobby-header-section">
+        <div class="section-title">
+          Players Joined: {{ lobby.playerCount }}
+        </div>
+        <div>
 
-  <div *ngIf="!lobby.isGameInProgress" class="p-2">
-
-    <div>
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <button class="btn btn-primary d-inline-flex" (click)="gameModeCollapse = !gameModeCollapse" [attr.aria-expanded]="!gameModeCollapse" aria-controls="gameModes">
-          {{ gameModeCollapse ? "▼" : "▲" }} Select Game
-        </button>
-        <div *ngIf ="gameModes && gameModes.length > 0 && lobby.selectedGameMode">
-          <span class="d-inline-flex">Selected game mode:<b class="pl-1">{{ gameModes[lobby.selectedGameMode].title }}</b></span>
         </div>
       </div>
-      <div id="gameModes" [ngbCollapse]="gameModeCollapse" (ngbCollapse)="refreshGameModes()">
-        <div *ngFor="let gameMode of gameModes; let i = index" >
-          <span class="fake-link" (click)="onSelectGameMode(i)">{{ gameMode.title }}</span>
+      <div class="lobby-header-section">
+        <div class="section-title">
+          Admin Actions
+        </div>
+        <div class="lobby-actions">
+          <scrawlbrawl-button href="https://github.com/kevinjroyston/RoystonGame/releases/latest/download/ScrawlBrawlClient.zip">
+            Download Game Viewer
+          </scrawlbrawl-button>
+          <scrawlbrawl-button (click)="onDeleteLobby()">
+            Delete Lobby
+          </scrawlbrawl-button>
+        </div>
+      </div>
+    </div>  
+  </div>
+
+  <div *ngIf="!lobby.isGameInProgress">
+    <h2 *ngIf ="gameModes && gameModes.length > 0">
+      Select Game Mode
+    </h2>
+    
+    <div class="game-options">
+      <div class="game-option-wrapper" *ngFor="let gameMode of gameModes; index as i" >
+        <div class="game-option" (click)="onSelectGameMode(i)" [ngClass]='{"active": isGameModeSelected(i)}'>
+          <div class="game-option-img">
+            <img gameAsset [gameID]="gameMode.gameIdString">
+          </div>
+          <div class="game-option-info">
+            <div class="game-option-title">
+              {{ gameMode.title }}
+              <ion-icon 
+                (click)="openGameInfoDialog($event, i)" 
+                matTooltip="Click for Game Info"
+                name="information-circle-outline"
+              >
+              </ion-icon>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
-    <div *ngIf="lobby.selectedGameMode != null && gameModes != null">
-        <div *ngFor="let option of gameModes[lobby.selectedGameMode].options; let i = index">
-          <div *ngIf="option.responseType.toString() === 'Integer'">
-            <label>{{ option.description }}:</label>
-            <input class="ml-1 mr-1" type="number" [(ngModel)]="option.value" />
-          </div>
-          <div *ngIf="option.responseType.toString() === 'Boolean'">
-            <label for="bool-switch-{{i}}" >{{ option.description }}:</label>
-            <ui-switch class="ml-1 mr-1" [(ngModel)]="option.value" size="small"></ui-switch>
-            <!-- <input type="checkbox" id="bool-switch-{{i}}" checked="" [(ngModel)]="option.value" > -->
-            <label>Current value: {{ option.value }}</label>
-          </div>
-        </div>
-        <div class="Error" *ngIf="error">{{ error }}</div>
-      <button class="btn btn-primary" (click)="onStartLobby()">Start</button>
-    </div>
   </div>
-
 </div>

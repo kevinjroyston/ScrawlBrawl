@@ -8,8 +8,5 @@
     display: flex; 
     flex: 1 0 auto;
     overflow-x: hidden;
-
-    :host {
-        width: 100%;
-    }
+    background: rgb(250, 250, 250);
 }

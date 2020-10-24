@@ -39,6 +39,7 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes, { useHash: true })],
   exports: [RouterModule],
+  //Put guard in here?
   providers: []
 })
 export class AppRoutingModule {}

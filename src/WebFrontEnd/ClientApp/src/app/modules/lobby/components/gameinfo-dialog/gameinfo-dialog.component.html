@@ -1,0 +1,16 @@
+<h2 [ngStyle]="{'margin-bottom': '1.5rem'}">
+  {{gameModes[selectedGameMode].title}}
+</h2>
+
+<mat-dialog-content>
+  <div gameAsset [gameID]='gameModes[selectedGameMode].gameIdString'></div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <scrawlbrawl-button [ngStyle]="{'margin-right': '.75rem'}" size="small" color='red' (click)="close()">
+    Close
+  </scrawlbrawl-button>
+  <scrawlbrawl-button size="small" color='green'>
+    Start
+  </scrawlbrawl-button>
+</mat-dialog-actions>

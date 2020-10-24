@@ -1,0 +1,85 @@
+:host {
+  width: 100%;
+}
+
+.lobby-wrapper{
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  max-width: 1100px;
+  margin-bottom: 3rem;
+}
+
+.lobby-header{
+  margin: 2rem 0;
+}
+
+.lobby-header-sections {
+  display: flex;
+  padding: 1rem;
+  
+  .lobby-header-section {
+    display: flex;
+    padding: 1rem;
+    flex: 1;
+    flex-direction: column;
+    border: var(--border-grey);
+    border-radius: 4px;
+    background: var(--white-primary);
+  }
+}
+
+.section-title {
+  margin-bottom: 1rem;
+}
+
+.lobby-actions {
+  display: flex;
+  scrawlbrawl-button {
+    flex-basis: 33.3%;
+    margin-right: 10px;
+    font-size: .9rem;
+  }
+}
+
+
+.game-options {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.game-option-wrapper{
+  padding: 1rem;
+  flex-basis: 50%;
+}
+
+.game-option {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  border: var(--border-grey);
+  background-color: var(--white-primary);
+  transition: all .25s ease;
+
+  & > div {
+    flex-basis: 50%;
+  }
+
+  &:hover {
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid transparent;
+    transform: translateY(-15px);
+  }
+}
+
+.game-option-info {
+  border-left: var(--border-grey);
+  padding: .5rem;
+}
+
+.game-option-img{
+  max-width: 380px;
+}
+
