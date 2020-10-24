@@ -11,13 +11,16 @@ export class ScrawlButtonComponent {
   @Input() color: string = 'blue';
   @Input() width: string = '174px';
   @Input() link: string = '';
-  @Output() onclick = new EventEmitter();
+  @Output() onClick = new EventEmitter<MouseEvent>();
   element;
 
   constructor(element: ElementRef) {
     this.element = element.nativeElement;
        }
-/*    
+      onClickButton(event){
+        this.onClick.emit(event)
+      }
+    /*    
        ngOnInit() {
         console.log("scrawlbutton init");
       }
