@@ -385,7 +385,6 @@ MonoBehaviour:
   PlayerBar: {fileID: 533607378}
   VoteReavealBar: {fileID: 533607378}
   TimerUI: {fileID: 533607378}
-  GameIcon: {fileID: 145848810}
   BlurCamera: {fileID: 1846907645}
 --- !u!1 &86101461
 GameObject:
@@ -649,7 +648,7 @@ MonoBehaviour:
   m_MinHeight: -1
   m_PreferredWidth: 0
   m_PreferredHeight: 0
-  m_FlexibleWidth: 10
+  m_FlexibleWidth: 7
   m_FlexibleHeight: 2
   m_LayoutPriority: 1
 --- !u!1 &139744406
@@ -1633,7 +1632,7 @@ MonoBehaviour:
   m_MinHeight: -1
   m_PreferredWidth: 0
   m_PreferredHeight: 0
-  m_FlexibleWidth: 10
+  m_FlexibleWidth: 7
   m_FlexibleHeight: 2
   m_LayoutPriority: 1
 --- !u!1 &353161879
@@ -3850,7 +3849,6 @@ MonoBehaviour:
   PlayerBar: {fileID: 1857957962}
   VoteReavealBar: {fileID: 1857957962}
   TimerUI: {fileID: 533607378}
-  GameIcon: {fileID: 145848810}
   BlurCamera: {fileID: 1846907645}
 --- !u!1 &672176311
 GameObject:
@@ -4516,7 +4514,6 @@ MonoBehaviour:
   PlayerBar: {fileID: 999931677}
   VoteReavealBar: {fileID: 999931677}
   TimerUI: {fileID: 999931677}
-  GameIcon: {fileID: 1104598911}
   BlurCamera: {fileID: 1846907645}
 --- !u!1 &747384920
 GameObject:
@@ -4572,7 +4569,7 @@ MonoBehaviour:
   m_MinHeight: -1
   m_PreferredWidth: 0
   m_PreferredHeight: 0
-  m_FlexibleWidth: 10
+  m_FlexibleWidth: 7
   m_FlexibleHeight: 2
   m_LayoutPriority: 1
 --- !u!1 &748542947
@@ -5094,7 +5091,7 @@ MonoBehaviour:
   m_MinHeight: -1
   m_PreferredWidth: 0
   m_PreferredHeight: 0
-  m_FlexibleWidth: 10
+  m_FlexibleWidth: 7
   m_FlexibleHeight: 2
   m_LayoutPriority: 1
 --- !u!1 &818657556
@@ -6964,7 +6961,7 @@ MonoBehaviour:
   m_MinHeight: -1
   m_PreferredWidth: 0
   m_PreferredHeight: 0
-  m_FlexibleWidth: 10
+  m_FlexibleWidth: 7
   m_FlexibleHeight: 2
   m_LayoutPriority: 1
 --- !u!1 &1100625178
@@ -7298,7 +7295,7 @@ MonoBehaviour:
   m_MinHeight: -1
   m_PreferredWidth: 0
   m_PreferredHeight: 0
-  m_FlexibleWidth: 10
+  m_FlexibleWidth: 7
   m_FlexibleHeight: 2
   m_LayoutPriority: 1
 --- !u!1 &1162883965
@@ -7449,7 +7446,6 @@ MonoBehaviour:
   PlayerBar: {fileID: 672176311}
   VoteReavealBar: {fileID: 999931677}
   TimerUI: {fileID: 677125845}
-  GameIcon: {fileID: 535618786}
   BlurCamera: {fileID: 1846907645}
 --- !u!114 &1177880473
 MonoBehaviour:
@@ -7573,7 +7569,6 @@ MonoBehaviour:
   PlayerBar: {fileID: 533607378}
   VoteReavealBar: {fileID: 1013505414}
   TimerUI: {fileID: 533607378}
-  GameIcon: {fileID: 572919148}
   BlurCamera: {fileID: 1846907645}
 --- !u!1 &1214592428
 GameObject:
@@ -8936,7 +8931,6 @@ MonoBehaviour:
   PlayerBar: {fileID: 818657556}
   VoteReavealBar: {fileID: 533607378}
   TimerUI: {fileID: 978126390}
-  GameIcon: {fileID: 660820571}
   BlurCamera: {fileID: 1846907645}
 --- !u!114 &1443247903
 MonoBehaviour:
@@ -9178,7 +9172,6 @@ MonoBehaviour:
   PlayerBar: {fileID: 1857957962}
   VoteReavealBar: {fileID: 1857957962}
   TimerUI: {fileID: 1857957962}
-  GameIcon: {fileID: 830119342}
   BlurCamera: {fileID: 519420031}
 --- !u!1 &1508404280
 GameObject:
@@ -10048,7 +10041,6 @@ MonoBehaviour:
   PlayerBar: {fileID: 299602095}
   VoteReavealBar: {fileID: 145848810}
   TimerUI: {fileID: 1727650411}
-  GameIcon: {fileID: 728731558}
   BlurCamera: {fileID: 1846907645}
 --- !u!1 &1725867970
 GameObject:
@@ -11063,7 +11055,7 @@ MonoBehaviour:
   m_MinHeight: -1
   m_PreferredWidth: 0
   m_PreferredHeight: 0
-  m_FlexibleWidth: 10
+  m_FlexibleWidth: 7
   m_FlexibleHeight: 2
   m_LayoutPriority: 1
 --- !u!1 &1980333264
@@ -11163,7 +11155,6 @@ MonoBehaviour:
   PlayerBar: {fileID: 1681740302}
   VoteReavealBar: {fileID: 533607378}
   TimerUI: {fileID: 110113023}
-  GameIcon: {fileID: 188278726}
   BlurCamera: {fileID: 1846907645}
 --- !u!1 &1999920789
 GameObject:
