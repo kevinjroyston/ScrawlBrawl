@@ -1,3 +1,7 @@
+:host {
+    width: 100%;
+}
+
 .aboutus-wrapper {
   margin-top: 1.5rem;
   margin-bottom: 4rem;
@@ -33,4 +37,6 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
 }

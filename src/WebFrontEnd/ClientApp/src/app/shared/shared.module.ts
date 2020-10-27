@@ -15,7 +15,7 @@ import { SimpleButtonComponent } from './components/simplebutton/simplebutton.co
 import {FooterModule} from '@layout/footer/footer.module'
 import { RouterModule } from '@angular/router';
 import {IconButtonComponent} from './components/iconbutton/iconbutton.component'
-
+import {GameAssetDirective} from './components/gameassetdirective.component'
 
 @NgModule({
   imports: [
@@ -37,6 +37,7 @@ import {IconButtonComponent} from './components/iconbutton/iconbutton.component'
     SimpleButtonComponent,
     DrawingDirective,
     SelectorDirective,
+    GameAssetDirective,
     IconButtonComponent
   ],
   exports: [
@@ -53,6 +54,7 @@ import {IconButtonComponent} from './components/iconbutton/iconbutton.component'
     FormsModule,
     ReactiveFormsModule,
     DrawingDirective,
+    GameAssetDirective,
     ScrawlButtonComponent,
     SelectorDirective,
     FooterModule,

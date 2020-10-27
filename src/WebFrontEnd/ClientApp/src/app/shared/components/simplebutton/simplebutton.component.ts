@@ -1,19 +1,27 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 
+interface Button {
+  variant: 'outlined' | 'action' | 'plain'
+  size: 'small' | 'medium' | 'large'
+  type: 'button' | 'submit'
+  color: 'blue' | 'red' | 'green'
+  disabled: true | false
+}
+
 @Component({
-  selector: 'scrawlbrawl-button',
+  selector: 'simplebutton',
   templateUrl: './simplebutton.component.html',
-  styleUrls: ['./simplebutton.component.css']
+  styleUrls: ['./simplebutton.component.scss']
 })
 export class SimpleButtonComponent implements OnInit {
-  hovered: boolean
-  style: any
+  @Input() size: string = 'medium';
   @Input() type: string = 'button';
+  @Input() variant: string = 'plain';
   @Input() color: string = 'blue';
+  @Input() disabled: boolean = false;
   @Output() onClick = new EventEmitter<MouseEvent>();
 
   constructor(){
-    this.hovered = false;
   }
 
   ngOnInit() {
@@ -21,19 +29,5 @@ export class SimpleButtonComponent implements OnInit {
 
   onClickButton(event){
     this.onClick.emit(event)
-  }
-
-  defaultStyle(){
-    this.style = {
-      'background-color': 'var(--' + this.color + '-primary)',
-      'filter': 'brightness(110%)',
-      'box-shadow': '0 2px 8px var(--' +this.color+'-tertiary)'
-    }
-    return this.style;
-  }
-
-  hoveredStyle(){
-    this.style['filter'] = 'brightness(95%)'
-    return this.style;
   }
 }

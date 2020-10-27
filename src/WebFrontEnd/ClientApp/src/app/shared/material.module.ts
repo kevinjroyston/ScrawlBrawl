@@ -1,17 +1,20 @@
 
 import { NgModule } from '@angular/core';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
     imports: [
-        MatFormFieldModule,
-        MatInputModule
+        MatDialogModule,
+        MatTooltipModule,
+        MatProgressSpinnerModule
     ],
     exports: [
-        MatFormFieldModule,
-        MatInputModule
+        MatDialogModule,
+        MatTooltipModule,
+        MatProgressSpinnerModule
     ]
 })
 
