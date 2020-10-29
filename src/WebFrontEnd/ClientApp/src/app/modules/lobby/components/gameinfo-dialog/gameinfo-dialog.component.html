@@ -1,16 +1,16 @@
 <h2 [ngStyle]="{'margin-bottom': '1.5rem'}">
-  {{gameModes[selectedGameMode].title}}
+    {{gameModes[selectedGameMode].title}}
 </h2>
 
 <mat-dialog-content>
-  <div gameAsset [gameID]='gameModes[selectedGameMode].gameIdString'></div>
+    <div gameAsset [gameID]='gameModes[selectedGameMode].gameIdString'></div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <simplebutton [ngStyle]="{'margin-right': '.75rem'}" size="small" color='red' (click)="close()">
-    Close
-  </simplebutton>
-  <simplebutton size="small" color='green' (click)="onProceedToSettings()">
-    Choose Settings
-  </simplebutton>
+    <scrawlbutton [ngStyle]="{'margin-right': '.75rem'}" color='red' (click)="close()">
+        Close
+    </scrawlbutton>
+    <scrawlbutton color='green' (click)="onProceedToSettings()">
+        Settings
+    </scrawlbutton>
 </mat-dialog-actions>
