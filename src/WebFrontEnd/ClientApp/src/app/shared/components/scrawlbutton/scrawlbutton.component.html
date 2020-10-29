@@ -1,4 +1,4 @@
-<a [routerLink]="link" class="scrawlbutton-link">
+<a [routerLink]="link" class="scrawlbutton-link" (click)="onClickButton($event);">
     <div class="scrawlbutton" [ngStyle]="{'width': width}">
         <p class="scrawlbutton-label">
             <ng-content></ng-content>
