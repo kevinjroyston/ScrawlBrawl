@@ -14,7 +14,6 @@
                     Players Joined: {{ lobby.playerCount }}
                 </div>
                 <div>
-
                 </div>
             </div>
             <div class="lobby-header-section">
@@ -34,12 +33,10 @@
             </div>
         </div>
     </div>
-
     <div *ngIf="!lobby.isGameInProgress">
         <h2 *ngIf="gameModes && gameModes.length > 0">
             Select Game Mode
         </h2>
-
         <div class="game-options">
             <div class="game-option-wrapper" *ngFor="let gameMode of gameModes; index as i">
                 <div class="game-option" (click)="onSelectGameMode(i)" [ngClass]='{"active": isGameModeSelected(i)}'>
