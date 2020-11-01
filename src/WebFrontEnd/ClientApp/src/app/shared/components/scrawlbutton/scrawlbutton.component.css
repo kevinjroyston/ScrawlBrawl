@@ -93,7 +93,7 @@ a:hover .green-scrawlbutton-base {
 }
 
 a:hover .red-scrawlbutton-base {
-    background-color: var(--green-secondary);
+    background-color: var(--red-secondary);
     left: 0px;
     top: 0px;
 }

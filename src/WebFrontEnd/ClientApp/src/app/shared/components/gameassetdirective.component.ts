@@ -28,7 +28,7 @@ export class GameAssetDirective {
 
     if (this.element.nodeName == 'IMG') {
       //this.element.src = "/assets/GameAssets/" + this.gameID + "-logo.png";
-      this.element.src = "/assets/GameAssets/Mimic-logo.png";
+      this.element.src = "/assets/GameAssets/" + this.gameID + "-logo.png";
     }
     else {
       let url: string;
