@@ -9,6 +9,13 @@
   background: rgba(40, 40, 40, .9);
 }
 
+.no-lobby{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
 .lobby-wrapper{
   display: flex;
   flex-direction: column;

@@ -1,0 +1,32 @@
+:host{
+    width: 100%;
+    height: 100%;
+}
+
+.gamemode {
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    background: var(--white-primary);
+    max-width: 400px;
+    width: 100%;
+    height: 100%;
+    box-shadow: var(--shadow-lg);
+    justify-content: space-between;
+}
+
+.action-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 1.25rem .5rem 0;
+}
+
+.gamemode-img {
+    width: 100%;
+    height: auto;
+    border-bottom: var(--border-grey);
+}
+
+.gamemode-text {
+    padding: 1.5rem;
+}

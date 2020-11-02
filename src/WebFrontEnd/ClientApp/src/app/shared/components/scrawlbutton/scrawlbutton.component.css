@@ -1,34 +1,36 @@
 .scrawlbutton-link {
     display: inline-block;
-    padding: 10px;
+    padding: .5px;
+    width: 100%;
+    min-width: 174px;
 }
 
 .scrawlbutton {
-    padding-right: 10px;
     position: relative;
+    width: 100%;
 }
 
 .scrawlbutton-label {
     font-family: Poppins;
     font-style: normal;
     font-weight: 600;
-    font-size: 20px;
+    font-size: 16px;
     line-height: 32px;
-    color: var(--black-tertiary);
+    color: var(--white-primary);
     text-align: center;
     position: absolute;
     z-index: 13;
     top: 51%;
     left: 51%;
     transform: translate(-50%, -50%);
-    transition: .3s;
+    transition: all .3s ease;
+    white-space: nowrap;
 }
 
 a:hover .scrawlbutton-label {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    transition: .3s;
 }
 
 .scrawlbutton-outline {
@@ -37,9 +39,10 @@ a:hover .scrawlbutton-label {
     height: 40px;
     position: relative;
     z-index: 12;
+    width: 100%;
     box-sizing: border-box;
     transform: rotate(-2deg);
-    transition: .3s;
+    transition: all .3s ease;
 }
 
 a:hover .scrawlbutton-outline {
@@ -50,16 +53,15 @@ a:hover .scrawlbutton-outline {
 .blue-scrawlbutton-base {
     width: 100%;
     height: 40px;
-    background-color: var(--blue-tertiary);
+    background-color: var(--blue-secondary);
     border-radius: 4px;
     position: absolute;
     left: 6px;
     top: 3px;
-    transition: .3s;
+    transition: all .3s ease;
 }
 
 a:hover .blue-scrawlbutton-base {
-    background-color: var(--blue-secondary);
     left: 0px;
     top: 0px;
 }
@@ -67,16 +69,15 @@ a:hover .blue-scrawlbutton-base {
 .green-scrawlbutton-base {
     width: 100%;
     height: 40px;
-    background-color: var(--green-tertiary);
+    background-color: var(--green-secondary);
     border-radius: 4px;
     position: absolute;
     left: 6px;
     top: 3px;
-    transition: .3s;
+    transition: all .3s ease;
 }
 
 a:hover .green-scrawlbutton-base {
-    background-color: var(--green-secondary);
     left: 0px;
     top: 0px;
 }
@@ -84,16 +85,15 @@ a:hover .green-scrawlbutton-base {
 .red-scrawlbutton-base {
     width: 100%;
     height: 40px;
-    background-color: var(--red-tertiary);
+    background-color: var(--red-secondary);
     border-radius: 4px;
     position: absolute;
     left: 6px;
     top: 3px;
-    transition: .3s;
+    transition: all .3s ease;
 }
 
 a:hover .red-scrawlbutton-base {
-    background-color: var(--red-secondary);
     left: 0px;
     top: 0px;
 }

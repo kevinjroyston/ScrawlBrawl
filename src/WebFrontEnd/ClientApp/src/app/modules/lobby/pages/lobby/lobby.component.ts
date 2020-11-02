@@ -16,12 +16,14 @@ import GameModes from '../../interfaces/gamemodes'
 export class LobbyManagementComponent {
     public lobby!: Lobby.LobbyMetadata;
     public gameModes!: GameModes.GameModeMetadata[];
-    public error: string = "";
+    public error: string;
     @ViewChild(GameAssetDirective) gameAssetDirective;
 
     constructor(@Inject(API) private api: API, private matDialog: MatDialog)
     {
-        this.getGames().then(()=>this.onGetLobby())
+        this.getGames().then(
+            () => this.onGetLobby()
+        )
     }
 
     async onStartLobby() {
@@ -48,6 +50,7 @@ export class LobbyManagementComponent {
         this.api.request({ type: "Lobby", path: "Get" }).subscribe({
             next: async (result) => {
                 this.lobby = result as Lobby.LobbyMetadata;
+                
                 if (this.lobby != null && this.lobby.selectedGameMode != null && this.lobby.gameModeSettings != null) {
                     this.lobby.gameModeSettings.options.forEach((value: GameModes.GameModeOptionResponse, index: number, array: GameModes.GameModeOptionResponse[]) => {
                         if (value != null && value.value != null) {
@@ -56,7 +59,7 @@ export class LobbyManagementComponent {
                     });
                 }
             },
-            error: () => { this.lobby = null; }
+            error: () => { this.lobby = null;}
         });
     }
 
@@ -92,7 +95,7 @@ export class LobbyManagementComponent {
         if (this.lobby.selectedGameMode !== null) {
             this.openGameSettingsDialog()
         }
-        this.error = "";
+        this.error = null;
     }
 
     openGameInfoDialog = (event, game: number) => {
@@ -128,10 +131,4 @@ export class LobbyManagementComponent {
             this.getGames();
         }
     }
-}
-
-enum ResponseType {
-    Boolean = 0,
-    Integer,
-    Text,
 }
