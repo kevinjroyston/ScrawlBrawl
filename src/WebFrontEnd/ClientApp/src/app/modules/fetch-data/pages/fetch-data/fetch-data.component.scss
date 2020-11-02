@@ -40,6 +40,8 @@ simplebutton {
   font-size: 16px;
   line-height: 19px;
   padding: .75rem;
+  border: 0;
+  box-shadow: var(--shadow);
 }
 
 .prompt-wrapper{

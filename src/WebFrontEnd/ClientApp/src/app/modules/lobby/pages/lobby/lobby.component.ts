@@ -1,9 +1,10 @@
-import { Component, Inject, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, ViewChild} from '@angular/core';
 import { API } from '@core/http/api';
 import { GameAssetDirective } from '@shared/components/gameassetdirective.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {GamemodeDialogComponent} from '../../components/gamemode-dialog/gamemode-dialog.component';
-import {GameInfoDialogComponent} from '../../components/gameinfo-dialog/gameinfo-dialog.component'
+import {GameInfoDialogComponent} from '../../components/gameinfo-dialog/gameinfo-dialog.component';
+import {ErrorService} from '../../services/error.service'
 import Lobby from '../../interfaces/lobby'
 import GameModes from '../../interfaces/gamemodes'
 
@@ -19,7 +20,7 @@ export class LobbyManagementComponent {
     public error: string;
     @ViewChild(GameAssetDirective) gameAssetDirective;
 
-    constructor(@Inject(API) private api: API, private matDialog: MatDialog)
+    constructor(@Inject(API) private api: API, private matDialog: MatDialog, public errorService: ErrorService)
     {
         this.getGames().then(
             () => this.onGetLobby()
@@ -35,14 +36,18 @@ export class LobbyManagementComponent {
         this.error = "";
         await this.api.request({ type: "Lobby", path: "Configure", body: bodyString }).subscribe({
             next: async () => {
-                if (this.error == "") {
+                if (!this.error) {
                     await this.api.request({ type: "Lobby", path: "Start" }).subscribe({
                         next: async () => { await this.onGetLobby() },
-                        error: async (error) => { this.error = error.error; await this.onGetLobby() }
+                        error: async (error) => { this.error = error.error; this.errorService.announceError(error.error); await this.onGetLobby() }
                     })
                 }
             },
-            error: async (error) => { this.error = error.error; await this.onGetLobby(); }
+            error: async (error) => { 
+                this.error = error.error; 
+                
+                await this.onGetLobby(); 
+            }
         })
     }
 
@@ -119,10 +124,8 @@ export class LobbyManagementComponent {
         dialogConfig.data = {
             gameModes: this.gameModes,
             lobby: this.lobby,
-            error: this.error,
             onStart: () => this.onStartLobby()
         }
-        console.log(dialogConfig);
         this.matDialog.open(GamemodeDialogComponent, dialogConfig);
     }
 

@@ -27,12 +27,7 @@ export class GameAssetDirective {
   loadGame() {
 
     if (this.element.nodeName == 'IMG') {
-<<<<<<< HEAD
-      //this.element.src = "/assets/GameAssets/" + this.gameID + "-logo.png";
-      this.element.src = "/assets/GameAssets/" + this.gameID + "-logo.png";
-=======
       this.element.src = "/assets/GameAssets/game-images/" + this.gameID + "-logo.png";
->>>>>>> d5e2fc3... moved files around, preliminary homoepage design, scrawlbutton fix for routing errors, manage lobby shows create lobby if lobby exists fix
     }
     else {
       const url = this.determineDescriptionDestination() + this.gameID + "-description.html";

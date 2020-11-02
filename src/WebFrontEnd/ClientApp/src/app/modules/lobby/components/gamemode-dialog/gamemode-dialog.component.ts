@@ -1,7 +1,9 @@
 import { Component, OnInit, Inject } from '@angular/core';
+import {Subscription} from 'rxjs'
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import Lobby from '../../interfaces/lobby';
 import GameModes from '../../interfaces/gamemodes';
+import { ErrorService } from '@modules/lobby/services/error.service';
 
 interface GameModeDialogData {
   gameModes: GameModes.GameModeMetadata
@@ -19,22 +21,30 @@ export class GamemodeDialogComponent implements OnInit {
   gameModes: GameModes.GameModeMetadata
   lobby: Lobby.LobbyMetadata
   error: string
+  errorSubscription: Subscription
   onStart: () => void
 
   constructor(
     private dialogRef: MatDialogRef<GamemodeDialogComponent>,
+    public errorService: ErrorService,
     @Inject(MAT_DIALOG_DATA) public data: GameModeDialogData) {
     this.gameModes = data.gameModes;
     this.lobby = data.lobby;
-    this.error = data.error;
     this.onStart = data.onStart;
+  }
+
+  ngOnInit() {
+    this.errorSubscription = this.errorService.errorObservable.subscribe((error) => {
+      this.error = error;
+    })
+  }
+
+  ngOnDestroy() {
+    this.errorSubscription.unsubscribe();
   }
 
   onStartLobby = () => {
     this.onStart();
-  }
-
-  ngOnInit() {
   }
 
   close() {

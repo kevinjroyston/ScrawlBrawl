@@ -8,15 +8,12 @@ import { MsalService, BroadcastService } from '@azure/msal-angular';
     selector: 'app-user-management',
     templateUrl: './user-management.component.html',
     styleUrls: ['./user-management.component.css'],
-
-    encapsulation: ViewEncapsulation.None
 })
 
 export class UserManagementComponent {
-    constructor(
-        @Inject(API) private api: API)
+    constructor(@Inject(API) private api: API)
     {
-
+        
     }
 
     async onDeleteUser() {
