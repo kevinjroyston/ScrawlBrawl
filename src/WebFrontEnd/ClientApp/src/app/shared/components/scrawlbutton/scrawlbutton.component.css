@@ -41,7 +41,7 @@ a:hover .scrawlbutton-label {
     z-index: 12;
     width: 100%;
     box-sizing: border-box;
-    transform: rotate(-2deg);
+    transform: rotate(-1deg);
     transition: all .3s ease;
 }
 
