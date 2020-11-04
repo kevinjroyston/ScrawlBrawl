@@ -29,6 +29,10 @@ namespace Backend.Games.TimsGames.FriendQuiz
             Description = "See how well you know your fellow players",
             MinPlayers = 3,
             MaxPlayers = null,
+            Attributes = new GameModeAttributes
+                {
+                    ProductionReady = false,
+                },
             Options = new List<GameModeOptionResponse>
                 {
                     new GameModeOptionResponse

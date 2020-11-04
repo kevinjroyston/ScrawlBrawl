@@ -34,6 +34,10 @@ namespace Backend.Games.KevinsGames.Mimic
             Description = "Test your drawing and memory skills",
             MinPlayers = 3,
             MaxPlayers = null,
+            Attributes = new GameModeAttributes
+                {
+                    ProductionReady = true,
+                },
             Options = new List<GameModeOptionResponse>
                 {
                     new GameModeOptionResponse
