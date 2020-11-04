@@ -6,6 +6,8 @@ using Common.DataModels.Requests.LobbyManagement;
 using Backend.APIs.Helpers.Extensions;
 using System;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using Backend.GameInfrastructure.DataModels;
 #if !DEBUG
 using Microsoft.AspNetCore.Authorization;
 #endif
@@ -19,14 +21,19 @@ namespace Backend.APIs.Controllers.LobbyManagement
 #endif
     public class LobbyController : ControllerBase
     {
-        public LobbyController(ILogger<LobbyController> logger, GameManager gameManager)
+        public LobbyController(ILogger<LobbyController> logger, GameManager gameManager, IServiceProvider serviceProvider, InMemoryConfiguration inMemoryConfiguration)
         {
             this.GameManager = gameManager;
             this.Logger = logger;
+            this.ServiceProvider = serviceProvider;
+            this.InMemoryConfiguration = inMemoryConfiguration;
         }
 
         private GameManager GameManager { get; set; }
         private ILogger<LobbyController> Logger { get; set; }
+        private IServiceProvider ServiceProvider { get; set; }
+        private InMemoryConfiguration InMemoryConfiguration { get; set; }
+
 
         [HttpGet]
         [Route("Get")]
@@ -83,7 +90,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 }
             } while (GameManager.GetLobby(lobbyId) != null);
 
-            Lobby newLobby = new Lobby(lobbyId, owner: user, gameManager: GameManager);
+            Lobby newLobby = ActivatorUtilities.CreateInstance<Lobby>(this.ServiceProvider, lobbyId, user);
 
             if (!GameManager.RegisterLobby(newLobby))
             {
@@ -180,7 +187,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
             {
                 return new BadRequestResult();
             }
-            return new OkObjectResult(Lobby.GameModes.Select(gameHolder => gameHolder.GameModeMetadata));
+            return new OkObjectResult(InMemoryConfiguration.GameModes.Select(gameHolder => gameHolder.GameModeMetadata));
         }
     }
 }

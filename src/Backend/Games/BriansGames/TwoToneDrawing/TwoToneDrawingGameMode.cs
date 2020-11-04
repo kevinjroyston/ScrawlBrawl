@@ -39,6 +39,10 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             Description = "Blindly collaborate on a drawing with unknown teammates.",
             MinPlayers = 4,
             MaxPlayers = null,
+            Attributes = new GameModeAttributes
+                {
+                    ProductionReady = true,
+                },
             Options = new List<GameModeOptionResponse>
             {
                 new GameModeOptionResponse

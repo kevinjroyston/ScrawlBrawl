@@ -13,6 +13,7 @@ using Backend.GameInfrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Logging;
 using Backend.APIs.AuthorizationPolicies;
+using Backend.GameInfrastructure.DataModels;
 
 namespace Backend
 {
@@ -53,6 +54,7 @@ namespace Backend
             // The following line enables Application Insights telemetry collection.
             services.AddApplicationInsightsTelemetry();
             services.AddSingleton(typeof(GameManager));
+            services.AddSingleton(typeof(InMemoryConfiguration));
 
             services.AddSignalR(hubOptions =>
             {

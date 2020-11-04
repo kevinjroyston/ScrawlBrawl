@@ -3,9 +3,6 @@ using Backend.GameInfrastructure.DataModels.Enums;
 using Backend.GameInfrastructure.DataModels.States.GameStates;
 using Backend.GameInfrastructure.DataModels.States.StateGroups;
 using Backend.GameInfrastructure.Extensions;
-using Backend.Games.BriansGames.BattleReady;
-using Backend.Games.BriansGames.BodyBuilder;
-using Backend.Games.BriansGames.TwoToneDrawing;
 using Backend.APIs.DataModels;
 using Backend.APIs.DataModels.Exceptions;
 using Common.DataModels.Requests;
@@ -18,9 +15,6 @@ using System.Collections.Generic;
 using System.Linq;
 using static System.FormattableString;
 using Backend.GameInfrastructure.DataModels;
-using Backend.Games.KevinsGames.Mimic;
-using Backend.Games.TimsGames.FriendQuiz;
-using Backend.Games.BriansGames.ImposterDrawing;
 using Backend.APIs.DataModels.Enums;
 using Common.Code.Extensions;
 using Common.DataModels.UnityObjects;
@@ -52,145 +46,16 @@ namespace Backend.GameInfrastructure
 
         private IGameMode Game { get; set; }
         private GameManager GameManager { get; set; }
+        private InMemoryConfiguration InMemoryConfiguration { get; set; }
 
 
-        #region GameModes
-        public static IReadOnlyList<GameModeMetadataHolder> GameModes { get; } = new List<GameModeMetadataHolder>
-        {
-            #region Imposter Syndrome (OLD Removed)
-            /*
-            new GameModeMetadata
-            {
-                Title = "Imposter Syndrome",
-                Description = "Come up with a difference only you'll be able to spot!",
-                MinPlayers = 4,
-                MaxPlayers = null,
-                GameModeInstantiator = (lobby, options) => new OneOfTheseThingsIsNotLikeTheOtherOneGameMode(lobby, options),
-                Options = new List<GameModeOptionResponse>
-                {
-                    new GameModeOptionResponse
-                    {
-                        Description = "Max total drawings per player.",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 6,
-                        MinValue = 3
-                    },
-                }
-            },*/
-            #endregion
-            #region Imposter Syndrome Text (Removed)
-            /*new GameModeMetadata
-            {
-                Title = "Imposter Syndrome (Text)",
-                Description = "Come up with a difference only you'll be able to spot!",
-                MinPlayers = 4,
-                MaxPlayers = null,
-                GameModeInstantiator = (lobby, options) => new ImposterTextGameMode(lobby, options),
-                Options = new List<GameModeOptionResponse>
-                {
-                    new GameModeOptionResponse
-                    {
-                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 5,
-                        MinValue = 0,
-                        MaxValue = 10,
-                    }
-                }
-            },*/
-            #endregion
-            new GameModeMetadataHolder()
-            {
-                GameModeMetadata = ImposterDrawingGameMode.GameModeMetadata,
-                GameModeInstantiator = (lobby, options) => new ImposterDrawingGameMode(lobby, options)
-            },
-            new GameModeMetadataHolder()
-            {
-                GameModeMetadata = TwoToneDrawingGameMode.GameModeMetadata,
-                GameModeInstantiator = (lobby, options) => new TwoToneDrawingGameMode(lobby, options)
-            },
-            new GameModeMetadataHolder()
-            {
-                GameModeMetadata = BodyBuilderGameMode.GameModeMetadata,
-                GameModeInstantiator = (lobby, options) => new BodyBuilderGameMode(lobby, options)
-            },
-            new GameModeMetadataHolder()
-            {
-                GameModeMetadata = BattleReadyGameMode.GameModeMetadata,
-                GameModeInstantiator = (lobby, options) => new BattleReadyGameMode(lobby, options)
-            },
-            new GameModeMetadataHolder()
-            {
-                GameModeMetadata = MimicGameMode.GameModeMetadata,
-                GameModeInstantiator = (lobby, options) => new MimicGameMode(lobby, options)
-            },
-            new GameModeMetadataHolder()
-            {
-                GameModeMetadata = FriendQuizGameMode.GameModeMetadata,
-                GameModeInstantiator = (lobby, options) => new FriendQuizGameMode(lobby, options)
-            },
-            
-            #region StoryTime (Removed)
-            /*new GameModeMetadata
-            {
-                Title = "StoryTime",
-                Description = "Work together to make the best story that fits set of rapidly changing genres",
-                MinPlayers = 3,
-                MaxPlayers = null,
-                GameModeInstantiator = (lobby, options) => new StoryTimeGameMode(lobby, options),
-                Options = new List<GameModeOptionResponse>
-                {
-                    new GameModeOptionResponse
-                    {
-                        Description = "Number of players asked to write each round",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 2,
-                        MinValue = 2,
-                        MaxValue = 30,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Number of rounds",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 10,
-                        MinValue = 2,
-                        MaxValue = 60,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "length of timer for writing",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 45,
-                        MinValue = 10,
-                        MaxValue = 120,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "length of timer for voting",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 30,
-                        MinValue = 5,
-                        MaxValue = 60,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "character limit for sentences",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 100,
-                        MinValue = 50,
-                        MaxValue = 200,
-                    },
-                }
-            },*/
-            #endregion
-        }.AsReadOnly();
-        #endregion
 
-        public Lobby(string friendlyName, AuthenticatedUser owner, GameManager gameManager)
+        public Lobby(string friendlyName, AuthenticatedUser owner, GameManager gameManager, InMemoryConfiguration inMemoryConfiguration)
         {
             this.LobbyId = friendlyName;
             this.Owner = owner;
             this.GameManager = gameManager;
+            this.InMemoryConfiguration = inMemoryConfiguration;
             InitializeAllGameStates();
         }
 
@@ -216,6 +81,8 @@ namespace Backend.GameInfrastructure
         {
             GameManager.ReportGameError(type: ErrorType.GetContent, lobbyId: LobbyId, error: error);
         }
+        private IReadOnlyList<GameModeMetadataHolder> GameModes => this.InMemoryConfiguration.GameModes;
+
         public bool ConfigureLobby(ConfigureLobbyRequest request, out string errorMsg)
         {
             errorMsg = string.Empty;
@@ -226,7 +93,7 @@ namespace Backend.GameInfrastructure
                 return false;
             }
 
-            if (request?.GameMode == null || request.GameMode.Value < 0 || request.GameMode.Value >= Lobby.GameModes.Count)
+            if (request?.GameMode == null || request.GameMode.Value < 0 || request.GameMode.Value >= GameModes.Count)
             {
                 errorMsg = "Unsupported Game Mode";
                 return false;

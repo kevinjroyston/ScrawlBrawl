@@ -25,45 +25,49 @@ namespace Backend.Games.BriansGames.BodyBuilder
             MinPlayers = 3,
             GameId = GameModeId.BodySwap,
             MaxPlayers = null,
+            Attributes = new GameModeAttributes
+            {
+                ProductionReady = false,
+            },
             Options = new List<GameModeOptionResponse>
+            {
+                new GameModeOptionResponse
                 {
-                    new GameModeOptionResponse
-                    {
-                        Description = "Number of rounds",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 2,
-                        MinValue = 1,
-                        MaxValue = 10,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Display names on screen",
-                        DefaultValue = true,
-                        ResponseType = ResponseType.Boolean
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Display images on screen",
-                        DefaultValue = false,
-                        ResponseType = ResponseType.Boolean
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Number of turns for round timeout",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 25,
-                        MinValue = 1,
-                        MaxValue = 100,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 5,
-                        MinValue = 0,
-                        MaxValue = 10,
-                    }
+                    Description = "Number of rounds",
+                    ResponseType = ResponseType.Integer,
+                    DefaultValue = 2,
+                    MinValue = 1,
+                    MaxValue = 10,
+                },
+                new GameModeOptionResponse
+                {
+                    Description = "Display names on screen",
+                    DefaultValue = true,
+                    ResponseType = ResponseType.Boolean
+                },
+                new GameModeOptionResponse
+                {
+                    Description = "Display images on screen",
+                    DefaultValue = false,
+                    ResponseType = ResponseType.Boolean
+                },
+                new GameModeOptionResponse
+                {
+                    Description = "Number of turns for round timeout",
+                    ResponseType = ResponseType.Integer,
+                    DefaultValue = 25,
+                    MinValue = 1,
+                    MaxValue = 100,
+                },
+                new GameModeOptionResponse
+                {
+                    Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
+                    ResponseType = ResponseType.Integer,
+                    DefaultValue = 5,
+                    MinValue = 0,
+                    MaxValue = 10,
                 }
+            }
         };
 
         private List<Setup_Person> PeopleList { get; set; } = new List<Setup_Person>();

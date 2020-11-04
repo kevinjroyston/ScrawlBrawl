@@ -29,6 +29,10 @@ namespace Backend.Games.BriansGames.ImposterDrawing
                 Description = "Come up with a difference only you'll be able to spot!",
                 MinPlayers = 4,
                 MaxPlayers = null,
+                Attributes = new GameModeAttributes
+                {
+                       ProductionReady = true,
+                },
                 Options = new List<GameModeOptionResponse>
                 {
                     new GameModeOptionResponse
@@ -39,7 +43,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing
                         MinValue = 0,
                         MaxValue = 10,
                     }
-                }
+                },
             };
         private Setup_GS Setup { get; set; }
         private Random Rand { get; } = new Random();

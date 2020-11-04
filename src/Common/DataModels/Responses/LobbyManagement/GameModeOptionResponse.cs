@@ -17,6 +17,12 @@ namespace Common.DataModels.Responses
         [JsonProperty("value")]
         public object DefaultValue { get; set; }
     }
+    public class GameModeAttributes
+    {
+        public bool ProductionReady { get; set; } = false;
+        public bool SupportsAudience { get; set; } = false;
+        public bool SupportsTimers { get; set; } = false;
+    }
 
     [JsonConverter(typeof(StringEnumConverter))]
     public enum ResponseType
