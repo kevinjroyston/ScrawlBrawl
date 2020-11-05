@@ -21,16 +21,16 @@ const routes: Routes = [
         loadChildren: () => import('./modules/feedback/feedback.module').then(m => m.FeedbackModule)
     },
     {
-        path: 'game/play',
+        path: 'play',
         loadChildren: () => import('./modules/fetch-data/fetch-data.module').then(m => m.FetchDataModule)
     },
     {
-        path: 'lobby/manage',
+        path: 'lobby',
         canActivate: guards,
         loadChildren: () => import('./modules/lobby/lobby.module').then(m => m.LobbyModule)
     },
     {
-        path: 'user/manage',
+        path: 'user',
         loadChildren: () => import('./modules/user/user.module').then(m => m.UserModule)
     },
     //{ path: 'admin', component: AdminComponent} //not yet made

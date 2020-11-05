@@ -1,10 +1,12 @@
 <header>
   <nav
-    class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light"
+    class="navbar navbar-expand-sm navbar-toggleable-sm"
   >
     <div class="navbar-left">
       <a [routerLink]="['/']">
-        <img class="navbar-brand" alt="Scrawl Brawl" src="/assets/SB_Logo_Transp_Shadow.png">
+        <div class="navbar-logo">
+          <scrawlbrawl-logo-horizontal></scrawlbrawl-logo-horizontal>
+        </div>
       </a>
       <button
         class="navbar-toggler"
@@ -24,13 +26,13 @@
     >
       <ul class="navbar-nav flex-grow">
         <li class="nav-item" [routerLinkActive]="['link-active']">
-          <a class="trans-link" [routerLink]="['/game/play']">Play</a>
+          <a class="trans-link" [routerLink]="['/play']">Play</a>
         </li>
         <li class="nav-item" [routerLinkActive]="['link-active']">
-          <a class="trans-link" [routerLink]="['/lobby/manage']">Manage Lobby</a>
+          <a class="trans-link" [routerLink]="['/lobby']">Manage Lobby</a>
         </li>
         <li class="nav-item" [routerLinkActive]="['link-active']">
-          <a class="trans-link" [routerLink]="['/user/manage']">Manage User</a>
+          <a class="trans-link" [routerLink]="['/user']">Manage User</a>
         </li>
       </ul>
     </div>

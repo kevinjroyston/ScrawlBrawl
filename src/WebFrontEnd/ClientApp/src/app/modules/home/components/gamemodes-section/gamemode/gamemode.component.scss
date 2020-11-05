@@ -6,12 +6,13 @@
 .gamemode {
     display: flex;
     flex-direction: column;
-    border-radius: 8px;
     background: var(--white-primary);
     max-width: 400px;
     width: 100%;
     height: 100%;
-    box-shadow: var(--shadow-lg);
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid rgb(240, 240, 240);
     justify-content: space-between;
 }
 
@@ -24,7 +25,6 @@
 .gamemode-img {
     width: 100%;
     height: auto;
-    border-bottom: var(--border-grey);
 }
 
 .gamemode-text {

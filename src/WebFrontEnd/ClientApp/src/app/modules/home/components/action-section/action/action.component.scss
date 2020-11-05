@@ -1,0 +1,20 @@
+:host {
+    flex: 1;
+    max-width: 600px;
+}
+
+.action-section {
+    display: flex;
+    height: 100%;
+}
+
+.action-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin-left: 2rem;
+}
+
+.action-content-button{
+    max-width: 150px;
+}

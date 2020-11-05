@@ -1,5 +1,10 @@
 :host {
     width: 100%;
+    background-color: white;
+}
+
+h2 {
+    font-size: 40px;
 }
 
 .home {
@@ -10,6 +15,12 @@
 
 .hero-section{
     display: flex;
+    background: var(--ornamental-pastelyellow);
+    height: calc(100vh - 65px);
+}
+
+.action-section {
+    justify-content: space-evenly;
 }
 
 section {
@@ -17,8 +28,7 @@ section {
     justify-content: center;
     width: 100%;
     margin: 0 auto;
-    padding: 4em 4%;
-    border-bottom: 1px solid var(--white-tertiary);
+    padding: 5rem 4%;
 }
 
 .home-wrapper{
@@ -70,6 +80,10 @@ section {
 
         .itsection-description {
             margin: 2.5rem 0;
+        }
+
+        .itsection-button{
+            max-width: 150px;
         }
     }
 }

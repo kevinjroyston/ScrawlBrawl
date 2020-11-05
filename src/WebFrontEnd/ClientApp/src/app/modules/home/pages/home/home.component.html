@@ -2,9 +2,23 @@
 <div class="home">
   <section class="hero-section">
     <div>
-      <h1>Scrawl Brawl!</h1>
-      <h3>Drawn Together. Polled Apart.</h3>
+      <hero-logo></hero-logo>
+      <h2>Drawn Together. Polled Apart.</h2>
     </div>
+  </section>
+  <section class="action-section">
+    <home-action>
+      <green-mustache-brush-svg image></green-mustache-brush-svg>
+      <h2 header>Start a Game!</h2>
+      <div description> Download the Game Viewer, create a lobby, and kick things offs!</div>
+      <scrawlbutton link='/lobby' action>Start Game</scrawlbutton>
+    </home-action>
+    <home-action>
+      <red-pencil-on-blue-pencil-svg image></red-pencil-on-blue-pencil-svg>
+      <h2 header>Join a Game!</h2>
+      <div description>All you need is a lobby code, and you're in!</div>
+      <scrawlbutton color="green" link='/play' action>Join Game</scrawlbutton>
+    </home-action>
   </section>
   <section>
     <div class='home-textimage'>
@@ -26,9 +40,11 @@
           <div class="itsection-description">
             With limitless lobbies and open source game mode creation, the possibilities are endless and always expanding!
           </div>
-          <scrawlbutton>
-            Learn More
-          </scrawlbutton>
+          <div class="itsection-button">
+            <scrawlbutton>
+              Learn More
+            </scrawlbutton>
+          </div>
         </div>
       </div>
     </div>
@@ -47,12 +63,14 @@
           <div class="itsection-description">
             Scrawl Brawl was built with the goal of allowing current and aspiring game developers to have an outlet for their ideas. If you’re interested in putting together a game mode, today’s the day to get started!
           </div>
-          <scrawlbutton (onClick)="onGithubRedirect()">
-            Learn More
-          </scrawlbutton>
+          <div class="itsection-button">
+            <scrawlbutton (onClick)="onGithubRedirect()">
+              Learn More
+            </scrawlbutton>
+          </div>
         </div>
       </div>
-      <div class="home-image">
+      <div class='home-image'>
       </div>
     </div>
   </section>
@@ -68,9 +86,11 @@
           <div class="itsection-description">
             Got feedback, questions, or want to find ways to get engaged? Drop us a line!
           </div>
-          <scrawlbutton>
-            Learn More
-          </scrawlbutton>
+          <div class="itsection-button">
+            <scrawlbutton >
+              Learn More
+            </scrawlbutton>
+          </div>
         </div>
       </div> 
     </div>

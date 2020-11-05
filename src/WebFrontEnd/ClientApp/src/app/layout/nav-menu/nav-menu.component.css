@@ -1,7 +1,19 @@
 
 .navbar{
   padding: .25rem 0;
+  height: 65px;
   box-shadow: var(--shadow);
+}
+
+.navbar-logo {
+  fill: var(--ornamental-pastelblue);
+  transition: all .3s ease;
+  height: 40px;
+  width: 250px;
+}
+
+.navbar-logo:hover{
+  fill: var(--ornamental-pastelyellow);
 }
 
 .navbar-left {
