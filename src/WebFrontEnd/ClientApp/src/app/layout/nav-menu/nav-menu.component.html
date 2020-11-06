@@ -1,6 +1,7 @@
 <header>
   <nav
     class="navbar navbar-expand-sm navbar-toggleable-sm"
+    [ngClass]="{'navbar-homepage': isHomePage, 'navbar-standard': isPastHero}"
   >
     <div class="navbar-left">
       <a [routerLink]="['/']">
@@ -29,7 +30,7 @@
           <a class="trans-link" [routerLink]="['/play']">Play</a>
         </li>
         <li class="nav-item" [routerLinkActive]="['link-active']">
-          <a class="trans-link" [routerLink]="['/lobby']">Manage Lobby</a>
+          <a class="trans-link" [routerLink]="['/lobby']">Lobby</a>
         </li>
         <li class="nav-item" [routerLinkActive]="['link-active']">
           <a class="trans-link" [routerLink]="['/user']">Manage User</a>

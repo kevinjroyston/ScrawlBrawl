@@ -16,7 +16,7 @@ h2 {
 .hero-section{
     display: flex;
     background: var(--ornamental-pastelyellow);
-    height: calc(100vh - 65px);
+    height: 100vh;
 }
 
 .action-section {
@@ -83,7 +83,7 @@ section {
         }
 
         .itsection-button{
-            max-width: 150px;
+            max-width: 180px;
         }
     }
 }
@@ -96,4 +96,20 @@ section {
 .vid-preview > iframe{
     width: 100%;
     height: 100%;
+}
+
+.hero-content{
+    display:flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-evenly;
+}
+
+.hero-image {
+    width: 1100px; 
+    height: auto;
+}
+
+.catchphrase {
+    text-shadow: 1px 1px 4px rgba(150, 150, 150, .75);
 }

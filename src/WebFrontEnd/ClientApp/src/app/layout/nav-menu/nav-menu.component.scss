@@ -3,6 +3,8 @@
   padding: .25rem 0;
   height: 65px;
   box-shadow: var(--shadow);
+  transition: all .3s ease;
+  z-index: 1000;
 }
 
 .navbar-logo {
@@ -28,7 +30,24 @@
   cursor:pointer;
 }
 
+.navbar-homepage{ 
+  background: transparent;
+  box-shadow: none;
+  position: fixed;
+  top:0;
+  width: 100%;
+  position: -webkit-sticky;
+
+  & .trans-link:hover {
+    background-color: white;
+  }
+}
 
 .navbar-brand {
   max-width: 100px;
+}
+
+.navbar-standard{
+  background-color: white;
+  box-shadow: var(--shadow);
 }

@@ -23,7 +23,6 @@ import {ComingSoonSVG} from './components/svgs/characters/coming-soon'
 import {ScrawlBrawlLogoHorizontal} from './components/svgs/branding/scrawlbrawl-horizontal';
 import {EraserSVG} from './components/svgs/icons/eraser';
 import { ScrawlBrawlLogoVertical } from './components/svgs/branding/scrawlbrawl-vertical';
-import {HeroLogo} from './components/svgs/branding/hero-logo'
 import { GreenBrushCharacter } from './components/svgs/characters/greenbrush';
 import { FeatherCharacter } from './components/svgs/characters/feather';
 import { RedPencilCharacter } from './components/svgs/characters/redpencil';
@@ -59,7 +58,6 @@ import { BlackPenCharacter } from './components/svgs/characters/blackpen';
     ScrawlBrawlLogoVertical,
     EraserSVG,
     ComingSoonSVG,
-    HeroLogo,
     GreenBrushCharacter,
     FeatherCharacter,
     RedPencilCharacter,
@@ -92,7 +90,6 @@ import { BlackPenCharacter } from './components/svgs/characters/blackpen';
     ComingSoonSVG,
     ScrawlBrawlLogoHorizontal,
     ScrawlBrawlLogoVertical,
-    HeroLogo,
     GreenBrushCharacter,
     FeatherCharacter,
     RedPencilCharacter,
