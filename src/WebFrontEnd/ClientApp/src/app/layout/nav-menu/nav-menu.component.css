@@ -1,7 +1,7 @@
 
 .navbar{
   padding: .25rem 0;
-  border-bottom: var(--border-grey);
+  box-shadow: var(--shadow);
 }
 
 .navbar-left {

@@ -13,9 +13,9 @@
       <div class="subprompt" *ngFor="let subPrompt of userPrompt.subPrompts; let j = index" formArrayName="subForms">
         <div class="subprompt-inner" [formGroupName]="j">
           <div class="prompt-wrapper">
-            <b class="prompt" *ngIf="subPrompt.prompt">
+            <h5 class="prompt" *ngIf="subPrompt.prompt">
               {{subPrompt.prompt}}
-            </b>
+            </h5>
           </div>
           <div *ngIf="subPrompt.stringList">
             <div class="StringList" *ngFor="let iString of subPrompt.stringList">

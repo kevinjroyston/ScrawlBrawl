@@ -9,6 +9,13 @@
   background: rgba(40, 40, 40, .9);
 }
 
+.no-lobby{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
 .lobby-wrapper{
   display: flex;
   flex-direction: column;
@@ -30,8 +37,8 @@
     padding: 1rem;
     flex: 1;
     flex-direction: column;
-    border: var(--border-grey);
     border-radius: 4px;
+    box-shadow: var(--shadow-md);
     background: var(--white-primary);
 
     &:first-child{
@@ -77,7 +84,7 @@
   display: flex;
   flex-direction: column;
   border-radius: 8px;
-  border: var(--border-grey);
+  box-shadow: var(--shadow-md);
   background-color: var(--white-primary);
   transition: all .25s ease;
   overflow: hidden;
@@ -89,7 +96,6 @@
   &:hover {
     cursor: pointer;
     box-shadow: var(--shadow-lg);
-    border: 1px solid transparent;
     transform: translateY(-15px);
   }
 }

@@ -1,9 +1,10 @@
-import { Component, Inject, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, ViewChild} from '@angular/core';
 import { API } from '@core/http/api';
 import { GameAssetDirective } from '@shared/components/gameassetdirective.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {GamemodeDialogComponent} from '../../components/gamemode-dialog/gamemode-dialog.component';
-import {GameInfoDialogComponent} from '../../components/gameinfo-dialog/gameinfo-dialog.component'
+import {GameInfoDialogComponent} from '../../components/gameinfo-dialog/gameinfo-dialog.component';
+import {ErrorService} from '../../services/error.service'
 import Lobby from '../../interfaces/lobby'
 import GameModes from '../../interfaces/gamemodes'
 
@@ -16,12 +17,14 @@ import GameModes from '../../interfaces/gamemodes'
 export class LobbyManagementComponent {
     public lobby!: Lobby.LobbyMetadata;
     public gameModes!: GameModes.GameModeMetadata[];
-    public error: string = "";
+    public error: string;
     @ViewChild(GameAssetDirective) gameAssetDirective;
 
-    constructor(@Inject(API) private api: API, private matDialog: MatDialog)
+    constructor(@Inject(API) private api: API, private matDialog: MatDialog, public errorService: ErrorService)
     {
-        this.getGames().then(()=>this.onGetLobby())
+        this.getGames().then(
+            () => this.onGetLobby()
+        )
     }
 
     async onStartLobby() {
@@ -33,14 +36,18 @@ export class LobbyManagementComponent {
         this.error = "";
         await this.api.request({ type: "Lobby", path: "Configure", body: bodyString }).subscribe({
             next: async () => {
-                if (this.error == "") {
+                if (!this.error) {
                     await this.api.request({ type: "Lobby", path: "Start" }).subscribe({
                         next: async () => { await this.onGetLobby() },
-                        error: async (error) => { this.error = error.error; await this.onGetLobby() }
+                        error: async (error) => { this.error = error.error; this.errorService.announceError(error.error); await this.onGetLobby() }
                     })
                 }
             },
-            error: async (error) => { this.error = error.error; await this.onGetLobby(); }
+            error: async (error) => { 
+                this.error = error.error; 
+                
+                await this.onGetLobby(); 
+            }
         })
     }
 
@@ -48,6 +55,7 @@ export class LobbyManagementComponent {
         this.api.request({ type: "Lobby", path: "Get" }).subscribe({
             next: async (result) => {
                 this.lobby = result as Lobby.LobbyMetadata;
+                
                 if (this.lobby != null && this.lobby.selectedGameMode != null && this.lobby.gameModeSettings != null) {
                     this.lobby.gameModeSettings.options.forEach((value: GameModes.GameModeOptionResponse, index: number, array: GameModes.GameModeOptionResponse[]) => {
                         if (value != null && value.value != null) {
@@ -56,7 +64,7 @@ export class LobbyManagementComponent {
                     });
                 }
             },
-            error: () => { this.lobby = null; }
+            error: () => { this.lobby = null;}
         });
     }
 
@@ -92,7 +100,7 @@ export class LobbyManagementComponent {
         if (this.lobby.selectedGameMode !== null) {
             this.openGameSettingsDialog()
         }
-        this.error = "";
+        this.error = null;
     }
 
     openGameInfoDialog = (event, game: number) => {
@@ -116,10 +124,8 @@ export class LobbyManagementComponent {
         dialogConfig.data = {
             gameModes: this.gameModes,
             lobby: this.lobby,
-            error: this.error,
             onStart: () => this.onStartLobby()
         }
-        console.log(dialogConfig);
         this.matDialog.open(GamemodeDialogComponent, dialogConfig);
     }
 
@@ -128,10 +134,4 @@ export class LobbyManagementComponent {
             this.getGames();
         }
     }
-}
-
-enum ResponseType {
-    Boolean = 0,
-    Integer,
-    Text,
 }

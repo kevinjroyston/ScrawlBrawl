@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Manage User</title>
-  </head>
-
-  <body>
-      <button [routerLink]="['/']" (click)="onDeleteUser()">Leave Lobby</button>
-  </body>
-</html>
+<div class="user-wrapper">
+  <scrawlbutton (click)="onDeleteUser()">
+    Leave Lobby
+  </scrawlbutton>
+</div>

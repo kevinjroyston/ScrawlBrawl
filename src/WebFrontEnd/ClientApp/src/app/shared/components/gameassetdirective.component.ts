@@ -1,6 +1,5 @@
 import { Directive, ElementRef, HostListener, forwardRef, Input, Output, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subject, Subscriber } from 'rxjs';
 
 @Directive({
     selector: '[gameAsset]',
@@ -8,6 +7,7 @@ import { Observable, Subject, Subscriber } from 'rxjs';
 
 export class GameAssetDirective {
   private _gameID: string;
+  @Input() descriptionPreview: boolean = false;
   @Input() set gameID(value: string) { this._gameID = value; this.loadGame() }
             get gameID(): string { return this._gameID}
   http: HttpClient;
@@ -27,16 +27,19 @@ export class GameAssetDirective {
   loadGame() {
 
     if (this.element.nodeName == 'IMG') {
-      //this.element.src = "/assets/GameAssets/" + this.gameID + "-logo.png";
-      this.element.src = "/assets/GameAssets/" + this.gameID + "-logo.png";
+      this.element.src = "/assets/GameAssets/game-images/" + this.gameID + "-logo.png";
     }
     else {
-      let url: string;
-      url = "/assets/GameAssets/" + this.gameID + "-lobby-description.html";
+      const url = this.determineDescriptionDestination() + this.gameID + "-description.html";
       this.http.get(url, { observe: "body", responseType: "text" }).subscribe(
         data => {
           this.element.innerHTML = data;
         })
     }
   }
+
+  determineDescriptionDestination = () => {
+    const gameAssetFolder = '/assets/GameAssets/'
+    return gameAssetFolder + (this.descriptionPreview ? '/homepage-previews/' : '/lobby-descriptions/')
+  } 
 }
