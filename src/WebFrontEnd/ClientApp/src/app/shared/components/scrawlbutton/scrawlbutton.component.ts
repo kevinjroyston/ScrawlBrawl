@@ -7,6 +7,7 @@ import { Component, ElementRef, Inject, ViewEncapsulation, Input,Output,EventEmi
 })
 export class ScrawlButtonComponent {
   @Input() color: string = 'blue';
+  @Input() textColor: string;
   @Input() link: string;
   @Output() onClick = new EventEmitter<MouseEvent>();
   element;

@@ -1,4 +1,18 @@
-<div class="gamemode-list">
-  <app-gamemode [gameModeID]='gamemode' *ngFor="let gamemode of gameModes">
-  </app-gamemode>
-</div>
+<section>
+  <div class="gamemode-list">
+    <div class='gamemodes-row'>
+      <div class="arrow-holder">
+        <button (click)="onPreviousGameMode()" class="control prev">
+          <span class="arrow left"></span>
+        </button>
+      </div>
+      <app-gamemode [gameModeID]="gameModes[currentGameMode]">
+      </app-gamemode>
+      <div class="arrow-holder">
+        <button (click)="onNextGameMode()" class="control next">
+          <span class="arrow right"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

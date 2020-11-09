@@ -24,7 +24,7 @@ export class NavMenuComponent {
   @throttle(200)
   onScroll(event: any) {
       // visible height + pixel scrolled >= total height 
-      if (document.documentElement.scrollTop >= event.target['scrollingElement'].clientHeight) {
+      if (document.documentElement.scrollTop >= event.target['scrollingElement'].clientHeight - 50) {
         this.isPastHero = true;
       } else {
         this.isPastHero = false;

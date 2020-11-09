@@ -1,0 +1,14 @@
+.itsection-socials {
+    display: flex;
+    fill: var(--white-primary);
+    transition: all .3 ease;
+
+    a {
+        margin-right: 25px;
+        max-height: 25px;
+    } 
+
+    a:hover{
+        fill: var(--yellow-primary);
+    }
+}

@@ -3,15 +3,8 @@ import { Component} from '@angular/core';
 @Component({
   selector: 'home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent {
 
-  constructor() {
-
-  }
-
-  onGithubRedirect() {
-    window.location.href='https://github.com/kevinjroyston/RoystonGame';
-  }
 }

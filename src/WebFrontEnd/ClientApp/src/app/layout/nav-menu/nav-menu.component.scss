@@ -19,7 +19,7 @@
 }
 
 .navbar-left {
-  padding: 0 5rem;
+  padding: 0 4%;
 }
 
 .nav-item {
@@ -50,4 +50,8 @@
 .navbar-standard{
   background-color: white;
   box-shadow: var(--shadow);
+
+  & .trans-link:hover {
+    background-color: var(--white-secondary);
+  }
 }

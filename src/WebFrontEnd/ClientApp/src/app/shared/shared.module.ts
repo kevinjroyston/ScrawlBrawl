@@ -29,6 +29,11 @@ import { RedPencilCharacter } from './components/svgs/characters/redpencil';
 import { BluePencilCharacter } from './components/svgs/characters/bluepencil';
 import { YellowCrayonCharacter } from './components/svgs/characters/yellowcrayon';
 import { BlackPenCharacter } from './components/svgs/characters/blackpen';
+import { TwitchIcon } from './components/svgs/socials/twitch';
+import { TwitterIcon } from './components/svgs/socials/twitter';
+import { YoutubeIcon } from './components/svgs/socials/youtube';
+import { FacebookIcon } from './components/svgs/socials/facebook';
+import { FeatherQuestion } from './components/svgs/branding/feather-question';
 
 @NgModule({
   imports: [
@@ -63,7 +68,12 @@ import { BlackPenCharacter } from './components/svgs/characters/blackpen';
     RedPencilCharacter,
     BluePencilCharacter,
     YellowCrayonCharacter,
-    BlackPenCharacter
+    BlackPenCharacter,
+    TwitchIcon,
+    TwitterIcon,
+    YoutubeIcon,
+    FacebookIcon,
+    FeatherQuestion
   ],
   exports: [
     CommonModule,
@@ -95,7 +105,12 @@ import { BlackPenCharacter } from './components/svgs/characters/blackpen';
     RedPencilCharacter,
     BluePencilCharacter,
     YellowCrayonCharacter,
-    BlackPenCharacter
+    BlackPenCharacter,
+    TwitchIcon,
+    TwitterIcon,
+    YoutubeIcon,
+    FacebookIcon,
+    FeatherQuestion
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

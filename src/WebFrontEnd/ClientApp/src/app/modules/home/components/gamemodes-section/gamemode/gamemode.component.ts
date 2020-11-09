@@ -1,5 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 
+
+const temporarySVGMapping = {
+  'BodyBuilder': 'BodyBuilder',
+  'BodySwap': 'blank',
+  'ChaoticCoop': 'blank',
+  'FriendQuiz': 'blank',
+  'Imposter': 'blank',
+  'Mimic': 'blank'
+}
+
 @Component({
   selector: 'app-gamemode',
   templateUrl: './gamemode.component.html',
@@ -8,8 +18,11 @@ import { Component, Input, OnInit } from '@angular/core';
 export class GamemodeComponent implements OnInit {
 
   @Input() gameModeID: string;
+  svgMapping: {}
 
-  constructor() { }
+  constructor() { 
+    this.svgMapping = temporarySVGMapping;
+  }
 
   ngOnInit() {
   }

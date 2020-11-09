@@ -18,3 +18,22 @@
 .action-content-button{
     max-width: 150px;
 }
+
+@media only screen and (max-width: 768px) {
+    :host {
+        flex: 1;
+        max-width: none;
+
+        &:first-of-type {
+            margin-bottom: 1rem;
+        }
+    }
+
+    .action-image {
+        flex: 1;
+    }
+
+    .action-content {
+        flex: 3;
+    }
+}

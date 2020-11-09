@@ -1,7 +1,93 @@
+section {
+  padding: 3rem 0 4rem 0;
+}
+
 .gamemode-list {
-    display: grid;
-    width: 100%;
-    grid-template-columns: repeat(3, 1fr);
-    grid-row-gap: 5rem;
-    grid-column-gap: 5rem;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1200px;
+  align-items: center;
+}
+
+.gamemodes-row {
+  display: flex;
+}
+
+.arrows {
+  display: flex;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.arrow-holder {
+  display:flex;
+  align-items: center;
+  height: 100%;
+}
+
+.control {
+  border: none;
+  background-color: white;
+  outline: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.5em;
+  color:var(--black-secondary);
+  font-weight: bold;
+  font-size: 2em;
+  user-select: none;
+  opacity: 80%;
+  transition: all 150ms cubic-bezier(0.25, 0.46, 0.45, 0.84);
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &:hover, &:focus {
+    opacity: 1;
+  }
+
+  /* Position the buttons */
+  &.next {
+    right: 0;
+  }
+  &.prev {
+    left: 0;
+  }
+}
+  
+  /* style the arrows */
+.arrow {
+  display: block;
+  border-left: 0.1em solid var(--black-secondary);
+  border-bottom: 0.1em solid var(--black-secondary);
+  width: 0.5em;
+  height: 0.5em;
+
+  &.left {
+    transform: rotate(45deg);
+  }
+  &.right {
+    transform: rotate(225deg);
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  section {
+    padding: 3rem 0;
+  }
+
+  .gamemode-list {
+    padding: 0 3rem;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+
+  .gamemode-list {
+    padding: 0 1rem;
+  }
 }

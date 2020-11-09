@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 export class GameAssetDirective {
   private _gameID: string;
   @Input() descriptionPreview: boolean = false;
+  @Input() isSVG: boolean = false;
   @Input() set gameID(value: string) { this._gameID = value; this.loadGame() }
             get gameID(): string { return this._gameID}
   http: HttpClient;
@@ -27,7 +28,7 @@ export class GameAssetDirective {
   loadGame() {
 
     if (this.element.nodeName == 'IMG') {
-      this.element.src = "/assets/GameAssets/game-images/" + this.gameID + "-logo.png";
+      this.element.src = this.determineAssetDestination();
     }
     else {
       const url = this.determineDescriptionDestination() + this.gameID + "-description.html";
@@ -36,6 +37,15 @@ export class GameAssetDirective {
           this.element.innerHTML = data;
         })
     }
+  }
+
+  determineAssetDestination = () => {
+
+    if (this.isSVG) {
+      return '/assets/svgs/gamemode/' + this.gameID + '.svg';
+    } 
+
+    return '/assets/GameAssets/game-images/' + this.gameID + "-logo.png";
   }
 
   determineDescriptionDestination = () => {

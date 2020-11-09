@@ -62,6 +62,7 @@ button {
     transition: all .25s ease;
     color: var(--black-primary);
     padding: .65rem .75rem;
+    font-size: 1.1rem;
 }
   
 .trans-link:hover{
