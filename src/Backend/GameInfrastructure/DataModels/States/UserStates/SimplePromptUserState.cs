@@ -44,7 +44,7 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
                 this.FormSubmitHandler = formSubmitHandler;
             }
             // Blackhole requests leaving Entrance. Once they properly submit they will make it to the exit.
-            this.Entrance.Transition(new WaitForUserInput_BlackholeInletConnector(HandleUserTimeout));
+            this.Entrance.Transition(new WaitForUserInput_BlackholeInletConnector((user)=> GetUserPromptHolder(user).Prompt.SubmitButton, HandleUserTimeout));
         }
 
         public override UserTimeoutAction HandleUserTimeout(User user, UserFormSubmission userInput)
@@ -97,6 +97,12 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             }
             this.Exit.Inlet(user, UserStateResult.Success, userInput);
             return true;
+        }
+
+        public override string GetSummary(User user)
+        {
+            var prompt = GetUserPromptHolder(user).Prompt;
+            return $"Prompt: '{prompt.UserPromptId}', Title: '{prompt.Title}', Description: '{prompt.Description}'";
         }
     }
 }

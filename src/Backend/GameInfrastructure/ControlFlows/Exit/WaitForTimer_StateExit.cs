@@ -10,6 +10,7 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
     public class WaitForTimer_StateExit: WaitForTrigger_StateExit
     {
         private bool firstUser = true;
+        private object firstUserLock { get; } = new object();
         private TimeSpan? Delay { get; set; }
         private Task delayTriggerTask { get; set; }
 
@@ -39,8 +40,14 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
             base.Inlet(user, stateResult, formSubmission);
             if(firstUser)
             {
-                this.delayTriggerTask = DelayedTrigger(this.Delay);
-                firstUser = false;
+                lock (firstUserLock)
+                {
+                    if (firstUser)
+                    {
+                        this.delayTriggerTask = DelayedTrigger(this.Delay);
+                        firstUser = false;
+                    }
+                }
             }
         }
         public async Task DelayedTrigger(TimeSpan? delay)

@@ -13,6 +13,7 @@ using static System.FormattableString;
 using Backend.GameInfrastructure;
 using Common.DataModels.Enums;
 using Common.Code.Extensions;
+using Common.Code.Helpers;
 
 namespace Backend.Games.BriansGames.BattleReady.GameStates
 {
@@ -42,7 +43,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
         }
         public override UserPrompt CountingPromptGenerator(User user, int counter)
         {
-            DrawingType drawingType = CommonHelpers.GetWeightedRandom(DrawingTypeToNumNeeded);
+            DrawingType drawingType = MathHelpers.GetWeightedRandom(DrawingTypeToNumNeeded);
 
             UsersToTypeDrawing.AddOrReplace(user, drawingType);
             return new UserPrompt()

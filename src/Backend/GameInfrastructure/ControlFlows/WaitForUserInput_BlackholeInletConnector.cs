@@ -12,14 +12,16 @@ namespace Backend.GameInfrastructure.ControlFlows
     public class WaitForUserInput_BlackholeInletConnector : IInlet
     {
         private Func<User, UserFormSubmission, UserTimeoutAction> HandleUserTimeout { get; }
-        public WaitForUserInput_BlackholeInletConnector(Func<User, UserFormSubmission, UserTimeoutAction> handleUserTimeout)
+        private Func<User,bool> AwaitingInput { get; }
+        public WaitForUserInput_BlackholeInletConnector(Func<User,bool> awaitingInput, Func<User, UserFormSubmission, UserTimeoutAction> handleUserTimeout)
         {
             HandleUserTimeout = handleUserTimeout;
+            AwaitingInput = awaitingInput;
         }
         public void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
             // If there is no submit button the user is not meant to answer prompts or hurry through.
-            if (!user.UserState.UserRequestingCurrentPrompt(user).SubmitButton)
+            if (!AwaitingInput(user))
             {
                 return;
             }

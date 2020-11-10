@@ -20,6 +20,8 @@ using Common.DataModels.Responses;
 using Microsoft.CodeAnalysis;
 using Backend.GameInfrastructure;
 using Common.DataModels.Enums;
+using Common.Code.Helpers;
+using Common.DataModels.Interfaces;
 
 namespace Backend.Games.BriansGames.BattleReady
 {
@@ -91,7 +93,6 @@ namespace Backend.Games.BriansGames.BattleReady
             ValidateOptions(gameModeOptions);
 
             this.Lobby = lobby;
-            List<Prompt> promptsCopy = new List<Prompt>();
             int numRounds = (int)gameModeOptions[(int)GameModeOptionsEnum.numRounds].ValueParsed;
             int numPromptsPerUserPerRound = (int)gameModeOptions[(int)GameModeOptionsEnum.numPromptsPerUserPerRound].ValueParsed;
             int expectedDrawingsPerUser = (int)gameModeOptions[(int)GameModeOptionsEnum.numToDraw].ValueParsed;
@@ -202,18 +203,35 @@ namespace Backend.Games.BriansGames.BattleReady
                         return null;
                     }
                 });
+            List<Prompt> battlePrompts = new List<Prompt>();
+            IReadOnlyList<PeopleUserDrawing> headDrawings = new List<PeopleUserDrawing>();
+            IReadOnlyList<PeopleUserDrawing> bodyDrawings = new List<PeopleUserDrawing>();
+            IReadOnlyList<PeopleUserDrawing> legsDrawings = new List<PeopleUserDrawing>();
             setupDrawing.AddExitListener(() =>
             {
-                this.Drawings = new ConcurrentBag<PeopleUserDrawing>(CommonHelpers.TrimUserInputList(this.Drawings.ToList(), expectedDrawingsPerUser * lobby.GetAllUsers().Count).Cast<PeopleUserDrawing>());
+                // Trim extra prompts/drawings.
+                headDrawings = MemberHelpers<PeopleUserDrawing>.Select_Ordered(
+                    Drawings.ToList().FindAll((drawing) => drawing.Type == DrawingType.Head),
+                    expectedDrawingsPerUser * lobby.GetAllUsers().Count / 3);
+
+                bodyDrawings = MemberHelpers<PeopleUserDrawing>.Select_Ordered(
+                    Drawings.ToList().FindAll((drawing) => drawing.Type == DrawingType.Body),
+                    expectedDrawingsPerUser * lobby.GetAllUsers().Count / 3);
+
+                legsDrawings = MemberHelpers<PeopleUserDrawing>.Select_Ordered(
+                    Drawings.ToList().FindAll((drawing) => drawing.Type == DrawingType.Legs),
+                    expectedDrawingsPerUser * lobby.GetAllUsers().Count / 3);
+
             });
             setupPrompt.AddExitListener(() =>
             {
-                this.Prompts = new ConcurrentBag<Prompt>(CommonHelpers.TrimUserInputList(this.Prompts.ToList(), expectedPromptsPerUser * lobby.GetAllUsers().Count).Cast<Prompt>());
-
-                promptsCopy = Prompts.ToList();
+                battlePrompts = MemberHelpers<Prompt>.Select_Ordered(Prompts.ToList(), minPromptsRequired);
+                foreach(Prompt prompt in battlePrompts)
+                {
+                    prompt.MaxMemberCount = numUsersPerPrompt;
+                }
             });
 
-            
             List<GameState> creationGameStates = new List<GameState>();
             List<GameState> votingGameStates = new List<GameState>();
             List<GameState> voteRevealedGameStates = new List<GameState>();
@@ -225,72 +243,26 @@ namespace Backend.Games.BriansGames.BattleReady
             GameState CreateContestantCreationGamestate()
             {
                 RoundTracker.ResetRoundVariables();
-                promptsCopy = promptsCopy.OrderBy(_ => Rand.Next()).ToList();
-                List<Prompt> roundPrompts = promptsCopy.Take(numPromptsPerRound).OrderBy(_ => Rand.Next()).ToList();
-                promptsCopy.RemoveRange(0, numPromptsPerRound);
+                List<Prompt> prompts = battlePrompts.Take(numPromptsPerRound).ToList();
+                battlePrompts.RemoveRange(0, numPromptsPerRound);
 
-                List<PeopleUserDrawing> headDrawings = Drawings.ToList().FindAll((drawing) => drawing.Type == DrawingType.Head).OrderBy(_ => Rand.Next()).ToList();
-                List<PeopleUserDrawing> bodyDrawings = Drawings.ToList().FindAll((drawing) => drawing.Type == DrawingType.Body).OrderBy(_ => Rand.Next()).ToList();
-                List<PeopleUserDrawing> legsDrawings = Drawings.ToList().FindAll((drawing) => drawing.Type == DrawingType.Legs).OrderBy(_ => Rand.Next()).ToList();
-                List<PeopleUserDrawing> headDrawingsCopy = headDrawings.ToList();
-                List<PeopleUserDrawing> bodyDrawingsCopy = bodyDrawings.ToList();
-                List<PeopleUserDrawing> legsDrawingsCopy = legsDrawings.ToList();
+                List<IGroup<User>> assignments = MemberHelpers<User>.Assign(
+                    prompts.Cast<IConstraints<User>>().ToList(),
+                    lobby.GetAllUsers().ToList(),
+                    duplicateMembers: numPromptsPerUserPerRound);
 
-                Dictionary<User, int> usersToNumPromptsAssignedTo = new Dictionary<User, int>();
+                var pairings = prompts.Zip(assignments);
 
-                List<User> randomizedUsers = lobby.GetAllUsers().OrderBy(_ => Rand.Next()).ToList();
-                foreach (User user in randomizedUsers)
+                foreach ((Prompt prompt, IGroup<User> users) in pairings)
                 {
-                    for (int i = 0; i < numPromptsPerUserPerRound; i++)
+                    foreach (User user in users.Members)
                     {
-                        Prompt randPrompt = null;
-                        foreach (Prompt prompt in roundPrompts.OrderBy(_ => Rand.Next()).ToList())
-                        {     
-                            if (!prompt.UsersToUserHands.Keys.Contains(user) 
-                                && prompt.UsersToUserHands.Keys.Count() < numUsersPerPrompt)
-                            {
-                                randPrompt = prompt;
-                                break;
-                            }
-                        }
-                        if (randPrompt == null)
+                        prompt.UsersToUserHands.TryAdd(user, new Prompt.UserHand
                         {
-                            throw new Exception("Something went wrong while setting up the game");
-                        }
-
-                        List<PeopleUserDrawing> headDrawingsToAdd = new List<PeopleUserDrawing>();
-                        List<PeopleUserDrawing> bodyDrawingsToAdd = new List<PeopleUserDrawing>();
-                        List<PeopleUserDrawing> legsDrawingsToAdd = new List<PeopleUserDrawing>();
-
-                        for (int j = 0; j < numOfEachPartInHand; j++)
-                        {
-                            if (headDrawingsCopy.Count < headDrawings.Count)
-                            {
-                                headDrawingsCopy.AddRange(headDrawings.OrderBy(_ => Rand.Next()));
-                            }
-                            if (bodyDrawingsCopy.Count < bodyDrawings.Count)
-                            {
-                                bodyDrawingsCopy.AddRange(bodyDrawings.OrderBy(_ => Rand.Next()));
-                            }
-                            if (legsDrawingsCopy.Count < legsDrawings.Count)
-                            {
-                                legsDrawingsCopy.AddRange(legsDrawings.OrderBy(_ => Rand.Next()));
-                            }
-
-                            headDrawingsToAdd.Add(headDrawingsCopy.Find((drawing) => !headDrawingsToAdd.Contains(drawing)));
-                            headDrawingsCopy.Remove(headDrawingsToAdd.Last());
-
-                            bodyDrawingsToAdd.Add(bodyDrawingsCopy.Find((drawing) => !bodyDrawingsToAdd.Contains(drawing)));
-                            bodyDrawingsCopy.Remove(bodyDrawingsToAdd.Last());
-
-                            legsDrawingsToAdd.Add(legsDrawingsCopy.Find((drawing) => !legsDrawingsToAdd.Contains(drawing)));
-                            legsDrawingsCopy.Remove(legsDrawingsToAdd.Last());
-                        }
-                        randPrompt.UsersToUserHands.TryAdd(user, new Prompt.UserHand
-                        {
-                            Heads = headDrawingsToAdd,
-                            Bodies = bodyDrawingsToAdd,
-                            Legs = legsDrawingsToAdd,
+                            // Users have even probabilities regardless of how many drawings they submitted.
+                            Heads = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(headDrawings, numOfEachPartInHand),
+                            Bodies = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(bodyDrawings, numOfEachPartInHand),
+                            Legs = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(legsDrawings, numOfEachPartInHand),
                             Contestant = new Person()
                         });
 
@@ -298,7 +270,7 @@ namespace Backend.Games.BriansGames.BattleReady
                         {
                             RoundTracker.UsersToAssignedPrompts.Add(user, new List<Prompt>());
                         }
-                        RoundTracker.UsersToAssignedPrompts[user].Add(randPrompt);
+                        RoundTracker.UsersToAssignedPrompts[user].Add(prompt);
                     }
                 }
 
@@ -306,7 +278,7 @@ namespace Backend.Games.BriansGames.BattleReady
                         lobby: lobby,
                         roundTracker: RoundTracker,
                         creationDuration: creationTimer);
-                toReturn.Transition(CreateVotingGameStates(roundPrompts));
+                toReturn.Transition(CreateVotingGameStates(prompts));
                 return toReturn;
             }
             Func<StateChain> CreateVotingGameStates(List<Prompt> roundPrompts)

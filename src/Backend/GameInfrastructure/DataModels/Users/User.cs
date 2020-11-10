@@ -4,15 +4,20 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Common.DataModels.Interfaces;
 
 namespace Backend.GameInfrastructure.DataModels.Users
 {
     /// <summary>
     /// Class representing a user instance.
     /// </summary>
-    public class User : IAccessorHashable
+    public class User : IAccessorHashable, IMember
     {
-        public Guid UserId { get; } = Guid.NewGuid();
+        public Guid Id { get; } = Guid.NewGuid();
+
+        public IReadOnlyList<Guid> Tags { get; }
+
+        public Guid Source => Id;
 
         /// <summary>
         /// The lobby id the user is a part of. Null indicates the user is unregistered.
@@ -146,7 +151,7 @@ namespace Backend.GameInfrastructure.DataModels.Users
         public int GetIAccessorHashCode()
         {
             var hash = new HashCode();
-            hash.Add(UserId);
+            hash.Add(Id);
             hash.Add(LobbyId);
             hash.Add(AuthenticatedUserPrincipalName);
             hash.Add(IsPartyLeader);

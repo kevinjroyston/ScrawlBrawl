@@ -18,10 +18,7 @@ namespace Backend.GameInfrastructure.Extensions
         }
         public static void Transition(this IOutlet A, Func<IInlet> B)
         {
-            A.AddExitListener(() =>
-            {
-                A.Transition(B());
-            });
+            A.SetOutlet(B);
         }
         public static void Transition(this StateOutlet A, Func<User, IInlet> B)
         {

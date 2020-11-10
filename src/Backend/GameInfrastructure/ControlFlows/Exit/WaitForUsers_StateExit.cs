@@ -19,6 +19,8 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
     public class WaitForUsers_StateExit : WaitForTrigger_StateExit
     {
         private Lobby Lobby { get; }
+        private bool Triggered { get; set; } = false;
+        private object TriggeredLock { get; } = new object();
         private ConcurrentBag<User> UsersWaiting { get; } = new ConcurrentBag<User>();
         private WaitForUsersType UsersToWaitForType { get; }
 
@@ -49,10 +51,17 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
             this.UsersWaiting.Add(user);
 
             // TODO: Fix bug. User switching from active to inactive will currently not prompt a re-calculation of this state
-            if (this.GetUsers(this.UsersToWaitForType).IsSubsetOf(this.UsersWaiting))
+            if (!this.Triggered && this.GetUsers(this.UsersToWaitForType).IsSubsetOf(this.UsersWaiting))
             {
-                // TODO: This is not sufficient for WaitForActiveUsers
-                this.Trigger();
+                lock (this.TriggeredLock)
+                {
+                    if (!this.Triggered && this.GetUsers(this.UsersToWaitForType).IsSubsetOf(this.UsersWaiting))
+                    {
+                        this.Triggered = true;
+                        // TODO: This is not sufficient for WaitForActiveUsers
+                        this.Trigger();
+                    }
+                }
             }
         }
 

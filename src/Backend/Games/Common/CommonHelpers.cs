@@ -1,5 +1,6 @@
 ﻿using Backend.GameInfrastructure.DataModels.Users;
 using Backend.Games.Common.DataModels;
+using Common.Code.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,62 +24,16 @@ namespace Backend.Games.Common
                 user.ResetScoreDeltaReveal();
             }
         }
-
-        public static T GetWeightedRandom<T>(IDictionary<T, int> valueToWeight)
+        public static TimeSpan GetTimerFromLength(double length, double minTimerLength, double aveTimerLength, double maxTimerLength, double minLength = 0, double aveLength = 5, double maxLength = 10)
         {
-            int totalWeight = valueToWeight.Values.Sum();
-            int random = Rand.Next(0, totalWeight);
-            foreach (T value in valueToWeight.Keys)
-            {
-                if (random <= valueToWeight[value])
-                {
-                    return value;
-                }
-                else
-                {
-                    random -= valueToWeight[value];
-                }
-            }
-            throw new Exception("Something went wrong getting weighted random");
-        }
-        public static IEnumerable<UserCreatedObject> TrimUserInputList(IEnumerable<UserCreatedObject> userInputs, int numInputsWanted)
-        {
-            Dictionary<User, List<UserCreatedObject>> usersToInputs = new Dictionary<User, List<UserCreatedObject>>();
-            foreach (UserCreatedObject userInput in userInputs)
-            {
-                if (!usersToInputs.ContainsKey(userInput.Owner))
-                {
-                    usersToInputs.Add(userInput.Owner, new List<UserCreatedObject>());
-                }
-                usersToInputs[userInput.Owner].Add(userInput);
-            }
-            List<User> keys = usersToInputs.Keys.ToList();
-            foreach (User user in keys)
-            {
-                usersToInputs[user] = usersToInputs[user].OrderBy(input => input.CreationTime).ToList();
-            }
-            List<UserCreatedObject> trimmedUserInputs = userInputs.ToList();
-            while (trimmedUserInputs.Count > numInputsWanted)
-            {
-                User userWithMostInputs = GetUserWithMostInputs();
-                trimmedUserInputs.Remove(usersToInputs[userWithMostInputs].Last());
-                usersToInputs[userWithMostInputs].RemoveAt(usersToInputs[userWithMostInputs].Count - 1);
-            }
-
-            return trimmedUserInputs;
-
-            User GetUserWithMostInputs()
-            {
-                User userWithMostInputs = usersToInputs.Keys.ToList()[0];
-                foreach (User user in usersToInputs.Keys)
-                {
-                    if (usersToInputs[user].Count > usersToInputs[userWithMostInputs].Count)
-                    {
-                        userWithMostInputs = user;
-                    }
-                }
-                return userWithMostInputs;
-            }
+            return TimeSpan.FromSeconds(MathHelpers.ThreePointLerp(
+                minX: minLength,
+                aveX: aveLength,
+                maxX: maxLength,
+                x: length,
+                minValue: minTimerLength,
+                aveValue: aveTimerLength,
+                maxValue: maxTimerLength));
         }
 
         public static int GetMaxInputsFromExpected(int numExpected, float multiplier = 1.3f, int minExtra = 2)
@@ -105,46 +60,7 @@ namespace Backend.Games.Common
             }
         }
 
-        public static TimeSpan GetTimerFromLength(double length, double minTimerLength, double aveTimerLength, double maxTimerLength, double minLength = 0, double aveLength = 5, double maxLength = 10)
-        {
-            return TimeSpan.FromSeconds(ThreePointLerp(
-                minX: minLength,
-                aveX: aveLength,
-                maxX: maxLength,
-                x: length,
-                minValue: minTimerLength,
-                aveValue: aveTimerLength,
-                maxValue: maxTimerLength));
-        }
-        public static double ThreePointLerp(double minX, double aveX, double maxX, double x, double minValue, double aveValue, double maxValue)
-        {
-            if (x < minX)
-            {
-                return minValue;
-            }
-            else if (x < aveX)
-            {
-                return Lerp(minValue, aveValue, (x - minX) / (aveX - minX));
-            }
-            else if (x < maxX)
-            {
-                return Lerp(aveValue, maxValue, (x - aveX) / (maxX - aveX));
-            }
-            else
-            {
-                return maxValue;
-            }
-        }
-        public static double Lerp(double a, double b, double t)
-        {
-            return (b - a) * t + a;
-        }
-        public static double ClampedLerp(double a, double b, double t)
-        {
-            t = Math.Clamp(t, 0.0, 1.0);
-            return (b - a) * t + a;
-        }
-
+        /*
         /// <summary>
         /// Evenly distributes the elements of toDistribute into the groups. Will duplicate toDistribute elements
         /// until the groups have reached maxGroupSize or all elements that pass the check have been assigned for each group
@@ -234,6 +150,6 @@ namespace Backend.Games.Common
             }
 
             return distributedDict;
-        }
+        }*/
     }
 }

@@ -81,7 +81,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
                 imageIdentifier: (objectIndex + 1).ToString(),
                 title: this.ObjectTitles?[objectIndex],
                 header: this.ObjectHeaders?[objectIndex],
-                imageOwnerId: this.Objects[objectIndex].Owner.UserId,
+                imageOwnerId: this.Objects[objectIndex].Owner.Id,
                 voteRevealOptions: new UnityImageVoteRevealOptions()
                 {
                     RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = AnswersToUsersWhoVoted.ContainsKey(objectIndex) ? AnswersToUsersWhoVoted[objectIndex] : new List<User>() },

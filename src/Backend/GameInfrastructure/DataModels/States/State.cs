@@ -1,6 +1,7 @@
 ﻿using Backend.GameInfrastructure.ControlFlows.Enter;
 using Backend.GameInfrastructure.ControlFlows.Exit;
 using Backend.GameInfrastructure.DataModels.Enums;
+using Backend.GameInfrastructure.DataModels.States.UserStates;
 using Backend.GameInfrastructure.DataModels.Users;
 using Common.DataModels;
 using Common.DataModels.Requests;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using static System.FormattableString;
 
@@ -30,6 +32,7 @@ namespace Backend.GameInfrastructure.DataModels
         private List<Action<User>> PerUserEntranceListeners { get; } = new List<Action<User>>();
 
         private bool Entered = false;
+        private object EnteredLock { get; } = new object();
 
         private bool UsersHurried = false;
 
@@ -111,10 +114,16 @@ namespace Backend.GameInfrastructure.DataModels
         {
             if (!this.Entered)
             {
-                this.Entered = true;
-                foreach (var listener in this.EntranceListeners)
+                lock (this.EnteredLock)
                 {
-                    listener?.Invoke();
+                    if (!this.Entered)
+                    {
+                        this.Entered = true;
+                        foreach (var listener in this.EntranceListeners)
+                        {
+                            listener?.Invoke();
+                        }
+                    }
                 }
             }
             foreach (var listener in this.PerUserEntranceListeners)
@@ -204,6 +213,17 @@ namespace Backend.GameInfrastructure.DataModels
 
             return this.Id.CompareTo(identifiable.Id);
         }
+
+
+        /// <summary>
+        /// Get a string summary of the state as pertaining to the specified user. This is used for debugging errors.
+        /// </summary>
+        /// <param name="user">The user that ran into issues / summary is needed for.</param>
+        /// <returns>A string that will be useful for debugging any issues relating to this state.</returns>
+        public virtual string GetSummary(User user)
+        {
+            return string.Empty;
+        }
     }
 
     public interface IInlet
@@ -265,6 +285,11 @@ namespace Backend.GameInfrastructure.DataModels
         public Guid StateId { get; } = Guid.NewGuid();
 
         /// <summary>
+        /// Lock for checking if first user.
+        /// </summary>
+        private object FirstUserLock { get; } = new object();
+
+        /// <summary>
         /// A bool per user indicating this user has already called CompletedActionCallback
         /// </summary>
         private ConcurrentDictionary<User, bool> HaveAlreadyCalledOutlet { get; set; } = new ConcurrentDictionary<User, bool>();
@@ -293,6 +318,9 @@ namespace Backend.GameInfrastructure.DataModels
         {
             this.Exit = stateExit ?? new StateExit();
             this.Exit.SetInternalOutlet(this.Outlet);
+
+            // Set outlet to dummy/default so that better information can be logged if it doesnt get set.
+            this.SetOutlet(outletGenerator: null);
         }
         
         /// <summary>
@@ -302,10 +330,17 @@ namespace Backend.GameInfrastructure.DataModels
         {
             if (this.FirstUser)
             {
-                this.FirstUser = false;
-                foreach (var listener in this.StateEndingListeners)
+                lock (this.FirstUserLock)
                 {
-                    listener?.Invoke();
+                    if (this.FirstUser)
+                    {
+
+                        this.FirstUser = false;
+                        foreach (var listener in this.StateEndingListeners)
+                        {
+                            listener?.Invoke();
+                        }
+                    }
                 }
             }
 
@@ -362,13 +397,8 @@ namespace Backend.GameInfrastructure.DataModels
         /// <param name="outletGenerator">This will be called at the last moment to determine the inlet to transition to.</param>
         public void SetOutlet(Func<IInlet> outletGenerator, List<User> specificUsers = null)
         {
-            if (outletGenerator == null)
-            {
-                throw new ArgumentNullException("Outlet generator cannot be null");
-            }
-
             //Debug.WriteLine(Invariant($"|||STATE SETUP|||{this.StateId}|{this.GetType()}|{(specificUsers == null ? "all users" : string.Join(", ", specificUsers.Select(user => user.DisplayName)))}"));
-
+            IInlet nextState = null;
             void InternalOutlet(User user, UserStateResult result, UserFormSubmission input)
             {
                 // An outlet should only ever be called once per user. Ignore extra calls (most likely a timeout thread).
@@ -380,14 +410,26 @@ namespace Backend.GameInfrastructure.DataModels
                 // Throw if not able to set called outlet bit.
                 if (!this.HaveAlreadyCalledOutlet.TryAdd(user, true))
                 {
-                    throw new Exception($"Issue updating the called outlet bit for user '{user.UserId}'");
+                    throw new Exception($"Issue updating the called outlet bit for user '{user.Id}'");
                 }
 
                 if (outletGenerator == null)
                 {
-                    throw new Exception(Invariant($"Outlet not defined for User '{user.DisplayName}' who is currently in state type '{user.UserState.GetType()}'"));
+                    var prompt = user.UserState.UserRequestingCurrentPrompt(user);
+
+                    string thisStateSummary = string.Empty;
+                    if (this is State badCodingPractice)
+                    {
+                        thisStateSummary = badCodingPractice.GetSummary(user);
+                    }
+                    throw new Exception(Invariant($"Outlet not defined for User '{user.DisplayName}'\n Executing state: '{this.GetType()}:[{thisStateSummary}]\n User state: '{user.UserState.GetType()}:[{user.UserState.GetSummary(user)}]'.\n\n State Stack: '{string.Join(",\n",user.StateStack.ToArray().Select(state => $"{state.GetType()}:[{state.GetSummary(user)}]"))}'"));
                 }
-                outletGenerator().Inlet(user, result, input);
+
+                if (nextState == null)
+                {
+                    nextState = outletGenerator();
+                }
+                nextState.Inlet(user, result, input);
             }
 
             if (specificUsers == null)

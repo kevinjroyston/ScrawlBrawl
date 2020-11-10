@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Common.Code.Extensions
 {
@@ -30,6 +31,24 @@ namespace Common.Code.Extensions
                 i++;
             }
             return defaultValue;
+        }
+
+        public static T GetWeightedRandomKey<T>(this Dictionary<T, double> weightedKeys)
+        {
+            Random random = new Random();
+            double totalWeights = weightedKeys.Values.Sum();
+            double selectedWeight = random.NextDouble() * totalWeights;
+            T source = weightedKeys.Keys.FirstOrDefault();
+            foreach ((T tempSource, double tempWeight) in weightedKeys)
+            {
+                source = tempSource;
+                selectedWeight -= tempWeight;
+                if (selectedWeight <= 0)
+                {
+                    break;
+                }
+            }
+            return source;
         }
     }
 }

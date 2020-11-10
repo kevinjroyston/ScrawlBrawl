@@ -1,9 +1,12 @@
 ﻿using Backend.GameInfrastructure.DataModels.Users;
+using Common.DataModels.Interfaces;
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Immutable;
 
 namespace Backend.Games.BriansGames.ImposterText.DataModels
 {
-    public class Prompt
+    public class Prompt : Constraints<User>
     {
         public User Owner { get; set; }
         public string RealPrompt { get; set; }
