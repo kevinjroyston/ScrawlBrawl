@@ -1,41 +1,26 @@
-<header>
-  <nav
-    class="navbar navbar-expand-sm navbar-toggleable-sm"
-    [ngClass]="{'navbar-homepage': isHomePage, 'navbar-standard': isPastHero}"
-  >
-    <div class="navbar-left">
-      <a [routerLink]="['/']">
-        <div class="navbar-logo">
-          <scrawlbrawl-logo-horizontal></scrawlbrawl-logo-horizontal>
-        </div>
-      </a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target=".navbar-collapse"
-        aria-label="Toggle navigation"
-        [attr.aria-expanded]="isExpanded"
-        (click)="toggle()"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
+<nav class="navbar" [ngClass]="{'navbar-homepage': isHomePage, 'navbar-standard': isPastHero}">
+  <div class="navbar-left">
+    <a [routerLink]="['/']">
+      <div class="navbar-logo">
+        <scrawlbrawl-logo-horizontal></scrawlbrawl-logo-horizontal>
+      </div>
+    </a>
+    <div id='hamburger' [ngClass]="{open: isExpanded}" (click)="toggle()">
+      <span></span>
+      <span></span>
+      <span></span>
     </div>
-    <div
-      class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"
-      [ngClass]="{ show: isExpanded }"
-    >
-      <ul class="navbar-nav flex-grow">
-        <li class="nav-item" [routerLinkActive]="['link-active']">
-          <a class="trans-link" [routerLink]="['/play']">Play</a>
-        </li>
-        <li class="nav-item" [routerLinkActive]="['link-active']">
-          <a class="trans-link" [routerLink]="['/lobby']">Lobby</a>
-        </li>
-        <li class="nav-item" [routerLinkActive]="['link-active']">
-          <a class="trans-link" [routerLink]="['/user']">Manage User</a>
-        </li>
-      </ul>
+  </div>
+  <div class="navbar-right" [ngClass]="{'active': isExpanded}">
+    <div class="nav-item" [routerLinkActive]="['link-active']">
+      <a class="trans-link" [routerLink]="['/play']">Play</a>
     </div>
-  </nav>
-</header>
+    <div class="nav-item" [routerLinkActive]="['link-active']">
+      <a class="trans-link" [routerLink]="['/lobby']">Lobby</a>
+    </div>
+    <div class="nav-item" [routerLinkActive]="['link-active']">
+      <a class="trans-link" [routerLink]="['/user']">User</a>
+    </div>
+  </div>
+</nav>
+
