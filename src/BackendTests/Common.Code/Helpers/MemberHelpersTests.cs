@@ -49,17 +49,17 @@ namespace BackendTests.Common.Code.Helpers
         // TODO test dynamic weighted random.
         // TODO add more test cases for assignment
 
-        //[DataRow(new int[] { 1, 2, 3, 4, 5, 6 }, 3, 5, 10, false)]
-        //[DataRow(new int[] { 1, 2, 3, 4, 5, 6 }, 10, 5, 10, true, true)]
-        //[DataRow(new int[] { 1, 2, 3, 4, 5, 6 }, 3, 5, 4, false)]
+        [DataRow(new int[] { 1, 2, 3, 4, 5, 6 }, 3, 5, 10, false)]
+        [DataRow(new int[] { 1, 2, 3, 4, 5, 6 }, 10, 5, 10, true, true)]
+        [DataRow(new int[] { 1, 2, 3, 4, 5, 6 }, 3, 5, 4, false)]
         [DataRow(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 }, 10, 12, 10, false)]
-        //[DataRow(new int[] { 1, 2, 3, 4, 5, 6 }, 12, 6, 12, true)]
-        //[DataRow(new int[] { 1, 2, 3 }, 3, 6, 10, false)]
-        //[DataRow(new int[] { 1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25 }, 100, 5, 10, true, true)]
+        [DataRow(new int[] { 1, 2, 3, 4, 5, 6 }, 12, 6, 12, true)]
+        [DataRow(new int[] { 1, 2, 3 }, 3, 6, 10, false)]
+        [DataRow(new int[] { 1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25 }, 100, 5, 10, true, true)]
         [DataTestMethod]
         public void Assign(int[] inputIds, int duplicateCount, int groups, int maxPerGroup, bool allowDuplicateIds, bool exceptionExpected = false)
         {
-            const int rerunCount = 1000;
+            const int rerunCount = 100;
             Exception exc = null;
             int failCount = 0;
             for (int i = 0; i< rerunCount; i++)
