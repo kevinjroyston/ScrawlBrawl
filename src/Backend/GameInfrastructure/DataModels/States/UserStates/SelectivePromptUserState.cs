@@ -44,7 +44,7 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
                 if (this.UsersToPrompt.Contains(user))
                 {
                     // Blackhole requests until user submits proper form. Set user status according to whether or not we gave them a submit button.
-                    return new WaitForUserInput_BlackholeInletConnector(HandleUserTimeout);
+                    return new WaitForUserInput_BlackholeInletConnector((user) => GetUserPromptHolder(user).Prompt.SubmitButton, HandleUserTimeout);
                 }
                 else
                 {

@@ -196,8 +196,7 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
 
                     randomlyOrderedPeople[i].UserSubmittedDrawingsByUser.Add(
                         temp.Owner, temp);
-                    randomlyOrderedPeople[i].BodyPartDrawings.Add(
-                        temp.Type, temp);
+                    randomlyOrderedPeople[i].BodyPartDrawings[temp.Type]= temp;
                 }
             }
 

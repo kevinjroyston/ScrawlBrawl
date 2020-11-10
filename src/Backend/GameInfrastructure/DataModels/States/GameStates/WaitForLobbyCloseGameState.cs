@@ -37,7 +37,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
                 UnityImages = new DynamicAccessor<IReadOnlyList<UnityImage>>
                 {
                     DynamicBacker = () => this.Lobby.GetAllUsers().OrderBy((User user)=>user.LobbyJoinTime).Select(usr =>
-                        new UnityImage(usr.UserId)
+                        new UnityImage(usr.Id)
                         {
                             Title = new StaticAccessor<string> { Value = usr.DisplayName },
                             Base64Pngs = new StaticAccessor<IReadOnlyList<string>>

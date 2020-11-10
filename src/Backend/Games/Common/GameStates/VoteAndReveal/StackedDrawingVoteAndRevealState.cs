@@ -61,7 +61,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
                 ImageIdentifier = new StaticAccessor<string> { Value = (objectIndex + 1).ToString() },
                 Title = new StaticAccessor<string> { Value = this.ObjectTitles?[objectIndex] },
                 Header = new StaticAccessor<string> { Value = this.ObjectTitles?[objectIndex] },
-                ImageOwnerId = new StaticAccessor<Guid?> { Value = this.Objects[objectIndex][0].Owner?.UserId },
+                ImageOwnerId = new StaticAccessor<Guid?> { Value = this.Objects[objectIndex][0].Owner?.Id },
                 VoteRevealOptions = new StaticAccessor<UnityImageVoteRevealOptions>
                 {
                     Value = new UnityImageVoteRevealOptions()

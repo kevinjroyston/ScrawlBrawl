@@ -190,6 +190,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                         {
                             TeamId = Invariant($"{(j / ColorsPerTeam)+1}"),
                             Color = randomizedOrderChallenges[i].Colors[j % ColorsPerTeam],
+                            Owner = users[(i+j)% users.Count]
                         });
                 }
             }

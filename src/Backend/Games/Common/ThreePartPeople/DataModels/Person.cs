@@ -3,14 +3,51 @@ using System.Collections.Generic;
 using Backend.Games.Common.DataModels;
 using Backend.APIs.DataModels.UnityObjects;
 using System.Drawing;
+using Backend.GameInfrastructure.DataModels.Users;
 
 namespace Backend.Games.Common.ThreePartPeople.DataModels
 {
     public class Person : UserCreatedUnityObject
     {
 
-        public string Name { get; set; }
-        public Dictionary<DrawingType, PeopleUserDrawing> BodyPartDrawings { get; set; } = new Dictionary<DrawingType, PeopleUserDrawing>();
+        public string Name { get; set; } = "N/A";
+
+        public Person()
+        {
+            // TODO: not the most ideal way to make dummy users. Should use an interface and a new DummyUser class
+            this.Owner = new User("dummy");
+        }
+
+        /// <summary>
+        /// Initialize to defaults, TODO: improve this.
+        /// </summary>
+        public Dictionary<DrawingType, PeopleUserDrawing> BodyPartDrawings { get; set; } = new Dictionary<DrawingType, PeopleUserDrawing>()
+        {
+            {
+                DrawingType.Head, new PeopleUserDrawing()
+                {
+                    Owner = new User("dummy"),
+                    Type = DrawingType.Head,
+                    Drawing = ThreePartPeopleConstants.Backgrounds[DrawingType.Head]
+                }
+            },
+            {
+                DrawingType.Body, new PeopleUserDrawing()
+                {
+                    Owner = new User("dummy"),
+                    Type = DrawingType.Body,
+                    Drawing = ThreePartPeopleConstants.Backgrounds[DrawingType.Body]
+                }
+            },
+            {
+                DrawingType.Legs, new PeopleUserDrawing()
+                {
+                    Owner = new User("dummy"),
+                    Type = DrawingType.Legs,
+                    Drawing = ThreePartPeopleConstants.Backgrounds[DrawingType.Legs]
+                }
+            }
+        };
 
         public enum DrawingType
         {

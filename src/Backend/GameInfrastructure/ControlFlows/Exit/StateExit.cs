@@ -21,6 +21,7 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
         private List<Action> Listeners { get; set; } = new List<Action>();
         private List<Action<User>> PerUserListeners { get; set; } = new List<Action<User>>();
         private bool CalledListeners { get; set; } = false;
+        private object CalledListenersLock { get; } = new object();
 
         public void SetInternalOutlet(Connector internalOutlet)
         {
@@ -38,10 +39,16 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
         {
             if (!CalledListeners)
             {
-                CalledListeners = true;
-                foreach (Action listener in Listeners)
+                lock (CalledListenersLock)
                 {
-                    listener.Invoke();
+                    if (!CalledListeners)
+                    {
+                        CalledListeners = true;
+                        foreach (Action listener in Listeners)
+                        {
+                            listener.Invoke();
+                        }
+                    }
                 }
             }
 

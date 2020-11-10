@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MiscUtil;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -21,7 +22,6 @@ namespace Common.Code.WordLists
         static string WorkingDirectory { get; } = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
         private static object ReadFileLock { get; set; } = new Object();
-        private static Random Rand { get; set; } = new Random();
         public static string GetRandomLine(FileNames file)
         {
             if (!FilesToLines.ContainsKey(file))
@@ -36,7 +36,7 @@ namespace Common.Code.WordLists
                 }
             }
             // TODO: fix inefficiency below.
-            return FilesToLines[file].ToArray()[Rand.Next(0, FilesToLines[file].Count)];
+            return FilesToLines[file].ToArray()[StaticRandom.Next(0, FilesToLines[file].Count)];
         }
         public static List<string> GetRandomLines(FileNames file, int count)
         {

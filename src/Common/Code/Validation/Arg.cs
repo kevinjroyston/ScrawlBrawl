@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using static System.FormattableString;
 
 namespace Common.Code.Validation
@@ -17,6 +18,20 @@ namespace Common.Code.Validation
             if (param == null)
             {
                 throw new ArgumentNullException(paramName);
+            }
+        }
+        public static void NotNullOrEmpty<T>(IReadOnlyList<T> param, string paramName = null)
+        {
+            if (param == null || param.Count <=0)
+            {
+                throw new ArgumentNullException(paramName);
+            }
+        }
+        public static void GreaterThan(double param, double value, string paramName = null)
+        {
+            if (param <= value)
+            {
+                throw new ArgumentOutOfRangeException(paramName);
             }
         }
     }

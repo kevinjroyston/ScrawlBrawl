@@ -124,7 +124,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             Dictionary<string, int> usersToScoreDelta = new Dictionary<string, int>();
             foreach (User user in Lobby.GetAllUsers())
             {
-                usersToScoreDelta.Add(user.UserId.ToString(), user.ScoreDeltaReveal);
+                usersToScoreDelta.Add(user.Id.ToString(), user.ScoreDeltaReveal);
                 user.ResetScoreDeltaReveal();
             }
             return new UnityView(this.Lobby)

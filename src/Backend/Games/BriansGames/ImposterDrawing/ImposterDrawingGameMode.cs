@@ -157,14 +157,15 @@ namespace Backend.Games.BriansGames.ImposterDrawing
             }
         }
 
-        public Dictionary<Prompt, List<User>> AssignPrompts(List<Prompt> prompts, List<User> users, int maxTextsPerPrompt)
+        
+       /*public Dictionary<Prompt, List<User>> AssignPrompts(List<Prompt> prompts, List<User> users, int maxTextsPerPrompt)
         {
             return CommonHelpers.EvenlyDistribute(
                 groups: prompts,
                 toDistribute: users, 
                 maxGroupSize: maxTextsPerPrompt,
                 validDistributeCheck: (Prompt prompt, User user) => user != prompt.Owner);
-        }
+        }*/
         public void ValidateOptions(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             // Empty

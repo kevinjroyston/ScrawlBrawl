@@ -11,6 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Backend.GameInfrastructure;
+using Common.Code.Helpers;
+using System.Collections.Immutable;
+using Common.Code.Extensions;
+using Common.DataModels.Interfaces;
 
 namespace Backend.Games.BriansGames.ImposterText
 {
@@ -27,7 +31,7 @@ namespace Backend.Games.BriansGames.ImposterText
             TimeSpan? votingTimer = null;
             if (gameLength > 0)
             {
-                setupTimer = TimeSpan.FromSeconds(CommonHelpers.ThreePointLerp(
+                setupTimer = TimeSpan.FromSeconds(MathHelpers.ThreePointLerp(
                     minX: 1,
                     aveX: 5,
                     maxX: 10,
@@ -35,7 +39,7 @@ namespace Backend.Games.BriansGames.ImposterText
                     minValue: ImposterTextConstants.SetupTimerMin,
                     aveValue: ImposterTextConstants.SetupTimerAve,
                     maxValue: ImposterTextConstants.SetupTimerMax));
-                answeringTimer = TimeSpan.FromSeconds(CommonHelpers.ThreePointLerp(
+                answeringTimer = TimeSpan.FromSeconds(MathHelpers.ThreePointLerp(
                     minX: 1,
                     aveX: 5,
                     maxX: 10,
@@ -43,7 +47,7 @@ namespace Backend.Games.BriansGames.ImposterText
                     minValue: ImposterTextConstants.AnsweringTimerMin,
                     aveValue: ImposterTextConstants.AnsweringTimerAve,
                     maxValue: ImposterTextConstants.AnsweringTimerMax));
-                votingTimer = TimeSpan.FromSeconds(CommonHelpers.ThreePointLerp(
+                votingTimer = TimeSpan.FromSeconds(MathHelpers.ThreePointLerp(
                     minX: 1,
                     aveX: 5,
                     maxX: 10,
@@ -148,14 +152,20 @@ namespace Backend.Games.BriansGames.ImposterText
             }
         }
 
-        public Dictionary<Prompt, List<User>> AssignPrompts(List<Prompt> prompts, List<User> users, int maxTextsPerPrompt)
+       /* public Dictionary<Prompt, List<User>> AssignPrompts(List<Prompt> prompts, List<User> users, int maxTextsPerPrompt)
         {
-            return CommonHelpers.EvenlyDistribute(
-                groups: prompts,
-                toDistribute: users,
-                maxGroupSize: maxTextsPerPrompt,
-                validDistributeCheck: (Prompt prompt, User user) => user != prompt.Owner);
-        }
+            prompts.ForEach((Prompt prompt) =>
+            {
+                prompt.MaxMemberCount = maxTextsPerPrompt;
+                prompt.BannedMemberIds = ImmutableHashSet.Create(prompt.Owner.Id);
+                prompt.AllowDuplicateIds = false;
+            });
+
+            return MemberHelpers<User>.Assign(
+                constraints: prompts.Cast<IConstraints<User>>().ToList(),
+                members: users,
+                maxDuplicates: prompts.Count*maxTextsPerPrompt/users.Count);
+        }*/
         public void ValidateOptions(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             // Empty

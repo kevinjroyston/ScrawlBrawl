@@ -30,36 +30,5 @@ namespace BackendTests.TV.GameModes.Common
                 CommonHelpers.PointsForSpeed(maxPoints, minPoints, startTime, endTime, secondsTaken);
             }
         }
-
-        [DataRow(
-            new int[] { 1, 1, 1, 2, 2, 3},
-            5,
-            new int[] { 1, 1, 2, 2, 3})]
-        [DataRow(
-            new int[] { 1, 1, 1, 2, 2, 3 },
-            10,
-            new int[] { 1, 1, 1, 2, 2, 3 })]
-        [DataRow(
-            new int[] { 1, 1, 1, 2, 2, 3 },
-            1,
-            new int[] { 3 })]
-        [DataRow(
-            new int[] { 1, 1, 2, 2, 2, 3 },
-            4,
-            new int[] { 1, 2, 2, 3 })]
-        [DataRow(
-            new int[] { 1, 1, 2, 2, 3, 3 },
-            5,
-            new int[] { 1, 1, 2, 2, 3 })]
-        [DataTestMethod]
-        public void TrimUserInputListTest(int[] inputIds, int numInputsWanted, int[] expectedIds)
-        {
-            TestUserManager.ResetTestUsers();
-            List<UserCreatedObject> inputObjects = inputIds.Select(id => new UserCreatedObject() { Owner = TestUserManager.GetTestUser(id), Id = TestUserManager.GetTestUser(id).UserId}).ToList();
-            List<UserCreatedObject> expectedObjects = expectedIds.Select(id => new UserCreatedObject() { Owner = TestUserManager.GetTestUser(id), Id = TestUserManager.GetTestUser(id).UserId }).ToList();
-
-            List<UserCreatedObject> returnedObjects = CommonHelpers.TrimUserInputList(userInputs: inputObjects, numInputsWanted: numInputsWanted).ToList();
-            Assert.IsTrue(returnedObjects.HasSameElements(expectedObjects), $"Expected:{string.Join(",",expectedObjects.Select(obj=>obj.Owner.DisplayName))} Actual:{string.Join(",", returnedObjects.Select(obj => obj.Owner.DisplayName))}");
-        }
     }
 }

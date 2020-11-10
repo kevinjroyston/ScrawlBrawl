@@ -252,9 +252,9 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                 {
                     Owner = user,
                 };
-                temp.BodyPartDrawings.Add(DrawingType.Head, heads.First());
-                temp.BodyPartDrawings.Add(DrawingType.Body, bodies.First());
-                temp.BodyPartDrawings.Add(DrawingType.Legs, legs.First());
+                temp.BodyPartDrawings[DrawingType.Head] = heads.First();
+                temp.BodyPartDrawings[DrawingType.Body] = bodies.First();
+                temp.BodyPartDrawings[DrawingType.Legs] = legs.First();
                 heads.RemoveAt(0);
                 bodies.RemoveAt(0);
                 legs.RemoveAt(0);
@@ -269,9 +269,9 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                 {
                     Owner = null,
                 };
-                temp.BodyPartDrawings.Add(DrawingType.Head, heads.First());
-                temp.BodyPartDrawings.Add(DrawingType.Body, bodies.First());
-                temp.BodyPartDrawings.Add(DrawingType.Legs, legs.First());
+                temp.BodyPartDrawings[DrawingType.Head] = heads.First();
+                temp.BodyPartDrawings[DrawingType.Body] = bodies.First();
+                temp.BodyPartDrawings[DrawingType.Legs] = legs.First();
                 heads.RemoveAt(0);
                 bodies.RemoveAt(0);
                 legs.RemoveAt(0);
