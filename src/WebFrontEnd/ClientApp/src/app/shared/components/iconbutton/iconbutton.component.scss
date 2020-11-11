@@ -7,10 +7,19 @@
     border-radius: 4px;
     justify-content: center;
     transition: all .3s ease;
+    max-width: 46px;
+    max-height: 46px;
+    fill: white;
+}
+:host ::ng-deep svg {
+    max-width: 36px;
+    max-height: 36px;
+    fill: white;
 }
 
 .icon-button-active {
     background-color: var(--ornamental-pastelblue);
+    border: 2px solid var(--black-primary);
 }
 
 .icon-button:hover{

@@ -1,6 +1,6 @@
 <a [routerLink]="link" class="scrawlbutton-link" (click)="onClickButton($event);">
     <div class="scrawlbutton" >
-        <div class="scrawlbutton-label">
+        <div class="scrawlbutton-label" [ngStyle]="{'color': textColor ? textColor : 'white'}">
             <ng-content></ng-content>
         </div>
         <div class="scrawlbutton-outline"></div>

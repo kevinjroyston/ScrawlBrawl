@@ -97,3 +97,19 @@ a:hover .red-scrawlbutton-base {
     left: 0px;
     top: 0px;
 }
+
+.yellow-scrawlbutton-base{
+    width: 100%;
+    height: 40px;
+    background-color: var(--yellow-secondary);
+    border-radius: 4px;
+    position: absolute;
+    left: 6px;
+    top: 3px;
+    transition: all .3s ease;
+}   
+
+a:hover .yellow-scrawlbutton-base {
+    left: 0px;
+    top: 0px;
+}
