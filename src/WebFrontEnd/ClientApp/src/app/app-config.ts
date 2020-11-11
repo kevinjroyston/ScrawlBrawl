@@ -61,7 +61,7 @@ export const msalConfig: Configuration = {
     auth: {
         clientId: "5c59c94a-140d-4c49-a4ed-772a55c52d57",
         authority: b2cPolicies.authorities.signUpSignIn.authority,
-        redirectUri:  environment.frontendUrl + "lobby/manage",
+        redirectUri:  environment.frontendUrl + "manage",
         postLogoutRedirectUri: environment.frontendUrl,
         navigateToLoginRequestUrl: true,
         validateAuthority: false,
@@ -92,7 +92,7 @@ export const tokenRequest: { scopes: string[] } = {
 // here you can define the coordinates and required permissions for your protected resources
 export const protectedResourceMap: [string, string[]][] = environment.enableMsal ? [
     [apiConfig.webApi, apiConfig.b2cScopes],
-    ['lobby/manage', apiConfig.b2cScopes],
+    ['lobby', apiConfig.b2cScopes],
     ['api/v1/Lobby/Games', apiConfig.b2cScopes],
     ['api/v1/Lobby/Get', apiConfig.b2cScopes],
     ['api/v1/Lobby/Create', apiConfig.b2cScopes],
