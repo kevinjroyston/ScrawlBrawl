@@ -66,4 +66,5 @@ interface DrawingPromptMetadata {
     heightInPx: number;
     premadeDrawing: string;
     canvasBackground: string;
+    localStorageId: string;
 }

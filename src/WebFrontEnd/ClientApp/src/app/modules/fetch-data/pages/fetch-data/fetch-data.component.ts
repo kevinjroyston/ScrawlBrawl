@@ -211,6 +211,7 @@ interface DrawingPromptMetadata {
     heightInPx: number;
     premadeDrawing: string;
     canvasBackground: string;
+    localStorageId: string;
 }
 interface SliderPromptMetadata {
   min: number;
