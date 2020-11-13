@@ -155,8 +155,7 @@ namespace Backend.Games.BriansGames.BattleReady
 
                         if (numHeadsNeeded + numBodiesNeeded + numLegsNeeded > 0)
                         {
-                            lobby.CloseLobbyWithError(new Exception("Not enough drawings submitted"));
-                            return null;
+                            throw new Exception("Not enough drawings submitted");
                             //todo re add when single user skip is available
                             /*return new ExtraSetupDrawing_GS( 
                                 lobby: lobby,

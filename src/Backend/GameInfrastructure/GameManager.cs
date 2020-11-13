@@ -14,11 +14,14 @@ using Backend.GameInfrastructure.Extensions;
 using Common.DataModels.Requests;
 using Common.DataModels.Responses;
 using Common.DataModels.Enums;
+using Microsoft.Extensions.Logging;
 
 namespace Backend.GameInfrastructure
 {
     public class GameManager
     {
+        // TODO: hook this up to applications insights.
+        private ILogger<GameManager> Logger { get; }
         #region User and Object trackers
         private ConcurrentDictionary<string, User> Users { get; } = new ConcurrentDictionary<string, User>();
         private ConcurrentDictionary<string, AuthenticatedUser> AuthenticatedUsers { get; } = new ConcurrentDictionary<string, AuthenticatedUser>();
@@ -75,8 +78,9 @@ namespace Backend.GameInfrastructure
         };
         #endregion
 
-        public GameManager()
+        public GameManager(ILogger<GameManager> logger)
         {
+            Logger = logger;
         }
 
         public void ReportGameError(ErrorType type, string lobbyId, User user = null, Exception error = null)
@@ -84,6 +88,8 @@ namespace Backend.GameInfrastructure
             // Log error to console (TODO redirect to file on release builds).
             Debug.WriteLine(Invariant($"ERROR ERROR ERROR ERROR ERROR ~~~~~~~~~~~~~~~~~~~~~~~~~ {error}"));
             Debug.Assert(false, error.ToString());
+            //Logger.LogError(error, $"LobbyId:{lobbyId},ErrorType:{type},User:[{user?.DisplayName}|{user?.Id}|{user?.AuthenticatedUserPrincipalName}]");
+
             if (!string.IsNullOrWhiteSpace(lobbyId))
             {
                 DeleteLobby(lobbyId);
