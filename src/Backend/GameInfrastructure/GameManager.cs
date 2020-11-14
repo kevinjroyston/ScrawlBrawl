@@ -71,7 +71,10 @@ namespace Backend.GameInfrastructure
                 new SubPrompt()
                 {
                     Prompt = "Self Portrait",
-                    Drawing = new DrawingPromptMetadata()
+                    Drawing = new DrawingPromptMetadata{
+                            LocalStorageId="SBPortrait"
+                    }
+
                 }
             },
             SubmitButton = true,

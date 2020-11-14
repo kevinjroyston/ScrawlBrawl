@@ -14,6 +14,7 @@ export class DrawingDirective {
     @Input() lineWidth: number;
     @Input() premadeDrawing: string;
     @Input() eraserMode: boolean;
+    @Input() localStorageId: string;
     @Output() drawingEmitter = new EventEmitter();
     defaultLineColor: string = "rgba(87,0,132,255)";
     element;
@@ -40,6 +41,20 @@ export class DrawingDirective {
             console.log("Loading premade drawing");
             img.src = this.premadeDrawing;
       }
+        if (this.localStorageId) {
+          var storedImg=localStorage.getItem(this.localStorageId);
+          if (storedImg) {
+            var img = new Image;
+            var ctx = this.ctx;
+            img.onload = function () {
+                console.log("showing stored drawing");
+                ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
+            }
+            console.log("loading stored drawing");
+            img.src = storedImg;     
+      }      
+
+      }
       this.storeImage();
     }
 
@@ -52,6 +67,10 @@ export class DrawingDirective {
     if (this.undoArray.length >= 20) { this.undoArray.shift(); }
     this.undoArray.push(imgStr);
     this.lastActionWasStoreImage = true;
+    if (this.localStorageId) {
+        localStorage.setItem(this.localStorageId,imgStr);
+    }
+    
   }
 
   stopDrawing() {

@@ -21,6 +21,8 @@ namespace Common.DataModels.Responses
         /// </summary>
         public string PremadeDrawing { get; set; }
 
+        public string LocalStorageId { get; set; }
+
         /// <summary>
         /// If provided, will be rendered behind the canvas.
         /// </summary>

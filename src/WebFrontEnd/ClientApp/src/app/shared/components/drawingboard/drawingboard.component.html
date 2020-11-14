@@ -1,17 +1,8 @@
 <div class="drawb">
     <!-- Drawing Canvas -->
     <div class="drawb-canvas">
-        <canvas 
-            appDrawing 
-            class="draw-canvas"
-            [width]="drawingPrompt.widthInPx"
-            [height]="drawingPrompt.heightInPx"
-            [ngStyle]="{'background-image': 'url(' + drawingPrompt.canvasBackground + ')'}"
-            [premadeDrawing]="drawingPrompt.premadeDrawing"
-            [lineColor]="selectedColor"
-            [lineWidth]="selectedBrushSize"
-            [eraserMode]="eraserMode"
-            (drawingEmitter)="onChange($event)">
+        <canvas appDrawing class="draw-canvas" [width]="drawingPrompt.widthInPx" [height]="drawingPrompt.heightInPx" [ngStyle]="{'background-image': 'url(' + drawingPrompt.canvasBackground + ')'}" [premadeDrawing]="drawingPrompt.premadeDrawing" [localStorageId]="drawingPrompt.localStorageId"
+            [lineColor]="selectedColor" [lineWidth]="selectedBrushSize" [eraserMode]="eraserMode" (drawingEmitter)="onChange($event)">
         </canvas>
     </div>
 
@@ -21,7 +12,7 @@
         <div class="drawb-setting" *ngIf="showEraser">
             <div class="drawb-setting-header">
                 Tools
-            </div> 
+            </div>
             <div class="drawb-tools">
                 <scrawlbrawl-iconbutton (click)="eraserMode= false" [active]="!eraserMode">
                     <ion-icon name="brush-outline"></ion-icon>
@@ -38,7 +29,7 @@
                 Actions
             </div>
             <div>
-                <scrawlbrawl-iconbutton (click)="drawingDirective.onPerformUndo()"> 
+                <scrawlbrawl-iconbutton (click)="drawingDirective.onPerformUndo()">
                     <ion-icon name="arrow-back-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
             </div>
@@ -47,14 +38,14 @@
         <div class="drawb-setting" *ngIf="showBrushSizeSelector">
             <div class="drawb-setting-header">
                 Size
-            </div>         
+            </div>
             <input type="range" min="5" max="40" [value]="5" [(ngModel)]="selectedBrushSize">
         </div>
 
-        <div class="drawb-setting" *ngIf="showColorSelector && drawingPrompt.colorList"> 
+        <div class="drawb-setting" *ngIf="showColorSelector && drawingPrompt.colorList">
             <div class="drawb-setting-header">
                 Color
-            </div>                  
+            </div>
             <div class='drawb-colors'>
                 <input type="color" (click)='handleColorPickerOnClick($event.target)' [(ngModel)]="selectedColor" [value]="selectedColor">
             </div>
