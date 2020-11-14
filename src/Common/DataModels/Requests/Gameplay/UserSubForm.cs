@@ -1,4 +1,5 @@
-﻿using Common.DataModels.Validation;
+﻿using Common.DataModels.Responses;
+using Common.DataModels.Validation;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
@@ -28,5 +29,22 @@ namespace Common.DataModels.Requests
 
         [JsonExtensionData]
         public IDictionary<string, object> Unmapped { get; set; }
+
+        public static UserSubForm WithDefaults(UserSubForm partialSubmission, SubPrompt prompt)
+        {
+            // TODO: default to selecting random choice.
+            return new UserSubForm()
+            {
+                Id = partialSubmission.Id,
+                ShortAnswer = prompt.ShortAnswer ? (partialSubmission.ShortAnswer ?? "N/A") : null,
+                Drawing = (prompt.Drawing != null) ? (partialSubmission.Drawing ?? Constants.Drawings.DefaultDrawing(prompt.Drawing.WidthInPx, prompt.Drawing.HeightInPx)) : null,
+                Selector= (prompt.Selector != null) ? (partialSubmission.Selector ?? (int?)0) : null,
+                Slider= (prompt.Slider != null) ? (partialSubmission.Slider ?? (prompt.Slider.Range ? new List<int> { prompt.Slider.Min, prompt.Slider.Max } : new List<int> { prompt.Slider.Min }) ): null,
+                DropdownChoice = (prompt.Dropdown != null) ? (partialSubmission.DropdownChoice ?? (int?)0): null,
+                RadioAnswer = (prompt.Answers != null) ? (partialSubmission.RadioAnswer ?? (int?)0) : null,
+                Color = prompt.ColorPicker ? (partialSubmission.Color ?? Constants.Colors.DarkGray) : null,
+            };
+
+        }
     }
 }

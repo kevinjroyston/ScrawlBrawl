@@ -15,6 +15,7 @@ using static System.FormattableString;
 using Backend.GameInfrastructure;
 using Common.DataModels.Enums;
 using Common.Code.Extensions;
+using Constants = Common.DataModels.Constants;
 
 namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
 {
@@ -160,7 +161,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                 unityImages.Add(new UnityImage()
                 {
                     Header = new StaticAccessor<string> { Value = "None of these" },
-                    Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string>() { Constants.NoneUnityImage} },
+                    Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string>() { Constants.Drawings.NoneUnityImage } },
                 });         
             }
 

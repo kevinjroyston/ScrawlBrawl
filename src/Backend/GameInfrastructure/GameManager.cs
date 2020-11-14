@@ -46,7 +46,8 @@ namespace Backend.GameInfrastructure
                 formSubmitHandler: (User user, UserFormSubmission userInput) =>
                 {
                     return RegisterUser(userInput.SubForms[1].ShortAnswer, user, userInput.SubForms[0].ShortAnswer, userInput.SubForms[2].Drawing);
-                });
+                },
+                userTimeoutHandler: (User user, UserFormSubmission userInput) => throw new Exception("Can't timeout on this prompt"));
 
             toReturn.Transition((User user)=> GetLobby(user.LobbyId));
             return toReturn;
