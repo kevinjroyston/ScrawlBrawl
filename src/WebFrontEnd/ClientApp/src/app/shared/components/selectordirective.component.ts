@@ -32,7 +32,7 @@ export class SelectorDirective implements ControlValueAccessor {
   registerOnChange(fn: any): void {
       this.onChange = fn;
       // Default to 0, needs a delay due to buggy form implementation.
-      setTimeout(()=>fn('0'), 200)
+//      setTimeout(()=>fn('0'), 200)
   }
   registerOnTouched(fn: any): void {
   }
