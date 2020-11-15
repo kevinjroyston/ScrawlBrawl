@@ -139,6 +139,9 @@ export class FetchDataComponent
         userSubmitData.id = this.userPrompt.id;
         for (let i = 0; i < userSubmitData.subForms.length; i++) {
             userSubmitData.subForms[i].id = this.userPrompt.subPrompts[i].id;
+            if (this.userPrompt.subPrompts[i].selector && !userSubmitData.subForms[i].selector) {
+                userSubmitData.subForms[i].selector="0";
+            }
         }
 
         var body = JSON.stringify(userSubmitData);
