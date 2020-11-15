@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import {Subscription} from 'rxjs'
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import Lobby from '../../interfaces/lobby';
-import GameModes from '../../interfaces/gamemodes';
+import Lobby from '@core/models/lobby';
+import GameModes from '@core/models/gamemodes';
 import { ErrorService } from '@modules/lobby/services/error.service';
 
 interface GameModeDialogData {
@@ -43,8 +43,9 @@ export class GamemodeDialogComponent implements OnInit {
     this.errorSubscription.unsubscribe();
   }
 
-  onStartLobby = () => {
+  onStartLobby = async () => {
     this.onStart();
+    //this.close();
   }
 
   close() {

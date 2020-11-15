@@ -127,6 +127,10 @@ b {
     line-height: 24px;
 }
 
+.error {
+    color: var(--red-primary);
+}
+
 
 .disclaimer {
     font-family: "Montserray", sans-serif;

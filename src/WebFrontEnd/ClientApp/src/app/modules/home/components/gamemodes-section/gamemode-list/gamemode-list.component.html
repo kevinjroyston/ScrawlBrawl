@@ -6,7 +6,7 @@
           <span class="arrow left"></span>
         </button>
       </div>
-      <app-gamemode [gameModeID]="gameModes[currentGameMode]">
+      <app-gamemode [gameModeID]="gameModes[currentGameMode].gameIdString">
       </app-gamemode>
       <div class="arrow-holder">
         <button (click)="onNextGameMode()" class="control next">

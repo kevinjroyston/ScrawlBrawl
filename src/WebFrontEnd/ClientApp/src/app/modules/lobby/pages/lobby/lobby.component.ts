@@ -5,8 +5,8 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {GamemodeDialogComponent} from '../../components/gamemode-dialog/gamemode-dialog.component';
 import {GameInfoDialogComponent} from '../../components/gameinfo-dialog/gameinfo-dialog.component';
 import {ErrorService} from '../../services/error.service'
-import Lobby from '../../interfaces/lobby'
-import GameModes from '../../interfaces/gamemodes'
+import Lobby from '@core/models/lobby'
+import GameModes from '@core/models/gamemodes'
 
 @Component({
     selector: 'app-lobby-management',
@@ -22,9 +22,7 @@ export class LobbyManagementComponent {
 
     constructor(@Inject(API) private api: API, private matDialog: MatDialog, public errorService: ErrorService)
     {
-        this.getGames().then(
-            () => this.onGetLobby()
-        )
+        this.getGames().then(() => this.onGetLobby())
     }
 
     async onStartLobby() {
@@ -32,20 +30,23 @@ export class LobbyManagementComponent {
         body.gameMode = this.lobby.selectedGameMode;
         body.options = JSON.parse(JSON.stringify(this.gameModes[this.lobby.selectedGameMode].options, ['value']));
         var bodyString = JSON.stringify(body);
-        console.log(bodyString);
-        this.error = "";
         await this.api.request({ type: "Lobby", path: "Configure", body: bodyString }).subscribe({
             next: async () => {
                 if (!this.error) {
                     await this.api.request({ type: "Lobby", path: "Start" }).subscribe({
-                        next: async () => { await this.onGetLobby() },
-                        error: async (error) => { this.error = error.error; this.errorService.announceError(error.error); await this.onGetLobby() }
+                        next: async () => { 
+                            await this.onGetLobby() 
+                        },
+                        error: async (error) => { 
+                            this.error = error.error; 
+                            this.errorService.announceError(error.error); 
+                            await this.onGetLobby() 
+                        }
                     })
                 }
             },
             error: async (error) => { 
                 this.error = error.error; 
-                
                 await this.onGetLobby(); 
             }
         })

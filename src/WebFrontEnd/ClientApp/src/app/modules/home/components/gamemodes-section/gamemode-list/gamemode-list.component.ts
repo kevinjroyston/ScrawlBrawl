@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-
-const gameModes = ['BodyBuilder', 'Imposter', 'ChaoticCoop', 'BodySwap', 'FriendQuiz', 'Mimic']
+import { Component, Inject, OnInit } from '@angular/core';
+import { API } from '@core/http/api';
+import GameModes from '@core/models/gamemodes'
 
 @Component({
   selector: 'app-gamemode-list',
@@ -8,14 +8,20 @@ const gameModes = ['BodyBuilder', 'Imposter', 'ChaoticCoop', 'BodySwap', 'Friend
   styleUrls: ['../../../pages/home/home.component.scss', './gamemode-list.component.scss']
 })
 export class GamemodeListComponent implements OnInit {
-  gameModes: string[];
+  gameModes: GameModes.GameModeMetadata[];
   currentGameMode: number = 0;
 
-  constructor() { 
-    this.gameModes = gameModes;
+  constructor(@Inject(API) private api: API) { 
+    this.getGames();
   }
 
   ngOnInit() {
+  }
+
+  getGames = async () => {
+    await this.api.request({ type: "Lobby", path: "Games" }).subscribe({
+        next: (result) => { this.gameModes = result as GameModes.GameModeMetadata[];console.log(this.gameModes) }
+    });
   }
 
   getNext = () => {

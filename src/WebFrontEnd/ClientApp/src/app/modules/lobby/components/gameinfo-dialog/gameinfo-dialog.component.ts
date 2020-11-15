@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import GameModes from '../../interfaces/gamemodes';
+import GameModes from '@core/models/gamemodes';
 
 interface GameInfoDialogData {
   gameModes: GameModes.GameModeMetadata

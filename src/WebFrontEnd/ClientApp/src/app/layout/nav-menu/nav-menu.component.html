@@ -1,6 +1,6 @@
 <nav class="navbar" [ngClass]="{'navbar-homepage': isHomePage, 'navbar-standard': isPastHero}">
   <div class="navbar-left">
-    <a [routerLink]="['/']">
+    <a (click)="redirectLink('')">
       <div class="navbar-logo">
         <scrawlbrawl-logo-horizontal></scrawlbrawl-logo-horizontal>
       </div>
@@ -13,13 +13,13 @@
   </div>
   <div class="navbar-right" [ngClass]="{'active': isExpanded}">
     <div class="nav-item" [routerLinkActive]="['link-active']">
-      <a class="trans-link" [routerLink]="['/play']">Play</a>
+      <a class="trans-link" (click)="redirectLink('play')">Play</a>
     </div>
     <div class="nav-item" [routerLinkActive]="['link-active']">
-      <a class="trans-link" [routerLink]="['/lobby']">Lobby</a>
+      <a class="trans-link" (click)="redirectLink('lobby')">Lobby</a>
     </div>
     <div class="nav-item" [routerLinkActive]="['link-active']">
-      <a class="trans-link" [routerLink]="['/user']">User</a>
+      <a class="trans-link" (click)="redirectLink('user')">User</a>
     </div>
   </div>
 </nav>

@@ -13,16 +13,14 @@ export class NavMenuComponent {
   isPastHero = false;
 
   constructor(private router: Router){
-    router.events.subscribe((val) => {
-      // see also 
+    router.events.subscribe((val) => { 
       this.checkRoute()
     });
   }
 
   @HostListener('window:scroll', ['$event'])
   @throttle(200)
-  onScroll(event: any) {
-      // visible height + pixel scrolled >= total height 
+  onScroll(event: any){
       if (document.documentElement.scrollTop >= event.target['scrollingElement'].clientHeight - 50) {
         this.isPastHero = true;
       } else {
@@ -33,12 +31,13 @@ export class NavMenuComponent {
   checkRoute = () => {
     this.router.url === '/' ? this.isHomePage = true : this.isHomePage = false
   }
-  
-  collapse() {
-    this.isExpanded = false;
+
+  toggle = () => {
+    this.isExpanded = !this.isExpanded;
   }
 
-  toggle() {
-    this.isExpanded = !this.isExpanded;
+  redirectLink = (route: string) => {
+    this.isExpanded = false;
+    this.router.navigate(['/' + route])
   }
 }
