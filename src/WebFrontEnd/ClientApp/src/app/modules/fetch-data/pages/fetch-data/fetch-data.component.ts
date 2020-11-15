@@ -7,6 +7,7 @@ import { MatSlider } from '@angular/material/slider';
 import { MsalService, BroadcastService } from '@azure/msal-angular';
 import { API } from '@core/http/api';
 import { isNullOrUndefined } from 'util';
+import { Router } from '@angular/router';
 
 @Pipe({ name: 'safe' })
 export class Safe {
@@ -47,15 +48,28 @@ export class FetchDataComponent
 
     constructor(
         formBuilder: FormBuilder,
+        router: Router,
         @Inject(API) private api: API)
     {
       this.formBuilder = formBuilder;
       this.fetchUserPrompt();
+      router.events.subscribe((val) => {
+        if (this.userPromptTimerId) {
+            clearTimeout(this.userPromptTimerId);
+            this.userPromptTimerId = null;
+          }
+        if (this.autoSubmitTimerId) {
+            clearTimeout(this.autoSubmitTimerId);
+            this.autoSubmitTimerId = null;
+          }
+});
     }
 
     async fetchUserPrompt() {
+        console.log("fetchUserPrompt: userPromptTimerId="+this.userPromptTimerId);
         if (this.userPromptTimerId) {
           clearTimeout(this.userPromptTimerId);
+          this.userPromptTimerId = null;
         }
 
         // fetch the current content from the server
@@ -80,6 +94,7 @@ export class FetchDataComponent
                 // Clear the autosubmit timer
                 if (this.autoSubmitTimerId) {
                   clearTimeout(this.autoSubmitTimerId);
+                  this.autoSubmitTimerId = null;
                 }
 
                 // Start a new autosubmit timer
@@ -130,9 +145,11 @@ export class FetchDataComponent
         // the submission and both will get set there
         if (this.userPromptTimerId) {
           clearTimeout(this.userPromptTimerId);
+          this.userPromptTimerId = null;
         }
         if (this.autoSubmitTimerId) {
           clearTimeout(this.autoSubmitTimerId);
+          this.autoSubmitTimerId = null;
         }
 
         // Populate IDs.
