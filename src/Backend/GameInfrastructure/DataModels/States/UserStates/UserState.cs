@@ -208,8 +208,11 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
         {
             UserPromptHolder userPrompt = GetUserPromptHolder(user);
 
-            // Set the Auto submit datetime
-            userPrompt.Prompt.AutoSubmitAtTime = user.EarliestStateTimeout;
+            if (userPrompt.Prompt.SubmitButton)
+            {
+                // Set the Auto submit datetime
+                userPrompt.Prompt.AutoSubmitAtTime = user.EarliestStateTimeout;
+            }
 
             // Refresh at the normal cadence unless the DontRefreshLaterThan time is coming up.
             if (this.DontRefreshLaterThan.HasValue)
