@@ -22,7 +22,7 @@ namespace Common.DataModels.Requests
             return new UserFormSubmission()
             {
                 Id = partialSubmission.Id,
-                SubForms = partialSubmission.SubForms.Zip(prompt.SubPrompts)
+                SubForms = (prompt.SubPrompts == null) ? null : partialSubmission.SubForms.Zip(prompt.SubPrompts)
                     .Select<(UserSubForm, SubPrompt), UserSubForm>(
                         (tuple) => UserSubForm.WithDefaults(tuple.Item1, tuple.Item2)).ToList()
             };

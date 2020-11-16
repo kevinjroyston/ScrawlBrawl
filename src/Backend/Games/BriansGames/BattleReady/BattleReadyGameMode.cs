@@ -110,7 +110,6 @@ namespace Backend.Games.BriansGames.BattleReady
             int minDrawingsRequired = numOfEachPartInHand * 3; // the amount to make one playerHand to give everyone
 
             int expectedPromptsPerUser = numPromptsPerRound * numRounds / lobby.GetAllUsers().Count;
-            int minPromptsRequired = numPromptsPerRound * numRounds; // the exact amount of prompts needed for the game
 
             if (gameLength > 0)
             {
@@ -186,17 +185,6 @@ namespace Backend.Games.BriansGames.BattleReady
                             numExpectedPerUser: expectedPromptsPerUser,
                             setupDurration: setupPromptTimer);
                     }
-                    else if (counter == 1)
-                    {
-                        if (Prompts.Count < minPromptsRequired)
-                        {
-                            return new ExtraSetupPrompt_GS(
-                                lobby: lobby,
-                                prompts: Prompts,
-                                numExtraNeeded: minPromptsRequired - Prompts.Count);
-                        }
-                        return null;
-                    }
                     else
                     {
                         return null;
@@ -224,7 +212,7 @@ namespace Backend.Games.BriansGames.BattleReady
             });
             setupPrompt.AddExitListener(() =>
             {
-                battlePrompts = MemberHelpers<Prompt>.Select_Ordered(Prompts.ToList(), minPromptsRequired);
+                battlePrompts = MemberHelpers<Prompt>.Select_Ordered(Prompts.ToList(), numPromptsPerRound * numRounds);
                 foreach(Prompt prompt in battlePrompts)
                 {
                     prompt.MaxMemberCount = numUsersPerPrompt;
@@ -243,12 +231,12 @@ namespace Backend.Games.BriansGames.BattleReady
             {
                 RoundTracker.ResetRoundVariables();
                 List<Prompt> prompts = battlePrompts.Take(numPromptsPerRound).ToList();
-                battlePrompts.RemoveRange(0, numPromptsPerRound);
+                battlePrompts.RemoveRange(0, prompts.Count);
 
                 List<IGroup<User>> assignments = MemberHelpers<User>.Assign(
                     prompts.Cast<IConstraints<User>>().ToList(),
                     lobby.GetAllUsers().ToList(),
-                    duplicateMembers: numPromptsPerUserPerRound);
+                    duplicateMembers: (int)Math.Ceiling((1.0 * prompts.Count / numPromptsPerRound) * numPromptsPerUserPerRound));
 
                 var pairings = prompts.Zip(assignments);
 
@@ -318,7 +306,7 @@ namespace Backend.Games.BriansGames.BattleReady
                         imageHeader: (person) => person.Name
                         );
 
-                    if (countRounds >= numRounds)
+                    if (battlePrompts.Count <= 0)
                     {
                         GameState finalScoreBoard = new ScoreBoardGameState(
                         lobby: lobby,
