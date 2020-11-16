@@ -11,7 +11,7 @@ namespace Common.DataModels.Responses
         /// <summary>
         /// Indicates the colors to use in the drawing.
         /// </summary>
-        public List<string> ColorList { get; set; } = Constants.DefaultColorPalette.ToList();
+        public List<string> ColorList { get; set; }
 
         public int WidthInPx { get; set; } = 360;
         public int HeightInPx { get; set; } = 360;
