@@ -54,15 +54,16 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             {
                 toReturn = this.UserTimeoutHandler(user, userInput);
             }
-            else
+            // Only mimic UserFormInput if there is a submit button.
+            else if (this.GetUserPromptHolder(user).Prompt.SubmitButton)
             {
-                // TODO: fill empty user inputs with defaults.
                 bool success = this.HandleUserFormInput(
                     user: user,
                     userInput: UserFormSubmission.WithDefaults(
                         partialSubmission: userInput,
                         prompt: this.GetUserPromptHolder(user).Prompt),
                     error: out string error);
+
                 // If succeeded, return since exit.inlet already called.
                 if (success)
                 {
