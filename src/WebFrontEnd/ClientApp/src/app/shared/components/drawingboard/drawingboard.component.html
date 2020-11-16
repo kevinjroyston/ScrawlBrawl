@@ -42,7 +42,7 @@
             <input type="range" min="5" max="40" [value]="5" [(ngModel)]="selectedBrushSize">
         </div>
 
-        <div class="drawb-setting" *ngIf="showColorSelector && drawingPrompt.colorList">
+        <div class="drawb-setting" *ngIf="showColorSelector && (!drawingPrompt.colorList)">
             <div class="drawb-setting-header">
                 Color
             </div>
@@ -50,5 +50,11 @@
                 <input type="color" (click)='handleColorPickerOnClick($event.target)' [(ngModel)]="selectedColor" [value]="selectedColor">
             </div>
         </div>
-    </div>
-</div>
+
+        <div *ngIf="showColorSelector && drawingPrompt.colorList && drawingPrompt.colorList.length > 1">
+            <mat-radio-group class="color-picker-group" [(ngModel)]="selectedColor" (change)="eraserMode=false">
+                <div class="color-picker-dot" *ngFor="let colorChoice of drawingPrompt.colorList; let i = index" [ngStyle]="{'background-color': colorChoice}">
+                    <mat-radio-button [value]="colorChoice" [checked]="i==0"></mat-radio-button>
+                </div>
+            </mat-radio-group>
+        </div>
