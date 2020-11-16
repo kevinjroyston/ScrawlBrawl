@@ -15,6 +15,8 @@ using Backend.Games.Common.DataModels;
 using System.Collections.Concurrent;
 using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
+using CommonConstants = Common.DataModels.Constants;
+using System.Linq;
 
 namespace Backend.Games.KevinsGames.Mimic.GameStates
 {
@@ -43,7 +45,9 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                     {
                         new SubPrompt
                         {
-                            Drawing = new DrawingPromptMetadata(),
+                            Drawing = new DrawingPromptMetadata{
+                                ColorList = CommonConstants.DefaultColorPalette.ToList() 
+                            }
                         },
                     },
                     SubmitButton = true
