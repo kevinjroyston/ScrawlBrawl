@@ -1,4 +1,5 @@
 import { Directive, ElementRef, HostListener, forwardRef, Input, Output, EventEmitter } from '@angular/core';
+import {throttle} from 'app/utils/throttle'
 
 @Directive({
     selector: '[appDrawing]',
@@ -175,8 +176,10 @@ export class DrawingDirective {
 
 */
     }
-
-  @HostListener('window:scroll', ['$event']) onScrollEvent($event) {
+  
+  @HostListener('window:scroll', ['$event']) 
+  @throttle(200)
+  onScrollEvent($event) {
     console.log("scrolling");
     if (this.userIsDrawing) {
       this.stopDrawing();

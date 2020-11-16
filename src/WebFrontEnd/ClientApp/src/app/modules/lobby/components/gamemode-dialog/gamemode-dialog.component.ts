@@ -3,13 +3,14 @@ import {Subscription} from 'rxjs'
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import Lobby from '@core/models/lobby';
 import GameModes from '@core/models/gamemodes';
+import {Observable} from 'rxjs'
 import { ErrorService } from '@modules/lobby/services/error.service';
 
 interface GameModeDialogData {
   gameModes: GameModes.GameModeMetadata
   lobby: Lobby.LobbyMetadata
   error: string
-  onStart: () => void
+  onStart: () => Observable<any>
 }
 
 @Component({
@@ -22,7 +23,7 @@ export class GamemodeDialogComponent implements OnInit {
   lobby: Lobby.LobbyMetadata
   error: string
   errorSubscription: Subscription
-  onStart: () => void
+  onStart: () => Observable<any>
 
   constructor(
     private dialogRef: MatDialogRef<GamemodeDialogComponent>,
@@ -43,12 +44,16 @@ export class GamemodeDialogComponent implements OnInit {
     this.errorSubscription.unsubscribe();
   }
 
-  onStartLobby = async () => {
-    this.onStart();
-    //this.close();
+  onStartLobby = () => {
+    let request = this.onStart();
+    request.subscribe({
+      next: () => {
+        this.closeDialog();
+      }
+    })
   }
 
-  close() {
+  closeDialog() {
     this.dialogRef.close();
   }
 }

@@ -1,4 +1,5 @@
 import { Component, Inject, ViewChild} from '@angular/core';
+import {Observable} from 'rxjs'
 import { API } from '@core/http/api';
 import { GameAssetDirective } from '@shared/components/gameassetdirective.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -25,31 +26,33 @@ export class LobbyManagementComponent {
         this.getGames().then(() => this.onGetLobby())
     }
 
-    async onStartLobby() {
+    onStartLobby() : Observable<any> {
         var body = new Lobby.ConfigureLobbyRequest();
         body.gameMode = this.lobby.selectedGameMode;
         body.options = JSON.parse(JSON.stringify(this.gameModes[this.lobby.selectedGameMode].options, ['value']));
         var bodyString = JSON.stringify(body);
-        await this.api.request({ type: "Lobby", path: "Configure", body: bodyString }).subscribe({
-            next: async () => {
-                if (!this.error) {
-                    await this.api.request({ type: "Lobby", path: "Start" }).subscribe({
-                        next: async () => { 
-                            await this.onGetLobby() 
-                        },
-                        error: async (error) => { 
-                            this.error = error.error; 
-                            this.errorService.announceError(error.error); 
-                            await this.onGetLobby() 
-                        }
-                    })
-                }
+
+        let configureRequest = this.api.request({ type: "Lobby", path: "Configure", body: bodyString })
+        let lobbyRequest = this.api.request({ type: "Lobby", path: "Start" })
+        configureRequest.subscribe({
+            next: () => {
+                lobbyRequest.subscribe({
+                    next: () => { 
+                        this.onGetLobby() 
+                    },
+                    error: (error) => { 
+                        this.error = error.error; 
+                        this.errorService.announceError(error.error); 
+                        this.onGetLobby() 
+                    }
+                })
             },
-            error: async (error) => { 
+            error: (error) => { 
                 this.error = error.error; 
-                await this.onGetLobby(); 
+                this.onGetLobby(); 
             }
         })
+        return lobbyRequest
     }
 
     async onGetLobby() {
