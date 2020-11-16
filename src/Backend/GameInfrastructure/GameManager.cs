@@ -92,7 +92,7 @@ namespace Backend.GameInfrastructure
             // Log error to console (TODO redirect to file on release builds).
             Debug.WriteLine(Invariant($"ERROR ERROR ERROR ERROR ERROR ~~~~~~~~~~~~~~~~~~~~~~~~~ {error}"));
             Debug.Assert(false, error.ToString());
-            //Logger.LogError(error, $"LobbyId:{lobbyId},ErrorType:{type},User:[{user?.DisplayName}|{user?.Id}|{user?.AuthenticatedUserPrincipalName}]");
+            Logger.LogError(error, $"LobbyId:{lobbyId},ErrorType:{type},User:[{user?.DisplayName}|{user?.Id}|{user?.AuthenticatedUserPrincipalName}]");
 
             if (!string.IsNullOrWhiteSpace(lobbyId))
             {
