@@ -88,6 +88,7 @@ namespace Backend.Games.BriansGames.BodyBuilder
             TimeSpan? roundTimer = null;
             if (gameLength > 0)
             {
+                // setupTimer is currently deprecated.
                 setupTimer = CommonHelpers.GetTimerFromLength(
                     length: (double)gameLength,
                     minTimerLength: BodyBuilderConstants.SetupTimerMin,
@@ -105,7 +106,7 @@ namespace Backend.Games.BriansGames.BodyBuilder
                     maxTimerLength: BodyBuilderConstants.RoundTimerMax);
             }
 
-            Setup = new Setup_GS(lobby: lobby, peopleList: this.PeopleList, setupTimeDuration: setupTimer);
+            Setup = new Setup_GS(lobby: lobby, peopleList: this.PeopleList, setupTimeDuration: setupTimer, drawingTimeDuration: drawingTimer);
             int countRounds = 0;
 
             GameState CreateGameplayGamestate()

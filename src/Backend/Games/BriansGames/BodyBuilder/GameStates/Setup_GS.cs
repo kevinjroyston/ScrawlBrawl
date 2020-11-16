@@ -77,8 +77,13 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                 });
                 return (true, String.Empty);
             },
-            exit: new WaitForUsers_StateExit(this.Lobby),
-            maxPromptDuration: setupTimer);
+            userTimeoutHandler: (User user, UserFormSubmission input) =>
+            {
+                // TODO: set up default people list to pull from.
+                throw new Exception("this game doesn't support timers for setup");
+            },
+            exit: new WaitForUsers_StateExit(this.Lobby)//,            maxPromptDuration: setupTimer
+            );
         }
 
 
@@ -127,15 +132,6 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                 {
                     person.UserSubmittedDrawingsByUser[user].Drawing = input.SubForms[0].Drawing;
                     return (true, String.Empty);
-                },
-                userTimeoutHandler: (User user, UserFormSubmission input) =>
-                {
-                    // If drawing was auto submitted continue.
-                    if (!string.IsNullOrWhiteSpace(input.SubForms[0].Drawing))
-                    {
-                        person.UserSubmittedDrawingsByUser[user].Drawing = input.SubForms[0].Drawing;
-                    }
-                    return UserTimeoutAction.None;
                 }));
             }
 
