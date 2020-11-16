@@ -40,6 +40,21 @@
     border-bottom-right-radius: 5px;
 }
 
+.color-input {
+  padding: 1rem;
+  width: 45px;
+  height: 45px;
+  border-radius: 5px;
+  box-shadow: var(--shadow);
+  border: var(--border-grey);
+  transition: all .25s ease;
+  cursor: pointer;
+}
+
+.color-input:hover {
+  transform: scale(1.1);
+}
+
 .drawb-setting {
     display: flex;
     flex-direction: column;
@@ -137,19 +152,35 @@ input[type=range] {
     }
 }
 
+::ng-deep.mat-bottom-sheet-container {
+  padding: 0 !important;
+  min-width: 0 !important;
+  border-top-left-radius: 5px !important;
+  border-top-right-radius: 5px !important;
+  overflow: hidden !important;
+}
+
 @media only screen and (max-width: 768px) {
-    .drawb {
-        flex-direction: column;
-    }
-    .drawb-settings {
-        display: flex;
-        flex-wrap: wrap;
-        border-left: 1px solid var(--white-secondary);
-    }
-    .drawb-setting {
-        padding: .5rem 1rem .5rem 0;
-        border-bottom: 0 !important;
-        width: 50%;
-        flex-grow: 1;
-    }
+  .drawb{
+    flex-direction: column;
+  }
+
+  .drawb-settings{
+    display:flex;
+    flex-wrap: wrap;
+    border-left: 1px solid var(--white-secondary);
+  }
+
+  .drawb-setting{
+    padding: .5rem 1rem .5rem 0;
+    border-bottom: 0 !important;
+    width: 50%;
+    flex-grow: 1;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  ::ng-deep.mat-bottom-sheet-container {
+    width: 100vw !important;
+  }
 }

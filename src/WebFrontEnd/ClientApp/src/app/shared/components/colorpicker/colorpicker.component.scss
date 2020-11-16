@@ -1,0 +1,33 @@
+.colorpicker {
+    width: 100vw;
+    max-width: 500px;
+}
+
+.color-row {
+    display: flex;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.color-grid {
+    display: flex;
+    width: 100%;
+
+    .color-row{
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+    }
+}
+
+.color-square {
+    flex: 1;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all .2s ease;
+    border: 2px solid transparent;
+}
+
+.color-square:hover {
+    border: 2px solid black;
+}
