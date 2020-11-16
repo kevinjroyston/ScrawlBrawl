@@ -67,7 +67,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                     List<string> colors = input.SubForms.Where((subForm, index) => index > 0).Select((subForm) => subForm.Color).Reverse().ToList();
                     if (colors.Count != new HashSet<string>(colors).Count)
                     {
-                        return (true, "Server doesn't handle identical colors well, change one slightly.");
+                        return (false, "Server doesn't handle identical colors well, change one slightly.");
                     }
 
                     bool success = this.SubChallenges.TryAdd(new ChallengeTracker
@@ -77,6 +77,10 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                         Colors = colors
                     }, null);
                     return (success, success ? string.Empty : "Server error, try again");
+                },
+                userTimeoutHandler: (User user, UserFormSubmission input) =>
+                {
+                    return GameInfrastructure.DataModels.Enums.UserTimeoutAction.None;
                 },
                 exit: new WaitForUsers_StateExit(this.Lobby),
                 maxPromptDuration: this.PromptTimer);

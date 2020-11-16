@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static System.FormattableString;
+using Constants = Common.DataModels.Constants;
 
 namespace Backend.Games.BriansGames.ImposterDrawing
 {
@@ -190,7 +191,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing
                     drawings.Add(new UserDrawing()
                     {
                         Owner = prompt.Imposter,
-                        Drawing = Constants.NoneUnityImage,
+                        Drawing = Constants.Drawings.NoneUnityImage,
                     });
                     randomizedUsersToShow.Add(prompt.Imposter);
                 }
@@ -199,7 +200,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing
                     drawings.Add(new UserDrawing()
                     {
                         Owner = prompt.Owner,
-                        Drawing = Constants.NoneUnityImage,
+                        Drawing = Constants.Drawings.NoneUnityImage,
                     });
                     randomizedUsersToShow.Add(prompt.Owner);
                 }

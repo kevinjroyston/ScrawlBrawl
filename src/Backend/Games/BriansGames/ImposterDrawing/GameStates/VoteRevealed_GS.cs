@@ -12,6 +12,7 @@ using System.Linq;
 using static System.FormattableString;
 using Backend.GameInfrastructure;
 using Common.DataModels.Enums;
+using Constants = Common.DataModels.Constants;
 
 namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
 {
@@ -75,7 +76,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                     {
                         BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = new List<int> { 250, 128, 114 } },
                         Header = new StaticAccessor<string> { Value = "<color=green>None of these</color>" },
-                        Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string>() { Constants.NoneUnityImage } },
+                        Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string>() { Constants.Drawings.NoneUnityImage } },
                         VoteCount = new StaticAccessor<int?> { Value = numVotesRecieved },
                     });
                 }
@@ -89,7 +90,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                     unityImages.Add(new UnityImage()
                     {
                         Header = new StaticAccessor<string> { Value = "None of these" },
-                        Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string>() { Constants.NoneUnityImage } },
+                        Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string>() { Constants.Drawings.NoneUnityImage } },
                         VoteCount = new StaticAccessor<int?> { Value = numVotesRecieved }
                     });
                 }

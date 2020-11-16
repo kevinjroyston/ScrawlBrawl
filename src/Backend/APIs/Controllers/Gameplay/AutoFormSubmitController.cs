@@ -52,8 +52,13 @@ namespace Backend.APIs.Controllers
             {
                 lock (user.LockObject)
                 {
+                    if (!user.UserState.UserRequestingCurrentPrompt(user).SubmitButton)
+                    {
+                        return BadRequest("You shouldn't be able to time out on this prompt.");
+                    }
+
                     // Cleans invalid fields and replaces with null.
-                    if(user.UserState.CleanUserFormInput(user, ref formData, out error) != UserState.CleanUserFormInputResult.Invalid)
+                    if (user.UserState.CleanUserFormInput(user, ref formData, out error) != UserState.CleanUserFormInputResult.Invalid)
                     {
                         // Handles partial/null inputs.
                         user.UserState.HandleUserTimeout(user, formData);

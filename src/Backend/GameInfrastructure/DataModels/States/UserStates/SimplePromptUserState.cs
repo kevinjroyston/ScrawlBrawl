@@ -54,6 +54,21 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             {
                 toReturn = this.UserTimeoutHandler(user, userInput);
             }
+            else
+            {
+                // TODO: fill empty user inputs with defaults.
+                bool success = this.HandleUserFormInput(
+                    user: user,
+                    userInput: UserFormSubmission.WithDefaults(
+                        partialSubmission: userInput,
+                        prompt: this.GetUserPromptHolder(user).Prompt),
+                    error: out string error);
+                // If succeeded, return since exit.inlet already called.
+                if (success)
+                {
+                    return UserTimeoutAction.None;
+                }
+            }
 
             // TODO: UserTimeoutAction doesnt work if we call exit.inlet prior to returning it
             this.Exit.Inlet(user, UserStateResult.Timeout, null);
