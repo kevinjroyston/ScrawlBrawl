@@ -34,28 +34,31 @@ export class DrawingDirective {
         if (this.premadeDrawing) {
             var img = new Image;
             var ctx = this.ctx;
+            var storeImage=this.storeImage;
             img.onload = function () {
                 console.log("Drawing premade drawing to canvas");
                 ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
+                storeImage();
             };
             console.log("Loading premade drawing");
             img.src = this.premadeDrawing;
-      }
+        }
         if (this.localStorageId) {
           var storedImg=localStorage.getItem(this.localStorageId);
+          var storeImage=this.storeImage;
           if (storedImg) {
             var img = new Image;
             var ctx = this.ctx;
             img.onload = function () {
                 console.log("showing stored drawing");
                 ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
-            }
+                storeImage();
+              }
             console.log("loading stored drawing");
             img.src = storedImg;     
-      }      
+            }      
 
-      }
-      this.storeImage();
+        }
     }
 
   storeImage() {
