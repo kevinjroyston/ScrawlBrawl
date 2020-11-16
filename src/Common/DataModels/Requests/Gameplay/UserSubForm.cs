@@ -32,6 +32,14 @@ namespace Common.DataModels.Requests
 
         public static UserSubForm WithDefaults(UserSubForm partialSubmission, SubPrompt prompt)
         {
+            if (partialSubmission == null)
+            {
+                throw new ArgumentNullException($"Partial submission was null");
+            }
+            if (prompt == null)
+            {
+                throw new ArgumentNullException($"prompt was null");
+            }
             // TODO: default to selecting random choice.
             return new UserSubForm()
             {
