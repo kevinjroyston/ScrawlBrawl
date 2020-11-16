@@ -27,58 +27,56 @@ export class DrawingDirective {
         this.userIsDrawing = false;
     }
 
+    loadPremadeImage(imgStr){
+      if (imgStr) {
+          var img = new Image;
+          var ctx = this.ctx;
+          img.onload = function () {
+              console.log("showing stored drawing");
+              ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
+            }
+          console.log("loading stored drawing");
+          img.src = imgStr;     
+          this.storeImage(imgStr);
+        }
+    }
     ngOnInit() {
         console.log("Clearing canvas");
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
-        if (this.premadeDrawing) {
-            var img = new Image;
-            var ctx = this.ctx;
-            var storeImage=this.storeImage;
-            img.onload = function () {
-                console.log("Drawing premade drawing to canvas");
-                ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
-                storeImage();
-            };
-            console.log("Loading premade drawing");
-            img.src = this.premadeDrawing;
-        }
+        this.loadPremadeImage(this.premadeDrawing);
+
         if (this.localStorageId) {
           var storedImg=localStorage.getItem(this.localStorageId);
-          var storeImage=this.storeImage;
-          if (storedImg) {
-            var img = new Image;
-            var ctx = this.ctx;
-            img.onload = function () {
-                console.log("showing stored drawing");
-                ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
-                storeImage();
-              }
-            console.log("loading stored drawing");
-            img.src = storedImg;     
-            }      
-
+          this.loadPremadeImage(storedImg);
         }
+
     }
 
-  storeImage() {
-    let imgStr = this.element.toDataURL();
+  storeChangedImage(imgStr){
     // write the data to the emitter
     this.drawingEmitter.emit(imgStr);
+    if (this.localStorageId) {
+      localStorage.setItem(this.localStorageId,imgStr);
+    return imgStr;
+  }
+
+  }
+  storeImage(imgStr) {
+    if (!imgStr){
+        imgStr = this.element.toDataURL();
+    }
+    this.storeChangedImage(imgStr);
 
     // store it for an undo
     if (this.undoArray.length >= 20) { this.undoArray.shift(); }
     this.undoArray.push(imgStr);
     this.lastActionWasStoreImage = true;
-    if (this.localStorageId) {
-        localStorage.setItem(this.localStorageId,imgStr);
-    }
-    
   }
 
   stopDrawing() {
     this.userIsDrawing = false;
-    this.storeImage();
+    this.storeImage(null);
   }
 
   onPerformUndo() {
@@ -95,7 +93,7 @@ export class DrawingDirective {
       console.log("Loading undo drawing");
       let imgStr = (this.undoArray.length == 1) ? this.undoArray[0] : this.undoArray.pop();
       img.src = imgStr;
-      this.drawingEmitter.emit(imgStr);
+      this.storeChangedImage(imgStr);
     }
 
   }
