@@ -50,14 +50,14 @@ namespace BackendTests.Common.Code.Helpers
         // TODO add more test cases for assignment
 
         [DataRow(new int[] { 1, 2, 3, 4, 5, 6 }, 3, 5, 10, false)]
-        [DataRow(new int[] { 1, 2, 3, 4, 5, 6 }, 10, 5, 10, true, true)]
+        [DataRow(new int[] { 1, 2, 3, 4, 5, 6 }, 10, 5, 10, true)]
         [DataRow(new int[] { 1, 2, 3, 4, 5, 6 }, 3, 5, 4, false)]
         [DataRow(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 }, 10, 12, 10, false)]
         [DataRow(new int[] { 1, 2, 3, 4, 5, 6 }, 12, 6, 12, true)]
         [DataRow(new int[] { 1, 2, 3 }, 3, 6, 10, false)]
-        [DataRow(new int[] { 1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25 }, 100, 5, 10, true, true)]
+        [DataRow(new int[] { 1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25 }, 100, 5, 10, true)]
         [DataTestMethod]
-        public void Assign(int[] inputIds, int duplicateCount, int groups, int maxPerGroup, bool allowDuplicateIds, bool exceptionExpected = false)
+        public void Assign(int[] inputIds, int duplicateCount, int groups, int maxPerGroup, bool allowDuplicateIds)
         {
             const int rerunCount = 100;
             Exception exc = null;
@@ -76,18 +76,16 @@ namespace BackendTests.Common.Code.Helpers
                         }).Cast<IConstraints<UserCreatedObject>>().ToList();
                     List<UserCreatedObject> inputObjects = inputIds.Select(id => new UserCreatedObject() { Owner = TestUserManager.GetTestUser(id), Id = TestUserManager.GetTestUser(id).Id }).ToList();
 
-                    // Pretty weak testing right now but better than no testing.
-                    if (!exceptionExpected)
+                    List<IGroup<UserCreatedObject>> returnedObjects = MemberHelpers<UserCreatedObject>.Assign(constraints, inputObjects, duplicateCount).ToList();
+                    Assert.AreEqual(groups, returnedObjects.Count());
+                    if(inputIds.Length * duplicateCount > returnedObjects.Sum(group => group.Members.Count()))
                     {
-                        List<IGroup<UserCreatedObject>> returnedObjects = MemberHelpers<UserCreatedObject>.Assign(constraints, inputObjects, duplicateCount).ToList();
-                        Assert.AreEqual(groups, returnedObjects.Count());
-                        Assert.AreEqual(inputIds.Length * duplicateCount, returnedObjects.Sum(group => group.Members.Count()));
-                        Assert.IsTrue(returnedObjects.All(group => group.Members.Count() <= maxPerGroup));
+                        Assert.IsTrue(returnedObjects.All(group => group.Members.Count() == maxPerGroup));
                     }
                     else
                     {
-                        // Temporary.
-                        Assert.ThrowsException<NotImplementedException>(() => MemberHelpers<UserCreatedObject>.Assign(constraints, inputObjects, duplicateCount));
+                        Assert.AreEqual(inputIds.Length * duplicateCount, returnedObjects.Sum(group => group.Members.Count()));
+                        Assert.IsTrue(returnedObjects.All(group => group.Members.Count() <= maxPerGroup));
                     }
                 }
                 catch (Exception e)

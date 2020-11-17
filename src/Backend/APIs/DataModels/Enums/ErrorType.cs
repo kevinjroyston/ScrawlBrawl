@@ -3,6 +3,8 @@
     public enum ErrorType
     {
         UserSubmit,
+        UserAutoSubmit,
+        HurryUser,
         GetContent,
         UnityClient,
     }
