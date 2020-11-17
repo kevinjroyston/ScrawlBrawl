@@ -37,7 +37,7 @@ export class DrawingDirective {
             }
           console.log("loading stored drawing");
           img.src = imgStr;     
-          this.storeImage(imgStr);
+          this.onImageChange(imgStr);
         }
     }
     ngOnInit() {
@@ -53,20 +53,19 @@ export class DrawingDirective {
 
     }
 
-  storeChangedImage(imgStr){
+  emitImageChange(imgStr){
     // write the data to the emitter
     this.drawingEmitter.emit(imgStr);
     if (this.localStorageId) {
       localStorage.setItem(this.localStorageId,imgStr);
-    return imgStr;
+    }
   }
 
-  }
-  storeImage(imgStr) {
+  onImageChange(imgStr) {
     if (!imgStr){
         imgStr = this.element.toDataURL();
     }
-    this.storeChangedImage(imgStr);
+    this.emitImageChange(imgStr);
 
     // store it for an undo
     if (this.undoArray.length >= 20) { this.undoArray.shift(); }
@@ -76,7 +75,7 @@ export class DrawingDirective {
 
   stopDrawing() {
     this.userIsDrawing = false;
-    this.storeImage(null);
+    this.onImageChange(null);
   }
 
   onPerformUndo() {
@@ -93,7 +92,7 @@ export class DrawingDirective {
       console.log("Loading undo drawing");
       let imgStr = (this.undoArray.length == 1) ? this.undoArray[0] : this.undoArray.pop();
       img.src = imgStr;
-      this.storeChangedImage(imgStr);
+      this.emitImageChange(imgStr);
     }
 
   }
