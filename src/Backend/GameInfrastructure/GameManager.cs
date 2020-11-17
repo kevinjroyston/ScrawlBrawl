@@ -22,6 +22,8 @@ namespace Backend.GameInfrastructure
     {
         // TODO: hook this up to applications insights.
         private ILogger<GameManager> Logger { get; }
+
+        public static GameManager Singleton { get; private set; }
         #region User and Object trackers
         private ConcurrentDictionary<string, User> Users { get; } = new ConcurrentDictionary<string, User>();
         private ConcurrentDictionary<string, AuthenticatedUser> AuthenticatedUsers { get; } = new ConcurrentDictionary<string, AuthenticatedUser>();
@@ -84,6 +86,11 @@ namespace Backend.GameInfrastructure
 
         public GameManager(ILogger<GameManager> logger)
         {
+            if (Singleton != null)
+            {
+                throw new Exception("GameManager instantiated twice");
+            }
+            Singleton = this;
             Logger = logger;
         }
 

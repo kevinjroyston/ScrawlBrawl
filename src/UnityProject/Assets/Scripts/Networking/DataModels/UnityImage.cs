@@ -13,7 +13,7 @@ public class UnityImage
     {
         get
         {
-            return InternalPngSprites ?? (InternalPngSprites = _Base64Pngs?.Select(val => TextureUtilities.LoadTextureFromBase64(val)).ToList());
+            return InternalPngSprites ?? (InternalPngSprites = _Base64Pngs?.Where(val=>val!=null).Select(val => TextureUtilities.LoadTextureFromBase64(val)).ToList());
         }
     }
     private List<Sprite> InternalPngSprites = null;

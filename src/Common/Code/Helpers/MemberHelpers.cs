@@ -179,6 +179,12 @@ namespace Common.Code.Helpers
                 duplicatedMembers.AddRange(originalMembers);
             }
 
+            // If all constraints have a max limit, trim the inputs such that source objects are roughly even in duplicate quantity.
+            if (constraints.All(constraint => constraint.MaxMemberCount.HasValue))
+            {
+                duplicatedMembers = Select_Ordered(duplicatedMembers, constraints.Sum(constraints => constraints.MaxMemberCount.Value));
+            }
+            bool optimal = false;
 
             // Try assigning randomly without violating any constraints!
             int currentAssignmentIndex = -1;
@@ -408,13 +414,22 @@ namespace Common.Code.Helpers
                     bestIter = i;
                 }
 
+                // Can't assign any more items.
+                if (assignments.All((tup) => tup.Item1.MaxMemberCount.HasValue && (tup.Item2.Count == tup.Item1.MaxMemberCount.Value)))
+                {
+                    optimal = true;
+                    break;
+                }
+
+                // No invalid constraints
                 if (unassignedMembers.Count <= 0 && constraintViolations <= 0)
                 {
+                    optimal = true;
                     break;
                 }
             }
 
-            if (unassignedMembers.Count > 0 || constraintViolations > 0)
+            if (!optimal)
             {
                 throw new NotImplementedException("Suboptimal assignment resolution not yet implemented.");
             }

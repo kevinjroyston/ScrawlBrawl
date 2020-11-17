@@ -1,4 +1,5 @@
-﻿using Backend.GameInfrastructure.ControlFlows.Enter;
+﻿using Backend.APIs.DataModels.Enums;
+using Backend.GameInfrastructure.ControlFlows.Enter;
 using Backend.GameInfrastructure.ControlFlows.Exit;
 using Backend.GameInfrastructure.DataModels.Enums;
 using Backend.GameInfrastructure.DataModels.States.UserStates;
@@ -166,21 +167,32 @@ namespace Backend.GameInfrastructure.DataModels
 
         public void HurryUser(User user)
         {
-            if (!this.UsersEnteredAndExitedState.ContainsKey(user))
+            try
             {
-                return;
-            }
-
-            (bool entered, bool exited) = this.UsersEnteredAndExitedState[user];
-            if (entered && !exited)
-            {
-                // Set user to hurry mode first!
-                user.StatesTellingMeToHurry.Add(this);
-                // Kick the user into motion so they can hurry through the states.
-                if (user.Status == UserStatus.AnsweringPrompts)
+                if (!this.UsersEnteredAndExitedState.ContainsKey(user))
                 {
-                    user.UserState.HandleUserTimeout(user, new UserFormSubmission());
+                    return;
                 }
+
+                (bool entered, bool exited) = this.UsersEnteredAndExitedState[user];
+                if (entered && !exited)
+                {
+                    // Set user to hurry mode first!
+                    user.StatesTellingMeToHurry.Add(this);
+                    // Kick the user into motion so they can hurry through the states.
+                    if (user.Status == UserStatus.AnsweringPrompts)
+                    {
+                        user.UserState.HandleUserTimeout(user, new UserFormSubmission());
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+
+                // Let GameManager know so it can determine whether or not to abandon the lobby.
+                GameManager.Singleton.ReportGameError(ErrorType.HurryUser, user?.LobbyId, user, e);
+
+                throw;
             }
         }
 
@@ -195,12 +207,24 @@ namespace Backend.GameInfrastructure.DataModels
                 await Task.Delay(millisecondsDelay).ConfigureAwait(false);
             }
 
-            this.HurryUsers();
-
-            // Hacky: If the attached StateExit is specifically a "WaitForStateTimeoutDuration_StateExit", invoke it here.
-            if (this.Exit is WaitForStateTimeoutDuration_StateExit exit)
+            try
             {
-                exit.Trigger();
+                this.HurryUsers();
+
+                // Hacky: If the attached StateExit is specifically a "WaitForStateTimeoutDuration_StateExit", invoke it here.
+                if (this.Exit is WaitForStateTimeoutDuration_StateExit exit)
+                {
+                    exit.Trigger();
+                }
+            }
+            catch (Exception e)
+            {
+                // Let GameManager know so it can determine whether or not to abandon the lobby.
+                // Hacky fix for getting lobby id.
+                // Duplicate logging galore.
+                GameManager.Singleton.ReportGameError(ErrorType.HurryUser, lobbyId: this.UsersEnteredAndExitedState.First().Key.LobbyId,error: e);
+
+                throw;
             }
         }
 

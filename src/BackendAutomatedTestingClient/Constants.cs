@@ -31,7 +31,7 @@ namespace BackendAutomatedTestingClient
             public const string LobbyConfigure = "api/v1/Lobby/Configure";
             public const string LobbyStart = "api/v1/Lobby/Start";
             public const string Games = "api/v1/Lobby/Games";
-            public const string BrowserStart = "http://localhost:50403/game/play?idOverride=";
+            public const string BrowserStart = "http://localhost:50402/play?idOverride=";
         }
 
         public static class MediaType
