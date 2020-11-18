@@ -40,6 +40,25 @@
     border-bottom-right-radius: 5px;
 }
 
+#size-controller{
+  display: flex;
+  align-items: center;
+}
+
+#preview-size-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 60px;
+  margin-left: .25rem;
+}
+
+#preview-size {
+  box-shadow: var(--shadow-md);
+  border-radius: 50%;
+}
+
 .color-input {
   width: 45px;
   height: 45px;

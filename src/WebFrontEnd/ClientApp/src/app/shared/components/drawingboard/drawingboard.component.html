@@ -39,7 +39,12 @@
             <div class="drawb-setting-header">
                 Size
             </div>
-            <input type="range" min="5" max="40" [value]="5" [(ngModel)]="selectedBrushSize">
+            <div id="size-controller">
+                <input type="range" min="5" max="40" [value]="selectedBrushSize" [(ngModel)]="selectedBrushSize">
+                <div id="preview-size-wrapper">
+                    <div id="preview-size" [ngStyle]="{'height': selectedBrushSize + 'px', 'width': selectedBrushSize + 'px', 'backgroundColor': selectedColor}"></div>
+                </div>
+            </div>
         </div>
 
         <div class="drawb-setting" *ngIf="showColorSelector && (!drawingPrompt.colorList)">

@@ -25,7 +25,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
 
     onChange;
     selectedColor: string;
-    selectedBrushSize: number = 15;
+    selectedBrushSize: number = 10;
     drawingOptionsCollapse: boolean = false;
     eraserMode: boolean = false; // Todo make brush-mode enum + group brush options into one object
 
