@@ -1,13 +1,24 @@
 <div class="colorpicker">
   <div *ngIf="!isColorsSpecified">
-    <!-- <div class="color-row">
-      <div class="color-square" *ngFor="let color of priorityColors" [ngStyle]="{'backgroundColor': color}" (click)="pickColor(color)">
+    <div class="color-row-descriptor">
+      Previously Used
+    </div>
+    <div class="color-row">
+      <div class="color-square" *ngFor="let color of pastColors" [ngStyle]="{'backgroundColor': color}" (click)="pickColor(color)">
       </div>
-    </div>  -->
+    </div> 
+
+    <div class="color-row-descriptor">
+      Grayscale
+    </div>
     <div class="color-row">
       <div class="color-square" *ngFor="let color of grayScaleColors" [ngStyle]="{'backgroundColor': color}" (click)="pickColor(color)">
       </div>
     </div> 
+
+    <div class="color-row-descriptor">
+      Rainbow
+    </div>
     <div class="color-grid">
       <div class="color-row" *ngFor="let colorRow of rainbowColors">
         <div class="color-square" *ngFor="let color of colorRow" [ngStyle]="{'backgroundColor': color}" (click)="pickColor(color)">

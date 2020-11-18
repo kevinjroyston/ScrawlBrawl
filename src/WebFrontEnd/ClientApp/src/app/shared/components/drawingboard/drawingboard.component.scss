@@ -41,12 +41,10 @@
 }
 
 .color-input {
-  padding: 1rem;
   width: 45px;
   height: 45px;
   border-radius: 5px;
-  box-shadow: var(--shadow);
-  border: var(--border-grey);
+  box-shadow: var(--shadow-md);
   transition: all .25s ease;
   cursor: pointer;
 }

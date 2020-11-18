@@ -6,7 +6,11 @@
 .color-row {
     display: flex;
     width: 100%;
-    margin-bottom: 1rem;
+}
+
+.color-row-descriptor{
+    margin-left: .5rem; 
+    font-weight: 600;
 }
 
 .color-grid {
