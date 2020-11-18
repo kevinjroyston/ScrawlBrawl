@@ -6,7 +6,7 @@
     <div *ngFor="let option of gameModes[lobby.selectedGameMode].options; let i = index">
         <div class="gamemode-option" *ngIf="option.responseType.toString() === 'Integer'">
             <span>{{ option.description }}</span>
-            <input type="number" [(ngModel)]="option.value" />
+            <input type="number" [(ngModel)]="option.value" [min]="option.minValue" [max]="option.maxValue" />
         </div>
         <div class="gamemode-option" *ngIf="option.responseType.toString() === 'Boolean'">
             <span>{{ option.description }}</span>

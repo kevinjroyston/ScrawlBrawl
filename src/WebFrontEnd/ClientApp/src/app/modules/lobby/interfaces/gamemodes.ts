@@ -4,6 +4,8 @@ namespace GameModes {
         responseType: ResponseType;
         // Response
         value: any;
+        minValue:number;
+        maxValue:number;
     }
     
     export class GameModeMetadata {
