@@ -3,6 +3,11 @@ class PastColorsConstants {
 }
 
 export default class PastColorsService {
+
+    getLastColor = () : string | null => {
+        let pastColors = this.retrievePastColors()
+        return pastColors.length === 0 ? null : pastColors[0]
+    }
     
     retrievePastColors = () => {
         if (localStorage.getItem('colorPicker')) {

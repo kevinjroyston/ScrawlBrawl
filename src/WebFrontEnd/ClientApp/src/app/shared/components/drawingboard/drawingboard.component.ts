@@ -35,10 +35,13 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
         if (this.drawingPrompt && this.drawingPrompt.colorList && this.drawingPrompt.colorList.length > 0) {
             this.selectedColor = this.drawingPrompt.colorList[0];
         }
+        console.log(this.selectedColor);
     }
 
     ngAfterViewInit() {
         // use this if you need to reference any data in drawing directive
+        console.log(this.selectedColor)
+        this.selectedColor = this.drawingDirective.defaultLineColor;
     }
 
     onPerformUndo(): void {

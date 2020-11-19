@@ -39,8 +39,7 @@
                     </div>
 
                     <slider *ngIf="subPrompt.slider" class="SliderHolder" [sliderParameters]="subPrompt.slider" formControlName="slider"></slider>
-
-                    <input formControlName="color" [(colorPicker)]="subPrompt.color" [style.background]="subPrompt.color" [readonly]="true" [cpPosition]="'bottom'" [ngModel]="subPrompt.color" [cpOutputFormat]="'rgba'" [cpAlphaChannel]="'disabled'" *ngIf="subPrompt.colorPicker">
+                    <div *ngIf="subPrompt.colorPicker" class="color-input" (click)='openColorPicker($event, j)' [ngStyle]="{'background-color': subPrompt.color}"></div>
                     <input type="text" class="text-input" formControlName="shortAnswer" *ngIf="subPrompt.shortAnswer">
 
                     <drawingboard *ngIf="subPrompt.drawing" [drawingPrompt]="subPrompt.drawing" formControlName="drawing"></drawingboard>

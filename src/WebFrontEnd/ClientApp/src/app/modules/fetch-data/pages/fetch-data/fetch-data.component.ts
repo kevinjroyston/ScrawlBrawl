@@ -1,13 +1,11 @@
 import { Component, Inject, ViewEncapsulation, Pipe } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
-import { Time } from '@angular/common';
+import { FormBuilder, FormGroup} from '@angular/forms';
 import { DomSanitizer, SafeHtml, SafeStyle, SafeScript, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
-import { MatSlider } from '@angular/material/slider';
-import { MsalService, BroadcastService } from '@azure/msal-angular';
 import { API } from '@core/http/api';
 import { isNullOrUndefined } from 'util';
 import { Router } from '@angular/router';
+import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-sheet';
+import { ColorPickerComponent } from '@shared/components/colorpicker/colorpicker.component';
 
 @Pipe({ name: 'safe' })
 export class Safe {
@@ -49,6 +47,7 @@ export class FetchDataComponent
     constructor(
         formBuilder: FormBuilder,
         router: Router,
+        private _colorPicker: MatBottomSheet,
         @Inject(API) private api: API)
     {
       this.formBuilder = formBuilder;
@@ -63,6 +62,20 @@ export class FetchDataComponent
             this.autoSubmitTimerId = null;
           }
 });
+    }
+
+    handleColorChange = (color: string, subPrompt: number) => {
+        this.userPrompt.subPrompts[subPrompt].color = color
+    }
+
+    openColorPicker = (event: MouseEvent, subPrompt: number): void => {
+        event.preventDefault();
+        const bottomConfig = new MatBottomSheetConfig();
+        bottomConfig.data = {
+            handleColorChange: (color: string) => this.handleColorChange(color, subPrompt),
+            panelClass: 'sb-colorpicker-dialog'
+        }
+        this._colorPicker.open(ColorPickerComponent, bottomConfig)
     }
 
     async fetchUserPrompt() {

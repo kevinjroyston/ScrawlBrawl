@@ -57,6 +57,7 @@
 #preview-size {
   box-shadow: var(--shadow-md);
   border-radius: 50%;
+  background-color: var(--black-primary);
 }
 
 .color-input {
@@ -65,6 +66,7 @@
   border-radius: 5px;
   box-shadow: var(--shadow-md);
   transition: all .25s ease;
+  background-color: var(--black-primary);
   cursor: pointer;
 }
 
@@ -91,10 +93,6 @@
 .drawb-colors {
     display: flex;
     flex-wrap: wrap;
-    &>div {
-        flex-grow: 1;
-        width: 33%;
-    }
 }
 
 .drawb-tools {
