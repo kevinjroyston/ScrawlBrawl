@@ -3,7 +3,7 @@
 </h2>
 
 <mat-dialog-content>
-    <div gameAsset [gameID]='gameModes[selectedGameMode].gameIdString'></div>
+    <div gameAsset [gameAssetClass]="'lobby-descriptions'" [gameAssetID]='gameModes[selectedGameMode].gameIdString'></div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
