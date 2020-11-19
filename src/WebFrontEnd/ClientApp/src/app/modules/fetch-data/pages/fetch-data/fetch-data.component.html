@@ -23,11 +23,10 @@
                         </div>
                     </div>
                     <select class="Dropdown" formControlName="dropdownChoice" *ngIf="subPrompt.dropdown">
-            <option *ngFor="let dropdown of subPrompt.dropdown; let i = index" value="{{i}}">
-              {{dropdown}}
-            </option>
-          </select>
-
+                        <option *ngFor="let dropdown of subPrompt.dropdown; let i = index" value="{{i}}">
+                            {{dropdown}}
+                        </option>
+                    </select>
                     <div *ngIf="subPrompt.answers">
                         <div class="RadioAnswer" *ngFor="let answer of subPrompt.answers; let i = index">
                             <input type="radio" formControlName="radioAnswer" value="{{i}}" id="ra{{i}}b" />
