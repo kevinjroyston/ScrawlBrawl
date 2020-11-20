@@ -9,7 +9,6 @@ export class DrawingDirective {
     lastX:number;
     lastY: number;
     ctx: any;
-    lastActionWasStoreImage: boolean = false;
     @Input() lineColor: string;
     @Input() lineWidth: number;
     @Input() premadeDrawing: string;
@@ -70,7 +69,7 @@ export class DrawingDirective {
     // store it for an undo
     if (this.undoArray.length >= 20) { this.undoArray.shift(); }
     this.undoArray.push(imgStr);
-    this.lastActionWasStoreImage = true;
+    console.log('saved undo '+this.undoArray.length)
   }
 
   stopDrawing() {
@@ -80,8 +79,7 @@ export class DrawingDirective {
 
   onPerformUndo() {
     if (this.undoArray.length > 0) {
-      if ((this.lastActionWasStoreImage) && (this.undoArray.length>1)) { this.undoArray.pop(); }  // the first call to undo would have the value we just stored, we want to go one back
-      this.lastActionWasStoreImage = false;
+      if (this.undoArray.length>1) { this.undoArray.pop(); }  // the first call to undo would have the value we just stored, we want to go one back
       var img = new Image;
       var ctx = this.ctx;
       img.onload = function () {
@@ -89,8 +87,8 @@ export class DrawingDirective {
           ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
           ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
         };
-      console.log("Loading undo drawing");
-      let imgStr = (this.undoArray.length == 1) ? this.undoArray[0] : this.undoArray.pop();
+      console.log('Loading undo drawing '+this.undoArray.length)
+      let imgStr = this.undoArray[this.undoArray.length-1];
       img.src = imgStr;
       this.emitImageChange(imgStr);
     }
@@ -154,7 +152,7 @@ export class DrawingDirective {
     @HostListener('mouseup')
     @HostListener('touchend')
     onmouseup() {
-      console.log("up/end");
+//      console.log("up/end");
       if (this.userIsDrawing) {
 //        event.preventDefault(); not needed since canvas does not care about mouse movements, and preventing affects gestures
 
@@ -165,7 +163,7 @@ export class DrawingDirective {
     @HostListener('mouseleave')
     @HostListener('touchleave')
     onmouseleave() {
-      console.log("mouseleave");
+//      console.log("mouseleave");
 /*  we are now stopping the drawing on a global mouseup / touch end
       if (this.userIsDrawing) {
         event.preventDefault();
