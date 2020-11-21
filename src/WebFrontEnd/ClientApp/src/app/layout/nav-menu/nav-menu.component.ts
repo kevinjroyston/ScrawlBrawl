@@ -1,11 +1,22 @@
 import { Component, HostListener} from '@angular/core';
 import {throttle} from 'app/utils/throttle'
 import { Router } from '@angular/router'; 
+import { trigger, style, animate, transition } from '@angular/animations';
 
 @Component({
   selector: 'app-nav-menu',
   templateUrl: './nav-menu.component.html',
-  styleUrls: ['./nav-menu.component.scss']
+  styleUrls: ['./nav-menu.component.scss'],
+  animations: [
+    trigger('simpleFadeAnimation', [
+      transition(':enter' , [
+        style({ opacity: 0 }),
+        animate('250ms 3400ms', 
+          style({opacity: 1})
+        )
+      ])
+    ])
+  ]
 })
 export class NavMenuComponent {
   isExpanded = false;

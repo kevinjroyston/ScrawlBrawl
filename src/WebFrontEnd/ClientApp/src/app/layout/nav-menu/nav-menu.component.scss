@@ -22,10 +22,15 @@
   margin-right: 10px;
 }
 
+.navbar-open{
+  background: white !important;
+  transition: all .25s ease;
+}
+
 #hamburger {
   display: none;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   margin-top: 5px;
   position: relative;
   transform: rotate(0deg);
@@ -35,7 +40,7 @@
   span {
     display: block;
     position: absolute;
-    height: 4px;
+    height: 3px;
     width: 100%;
     background: black;
     border-radius: 15px;
@@ -99,7 +104,7 @@
 }
 
 .navbar-homepage{ 
-  background: var(--ornamental-pastelyellow);
+  background: transparent;
   box-shadow: none;
   position: fixed;
   top:0;
