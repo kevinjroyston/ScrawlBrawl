@@ -21,7 +21,8 @@ export class ColorPickerComponent implements OnInit {
 
   constructor(
     private _colorPickerRef: MatBottomSheetRef<ColorPickerComponent>, 
-    @Inject(MAT_BOTTOM_SHEET_DATA) public data: ColorPickerData){
+    @Inject(MAT_BOTTOM_SHEET_DATA) public data: ColorPickerData
+  ) {
     let colorPickerService = new ColorPickerService();
     this.pastColorsService = new PastColorsService();
     this.pastColors = this.pastColorsService.retrievePastColors();

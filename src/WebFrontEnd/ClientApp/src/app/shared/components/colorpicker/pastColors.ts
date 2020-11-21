@@ -35,7 +35,7 @@ export default class PastColorsService {
 
     handleIfExists = (color: string) : string[] => {
         let pickedColors = JSON.parse(localStorage.getItem('colorPicker'));
-        let index = pickedColors.indexOf(color)
+        let index = pickedColors.indexOf(color);
 
         if (index > -1) {
             pickedColors.splice(index, 1);
