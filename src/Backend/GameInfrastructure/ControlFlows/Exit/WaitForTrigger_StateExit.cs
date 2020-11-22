@@ -35,7 +35,8 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
         /// </summary>
         public virtual void Trigger()
         {
-            // TODO: add locking if risk of multiple triggers.
+            // TODO: add locking if risk of multiple triggers. Be very weary of deadlock. Don't block any threads, just only trigger once without any blocking
+
 
             // Set the Waiting state outlet at last possible moment in case this.Outlet has been changed.
             this.WaitingState.SetOutlet(this.InternalOutlet);
