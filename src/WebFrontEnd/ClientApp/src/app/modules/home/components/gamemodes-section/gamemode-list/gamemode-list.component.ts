@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { API } from '@core/http/api';
 import GameModes from '@core/models/gamemodes'
+import { trigger, transition, style, animate } from "@angular/animations";
 
 @Component({
   selector: 'app-gamemode-list',
@@ -9,7 +10,7 @@ import GameModes from '@core/models/gamemodes'
 })
 export class GamemodeListComponent implements OnInit {
   gameModes: GameModes.GameModeMetadata[];
-  currentGameMode: number = 0;
+  currentGameMode: number = 1;
 
   constructor(@Inject(API) private api: API) { 
     this.getGames();

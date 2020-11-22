@@ -1,27 +1,29 @@
 :host{
-    width: 100%;
-    height: 100%;
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+    padding: 2rem;
 }
+
 .gamemode {
     display: flex;
-    min-width: 400px;
-    min-height: 550px;
     box-shadow: var(--shadow-lg);
     overflow: hidden;
     flex-direction: column;
     border-radius: 10px;
-    margin: 0 2rem;
+    height: 100%;
 }    
 
 .gamemode-content {
     display: flex;
     flex-direction: column;
-    padding: 1rem;
-    margin-left: 3rem;
+    padding: 1rem 2rem;
+    height: 100%;
+    justify-content: space-between;
 }
 
 .gamemode-text {
-    margin: 2rem 0;
+    margin-bottom: 1rem;
+    font-size: .9rem;
 }
 
 .action-wrapper {
@@ -35,31 +37,26 @@
 }
 
 @media only screen and (max-width: 1200px) {
-    .gamemode {
-        margin: 0 .5rem;
-        padding: .5rem;
-    }
-
-    .gamemode-img{
-        min-width: 300px;
-        max-width: 300px;
+    :host{
+        flex: 0 0 50%;
+        max-width: 50%;
+        padding: 1.5rem;
     }
 }
 
 @media only screen and (max-width: 768px) {
-    .gamemode {
-        flex-direction: column;
-        align-items: center;
+    :host{
+        flex: 0 0 85%;
+        max-width: 85%;
+        padding: 1.5rem;
     }
 
-    .gamemode-content{
-        margin-left: 1rem;
-    }
 }
 
 @media only screen and (max-width: 420px) {
-    .gamemode {
-        margin: 0;
-        padding: 0;
+    :host{
+        flex: 0 0 100%;
+        max-width: 100%;
+        padding: 1.5rem;
     }
 }

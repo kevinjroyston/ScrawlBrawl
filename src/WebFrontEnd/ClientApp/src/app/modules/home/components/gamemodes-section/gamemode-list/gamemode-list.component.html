@@ -1,18 +1,10 @@
 <section>
   <div class="gamemode-list">
-    <div class='gamemodes-row'>
-      <div class="arrow-holder">
-        <button (click)="onPreviousGameMode()" class="control prev">
-          <span class="arrow left"></span>
-        </button>
-      </div>
-      <app-gamemode [gameModeID]="gameModes[currentGameMode].gameIdString">
-      </app-gamemode>
-      <div class="arrow-holder">
-        <button (click)="onNextGameMode()" class="control next">
-          <span class="arrow right"></span>
-        </button>
-      </div>
+    <div class='gamemodes-row carousel'>
+      <ng-container *ngFor="let gameMode of gameModes; let i = index;">
+        <app-gamemode [gameModeID]="gameMode.gameIdString" >
+        </app-gamemode>
+      </ng-container>
     </div>
   </div>
 </section>
