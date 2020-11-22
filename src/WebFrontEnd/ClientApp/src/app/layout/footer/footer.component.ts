@@ -1,45 +1,20 @@
-import { Component, Input, OnInit } from '@angular/core';
-
-const footerLinksOrder = ['Learn More', 'About', 'Contact']
-
-const footerLinks = {
-  'Learn More': [
-    {url: '/', name: "Tutorial"}
-  ],
-  'About': [
-    {url: '/about', name: "Team"},
-    {url: '/', name: "Join Us"}
-  ],
-  'Contact': [
-    {url: '/feedback', name: "Feedback"},
-    {url: '/contact', name: "Contact Us"}
-  ]
-}
-
-const socialLinks = [
-  {name: "Discord"},
-  {name: "Reddit"},
-  {name: "Twitch"},
-  {name: "Twitter"}
-]
+import { Component } from '@angular/core';
+import { FooterService } from './footer.service';
+import {footerLinksOrder, footerLinks, socialLinks} from './footer'
 
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html',
-  styleUrls: ['./footer.component.css']
+  styleUrls: ['./footer.component.scss']
 })
-export class FooterComponent implements OnInit {
+export class FooterComponent {
   sections: any;
   sectionsOrder: any;
   socialLinks: any;
 
-  constructor() { 
+  constructor(public footerService : FooterService) { 
     this.sections = footerLinks;
     this.sectionsOrder = footerLinksOrder;
     this.socialLinks = socialLinks;
   }
-
-  ngOnInit() {
-  }
-
 }
