@@ -16,9 +16,6 @@ namespace Backend.APIs.Controllers.LobbyManagement
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-#if !DEBUG
-    [Authorize(Policy = "LobbyManagement")]
-#endif
     public class LobbyController : ControllerBase
     {
         public LobbyController(ILogger<LobbyController> logger, GameManager gameManager, IServiceProvider serviceProvider, InMemoryConfiguration inMemoryConfiguration)
@@ -37,6 +34,9 @@ namespace Backend.APIs.Controllers.LobbyManagement
 
         [HttpGet]
         [Route("Get")]
+#if !DEBUG
+    [Authorize(Policy = "LobbyManagement")]
+#endif
         public IActionResult GetLobby([FromQuery(Name = "Id")]string testHookId)
         {
             if (!ModelState.IsValid)
@@ -60,6 +60,9 @@ namespace Backend.APIs.Controllers.LobbyManagement
 
         [HttpPost]
         [Route("Create")]
+#if !DEBUG
+    [Authorize(Policy = "LobbyManagement")]
+#endif
         public IActionResult CreateLobby([FromQuery(Name = "Id")]string testHookId)
         {
             if (!ModelState.IsValid)
@@ -103,6 +106,9 @@ namespace Backend.APIs.Controllers.LobbyManagement
 
         [HttpGet]
         [Route("Delete")]
+#if !DEBUG
+    [Authorize(Policy = "LobbyManagement")]
+#endif
         public IActionResult DeleteLobby([FromQuery(Name = "Id")]string testHookId)
         {
             if (!ModelState.IsValid)
@@ -127,6 +133,9 @@ namespace Backend.APIs.Controllers.LobbyManagement
 
         [HttpPost]
         [Route("Configure")]
+#if !DEBUG
+    [Authorize(Policy = "LobbyManagement")]
+#endif
         public IActionResult ConfigureLobby([FromBody]ConfigureLobbyRequest request, [FromQuery(Name ="Id")]string testHookId)
         {
             if (!ModelState.IsValid)
@@ -154,6 +163,9 @@ namespace Backend.APIs.Controllers.LobbyManagement
 
         [HttpGet]
         [Route("Start")]
+#if !DEBUG
+    [Authorize(Policy = "LobbyManagement")]
+#endif
         public IActionResult StartLobby([FromQuery(Name = "Id")]string testHookId)
         {
             if (!ModelState.IsValid)
