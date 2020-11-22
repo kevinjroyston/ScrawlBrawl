@@ -30,7 +30,7 @@ export class GameAssetDirective {
   element;
 
   constructor(http: HttpClient, element: ElementRef) {
-    console.log("Instantiating gameAsset " + element.nativeElement.nodeName);
+    //console.log("Instantiating gameAsset " + element.nativeElement.nodeName);
     this.element = element.nativeElement;
     this.http = http;
   }
@@ -41,7 +41,7 @@ export class GameAssetDirective {
   }
 
   loadGameAsset() {
-    console.log("gameAsset load " + this.gameAssetID);
+    //console.log("gameAsset load " + this.gameAssetID);
 
     if (this.element.nodeName == 'IMG') {
       this.element.src = this.determineImageAssetDestination();

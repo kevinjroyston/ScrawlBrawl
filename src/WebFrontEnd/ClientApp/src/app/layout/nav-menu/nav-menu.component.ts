@@ -3,6 +3,7 @@ import {throttle} from 'app/utils/throttle'
 import { Router, ActivatedRoute } from '@angular/router'; 
 import { trigger, style, animate, transition } from '@angular/animations';
 import { Location } from '@angular/common';
+import { NavMenuService } from './nav-menu.service';
 
 @Component({
   selector: 'app-nav-menu',
@@ -24,7 +25,7 @@ export class NavMenuComponent {
   isHomePage = true;
   isPastHero = false;
 
-  constructor(private router: Router, public activatedRoute: ActivatedRoute, public location: Location){
+  constructor(private router: Router, public activatedRoute: ActivatedRoute, public location: Location, public NavMenuService : NavMenuService){
     this.checkRoute(location.prepareExternalUrl(location.path()));
     router.events.subscribe((val) => { 
       this.checkRoute(this.router.url)
@@ -42,7 +43,6 @@ export class NavMenuComponent {
   }
 
   checkRoute = (url: string) : void => {
-    console.log(url);
     url === '/' ? this.isHomePage = true : this.isHomePage = false
   }
 

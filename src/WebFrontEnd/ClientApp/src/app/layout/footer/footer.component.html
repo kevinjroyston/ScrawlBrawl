@@ -1,9 +1,11 @@
-<div class="footer-wrapper">
-  <div class="footer">
+<div class="footer" *ngIf="footerService.visible">
+  <div class="footer-inner">
     <div class="footer-links">
       <div class="footer-section">
         <a [routerLink]="['/']">
-          <img class="footer-brand" alt="Scrawl Brawl" src="/assets/SB_Logo_Transp_Shadow.png">
+          <div class="footer-logo">
+            <scrawlbrawl-logo-horizontal strokeColor="rgb(30, 30, 30)"></scrawlbrawl-logo-horizontal>
+          </div>
         </a>
       </div>
       <div class="footer-section" *ngFor="let section of sectionsOrder">
@@ -12,26 +14,32 @@
         </div>
         <div class="footer-section-links">
           <div class="footer-link" *ngFor="let link of sections[section]">
-            <a [routerLink]=[link.url]>{{link.name}}</a>
-          </div>
-        </div>
-      </div>
-      <div class='footer-section'>
-        <div class="footer-section-title">
-          Socials
-        </div>
-        <div class="footer-section-links">
-          <div class="footer-link" *ngFor="let link of socialLinks">
-            <a>i {{link.name}}</a>
+            <a [routerLink]=[link.url]>
+              {{link.name}}
+            </a>
           </div>
         </div>
       </div>
     </div>
+  
     <div class="footer-bottom">
-      <div>Drawn Together. Polled Apart.</div>
-      <div>© 2020. All Rights Reserved.</div>
-      
+        <div class="footer-bottom-tagline">
+          © ScrawlBrawl 2020
+        </div>
+        <div class="socials">
+          <a href="https://twitter.com" target="_blank">
+            <twitter-icon></twitter-icon>
+          </a>
+          <a href="https://twitch.com" target="_blank">
+            <twitch-icon></twitch-icon>
+          </a>
+          <a href="https://facebook.com" target="_blank">
+            <facebook-icon></facebook-icon>
+          </a>
+          <a href="https://youtube.com" target="_blank">
+            <youtube-icon></youtube-icon>
+          </a>
+      </div>
     </div>
   </div>
 </div>
-
