@@ -67,5 +67,14 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             }
             return true;
         }
+        public override UserTimeoutAction HandleUserTimeout(User user, UserFormSubmission userInput)
+        {
+            if (!this.UsersToPrompt.Contains(user))
+            {
+                throw new Exception("User should not have triggered timeout.");
+            }
+
+            return base.HandleUserTimeout(user, userInput);
+        }
     }
 }

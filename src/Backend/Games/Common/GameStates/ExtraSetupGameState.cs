@@ -12,6 +12,7 @@ using static System.FormattableString;
 using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
 using Common.Code.Extensions;
+using System.Collections.Generic;
 
 namespace Backend.Games.Common.GameStates
 {

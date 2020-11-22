@@ -70,7 +70,7 @@ public class GenericView : ITVView
         if (ImagePrefab != null && ImageDropZone != null && (UnityView?._UnityImages?.Any() ?? false))
         {
             // TODO: below causes sprite to be created an extra time. consider caching all the base64 sprites or using RawImage.
-            LoadAllImages(UnityView._UnityImages.ToList());
+            LoadAllImages(UnityView._UnityImages.Where(img=>img!=null).ToList());
             ImageDropZone.SetActive(true);
         }
         else

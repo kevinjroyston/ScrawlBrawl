@@ -33,7 +33,8 @@ namespace Backend.GameInfrastructure.ControlFlows
             }
             else
             {
-                HandleUserTimeout(user, new UserFormSubmission());
+                // TODO: May need to pass in prompt rather than getting from user.UserState but should be okay for now.
+                HandleUserTimeout(user, UserFormSubmission.WithNulls(user.UserState?.UserRequestingCurrentPrompt(user)));
             }
         }
 

@@ -90,7 +90,6 @@ namespace Backend.Games.KevinsGames.Mimic
             int numSets = (int)gameModeOptions[(int)GameModeOptions.NumSets].ValueParsed;
             int maxVoteDrawings = (int)gameModeOptions[(int)GameModeOptions.MaxVoteDrawings].ValueParsed;
             int gameLength = (int)gameModeOptions[(int)GameModeOptions.GameLength].ValueParsed;
-            TimeSpan? setupTimer = null;
             TimeSpan? drawingTimer = null;
             TimeSpan? votingTimer = null;
             if (gameLength > 0)
@@ -145,7 +144,7 @@ namespace Backend.Games.KevinsGames.Mimic
                                     RoundTracker drawingsRoundTracker = new RoundTracker();
                                     roundTrackers.Add(drawingsRoundTracker);
                                     drawingsRoundTracker.originalDrawer = originalDrawing.Owner;
-                                    drawingsRoundTracker.UsersToUserDrawings.AddOrUpdate(originalDrawing.Owner, originalDrawing, (User user, UserDrawing drawing) => randomizedDrawings.First());
+                                    drawingsRoundTracker.UsersToUserDrawings.AddOrUpdate(originalDrawing.Owner, originalDrawing, (User user, UserDrawing drawing) => originalDrawing);
 
                                     DisplayOriginal_GS displayGS = new DisplayOriginal_GS(
                                         lobby: lobby,
@@ -153,7 +152,7 @@ namespace Backend.Games.KevinsGames.Mimic
                                         displayDrawing: originalDrawing);
                                     CreateMimics_GS mimicsGS = new CreateMimics_GS(
                                         lobby: lobby,
-                                        roundTracker: roundTrackers.Last(),
+                                        roundTracker: drawingsRoundTracker,
                                         drawingTimeDuration: extendedDrawingTimer
                                         );
                                     mimicsGS.AddExitListener(() =>

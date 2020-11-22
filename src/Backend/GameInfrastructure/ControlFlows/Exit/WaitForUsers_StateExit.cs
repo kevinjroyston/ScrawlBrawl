@@ -53,14 +53,21 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
             // TODO: Fix bug. User switching from active to inactive will currently not prompt a re-calculation of this state
             if (!this.Triggered && this.GetUsers(this.UsersToWaitForType).IsSubsetOf(this.UsersWaiting))
             {
+                bool triggeringThread = false;
                 lock (this.TriggeredLock)
                 {
                     if (!this.Triggered && this.GetUsers(this.UsersToWaitForType).IsSubsetOf(this.UsersWaiting))
                     {
                         this.Triggered = true;
-                        // TODO: This is not sufficient for WaitForActiveUsers
-                        this.Trigger();
+                        triggeringThread = true;
                     }
+                }
+
+                // Cannot call this from within a lock, can only be called by one thread. Other threads will just go into
+                // waiting mode :)
+                if (triggeringThread)
+                {
+                    this.Trigger();
                 }
             }
         }

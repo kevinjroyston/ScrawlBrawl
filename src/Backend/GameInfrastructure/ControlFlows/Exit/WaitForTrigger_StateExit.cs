@@ -4,6 +4,7 @@ using Backend.GameInfrastructure.DataModels.States.UserStates;
 using Common.DataModels.Requests;
 using Common.DataModels.Responses;
 using System;
+using System.Collections.Generic;
 
 namespace Backend.GameInfrastructure.ControlFlows.Exit
 {
@@ -18,7 +19,7 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
         /// Initializes a new <see cref="WaitForTrigger_StateExit"/>.
         /// </summary>
         /// <param name="waitingPromptGenerator">The prompt generator to use while waiting for the trigger. The outlet of this state will be overwritten</param>
-        public WaitForTrigger_StateExit(Func<User,UserPrompt> waitingPromptGenerator = null) : base()
+        public WaitForTrigger_StateExit(Func<User, UserPrompt> waitingPromptGenerator = null) : base()
         {
             this.WaitingState = new SimplePromptUserState(promptGenerator: waitingPromptGenerator ?? SimplePromptUserState.DefaultWaitingPrompt);
             this.WaitingState.AddPerUserExitListener((User user) => this.InvokeEntranceListeners(user));
@@ -34,6 +35,8 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
         /// </summary>
         public virtual void Trigger()
         {
+            // TODO: add locking if risk of multiple triggers.
+
             // Set the Waiting state outlet at last possible moment in case this.Outlet has been changed.
             this.WaitingState.SetOutlet(this.InternalOutlet);
             this.WaitingState.ForceChangeOfUserStates(UserStateResult.Success);

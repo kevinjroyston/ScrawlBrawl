@@ -1,11 +1,15 @@
 ﻿using Backend.GameInfrastructure.DataModels.Users;
 using Backend.Games.Common.DataModels;
+using Common.DataModels.Interfaces;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Backend.Games.BriansGames.TwoToneDrawing.DataModels
 {
     public class ChallengeTracker
+        : Constraints<User>
     {
         /// <summary>
         /// The user who came up with this challenge
@@ -30,6 +34,9 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.DataModels
         public ConcurrentDictionary<string, ConcurrentDictionary<string, TeamUserDrawing>> TeamIdToDrawingMapping { get; set; } = new ConcurrentDictionary<string, ConcurrentDictionary<string, TeamUserDrawing>>();
 
         public ConcurrentDictionary<string, ConcurrentBag<User>> TeamIdToUsersWhoVotedMapping { get; set; } = new ConcurrentDictionary<string, ConcurrentBag<User>>();
+
         #endregion
+
+        public override bool? AllowDuplicateIds => false;
     }
 }

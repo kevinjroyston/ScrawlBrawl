@@ -18,6 +18,7 @@ using Backend.GameInfrastructure.DataModels;
 using Backend.APIs.DataModels.Enums;
 using Common.Code.Extensions;
 using Common.DataModels.UnityObjects;
+using Backend.GameInfrastructure.ControlFlows;
 
 namespace Backend.GameInfrastructure
 {
@@ -298,6 +299,11 @@ namespace Backend.GameInfrastructure
                 case EndOfGameRestartType.Disband:
                     UnregisterAllUsers();
                     InitializeAllGameStates();
+
+                    // Banish the unregistered user to the shadow realm while it waits to be garbage collected.
+                    previousEndOfGameRestart.Transition(new WaitForUserInput_BlackholeInletConnector(
+                        awaitingInput: (User user) => true,
+                        handleUserTimeout: (User user, UserFormSubmission input) => UserTimeoutAction.None));
                     break;
                 case EndOfGameRestartType.ResetScore:
                     InitializeAllGameStates();

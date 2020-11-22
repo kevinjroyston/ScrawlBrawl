@@ -196,23 +196,24 @@ namespace Backend.Games.BriansGames.BattleReady
             IReadOnlyList<PeopleUserDrawing> legsDrawings = new List<PeopleUserDrawing>();
             setupDrawing.AddExitListener(() =>
             {
+                List<PeopleUserDrawing> orderedDrawings = Drawings.OrderBy(drawing => drawing.CreationTime).ToList();
                 // Trim extra prompts/drawings.
                 headDrawings = MemberHelpers<PeopleUserDrawing>.Select_Ordered(
-                    Drawings.ToList().FindAll((drawing) => drawing.Type == DrawingType.Head),
+                    orderedDrawings.FindAll((drawing) => drawing.Type == DrawingType.Head),
                     expectedDrawingsPerUser * lobby.GetAllUsers().Count / 3);
 
                 bodyDrawings = MemberHelpers<PeopleUserDrawing>.Select_Ordered(
-                    Drawings.ToList().FindAll((drawing) => drawing.Type == DrawingType.Body),
+                    orderedDrawings.FindAll((drawing) => drawing.Type == DrawingType.Body),
                     expectedDrawingsPerUser * lobby.GetAllUsers().Count / 3);
 
                 legsDrawings = MemberHelpers<PeopleUserDrawing>.Select_Ordered(
-                    Drawings.ToList().FindAll((drawing) => drawing.Type == DrawingType.Legs),
+                    orderedDrawings.FindAll((drawing) => drawing.Type == DrawingType.Legs),
                     expectedDrawingsPerUser * lobby.GetAllUsers().Count / 3);
 
             });
             setupPrompt.AddExitListener(() =>
             {
-                battlePrompts = MemberHelpers<Prompt>.Select_Ordered(Prompts.ToList(), numPromptsPerRound * numRounds);
+                battlePrompts = MemberHelpers<Prompt>.Select_Ordered(Prompts.OrderBy(prompt=>prompt.CreationTime).ToList(), numPromptsPerRound * numRounds);
                 foreach(Prompt prompt in battlePrompts)
                 {
                     prompt.MaxMemberCount = numUsersPerPrompt;

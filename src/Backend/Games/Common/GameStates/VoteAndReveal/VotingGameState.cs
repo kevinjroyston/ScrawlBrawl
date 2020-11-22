@@ -30,7 +30,10 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
                 usersToPrompt: votingUsers ?? lobby.GetAllUsers().ToList(),
                 promptGenerator: votingUserPromptGenerator,
                 formSubmitHandler: votingFormSubmitHandler,
-                //userTimeoutHandler: votingTimeoutHandler,
+                userTimeoutHandler: (user, userFormSubmission) => {
+                    votingTimeoutHandler(user, userFormSubmission);
+                    return GameInfrastructure.DataModels.Enums.UserTimeoutAction.None;
+                },
                 maxPromptDuration: votingTime,
                 exit: new WaitForUsers_StateExit(lobby: lobby, waitingPromptGenerator: waitingPromptGenerator));
 
