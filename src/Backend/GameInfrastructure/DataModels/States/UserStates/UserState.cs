@@ -9,7 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
-
+using System.Collections.Generic;
 
 namespace Backend.GameInfrastructure.DataModels.States.UserStates
 {
@@ -118,11 +118,15 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             Debug.Assert(this.SpecialCallbackAppliedToAllUsersInState == null, "Shouldn't be applying more than 1 special callback.");
             this.SpecialCallbackAppliedToAllUsersInState = specialCallback;
 
-            foreach ((User user, (bool entered, bool exited)) in this.UsersEnteredAndExitedState.ToList())
+            foreach (User user in this.UsersEnteredAndExitedState.Keys.ToList())
             {
-                if (entered && !exited)
+                lock (user.LockObject)
                 {
-                    specialCallback(user);
+                    (bool entered, bool exited) = this.UsersEnteredAndExitedState[user];
+                    if (entered && !exited)
+                    {
+                        specialCallback(user);
+                    }
                 }
             }
         }

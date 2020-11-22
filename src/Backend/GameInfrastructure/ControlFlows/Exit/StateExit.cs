@@ -43,11 +43,11 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
                 {
                     if (!CalledListeners)
                     {
-                        CalledListeners = true;
                         foreach (Action listener in Listeners)
                         {
                             listener.Invoke();
                         }
+                        CalledListeners = true;
                     }
                 }
             }

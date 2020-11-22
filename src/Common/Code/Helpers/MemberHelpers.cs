@@ -414,8 +414,8 @@ namespace Common.Code.Helpers
                     bestIter = i;
                 }
 
-                // Can't assign any more items.
-                if (assignments.All((tup) => tup.Item1.MaxMemberCount.HasValue && (tup.Item2.Count == tup.Item1.MaxMemberCount.Value)))
+                // Can't assign any more items and no invalid constraints
+                if ((assignments.All((tup) => tup.Item1.MaxMemberCount.HasValue && (tup.Item2.Count == tup.Item1.MaxMemberCount.Value))) && (unassignedMemberPenalty * unassignedMembers.Count >= constraintViolations))
                 {
                     optimal = true;
                     break;

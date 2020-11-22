@@ -90,7 +90,8 @@ namespace Backend.GameInfrastructure.DataModels.Users
         public DateTime? EarliestStateTimeout { get; private set; }
 
         /// <summary>
-        /// Lock used for ensuring only one User form submission is being processed at a time.
+        /// Lock used for ensuring user state is only read/written to by one thread at a time.
+        /// Current Threads: CurrentContentController, FormSubmitController, AutoFormSubmitController, State timeout threads.
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]

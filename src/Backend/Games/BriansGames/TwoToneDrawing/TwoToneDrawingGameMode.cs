@@ -126,11 +126,13 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                 {
                     if (counter < challenges.Count)
                     {
-                        return new StateChain(states: new List<State>
-                        {
-                            GetVotingAndRevealState(challenges[counter], votingTimer),
-                            (counter == challenges.Count - 1) ? new ScoreBoardGameState(lobby, "Final Scores") : new ScoreBoardGameState(lobby),
-                        });
+                        return new StateChain(stateGenerator: (int i) => {
+                            switch(i)
+                            {
+                                case 0: return GetVotingAndRevealState(challenges[counter], votingTimer);
+                                case 1: return ((counter == challenges.Count - 1) ? new ScoreBoardGameState(lobby, "Final Scores") : new ScoreBoardGameState(lobby));
+                                default: return null;
+                            }});
                     }
                     else
                     {
@@ -230,27 +232,6 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                         return currentDictionary;
                     });
                 challenge.TeamIdToUsersWhoVotedMapping.GetOrAdd(kvp.Value.TeamId, _ => new ConcurrentBag<User>());
-            }
-            int count = 0;
-
-            for (int i = 0; i < 500 && count < 133; i++)
-            {
-                var teamIds = challenge.TeamIdToDrawingMapping.Keys.ToList();
-                string teamId1 = teamIds[Rand.Next(teamIds.Count)];
-                string teamId2 = teamIds[Rand.Next(teamIds.Count)];
-                if (teamId1 == teamId2)
-                {
-                    continue;
-                }
-                var colors = challenge.TeamIdToDrawingMapping[teamId1].Keys.ToList();
-                string color = colors[Rand.Next(colors.Count)];
-                TeamUserDrawing userDrawing1 = challenge.TeamIdToDrawingMapping[teamId1][color];
-                TeamUserDrawing userDrawing2 = challenge.TeamIdToDrawingMapping[teamId2][color];
-                challenge.TeamIdToDrawingMapping[teamId1][color] = userDrawing2;
-                challenge.TeamIdToDrawingMapping[teamId2][color] = userDrawing1;
-                userDrawing1.TeamId = teamId2;
-                userDrawing2.TeamId = teamId1;
-                count++;
             }
         }
         public void ValidateOptions(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)

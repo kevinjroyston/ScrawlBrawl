@@ -106,10 +106,11 @@ namespace Backend.GameInfrastructure
                 DeleteLobby(lobbyId);
             }
 
-            if (user != null)
+            // All users or no users for now.
+            /*if (user != null)
             {
                 UnregisterUser(user);
-            }
+            }*/
         }
 
         public User MapIdentifierToUser(string identifier, out bool newUser)
