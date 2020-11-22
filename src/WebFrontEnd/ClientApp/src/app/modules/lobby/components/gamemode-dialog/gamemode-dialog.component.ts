@@ -51,8 +51,8 @@ export class GamemodeDialogComponent implements OnInit {
     body.options = JSON.parse(JSON.stringify(this.gameModes[this.lobby.selectedGameMode].options, ['value']));
     var bodyString = JSON.stringify(body);
 
-    let configureRequest = this.api.request({ type: "Lobby", path: "Configure", body: bodyString })
-    let lobbyRequest = this.api.request({ type: "Lobby", path: "Start" })
+    let configureRequest = this.api.request({ type: "Lobby", path: "Configure", body: bodyString });
+    let lobbyRequest = this.api.request({ type: "Lobby", path: "Start" });
 
     configureRequest.subscribe({
         next: () => {
