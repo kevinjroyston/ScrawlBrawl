@@ -2,25 +2,24 @@
     width: 100%;
 }
 
-.feedback {
-    width: 100%;
+.faq-wrapper{
+    display:flex;
     height: 100%;
-    display: flex;
-    align-items: center;
+    width: 100%;
     justify-content: center;
+    align-items: center;
 }
 
-.feedback-card {
+.faq-card {
     background-color: white;
     box-shadow: var(--shadow-md);
-    width: 400px;
+    width: 600px;
     padding: 1.5rem;
     margin: 1rem;
     border-radius: 5px;
-    overflow: hidden;
+    overflow: hidden
 }
 
-.feedback-text {
-    padding: 1.5rem 0;
-    font-size: .9rem;
+.qas{
+    margin-top: 1.75rem;
 }
