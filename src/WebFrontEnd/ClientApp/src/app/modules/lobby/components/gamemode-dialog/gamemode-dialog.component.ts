@@ -1,15 +1,16 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import {Subscription} from 'rxjs'
+import { API } from '@core/http/api';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import Lobby from '../../interfaces/lobby';
-import GameModes from '../../interfaces/gamemodes';
+import Lobby from '@core/models/lobby';
+import GameModes from '@core/models/gamemodes';
 import { ErrorService } from '@modules/lobby/services/error.service';
 
 interface GameModeDialogData {
   gameModes: GameModes.GameModeMetadata
   lobby: Lobby.LobbyMetadata
   error: string
-  onStart: () => void
+  onGetLobby: () => void
 }
 
 @Component({
@@ -21,16 +22,17 @@ export class GamemodeDialogComponent implements OnInit {
   gameModes: GameModes.GameModeMetadata
   lobby: Lobby.LobbyMetadata
   error: string
+  onGetLobby: () => void
   errorSubscription: Subscription
-  onStart: () => void
 
   constructor(
     private dialogRef: MatDialogRef<GamemodeDialogComponent>,
     public errorService: ErrorService,
-    @Inject(MAT_DIALOG_DATA) public data: GameModeDialogData) {
+    @Inject(MAT_DIALOG_DATA) public data: GameModeDialogData,
+    @Inject(API) private api: API) {
     this.gameModes = data.gameModes;
     this.lobby = data.lobby;
-    this.onStart = data.onStart;
+    this.onGetLobby = data.onGetLobby;
   }
 
   ngOnInit() {
@@ -43,11 +45,37 @@ export class GamemodeDialogComponent implements OnInit {
     this.errorSubscription.unsubscribe();
   }
 
-  onStartLobby = () => {
-    this.onStart();
+  onStartLobby() : void {
+    var body = new Lobby.ConfigureLobbyRequest();
+    body.gameMode = this.lobby.selectedGameMode;
+    body.options = JSON.parse(JSON.stringify(this.gameModes[this.lobby.selectedGameMode].options, ['value']));
+    var bodyString = JSON.stringify(body);
+
+    let configureRequest = this.api.request({ type: "Lobby", path: "Configure", body: bodyString });
+    let lobbyRequest = this.api.request({ type: "Lobby", path: "Start" });
+
+    configureRequest.subscribe({
+        next: () => {
+            lobbyRequest.subscribe({
+                next: () => { 
+                    this.onGetLobby()
+                    this.closeDialog();
+                },
+                error: (error) => { 
+                    this.error = error.error; 
+                    this.errorService.announceError(error.error); 
+                    this.onGetLobby() 
+                }
+            })
+        },
+        error: (error) => { 
+            this.error = error.error; 
+            this.onGetLobby(); 
+        }
+    })
   }
 
-  close() {
+  closeDialog() {
     this.dialogRef.close();
   }
 }

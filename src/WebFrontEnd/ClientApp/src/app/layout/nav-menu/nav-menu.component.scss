@@ -22,10 +22,15 @@
   margin-right: 10px;
 }
 
+.navbar-open{
+  background: white !important;
+  transition: all .25s ease;
+}
+
 #hamburger {
   display: none;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   margin-top: 5px;
   position: relative;
   transform: rotate(0deg);
@@ -35,7 +40,7 @@
   span {
     display: block;
     position: absolute;
-    height: 4px;
+    height: 3px;
     width: 100%;
     background: black;
     border-radius: 15px;
@@ -79,6 +84,7 @@
   transition: all .3s ease;
   height: 40px;
   width: 250px;
+  cursor: pointer;
 }
 
 .navbar-logo:hover{
@@ -143,7 +149,6 @@
   .navbar-right {
     display: none;
     flex-direction: column;
-    background-color: var(--ornamental-pastelblue);
     color: white !important;
     margin-right:0;
     width: 100%;

@@ -58,6 +58,20 @@ simplebutton {
   margin-top: 1rem;
 }
 
+.color-input {
+  width: 100%;
+  height: 45px;
+  border-radius: 5px;
+  box-shadow: var(--shadow-md);
+  transition: all .25s ease;
+  background-color: var(--black-primary);
+  cursor: pointer;
+}
+
+.color-input:hover {
+  transform: scale(1.04);
+}
+
 .subprompt {
   width: 100%;
   margin-bottom: 1.5rem;

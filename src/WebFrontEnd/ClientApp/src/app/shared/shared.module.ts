@@ -1,4 +1,4 @@
-import { NgModule,  CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import { NgModule,  CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from './material.module';
@@ -17,11 +17,11 @@ import { RouterModule } from '@angular/router';
 import { IconButtonComponent} from './components/iconbutton/iconbutton.component'
 import { GameAssetDirective} from './components/gameassetdirective.component'
 //SVGs Import/Export these as module later
-import { GreenMoustacheBrushSVG} from './components/svgs/characters/green-moustache-brush';
-import {RedPencilOnBluePencilSVG} from './components/svgs/characters/red-pencil-on-blue-pencil';
-import {ComingSoonSVG} from './components/svgs/characters/coming-soon'
-import {ScrawlBrawlLogoHorizontal} from './components/svgs/branding/scrawlbrawl-horizontal';
-import {EraserSVG} from './components/svgs/icons/eraser';
+import { GreenMoustacheBrushSVG } from './components/svgs/characters/green-moustache-brush';
+import { RedPencilOnBluePencilSVG } from './components/svgs/characters/red-pencil-on-blue-pencil';
+import { ComingSoonSVG } from './components/svgs/characters/coming-soon'
+import { ScrawlBrawlLogoHorizontal } from './components/svgs/branding/scrawlbrawl-horizontal';
+import { EraserSVG } from './components/svgs/icons/eraser';
 import { ScrawlBrawlLogoVertical } from './components/svgs/branding/scrawlbrawl-vertical';
 import { GreenBrushCharacter } from './components/svgs/characters/greenbrush';
 import { FeatherCharacter } from './components/svgs/characters/feather';
@@ -34,6 +34,7 @@ import { TwitterIcon } from './components/svgs/socials/twitter';
 import { YoutubeIcon } from './components/svgs/socials/youtube';
 import { FacebookIcon } from './components/svgs/socials/facebook';
 import { FeatherQuestion } from './components/svgs/branding/feather-question';
+import { ColorPickerComponent } from './components/colorpicker/colorpicker.component';
 
 @NgModule({
   imports: [
@@ -51,6 +52,7 @@ import { FeatherQuestion } from './components/svgs/branding/feather-question';
   declarations: [
     DrawingBoard,
     Slider,
+    ColorPickerComponent,
     ScrawlButtonComponent,
     SimpleButtonComponent,
     DrawingDirective,

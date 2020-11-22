@@ -1,4 +1,7 @@
 import { Directive, ElementRef, HostListener, forwardRef, Input, Output, EventEmitter } from '@angular/core';
+import {throttle} from 'app/utils/throttle'
+import PastColorsService from './colorpicker/pastColors';
+
 
 @Directive({
     selector: '[appDrawing]',
@@ -15,13 +18,15 @@ export class DrawingDirective {
     @Input() eraserMode: boolean;
     @Input() localStorageId: string;
     @Output() drawingEmitter = new EventEmitter();
-    defaultLineColor: string = "rgba(87,0,132,255)";
+    defaultLineColor: string;
     element;
     undoArray: string[] = [];
 
     constructor(element: ElementRef) {
         console.log("Instantiating canvas");
         this.element = element.nativeElement;
+        let pastColorsService = new PastColorsService();
+        this.defaultLineColor = pastColorsService.getLastColor() || 'rgb(0,0,0)';
         this.ctx = element.nativeElement.getContext('2d');
         this.userIsDrawing = false;
     }
@@ -173,8 +178,10 @@ export class DrawingDirective {
 
 */
     }
-
-  @HostListener('window:scroll', ['$event']) onScrollEvent($event) {
+  
+  @HostListener('window:scroll', ['$event']) 
+  @throttle(200)
+  onScrollEvent($event) {
     console.log("scrolling");
     if (this.userIsDrawing) {
       this.stopDrawing();

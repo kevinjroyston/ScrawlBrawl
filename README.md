@@ -1,4 +1,6 @@
-# RoystonGame
+# ScrawlBrawl
+A game built for everyone by anyone. Put your wordsmithing and drawing skills to the test with one of many game modes, perfect for small gatherings and huge events alike.
+
 Still a work in progress. Reach out to us if you are interested in contributing!
 
 ## Developer Setup (Windows only):
@@ -21,4 +23,11 @@ Disclaimer: Running this project in this manner involves adding an exclusion to 
   - Edit the ApplicationHost.config file to include a binding for your LAN IP (ctrl+f 'localhost' and add a new entry)
   - Run Visual Studio as an administrator (otherwise IIS express can't be bound to your LAN IP)
   - Ensure the server and client are on the same wifi, enter 'http://[yourip]:[yourport]' in a web browser
-
+  
+  
+## How To Simulate Players Locally For Debugging/Playthrough
+### Using Multiple Browsers
+  1. Start up x browsers (chrome, edge, etc + incognito)
+### Using AutomatedTestingClient
+  1. Run executable with "-browsers -users 4 -games "Chaotic Cooperation" -defaultparams"
+  2. Create breakpoint on some point of the test

@@ -146,6 +146,10 @@ namespace Backend.APIs.Controllers
                     },
                     new SubPrompt
                     {
+                        ColorPicker=true
+                    },
+                    new SubPrompt
+                    {
                         Selector = new SelectorPromptMetadata
                         {
                             WidthInPx=315,

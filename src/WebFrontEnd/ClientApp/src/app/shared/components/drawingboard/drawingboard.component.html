@@ -39,7 +39,12 @@
             <div class="drawb-setting-header">
                 Size
             </div>
-            <input type="range" min="5" max="40" [value]="5" [(ngModel)]="selectedBrushSize">
+            <div id="size-controller">
+                <input type="range" min="5" max="40" [value]="selectedBrushSize" [(ngModel)]="selectedBrushSize">
+                <div id="preview-size-wrapper">
+                    <div id="preview-size" [ngStyle]="{'height': selectedBrushSize * 1.3 + 'px', 'width': selectedBrushSize * 1.3 + 'px', 'backgroundColor': selectedColor}"></div>
+                </div>
+            </div>
         </div>
 
         <div class="drawb-setting" *ngIf="showColorSelector && (!drawingPrompt.colorList)">
@@ -47,7 +52,8 @@
                 Color
             </div>
             <div class='drawb-colors'>
-                <input type="color" (click)='handleColorPickerOnClick($event.target)' [(ngModel)]="selectedColor" [value]="selectedColor">
+                <div class="color-input" (click)='openColorPicker($event)' [ngStyle]="{'background-color': selectedColor}">
+                </div>
             </div>
         </div>
 

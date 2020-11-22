@@ -1,11 +1,13 @@
 <section class="hero-section">
-  <div class="hero-content">
+  <div @simpleFadeAnimation class="hero-content">
     <div class="cast">
-      <img [@simpleFadeAnimation]="'fastin'" class='hero-image' src="assets/svgs/hero-logo.svg"/>
+      <img class='hero-image' src="assets/svgs/hero-logo.svg"/>
     </div>
-    <h2 [@simpleFadeAnimation]="'slowin'" class="catchphrase">
-      Drawn Together.
-      Polled Apart.
-    </h2>
+    <div class="catchphrase">
+      <h2>Drawn Together.</h2><h2>Polled Apart.</h2>
+    </div>
+    <div id="mobile-play">
+      <scrawlbutton color="green" link='/play' action>Join Game</scrawlbutton>
+    </div>
   </div>
 </section>

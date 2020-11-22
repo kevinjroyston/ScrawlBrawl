@@ -14,13 +14,13 @@
             <!-- <input type="checkbox" id="bool-switch-{{i}}" checked="" [(ngModel)]="option.value" > -->
         </div>
     </div>
-    <div class="Error" *ngIf="error">
+    <div class="error" *ngIf="error">
         {{ error }}
     </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-    <scrawlbutton [ngStyle]="{'margin-right': '.75rem'}" color='red' (click)="close()">
+    <scrawlbutton [ngStyle]="{'margin-right': '.75rem'}" color='red' (click)="closeDialog()">
         Close
     </scrawlbutton>
     <scrawlbutton color='green' (click)="onStartLobby()">
