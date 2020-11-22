@@ -1,4 +1,4 @@
-<nav [@simpleFadeAnimation] class="navbar" [ngClass]="{'navbar-homepage': isHomePage, 'navbar-standard': isPastHero, 'navbar-open': isExpanded}">
+<nav [@simpleFadeAnimation] [@.disabled]="!isHomePage" class="navbar" [ngClass]="{'navbar-homepage': isHomePage, 'navbar-standard': isPastHero, 'navbar-open': isExpanded}">
   <div class="navbar-left">
     <a (click)="redirectLink('')">
       <div class="navbar-logo">

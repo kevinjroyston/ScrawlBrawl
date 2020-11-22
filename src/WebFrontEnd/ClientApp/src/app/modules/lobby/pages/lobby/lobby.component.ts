@@ -26,35 +26,6 @@ export class LobbyManagementComponent {
         this.getGames().then(() => this.onGetLobby())
     }
 
-    onStartLobby() : Observable<any> {
-        var body = new Lobby.ConfigureLobbyRequest();
-        body.gameMode = this.lobby.selectedGameMode;
-        body.options = JSON.parse(JSON.stringify(this.gameModes[this.lobby.selectedGameMode].options, ['value']));
-        var bodyString = JSON.stringify(body);
-
-        let configureRequest = this.api.request({ type: "Lobby", path: "Configure", body: bodyString })
-        let lobbyRequest = this.api.request({ type: "Lobby", path: "Start" })
-        configureRequest.subscribe({
-            next: () => {
-                lobbyRequest.subscribe({
-                    next: () => { 
-                        this.onGetLobby() 
-                    },
-                    error: (error) => { 
-                        this.error = error.error; 
-                        this.errorService.announceError(error.error); 
-                        this.onGetLobby() 
-                    }
-                })
-            },
-            error: (error) => { 
-                this.error = error.error; 
-                this.onGetLobby(); 
-            }
-        })
-        return lobbyRequest
-    }
-
     async onGetLobby() {
         this.api.request({ type: "Lobby", path: "Get" }).subscribe({
             next: async (result) => {
@@ -128,7 +99,7 @@ export class LobbyManagementComponent {
         dialogConfig.data = {
             gameModes: this.gameModes,
             lobby: this.lobby,
-            onStart: () => this.onStartLobby()
+            onGetLobby: () => this.onGetLobby()
         }
         this.matDialog.open(GamemodeDialogComponent, dialogConfig);
     }

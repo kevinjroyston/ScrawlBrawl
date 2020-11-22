@@ -1,7 +1,8 @@
 import { Component, HostListener} from '@angular/core';
 import {throttle} from 'app/utils/throttle'
-import { Router } from '@angular/router'; 
+import { Router, ActivatedRoute } from '@angular/router'; 
 import { trigger, style, animate, transition } from '@angular/animations';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-nav-menu',
@@ -11,7 +12,7 @@ import { trigger, style, animate, transition } from '@angular/animations';
     trigger('simpleFadeAnimation', [
       transition(':enter' , [
         style({ opacity: 0 }),
-        animate('250ms 3400ms', 
+        animate('250ms 3300ms', 
           style({opacity: 1})
         )
       ])
@@ -23,9 +24,10 @@ export class NavMenuComponent {
   isHomePage = true;
   isPastHero = false;
 
-  constructor(private router: Router){
+  constructor(private router: Router, public activatedRoute: ActivatedRoute, public location: Location){
+    this.checkRoute(location.prepareExternalUrl(location.path()));
     router.events.subscribe((val) => { 
-      this.checkRoute()
+      this.checkRoute(this.router.url)
     });
   }
 
@@ -39,8 +41,9 @@ export class NavMenuComponent {
       }
   }
 
-  checkRoute = () => {
-    this.router.url === '/' ? this.isHomePage = true : this.isHomePage = false
+  checkRoute = (url: string) : void => {
+    console.log(url);
+    url === '/' ? this.isHomePage = true : this.isHomePage = false
   }
 
   toggle = () => {

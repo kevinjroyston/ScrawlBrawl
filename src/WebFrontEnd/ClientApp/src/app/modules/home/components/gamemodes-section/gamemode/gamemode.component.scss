@@ -4,9 +4,13 @@
 }
 .gamemode {
     display: flex;
+    min-width: 400px;
+    min-height: 550px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    flex-direction: column;
     border-radius: 10px;
     margin: 0 2rem;
-    padding: 1rem;
 }    
 
 .gamemode-content {
@@ -27,8 +31,6 @@
 
 .gamemode-img {
     width: 100%;
-    min-width: 350px;
-    max-width: 350px;
     height: auto;
 }
 
