@@ -1,26 +1,3 @@
-:host {
-    width: 100%;
-}
-
-.feedback {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.feedback-card {
-    background-color: white;
-    box-shadow: var(--shadow-md);
-    width: 400px;
-    padding: 1.5rem;
-    margin: 1rem;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.feedback-text {
-    padding: 1.5rem 0;
-    font-size: .9rem;
+* {
+  
 }

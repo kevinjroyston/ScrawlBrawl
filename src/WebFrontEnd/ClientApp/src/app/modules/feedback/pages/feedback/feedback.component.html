@@ -1,11 +1,15 @@
-<div class="feedback">
-  <div class='feedback-card'>
-    <h2>Feedback</h2>
-    <div class='feedback-text'>
-      Thanks for leaving your feedback. We'll take into account what you write and try our best to get to it. We really appreciate it!
-    </div>
-    <simplelink link="https://docs.google.com/forms/d/e/1FAIpQLScn5uY0StM3AJ8o1tDv84XTjem0Di6vWGiBOokd_ND276g8ng/viewform">
-      Submit Feedback Here
-    </simplelink>
-  </div>
-</div>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>wheee</title>
+  </head>
+  <body>
+    <h1>thoughts? comments?</h1>
+    <h4>kevin is so so s o s o so very nosy. (plz help) he wants to know everything: kevin is BULLying :(</h4>
+    <form>
+    <input type="text" name="feedback-box" #feedbackValue name='feedbackValue' />
+    <button type="submit" (ngSubmit)="onSubmitFeedback(feedbackValue)">Submit Feedback</button>
+    </form>
+  </body>
+</html>
