@@ -15,7 +15,6 @@ section {
   justify-content: center;
   width: 100%;
   height: 100%;
-  padding: 0 4%;
 }
 
 .arrows {
@@ -79,13 +78,14 @@ section {
   }
 
   .gamemode-list {
-    padding: 0;
+    padding: 0 3rem;
   }
 }
 
 @media only screen and (max-width: 768px) {
-  .gamemodes-row{
-    padding: 0;
+
+  .gamemode-list {
+    padding: 0 1rem;
   }
 }
 

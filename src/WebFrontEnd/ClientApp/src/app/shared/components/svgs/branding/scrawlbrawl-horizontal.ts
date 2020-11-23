@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
     selector: 'scrawlbrawl-logo-horizontal',
@@ -6,5 +6,5 @@ import { Component, Input } from '@angular/core';
     styleUrls: ['../svg.component.scss']
 })
 export class ScrawlBrawlLogoHorizontal {
-    @Input()strokeColor : string = '#7c7c7c'
+    
 }

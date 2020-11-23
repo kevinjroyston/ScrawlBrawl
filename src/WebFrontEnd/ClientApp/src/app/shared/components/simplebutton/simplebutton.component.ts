@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 
 interface Button {
   variant: 'outlined' | 'action' | 'plain'
@@ -10,16 +10,22 @@ interface Button {
 
 @Component({
   selector: 'simplebutton',
-  templateUrl: './button.component.html',
-  styleUrls: ['../simplebutton.component.scss']
+  templateUrl: './simplebutton.component.html',
+  styleUrls: ['./simplebutton.component.scss']
 })
-export class SimpleButtonComponent {
+export class SimpleButtonComponent implements OnInit {
   @Input() size: string = 'medium';
   @Input() type: string = 'button';
   @Input() variant: string = 'plain';
   @Input() color: string = 'blue';
   @Input() disabled: boolean = false;
   @Output() onClick = new EventEmitter<MouseEvent>();
+
+  constructor(){
+  }
+
+  ngOnInit() {
+  }
 
   onClickButton(event){
     this.onClick.emit(event)

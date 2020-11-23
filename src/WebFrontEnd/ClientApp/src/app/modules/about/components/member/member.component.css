@@ -1,22 +1,25 @@
-:host {
-    flex: 0 0 33.3%;
-    max-width: 33.3%;
-}
+
 
 .member-wrapper{
     padding: 1.25rem;
     height: 100%;
-    width: 100%;
-    
+    flex-basis: 33.3%;
 }
 
 .member {
+    width: 320px;
     overflow: hidden;
     box-shadow: var(--shadow-md);
     height: 100%;
     transition: all .3s ease;
     border-radius: 10px;
-    background-color: var(--white-primary);
+}
+
+.member:hover{
+    cursor: pointer;
+    box-shadow: var(--shadow-xl);
+    transform: translate(0px, -20px);
+
 }
 
 .member-name {
@@ -24,7 +27,6 @@
 }
 
 .member-avatar{
-    display: block;
     max-height: 300px;
     width: 100%;
 }
@@ -41,27 +43,5 @@
 
 .member-text {
     padding: .75rem;
-}
-
-@media only screen and (max-width: 1100px) {
-    :host {
-        flex: 0 0 50%;
-        max-width: 50%;
-    }
-}
-
-@media only screen and (max-width: 768px) {
-    :host {
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-
-    .member-wrapper{
-        display: flex;
-        justify-content: center;
-    }
-
-    .member{
-        max-width: 400px;
-    }
+    text-align: center;
 }

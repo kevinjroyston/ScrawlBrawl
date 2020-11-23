@@ -11,7 +11,8 @@ import { DrawingDirective } from './components/drawingdirective.component';
 import { ScrawlButtonComponent } from './components/scrawlbutton/scrawlbutton.component';
 import { SelectorDirective } from './components/selectordirective.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SimpleButtonComponent } from './components/simplebuttons/button/button.component'
+import { SimpleButtonComponent } from './components/simplebutton/simplebutton.component'
+import { FooterModule} from '@layout/footer/footer.module'
 import { RouterModule } from '@angular/router';
 import { IconButtonComponent} from './components/iconbutton/iconbutton.component'
 import { GameAssetDirective} from './components/gameassetdirective.component'
@@ -32,8 +33,8 @@ import { TwitchIcon } from './components/svgs/socials/twitch';
 import { TwitterIcon } from './components/svgs/socials/twitter';
 import { YoutubeIcon } from './components/svgs/socials/youtube';
 import { FacebookIcon } from './components/svgs/socials/facebook';
+import { FeatherQuestion } from './components/svgs/branding/feather-question';
 import { ColorPickerComponent } from './components/colorpicker/colorpicker.component';
-import { SimpleLinkComponent } from './components/simplebuttons/link/link.component';
 
 @NgModule({
   imports: [
@@ -43,6 +44,7 @@ import { SimpleLinkComponent } from './components/simplebuttons/link/link.compon
     NgbModule,
     ColorPickerModule,
     UiSwitchModule,
+    FooterModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule
@@ -53,7 +55,6 @@ import { SimpleLinkComponent } from './components/simplebuttons/link/link.compon
     ColorPickerComponent,
     ScrawlButtonComponent,
     SimpleButtonComponent,
-    SimpleLinkComponent,
     DrawingDirective,
     SelectorDirective,
     GameAssetDirective,
@@ -73,7 +74,8 @@ import { SimpleLinkComponent } from './components/simplebuttons/link/link.compon
     TwitchIcon,
     TwitterIcon,
     YoutubeIcon,
-    FacebookIcon
+    FacebookIcon,
+    FeatherQuestion
   ],
   exports: [
     CommonModule,
@@ -84,7 +86,7 @@ import { SimpleLinkComponent } from './components/simplebuttons/link/link.compon
     ColorPickerModule,
     UiSwitchModule,
     SimpleButtonComponent,
-    SimpleLinkComponent,
+    FooterModule,
     Slider,
     FormsModule,
     ReactiveFormsModule,
@@ -92,6 +94,7 @@ import { SimpleLinkComponent } from './components/simplebuttons/link/link.compon
     GameAssetDirective,
     ScrawlButtonComponent,
     SelectorDirective,
+    FooterModule,
     IconButtonComponent,
     GreenMoustacheBrushSVG,
     RedPencilOnBluePencilSVG,
@@ -108,7 +111,8 @@ import { SimpleLinkComponent } from './components/simplebuttons/link/link.compon
     TwitchIcon,
     TwitterIcon,
     YoutubeIcon,
-    FacebookIcon
+    FacebookIcon,
+    FeatherQuestion
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
