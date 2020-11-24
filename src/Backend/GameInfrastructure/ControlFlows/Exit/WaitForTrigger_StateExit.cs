@@ -22,7 +22,7 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
         public WaitForTrigger_StateExit(Func<User, UserPrompt> waitingPromptGenerator = null) : base()
         {
             this.WaitingState = new SimplePromptUserState(promptGenerator: waitingPromptGenerator ?? SimplePromptUserState.DefaultWaitingPrompt);
-            this.WaitingState.AddPerUserExitListener((User user) => this.InvokeEntranceListeners(user));
+            this.WaitingState.AddPerUserEntranceListener((User user) => this.InvokeEntranceListeners(user));
         }
 
         public override void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
