@@ -331,7 +331,7 @@ RectTransform:
   m_GameObject: {fileID: 958200141029690273}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 0}
   m_Children:
   - {fileID: 8161376606224987676}
   m_Father: {fileID: 0}
@@ -362,6 +362,7 @@ MonoBehaviour:
   ImageId: {fileID: 9005909003244505805}
   Title: {fileID: 4200084594949836866}
   Header: {fileID: 7233078079472361656}
+  NewScene: 0
   SpriteZone: {fileID: 272053788141012050}
   ImageIdHolder: {fileID: 7139616067880138905}
   VoteCountHolder: {fileID: 7382733499985497662}
@@ -388,7 +389,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 958200141029690273}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7217fa1a62be34b4a949d34e65641059, type: 3}
   m_Name: 
@@ -400,7 +401,7 @@ MonoBehaviour:
     eventType: 0
     id: 
   startDelay: 0
-  endDurration: 0
+  endDuration: 0
   registerOnEnable: 1
   persistant: 0
   oneShot: 1
@@ -423,7 +424,7 @@ MonoBehaviour:
     eventType: 0
     id: 
   startDelay: 0
-  endDurration: 0
+  endDuration: 0
   registerOnEnable: 0
   persistant: 0
   oneShot: 1
@@ -450,7 +451,7 @@ MonoBehaviour:
     eventType: 0
     id: 
   startDelay: 1
-  endDurration: 0
+  endDuration: 0
   registerOnEnable: 1
   persistant: 0
   oneShot: 1
@@ -2014,8 +2015,8 @@ MonoBehaviour:
   m_IgnoreLayout: 0
   m_MinWidth: -1
   m_MinHeight: -1
-  m_PreferredWidth: 111.23078
-  m_PreferredHeight: 55.61539
+  m_PreferredWidth: 180.9231
+  m_PreferredHeight: 90.46155
   m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
