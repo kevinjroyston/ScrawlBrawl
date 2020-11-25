@@ -127,9 +127,13 @@ namespace Backend.GameInfrastructure.DataModels
                     }
                 }
             }
-            foreach (var listener in this.PerUserEntranceListeners)
+
+            lock (user)
             {
-                listener?.Invoke(user);
+                foreach (var listener in this.PerUserEntranceListeners)
+                {
+                    listener?.Invoke(user);
+                }
             }
 
             if (this.UsersHurried)
@@ -173,11 +177,7 @@ namespace Backend.GameInfrastructure.DataModels
                         // For any users currently within this state, hurry them up.
                         foreach (User user in this.UsersEnteredAndExitedState.Keys)
                         {
-                            // Locks are re-entrant meaning the same thread can lock the same object twice without deadlock.
-                            lock (user.LockObject)
-                            {
-                                HurryUser(user);
-                            }
+                            HurryUser(user);
                         }
                         this.UsersHurried = true;
                     }
@@ -185,28 +185,28 @@ namespace Backend.GameInfrastructure.DataModels
             }
         }
 
-        /// <summary>
-        /// If making this public/adding more callers, have to be VERY careful about user.LockObject.
-        /// This function expects the caller to have the lock on the user.LockObject.
-        /// </summary>
         private void HurryUser(User user)
         {
             try
             {
-                if (!this.UsersEnteredAndExitedState.ContainsKey(user))
+                // Locks are re-entrant meaning the same thread can lock the same object twice without deadlock.
+                lock (user.LockObject)
                 {
-                    return;
-                }
-
-                (bool entered, bool exited) = this.UsersEnteredAndExitedState[user];
-                if (entered && !exited)
-                {
-                    // Set user to hurry mode first!
-                    user.StatesTellingMeToHurry.Add(this);
-                    // Kick the user into motion so they can hurry through the states.
-                    if (user.Status == UserStatus.AnsweringPrompts)
+                    if (!this.UsersEnteredAndExitedState.ContainsKey(user))
                     {
-                        user.UserState.HandleUserTimeout(user, UserFormSubmission.WithNulls(user.UserState.UserRequestingCurrentPrompt(user)));
+                        return;
+                    }
+
+                    (bool entered, bool exited) = this.UsersEnteredAndExitedState[user];
+                    if (entered && !exited)
+                    {
+                        // Set user to hurry mode first!
+                        user.StatesTellingMeToHurry.Add(this);
+                        // Kick the user into motion so they can hurry through the states.
+                        if (user.Status == UserStatus.AnsweringPrompts)
+                        {
+                            user.UserState.HandleUserTimeout(user, UserFormSubmission.WithNulls(user.UserState.UserRequestingCurrentPrompt(user)));
+                        }
                     }
                 }
             }
@@ -391,9 +391,12 @@ namespace Backend.GameInfrastructure.DataModels
                 }
             }
 
-            foreach (var listener in this.PerUserStateEndingListeners)
+            lock (user)
             {
-                listener?.Invoke(user);
+                foreach (var listener in this.PerUserStateEndingListeners)
+                {
+                    listener?.Invoke(user);
+                }
             }
 
             if (this.UserOutletOverrides.TryGetValue(user, out Connector connector))

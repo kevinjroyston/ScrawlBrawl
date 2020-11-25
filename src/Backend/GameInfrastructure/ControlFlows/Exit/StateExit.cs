@@ -52,9 +52,12 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
                 }
             }
 
-            foreach (Action<User> listener in PerUserListeners)
+            lock (user)
             {
-                listener.Invoke(user);
+                foreach (Action<User> listener in PerUserListeners)
+                {
+                    listener.Invoke(user);
+                }
             }
         }
 
