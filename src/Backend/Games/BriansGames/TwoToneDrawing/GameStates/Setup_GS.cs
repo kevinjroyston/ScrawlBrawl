@@ -20,6 +20,8 @@ using System.Collections.Concurrent;
 using Backend.GameInfrastructure;
 using Common.DataModels.Enums;
 using Common.Code.Extensions;
+using Common.Code.Helpers;
+using Common.DataModels.Interfaces;
 
 namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
 {
@@ -74,7 +76,8 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                     {
                         Owner = user,
                         Prompt = input.SubForms[0].ShortAnswer,
-                        Colors = colors
+                        Colors = colors,
+                        MaxMemberCount = colors.Count * TeamsPerPrompt,
                     }, null);
                     return (success, success ? string.Empty : "Server error, try again");
                 },
@@ -160,7 +163,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
 
 
             State getChallenges = GetChallengesUserState();
-            MultiStateChain getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby), stateDuration: drawingTimer);
+            MultiStateChain getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby), stateDuration: multipliedDrawingTimer);
 
             this.Entrance.Transition(getChallenges);
             getChallenges.AddExitListener(() => this.AssignPrompts());
@@ -174,55 +177,35 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
             };
         }
 
-        /// <summary>
-        /// This method of assigning prompts is not the most efficient but the next best algorithm I could find for getting a 
-        /// good solution was even more inefficient. All the efficient algorithms gave suboptimal solutions.
-        /// </summary>
         private void AssignPrompts()
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
             IReadOnlyList<User> users = this.Lobby.GetAllUsers();
             List<ChallengeTracker> randomizedOrderChallenges = this.SubChallenges.Keys.OrderBy(_ => Rand.Next()).ToList();
 
-            for (int i = 0; i < randomizedOrderChallenges.Count; i++)
+            if (randomizedOrderChallenges.Count == 0)
             {
-                for (int j = 0; j < ColorsPerTeam * TeamsPerPrompt; j++)
-                {
-                    randomizedOrderChallenges[i].UserSubmittedDrawings.Add(
-                        users[(i + j) % users.Count],
-                        new ChallengeTracker.TeamUserDrawing
-                        {
-                            TeamId = Invariant($"{(j / ColorsPerTeam)+1}"),
-                            Color = randomizedOrderChallenges[i].Colors[j % ColorsPerTeam],
-                            Owner = users[(i+j)% users.Count]
-                        });
-                }
+                throw new Exception("Can't play the game if there are no prompts");
             }
 
-            // Make 100 attempts at valid swaps
-            for (int i = 0; i < 100; i++)
+            List<IGroup<User>> groups = MemberHelpers<User>.Assign(
+                this.SubChallenges.Keys.Cast<IConstraints<User>>().ToList(),
+                users,
+                this.ColorsPerTeam * this.TeamsPerPrompt);
+
+            var assignments = groups.Zip(this.SubChallenges.Keys);
+
+            foreach ((IGroup<User> groupedUsers, ChallengeTracker tracker) in assignments)
             {
-                int rand1 = Rand.Next(0, randomizedOrderChallenges.Count);
-                int rand1b = Rand.Next(0, randomizedOrderChallenges[0].UserSubmittedDrawings.Count);
-
-                //int rand2a = rand.Next(0, randomizedOrderChallenges.Count);
-                int rand2b = Rand.Next(0, randomizedOrderChallenges[0].UserSubmittedDrawings.Count);
-
-                User user1 = randomizedOrderChallenges[rand1].UserSubmittedDrawings.Keys.ToList()[rand1b];
-                User user2 = randomizedOrderChallenges[rand1].UserSubmittedDrawings.Keys.ToList()[rand2b];
-
-                // Unforunately does not swap remainder players. Oh well.
-                if (rand1b != rand2b)
-                {
-                    ChallengeTracker.TeamUserDrawing user1Drawing = randomizedOrderChallenges[rand1].UserSubmittedDrawings[user1];
-                    ChallengeTracker.TeamUserDrawing user2Drawing = randomizedOrderChallenges[rand1].UserSubmittedDrawings[user2];
-                    randomizedOrderChallenges[rand1].UserSubmittedDrawings.Remove(user1);
-                    randomizedOrderChallenges[rand1].UserSubmittedDrawings.Remove(user2);
-                    randomizedOrderChallenges[rand1].UserSubmittedDrawings.Add(user2, user1Drawing);
-                    randomizedOrderChallenges[rand1].UserSubmittedDrawings.Add(user1, user2Drawing);
-                }
+                int badCodingPractice = 0;
+                tracker.UserSubmittedDrawings = groupedUsers.Members.ToDictionary((user)=> user, (user)=>
+                    new ChallengeTracker.TeamUserDrawing
+                    {
+                        TeamId = Invariant($"{(badCodingPractice / ColorsPerTeam)+1}"),
+                        Color = tracker.Colors[badCodingPractice++ % ColorsPerTeam],
+                        Owner = user
+                    });
             }
-
             Debug.WriteLine(Invariant($"Assigned user prompts in ({stopwatch.ElapsedMilliseconds} ms)"), "Timing");
         }
     }

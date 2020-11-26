@@ -43,18 +43,21 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
                 {
                     if (!CalledListeners)
                     {
-                        CalledListeners = true;
                         foreach (Action listener in Listeners)
                         {
                             listener.Invoke();
                         }
+                        CalledListeners = true;
                     }
                 }
             }
 
-            foreach (Action<User> listener in PerUserListeners)
+            lock (user)
             {
-                listener.Invoke(user);
+                foreach (Action<User> listener in PerUserListeners)
+                {
+                    listener.Invoke(user);
+                }
             }
         }
 

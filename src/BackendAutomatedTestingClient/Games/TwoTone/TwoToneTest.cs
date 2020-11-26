@@ -14,7 +14,7 @@ namespace BackendAutomatedTestingClient.Games
     {
         // TODO: Let children override TestName like GameModeTitle (move to GameTest)
         private const string TestName = "TwoTone";
-        public override string GameModeTitle => "Chaotic Cooperation" ;
+        public override string GameModeTitle => "Chaotic Cooperation";
 
         public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player, int gameStep)
         {
@@ -22,7 +22,7 @@ namespace BackendAutomatedTestingClient.Games
             {
                 case UserPromptId.Voting:
                     Console.WriteLine($"{TestName}:Submitting Voting");
-                    return Vote(player);
+                    return Vote(player,userPrompt);
                 case UserPromptId.ChaoticCooperation_Draw:
                     Console.WriteLine($"{TestName}:Submitting Drawing");
                     return MakeDrawing(player);
@@ -40,9 +40,11 @@ namespace BackendAutomatedTestingClient.Games
             }
         }
 
+        private IReadOnlyList<string> Drawings { get; } = new List<string> { Constants.Drawings.Body, Constants.Drawings.Head, Constants.Drawings.Legs }.AsReadOnly();
+        private Random Rand { get; } = new Random();
         protected virtual UserFormSubmission MakeDrawing(LobbyPlayer player)
         {
-            return CommonSubmissions.SubmitSingleDrawing(player.UserId);
+            return CommonSubmissions.SubmitSingleDrawing(player.UserId, Drawings[Rand.Next(Drawings.Count)]);
         }
         protected virtual UserFormSubmission MakePrompt(LobbyPlayer player, int colorCount)
         {
@@ -70,9 +72,9 @@ namespace BackendAutomatedTestingClient.Games
             };
 
         }
-        protected virtual UserFormSubmission Vote(LobbyPlayer player)
+        protected virtual UserFormSubmission Vote(LobbyPlayer player, UserPrompt prompt)
         {
-            return CommonSubmissions.SubmitSingleRadio(player.UserId);
+            return CommonSubmissions.SubmitSingleRadio(player.UserId, Rand.Next(prompt.SubPrompts[0].Answers.Length));
         }
         protected virtual UserFormSubmission SkipReveal(LobbyPlayer player)
         {

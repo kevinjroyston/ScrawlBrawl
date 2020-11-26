@@ -9,7 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
-
+using System.Collections.Generic;
 
 namespace Backend.GameInfrastructure.DataModels.States.UserStates
 {
@@ -118,11 +118,15 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             Debug.Assert(this.SpecialCallbackAppliedToAllUsersInState == null, "Shouldn't be applying more than 1 special callback.");
             this.SpecialCallbackAppliedToAllUsersInState = specialCallback;
 
-            foreach ((User user, (bool entered, bool exited)) in this.UsersEnteredAndExitedState.ToList())
+            foreach (User user in this.UsersEnteredAndExitedState.Keys.ToList())
             {
-                if (entered && !exited)
+                lock (user.LockObject)
                 {
-                    specialCallback(user);
+                    (bool entered, bool exited) = this.UsersEnteredAndExitedState[user];
+                    if (entered && !exited)
+                    {
+                        specialCallback(user);
+                    }
                 }
             }
         }
@@ -146,7 +150,7 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             if (userInput == null || userPrompt == null)
             {
                 error = "Try again or try refreshing the page.";
-                userInput = new UserFormSubmission();
+                userInput = UserFormSubmission.WithNulls(userPrompt);
                 return CleanUserFormInputResult.Invalid;
             }
 
@@ -154,14 +158,14 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             if (userInput.Id != userPrompt.Id)
             {
                 error = "Outdated form submitted, try again or try refreshing the page.";
-                userInput.SubForms = null;
+                userInput = UserFormSubmission.WithNulls(userPrompt);
                 return CleanUserFormInputResult.Invalid;
             }
 
             // No prompts requested.
             if (userPrompt?.SubPrompts == null || userPrompt.SubPrompts.Length == 0)
             {
-                userInput.SubForms = null;
+                userInput = UserFormSubmission.WithNulls(userPrompt);
                 error = "";
                 return CleanUserFormInputResult.Valid;
             }
@@ -169,7 +173,7 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             if (userInput?.SubForms == null || (userPrompt.SubPrompts.Length != userInput.SubForms.Count))
             {
                 error = "Error in submission, try again or try refreshing the page.";
-                userInput.SubForms = null;
+                userInput = UserFormSubmission.WithNulls(userPrompt);
                 return CleanUserFormInputResult.Invalid;
             }
 
@@ -191,7 +195,7 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
                     result = CleanUserFormInputResult.Cleaned;
 
                     // Invalid fields get set to null (used in autosubmit partial submission flows).
-                    userInput.SubForms[i] = null;
+                    userInput.SubForms[i] = new UserSubForm() { Id = prompt.Id };
                 }
 
                 i++;

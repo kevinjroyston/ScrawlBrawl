@@ -38,11 +38,12 @@ public class TestClient : MonoBehaviour
         Application.targetFrameRate = 60;
 
         hubConnection = new HubConnectionBuilder()
-        #if DEBUG
+#if DEBUG
             .WithUrl("http://localhost:50403/signalr")
-        #else
+
+#else
             .WithUrl("https://api.test.scrawlbrawl.tv/signalr")
-        #endif
+#endif
             .ConfigureLogging(logging =>
             {
                 logging.AddProvider(new DebugLoggerProvider());

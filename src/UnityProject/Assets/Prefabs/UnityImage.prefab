@@ -362,6 +362,7 @@ MonoBehaviour:
   ImageId: {fileID: 9005909003244505805}
   Title: {fileID: 4200084594949836866}
   Header: {fileID: 7233078079472361656}
+  NewScene: 0
   SpriteZone: {fileID: 272053788141012050}
   ImageIdHolder: {fileID: 7139616067880138905}
   VoteCountHolder: {fileID: 7382733499985497662}
@@ -400,7 +401,7 @@ MonoBehaviour:
     eventType: 0
     id: 
   startDelay: 0
-  endDurration: 0
+  endDuration: 0
   registerOnEnable: 1
   persistant: 0
   oneShot: 1
@@ -423,7 +424,7 @@ MonoBehaviour:
     eventType: 0
     id: 
   startDelay: 0
-  endDurration: 0
+  endDuration: 0
   registerOnEnable: 0
   persistant: 0
   oneShot: 1
@@ -450,7 +451,7 @@ MonoBehaviour:
     eventType: 0
     id: 
   startDelay: 1
-  endDurration: 0
+  endDuration: 0
   registerOnEnable: 1
   persistant: 0
   oneShot: 1
@@ -2014,8 +2015,8 @@ MonoBehaviour:
   m_IgnoreLayout: 0
   m_MinWidth: -1
   m_MinHeight: -1
-  m_PreferredWidth: 111.23078
-  m_PreferredHeight: 55.61539
+  m_PreferredWidth: 180.9231
+  m_PreferredHeight: 90.46155
   m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1

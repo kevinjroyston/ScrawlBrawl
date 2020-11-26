@@ -119,22 +119,32 @@ namespace Backend.GameInfrastructure.DataModels
                 {
                     if (!this.Entered)
                     {
-                        this.Entered = true;
                         foreach (var listener in this.EntranceListeners)
                         {
                             listener?.Invoke();
                         }
+                        this.Entered = true;
                     }
                 }
             }
-            foreach (var listener in this.PerUserEntranceListeners)
+
+            lock (user)
             {
-                listener?.Invoke(user);
+                foreach (var listener in this.PerUserEntranceListeners)
+                {
+                    listener?.Invoke(user);
+                }
             }
 
             if (this.UsersHurried)
             {
-                this.HurryUser(user);
+                lock (this.HurryLock)
+                {
+                    if (this.UsersHurried)
+                    {
+                        this.HurryUser(user);
+                    }
+                }
             }
 
             this.Entrance.Inlet(user, stateResult, formSubmission);
@@ -150,39 +160,53 @@ namespace Backend.GameInfrastructure.DataModels
             PerUserEntranceListeners.Add(listener);
         }
 
+        private object HurryLock { get; } = new object();
+
         /// <summary>
         /// Put all users currently (and in the future) in this state into "hurried" mode. Which means they will automatically call
         /// "HandleUserTimeout" rather than be given a chance to submit.
         /// </summary>
         public void HurryUsers()
         {
-            this.UsersHurried = true;
-
-            // For any users currently within this state, hurry them up.
-            foreach (User user in this.UsersEnteredAndExitedState.Keys)
+            if (!this.UsersHurried)
             {
-                HurryUser(user);
+                lock (this.HurryLock)
+                {
+                    if (!this.UsersHurried)
+                    {
+                        // For any users currently within this state, hurry them up.
+                        foreach (User user in this.UsersEnteredAndExitedState.Keys)
+                        {
+                            HurryUser(user);
+                        }
+                        this.UsersHurried = true;
+                    }
+                }
             }
         }
 
-        public void HurryUser(User user)
+        private void HurryUser(User user)
         {
             try
             {
-                if (!this.UsersEnteredAndExitedState.ContainsKey(user))
+                // Locks are re-entrant meaning the same thread can lock the same object twice without deadlock.
+                lock (user.LockObject)
                 {
-                    return;
-                }
-
-                (bool entered, bool exited) = this.UsersEnteredAndExitedState[user];
-                if (entered && !exited)
-                {
-                    // Set user to hurry mode first!
-                    user.StatesTellingMeToHurry.Add(this);
-                    // Kick the user into motion so they can hurry through the states.
-                    if (user.Status == UserStatus.AnsweringPrompts)
+                    if (!this.UsersEnteredAndExitedState.ContainsKey(user))
                     {
-                        user.UserState.HandleUserTimeout(user, new UserFormSubmission());
+                        return;
+                    }
+
+                    (bool entered, bool exited) = this.UsersEnteredAndExitedState[user];
+                    if (entered && !exited)
+                    {
+                        // Set user to hurry mode first!
+                        user.StatesTellingMeToHurry.Add(this);
+                        // Kick the user into motion so they can hurry through the states.
+                        if (user.Status == UserStatus.AnsweringPrompts)
+                        {
+                            user.UserState.HandleUserTimeout(user, UserFormSubmission.WithNulls(user.UserState.UserRequestingCurrentPrompt(user)));
+                        }
                     }
                 }
             }
@@ -358,19 +382,21 @@ namespace Backend.GameInfrastructure.DataModels
                 {
                     if (this.FirstUser)
                     {
-
-                        this.FirstUser = false;
                         foreach (var listener in this.StateEndingListeners)
                         {
                             listener?.Invoke();
                         }
+                        this.FirstUser = false;
                     }
                 }
             }
 
-            foreach (var listener in this.PerUserStateEndingListeners)
+            lock (user)
             {
-                listener?.Invoke(user);
+                foreach (var listener in this.PerUserStateEndingListeners)
+                {
+                    listener?.Invoke(user);
+                }
             }
 
             if (this.UserOutletOverrides.TryGetValue(user, out Connector connector))

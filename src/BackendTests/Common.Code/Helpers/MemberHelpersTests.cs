@@ -14,7 +14,6 @@ namespace BackendTests.Common.Code.Helpers
     [TestClass]
     public class MemberHelpersTests
     {
-        // TODO missing test cases for the nondeterministic scenarios.
         [DataRow(
             new int[] { 1, 1, 1, 2, 2, 3 },
             5,
@@ -44,6 +43,63 @@ namespace BackendTests.Common.Code.Helpers
 
             List<UserCreatedObject> returnedObjects = MemberHelpers<UserCreatedObject>.Select_Ordered(inputObjects, numInputsWanted).ToList();
             Assert.IsTrue(returnedObjects.HasSameElements(expectedObjects), $"Expected:{string.Join(",", expectedObjects.Select(obj => obj.Owner.DisplayName))} Actual:{string.Join(",", returnedObjects.Select(obj => obj.Owner.DisplayName))}");
+        }
+
+        [TestMethod]
+        public void SelectOrdered_RandomlyGeneratedCases()
+        {
+            Random rand = new Random(Seed: 101);
+            const int generatedTestCaseCount = 1000;
+
+            for (int _ = 0; _ < generatedTestCaseCount; _++)
+            {
+                TestUserManager.ResetTestUsers();
+
+                // Test should work with any values (undefined behavior for negatives)
+                int numUsers = rand.Next(3, 50);
+                int numInputsWanted = (numUsers * rand.Next(0, 5)) + rand.Next(1, 50);
+
+                Dictionary<Guid, List<UserCreatedObject>> userIdToObjectList = new Dictionary<Guid, List<UserCreatedObject>>();
+
+                for (int userId = 0; userId < numUsers; userId++)
+                {
+                    // Based on implementation of SelectOrdered, 0 members is equivalent to numUsers--.
+                    int numMembersForUser = rand.Next(1, 8);
+                    userIdToObjectList[TestUserManager.GetTestUser(userId).Id] = new List<UserCreatedObject>();
+                    for (int objIter = 0; objIter < numMembersForUser; objIter++)
+                    {
+                        userIdToObjectList[TestUserManager.GetTestUser(userId).Id].Add(
+                            new UserCreatedObject()
+                            {
+                                Owner = TestUserManager.GetTestUser(userId),
+                                Id = Guid.NewGuid()
+                            });
+                    }
+                }
+                List<UserCreatedObject> inputObjects = userIdToObjectList.Values.SelectMany(val => val).ToList();
+                List<UserCreatedObject> returnedObjects = MemberHelpers<UserCreatedObject>.Select_Ordered(
+                    inputObjects,
+                    numInputsWanted).ToList();
+
+                if (inputObjects.Count <= numInputsWanted)
+                {
+                    Assert.AreEqual(inputObjects.Count, returnedObjects.Count);
+                    Assert.IsTrue(returnedObjects.HasSameElements(inputObjects));
+                    continue;
+                }
+
+                Assert.AreEqual(numInputsWanted, returnedObjects.Count);
+
+                Dictionary<Guid, List<UserCreatedObject>> groupedReturnedObjects = userIdToObjectList.Keys.Select(
+                    (userId) =>
+                        (userId,
+                        returnedObjects.Where((member) => member.Source == userId).ToList()))
+                    .ToDictionary((val) => val.Item1, (val) => val.Item2);
+
+                int largestGroup = groupedReturnedObjects.Values.Max((val) => val.Count);
+                Assert.IsTrue(groupedReturnedObjects.All((val) => (val.Value.Count >= largestGroup - 1) || (userIdToObjectList[val.Key].Count == val.Value.Count)));
+                Assert.IsTrue(groupedReturnedObjects.All((val) => (val.Value.Zip(userIdToObjectList[val.Key].Take(val.Value.Count)).All((pair)=> pair.First?.Id == pair.Second?.Id))));
+            }
         }
 
         // TODO test dynamic weighted random.
