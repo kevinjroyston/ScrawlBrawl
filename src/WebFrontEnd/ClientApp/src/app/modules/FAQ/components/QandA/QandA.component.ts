@@ -1,4 +1,4 @@
-import { Component, Inject, Input, ViewEncapsulation } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 
 @Component({
@@ -9,7 +9,7 @@ import { Component, Inject, Input, ViewEncapsulation } from '@angular/core';
 
 export class QandAComponent {
 
-@Input() QandA;
+  @Input() QandA;
 
   constructor() {
  

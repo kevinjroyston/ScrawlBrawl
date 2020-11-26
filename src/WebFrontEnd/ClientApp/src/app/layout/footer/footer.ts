@@ -3,7 +3,7 @@ export const footerLinksOrder = ['Questions?', 'Have thoughts?', 'About']
 export const footerLinks = {
   'Questions?': [
     {url: '/', name: "Check out our tutorial"},
-    {url: '/FAQ', name: "Visit our FAQ page"}
+    {url: '/faq', name: "Visit our FAQ page"}
   ],
   'About': [
     {url: '/about', name: "Team Bios"},

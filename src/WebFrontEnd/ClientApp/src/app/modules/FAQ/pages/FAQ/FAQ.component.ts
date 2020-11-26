@@ -1,10 +1,10 @@
-import { Component, OnInit} from '@angular/core';
+import { Component} from '@angular/core';
 import { QandAs } from '../../components/QandA/QandAs';
 
 @Component({
   selector: 'FAQ',
-  templateUrl: './FAQ.component.html',
-  styleUrls: ['./FAQ.component.scss']
+  templateUrl: './faq.component.html',
+  styleUrls: ['./faq.component.scss']
 })
 export class FAQComponent {
 

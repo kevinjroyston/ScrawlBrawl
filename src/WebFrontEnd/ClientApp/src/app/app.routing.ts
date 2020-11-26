@@ -18,8 +18,8 @@ const routes: Routes = [
         loadChildren: () => import('./modules/about/about.module').then(m => m.AboutModule)
     },
     {
-        path: 'FAQ',
-        loadChildren: () => import('./modules/FAQ/FAQ.module').then(m => m.FAQModule)
+        path: 'faq',
+        loadChildren: () => import('./modules/faq/faq.module').then(m => m.FAQModule)
     }, 
     {
         path: 'feedback',
