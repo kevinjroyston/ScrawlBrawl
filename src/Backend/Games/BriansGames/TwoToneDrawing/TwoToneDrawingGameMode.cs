@@ -151,8 +151,8 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
         {
             AssignUsersToChallenge(challenge);
             List<string> randomizedTeamIds = challenge.TeamIdToDrawingMapping.Keys.OrderBy(_=> Rand.Next()).ToList();
-            List<List<UserDrawing>> stackedDrawings = randomizedTeamIds.Select(teamId => challenge.TeamIdToDrawingMapping[teamId].Values.Select(drawing => (UserDrawing)drawing).ToList()).ToList();
-
+            IReadOnlyList<string> orderedColors = challenge.Colors.AsReadOnly();
+            List<List<UserDrawing>> stackedDrawings = randomizedTeamIds.Select(teamId => orderedColors.Select(color=>(UserDrawing)challenge.TeamIdToDrawingMapping[teamId][color]).ToList()).ToList();
 
             return new StackedDrawingVoteAndRevealState(
                 lobby: this.Lobby,

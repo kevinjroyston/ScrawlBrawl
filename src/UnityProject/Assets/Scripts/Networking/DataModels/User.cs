@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class User
 {
-    public Guid UserId { get; set; }
+    public Guid Id { get; set; }
 
     /// <summary>
     /// Indicates this User is the party leader (Technically can have multiple).

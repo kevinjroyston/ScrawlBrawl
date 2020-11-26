@@ -32,16 +32,22 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     constructor(private _colorPicker: MatBottomSheet) {}
 
     ngOnInit() {
-        if (this.drawingPrompt && this.drawingPrompt.colorList && this.drawingPrompt.colorList.length > 0) {
-            this.selectedColor = this.drawingPrompt.colorList[0];
-        }
-        console.log(this.selectedColor);
     }
 
     ngAfterViewInit() {
-        // use this if you need to reference any data in drawing directive
         console.log(this.selectedColor)
-        this.selectedColor = this.drawingDirective.defaultLineColor;
+        
+        // If there is a required color list default to first color.
+        if (this.drawingPrompt && this.drawingPrompt.colorList && this.drawingPrompt.colorList.length > 0) {
+            this.selectedColor = this.drawingPrompt.colorList[0];
+        }
+
+        // If there is no required color list or if the defaultLineColor is in the color list, default to that.
+        let tempColor = this.drawingDirective.defaultLineColor;
+        if (!this.drawingPrompt || !this.drawingPrompt.colorList || this.drawingPrompt.colorList.includes(tempColor))
+        {
+            this.selectedColor = tempColor;
+        }
     }
 
     onPerformUndo(): void {

@@ -163,7 +163,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
 
 
             State getChallenges = GetChallengesUserState();
-            MultiStateChain getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby), stateDuration: drawingTimer);
+            MultiStateChain getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby), stateDuration: multipliedDrawingTimer);
 
             this.Entrance.Transition(getChallenges);
             getChallenges.AddExitListener(() => this.AssignPrompts());

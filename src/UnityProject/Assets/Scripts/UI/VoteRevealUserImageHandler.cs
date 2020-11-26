@@ -23,9 +23,9 @@ public class VoteRevealUserImageHandler : MonoBehaviour
 
         for (int i = 0; i < users.Count; i++)
         {
-            if (userIdsToScoreDelta.ContainsKey(users[i].UserId.ToString()))
+            if (userIdsToScoreDelta.ContainsKey(users[i].Id.ToString()))
             {
-                InstantiateRelevantUser(DropZone.transform, users[i], userIdsToScoreDelta[users[i].UserId.ToString()], i + 1, users.Count);
+                InstantiateRelevantUser(DropZone.transform, users[i], userIdsToScoreDelta[users[i].Id.ToString()], i + 1, users.Count);
             }
             else
             {

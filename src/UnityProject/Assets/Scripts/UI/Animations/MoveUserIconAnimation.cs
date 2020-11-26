@@ -136,7 +136,7 @@ public class MoveUserIconAnimation : AnimationBase
         this.IconOrder = order;
         this.IconCountTotal = totalNumIcons;
         startDelay += order * OrderOffset;
-        startEvent.id = relevantUser.UserId.ToString();
+        startEvent.id = relevantUser.Id.ToString();
         CallRegisterForAnimation();
     }
 }
