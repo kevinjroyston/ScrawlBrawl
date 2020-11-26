@@ -218,7 +218,7 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
                         EventSystem.Singleton.PublishEvent(new MoveToTargetGameEvent()
                         {
                             eventType = GameEvent.EventEnum.MoveToTarget,
-                            id = user.UserId.ToString(),
+                            id = user.Id.ToString(),
                             TargetRect = VoteCountHolder.GetComponent<RectTransform>(),
                             TargetUserId = value?._ImageOwnerId.ToString()
                         });
