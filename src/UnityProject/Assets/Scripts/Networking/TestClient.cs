@@ -40,9 +40,10 @@ public class TestClient : MonoBehaviour
         hubConnection = new HubConnectionBuilder()
 #if DEBUG
             .WithUrl("http://localhost:50403/signalr")
+            //.WithUrl("https://api.test.scrawlbrawl.tv/signalr")
 
 #else
-            .WithUrl("https://api.test.scrawlbrawl.tv/signalr")
+            .WithUrl("https://api.scrawlbrawl.tv/signalr")
 #endif
             .ConfigureLogging(logging =>
             {
