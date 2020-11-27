@@ -1,6 +1,7 @@
 import { Component, Inject, ViewEncapsulation, Pipe } from '@angular/core';
 import { FormBuilder, FormGroup} from '@angular/forms';
 import { DomSanitizer, SafeHtml, SafeStyle, SafeScript, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
+import GameplayPrompts from '@core/models/gameplay' 
 import { API } from '@core/http/api';
 import { isNullOrUndefined } from 'util';
 import { Router } from '@angular/router';
@@ -38,7 +39,7 @@ export class Safe {
 
 export class FetchDataComponent
 {
-    public userPrompt: UserPrompt;
+    public userPrompt: GameplayPrompts.UserPrompt;
     public userForm;
     private formBuilder: FormBuilder;
     private userPromptTimerId;
@@ -61,7 +62,7 @@ export class FetchDataComponent
             clearTimeout(this.autoSubmitTimerId);
             this.autoSubmitTimerId = null;
           }
-});
+      });
     }
 
     handleColorChange = (color: string, subPrompt: number) => {
@@ -88,7 +89,7 @@ export class FetchDataComponent
         // fetch the current content from the server
         await this.api.request({ type: "Game", path: "CurrentContent"}).subscribe({
             next: async data => {
-                var prompt = data as UserPrompt;
+                var prompt = data as GameplayPrompts.UserPrompt;
 
                 // Too lazy to figure out how to properly deserialize things.
                 prompt.autoSubmitAtTime = isNullOrUndefined(prompt.autoSubmitAtTime) ? null : new Date(prompt.autoSubmitAtTime);
@@ -142,9 +143,11 @@ export class FetchDataComponent
             }
         });
     }
+
     refreshUserPromptTimer(ms: number): void {
         this.userPromptTimerId = setTimeout(() => this.fetchUserPrompt(), ms);
     }
+
     autoSubmitUserPromptTimer(ms: number): void {
         if (ms <= 0) {
             this.onSubmit(this.userForm?.value, true)
@@ -213,49 +216,4 @@ export class FetchDataComponent
         }
         return arr;
     }
-}
-interface UserPrompt {
-    id: string;
-    refreshTimeInMs: number;
-    currentServerTime: Date;
-    autoSubmitAtTime: Date;
-    submitButton: boolean;
-    title: string;
-    description: string;
-    subPrompts: SubPrompt[];
-    error: string;
-}
-interface SubPrompt {
-    id: string;
-    prompt: string;
-    color: string;
-    stringList: string[];
-    dropdown: string[];    
-    answers: string[];
-    colorPicker: boolean;
-    shortAnswer: boolean;
-    drawing: DrawingPromptMetadata;
-    slider: SliderPromptMetadata;
-    selector: SelectorPromptMetadata;
-}
-interface DrawingPromptMetadata {
-    colorList: string[];
-    widthInPx: number;
-    heightInPx: number;
-    premadeDrawing: string;
-    canvasBackground: string;
-    localStorageId: string;
-}
-interface SliderPromptMetadata {
-  min: number;
-  max: number;
-  value: string;
-  ticks: number[];
-  range: boolean;
-  ticksLabels: string[];
-}
-interface SelectorPromptMetadata {
-  widthInPx: number;
-  heightInPx: number;
-  imageList: string[];
 }

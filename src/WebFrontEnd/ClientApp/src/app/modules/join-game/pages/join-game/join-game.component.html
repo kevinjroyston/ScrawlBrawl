@@ -1,0 +1,31 @@
+Join Game
+<div class="fetch-data">
+  <form ng-app="myApp" class="form" *ngIf="userPrompt" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)">
+    <h1 class="title" *ngIf="userPrompt.title">
+        {{ userPrompt.title }}
+    </h1>
+    <div class="Description" *ngIf="userPrompt.description">
+        {{ userPrompt.description }}
+    </div>
+    <div class="subprompts" *ngIf="userPrompt.subPrompts">
+      <div class="subprompt" *ngFor="let subPrompt of userPrompt.subPrompts; let j = index" formArrayName="subForms">
+        <div class="subprompt-inner" [formGroupName]="j">
+          <div class="prompt-wrapper">
+            <h5 class="prompt" *ngIf="subPrompt.prompt">
+              {{subPrompt.prompt}}
+            </h5>
+          </div>
+          <input type="text" class="text-input" formControlName="shortAnswer" *ngIf="subPrompt.shortAnswer">
+
+          <drawingboard *ngIf="subPrompt.drawing" [drawingPrompt]="subPrompt.drawing" formControlName="drawing"></drawingboard>
+        </div>
+      </div>
+    </div>
+    <div class="Error" *ngIf="userPrompt.error">
+      {{ userPrompt.error }}
+    </div>
+    <scrawlbutton *ngIf="userPrompt.submitButton" color="green" (click)="onSubmit(userForm.value)">
+      Submit
+    </scrawlbutton>
+  </form>
+</div>

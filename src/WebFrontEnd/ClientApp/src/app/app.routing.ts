@@ -26,6 +26,10 @@ const routes: Routes = [
         loadChildren: () => import('./modules/feedback/feedback.module').then(m => m.FeedbackModule)
     },
     {
+        path: 'join',
+        loadChildren: () => import('./modules/join-game/join-game.module').then(m => m.JoinGameModule)
+    },
+    {
         path: 'play',
         loadChildren: () => import('./modules/fetch-data/fetch-data.module').then(m => m.FetchDataModule)
     },
