@@ -13,6 +13,6 @@ export class OpensourceSectionComponent implements OnInit {
   }
 
   onGithubRedirect() {
-    window.location.href='https://github.com/kevinjroyston/RoystonGame';
+    window.location.href='https://github.com/kevinjroyston/ScrawlBrawl';
   }
 }

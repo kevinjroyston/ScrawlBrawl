@@ -7,7 +7,7 @@ export const footerLinks = {
   ],
   'About': [
     {url: '/about', name: "Team"},
-    {url: 'https://github.com/kevinjroyston/RoystonGame', name: "Join Us", external: true}
+    {url: 'https://github.com/kevinjroyston/ScrawlBrawl', name: "Join Us", external: true}
   ],
   'Have thoughts?': [
     {url: '/feedback', name: "Feedback"},
