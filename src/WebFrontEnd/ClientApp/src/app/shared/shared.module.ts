@@ -11,8 +11,7 @@ import { DrawingDirective } from './components/drawingdirective.component';
 import { ScrawlButtonComponent } from './components/scrawlbutton/scrawlbutton.component';
 import { SelectorDirective } from './components/selectordirective.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SimpleButtonComponent } from './components/simplebutton/simplebutton.component'
-import { FooterModule} from '@layout/footer/footer.module'
+import { SimpleButtonComponent } from './components/simplebuttons/button/button.component'
 import { RouterModule } from '@angular/router';
 import { IconButtonComponent} from './components/iconbutton/iconbutton.component'
 import { GameAssetDirective} from './components/gameassetdirective.component'
@@ -33,8 +32,8 @@ import { TwitchIcon } from './components/svgs/socials/twitch';
 import { TwitterIcon } from './components/svgs/socials/twitter';
 import { YoutubeIcon } from './components/svgs/socials/youtube';
 import { FacebookIcon } from './components/svgs/socials/facebook';
-import { FeatherQuestion } from './components/svgs/branding/feather-question';
 import { ColorPickerComponent } from './components/colorpicker/colorpicker.component';
+import { SimpleLinkComponent } from './components/simplebuttons/link/link.component';
 
 @NgModule({
   imports: [
@@ -44,7 +43,6 @@ import { ColorPickerComponent } from './components/colorpicker/colorpicker.compo
     NgbModule,
     ColorPickerModule,
     UiSwitchModule,
-    FooterModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule
@@ -55,6 +53,7 @@ import { ColorPickerComponent } from './components/colorpicker/colorpicker.compo
     ColorPickerComponent,
     ScrawlButtonComponent,
     SimpleButtonComponent,
+    SimpleLinkComponent,
     DrawingDirective,
     SelectorDirective,
     GameAssetDirective,
@@ -74,8 +73,7 @@ import { ColorPickerComponent } from './components/colorpicker/colorpicker.compo
     TwitchIcon,
     TwitterIcon,
     YoutubeIcon,
-    FacebookIcon,
-    FeatherQuestion
+    FacebookIcon
   ],
   exports: [
     CommonModule,
@@ -86,7 +84,7 @@ import { ColorPickerComponent } from './components/colorpicker/colorpicker.compo
     ColorPickerModule,
     UiSwitchModule,
     SimpleButtonComponent,
-    FooterModule,
+    SimpleLinkComponent,
     Slider,
     FormsModule,
     ReactiveFormsModule,
@@ -94,7 +92,6 @@ import { ColorPickerComponent } from './components/colorpicker/colorpicker.compo
     GameAssetDirective,
     ScrawlButtonComponent,
     SelectorDirective,
-    FooterModule,
     IconButtonComponent,
     GreenMoustacheBrushSVG,
     RedPencilOnBluePencilSVG,
@@ -111,8 +108,7 @@ import { ColorPickerComponent } from './components/colorpicker/colorpicker.compo
     TwitchIcon,
     TwitterIcon,
     YoutubeIcon,
-    FacebookIcon,
-    FeatherQuestion
+    FacebookIcon
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

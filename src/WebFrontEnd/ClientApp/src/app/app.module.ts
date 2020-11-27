@@ -18,9 +18,12 @@ import { CoreModule } from '@core/core.module';
 import { SharedModule } from '@shared/shared.module';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from '@layout/nav-menu/nav-menu.component';
+import { FooterComponent } from '@layout/footer/footer.component'
 import { Configuration } from 'msal';
 import { AppRoutingModule } from './app.routing';
 import { environment } from 'environments/environment';
+import { FooterService } from '@layout/footer/footer.service';
+import { NavMenuService } from '@layout/nav-menu/nav-menu.service';
 
 function MSALConfigFactory(): Configuration {
     return msalConfig;
@@ -52,7 +55,8 @@ export const providers : Provider[] = (<Provider[]>[
 @NgModule({
   declarations: [
     AppComponent,
-    NavMenuComponent
+    NavMenuComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -63,7 +67,7 @@ export const providers : Provider[] = (<Provider[]>[
     HttpClientModule,
     MsalModule,
   ],
-  providers: providers,
+  providers: providers.concat([FooterService, NavMenuService]),
   bootstrap: [AppComponent]
 })
 export class AppModule { }

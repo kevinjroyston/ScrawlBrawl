@@ -1,10 +1,26 @@
-<div class="footer-wrapper">
-  <div class="footer">
+<div class="footer">
+  <div class="footer-inner">
     <div class="footer-links">
       <div class="footer-section">
         <a [routerLink]="['/']">
-          <img class="footer-brand" alt="Scrawl Brawl" src="/assets/SB_Logo_Transp_Shadow.png">
+          <div class="footer-logo">
+            <scrawlbrawl-logo-horizontal strokeColor="rgb(30, 30, 30)"></scrawlbrawl-logo-horizontal>
+          </div>
         </a>
+        <div class="socials">
+          <a href={{socialLinks.twitter}} target="_blank">
+            <twitter-icon></twitter-icon>
+          </a>
+          <a href={{socialLinks.twitch}} target="_blank">
+            <twitch-icon></twitch-icon>
+          </a>
+          <a href={{socialLinks.facebook}} target="_blank">
+            <facebook-icon></facebook-icon>
+          </a>
+          <a href={{socialLinks.youtube}} target="_blank">
+            <youtube-icon></youtube-icon>
+          </a>
+        </div>
       </div>
       <div class="footer-section" *ngFor="let section of sectionsOrder">
         <div class="footer-section-title">
@@ -12,26 +28,15 @@
         </div>
         <div class="footer-section-links">
           <div class="footer-link" *ngFor="let link of sections[section]">
-            <a [routerLink]=[link.url]>{{link.name}}</a>
+            <ng-container *ngIf="link.external; else internal">
+              <a [href]="link.url">{{link.name}}</a>
+            </ng-container>
+            <ng-template #internal>
+              <a [routerLink]=[link.url]>{{link.name}}</a>
+            </ng-template>
           </div>
         </div>
       </div>
-      <div class='footer-section'>
-        <div class="footer-section-title">
-          Socials
-        </div>
-        <div class="footer-section-links">
-          <div class="footer-link" *ngFor="let link of socialLinks">
-            <a>i {{link.name}}</a>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <div>Drawn Together. Polled Apart.</div>
-      <div>© 2020. All Rights Reserved.</div>
-      
     </div>
   </div>
 </div>
-

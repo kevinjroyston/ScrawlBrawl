@@ -2,9 +2,10 @@
 <div class="body-wrapper">
   <app-nav-menu></app-nav-menu>
   <div class="root-container">
-    <router-outlet></router-outlet>
+    <router-outlet (activate)="onActivate($event)"></router-outlet>
   </div>
 </div>
+<app-footer></app-footer>
 
 
 
