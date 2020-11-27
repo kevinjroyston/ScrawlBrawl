@@ -4,13 +4,13 @@ export const members : Member[] = [
     {
         name: "Kevin Royston", 
         image: "https://material.angular.io/assets/img/examples/shiba2.jpg", 
-        role: "Creator / Lead Developer", 
+        role: "Creator / Lead Backend Developer / Mentor", 
         description: "Kevin is a software engineer at a large corporation." 
     },
     {
         name: "Brian Royston", 
         image: "https://material.angular.io/assets/img/examples/shiba2.jpg", 
-        role: "Lead Developer", 
+        role: "Lead Gameplay Developer", 
         description: "Brian is an undergraduate student at U.C. Berkeley studying Computer Science with an interest in computer graphics."
     },
     {
@@ -33,7 +33,7 @@ export const members : Member[] = [
     {
         name: "Daniel Lee", 
         image: "https://material.angular.io/assets/img/examples/shiba2.jpg", 
-        role: "Developer", 
-        description: "Somebody"
+        role: "Full Stack / Lead Frontend Developer", 
+        description: "Daniel is a software engineer at a large corporation"
     }
 ]

@@ -16,10 +16,19 @@
     padding: 0 2rem;
 }
 
-.socials {
+.socials{
+    display: flex;
+    margin: 1.5rem 0;
+
     a {
-        max-height: 20px;
+        transition: all .2s ease;
+        margin-right: 20px;
+        max-height: 23px;
         max-width: 30px;
+    }
+
+    a:hover{
+        fill: var(--ornamental-pastelyellow);
     }
 }
 
@@ -40,9 +49,8 @@
 .footer-section-title{
     font-family: "Poppins", sans-serif;
     margin-bottom: 2rem;
-    color: var(--white-secondary);
-    font-size: 1.5rem;
-    font-weight: 600;
+    color: var(--blue-secondary);
+    font-size: 1.1rem;
 }
 
 .footer-logo {
@@ -63,30 +71,17 @@
     a {
         transition: all .2s ease;
         font-size: .9rem;
-        color: var(--blue-secondary);
+        color: var(--white-secondary);
     }
 
     a:hover{
-        color: var(--ornamental-pastelyellow);
+        color: var(--blue-secondary);
     }
 }
 
 .footer-bottom-tagline{
     color: var(--white-secondary);
     font-size: .8rem;
-}
-
-.socials{
-    display: flex;
-
-    a {
-        transition: all .2s ease;
-        margin-right: 15px;
-    }
-
-    a:hover{
-        fill: var(--ornamental-pastelyellow);
-    }
 }
 
 

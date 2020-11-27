@@ -12,7 +12,7 @@ export class FooterComponent {
   sectionsOrder: any;
   socialLinks: any;
 
-  constructor(public footerService : FooterService) { 
+  constructor() {
     this.sections = footerLinks;
     this.sectionsOrder = footerLinksOrder;
     this.socialLinks = socialLinks;

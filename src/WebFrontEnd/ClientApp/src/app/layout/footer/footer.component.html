@@ -1,4 +1,4 @@
-<div class="footer" *ngIf="footerService.visible">
+<div class="footer">
   <div class="footer-inner">
     <div class="footer-links">
       <div class="footer-section">
@@ -7,6 +7,20 @@
             <scrawlbrawl-logo-horizontal strokeColor="rgb(30, 30, 30)"></scrawlbrawl-logo-horizontal>
           </div>
         </a>
+        <div class="socials">
+          <a href={{socialLinks.twitter}} target="_blank">
+            <twitter-icon></twitter-icon>
+          </a>
+          <a href={{socialLinks.twitch}} target="_blank">
+            <twitch-icon></twitch-icon>
+          </a>
+          <a href={{socialLinks.facebook}} target="_blank">
+            <facebook-icon></facebook-icon>
+          </a>
+          <a href={{socialLinks.youtube}} target="_blank">
+            <youtube-icon></youtube-icon>
+          </a>
+        </div>
       </div>
       <div class="footer-section" *ngFor="let section of sectionsOrder">
         <div class="footer-section-title">
@@ -14,31 +28,14 @@
         </div>
         <div class="footer-section-links">
           <div class="footer-link" *ngFor="let link of sections[section]">
-            <a [routerLink]=[link.url]>
-              {{link.name}}
-            </a>
+            <ng-container *ngIf="link.external; else internal">
+              <a [href]="link.url">{{link.name}}</a>
+            </ng-container>
+            <ng-template #internal>
+              <a [routerLink]=[link.url]>{{link.name}}</a>
+            </ng-template>
           </div>
         </div>
-      </div>
-    </div>
-  
-    <div class="footer-bottom">
-        <div class="footer-bottom-tagline">
-          © ScrawlBrawl 2020
-        </div>
-        <div class="socials">
-          <a href="https://twitter.com" target="_blank">
-            <twitter-icon></twitter-icon>
-          </a>
-          <a href="https://twitch.com" target="_blank">
-            <twitch-icon></twitch-icon>
-          </a>
-          <a href="https://facebook.com" target="_blank">
-            <facebook-icon></facebook-icon>
-          </a>
-          <a href="https://youtube.com" target="_blank">
-            <youtube-icon></youtube-icon>
-          </a>
       </div>
     </div>
   </div>

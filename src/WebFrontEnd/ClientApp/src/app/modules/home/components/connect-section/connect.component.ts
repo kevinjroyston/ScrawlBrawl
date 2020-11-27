@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { socialLinks } from '@layout/footer/footer';
 
 @Component({
   selector: 'home-connect-with-us',
@@ -6,8 +7,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['../../pages/home/home.component.scss','./connect.component.scss']
 })
 export class ConnectWithUsComponent implements OnInit {
+  socialLinks: any
 
-  constructor() { }
+  constructor() { 
+    this.socialLinks = socialLinks;
+  }
 
   ngOnInit() {
   }
