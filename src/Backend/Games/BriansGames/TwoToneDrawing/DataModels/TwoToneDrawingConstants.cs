@@ -7,15 +7,15 @@
         public const int PointsToLoseForBadSelfVote= -100;
 
         public const double SetupTimerMin = 45;
-        public const double SetupTimerAve = 120;
-        public const double SetupTimerMax = 240;
+        public const double SetupTimerAve = 90;
+        public const double SetupTimerMax = 180;
 
         public const double PerDrawingTimerMin = 45;
-        public const double PerDrawingTimerAve = 120;
-        public const double PerDrawingTimerMax = 240;
+        public const double PerDrawingTimerAve = 60;
+        public const double PerDrawingTimerMax = 120;
 
         public const double VotingTimerMin = 30;
-        public const double VotingTimerAve = 60;
-        public const double VotingTimerMax = 120;
+        public const double VotingTimerAve = 45;
+        public const double VotingTimerMax = 90;
     }
 }

@@ -15,8 +15,9 @@ public class TextGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
     public int dimensionMax = 10;
     public ITVView iTVView;
 
-    public void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         this.iTVView.AddOptionsListener((UnityViewOptions options) =>
         {
             if (options != null)
