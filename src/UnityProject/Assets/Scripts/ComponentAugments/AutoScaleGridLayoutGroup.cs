@@ -25,8 +25,9 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
 
 
 
-    protected void Start()
+    protected override void Start()
     {
+        base.Start();
         gridLayoutGroup = GetComponent<GridLayoutGroup>();
         rect = GetComponentInParent<RectTransform>();
 

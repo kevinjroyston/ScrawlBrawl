@@ -2,7 +2,7 @@
   "profiles": {
     "BackendAutomatedTestingClient": {
       "commandName": "Project",
-      "commandLineArgs": "-parallel -structured"
+      "commandLineArgs": "-games \"Chaotic Cooperation\" -users 9 "
     }
   }
 }

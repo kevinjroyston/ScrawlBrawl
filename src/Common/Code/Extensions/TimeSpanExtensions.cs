@@ -10,7 +10,11 @@ namespace Common.Code.Extensions
             {
                 return null;
             }
-            return TimeSpan.FromTicks(((TimeSpan)originalTimeSpan).Ticks * (long)multiplier);
+            return originalTimeSpan.Value.MultipliedBy(multiplier);
+        }
+        public static TimeSpan MultipliedBy(this TimeSpan originalTimeSpan, float multiplier)
+        {
+            return TimeSpan.FromTicks((long)(originalTimeSpan.Ticks * multiplier));
         }
     }
 }

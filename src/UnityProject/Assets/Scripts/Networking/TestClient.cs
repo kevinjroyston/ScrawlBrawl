@@ -43,7 +43,8 @@ public class TestClient : MonoBehaviour
             //.WithUrl("https://api.test.scrawlbrawl.tv/signalr")
 
 #else
-            .WithUrl("https://api.scrawlbrawl.tv/signalr")
+            .WithUrl("http://localhost:50403/signalr")
+            //.WithUrl("https://api.scrawlbrawl.tv/signalr")
 #endif
             .ConfigureLogging(logging =>
             {
