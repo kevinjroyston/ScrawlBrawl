@@ -159,16 +159,16 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
 
             this.ShowColors = showColors;
 
-            TimeSpan? multipliedDrawingTimer = drawingTimer.MultipliedBy(challengeTrackers.Count);
-
-
             State getChallenges = GetChallengesUserState();
-            MultiStateChain getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby), stateDuration: multipliedDrawingTimer);
 
             this.Entrance.Transition(getChallenges);
             getChallenges.AddExitListener(() => this.AssignPrompts());
-            getChallenges.Transition(getDrawings);
-            getDrawings.Transition(this.Exit);
+            getChallenges.Transition(() =>
+            {
+                var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby), stateDuration: drawingTimer.MultipliedBy(challengeTrackers.Count));
+                getDrawings.Transition(this.Exit);
+                return getDrawings;
+            });
 
             this.UnityView = new UnityView(this.Lobby)
             {
