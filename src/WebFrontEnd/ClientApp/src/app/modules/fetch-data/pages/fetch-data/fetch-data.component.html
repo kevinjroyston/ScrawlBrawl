@@ -1,6 +1,3 @@
-<div class="LoadingText" *ngIf="!userPrompt">
-    <em>Loading...</em>
-</div>
 <div class="fetch-data">
     <form ng-app="myApp" class="form" *ngIf="userPrompt" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)">
         <h2 class="title" *ngIf="userPrompt.title">

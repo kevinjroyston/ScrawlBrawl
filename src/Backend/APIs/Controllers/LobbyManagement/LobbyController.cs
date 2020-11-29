@@ -9,6 +9,7 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Backend.GameInfrastructure.DataModels;
 using Backend.GameInfrastructure.DataModels.Users;
+using Backend.GameInfrastructure.DataModels.States.UserStates;
 #if !DEBUG
 using Microsoft.AspNetCore.Authorization;
 #endif
@@ -120,6 +121,9 @@ namespace Backend.APIs.Controllers.LobbyManagement
             {
                 return StatusCode(400, result.Item2);
             }
+
+            UserState waitingState = new SimplePromptUserState();
+            user.TransitionUserState(waitingState);
 
             return new OkResult();
         }

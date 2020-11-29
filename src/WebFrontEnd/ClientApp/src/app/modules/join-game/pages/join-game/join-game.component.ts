@@ -25,6 +25,7 @@ export class JoinGameComponent {
     localStorageId: "SBPortrait"
   };
   error : any;
+  user: User;
 
   constructor(@Inject(API) private api: API, private router : Router) {
     this.getUser();
@@ -39,6 +40,7 @@ export class JoinGameComponent {
     userRequest.subscribe({
       next: async (data : User) => {
         this.checkUserLobby(data);
+        this.user = data;
       },
       error: async (error) => {
         console.log(error);
