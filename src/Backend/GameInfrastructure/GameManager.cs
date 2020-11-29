@@ -15,6 +15,7 @@ using Common.DataModels.Requests;
 using Common.DataModels.Responses;
 using Common.DataModels.Enums;
 using Microsoft.Extensions.Logging;
+using Common.DataModels.Requests.LobbyManagement;
 
 namespace Backend.GameInfrastructure
 {
@@ -240,6 +241,11 @@ namespace Backend.GameInfrastructure
                 return;
             }
             Users.TryRemove(userIdentifier, out User _);
+        }
+
+        public (bool, string) RegisterUser(User user, JoinLobbyRequest request)
+        {
+            return RegisterUser(request.LobbyID, user, request.DisplayName, request.SelfPortrait);
         }
 
         private (bool, string) RegisterUser(string lobbyId, User user, string displayName, string selfPortrait)
