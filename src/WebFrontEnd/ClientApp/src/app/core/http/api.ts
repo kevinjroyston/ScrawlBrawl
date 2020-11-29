@@ -14,13 +14,13 @@ type APIRequest = LobbyRequest | UserRequest | GameRequest;
 
 type UserRequest = {
     type: "User",
-    path: "Delete",
+    path: "Delete" | "Get",
     body?: {}
 }
 
 type LobbyRequest = {
     type: "Lobby",
-    path: "Get" | "Create" | "Configure" | "Start" | "Games" | "Delete",
+    path: "Get" | "Create" | "Configure" | "Start" | "Games" | "Delete" | "Join",
     body?: {}
 }
 
@@ -85,6 +85,8 @@ export class API {
                     case "Games": obs = this.Get(r);
                         break;
                     case "Configure":
+                    case "Join": obs = this.Post(r);
+                        break;
                     case "Create": obs = this.Post(r);
                         break;
                     default: return;
@@ -92,6 +94,8 @@ export class API {
                 break;
             case "User":
                 switch (r.path) {
+                    case "Get": obs = this.Get(r);
+                        break;
                     case "Delete": obs = this.Get(r);
                         break;
                     default: return;

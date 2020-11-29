@@ -3,9 +3,9 @@
 </div>
 <div class="fetch-data">
     <form ng-app="myApp" class="form" *ngIf="userPrompt" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)">
-        <h1 class="title" *ngIf="userPrompt.title">
+        <h2 class="title" *ngIf="userPrompt.title">
             {{ userPrompt.title }}
-        </h1>
+        </h2>
         <div class="Description" *ngIf="userPrompt.description">
             {{ userPrompt.description }}
         </div>

@@ -1,8 +1,9 @@
 import { Component, Inject } from '@angular/core';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import GameplayPrompts from '@core/models/gameplay'
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+import { FormControl, FormGroup } from '@angular/forms';
 import { API } from '@core/http/api';
+import GameplayPrompts from '@core/models/gameplay'
+import User from '@core/models/user'
 
 @Component({
   selector: 'app-join-game',
@@ -10,101 +11,64 @@ import { API } from '@core/http/api';
   styleUrls: ['../../../fetch-data/pages/fetch-data/fetch-data.component.scss']
 })
 export class JoinGameComponent {
-  public userPrompt: GameplayPrompts.UserPrompt;
-  public userForm;
-  private userPromptTimerId;
-  private formBuilder: FormBuilder;
-  private autoSubmitTimerId;
+  form = new FormGroup({
+    DisplayName: new FormControl(''),
+    LobbyID: new FormControl(''),
+    SelfPortrait: new FormControl(''),
+  })
+  drawingSettings: GameplayPrompts.DrawingPromptMetadata = {
+    colorList: null,
+    premadeDrawing: null,
+    canvasBackground: null,
+    heightInPx : 360,
+    widthInPx : 360,
+    localStorageId: "SBPortrait"
+  };
+  error : any;
 
-  constructor(formBuilder: FormBuilder, private _colorPicker: MatBottomSheet, @Inject(API) private api: API) {
-    this.formBuilder = formBuilder;
-    this.fetchUserPrompt();
+  constructor(@Inject(API) private api: API, private router : Router) {
+    this.getUser();
   }
 
-  async onSubmit(userSubmitData, autoSubmit = false) {
-    // Clear auto refresh timer as well as auto submit timer since we will be calling get after
-    // the submission and both will get set there
-    if (this.userPromptTimerId) {
-      clearTimeout(this.userPromptTimerId);
-      this.userPromptTimerId = null;
-    }
-    if (this.autoSubmitTimerId) {
-      clearTimeout(this.autoSubmitTimerId);
-      this.autoSubmitTimerId = null;
-    }
+  getUser = async () => {
+    let userRequest = await this.api.request({ 
+      type: "User", 
+      path: "Get"
+    })
 
-    // Populate IDs.
-    userSubmitData.id = this.userPrompt.id;
-    for (let i = 0; i < userSubmitData.subForms.length; i++) {
-        userSubmitData.subForms[i].id = this.userPrompt.subPrompts[i].id;
-        if (this.userPrompt.subPrompts[i].selector && !userSubmitData.subForms[i].selector) {
-            userSubmitData.subForms[i].selector="0";
-        }
+    userRequest.subscribe({
+      next: async (data : User) => {
+        this.checkUserLobby(data);
+      },
+      error: async (error) => {
+        console.log(error);
+      }
+    })
+  }
+
+  checkUserLobby = (user: User) => {
+    if (user.LobbyId !== null){
+      this.router.navigate(['/play']) 
     }
+  }
 
-    var body = JSON.stringify(userSubmitData);
-    console.warn('Submitting response', body);
+  onSubmit = async () => {
+    let requestBody = this.form.value
+    let lobbyJoinRequest = await this.api.request({ 
+      type: "Lobby", 
+      path: "Join", 
+      body: JSON.stringify(requestBody)
+    })
 
-    await this.api.request({ type: "Game", path: autoSubmit ? "AutoFormSubmit" : "FormSubmit", body: body }).subscribe({
-        next: async (data) => {
-            console.log("POST Request is successful ", data);
-            this.fetchUserPrompt();
+    lobbyJoinRequest.subscribe({
+        next: async () => {
+          this.router.navigate(['/play']);
         },
         error: async (error) => {
-            console.log("Error", error);
-            if (error && error.error) {
-                this.userPrompt.error = error.error;
-            }
+          const firstError = Object.keys(error.error.errors)[0];
+          const firstErrorMessage = error.error.errors[firstError][0]
+          this.error = firstErrorMessage;
         }
     });
   }
-
-  async fetchUserPrompt() {
-    console.log("fetchUserPrompt: userPromptTimerId="+this.userPromptTimerId);
-    if (this.userPromptTimerId) {
-      clearTimeout(this.userPromptTimerId);
-      this.userPromptTimerId = null;
-    }
-
-    // fetch the current content from the server
-    await this.api.request({ type: "Game", path: "CurrentContent"}).subscribe({
-        next: async data => {
-          const prompt = data as GameplayPrompts.UserPrompt;
-          this.userPrompt = prompt;
-          let subFormCount: number = 0;
-          if (prompt && prompt.subPrompts && prompt.subPrompts.length > 0) {
-              subFormCount = prompt.subPrompts.length;
-          }
-          this.userForm = this.formBuilder.group({
-              id: '',
-              subForms: this.formBuilder.array(this.makeSubForms(subFormCount))
-          });
-        },
-        error: async (error) => {
-            console.error(error);
-        }
-    });
-}
-
-createSubForm(): FormGroup {
-  return this.formBuilder.group({
-      id: '',
-      dropdownChoice: '',
-      radioAnswer: '',
-      shortAnswer: '',
-      color: '',
-      drawing: '',
-      slider: '',
-      selector: '',
-  });
-}
-
-makeSubForms(len: number): FormGroup[] {
-  let arr:FormGroup[] = [];
-  for (let i = 0; i < len; i++) {
-      arr.push(this.createSubForm());
-  }
-  return arr;
-}
-
 }
