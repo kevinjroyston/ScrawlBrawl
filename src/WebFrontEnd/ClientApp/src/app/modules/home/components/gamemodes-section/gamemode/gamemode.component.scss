@@ -7,6 +7,7 @@
 .gamemode {
     display: flex;
     box-shadow: var(--shadow-lg);
+    background: var(--white-primary);
     overflow: hidden;
     flex-direction: column;
     border-radius: 10px;

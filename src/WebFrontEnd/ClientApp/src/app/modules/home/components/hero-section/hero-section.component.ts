@@ -8,10 +8,10 @@ import { trigger, style, animate, query, stagger, transition } from '@angular/an
   animations: [
     trigger('simpleFadeAnimation', [
       transition(':enter' , [
-        query(".cast, h2, #mobile-play", [
+        query(".cast, .catchphrase, #mobile-play", [
           style({ opacity: 0 }),
           stagger('750ms', [
-            animate('900ms', style( { opacity: 1}))
+            animate('1000ms', style( { opacity: 1}))
           ]
         )])
       ])
