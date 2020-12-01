@@ -216,6 +216,7 @@ export class FetchDataComponent
 }
 interface UserPrompt {
     id: string;
+    gameIdString: string;
     refreshTimeInMs: number;
     currentServerTime: Date;
     autoSubmitAtTime: Date;

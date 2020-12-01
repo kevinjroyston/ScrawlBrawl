@@ -2,6 +2,7 @@
     <em>Loading...</em>
 </div>
 <div class="fetch-data">
+
     <form ng-app="myApp" class="form" *ngIf="userPrompt" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)">
         <h1 class="title" *ngIf="userPrompt.title">
             {{ userPrompt.title }}
@@ -54,5 +55,9 @@
         <scrawlbutton *ngIf="userPrompt.submitButton" color="green" (click)="onSubmit(userForm.value)">
             Submit
         </scrawlbutton>
+        <div *ngIf="userPrompt.submitButton" gameAsset [gameAssetClass]="'game-css'" [gameAssetType]="'prompts-css'" [gameAssetID]="userPrompt.gameIdString">
+        </div>
+        <div *ngIf="!userPrompt.submitButton" gameAsset [gameAssetClass]="'game-css'" [gameAssetType]="'waiting-css'" [gameAssetID]="userPrompt.gameIdString">
+        </div>
     </form>
 </div>

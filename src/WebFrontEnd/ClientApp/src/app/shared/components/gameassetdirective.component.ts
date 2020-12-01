@@ -14,6 +14,7 @@ Usage:
     homepage-previews  (text)
     lobby-descriptions  (text)
     
+  important!  Set gameAssetID as the LAST item in your tag.  As soon as it is set it will attempt to load
 */
 
 @Directive({
@@ -43,6 +44,7 @@ export class GameAssetDirective {
   loadGameAsset() {
     console.log("gameAsset load " + this.gameAssetID);
 
+    if ((!this._gameAssetID) || (this._gameAssetID=="undefined")) {this._gameAssetID=""}
     if (this.element.nodeName == 'IMG') {
       this.element.src = this.determineImageAssetDestination();
     }
@@ -55,12 +57,13 @@ export class GameAssetDirective {
     }
   }
 
-  determineImageAssetDestination = () => {
+  supportsSVG(gameId){return ((gameId!='BodySwap')&&(gameId!='FriendQuiz'))}
+  determineImageAssetDestination() {
     return '/assets/GameAssets/game-images/'+(this.gameAssetClass ? this.gameAssetClass+'/' : '') + this.gameAssetID + "-" 
-       + (this.gameAssetType ? this.gameAssetType : 'logo') + ".svg";
+       + (this.gameAssetType ? this.gameAssetType : 'logo') + (this.supportsSVG(this.gameAssetID) ? '.svg' : '.png');
   }
 
-  determineDescriptionDestination = () => {
+  determineDescriptionDestination() {
     return '/assets/GameAssets/'+(this.gameAssetClass ? this.gameAssetClass+'/' : '') + this.gameAssetID + "-" + (this.gameAssetType ? this.gameAssetType : 'description') + ".html";
   } 
 }
