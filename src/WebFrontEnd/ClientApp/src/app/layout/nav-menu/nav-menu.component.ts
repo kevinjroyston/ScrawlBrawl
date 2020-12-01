@@ -13,7 +13,7 @@ import { NavMenuService } from './nav-menu.service';
     trigger('simpleFadeAnimation', [
       transition(':enter' , [
         style({ opacity: 0 }),
-        animate('250ms 3300ms', 
+        animate('250ms 1000ms', 
           style({opacity: 1})
         )
       ])

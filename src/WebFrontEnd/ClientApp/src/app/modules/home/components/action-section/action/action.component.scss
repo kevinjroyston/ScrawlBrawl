@@ -19,6 +19,11 @@
     max-width: 150px;
 }
 
+.action-image {
+  -webkit-filter: drop-shadow( 1.5px 1.5px 1px rgba(0, 0, 0, .8));
+  filter: drop-shadow( 1.5px 1.5px 1px rgba(0, 0, 0, .8));
+}
+
 @media only screen and (max-width: 768px) {
     :host {
         flex: 1;

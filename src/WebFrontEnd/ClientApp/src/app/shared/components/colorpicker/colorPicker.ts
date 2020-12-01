@@ -15,8 +15,9 @@ export default class ColorPickerService {
     generateGrayScale = (numSquares: number = ColorPickerConstants.numColorsPerRow) : string[] => {
         let grayScale = []
     
-        for (let value = ColorPickerConstants.RGB_MIN; value <= ColorPickerConstants.RGB_MAX - ColorPickerConstants.RGB_MAX/numSquares; value += ColorPickerConstants.RGB_MAX/numSquares) {
-          grayScale.push(`rgb(${value}, ${value}, ${value})`)
+        for (let square = 0; square <= numSquares - 2; square += 1) {
+            let squareValue = square * (ColorPickerConstants.RGB_MAX - ColorPickerConstants.RGB_MIN)/(numSquares - 2);
+            grayScale.push(`rgb(${squareValue}, ${squareValue}, ${squareValue})`)
         }
     
         return grayScale
@@ -27,14 +28,22 @@ export default class ColorPickerService {
         let rainbowColors = []
         let baseColors = []
 
-        for (let hex = ColorPickerConstants.HEX_MIN; hex <= ColorPickerConstants.HEX_MAX - ColorPickerConstants.HEX_MAX/numColors; hex += ColorPickerConstants.HEX_MAX/numColors) {
+        for (
+            let hex = ColorPickerConstants.HEX_MIN; 
+            hex <= ColorPickerConstants.HEX_MAX - ColorPickerConstants.HEX_MAX/numColors; 
+            hex += ColorPickerConstants.HEX_MAX/numColors
+        ) {
             baseColors.push(hex);
         }
 
         for (let color of baseColors) {
             let colorRow = []
-            for (let luminosity = ColorPickerConstants.LUMINOSITY_MIN; luminosity <= ColorPickerConstants.LUMINOSITY_MAX; luminosity += ColorPickerConstants.LUMINOSITY_MAX/numSquares) {
-            colorRow.push(`hsl(${color}, ${ColorPickerConstants.SATURATION}%, ${luminosity}%)`)
+            for (
+                let luminosity = ColorPickerConstants.LUMINOSITY_MIN; 
+                luminosity <= ColorPickerConstants.LUMINOSITY_MAX; 
+                luminosity += ColorPickerConstants.LUMINOSITY_MAX/numSquares
+            ) {
+                colorRow.push(`hsl(${color}, ${ColorPickerConstants.SATURATION}%, ${luminosity}%)`)
             }
             rainbowColors.push(colorRow);
         }
