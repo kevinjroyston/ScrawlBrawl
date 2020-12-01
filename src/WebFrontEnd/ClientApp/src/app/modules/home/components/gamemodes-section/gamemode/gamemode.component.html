@@ -5,7 +5,7 @@
         <div gameAsset class="gamemode-text" [gameAssetClass]="'homepage-previews'" [gameAssetID]='gameModeID'>
         </div>
         <div class="action-wrapper">
-            <scrawlbutton class="action">
+            <scrawlbutton class="action" (click)="openGameInfoDialog($event, gameModeID)">
                 Learn More
             </scrawlbutton>
         </div>

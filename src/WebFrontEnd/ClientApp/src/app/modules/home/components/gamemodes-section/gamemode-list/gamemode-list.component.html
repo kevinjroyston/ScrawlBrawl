@@ -1,10 +1,10 @@
 <section>
-  <div class="gamemode-list">
-    <div class='gamemodes-row carousel'>
-      <ng-container *ngFor="let gameMode of gameModes; let i = index;">
-        <app-gamemode [gameModeID]="gameMode.gameIdString" >
-        </app-gamemode>
-      </ng-container>
+    <div class="gamemode-list">
+        <div class='gamemodes-row carousel'>
+            <ng-container *ngFor="let gameMode of gameModes; let i = index;">
+                <app-gamemode [gameModeID]="gameMode.gameIdString" [gameModes]="gameModes" [gameId]="i">
+                </app-gamemode>
+            </ng-container>
+        </div>
     </div>
-  </div>
 </section>
