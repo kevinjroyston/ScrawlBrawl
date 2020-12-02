@@ -19,5 +19,6 @@ export const socialLinks = {
   discord: "https://discord.gg/HwjmTxx",
   reddit:  "https://www.reddit.com/r/ScrawlBrawl/",
   twitch: "https://www.twitch.tv/scrawlbrawl",
-  twitter: "https://twitter.com/ScrawlBrawlGames"
+  twitter: "https://twitter.com/ScrawlBrawlGame",
+  youtube: "https://youtube.com/ScrawlBrawlGame", /* needs correct link */
 }
