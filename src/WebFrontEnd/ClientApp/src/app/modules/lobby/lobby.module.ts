@@ -5,6 +5,7 @@ import { LobbyRoutes } from './lobby.routing';
 import {GamemodeDialogComponent} from './components/gamemode-dialog/gamemode-dialog.component'
 import {GameInfoDialogComponent} from './components/gameinfo-dialog/gameinfo-dialog.component'
 import { ErrorService } from '@modules/lobby/services/error.service';
+import { LobbyInstructionsDialogComponent } from './components/lobbyinstructions-dialog/lobbyinstructions-dialog.component';
 
 @NgModule({
   imports: [
@@ -14,7 +15,8 @@ import { ErrorService } from '@modules/lobby/services/error.service';
   declarations: [
     LobbyComponent,
     GamemodeDialogComponent,
-    GameInfoDialogComponent
+    GameInfoDialogComponent,
+    LobbyInstructionsDialogComponent
   ],
   providers: [
     ErrorService
