@@ -1,0 +1,21 @@
+<h2 [ngStyle]="{'margin-bottom': '1.5rem'}">
+  Instructions
+</h2>
+
+<mat-dialog-content>
+  <div>
+    1. Download Game Client (Cloud Icon)
+  </div>
+  <div>
+    2. Launch Client
+  </div>
+  <div>
+    3. Once players joined, enter lobby code in game client and start game
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <scrawlbutton [ngStyle]="{'margin-right': '.75rem'}" color='red' (click)="close()">
+      Close
+  </scrawlbutton>
+</mat-dialog-actions>
