@@ -11,7 +11,7 @@ export const footerLinks = {
   ],
   'Have thoughts?': [
     {url: '/feedback', name: "Feedback"},
-    {url: '/contact', name: "Contact Us"}
+    {url: 'https://discord.gg/f6RbrTtB', name: "Contact Us", external: true}
   ]
 }
 
