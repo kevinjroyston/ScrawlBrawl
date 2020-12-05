@@ -3,7 +3,8 @@
   display: flex;
   padding: .25rem 0;
   min-height: 60px;
-  border-bottom: var(--border-grey);
+  border-bottom: var(--border);
+  background: var(--navbar-background);
   transition: all .3s ease;
   width: 100%;
   z-index: 1000;
@@ -23,7 +24,7 @@
 }
 
 .navbar-open{
-  background: white !important;
+  background: var(--navbar-background) !important;
   transition: all .25s ease;
 }
 
@@ -80,7 +81,7 @@
 }
 
 .navbar-logo {
-  fill: var(--ornamental-pastelblue);
+  fill: var(--pastelblue);
   transition: all .3s ease;
   height: 40px;
   width: 250px;
@@ -88,7 +89,7 @@
 }
 
 .navbar-logo:hover{
-  fill: var(--ornamental-pastelyellow);
+  fill: var(--pastelyellow);
 }
 
 .nav-item {
@@ -105,29 +106,39 @@
 
 .navbar-homepage{ 
   background: transparent;
-  border: 1px solid transparent;
+  border-bottom: 1px solid transparent;
   position: fixed;
   top:0;
   width: 100%;
-
-  & .trans-link:hover {
-    background-color: white;
-  }
 }
 
 .navbar-brand {
   max-width: 100px;
 }
 
-.navbar-standard{
-  background-color: white;
-  border: var(--border-grey);
-
-  & .trans-link:hover {
-    background-color: var(--white-secondary);
-  }
+.darkmode {
+  cursor:pointer;
+  fill: var(--text-color);
+  margin-right: 10px;
+  transition: all .5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
+.navbar-standard{
+  background-color: var(--navbar-background);
+  border-bottom: var(--border);
+}
+
+.trans-link{
+  transition: all .25s ease;
+  color: var(--text-color);
+  padding: .65rem .75rem;
+  font-size: 1.1rem;
+  border-radius: 4px;
+}
+
+.trans-link:hover {
+  background-color: var(--iconbutton-hover);
+}
 
 @media only screen and (max-width: 768px) {
   nav{

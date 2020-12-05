@@ -28,7 +28,6 @@ simplebutton {
 
 .title {
     margin: 1rem 0;
-    color: var(--black-primary);
     text-align: center;
     text-transform: uppercase;
 }
@@ -38,14 +37,15 @@ simplebutton {
     font-size: 16px;
     line-height: 19px;
     padding: 0.75rem;
-    border: var(--border-grey);
+    border: var(--border);
+    color: var(--text-color);
+    background: var(--input-background);
 }
 
 .prompt-wrapper {
     display: flex;
     justify-content: center;
     margin-bottom: 0.2rem;
-    color: var(--black-primary);
 }
 
 .subprompts {
@@ -56,10 +56,10 @@ simplebutton {
 }
 
 .color-input {
+    box-shadow: var(--shadow-md);
     width: 100%;
     height: 45px;
     border-radius: 5px;
-    box-shadow: var(--shadow-md);
     transition: all 0.25s ease;
     background-color: var(--black-primary);
     cursor: pointer;
@@ -74,8 +74,7 @@ simplebutton {
     margin-bottom: 0rem;
 }
 
-.submit-button {
-    max-width: 700px;
+.submit-prompt {
     margin-top: 1rem;
 }
 

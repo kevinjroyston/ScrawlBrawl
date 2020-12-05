@@ -4,8 +4,7 @@ section{
 
 .itsection-socials {
     display: flex;
-    fill: var(--white-primary);
-    transition: all .3 ease;
+    fill: var(--background);
 
     a {
         margin-right: 25px;
@@ -15,6 +14,7 @@ section{
 
     a:hover{
         fill: var(--yellow-primary);
+        transition: all .25 ease;
     }
 }
 

@@ -39,7 +39,7 @@
     }
 
     a:hover{
-        fill: var(--ornamental-pastelyellow);
+        fill: var(--pastelyellow);
     }
 }
 
@@ -67,11 +67,11 @@
 .footer-logo {
     max-width: 300px;
     stroke: white !important;
-    fill: var(--ornamental-pastelyellow);
+    fill: var(--pastelyellow);
     transition: all .3s ease;
 
     &:hover{
-        fill: var(--ornamental-pastelblue)
+        fill: var(--pastelblue)
     }
 }
 

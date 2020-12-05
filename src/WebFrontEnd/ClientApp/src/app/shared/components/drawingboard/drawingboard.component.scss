@@ -1,6 +1,6 @@
 .drawb {
     display: flex;
-    border: var(--border-grey);
+    border: var(--border);
 }
 
 .drawb-canvas {
@@ -32,10 +32,10 @@
 }
 
 .drawb-settings {
-    background: var(--white-primary);
+    background: var(--input-background);
     flex-basis: 35%;
     padding: 0 1rem;
-    border-left: var(--border-grey);
+    border-left: var(--border);
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
 }
@@ -79,7 +79,7 @@
     flex-direction: column;
     padding: 1rem 0;
     &:not(:last-child) {
-        border-bottom: 1px solid var(--white-secondary);
+        border-bottom: var(--border);
     }
 }
 
@@ -136,6 +136,7 @@ input[type=color] {
 input[type=range] {
     border: 0;
     height: 39px;
+    background: var(--input-background);
     -webkit-appearance: none;
     width: 100%;
     &:focus {
@@ -147,7 +148,7 @@ input[type=range] {
         cursor: pointer;
         animate: 0.2s;
         box-shadow: 1px 1px 2px #A6A6A6;
-        background: var(--ornamental-pastelblue);
+        background: var(--pastelblue);
         border-radius: 4px;
         border: 2px solid var(--blue-primary);
     }
@@ -157,13 +158,13 @@ input[type=range] {
         height: 30px;
         width: 17px;
         border-radius: 10px;
-        background: var(--ornamental-pastelblue);
+        background: var(--pastelblue);
         cursor: pointer;
         -webkit-appearance: none;
         margin-top: -13px;
     }
     &:focus::-webkit-slider-thumb {
-        background: var(--ornamental-pastelred);
+        background: var(--pastelred);
     }
 }
 

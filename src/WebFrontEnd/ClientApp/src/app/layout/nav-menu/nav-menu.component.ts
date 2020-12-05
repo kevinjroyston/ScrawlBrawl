@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { Location } from '@angular/common';
 import { NavMenuService } from './nav-menu.service';
+import { ThemeService } from '@core/services/theme.service' 
 
 @Component({
   selector: 'app-nav-menu',
@@ -25,7 +26,7 @@ export class NavMenuComponent {
   isHomePage = true;
   isPastHero = false;
 
-  constructor(private router: Router, public activatedRoute: ActivatedRoute, public location: Location, public NavMenuService : NavMenuService){
+  constructor(private router: Router, public activatedRoute: ActivatedRoute, public location: Location, public NavMenuService : NavMenuService, private ThemeService: ThemeService ){
     this.checkRoute(location.prepareExternalUrl(location.path()));
     router.events.subscribe((val) => { 
       this.checkRoute(this.router.url)
@@ -48,6 +49,10 @@ export class NavMenuComponent {
 
   toggle = () => {
     this.isExpanded = !this.isExpanded;
+  }
+
+  toggleTheme = () => {
+    this.ThemeService.toggleTheme();
   }
 
   redirectLink = (route: string) => {

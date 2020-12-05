@@ -1,7 +1,7 @@
 .icon-button {
     display: flex;
     border: 0;
-    background-color: var(--white-primary);
+    background-color: transparent;
     align-items: center;
     padding: .5rem;
     border-radius: 4px;
@@ -9,19 +9,17 @@
     transition: all .3s ease;
     max-width: 43px;
     max-height: 43px;
-    fill: white;
+
+    &:hover{
+        background-color: var(--iconbutton-hover);
+    }
 }
 :host ::ng-deep svg {
     max-width: 36px;
     max-height: 36px;
-    fill: white;
 }
 
 .icon-button-active {
-    background-color: var(--ornamental-pastelblue);
+    background-color: var(--pastelblue);
     border: 2px solid var(--black-primary);
 }
-
-.icon-button:hover{
-    background-color: var(--white-secondary);
-} 
