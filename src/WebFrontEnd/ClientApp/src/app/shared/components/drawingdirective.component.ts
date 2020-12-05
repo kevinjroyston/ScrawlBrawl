@@ -48,13 +48,18 @@ export class DrawingDirective {
         console.log("Clearing canvas");
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
-        this.loadPremadeImage(this.premadeDrawing);
-
         if (this.localStorageId) {
           var storedImg=localStorage.getItem(this.localStorageId);
           this.loadPremadeImage(storedImg);
+        } 
+        else if (this.premadeDrawing)
+        {
+          this.loadPremadeImage(this.premadeDrawing)
         }
-
+        else
+        {
+          this.onImageChange(null) /* so undo will work */
+        }
     }
 
   emitImageChange(imgStr){
