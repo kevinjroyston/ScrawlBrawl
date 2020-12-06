@@ -2,6 +2,7 @@
 @import "./../node_modules/ngx-ui-switch/ui-switch.component.css";
 @import "styles/animations";
 @import "styles/theme";
+@import "styles/common";
 
 html,
 body {
@@ -97,17 +98,23 @@ b {
 input {
     border: 1px solid var(--white-secondary);
     border-radius: 4px;
+    background: var(--surface-background);
+    color: var(--text-color);
+}
+
+.mat-dialog-container{
+    background: var(--card-background) !important;
+    color: var(--text-color) !important;
 }
 
 ion-icon {
     font-size: 30px;
-    
 }
 
 /* Mat */
 
 .mat-progress-spinner circle, .mat-spinner circle {
-    stroke: var(--black-primary);
+    stroke: var(--text-color);
 }
 
 /* Remove */

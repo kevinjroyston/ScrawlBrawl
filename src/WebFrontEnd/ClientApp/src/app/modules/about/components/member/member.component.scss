@@ -1,3 +1,5 @@
+@import "styles/common";
+
 :host {
     flex: 0 0 33.3%;
     max-width: 33.3%;
@@ -11,12 +13,12 @@
 }
 
 .member {
+    @include card;
     box-shadow: var(--shadow-md);
     overflow: hidden;
     height: 100%;
     transition: all .3s ease;
     border-radius: 10px;
-    background-color: var(--white-primary);
 }
 
 .member-name {
