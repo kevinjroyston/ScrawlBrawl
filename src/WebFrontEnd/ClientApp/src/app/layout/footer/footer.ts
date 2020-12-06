@@ -1,5 +1,13 @@
 export const footerLinksOrder = ['Questions?', 'About', 'Have thoughts?']
 
+export const socialLinks = {
+  discord: "https://discord.gg/HwjmTxx",
+  reddit:  "https://www.reddit.com/r/ScrawlBrawl/",
+  twitch: "https://www.twitch.tv/scrawlbrawl",
+  twitter: "https://twitter.com/ScrawlBrawlGame",
+  youtube: "https://youtube.com/ScrawlBrawlGame", /* needs correct link */
+}
+
 export const footerLinks = {
   'Questions?': [
     // {url: '/', name: "Check out our tutorial"},
@@ -11,14 +19,6 @@ export const footerLinks = {
   ],
   'Have thoughts?': [
     {url: '/feedback', name: "Feedback"},
-    {url: '/contact', name: "Contact Us"}
+    {url: socialLinks.discord, name: "Contact Us", external: true}
   ]
-}
-
-export const socialLinks = {
-  discord: "https://discord.gg/HwjmTxx",
-  reddit:  "https://www.reddit.com/r/ScrawlBrawl/",
-  twitch: "https://www.twitch.tv/scrawlbrawl",
-  twitter: "https://twitter.com/ScrawlBrawlGame",
-  youtube: "https://youtube.com/ScrawlBrawlGame", /* needs correct link */
 }
