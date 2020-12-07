@@ -30,19 +30,11 @@ export class GameAssetDirective {
   element;
 
   constructor(http: HttpClient, element: ElementRef) {
-    //console.log("Instantiating gameAsset " + element.nativeElement.nodeName);
     this.element = element.nativeElement;
     this.http = http;
   }
-  
-  ngOnInit() {
-    // console.log("OnInit gameAsset " + this.gameAssetID);  no longer needed due to setter on gameAssetID
-    // this.loadGameAsset();
-  }
 
   loadGameAsset() {
-    //console.log("gameAsset load " + this.gameAssetID);
-
     if (this.element.nodeName == 'IMG') {
       this.element.src = this.determineImageAssetDestination();
     }

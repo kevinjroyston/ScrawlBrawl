@@ -14,28 +14,27 @@ interface ColorPickerData {
     provide: NG_VALUE_ACCESSOR,
     multi: true,
     useExisting: ColorPickerComponent
-}],
-templateUrl: './colorpicker.component.html',
+  }],
+  templateUrl: './colorpicker.component.html',
   styleUrls: ['./colorpicker.component.scss']
 })
 export class ColorPickerComponent implements ControlValueAccessor, OnInit 
 {
   @Input() isColorsSpecified : boolean = false
-  pastColorsService: PastColorsService
   pastColors: string[]
   grayScaleColors : string[]
   rainbowColors: string[][]
-  onChange = (color)=>{console.log('no change defined')};
+  onChange = (color)=> {console.log('no change defined')};
 
   constructor(
     private _colorPickerRef: MatBottomSheetRef<ColorPickerComponent>, 
+    private colorPickerService : ColorPickerService,
+    private pastColorsService : PastColorsService,
     @Inject(MAT_BOTTOM_SHEET_DATA) public data: ColorPickerData
   ) {
-    let colorPickerService = new ColorPickerService();
-    this.pastColorsService = new PastColorsService();
     this.pastColors = this.pastColorsService.retrievePastColors();
-    this.grayScaleColors = colorPickerService.generateGrayScale();
-    this.rainbowColors = colorPickerService.generateRainbow();
+    this.grayScaleColors = this.colorPickerService.generateGrayScale();
+    this.rainbowColors = this.colorPickerService.generateRainbow();
   }
 
   ngOnInit() {}

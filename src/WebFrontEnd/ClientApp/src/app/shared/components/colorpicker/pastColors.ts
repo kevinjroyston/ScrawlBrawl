@@ -1,7 +1,12 @@
+import { Injectable } from '@angular/core'
+
 class PastColorsConstants {
     static MAX_COLORS : number = 6;
 }
 
+@Injectable({
+    providedIn: 'root',
+})
 export default class PastColorsService {
 
     getLastColor = () : string | null => {

@@ -1,14 +1,22 @@
 <div class="drawb">
-    <!-- Drawing Canvas -->
     <div class="drawb-canvas">
-        <canvas appDrawing class="draw-canvas" [width]="drawingPrompt.widthInPx" [height]="drawingPrompt.heightInPx" [ngStyle]="{'background-image': 'url(' + drawingPrompt.canvasBackground + ')'}" [premadeDrawing]="drawingPrompt.premadeDrawing" [localStorageId]="drawingPrompt.localStorageId"
-            [lineColor]="selectedColor" [lineWidth]="selectedBrushSize" [eraserMode]="eraserMode" (drawingEmitter)="onChange($event)">
+        <canvas 
+            appDrawing 
+            class="draw-canvas" 
+            [width]="drawingPrompt.widthInPx" 
+            [height]="drawingPrompt.heightInPx" 
+            [ngStyle]="{'background-image': 'url(' + drawingPrompt.canvasBackground + ')'}" 
+            [premadeDrawing]="drawingPrompt.premadeDrawing" 
+            [localStorageId]="drawingPrompt.localStorageId"
+            [lineColor]="selectedColor" 
+            [lineWidth]="selectedBrushSize" 
+            [eraserMode]="eraserMode" 
+            (drawingEmitter)="onChange($event)"
+        >
         </canvas>
     </div>
 
-    <!-- Drawing Settings -->
     <div class="drawb-settings">
-
         <div class="drawb-setting" *ngIf="showEraser">
             <div class="drawb-setting-header">
                 Tools
@@ -28,9 +36,13 @@
             <div class="drawb-setting-header">
                 Actions
             </div>
-            <div>
+            <div class="drawb-tools">
                 <scrawlbrawl-iconbutton (click)="drawingDirective.onPerformUndo()">
                     <ion-icon name="arrow-back-outline"></ion-icon>
+                </scrawlbrawl-iconbutton>
+
+                <scrawlbrawl-iconbutton (click)="drawingDirective.clearDrawing()" matTooltip="Clear" [mdTooltipClass]="{'tooltip': true}">
+                    <ion-icon [style.color]="'var(--red-secondary)'" name="trash-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
             </div>
         </div>
@@ -52,7 +64,7 @@
                 Color
             </div>
             <div class='drawb-colors'>
-                <div class="color-input" (click)='openColorPicker($event)' [ngStyle]="{'background-color': selectedColor}">
+                <div class="color-input" (click)='openColorPicker($event)' [style.background]="selectedColor">
                 </div>
             </div>
         </div>
@@ -64,3 +76,5 @@
                 </div>
             </mat-radio-group>
         </div>
+    </div>
+</div>

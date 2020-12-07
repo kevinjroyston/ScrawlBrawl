@@ -1,3 +1,5 @@
+import { Injectable } from '@angular/core'
+
 class ColorPickerConstants {
     static RGB_MIN : number = 0;
     static RGB_MAX : number = 255;
@@ -10,6 +12,9 @@ class ColorPickerConstants {
     static numShadeOfColor : number = 9;
 }
 
+@Injectable({
+    providedIn: 'root',
+})
 export default class ColorPickerService {
 
     generateGrayScale = (numSquares: number = ColorPickerConstants.numColorsPerRow) : string[] => {
