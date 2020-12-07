@@ -115,6 +115,7 @@ ion-icon {
 
 .mat-progress-spinner circle, .mat-spinner circle {
     stroke: var(--text-color);
+}
 
 /* Remove */
   
@@ -136,21 +137,21 @@ ion-icon {
     opacity: 0.4;
     max-width: 24%;
     height: auto;
-    max-width: calc(24% * (var(--n) / 100))
+    max-width: calc(24% * (var(--n) / 100));
 }
 
 .rightImg {
     opacity: 0.4;
     max-width: 24%;
     height: auto;
-    max-width: calc(24% * (var(--n) / 100))
+    max-width: calc(24% * (var(--n) / 100));
 }
 
 .mainImg {
     border: 2px solid var(--blue-primary);
     max-width: 50%;
     height: auto;
-    max-width: calc(50% * (var(--n) / 100))
+    max-width: calc(50% * (var(--n) / 100));
 }
 
 .color-box {
