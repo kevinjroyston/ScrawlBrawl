@@ -25,7 +25,7 @@ h3 {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1rem 1rem 1.5rem;
-  border-bottom: var(--border-grey);
+  border-bottom: var(--border);
   max-height: 70px;
 }
 
@@ -47,8 +47,8 @@ h3 {
 
 .lobby-header{
   margin: 2rem 0;
-  background: var(--white-primary);
-  border: var(--border-grey);
+  background-color: var(--card-background);
+  border: var(--border);
 
   &:last-of-type {
     margin-top: 0;
@@ -96,9 +96,9 @@ h3 {
   display: flex;
   flex-direction: column;
   border-radius: 8px;
-  border: var(--border-grey);
+  border: var(--border);
   box-shadow: rgba(17, 51, 83, 0.02) 0px 4px 12px 0px;
-  background-color: var(--white-primary);
+  background-color: var(--card-background);
   transition: all .25s ease;
   overflow: hidden;
 
@@ -113,7 +113,7 @@ h3 {
 }
 
 .game-option-info {
-  border-top: var(--border-grey);
+  border-top: var(--border);
   padding: .5rem .5rem .5rem 1rem;
 }
 

@@ -51,7 +51,7 @@
         <div class="Error" *ngIf="userPrompt.error">
             {{ userPrompt.error }}
         </div>
-        <scrawlbutton *ngIf="userPrompt.submitButton" color="green" (click)="onSubmit(userForm.value)">
+        <scrawlbutton class='submit-prompt' *ngIf="userPrompt.submitButton" color="green" (click)="onSubmit(userForm.value)">
             Submit
         </scrawlbutton>
     </form>

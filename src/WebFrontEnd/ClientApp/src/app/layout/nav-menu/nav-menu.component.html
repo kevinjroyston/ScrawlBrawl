@@ -12,6 +12,9 @@
     </div>
   </div>
   <div class="navbar-right" [ngClass]="{'active': isExpanded}">
+    <scrawlbrawl-iconbutton (click)="toggleTheme()" class="darkmode" matTooltip="Dark Mode" [mdTooltipClass]="{'tooltip': true}">
+      <ion-icon [style.fill]="'var(--text-color)'" name="contrast-outline" ></ion-icon>
+    </scrawlbrawl-iconbutton>
     <div class="nav-item" [routerLinkActive]="['link-active']">
       <a class="trans-link" (click)="redirectLink('play')">Play</a>
     </div>
