@@ -1,5 +1,7 @@
 import { Directive, ElementRef, HostListener, forwardRef, Input, Output, EventEmitter } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { FixedAsset } from '@core/http/fixedassets';
+import { Inject } from '@angular/core';
+
 /*
 Usage:
   The root folder for DIV (html) game assets is /assets/GameAssets/
@@ -17,7 +19,7 @@ Usage:
 */
 
 @Directive({
-    selector: '[gameAsset]',
+  selector: "[gameAsset]",
 })
 
 export class GameAssetDirective {
@@ -26,13 +28,14 @@ export class GameAssetDirective {
   @Input() gameAssetType: string;
   @Input() set gameAssetID(value: string) { this._gameAssetID = value; this.loadGameAsset() }
             get gameAssetID(): string { return this._gameAssetID}
-  http: HttpClient;
   element;
 
-  constructor(http: HttpClient, element: ElementRef) {
+  constructor(
+    @Inject(FixedAsset) private fixedAsset: FixedAsset,
+    element: ElementRef
+  ) {
     //console.log("Instantiating gameAsset " + element.nativeElement.nodeName);
     this.element = element.nativeElement;
-    this.http = http;
   }
   
   ngOnInit() {
@@ -43,24 +46,25 @@ export class GameAssetDirective {
   loadGameAsset() {
     //console.log("gameAsset load " + this.gameAssetID);
 
-    if (this.element.nodeName == 'IMG') {
+    if (this.element.nodeName == "IMG") {
       this.element.src = this.determineImageAssetDestination();
-    }
-    else {
-      const url = this.determineDescriptionDestination();
-      this.http.get(url, { observe: "body", responseType: "text" }).subscribe(
-        data => {
-          this.element.innerHTML = data;
-        })
+    } else {
+      const uri = this.determineDescriptionDestination();
+
+      this.fixedAsset.fetchFixedAsset(uri).subscribe({
+        next: (x) => {
+          this.element.innerHTML = x;
+        },
+      });
     }
   }
 
   determineImageAssetDestination = () => {
-    return '/assets/GameAssets/game-images/'+(this.gameAssetClass ? this.gameAssetClass+'/' : '') + this.gameAssetID + "-" 
-       + (this.gameAssetType ? this.gameAssetType : 'logo') + ".svg";
+    return "/assets/GameAssets/game-images/"+(this.gameAssetClass ? this.gameAssetClass + "/" : "")+this.gameAssetID + "-" 
+       + (this.gameAssetType ? this.gameAssetType : "logo") + ".svg";
   }
 
   determineDescriptionDestination = () => {
-    return '/assets/GameAssets/'+(this.gameAssetClass ? this.gameAssetClass+'/' : '') + this.gameAssetID + "-" + (this.gameAssetType ? this.gameAssetType : 'description') + ".html";
-  } 
+    return "/assets/GameAssets/"+(this.gameAssetClass ? this.gameAssetClass + "/" : "") + this.gameAssetID + "-" + (this.gameAssetType ? this.gameAssetType : "description") + ".html";
+  }
 }
