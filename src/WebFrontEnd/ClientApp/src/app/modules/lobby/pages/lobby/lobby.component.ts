@@ -8,6 +8,7 @@ import {GameInfoDialogComponent} from '../../components/gameinfo-dialog/gameinfo
 import {ErrorService} from '../../services/error.service'
 import Lobby from '@core/models/lobby'
 import GameModes from '@core/models/gamemodes'
+import { GameModeList } from '@core/http/gamemodelist';
 
 @Component({
     selector: 'app-lobby-management',
@@ -17,13 +18,13 @@ import GameModes from '@core/models/gamemodes'
 
 export class LobbyManagementComponent {
     public lobby!: Lobby.LobbyMetadata;
-    public gameModes!: GameModes.GameModeMetadata[];
     public error: string;
     @ViewChild(GameAssetDirective) gameAssetDirective;
 
-    constructor(@Inject(API) private api: API, private matDialog: MatDialog, public errorService: ErrorService)
+    constructor(@Inject(GameModeList) public gameModeList: GameModeList, @Inject(API) private api: API, private matDialog: MatDialog, public errorService: ErrorService)
     {
-        this.getGames().then(() => this.onGetLobby())
+/*        this.getGames().then(() => this.onGetLobby()) */
+        this.onGetLobby()
     }
 
     async onGetLobby() {
@@ -34,7 +35,7 @@ export class LobbyManagementComponent {
                 if (this.lobby != null && this.lobby.selectedGameMode != null && this.lobby.gameModeSettings != null) {
                     this.lobby.gameModeSettings.options.forEach((value: GameModes.GameModeOptionResponse, index: number, array: GameModes.GameModeOptionResponse[]) => {
                         if (value != null && value.value != null) {
-                            this.gameModes[this.lobby.selectedGameMode].options[index].value = value.value;
+                            this.gameModeList.gameModes[this.lobby.selectedGameMode].options[index].value = value.value;
                         }
                     });
                 }
@@ -60,12 +61,6 @@ export class LobbyManagementComponent {
         });
     }
 
-    async getGames() {
-        await this.api.request({ type: "Lobby", path: "Games" }).subscribe({
-            next: (result) => { this.gameModes = result as GameModes.GameModeMetadata[] }
-        });
-    }
-
     isGameModeSelected(game: number){
         return game === this.lobby.selectedGameMode;
     }
@@ -81,7 +76,6 @@ export class LobbyManagementComponent {
     openGameInfoDialog = (event, game: number) => {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.data = {
-            gameModes: this.gameModes,
             selectedGameMode: game,
             proceedToGameSettings: () => this.proceedToGameSettings(game)
         }
@@ -97,16 +91,10 @@ export class LobbyManagementComponent {
     openGameSettingsDialog = () => {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.data = {
-            gameModes: this.gameModes,
             lobby: this.lobby,
             onGetLobby: () => this.onGetLobby()
         }
         this.matDialog.open(GamemodeDialogComponent, dialogConfig);
     }
 
-    refreshGameModes() {
-        if (this.gameModes.length <= 0) {
-            this.getGames();
-        }
-    }
 }

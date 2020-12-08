@@ -1,9 +1,9 @@
 <h2 [ngStyle]="{'margin-bottom': '1.5rem'}">
-    {{gameModes[selectedGameMode].title}}
+    {{gameModeList.gameModes[selectedGameMode].title}}
 </h2>
 
 <mat-dialog-content>
-    <div gameAsset [gameAssetClass]="'lobby-descriptions'" [gameAssetID]='gameModes[selectedGameMode].gameIdString'></div>
+    <div gameAsset [gameAssetClass]="'lobby-descriptions'" [gameAssetID]='gameModeList.gameModes[selectedGameMode].gameIdString'></div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">

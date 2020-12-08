@@ -34,11 +34,11 @@
         </div>
     </div>
     <div *ngIf="!lobby.isGameInProgress">
-        <h2 *ngIf="gameModes && gameModes.length > 0">
+        <h2 *ngIf="gameModeList.gameModes && gameModeList.gameModes.length > 0">
             Select Game Mode
         </h2>
         <div class="game-options">
-            <div class="game-option-wrapper" *ngFor="let gameMode of gameModes; index as i">
+            <div class="game-option-wrapper" *ngFor="let gameMode of gameModeList.gameModes; index as i">
                 <div class="game-option" (click)="onSelectGameMode(i)" [ngClass]='{"active": isGameModeSelected(i)}'>
                     <div class="game-option-img">
                         <img gameAsset [gameAssetID]="gameMode.gameIdString" style="max-height: 200px;">

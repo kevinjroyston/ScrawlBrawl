@@ -5,9 +5,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import Lobby from '@core/models/lobby';
 import GameModes from '@core/models/gamemodes';
 import { ErrorService } from '@modules/lobby/services/error.service';
+import { GameModeList } from '@core/http/gamemodelist';
 
 interface GameModeDialogData {
-  gameModes: GameModes.GameModeMetadata
   lobby: Lobby.LobbyMetadata
   error: string
   onGetLobby: () => void
@@ -19,7 +19,6 @@ interface GameModeDialogData {
   styleUrls: ['./gamemode-dialog.component.scss']
 })
 export class GamemodeDialogComponent implements OnInit {
-  gameModes: GameModes.GameModeMetadata
   lobby: Lobby.LobbyMetadata
   error: string
   onGetLobby: () => void
@@ -28,9 +27,9 @@ export class GamemodeDialogComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<GamemodeDialogComponent>,
     public errorService: ErrorService,
+    @Inject(GameModeList) public gameModeList: GameModeList,
     @Inject(MAT_DIALOG_DATA) public data: GameModeDialogData,
     @Inject(API) private api: API) {
-    this.gameModes = data.gameModes;
     this.lobby = data.lobby;
     this.onGetLobby = data.onGetLobby;
   }
@@ -48,7 +47,7 @@ export class GamemodeDialogComponent implements OnInit {
   onStartLobby() : void {
     var body = new Lobby.ConfigureLobbyRequest();
     body.gameMode = this.lobby.selectedGameMode;
-    body.options = JSON.parse(JSON.stringify(this.gameModes[this.lobby.selectedGameMode].options, ['value']));
+    body.options = JSON.parse(JSON.stringify(this.gameModeList.gameModes[this.lobby.selectedGameMode].options, ['value']));
     var bodyString = JSON.stringify(body);
 
     let configureRequest = this.api.request({ type: "Lobby", path: "Configure", body: bodyString });
