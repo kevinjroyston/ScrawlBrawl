@@ -31,7 +31,7 @@ export class DrawingDirective {
         this.userIsDrawing = false;
     }
 
-    loadPremadeImage(imgStr){
+    loadImageString(imgStr){
       if (imgStr) {
           var img = new Image;
           var ctx = this.ctx;
@@ -50,15 +50,15 @@ export class DrawingDirective {
 
         if (this.localStorageId) {
           var storedImg=localStorage.getItem(this.localStorageId);
-          this.loadPremadeImage(storedImg);
+          this.loadImageString(storedImg);
         } 
         else if (this.premadeDrawing)
         {
-          this.loadPremadeImage(this.premadeDrawing)
+          this.loadImageString(this.premadeDrawing)
         }
         else
         {
-          this.onImageChange(null) /* so undo will work */
+          this.onImageChange(null,false) /* so undo will work */
         }
     }
 
@@ -70,11 +70,13 @@ export class DrawingDirective {
     }
   }
 
-  onImageChange(imgStr) {
+  onImageChange(imgStr:string, emitChange=true) {
     if (!imgStr){
         imgStr = this.element.toDataURL();
     }
-    this.emitImageChange(imgStr);
+    if (emitChange) {
+        this.emitImageChange(imgStr);
+    }
 
     // store it for an undo
     if (this.undoArray.length >= 20) { this.undoArray.shift(); }

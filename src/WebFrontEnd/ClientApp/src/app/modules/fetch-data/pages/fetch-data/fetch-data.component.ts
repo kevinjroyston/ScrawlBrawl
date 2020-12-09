@@ -153,6 +153,18 @@ export class FetchDataComponent
         this.autoSubmitTimerId = setTimeout(() => this.onSubmit(this.userForm?.value, true), ms);
     }
 
+  shortTermSanitize(ans){
+        /* see this line in backend  sanitize.cs
+           str.All(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.?,'-".Contains); 
+        */
+       if (ans) {
+            ans=ans.replace(/[!\*;:]/g, ".");               // replace some punctuation with a .
+            ans=ans.replace(/[\()\[\]\{}<>=\+_]/g, "-");    // replace a few chars with -
+            ans=ans.replace(/[^a-zA-Z0-9 .?,\-]/g, "");  // delete the rest of the undesireables
+       }
+       return ans;
+  }
+
   async onSubmit(userSubmitData, autoSubmit = false) {
         // Clear auto refresh timer as well as auto submit timer since we will be calling get after
         // the submission and both will get set there
@@ -165,10 +177,14 @@ export class FetchDataComponent
           this.autoSubmitTimerId = null;
         }
 
+
         // Populate IDs.
         userSubmitData.id = this.userPrompt.id;
         for (let i = 0; i < userSubmitData.subForms.length; i++) {
             userSubmitData.subForms[i].id = this.userPrompt.subPrompts[i].id;
+            if (this.userPrompt.subPrompts[i].shortAnswer) {
+                userSubmitData.subForms[i].shortAnswer=this.shortTermSanitize(userSubmitData.subForms[i].shortAnswer);
+            }
             if (this.userPrompt.subPrompts[i].selector && !userSubmitData.subForms[i].selector) {
                 userSubmitData.subForms[i].selector="0";
             }
