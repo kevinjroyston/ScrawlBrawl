@@ -24,7 +24,7 @@ namespace Backend.APIs.Controllers
         private GameManager GameManager { get; set; }
 
         [HttpGet]
-        public IActionResult Get(string id)
+        public IActionResult Get(string id) 
         {
             if (!ModelState.IsValid)
             {
@@ -73,7 +73,7 @@ namespace Backend.APIs.Controllers
                     Id = Guid.Empty,
                     Title = "This is a title",
                     Description = "This is a description",
-                    RefreshTimeInMs = 1000,
+                    RefreshTimeInMs = 10000,
                     SubPrompts = new SubPrompt[]
                     {
                     new SubPrompt
@@ -149,10 +149,6 @@ namespace Backend.APIs.Controllers
                     },
                     new SubPrompt
                     {
-                        ColorPicker=true
-                    },
-                    new SubPrompt
-                    {
                         Selector = new SelectorPromptMetadata
                         {
                             WidthInPx=315,
@@ -170,6 +166,10 @@ namespace Backend.APIs.Controllers
 
                     new SubPrompt
                     {
+                        ColorPicker=true
+                    },
+                    new SubPrompt
+                    {
                         Prompt = "This is a sub prompt which has numerous sub strings",
                         StringList = new string[]{"String 1", "<div class=\"color-box\" style=\"background-color: rgb(100,0,0);\"></div>Test", "String 3"}
                     },
@@ -180,12 +180,17 @@ namespace Backend.APIs.Controllers
                     },
                     new SubPrompt
                     {
+                        Prompt = "This is a sub prompt which asks for an additional short answer",
+                        ShortAnswer = true,
+                    },
+                    new SubPrompt
+                    {
                         Prompt = "This is a sub prompt that asks for radio button answers",
                         Answers = new string[] {"This is an answer", "another answer", "the best answer", "all of the above"}
                     },
                     new SubPrompt
                     {
-                        Prompt = "This is a sub prompt with a background",
+                        Prompt = "This is a sub prompt with a background and local storage",
                         Drawing = new DrawingPromptMetadata
                         {
                             CanvasBackground="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
@@ -200,6 +205,17 @@ namespace Backend.APIs.Controllers
                         Drawing = new DrawingPromptMetadata
                         {
                             PremadeDrawing="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+                            GalleryType="HEADS",
+                            GameId="BodyBuilder",
+                            HeightInPx=300,
+                            WidthInPx=200,
+                        }
+                    },
+                    new SubPrompt
+                    {
+                        Prompt = "This is a drawing with no premade or storage",
+                        Drawing = new DrawingPromptMetadata
+                        {
                             HeightInPx=300,
                             WidthInPx=200,
                         }

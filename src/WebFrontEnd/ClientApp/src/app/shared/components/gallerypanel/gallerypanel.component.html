@@ -1,0 +1,11 @@
+<div id="galleryRow" class="pictureRow grid-container">
+    <div #galleryStart id="galleryStart" class="start hover" (click)="galleryStartClick()"><svg width="20" height="20" viewBox="0 0 25 25" style="margin-left: calc(50% - 0.5em)">
+                    <g transform="scale(0.02125 0.02125)"><path d="M512 1024c282.77 0 512-229.23 512-512s-229.23-512-512-512-512 229.23-512 512 229.23 512 512 512zM512 96c229.75 0 416 186.25 416 416s-186.25 416-416 416-416-186.25-416-416 186.25-416 416-416z"></path><path d="M669.256 317.256l-90.512-90.512-285.254 285.256 285.256 285.254 90.508-90.508-194.744-194.746z"></path></g></svg></div>
+
+    <div id="galleryEnd" class="end hover" (click)="galleryEndClick()"><svg width="20" height="20" viewBox="0 0 25 25" style="margin-left: calc(50% - 0.5em)">
+        <g transform="scale(0.02125 0.02125)"><path d="M512 0c-282.77 0-512 229.23-512 512s229.23 512 512 512 512-229.23 512-512-229.23-512-512-512zM512 928c-229.75 0-416-186.25-416-416s186.25-416 416-416 416 186.25 416 416-186.25 416-416 416z"></path><path d="M354.744 706.744l90.512 90.512 285.254-285.256-285.256-285.254-90.508 90.508 194.744 194.746z"></path></g></svg></div>
+    <div class="verticalLabelContainer">
+        <div class="verticalLabel label labelGallery"></div>
+    </div>
+    <div #galleryPictures class="flex-container flex-row betterScrollHorizontal" id="galleryPictures"></div>
+</div>

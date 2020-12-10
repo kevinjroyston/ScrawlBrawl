@@ -34,22 +34,17 @@ export class GameAssetDirective {
     @Inject(FixedAsset) private fixedAsset: FixedAsset,
     element: ElementRef
   ) {
-    //console.log("Instantiating gameAsset " + element.nativeElement.nodeName);
     this.element = element.nativeElement;
   }
   
   ngOnInit() {
-    // console.log("OnInit gameAsset " + this.gameAssetID);  no longer needed due to setter on gameAssetID
-    // this.loadGameAsset();
   }
 
   loadGameAsset() {
-    //console.log("gameAsset load " + this.gameAssetID);
-
     if (this.element.nodeName == "IMG") {
-      this.element.src = this.determineImageAssetDestination();
+      this.element.src = this.fixedAsset.determineImageAssetURI(this.gameAssetClass,this.gameAssetID,this.gameAssetType );
     } else {
-      const uri = this.determineDescriptionDestination();
+      const uri = this.fixedAsset.determineGameTextAssetURI(this.gameAssetClass,this.gameAssetID,this.gameAssetType )
 
       this.fixedAsset.fetchFixedAsset(uri).subscribe({
         next: (x) => {
@@ -57,14 +52,5 @@ export class GameAssetDirective {
         },
       });
     }
-  }
-
-  determineImageAssetDestination = () => {
-    return "/assets/GameAssets/game-images/"+(this.gameAssetClass ? this.gameAssetClass + "/" : "")+this.gameAssetID + "-" 
-       + (this.gameAssetType ? this.gameAssetType : "logo") + ".svg";
-  }
-
-  determineDescriptionDestination = () => {
-    return "/assets/GameAssets/"+(this.gameAssetClass ? this.gameAssetClass + "/" : "") + this.gameAssetID + "-" + (this.gameAssetType ? this.gameAssetType : "description") + ".html";
   }
 }

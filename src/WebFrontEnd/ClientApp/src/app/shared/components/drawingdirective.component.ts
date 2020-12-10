@@ -175,14 +175,11 @@ export class DrawingDirective {
     @HostListener('mouseleave')
     @HostListener('touchleave')
     onmouseleave() {
-//      console.log("mouseleave");
 /*  we are now stopping the drawing on a global mouseup / touch end
       if (this.userIsDrawing) {
         event.preventDefault();
-
         this.stopDrawing();
       }
-
 */
     }
   
@@ -254,3 +251,4 @@ export class DrawingDirective {
         return [currentX * (this.element.width / this.element.clientWidth), currentY * (this.element.height / this.element.clientHeight)];
     }
 }
+

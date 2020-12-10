@@ -23,6 +23,10 @@ namespace Common.DataModels.Responses
 
         public string LocalStorageId { get; set; }
 
+        public string GalleryType { get; set; }
+        public string GameId { get; set; }
+
+
         /// <summary>
         /// If provided, will be rendered behind the canvas.
         /// </summary>

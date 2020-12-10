@@ -20,7 +20,7 @@
 
 .draw-canvas {
     width: 100%;
-    height: 100%;
+    //height: 100%;
     background-size: 100% 100%;
     background-color: var(--white-primary);
     border-top-left-radius: 5px;
@@ -40,38 +40,38 @@
     border-bottom-right-radius: 5px;
 }
 
-#size-controller{
-  display: flex;
-  align-items: center;
+#size-controller {
+    display: flex;
+    align-items: center;
 }
 
 #preview-size-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 40px;
-  width: 60px;
-  margin-left: .25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 60px;
+    margin-left: .25rem;
 }
 
 #preview-size {
-  box-shadow: var(--shadow-md);
-  border-radius: 50%;
-  background-color: var(--black-primary);
+    box-shadow: var(--shadow-md);
+    border-radius: 50%;
+    background-color: var(--black-primary);
 }
 
 .color-input {
-  width: 45px;
-  height: 45px;
-  border-radius: 5px;
-  box-shadow: var(--shadow-md);
-  transition: all .25s ease;
-  background-color: var(--black-primary);
-  cursor: pointer;
+    width: 45px;
+    height: 45px;
+    border-radius: 5px;
+    box-shadow: var(--shadow-md);
+    transition: all .25s ease;
+    background-color: var(--black-primary);
+    cursor: pointer;
 }
 
 .color-input:hover {
-  transform: scale(1.1);
+    transform: scale(1.1);
 }
 
 .drawb-setting {
@@ -96,6 +96,13 @@
 }
 
 .drawb-tools {
+    display: flex;
+    &>scrawlbrawl-iconbutton {
+        margin-right: 15px;
+    }
+}
+
+.drawb-actions {
     display: flex;
     &>scrawlbrawl-iconbutton {
         margin-right: 15px;
@@ -168,34 +175,32 @@ input[type=range] {
 }
 
 ::ng-deep.mat-bottom-sheet-container {
-  padding: 0 !important;
-  min-width: 0 !important;
-  border-top-left-radius: 5px !important;
-  border-top-right-radius: 5px !important;
-  overflow: hidden !important;
+    padding: 0 !important;
+    min-width: 0 !important;
+    border-top-left-radius: 5px !important;
+    border-top-right-radius: 5px !important;
+    overflow: hidden !important;
 }
 
 @media only screen and (max-width: 768px) {
-  .drawb{
-    flex-direction: column;
-  }
-
-  .drawb-settings{
-    display:flex;
-    flex-wrap: wrap;
-    border-left: 1px solid var(--white-secondary);
-  }
-
-  .drawb-setting{
-    padding: .5rem 1rem .5rem 0;
-    border-bottom: 0 !important;
-    width: 50%;
-    flex-grow: 1;
-  }
+    .drawb {
+        flex-direction: column;
+    }
+    .drawb-settings {
+        display: flex;
+        flex-wrap: wrap;
+        border-left: 1px solid var(--white-secondary);
+    }
+    .drawb-setting {
+        padding: .5rem 1rem .5rem 0;
+        border-bottom: 0 !important;
+        width: 50%;
+        flex-grow: 1;
+    }
 }
 
 @media only screen and (max-width: 500px) {
-  ::ng-deep.mat-bottom-sheet-container {
-    width: 100vw !important;
-  }
+     ::ng-deep.mat-bottom-sheet-container {
+        width: 100vw !important;
+    }
 }

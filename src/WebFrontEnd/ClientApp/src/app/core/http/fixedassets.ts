@@ -15,6 +15,7 @@ export class FixedAsset {
         {  }
 
     assetList = new Map();
+
     fetchFixedAsset(uri):Observable<any>{
         // I still do not like this sam I am.
        var observable = new Observable(subscriber => {
@@ -41,6 +42,21 @@ export class FixedAsset {
             });
        });
         return observable;
+    }
+
+    determineImageAssetURI(gameAssetClass,gameAssetId,gameAssetType){
+        return "/assets/GameAssets/game-images/"+(gameAssetClass ? gameAssetClass + "/" : "") + gameAssetId + "-" 
+        + (gameAssetType ? gameAssetType : "logo") + ".svg";
+    }
+
+    determineGameTextAssetURI(gameAssetClass,gameAssetId,gameAssetType){
+        return "/assets/GameAssets/"+(gameAssetClass ? gameAssetClass + "/" : "") + gameAssetId + "-" 
+               + (gameAssetType ? gameAssetType : "description") + ".html";
+    }
+
+
+    determineGalleryURI(galleryType):string{
+        return '/assets/GameAssets/gallery-samples/samples-'+galleryType+'.json'
     }
 }
 

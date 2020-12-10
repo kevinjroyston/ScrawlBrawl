@@ -1,0 +1,113 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: 30px auto;
+}
+
+.flex-container {
+    display: flex;
+    align-content: space-between;
+    max-height: 80px;
+}
+
+.flex-row {
+    flex-flow: row nowrap;
+}
+
+img {
+    width: 30px;
+    height: 30px;
+    margin: 3px;
+    /*   border:1px ridge cyan; */
+    box-shadow: 0px 1px 3px black;
+}
+
+div,
+img {
+    /*   border:3px solid black; */
+}
+
+.pictureRow {
+    //    border-radius: 15px;
+    //background: linear-gradient(120deg, rgba(0, 246, 255, 0.5), rgba(0, 255, 25, 0.65));
+    overflow: scroll;
+}
+
+.pictureRow {
+    overflow: hidden;
+}
+
+.betterScrollHorizontal {
+    overflow: scroll;
+    overflow-Y: hidden;
+    margin-bottom: -17px;
+}
+
+.label {
+    font-family: "Arial Black", Gadget, sans-serif;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.2);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    font-size: 20px;
+    text-align: center;
+}
+
+.labelGallery {
+    //background-image:url(https://media.giphy.com/media/13Xdqs2ygZYe9G/giphy.gif);
+    //background-size:cover;
+}
+
+.verticalLabel {
+    //margin-left: -55px;
+    width: 30px;
+    //margin-top: 10px;
+    height: 30px;
+    vertical-align: middle;
+    transform: rotate(270deg);
+}
+
+.labelContainer {
+    //    background: linear-gradient(240deg, red, orange);
+    //    box-shadow: -1px 0px 5px black;
+    margin-left: -3px;
+    padding-right: 3px;
+    width: 100%;
+    min-width: 10px;
+    height: 5%;
+    text-align: left;
+}
+
+.verticalLabelContainer {
+    //   background: linear-gradient(240deg, darkblue, blue);
+    //    box-shadow: -1px 0px 5px black;
+    margin-left: -3px;
+    padding-right: 3px;
+    width: 5%;
+    min-width: 10px;
+    height: 100%;
+    text-align: left;
+}
+
+.hover {
+    position: absolute;
+    //    border-radius: 1px;
+    width: 20px;
+    height: 19px;
+}
+
+.hover:hover {
+    svg {
+        opacity: 0.8;
+    }
+}
+
+.end {
+    right: 8px;
+}
+
+.hover svg {
+    //  margin-top: 35%;
+    opacity: 0.5;
+    cursor: pointer;
+}

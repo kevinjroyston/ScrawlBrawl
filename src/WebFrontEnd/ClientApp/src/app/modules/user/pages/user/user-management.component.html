@@ -1,5 +1,18 @@
-<div class="user-wrapper">
-  <scrawlbutton (click)="onDeleteUser()">
-    Leave Lobby
-  </scrawlbutton>
+<div class="plrskip-user-wrapper">
+    <select class="Dropdown">
+          <option value="HEAD" selected>Heads</option>
+          <option value="BODY">Bodies</option>
+          <option value="LEGS">Legs</option>
+          <option value="PROFILE">Profiles</option>
+        </select>
+    <br>
+    <div>
+        <drawingboard [gameId]="'BodyBuilder'" [galleryType]="'HEADS'"></drawingboard>
+    </div>
+
+</div>
+<div>
+    <scrawlbutton (click)="onDeleteUser()">
+        Leave Lobby
+    </scrawlbutton>
 </div>
