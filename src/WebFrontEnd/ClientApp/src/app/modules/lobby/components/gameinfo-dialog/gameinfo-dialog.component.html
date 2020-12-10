@@ -10,7 +10,7 @@
     <scrawlbutton [ngStyle]="{'margin-right': '.75rem'}" color='red' (click)="close()">
         Close
     </scrawlbutton>
-    <scrawlbutton color='green' (click)="onProceedToSettings()">
+    <scrawlbutton *ngIf="proceedToGameSettings" color='green' (click)="onProceedToSettings()">
         Settings
     </scrawlbutton>
 </mat-dialog-actions>
