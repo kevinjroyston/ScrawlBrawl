@@ -1,9 +1,9 @@
 <h2 [ngStyle]="{'margin-bottom': '1.5rem'}">
-    {{gameModes[lobby.selectedGameMode].title}}
+    {{gameModeList.gameModes[lobby.selectedGameMode].title}}
 </h2>
 
 <mat-dialog-content>
-    <div *ngFor="let option of gameModes[lobby.selectedGameMode].options; let i = index">
+    <div *ngFor="let option of gameModeList.gameModes[lobby.selectedGameMode].options; let i = index">
         <div class="gamemode-option" *ngIf="option.responseType.toString() === 'Integer'">
             <span>{{ option.description }}</span>
             <input type="number" [(ngModel)]="option.value" [min]="option.minValue" [max]="option.maxValue" />

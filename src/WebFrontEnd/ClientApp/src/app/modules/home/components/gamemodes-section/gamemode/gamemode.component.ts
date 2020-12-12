@@ -1,9 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {GameInfoDialogComponent} from '../../../../lobby/components/gameinfo-dialog/gameinfo-dialog.component';
+import { GameModeList } from '@core/http/gamemodelist';
 import GameModes from '@core/models/gamemodes'
-
-
 @Component({
   selector: 'app-gamemode',
   templateUrl: './gamemode.component.html',
@@ -12,26 +11,20 @@ import GameModes from '@core/models/gamemodes'
 export class GamemodeComponent implements OnInit {
 
   @Input() gameModeID: string;
-  @Input() gameId: number;
-  @Input() gameModes: GameModes.GameModeMetadata[];
-  svgMapping: {}
 
   constructor(private matDialog: MatDialog)
   {
-
-//    this.svgMapping = temporarySVGMapping;
   }
-  openGameInfoDialog = (event, game: number) => {
+
+  openGameInfoDialog = (event) => {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
-      gameModes: this.gameModes,
-      selectedGameMode: this.gameId,
+      selectedGameModeId: this.gameModeID,
       proceedToGameSettings: null,
     }
     this.matDialog.open(GameInfoDialogComponent, dialogConfig);
     event.stopPropagation();
 }
-
 
   ngOnInit() {
   }
