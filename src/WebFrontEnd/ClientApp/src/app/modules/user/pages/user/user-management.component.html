@@ -1,5 +1,16 @@
-<div class="user-wrapper">
-  <scrawlbutton (click)="onDeleteUser()">
-    Leave Lobby
-  </scrawlbutton>
+<div class="plrskip-user-wrapper">
+    <!--form ng-app="myApp" class="form" [formGroup]="userForm"> -->
+    <select class="Dropdown" [(formControl)]="dropdownChoice" (change)="dropDownChanged()">
+            <option *ngFor="let gallery of galleryTypes; let i = index" [selected]="(currentGalleryType==gallery.galleryId)" value="{{gallery.galleryId}}">
+                {{gallery.galleryDesc}}
+            </option>
+        </select>
+    <div>
+        <drawingboard [gameId]="'BodyBuilder'" [galleryType]="currentGalleryType"></drawingboard>
+    </div>
+</div>
+<div>
+    <scrawlbutton (click)="onDeleteUser()">
+        Leave Lobby
+    </scrawlbutton>
 </div>

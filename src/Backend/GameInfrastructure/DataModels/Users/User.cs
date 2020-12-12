@@ -24,6 +24,21 @@ namespace Backend.GameInfrastructure.DataModels.Users
         /// </summary>
         public string LobbyId { get; set; }
 
+        private string CachedLobbyId { get; set; }
+        public Lobby Lobby {
+            get
+            {
+                if (String.IsNullOrWhiteSpace(LobbyId)) { return null; }
+
+                if ((String.IsNullOrWhiteSpace(CachedLobbyId)) || (LobbyId != CachedLobbyId))
+                { 
+                    CachedLobbyId = LobbyId;
+                    CachedLobby = GameManager.Singleton.GetLobby(LobbyId);
+                }
+                return CachedLobby;
+            }
+        }
+        private Lobby CachedLobby { get; set; }
         /// <summary>
         /// Used for monitoring user age.
         /// </summary>

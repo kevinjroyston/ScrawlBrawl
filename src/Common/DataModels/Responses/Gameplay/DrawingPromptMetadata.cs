@@ -21,7 +21,10 @@ namespace Common.DataModels.Responses
         /// </summary>
         public string PremadeDrawing { get; set; }
 
-        public string LocalStorageId { get; set; }
+        public string GalleryType { get; set; }
+
+        public bool GalleryAutoLoadMostRecent { get; set; } = false;
+
 
         /// <summary>
         /// If provided, will be rendered behind the canvas.
