@@ -54,5 +54,9 @@
         <scrawlbutton class='submit-prompt' *ngIf="userPrompt.submitButton" color="green" (click)="onSubmit(userForm.value)">
             Submit
         </scrawlbutton>
+        <div *ngIf="userPrompt.submitButton" gameAsset [gameAssetClass]="'game-css'" [gameAssetType]="'prompts-css'" [gameAssetID]="userPrompt.gameIdString">
+        </div>
+        <div *ngIf="!userPrompt.submitButton" gameAsset [gameAssetClass]="'game-css'" [gameAssetType]="'waiting-css'" [gameAssetID]="userPrompt.gameIdString">
+        </div>
     </form>
 </div>

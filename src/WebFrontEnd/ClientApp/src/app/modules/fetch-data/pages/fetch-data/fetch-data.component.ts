@@ -6,6 +6,7 @@ import { isNullOrUndefined } from 'util';
 import { Router } from '@angular/router';
 import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-sheet';
 import { ColorPickerComponent } from '@shared/components/colorpicker/colorpicker.component';
+import {DrawingPromptMetadata} from '@shared/components/drawingdirective.component';
 
 @Pipe({ name: 'safe' })
 export class Safe {
@@ -232,7 +233,7 @@ export class FetchDataComponent
 }
 interface UserPrompt {
     id: string;
- //   gameIdString: string;
+    gameIdString: string;
     refreshTimeInMs: number;
     currentServerTime: Date;
     autoSubmitAtTime: Date;
@@ -254,14 +255,6 @@ interface SubPrompt {
     drawing: DrawingPromptMetadata;
     slider: SliderPromptMetadata;
     selector: SelectorPromptMetadata;
-}
-interface DrawingPromptMetadata {
-    colorList: string[];
-    widthInPx: number;
-    heightInPx: number;
-    premadeDrawing: string;
-    canvasBackground: string;
-    localStorageId: string;
 }
 interface SliderPromptMetadata {
   min: number;

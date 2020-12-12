@@ -24,6 +24,7 @@ import { AppRoutingModule } from './app.routing';
 import { environment } from 'environments/environment';
 import { FooterService } from '@layout/footer/footer.service';
 import { NavMenuService } from '@layout/nav-menu/nav-menu.service';
+import { MatTabsModule } from '@angular/material/tabs';
 
 function MSALConfigFactory(): Configuration {
     return msalConfig;
@@ -62,6 +63,7 @@ export const providers : Provider[] = (<Provider[]>[
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     CoreModule,
     SharedModule,
+    MatTabsModule,
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,

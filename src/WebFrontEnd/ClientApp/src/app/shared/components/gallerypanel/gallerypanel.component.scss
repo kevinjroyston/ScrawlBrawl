@@ -1,0 +1,8 @@
+.galleryPics {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;
+    max-height: 80px;
+    align-items: flex-start;
+    //    min-height: 100vh;
+}

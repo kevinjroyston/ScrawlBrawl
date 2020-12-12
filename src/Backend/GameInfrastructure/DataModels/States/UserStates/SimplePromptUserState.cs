@@ -19,7 +19,7 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
         public static UserPrompt DefaultWaitingPrompt(User user) => new UserPrompt()
         {
             UserPromptId = UserPromptId.Waiting,
-            Description = "Waiting . . ."
+            Description = "Waiting for other players . . ."
         };
         public static UserPrompt YouHaveThePowerPrompt(User _) => new UserPrompt()
         {

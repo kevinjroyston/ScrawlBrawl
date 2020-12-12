@@ -1,6 +1,7 @@
-import { Directive, ElementRef, HostListener, forwardRef, Input, Output, EventEmitter } from '@angular/core';
+import { Directive, ElementRef, HostListener, AfterViewInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import {throttle} from 'app/utils/throttle'
 import PastColorsService from './colorpicker/pastColors';
+import { NgbInputDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Directive({
@@ -16,7 +17,7 @@ export class DrawingDirective {
     @Input() lineWidth: number;
     @Input() premadeDrawing: string;
     @Input() eraserMode: boolean;
-    @Input() localStorageId: string;
+    @Input() galleryAutoLoadMostRecent: boolean;
     @Output() drawingEmitter = new EventEmitter();
     defaultLineColor: string;
     element;
@@ -31,7 +32,7 @@ export class DrawingDirective {
         this.userIsDrawing = false;
     }
 
-    loadPremadeImage(imgStr){
+    loadImageString(imgStr){
       if (imgStr) {
           var img = new Image;
           var ctx = this.ctx;
@@ -45,36 +46,35 @@ export class DrawingDirective {
         }
     }
     ngOnInit() {
-        console.log("Clearing canvas");
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    }
 
-        if (this.localStorageId) {
-          var storedImg=localStorage.getItem(this.localStorageId);
-          this.loadPremadeImage(storedImg);
+    ngAfterViewInit(){
+        if (this.galleryAutoLoadMostRecent) {
+           /* will be handled by gallerytool */
         } 
         else if (this.premadeDrawing)
         {
-          this.loadPremadeImage(this.premadeDrawing)
+          this.loadImageString(this.premadeDrawing)
         }
         else
         {
-          this.onImageChange(null) /* so undo will work */
+          this.onImageChange(null,false) /* so undo will work */
         }
     }
 
   emitImageChange(imgStr){
     // write the data to the emitter
     this.drawingEmitter.emit(imgStr);
-    if (this.localStorageId) {
-      localStorage.setItem(this.localStorageId,imgStr);
-    }
   }
 
-  onImageChange(imgStr) {
+  onImageChange(imgStr:string, emitChange=true) {
     if (!imgStr){
         imgStr = this.element.toDataURL();
     }
-    this.emitImageChange(imgStr);
+    if (emitChange) {
+        this.emitImageChange(imgStr);
+    }
 
     // store it for an undo
     if (this.undoArray.length >= 20) { this.undoArray.shift(); }
@@ -162,10 +162,8 @@ export class DrawingDirective {
     @HostListener('mouseup')
     @HostListener('touchend')
     onmouseup() {
-//      console.log("up/end");
       if (this.userIsDrawing) {
 //        event.preventDefault(); not needed since canvas does not care about mouse movements, and preventing affects gestures
-
         this.stopDrawing();
       }
     }
@@ -173,15 +171,6 @@ export class DrawingDirective {
     @HostListener('mouseleave')
     @HostListener('touchleave')
     onmouseleave() {
-//      console.log("mouseleave");
-/*  we are now stopping the drawing on a global mouseup / touch end
-      if (this.userIsDrawing) {
-        event.preventDefault();
-
-        this.stopDrawing();
-      }
-
-*/
     }
   
   @HostListener('window:scroll', ['$event']) 
@@ -251,4 +240,15 @@ export class DrawingDirective {
 
         return [currentX * (this.element.width / this.element.clientWidth), currentY * (this.element.height / this.element.clientHeight)];
     }
+}
+
+export interface DrawingPromptMetadata {
+  colorList: string[];
+  widthInPx: number;
+  heightInPx: number;
+  premadeDrawing: string;
+  canvasBackground: string;
+  galleryType: string;
+  galleryAutoLoadMostRecent: boolean;
+  gameId: string;  /* should we be getting this from fetch-data? */
 }

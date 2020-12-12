@@ -1,8 +1,8 @@
 <div class="drawb">
     <!-- Drawing Canvas -->
     <div class="drawb-canvas">
-        <canvas appDrawing class="draw-canvas" [width]="drawingPrompt.widthInPx" [height]="drawingPrompt.heightInPx" [ngStyle]="{'background-image': 'url(' + drawingPrompt.canvasBackground + ')'}" [premadeDrawing]="drawingPrompt.premadeDrawing" [localStorageId]="drawingPrompt.localStorageId"
-            [lineColor]="selectedColor" [lineWidth]="selectedBrushSize" [eraserMode]="eraserMode" (drawingEmitter)="onChange($event)">
+        <canvas appDrawing class="draw-canvas" [width]="drawingPrompt.widthInPx" [height]="drawingPrompt.heightInPx" [ngStyle]="{'background-image': 'url(' + drawingPrompt.canvasBackground + ')'}" [premadeDrawing]="drawingPrompt.premadeDrawing" [lineColor]="selectedColor"
+            [lineWidth]="selectedBrushSize" [eraserMode]="eraserMode" (drawingEmitter)="onDrawingChange($event)">
         </canvas>
     </div>
 
@@ -14,11 +14,11 @@
                 Tools
             </div>
             <div class="drawb-tools">
-                <scrawlbrawl-iconbutton (click)="eraserMode= false" [active]="!eraserMode">
+                <scrawlbrawl-iconbutton (click)="eraserMode=false" [active]="!eraserMode">
                     <ion-icon name="brush-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
 
-                <scrawlbrawl-iconbutton (click)="eraserMode= true" [active]="eraserMode">
+                <scrawlbrawl-iconbutton (click)="eraserMode=true" [active]="eraserMode">
                     <eraser-svg></eraser-svg>
                 </scrawlbrawl-iconbutton>
             </div>
@@ -28,9 +28,13 @@
             <div class="drawb-setting-header">
                 Actions
             </div>
-            <div>
+            <div class="drawb-actions">
                 <scrawlbrawl-iconbutton (click)="drawingDirective.onPerformUndo()">
                     <ion-icon name="arrow-back-outline"></ion-icon>
+                </scrawlbrawl-iconbutton>
+
+                <scrawlbrawl-iconbutton *ngIf="drawingPrompt.galleryType" (click)="showGallery=!showGallery">
+                    <ion-icon name="star-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
             </div>
         </div>
@@ -47,20 +51,28 @@
             </div>
         </div>
 
-        <div class="drawb-setting" *ngIf="showColorSelector && (!drawingPrompt.colorList)">
+        <div class="drawb-setting" *ngIf="showColorSelector && ((!drawingPrompt.colorList) || (drawingPrompt.colorList.length==0))">
             <div class="drawb-setting-header">
                 Color
             </div>
             <div class='drawb-colors'>
-                <div class="color-input" (click)='openColorPicker($event)' [ngStyle]="{'background-color': selectedColor}">
+                <div class="color-input" (click)='openColorPicker($event)' [ngStyle]="{ 'background-color': selectedColor}">
                 </div>
             </div>
         </div>
 
-        <div *ngIf="showColorSelector && drawingPrompt.colorList && drawingPrompt.colorList.length > 1">
+        <div *ngIf="showColorSelector && drawingPrompt.colorList && drawingPrompt.colorList.length> 1">
             <mat-radio-group class="color-picker-group" [(ngModel)]="selectedColor" (change)="eraserMode=false">
                 <div class="color-picker-dot" *ngFor="let colorChoice of drawingPrompt.colorList; let i = index" [ngStyle]="{'background-color': colorChoice}">
                     <mat-radio-button [value]="colorChoice" [checked]="i==0"></mat-radio-button>
                 </div>
             </mat-radio-group>
+        </div>
+        <div #galleryPanel [hidden]="!showGallery" class="drawb-setting" *ngIf="drawingPrompt.galleryType">
+            <div class="drawb-setting-header">
+                Gallery
+            </div>
+            <div>
+                <gallerytool #galleryTool [drawingPrompt]="drawingPrompt" [drawingDirective]="drawingDirective"></gallerytool>
+            </div>
         </div>

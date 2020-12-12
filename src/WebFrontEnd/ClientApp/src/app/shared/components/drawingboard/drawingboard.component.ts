@@ -1,8 +1,10 @@
-import { Component, ViewEncapsulation, Input, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, ViewEncapsulation, Input, AfterViewInit, ViewChild, ElementRef, HostListener  } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {ColorPickerComponent} from '../colorpicker/colorpicker.component'
-import {DrawingDirective} from '@shared/components/drawingdirective.component';
+import {GalleryTool} from '@shared/components/gallerytool/gallerytool.component';
+import {DrawingDirective,DrawingPromptMetadata} from '@shared/components/drawingdirective.component';
 import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-sheet';
+import Galleries from '@core/models/gallerytypes';
 
 @Component({
     selector: 'drawingboard',
@@ -16,26 +18,68 @@ import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-she
     encapsulation: ViewEncapsulation.Emulated
 })
 
+
 export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
+    _galleryType:string;
     @Input() drawingPrompt: DrawingPromptMetadata;
     @Input() showColorSelector: boolean = true;
     @Input() showEraser: boolean = true;
     @Input() showBrushSizeSelector: boolean = true;
+    @Input() set galleryType(value: string) { this._galleryType = value; this.setGalleryType(value) }
+             get galleryType(): string { return this._galleryType}
+
+    @Input() gameId: string;
+
+
     @ViewChild(DrawingDirective) drawingDirective;
+    @ViewChild('galleryTool') galleryTool: GalleryTool;
 
     onChange;
     selectedColor: string;
     selectedBrushSize: number = 10;
     drawingOptionsCollapse: boolean = false;
+    lastImageChange: string = "";
+    showGallery: boolean = true;
     eraserMode: boolean = false; // Todo make brush-mode enum + group brush options into one object
 
-    constructor(private _colorPicker: MatBottomSheet) {}
+    constructor(private _colorPicker: MatBottomSheet) {
+    }
+
+    createDrawingPrompt(){
+      let gallery = Galleries.galleryFromType(this.galleryType);
+      this.drawingPrompt = {
+        colorList: null,
+        widthInPx: gallery.imageWidth,
+        heightInPx: gallery.imageWidth,
+        premadeDrawing: "",
+        canvasBackground: "",
+        galleryType: this.galleryType,
+        galleryAutoLoadMostRecent: false,
+        gameId: this.gameId
+      }
+     
+    }
+
+    setGalleryType(typ){
+        if (!this.drawingPrompt) {
+            this.createDrawingPrompt();
+        }
+        if (this.galleryTool) {
+            this.galleryTool.setGalleryType(typ);  
+        }
+    }
 
     ngOnInit() {
     }
 
-    ngAfterViewInit() {
-        console.log(this.selectedColor)
+    ngOnDestroy() {
+    }
+
+    ngAfterViewInit(){
+        if (this.drawingPrompt) {
+            this.gameId = this.drawingPrompt.gameId;
+            this.galleryType = this.drawingPrompt.galleryType;
+        }
         
         // If there is a required color list default to first color.
         if (this.drawingPrompt && this.drawingPrompt.colorList && this.drawingPrompt.colorList.length > 0) {
@@ -48,12 +92,30 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
         {
             this.selectedColor = tempColor;
         }
+//        if (this.drawingPrompt.galleryAutoLoadMostRecent) {
+            //this.galleryTool.loadMostRecent();
+          //}
+  
     }
 
-    onPerformUndo(): void {
-        
-        alert('undo')
+    onDrawingChange(event){
+        if (this.galleryTool) {
+            this.galleryTool.onDrawingChange(event);
+            this.onChange(event)
+        }
     }
+
+    @HostListener('mousedown', ['$event'])
+    @HostListener('touchstart', ['$event'])
+    onmousedown(event) { 
+    }
+
+
+    @HostListener('mouseup', ['$event'])
+    @HostListener('touchend', ['$event'])
+    onmouseup(event) {
+    }
+
     writeValue(obj: any): void {
     }
 
@@ -83,11 +145,3 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     }
 }
 
-interface DrawingPromptMetadata {
-    colorList: string[];
-    widthInPx: number;
-    heightInPx: number;
-    premadeDrawing: string;
-    canvasBackground: string;
-    localStorageId: string;
-}

@@ -15,6 +15,13 @@ namespace Common.DataModels.Responses
         /// </summary>
         public UserPromptId UserPromptId { get; set; } = UserPromptId.Unknown;
 
+        public string GameIdString { get { return this.GameId?.ToString()??String.Empty; } }
+
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public GameModeId? GameId { get; set; }
+
+
         /// <summary>
         /// The amount of Time before calling this endpoint again.
         /// </summary>

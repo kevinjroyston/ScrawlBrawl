@@ -34,6 +34,8 @@ import { YoutubeIcon } from './components/svgs/socials/youtube';
 import { FacebookIcon } from './components/svgs/socials/facebook';
 import { ColorPickerComponent } from './components/colorpicker/colorpicker.component';
 import { SimpleLinkComponent } from './components/simplebuttons/link/link.component';
+import {GalleryTool} from '@shared/components/gallerytool/gallerytool.component';
+import {GalleryPanel} from '@shared/components/gallerypanel/gallerypanel.component';
 
 @NgModule({
   imports: [
@@ -55,6 +57,8 @@ import { SimpleLinkComponent } from './components/simplebuttons/link/link.compon
     SimpleButtonComponent,
     SimpleLinkComponent,
     DrawingDirective,
+    GalleryPanel,
+    GalleryTool,
     SelectorDirective,
     GameAssetDirective,
     IconButtonComponent,
