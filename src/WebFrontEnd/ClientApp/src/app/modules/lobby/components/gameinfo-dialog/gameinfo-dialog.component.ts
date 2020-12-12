@@ -1,10 +1,10 @@
 import { Component, OnInit, Inject} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import GameModes from '@core/models/gamemodes';
+import { GameModeList } from '@core/http/gamemodelist';
+import GameModes from '@core/models/gamemodes'
 
 interface GameInfoDialogData {
-  gameModes: GameModes.GameModeMetadata
-  selectedGameMode: number
+  selectedGameModeId: string
   proceedToGameSettings: () => void
 }
 
@@ -14,15 +14,14 @@ interface GameInfoDialogData {
   styleUrls: ['./gameinfo-dialog.component.scss']
 })
 export class GameInfoDialogComponent implements OnInit {
-  gameModes: GameModes.GameModeMetadata
-  selectedGameMode: number
+  selectedGameModeId: string;
   proceedToGameSettings: () => void
 
   constructor(
     private dialogRef: MatDialogRef<GameInfoDialogComponent>,
+    @Inject(GameModeList) public gameModeList: GameModeList,
     @Inject(MAT_DIALOG_DATA) public data: GameInfoDialogData) {
-    this.gameModes = data.gameModes;
-    this.selectedGameMode = data.selectedGameMode;
+    this.selectedGameModeId = data.selectedGameModeId;
     this.proceedToGameSettings = data.proceedToGameSettings;
   }
 
