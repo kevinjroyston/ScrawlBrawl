@@ -29,7 +29,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
              get galleryType(): string { return this._galleryType}
 
     @Input() gameId: string;
-
+    @Input() galleryEditor: boolean;
 
     @ViewChild(DrawingDirective) drawingDirective;
     @ViewChild('galleryTool') galleryTool: GalleryTool;

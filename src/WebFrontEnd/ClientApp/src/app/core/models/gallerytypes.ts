@@ -17,22 +17,22 @@ export namespace Galleries  {
      [
         {galleryId:"HEAD",
         galleryDesc: "Heads",
-        imageWidth: 300,
-        imageHeight: 200,
+        imageWidth: 360,
+        imageHeight: 240,
         maxLocalFavorites: 10,
         maxLocalRecent: 10,    },
 
         {galleryId:"BODY",
         galleryDesc: "Bodies",
-        imageWidth: 300,
-        imageHeight: 200,
+        imageWidth: 360,
+        imageHeight: 240,
         maxLocalFavorites: 10,
         maxLocalRecent: 10,    },
 
         {galleryId:"LEGS",
         galleryDesc: "Legs",
-        imageWidth: 300,
-        imageHeight: 200,
+        imageWidth: 360,
+        imageHeight: 240,
         maxLocalFavorites: 10,
         maxLocalRecent: 10,    },
 

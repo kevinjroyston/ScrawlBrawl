@@ -18,6 +18,7 @@ export class DrawingDirective {
     @Input() premadeDrawing: string;
     @Input() eraserMode: boolean;
     @Input() galleryAutoLoadMostRecent: boolean;
+    @Input() galleryEditor: boolean = false;
     @Output() drawingEmitter = new EventEmitter();
     defaultLineColor: string;
     element;

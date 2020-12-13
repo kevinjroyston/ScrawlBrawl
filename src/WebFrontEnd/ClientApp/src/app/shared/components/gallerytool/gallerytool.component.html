@@ -11,6 +11,8 @@
 </mat-tab-group>
 <div style="display:inline;height: 30px;">Click to save as favorite:</div>
 <img #currentImage style="display:inline;" class="galleryimg-current" id="galC" (click)="onCurrentBtnClick()"> &nbsp;
-<ion-icon name="trash-outline" style="vertical-align: bottom;"></ion-icon>
-<div (click)="favoritesToClipboard()" style="cursor:pointer">clip Favs</div>
-<div (click)="favoritesFromClipboard()" style="cursor:pointer">paste Favs</div>
+<div *ngIf="galleryEditor">
+    <ion-icon name="trash-outline" style="vertical-align: bottom;"></ion-icon>
+    <div (click)="favoritesToClipboard()" style="cursor:pointer">clip Favs</div>
+    <div (click)="favoritesFromClipboard()" style="cursor:pointer">paste Favs</div>
+</div>

@@ -17,7 +17,7 @@ import Galleries from '@core/models/gallerytypes';
 export class GalleryTool implements AfterViewInit {
     @Input() drawingPrompt: DrawingPromptMetadata;
     @Input() drawingDirective: DrawingDirective;
-
+    @Input() galleryEditor: boolean = false;
     @ViewChild("galleryFavorites") galleryFavorites: GalleryPanel;
     @ViewChild("galleryRecent") galleryRecent: GalleryPanel;
     @ViewChild("gallerySamples") gallerySamples: GalleryPanel;
