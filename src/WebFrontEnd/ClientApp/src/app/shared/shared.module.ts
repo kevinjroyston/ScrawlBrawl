@@ -34,6 +34,7 @@ import { YoutubeIcon } from './components/svgs/socials/youtube';
 import { FacebookIcon } from './components/svgs/socials/facebook';
 import { ColorPickerComponent } from './components/colorpicker/colorpicker.component';
 import { SimpleLinkComponent } from './components/simplebuttons/link/link.component';
+import {MatTabsModule} from '@angular/material/tabs';
 import {GalleryTool} from '@shared/components/gallerytool/gallerytool.component';
 import {GalleryPanel} from '@shared/components/gallerypanel/gallerypanel.component';
 
@@ -46,6 +47,7 @@ import {GalleryPanel} from '@shared/components/gallerypanel/gallerypanel.compone
     ColorPickerModule,
     UiSwitchModule,
     FormsModule,
+    MatTabsModule,
     ReactiveFormsModule,
     RouterModule
   ],
