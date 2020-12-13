@@ -10,7 +10,6 @@ import { Observable } from 'rxjs';
 })
 export class FixedAsset {
 
-    // TODO: instantiate api via dependency injection / make it injectable.
     constructor(@Inject(HttpClient) private http: HttpClient)
         {  }
 
