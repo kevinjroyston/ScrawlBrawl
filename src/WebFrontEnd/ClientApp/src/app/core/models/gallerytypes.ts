@@ -13,7 +13,7 @@ export namespace Galleries  {
         maxLocalRecent: number;
     }
 
-    export const galleryTypes:GalleryType[] = 
+    export const galleryTypes:ReadonlyArray<GalleryType> = 
      [
         {galleryId:"HEAD",
         galleryDesc: "Heads",

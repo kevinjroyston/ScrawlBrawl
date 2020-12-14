@@ -3,5 +3,9 @@ export const environment = {
     enableMsal: false,
     overrideUrlsWithBrowserHost: true,
     backendApiUrl: null,
-    frontendUrl: null
+    frontendUrl: null,
+    galleryOptions: {
+        allowCopy: true,
+        allowPaste: true,
+    }
 };

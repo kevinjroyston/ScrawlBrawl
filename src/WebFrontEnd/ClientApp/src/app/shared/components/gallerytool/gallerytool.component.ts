@@ -3,6 +3,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {DrawingDirective,DrawingPromptMetadata} from '@shared/components/drawingdirective.component';
 import {GalleryPanel} from '@shared/components/gallerypanel/gallerypanel.component';
 import {MatTabsModule} from '@angular/material/tabs';
+import { environment } from '../../../../environments/environment';
 
 import Galleries from '@core/models/gallerytypes';
 
@@ -27,6 +28,7 @@ export class GalleryTool implements AfterViewInit {
     gameId: string;
     onChange;
     lastImageChange: string = "";
+    galleryOptions = environment.galleryOptions;
 
     constructor() {
     }
