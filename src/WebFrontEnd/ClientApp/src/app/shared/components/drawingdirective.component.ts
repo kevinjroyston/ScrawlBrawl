@@ -39,6 +39,7 @@ export class DrawingDirective {
           var ctx = this.ctx;
           img.onload = function () {
               console.log("showing stored drawing");
+              ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
               ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
             }
           console.log("loading stored drawing");
