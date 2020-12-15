@@ -101,6 +101,8 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     onDrawingChange(event){
         if (this.galleryTool) {
             this.galleryTool.onDrawingChange(event);
+        }
+        if (this.onChange) {
             this.onChange(event)
         }
     }

@@ -15,7 +15,7 @@ export class UserManagementComponent {
     public userForm;
     
     galleryName;
-    galleryTypes:Galleries.GalleryType[] = Galleries.galleryTypes;
+    galleryTypes = [...Galleries.galleryTypes]; /* needed so html page can see it */
     currentGalleryType = this.galleryTypes[0].galleryId;
     dropdownChoice = new FormControl(this.currentGalleryType);
     

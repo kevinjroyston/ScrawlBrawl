@@ -9,7 +9,7 @@ import GameModes from '@core/models/gamemodes'
     providedIn: 'root'
 })
 export class GameModeList {
-    gameModes: GameModes.GameModeMetadata[];
+    gameModes: ReadonlyArray<GameModes.GameModeMetadata>=[];
 
     gameModeIndexFromGameId(gameId):number{
         let result = -1;

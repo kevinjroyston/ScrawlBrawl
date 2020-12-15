@@ -34,7 +34,7 @@ export class DrawingDirective {
     }
 
     loadImageString(imgStr){
-      if (imgStr) {
+      if (imgStr && this.ctx) {
           var img = new Image;
           var ctx = this.ctx;
           img.onload = function () {

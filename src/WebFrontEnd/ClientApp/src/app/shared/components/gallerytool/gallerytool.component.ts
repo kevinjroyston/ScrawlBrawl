@@ -41,7 +41,9 @@ export class GalleryTool implements AfterViewInit {
     setGalleryType(galType){
         if (galType != this.galleryType) {
             this.storeMostRecent();
-            this.drawingDirective.ctx.clearRect(0, 0, this.drawingDirective.ctx.canvas.width, this.drawingDirective.ctx.canvas.height);
+            if (this.drawingDirective && this.drawingDirective.ctx){
+                this.drawingDirective.ctx.clearRect(0, 0, this.drawingDirective.ctx.canvas.width, this.drawingDirective.ctx.canvas.height);
+            }
             this.galleryType = galType;
             this.galleryFavorites.setGalleryType(galType);
             this.galleryRecent.setGalleryType(galType);
