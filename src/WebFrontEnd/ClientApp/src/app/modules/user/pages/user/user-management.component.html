@@ -1,6 +1,5 @@
 <div class="plrskip-user-wrapper">
-    <!--form ng-app="myApp" class="form" [formGroup]="userForm"> -->
-    <select class="Dropdown" [(formControl)]="dropdownChoice" (change)="dropDownChanged()">
+    <select #galleryDD class="Dropdown" (change)="currentGalleryType=galleryDD.value">
             <option *ngFor="let gallery of galleryTypes; let i = index" [selected]="(currentGalleryType==gallery.galleryId)" value="{{gallery.galleryId}}">
                 {{gallery.galleryDesc}}
             </option>
