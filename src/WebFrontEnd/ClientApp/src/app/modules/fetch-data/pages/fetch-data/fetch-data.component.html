@@ -56,7 +56,22 @@
         </scrawlbutton>
         <div *ngIf="userPrompt.submitButton" gameAsset [gameAssetClass]="'game-css'" [gameAssetType]="'prompts-css'" [gameAssetID]="userPrompt.gameIdString">
         </div>
-        <div *ngIf="!userPrompt.submitButton" gameAsset [gameAssetClass]="'game-css'" [gameAssetType]="'waiting-css'" [gameAssetID]="userPrompt.gameIdString">
+        <div *ngIf="!userPrompt.submitButton">
+            <br><br>
+            <scrawlbutton (click)="showGalleryEditor=!showGalleryEditor">Gallery Editor</scrawlbutton>
+            <div [hidden]="!showGalleryEditor">
+                <select #galleryDD class="Dropdown" (change)="currentGalleryType=galleryDD.value">
+                    <option *ngFor="let gallery of galleryTypes; let i = index" [selected]="(currentGalleryType==gallery.galleryId)" value="{{gallery.galleryId}}">
+                        {{gallery.galleryDesc}}
+                    </option>
+                </select>
+                <div>
+                    <drawingboard [gameId]="'BodyBuilder'" [galleryEditor]="true" [galleryType]="currentGalleryType"></drawingboard>
+                </div>
+                <br>
+            </div>
+        </div>
+        <div [hidden]="showGalleryEditor" *ngIf="!userPrompt.submitButton" gameAsset [gameAssetClass]="'game-css'" [gameAssetType]="'waiting-css'" [gameAssetID]="userPrompt.gameIdString">
         </div>
     </form>
 </div>

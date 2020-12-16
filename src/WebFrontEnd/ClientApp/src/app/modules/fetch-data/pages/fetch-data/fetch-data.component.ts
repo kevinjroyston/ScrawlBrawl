@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-sheet';
 import { ColorPickerComponent } from '@shared/components/colorpicker/colorpicker.component';
 import {DrawingPromptMetadata} from '@shared/components/drawingdirective.component';
+import Galleries from '@core/models/gallerytypes';
 
 @Pipe({ name: 'safe' })
 export class Safe {
@@ -44,6 +45,10 @@ export class FetchDataComponent
     private formBuilder: FormBuilder;
     private userPromptTimerId;
     private autoSubmitTimerId;
+
+    showGalleryEditor = false;
+    galleryTypes = [...Galleries.galleryTypes]; /* needed so html page can see it */
+    currentGalleryType = this.galleryTypes[0].galleryId;
 
     constructor(
         formBuilder: FormBuilder,
