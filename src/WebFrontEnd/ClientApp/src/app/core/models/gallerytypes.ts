@@ -1,4 +1,4 @@
-export namespace Galleries  {
+namespace Galleries  {
 
     export const favorites: string = 'Favorites';
     export const recent: string = 'Recent';
