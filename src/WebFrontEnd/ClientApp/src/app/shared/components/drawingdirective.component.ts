@@ -1,7 +1,6 @@
 import { Directive, ElementRef, HostListener, AfterViewInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import {throttle} from 'app/utils/throttle'
 import PastColorsService from './colorpicker/pastColors';
-import { NgbInputDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Directive({
@@ -244,13 +243,16 @@ export class DrawingDirective {
     }
 }
 
+export interface GalleryOptionsMetadata {
+  galleryId: string;
+  galleryAutoLoadMostRecent: boolean;
+}
+
 export interface DrawingPromptMetadata {
   colorList: string[];
   widthInPx: number;
   heightInPx: number;
   premadeDrawing: string;
   canvasBackground: string;
-  galleryType: string;
-  galleryAutoLoadMostRecent: boolean;
-  gameId: string;  /* should we be getting this from fetch-data? */
+  galleryOptions: GalleryOptionsMetadata;
 }

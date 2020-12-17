@@ -7,8 +7,6 @@ import { FixedAsset } from '@core/http/fixedassets';
 import { Inject } from '@angular/core';
 import Galleries from '@core/models/gallerytypes';
 
-const MaxGallerySize:number=10;
-
 @Component({
     selector: 'gallerypanel',
     templateUrl: './gallerypanel.component.html',
@@ -20,183 +18,115 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 
     private _drawingDirective: DrawingDirective;
     @Input() set drawingDirective(value: DrawingDirective) { this._drawingDirective = value; this.loadRecentIfRequested() }
-              get drawingDirective(): DrawingDirective { return this._drawingDirective}
+             get drawingDirective(): DrawingDirective { return this._drawingDirective}
 
-    @Input() drawingPrompt: DrawingPromptMetadata;
+    @Input() drawingOptions: DrawingPromptMetadata;
     @Input() galleryPanelType: string; /* Favorites | Recent | Sample */
 
     @ViewChild("galleryPictures") galleryPictures: ElementRef;
 
     onChange;
-    galleryType: string;
-    gameId: string;
+    galleryId : string;
     gallery: GalleryDrawing[]=[];
+    galleryType: Galleries.GalleryType;
 
     
     constructor(@Inject(FixedAsset) private fixedAsset: FixedAsset, private _colorPicker: MatBottomSheet) {
     }
 
     loadTheGallery(){
-        if (this.galleryType) {
+        if (this.galleryId) {
             if (this.galleryPanelType==Galleries.samples) {
-                this.loadGallerySamples(); /* loading multiple copies just to fill out the list, delete the rest */
+                this.fetchGallerySamples(); 
             } else {
                 this.loadGalleryImages();
             }
         }
-
     }
 
-    removeExistingGallery(){
-        if (this.gallery.length > 0){
-            this.gallery.length = 0;
-        }
-        while (this.galleryPictures.nativeElement.firstChild) {
-            this.galleryPictures.nativeElement.removeChild(this.galleryPictures.nativeElement.firstChild);
-        }
-    }
-    setGalleryType(galType){
-       if (galType != this.galleryType){
-            this.removeExistingGallery();
-            this.galleryType = galType;
-            this.loadTheGallery();
-       }
-    }
-
-    ngAfterViewInit(){
-        if (this.drawingPrompt) {
-            this.gameId = this.drawingPrompt.gameId;
-            this.galleryType = this.drawingPrompt.galleryType;
-        }
-        
-        this.loadTheGallery();
-    }
-
-    loadGallerySamples(){
-        this.fixedAsset.fetchFixedAsset(this.fixedAsset.determineGalleryURI(this.galleryType)).subscribe({
-                next: (data) => {
-                    if (data){
-                        var rawGallery: GalleryDrawing[];
-                        rawGallery =  JSON.parse(data);
-                        rawGallery.forEach((galleryDrawing)=>{this.galleryDisplayImage(galleryDrawing.image)})
-                    }
-                },
-            });
+    saveTheGallery(){
+        this.saveGalleryToLocalStorage(); /* in the future we will support saving to DB */
     }
 
     loadGalleryImages(){
         this.loadLocalGalleryImages(); /* in the future we will support loading from DB */
     }
 
-    loadLocalGalleryImages(){
-        /* currently loading from local storage, could load from DB in future */
-        if (this.galleryType) {
-            var storedGallery=localStorage.getItem('Gallery-'+this.galleryType+'-'+this.galleryPanelType);
-            var rawGallery: GalleryDrawing[];
+    setGalleryId(galId){
+       if ((galId) && (galId != this.galleryId)){
+            this.clearExistingGallery();
+            this.galleryId  = galId;
+            this.galleryType=Galleries.galleryFromId(this.galleryId);
+            this.loadTheGallery();
+       }
+    }
 
-            if (storedGallery) {
-                rawGallery =  JSON.parse(storedGallery);
-            /* sort the list so our game images come first - do we care about this? */
-                this.gallery =  rawGallery.sort((a,b)=>{
-                     if (a.gameId==this.gameId){
-                        return (b.gameId==this.gameId) ? 0 : -1;
-                     };
-                     if (b.gameId==this.gameId){
-                        return 1;
-                     };
-                    return 0; 
-                    })
-                this.gallery.forEach((galleryDrawing)=>{this.galleryDisplayImage(galleryDrawing.image)})
-            } 
+    ngAfterViewInit(){
+        if (this.drawingOptions && this.drawingOptions.galleryOptions) {
+            this.setGalleryId(this.drawingOptions.galleryOptions.galleryId);
         }
     }
 
-   
-    galleryCountForGame(gameId){
-       var count:number=0;
-       this.gallery.forEach(function (drawing){if (drawing.gameId==gameId){count++}})
-       return count;
+    loadRecentIfRequested(){
+        // if the gallery option galleryAutoLoadMostRecent is true, then take the last "recent" image and put it on the canvas
+        if (this.galleryPanelType && this.drawingDirective) {
+          if ((this.drawingDirective.galleryAutoLoadMostRecent) && (this.galleryPanelType==Galleries.recent) && (this.gallery.length > 0)) {
+              this.drawingDirective.loadImageString(this.gallery[this.gallery.length-1].image);
+          }
+        }
+    }
+
+
+
+    maxGallerySize():number {
+        // find the max based on gallerytype and panel type
+        if (this.galleryPanelType!=Galleries.recent) {
+          return this.galleryType.maxLocalFavorites
+        } else {
+          return this.galleryType.maxLocalRecent
+        }
     }
 
     storeImageInGallery(imgStr){
-        if (imgStr=='') {return}
-        let alreadyInList:number=-1;
-        this.gallery.forEach(function (drawing,index){if (drawing.image==imgStr){alreadyInList=index; return}})
-        if (alreadyInList<0){
-            /* if we are at max length for this game, then delete the first image that is not marked favorite */
-            if (this.galleryCountForGame(this.gameId) >= MaxGallerySize)  {
-                let delIndex:number = -1;
-                let findId=this.gameId;
-                this.gallery.forEach(function (drawing,index){if (drawing.gameId==findId){delIndex=index; return}})
-                if (delIndex >= 0) {
-                  this.gallery.splice(delIndex, 1);
+        if ((imgStr=='') || (this.galleryId==Galleries.samples)) {return}  // can't write to samples
+        let alreadyInList:boolean=false;
+        this.gallery.forEach(function (drawing,index){if (drawing.image==imgStr){alreadyInList=true; return}})
+        if (!alreadyInList){
+            /* if we are at max length for this gallery type, error if favorites, delete the first (oldest) image if recent */
+            if (this.gallery.length >= this.maxGallerySize())  {
+                if (this.galleryPanelType==Galleries.favorites) {
+                    alert("You can only save "+this.maxGallerySize()+" favorites.");
+                    return;
                 }
+                this.gallery.splice(0, 1);
             }
-            var drawing : GalleryDrawing = {gameId:this.gameId, image:imgStr }
+            var drawing : GalleryDrawing = { image:imgStr }
             this.gallery.push(drawing);
 
-            this.saveGalleryToLocalStorage();
+            this.saveTheGallery();
             this.galleryDisplayImage(drawing.image);
         }
     }
 
     removeImageFromGallery(imgStr){
-        if (imgStr=='') {return}
-        let placeInList:number=-1;
-        this.gallery.forEach(function (drawing,index){if (drawing.image==imgStr){placeInList=index; return}})
-        if (placeInList>=0){
-            this.gallery.splice(placeInList, 1);
-            this.saveGalleryToLocalStorage();
+        if (imgStr!='') {
+            let placeInList:number=-1;
+            this.gallery.forEach(function (drawing,index){if (drawing.image==imgStr){placeInList=index; return}})
+
+            if (placeInList>=0){
+                this.gallery.splice(placeInList, 1);
+                this.saveTheGallery();
+            }
         }
     }
 
-    deleteImage(img){ /* expects an IMG element */
-        if (img.src) { 
-            this.removeImageFromGallery(img.src);
-            img.parentNode.removeChild(img);
-        }
-    }
-
-
-    saveGalleryToLocalStorage(){
-        if (this.galleryType) {
-            var data = JSON.stringify(this.gallery.filter(img => img.image.length > 0));  /* don't write out sample images */
-            localStorage.setItem('Gallery-'+this.galleryType+'-'+this.galleryPanelType,data);
-        }
-    }
-    saveImageAsFavorite(imgStr){
-        if (this.galleryPanelType!=Galleries.favorites) { alert('Unable to save favorite'); return}
-        this.storeImageInGallery(imgStr);
-    }
-
-    saveImageAsRecent(imgStr){
-        if (this.galleryPanelType!=Galleries.recent) { alert('Unable to save recent'); return}
-        this.storeImageInGallery(imgStr);
-    }
+    
     ngOnInit() {
     }
-
+    
     ngOnDestroy() {
     }
 
-    @HostListener('click', ['$event.target'])
-      onclick(img) {
-            if (img.src) { /* if we clicked on an image, move it to the drawing */
-                this.drawingDirective.loadImageString(img.src);
-                event.preventDefault;
-            }
-        }
-    
-    @HostListener('mousedown', ['$event'])
-    @HostListener('touchstart', ['$event'])
-    onmousedown(event) {
-    }
-
-    @HostListener('mouseup', ['$event'])
-    @HostListener('touchend', ['$event'])
-    onmouseup(event) {
-    }
-    
     writeValue(obj: any): void {
     }
 
@@ -207,38 +137,80 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
     registerOnTouched(fn: any): void {
     }
 
-    galleryStartClick()  {
-        setTimeout(()=>this.galleryPictures.nativeElement.animate( { scrollLeft: '-=150' }, 100),100);
-    }
-    galleryEndClick()  {
-        setTimeout(()=>this.galleryPictures.nativeElement.animate( { scrollLeft: '+=150' }, 100),100);
-    }
+    /************ the following routines deal with the images in the GalleryPictured div  *************/
 
-    loadMostRecent(){
-        if (this.gallery.length > 0) {
-            this.drawingDirective.loadImageString(this.gallery[this.gallery.length-1].image);
+    deleteImage(img){ /* not currently be used.  pass in an <img> element and it will find it and delete it from gallery and the display */
+        if (img.src) { 
+            this.removeImageFromGallery(img.src);
+            img.parentNode.removeChild(img);
         }
     }
 
-    loadRecentIfRequested(){
-        if (this.galleryPanelType && this.drawingDirective) {
-          if (this.galleryPanelType==Galleries.recent){
-               this.loadMostRecent()        
-            }
-        }
-    }
-
-    galleryDisplayImage(imgStr) {
+    galleryDisplayImage(imgStr) { /* add an image to the galleryPictures div */
         var img=document.createElement('img');
         img.width=30;
         img.height=30;
         img.src=imgStr;
-        this.galleryPictures.nativeElement.append(img); //"<img src='"+imgStr+"'>");
-        /* example showed appending &nbsp; after last image... needed? */
+        this.galleryPictures.nativeElement.append(img);
     }
 
+    @HostListener('click', ['$event.target'])
+      onclick(img) {
+            if (img.src) { /* if we clicked on an image, move it to the drawing */
+                this.drawingDirective.loadImageString(img.src);
+                event.preventDefault;
+            }
+        }
+
+    clearExistingGallery(){
+        if (this.gallery.length > 0){
+            this.gallery.length = 0;
+        }
+        while (this.galleryPictures.nativeElement.firstChild) {
+            this.galleryPictures.nativeElement.removeChild(this.galleryPictures.nativeElement.firstChild);
+        }
+    }
+
+
+    /************ Fetch Samples from the fixed assets ***********/
+    fetchGallerySamples(){
+        this.fixedAsset.fetchFixedAsset(this.fixedAsset.determineGalleryURI(this.galleryId)).subscribe({
+                next: (data) => {
+                    if (data){
+                        this.gallery  =  JSON.parse(data);
+                        this.gallery.forEach((galleryDrawing)=>{this.galleryDisplayImage(galleryDrawing.image)})
+                    }
+                },
+            });
+    }
+
+    /************ Local storage routines ***********/
+    localStorageGalleryName():string{
+       return 'Gallery-'+this.galleryId+'-'+this.galleryPanelType;
+    }
+
+    loadLocalGalleryImages(){
+        if (this.galleryId) {
+            var storedGallery=localStorage.getItem(this.localStorageGalleryName());
+
+            if (storedGallery) {
+                this.gallery =  JSON.parse(storedGallery);
+                this.gallery.forEach((galleryDrawing)=>{this.galleryDisplayImage(galleryDrawing.image)})
+            } 
+        }
+    }
+
+    saveGalleryToLocalStorage(){
+        if (this.galleryId) {
+            var data = JSON.stringify(this.gallery); 
+            localStorage.setItem(this.localStorageGalleryName(),data);
+        }
+    }
+
+    /*********** clipboard functions for our testing purposes - these buttons are hidden on production server  */
+
     putGalleryOnClipboard(){
-        var data = JSON.stringify(this.gallery.filter(img => img.image.length > 0));  /* don't write out sample images */
+        var data = JSON.stringify(this.gallery.filter(img => img.image.length > 0));  /* don't write out sample images ***********/
         navigator.clipboard.writeText(data).then().catch(e => console.error(e));
         alert("Your gallery is on the clipboard.");
     }
@@ -260,7 +232,6 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 }
 
 interface GalleryDrawing {
-    gameId: string;
     image: string;
 }
 

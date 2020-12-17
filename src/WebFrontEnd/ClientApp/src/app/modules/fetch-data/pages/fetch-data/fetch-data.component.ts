@@ -46,9 +46,9 @@ export class FetchDataComponent
     private userPromptTimerId;
     private autoSubmitTimerId;
 
-    showGalleryEditor = false;
-    galleryTypes = [...Galleries.galleryTypes]; /* needed so html page can see it */
-    currentGalleryType = this.galleryTypes[0].galleryId;
+    galleryEditorVisible = false;
+    galleryTypes = [...Galleries.galleryTypes]; /* so html page can see the reference.  ... is SPREAD command: https://www.samanthaming.com/tidbits/35-es6-way-to-clone-an-array/ */
+    currentGalleryId = this.galleryTypes[0].galleryId;
 
     constructor(
         formBuilder: FormBuilder,
@@ -67,7 +67,7 @@ export class FetchDataComponent
             clearTimeout(this.autoSubmitTimerId);
             this.autoSubmitTimerId = null;
           }
-});
+        });
     }
 
     handleColorChange = (color: string, subPrompt: number) => {

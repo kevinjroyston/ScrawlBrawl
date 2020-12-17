@@ -16,7 +16,7 @@ import Galleries from '@core/models/gallerytypes';
 
 
 export class GalleryTool implements AfterViewInit {
-    @Input() drawingPrompt: DrawingPromptMetadata;
+    @Input() drawingOptions: DrawingPromptMetadata;
     @Input() drawingDirective: DrawingDirective;
     @Input() galleryEditor: boolean = false;
     @ViewChild("galleryFavorites") galleryFavorites: GalleryPanel;
@@ -24,30 +24,31 @@ export class GalleryTool implements AfterViewInit {
     @ViewChild("gallerySamples") gallerySamples: GalleryPanel;
     @ViewChild("currentImage") galleryImageCurrent: ElementRef;
 
-    galleryType: string;
-    gameId: string;
+    galleryId: string;
     onChange;
-    lastImageChange: string = "";
+    lastDrawingChange: string = "";
     galleryOptions = environment.galleryOptions;
 
     constructor() {
     }
 
     storeMostRecent(){
-        if (this.lastImageChange != "") {
-            this.galleryRecent.saveImageAsRecent(this.lastImageChange);
+        if (this.lastDrawingChange != "") {
+            this.galleryRecent.storeImageInGallery(this.lastDrawingChange);
+            this.lastDrawingChange = "";
         }
     }
-    setGalleryType(galType){
-        if (galType != this.galleryType) {
-            this.storeMostRecent();
+    setGalleryId(galId){
+        if (galId != this.galleryId) {
+            this.storeMostRecent(); /* we navigated to a different gallery, save what they were working on in last gallery */
+
             if (this.drawingDirective && this.drawingDirective.ctx){
                 this.drawingDirective.ctx.clearRect(0, 0, this.drawingDirective.ctx.canvas.width, this.drawingDirective.ctx.canvas.height);
             }
-            this.galleryType = galType;
-            this.galleryFavorites.setGalleryType(galType);
-            this.galleryRecent.setGalleryType(galType);
-            this.gallerySamples.setGalleryType(galType);
+            this.galleryId = galId;
+            this.galleryFavorites.setGalleryId(galId);
+            this.galleryRecent.setGalleryId(galId);
+            this.gallerySamples.setGalleryId(galId);
         }
     }
 
@@ -62,7 +63,7 @@ export class GalleryTool implements AfterViewInit {
     }
 
     onDrawingChange(event){
-        this.lastImageChange = event;
+        this.lastDrawingChange = event;
       
         if (this.galleryImageCurrent) {
             this.galleryImageCurrent.nativeElement.src = event;
@@ -71,7 +72,7 @@ export class GalleryTool implements AfterViewInit {
         
     }
     onCurrentBtnClick(){
-        this.galleryFavorites.saveImageAsFavorite(this.lastImageChange)
+        this.galleryFavorites.storeImageInGallery(this.lastDrawingChange)
       }
   
     registerOnChange(fn: any): void {
@@ -81,9 +82,6 @@ export class GalleryTool implements AfterViewInit {
     registerOnTouched(fn: any): void {
     }
 
-    loadMostRecent(){
-//        this.galleryRecent.loadMostRecent();
-    }
     favoritesToClipboard(){
         this.galleryFavorites.putGalleryOnClipboard();
     }

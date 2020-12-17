@@ -61,7 +61,10 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                             WidthInPx = ThreePartPeopleConstants.Widths[drawingType],
                             HeightInPx = ThreePartPeopleConstants.Heights[drawingType],
                             CanvasBackground = ThreePartPeopleConstants.Backgrounds[drawingType],
-                            GalleryType = drawingType.ToString().ToUpper(),
+                            GalleryOptions = new GalleryOptionMetadata(){
+                                GalleryId = drawingType.ToString().ToUpper(),
+                            },
+                            
 
                         },
                     },

@@ -1,7 +1,7 @@
 <div class="drawb">
     <!-- Drawing Canvas -->
     <div class="drawb-canvas">
-        <canvas appDrawing class="draw-canvas" [width]="drawingPrompt.widthInPx" [height]="drawingPrompt.heightInPx" [ngStyle]="{'background-image': 'url(' + drawingPrompt.canvasBackground + ')'}" [premadeDrawing]="drawingPrompt.premadeDrawing" [lineColor]="selectedColor"
+        <canvas appDrawing class="draw-canvas" [width]="drawingOptions.widthInPx" [height]="drawingOptions.heightInPx" [ngStyle]="{'background-image': 'url(' + drawingOptions.canvasBackground + ')'}" [premadeDrawing]="drawingOptions.premadeDrawing" [lineColor]="selectedColor"
             [lineWidth]="selectedBrushSize" [eraserMode]="eraserMode" (drawingEmitter)="onDrawingChange($event)">
         </canvas>
     </div>
@@ -33,7 +33,7 @@
                     <ion-icon name="arrow-back-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
 
-                <scrawlbrawl-iconbutton *ngIf="drawingPrompt.galleryType" (click)="showGallery=!showGallery">
+                <scrawlbrawl-iconbutton *ngIf="drawingOptions.galleryOptions" (click)="showGallery=!showGallery">
                     <ion-icon name="star-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
             </div>
@@ -51,7 +51,7 @@
             </div>
         </div>
 
-        <div class="drawb-setting" *ngIf="showColorSelector && ((!drawingPrompt.colorList) || (drawingPrompt.colorList.length==0))">
+        <div class="drawb-setting" *ngIf="showColorSelector && ((!drawingOptions.colorList) || (drawingOptions.colorList.length==0))">
             <div class="drawb-setting-header">
                 Color
             </div>
@@ -61,18 +61,18 @@
             </div>
         </div>
 
-        <div *ngIf="showColorSelector && drawingPrompt.colorList && drawingPrompt.colorList.length> 1">
+        <div *ngIf="showColorSelector && drawingOptions.colorList && drawingOptions.colorList.length> 1">
             <mat-radio-group class="color-picker-group" [(ngModel)]="selectedColor" (change)="eraserMode=false">
-                <div class="color-picker-dot" *ngFor="let colorChoice of drawingPrompt.colorList; let i = index" [ngStyle]="{'background-color': colorChoice}">
+                <div class="color-picker-dot" *ngFor="let colorChoice of drawingOptions.colorList; let i = index" [ngStyle]="{'background-color': colorChoice}">
                     <mat-radio-button [value]="colorChoice" [checked]="i==0"></mat-radio-button>
                 </div>
             </mat-radio-group>
         </div>
-        <div #galleryPanel [hidden]="!showGallery" class="drawb-setting" *ngIf="drawingPrompt.galleryType">
+        <div #galleryPanel [hidden]="!showGallery" class="drawb-setting" *ngIf="drawingOptions.galleryOptions">
             <div class="drawb-setting-header">
                 Gallery
             </div>
             <div>
-                <gallerytool #galleryTool [drawingPrompt]="drawingPrompt" [galleryEditor]="galleryEditor" [drawingDirective]="drawingDirective"></gallerytool>
+                <gallerytool #galleryTool [drawingOptions]="drawingOptions" [galleryEditor]="galleryEditor" [drawingDirective]="drawingDirective"></gallerytool>
             </div>
         </div>

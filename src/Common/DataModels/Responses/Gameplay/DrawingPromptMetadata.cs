@@ -6,6 +6,12 @@ namespace Common.DataModels.Responses
     /// <summary>
     /// Class containing metadata about a drawing prompt.
     /// </summary>
+    public class GalleryOptionMetadata 
+    {
+        public string GalleryId { get; set; } = "GENERIC";
+
+        public bool GalleryAutoLoadMostRecent { get; set; } = false;
+    }
     public class DrawingPromptMetadata
     {
         /// <summary>
@@ -21,10 +27,7 @@ namespace Common.DataModels.Responses
         /// </summary>
         public string PremadeDrawing { get; set; }
 
-        public string GalleryType { get; set; }
-
-        public bool GalleryAutoLoadMostRecent { get; set; } = false;
-
+        public GalleryOptionMetadata GalleryOptions { get; set; } 
 
         /// <summary>
         /// If provided, will be rendered behind the canvas.

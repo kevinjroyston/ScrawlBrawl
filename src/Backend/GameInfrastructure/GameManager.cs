@@ -75,8 +75,10 @@ namespace Backend.GameInfrastructure
                 {
                     Prompt = "Self Portrait",
                     Drawing = new DrawingPromptMetadata{
-                        GalleryType = "PROFILE",
-                        GalleryAutoLoadMostRecent = true,
+                        GalleryOptions = new GalleryOptionMetadata{
+                            GalleryId = "PROFILE",
+                            GalleryAutoLoadMostRecent = true,
+                        }
                     }
 
                 }

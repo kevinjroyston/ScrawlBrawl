@@ -44,7 +44,7 @@
 
                     <input type="text" class="text-input" formControlName="shortAnswer" *ngIf="subPrompt.shortAnswer">
 
-                    <drawingboard *ngIf="subPrompt.drawing" [drawingPrompt]="subPrompt.drawing" formControlName="drawing"></drawingboard>
+                    <drawingboard *ngIf="subPrompt.drawing" [drawingOptions]="subPrompt.drawing" formControlName="drawing"></drawingboard>
                 </div>
             </div>
         </div>
@@ -58,20 +58,20 @@
         </div>
         <div *ngIf="!userPrompt.submitButton">
             <br><br>
-            <scrawlbutton (click)="showGalleryEditor=!showGalleryEditor">Gallery Editor</scrawlbutton>
-            <div [hidden]="!showGalleryEditor">
-                <select #galleryDD class="Dropdown" (change)="currentGalleryType=galleryDD.value">
-                    <option *ngFor="let gallery of galleryTypes; let i = index" [selected]="(currentGalleryType==gallery.galleryId)" value="{{gallery.galleryId}}">
+            <scrawlbutton (click)="galleryEditorVisible=!galleryEditorVisible">Gallery Editor</scrawlbutton>
+            <div [hidden]="!galleryEditorVisible">
+                <select #galleryDD class="Dropdown" (change)="currentGalleryId=galleryDD.value">
+                    <option *ngFor="let gallery of galleryTypes; let i = index" [selected]="(currentGalleryId==gallery.galleryId)" value="{{gallery.galleryId}}">
                         {{gallery.galleryDesc}}
                     </option>
                 </select>
                 <div>
-                    <drawingboard [gameId]="'BodyBuilder'" [galleryEditor]="true" [galleryType]="currentGalleryType"></drawingboard>
+                    <drawingboard [galleryEditor]="true" [galleryId]="currentGalleryId"></drawingboard>
                 </div>
                 <br>
             </div>
-        </div>
-        <div [hidden]="showGalleryEditor" *ngIf="!userPrompt.submitButton" gameAsset [gameAssetClass]="'game-css'" [gameAssetType]="'waiting-css'" [gameAssetID]="userPrompt.gameIdString">
+            <div [hidden]="galleryEditorVisible" gameAsset [gameAssetClass]="'game-css'" [gameAssetType]="'waiting-css'" [gameAssetID]="userPrompt.gameIdString">
+            </div>
         </div>
     </form>
 </div>

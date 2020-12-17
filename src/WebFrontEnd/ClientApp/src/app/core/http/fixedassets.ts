@@ -54,8 +54,8 @@ export class FixedAsset {
     }
 
 
-    determineGalleryURI(galleryType):string{
-        return '/assets/GameAssets/gallery-samples/samples-'+galleryType+'.json'
+    determineGalleryURI(galleryId):string{
+        return '/assets/GameAssets/gallery-samples/samples-'+galleryId+'.json'
     }
 }
 

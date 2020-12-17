@@ -20,15 +20,14 @@ import Galleries from '@core/models/gallerytypes';
 
 
 export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
-    _galleryType:string;
-    @Input() drawingPrompt: DrawingPromptMetadata;
+    _galleryId:string;
+    @Input() drawingOptions: DrawingPromptMetadata;
     @Input() showColorSelector: boolean = true;
     @Input() showEraser: boolean = true;
     @Input() showBrushSizeSelector: boolean = true;
-    @Input() set galleryType(value: string) { this._galleryType = value; this.setGalleryType(value) }
-             get galleryType(): string { return this._galleryType}
+    @Input() set galleryId(value: string) { this._galleryId = value; this.setGalleryId(value) }
+             get galleryId(): string { return this._galleryId}
 
-    @Input() gameId: string;
     @Input() galleryEditor: boolean;
 
     @ViewChild(DrawingDirective) drawingDirective;
@@ -45,27 +44,31 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     constructor(private _colorPicker: MatBottomSheet) {
     }
 
-    createDrawingPrompt(){
-      let gallery = Galleries.galleryFromType(this.galleryType);
-      this.drawingPrompt = {
-        colorList: null,
-        widthInPx: gallery.imageWidth,
-        heightInPx: gallery.imageWidth,
-        premadeDrawing: "",
-        canvasBackground: "",
-        galleryType: this.galleryType,
-        galleryAutoLoadMostRecent: false,
-        gameId: this.gameId
-      }
-     
+    updateDrawingOptionsForGalleryId(id){
+        let gallery = Galleries.galleryFromId(this.galleryId);
+        if (!this.drawingOptions) { /* if we are in a stand alone gallery editor, we do not have a drawing prompt, create one */
+            this.drawingOptions = {
+                colorList: null,
+                widthInPx: gallery.imageWidth,
+                heightInPx: gallery.imageHeight,
+                premadeDrawing: "",
+                canvasBackground: "",
+                galleryOptions:{    
+                    galleryId: this.galleryId,
+                    galleryAutoLoadMostRecent: false,
+                }
+            }
+        }
+        this.drawingOptions.widthInPx = gallery.imageWidth;
+        this.drawingOptions.heightInPx = gallery.imageHeight;
     }
 
-    setGalleryType(typ){
-        if (!this.drawingPrompt) {
-            this.createDrawingPrompt();
-        }
+    setGalleryId(id){
+
+        this.updateDrawingOptionsForGalleryId(id);
+
         if (this.galleryTool) {
-            this.galleryTool.setGalleryType(typ);  
+            this.galleryTool.setGalleryId(id);
         }
     }
 
@@ -76,25 +79,23 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     }
 
     ngAfterViewInit(){
-        if (this.drawingPrompt) {
-            this.gameId = this.drawingPrompt.gameId;
-            this.galleryType = this.drawingPrompt.galleryType;
+        // If this is a prompt from the backend drawingOptions will be defined here.
+        // If it is a gallery editor created on the front end, then drawingOptions is created above when the galleryId input is set
+        if (this.drawingOptions && this.drawingOptions.galleryOptions) {
+            this.galleryId = this.drawingOptions.galleryOptions.galleryId;
         }
         
         // If there is a required color list default to first color.
-        if (this.drawingPrompt && this.drawingPrompt.colorList && this.drawingPrompt.colorList.length > 0) {
-            this.selectedColor = this.drawingPrompt.colorList[0];
+        if (this.drawingOptions && this.drawingOptions.colorList && this.drawingOptions.colorList.length > 0) {
+            this.selectedColor = this.drawingOptions.colorList[0];
         }
 
         // If there is no required color list or if the defaultLineColor is in the color list, default to that.
         let tempColor = this.drawingDirective.defaultLineColor;
-        if (!this.drawingPrompt || !this.drawingPrompt.colorList || this.drawingPrompt.colorList.includes(tempColor))
+        if (!this.drawingOptions || !this.drawingOptions.colorList || this.drawingOptions.colorList.includes(tempColor))
         {
             this.selectedColor = tempColor;
         }
-//        if (this.drawingPrompt.galleryAutoLoadMostRecent) {
-            //this.galleryTool.loadMostRecent();
-          //}
   
     }
 
@@ -105,17 +106,6 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
         if (this.onChange) {
             this.onChange(event)
         }
-    }
-
-    @HostListener('mousedown', ['$event'])
-    @HostListener('touchstart', ['$event'])
-    onmousedown(event) { 
-    }
-
-
-    @HostListener('mouseup', ['$event'])
-    @HostListener('touchend', ['$event'])
-    onmouseup(event) {
     }
 
     writeValue(obj: any): void {
