@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Common.DataModels.Enums;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Common.DataModels.Responses
@@ -8,7 +10,11 @@ namespace Common.DataModels.Responses
     /// </summary>
     public class GalleryOptionMetadata 
     {
-        public string GalleryId { get; set; } = "GENERIC";
+        [JsonProperty(PropertyName = "galleryId")]
+        public string GalleryIdString { get { return this.GalleryId.ToString().ToUpper(); } }
+
+        [JsonIgnore]
+        public GalleryId GalleryId { get; set; } = GalleryId.Generic;
 
         public bool GalleryAutoLoadMostRecent { get; set; } = false;
     }

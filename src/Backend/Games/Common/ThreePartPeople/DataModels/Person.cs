@@ -4,6 +4,7 @@ using Backend.Games.Common.DataModels;
 using Backend.APIs.DataModels.UnityObjects;
 using System.Drawing;
 using Backend.GameInfrastructure.DataModels.Users;
+using Common.DataModels.Enums;
 
 namespace Backend.Games.Common.ThreePartPeople.DataModels
 {

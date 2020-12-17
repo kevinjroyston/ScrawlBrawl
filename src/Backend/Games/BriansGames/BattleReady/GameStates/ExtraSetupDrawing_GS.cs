@@ -14,6 +14,7 @@ using Backend.GameInfrastructure;
 using Common.DataModels.Enums;
 using Common.Code.Extensions;
 using Common.Code.Helpers;
+using Backend.Games.Common.ThreePartPeople.Extensions;
 
 namespace Backend.Games.BriansGames.BattleReady.GameStates
 {
@@ -62,7 +63,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                             HeightInPx = ThreePartPeopleConstants.Heights[drawingType],
                             CanvasBackground = ThreePartPeopleConstants.Backgrounds[drawingType],
                             GalleryOptions = new GalleryOptionMetadata(){
-                                GalleryId = drawingType.ToString().ToUpper(),
+                                GalleryId = drawingType.GetGalleryId(),
                             },
                             
 
