@@ -44,7 +44,7 @@
 
                     <input type="text" class="text-input" formControlName="shortAnswer" *ngIf="subPrompt.shortAnswer">
 
-                    <drawingboard *ngIf="subPrompt.drawing" [drawingPrompt]="subPrompt.drawing" formControlName="drawing"></drawingboard>
+                    <drawingboard *ngIf="subPrompt.drawing" [drawingOptions]="subPrompt.drawing" formControlName="drawing"></drawingboard>
                 </div>
             </div>
         </div>
@@ -54,5 +54,24 @@
         <scrawlbutton class='submit-prompt' *ngIf="userPrompt.submitButton" color="green" (click)="onSubmit(userForm.value)">
             Submit
         </scrawlbutton>
+        <div *ngIf="userPrompt.submitButton" gameAsset [gameAssetClass]="'game-css'" [gameAssetType]="'prompts-css'" [gameAssetID]="userPrompt.gameIdString">
+        </div>
+        <div *ngIf="!userPrompt.submitButton">
+            <br><br>
+            <scrawlbutton (click)="galleryEditorVisible=!galleryEditorVisible">Gallery Editor</scrawlbutton>
+            <div [hidden]="!galleryEditorVisible">
+                <select #galleryDD class="Dropdown" (change)="currentGalleryId=galleryDD.value">
+                    <option *ngFor="let gallery of galleryTypes; let i = index" [selected]="(currentGalleryId==gallery.galleryId)" value="{{gallery.galleryId}}">
+                        {{gallery.galleryDesc}}
+                    </option>
+                </select>
+                <div>
+                    <drawingboard [galleryEditor]="true" [galleryId]="currentGalleryId"></drawingboard>
+                </div>
+                <br>
+            </div>
+            <div [hidden]="galleryEditorVisible" gameAsset [gameAssetClass]="'game-css'" [gameAssetType]="'waiting-css'" [gameAssetID]="userPrompt.gameIdString">
+            </div>
+        </div>
     </form>
 </div>

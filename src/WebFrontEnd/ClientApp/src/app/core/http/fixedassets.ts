@@ -10,7 +10,6 @@ import { Observable } from 'rxjs';
 })
 export class FixedAsset {
 
-    // TODO: instantiate api via dependency injection / make it injectable.
     constructor(@Inject(HttpClient) private http: HttpClient)
         {  }
 
@@ -55,8 +54,8 @@ export class FixedAsset {
     }
 
 
-    determineGalleryURI(galleryType):string{
-        return '/assets/GameAssets/gallery-samples/samples-'+galleryType+'.json'
+    determineGalleryURI(galleryId):string{
+        return '/assets/GameAssets/gallery-samples/samples-'+galleryId+'.json'
     }
 }
 

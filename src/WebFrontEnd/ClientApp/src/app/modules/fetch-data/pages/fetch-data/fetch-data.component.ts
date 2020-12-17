@@ -6,6 +6,8 @@ import { isNullOrUndefined } from 'util';
 import { Router } from '@angular/router';
 import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-sheet';
 import { ColorPickerComponent } from '@shared/components/colorpicker/colorpicker.component';
+import {DrawingPromptMetadata} from '@shared/components/drawingdirective.component';
+import Galleries from '@core/models/gallerytypes';
 
 @Pipe({ name: 'safe' })
 export class Safe {
@@ -44,6 +46,10 @@ export class FetchDataComponent
     private userPromptTimerId;
     private autoSubmitTimerId;
 
+    galleryEditorVisible = false;
+    galleryTypes = [...Galleries.galleryTypes]; /* so html page can see the reference.  ... is SPREAD command: https://www.samanthaming.com/tidbits/35-es6-way-to-clone-an-array/ */
+    currentGalleryId = this.galleryTypes[0].galleryId;
+
     constructor(
         formBuilder: FormBuilder,
         router: Router,
@@ -61,7 +67,7 @@ export class FetchDataComponent
             clearTimeout(this.autoSubmitTimerId);
             this.autoSubmitTimerId = null;
           }
-});
+        });
     }
 
     handleColorChange = (color: string, subPrompt: number) => {
@@ -232,7 +238,7 @@ export class FetchDataComponent
 }
 interface UserPrompt {
     id: string;
- //   gameIdString: string;
+    gameIdString: string;
     refreshTimeInMs: number;
     currentServerTime: Date;
     autoSubmitAtTime: Date;
@@ -254,14 +260,6 @@ interface SubPrompt {
     drawing: DrawingPromptMetadata;
     slider: SliderPromptMetadata;
     selector: SelectorPromptMetadata;
-}
-interface DrawingPromptMetadata {
-    colorList: string[];
-    widthInPx: number;
-    heightInPx: number;
-    premadeDrawing: string;
-    canvasBackground: string;
-    localStorageId: string;
 }
 interface SliderPromptMetadata {
   min: number;

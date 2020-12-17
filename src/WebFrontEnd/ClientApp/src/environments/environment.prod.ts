@@ -3,5 +3,9 @@ export const environment = {
     enableMsal: true,
     overrideUrlsWithBrowserHost: false,
     backendApiUrl: "https://api.scrawlbrawl.tv/",
-    frontendUrl: "https://www.scrawlbrawl.tv/"
+    frontendUrl: "https://www.scrawlbrawl.tv/",
+    galleryOptions: {
+        allowCopy: false,
+        allowPaste: false,
+    }
 };

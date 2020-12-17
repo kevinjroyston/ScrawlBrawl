@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Common.DataModels.Enums;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Common.DataModels.Responses
@@ -6,6 +8,16 @@ namespace Common.DataModels.Responses
     /// <summary>
     /// Class containing metadata about a drawing prompt.
     /// </summary>
+    public class GalleryOptionMetadata 
+    {
+        [JsonProperty(PropertyName = "galleryId")]
+        public string GalleryIdString { get { return this.GalleryId.ToString().ToUpper(); } }
+
+        [JsonIgnore]
+        public GalleryId GalleryId { get; set; } = GalleryId.Generic;
+
+        public bool GalleryAutoLoadMostRecent { get; set; } = false;
+    }
     public class DrawingPromptMetadata
     {
         /// <summary>
@@ -21,7 +33,7 @@ namespace Common.DataModels.Responses
         /// </summary>
         public string PremadeDrawing { get; set; }
 
-        public string LocalStorageId { get; set; }
+        public GalleryOptionMetadata GalleryOptions { get; set; } 
 
         /// <summary>
         /// If provided, will be rendered behind the canvas.

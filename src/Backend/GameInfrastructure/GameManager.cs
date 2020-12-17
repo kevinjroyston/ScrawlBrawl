@@ -75,7 +75,10 @@ namespace Backend.GameInfrastructure
                 {
                     Prompt = "Self Portrait",
                     Drawing = new DrawingPromptMetadata{
-                            LocalStorageId="SBPortrait"
+                        GalleryOptions = new GalleryOptionMetadata{
+                            GalleryId = GalleryId.Profile,
+                            GalleryAutoLoadMostRecent = true,
+                        }
                     }
 
                 }

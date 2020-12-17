@@ -9,18 +9,19 @@ import GameModes from '@core/models/gamemodes'
     providedIn: 'root'
 })
 export class GameModeList {
-    gameModes: GameModes.GameModeMetadata[];
+    private _gameModes: ReadonlyArray<GameModes.GameModeMetadata>=[];
+    public get gameModes():ReadonlyArray<GameModes.GameModeMetadata> {return this._gameModes}
 
     gameModeIndexFromGameId(gameId):number{
         let result = -1;
-        this.gameModes.forEach(function (gameMode,index){if (gameMode.gameIdString==gameId){result=index; return}})
+        this._gameModes.forEach(function (gameMode,index){if (gameMode.gameIdString==gameId){result=index; return}})
         return result;
     }
 
     gameModeFromGameId(gameId):GameModes.GameModeMetadata{
         let index = this.gameModeIndexFromGameId(gameId);
         if (index < 0) {return null}
-        return this.gameModes[index];
+        return this._gameModes[index];
     }
 
     constructor(@Inject(API) private api: API) { 
@@ -30,7 +31,7 @@ export class GameModeList {
 
     getGames = async () => {
             await this.api.request({ type: "Lobby", path: "Games" }).subscribe({
-            next: (result) => { this.gameModes = result as GameModes.GameModeMetadata[]; }
+            next: (result) => { this._gameModes = result as GameModes.GameModeMetadata[]; }
         });
     }    
 }

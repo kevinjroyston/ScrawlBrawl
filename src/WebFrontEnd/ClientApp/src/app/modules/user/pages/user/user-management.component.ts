@@ -1,8 +1,8 @@
 import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { API } from '@core/http/api';
-import { NgForm } from '@angular/forms';
 import { MsalService, BroadcastService } from '@azure/msal-angular';
+import Galleries from '@core/models/gallerytypes';
 
 @Component({
     selector: 'app-user-management',
@@ -11,6 +11,11 @@ import { MsalService, BroadcastService } from '@azure/msal-angular';
 })
 
 export class UserManagementComponent {
+    public userForm;
+    
+    galleryTypes = [...Galleries.galleryTypes]; /* needed so html page can see it */
+    currentGalleryId = this.galleryTypes[0].galleryId;
+    
     constructor(@Inject(API) private api: API)
     {
         
