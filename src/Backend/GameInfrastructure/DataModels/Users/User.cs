@@ -25,6 +25,8 @@ namespace Backend.GameInfrastructure.DataModels.Users
         public string LobbyId { get; set; }
 
         private string CachedLobbyId { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public Lobby Lobby {
             get
             {
