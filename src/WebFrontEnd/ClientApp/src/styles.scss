@@ -3,6 +3,13 @@
 @import "styles/animations";
 @import "styles/theme";
 @import "styles/common";
+.mat-tab-label {
+    min-width: 0!important;
+}
+
+.galleryPics>img {
+    cursor: pointer;
+}
 
 html,
 body {
@@ -16,7 +23,7 @@ a {
     line-height: 24px;
 }
 
-a:hover{
+a:hover {
     text-decoration: none;
 }
 
@@ -87,7 +94,6 @@ b {
     color: var(--red-primary);
 }
 
-
 .disclaimer {
     font-family: "Montserrat", sans-serif;
     font-weight: 500;
@@ -102,7 +108,7 @@ input {
     color: var(--text-color);
 }
 
-.mat-dialog-container{
+.mat-dialog-container {
     background: var(--card-background) !important;
     color: var(--text-color) !important;
 }
@@ -111,14 +117,17 @@ ion-icon {
     font-size: 30px;
 }
 
+
 /* Mat */
 
-.mat-progress-spinner circle, .mat-spinner circle {
+.mat-progress-spinner circle,
+.mat-spinner circle {
     stroke: var(--text-color);
 }
 
+
 /* Remove */
-  
+
 .slider.slider-horizontal {
     width: 98%;
 }

@@ -12,6 +12,7 @@ using Common.DataModels.Enums;
 using Backend.GameInfrastructure.DataModels.Enums;
 using Backend.Games.Common.GameStates;
 using Backend.GameInfrastructure;
+using Backend.Games.Common.ThreePartPeople.Extensions;
 
 namespace Backend.Games.BriansGames.BattleReady.GameStates
 {
@@ -61,9 +62,13 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                         Prompt = Invariant($"Draw any \"{drawingType.ToString()}\""),
                         Drawing = new DrawingPromptMetadata()
                         {
-                            WidthInPx = ThreePartPeopleConstants.Widths[drawingType],
-                            HeightInPx = ThreePartPeopleConstants.Heights[drawingType],
-                            CanvasBackground = ThreePartPeopleConstants.Backgrounds[drawingType],
+                            /* WidthInPx = ThreePartPeopleConstants.Widths[drawingType],   these are now set through gallerytype on the front end
+                              HeightInPx = ThreePartPeopleConstants.Heights[drawingType],
+                              CanvasBackground = ThreePartPeopleConstants.Backgrounds[drawingType], */
+                            GalleryOptions = new GalleryOptionMetadata(){
+                                GalleryId = drawingType.GetGalleryId(),
+                            },
+
                         },
                     },
                 },

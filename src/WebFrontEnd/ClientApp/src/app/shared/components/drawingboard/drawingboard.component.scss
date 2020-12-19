@@ -103,6 +103,13 @@
     }
 }
 
+.drawb-actions {
+    display: flex;
+    &>scrawlbrawl-iconbutton {
+        margin-right: 15px;
+    }
+}
+
 .radio-group {
     display: flex;
     flex-direction: column;

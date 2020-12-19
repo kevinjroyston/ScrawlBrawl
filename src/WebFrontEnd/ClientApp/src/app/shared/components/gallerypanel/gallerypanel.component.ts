@@ -17,24 +17,30 @@ import Galleries from '@core/models/gallerytypes';
 export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 
     private _drawingDirective: DrawingDirective;
-    @Input() set drawingDirective(value: DrawingDirective) { this._drawingDirective = value; this.loadRecentIfRequested() }
+    private _drawingOptions: DrawingPromptMetadata;
+    private _galleryPanelType: string;
+    @Input() set drawingDirective(value: DrawingDirective) { this._drawingDirective = value; this.loadMostRecentDrawing() }
              get drawingDirective(): DrawingDirective { return this._drawingDirective}
-
-    @Input() drawingOptions: DrawingPromptMetadata;
-    @Input() galleryPanelType: string; /* Favorites | Recent | Sample */
-
+    @Input() set drawingOptions(value: DrawingPromptMetadata){ this._drawingOptions = value; this.loadMostRecentDrawing() }
+             get drawingOptions(): DrawingPromptMetadata {return this._drawingOptions}
+    @Input() set galleryPanelType(value: string){ this._galleryPanelType = value; this.loadMostRecentDrawing() }   /* Favorites | Recent | Sample */
+             get galleryPanelType(): string {return this._galleryPanelType}
+    
     @ViewChild("galleryPictures") galleryPictures: ElementRef;
 
-    onChange;
-    galleryId : string;
-    gallery: GalleryDrawing[]=[];
-    galleryType: Galleries.GalleryType;
+    private _galleryId : string;
+    set galleryId(value: string){ this.setGalleryId(value) } 
+    get galleryId(): string {return this._galleryId}
 
+    private onChange;
+    private gallery: GalleryDrawing[]=[];
+    private galleryType: Galleries.GalleryType;
+    private deleteOnNextClick: boolean = false;
     
     constructor(@Inject(FixedAsset) private fixedAsset: FixedAsset, private _colorPicker: MatBottomSheet) {
     }
 
-    loadTheGallery(){
+    private loadTheGallery(){
         if (this.galleryId) {
             if (this.galleryPanelType==Galleries.samples) {
                 this.fetchGallerySamples(); 
@@ -44,18 +50,18 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
         }
     }
 
-    saveTheGallery(){
+    private saveTheGallery(){
         this.saveGalleryToLocalStorage(); /* in the future we will support saving to DB */
     }
 
-    loadGalleryImages(){
+    private loadGalleryImages(){
         this.loadLocalGalleryImages(); /* in the future we will support loading from DB */
     }
 
-    setGalleryId(galId){
-       if ((galId) && (galId != this.galleryId)){
+    private setGalleryId(galId){
+       if ((galId) && (galId != this._galleryId)){
             this.clearExistingGallery();
-            this.galleryId  = galId;
+            this._galleryId  = galId;
             this.galleryType=Galleries.galleryFromId(this.galleryId);
             this.loadTheGallery();
        }
@@ -63,14 +69,15 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 
     ngAfterViewInit(){
         if (this.drawingOptions && this.drawingOptions.galleryOptions) {
-            this.setGalleryId(this.drawingOptions.galleryOptions.galleryId);
+            this.galleryId=this.drawingOptions.galleryOptions.galleryId;
         }
     }
 
-    loadRecentIfRequested(){
+    private loadMostRecentDrawing(){
         // if the gallery option galleryAutoLoadMostRecent is true, then take the last "recent" image and put it on the canvas
-        if (this.galleryPanelType && this.drawingDirective) {
-          if ((this.drawingDirective.galleryAutoLoadMostRecent) && (this.galleryPanelType==Galleries.recent) && (this.gallery.length > 0)) {
+        // this will get called multiple times until all of the variables are populated
+        if (this.galleryPanelType && this.drawingDirective && this.drawingOptions && this.drawingOptions.galleryOptions) {
+          if ((this.drawingOptions.galleryOptions.galleryAutoLoadMostRecent) && (this.galleryPanelType==Galleries.recent) && (this.gallery.length > 0)) {
               this.drawingDirective.loadImageString(this.gallery[this.gallery.length-1].image);
           }
         }
@@ -78,7 +85,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 
 
 
-    maxGallerySize():number {
+    private maxGallerySize():number {
         // find the max based on gallerytype and panel type
         if (this.galleryPanelType!=Galleries.recent) {
           return this.galleryType.maxLocalFavorites
@@ -139,30 +146,43 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 
     /************ the following routines deal with the images in the GalleryPictured div  *************/
 
-    deleteImage(img){ /* not currently be used.  pass in an <img> element and it will find it and delete it from gallery and the display */
+    deleteImage(img){ /* pass in an <img> element and it will find it and delete it from gallery and the display */
         if (img.src) { 
             this.removeImageFromGallery(img.src);
             img.parentNode.removeChild(img);
         }
     }
 
-    galleryDisplayImage(imgStr) { /* add an image to the galleryPictures div */
+    private galleryDisplayImage(imgStr) { /* add an image to the galleryPictures div */
         var img=document.createElement('img');
-        img.width=30;
-        img.height=30;
+        img.width=40;
+        img.height=40;
         img.src=imgStr;
         this.galleryPictures.nativeElement.append(img);
     }
 
     @HostListener('click', ['$event.target'])
       onclick(img) {
-            if (img.src) { /* if we clicked on an image, move it to the drawing */
+            if (!img.src) { return } 
+
+             /* we clicked on an image, see if we are deletiting it */
+            if (this.deleteOnNextClick) {
+                this.deleteOnNextClick = false;
+                if (this.galleryPanelType==Galleries.samples) {
+                    alert("You cannot delete from Samples.")
+                } else {
+                    if (confirm("Are you sure you want to delete this image?")){
+                        this.deleteImage(img);
+                    }
+                }
+            } else { // otherwise  move it to the drawing 
                 this.drawingDirective.loadImageString(img.src);
-                event.preventDefault;
             }
+            event.preventDefault;
+            
         }
 
-    clearExistingGallery(){
+    private clearExistingGallery(){
         if (this.gallery.length > 0){
             this.gallery.length = 0;
         }
@@ -173,7 +193,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 
 
     /************ Fetch Samples from the fixed assets ***********/
-    fetchGallerySamples(){
+    private fetchGallerySamples(){
         this.fixedAsset.fetchFixedAsset(this.fixedAsset.determineGalleryURI(this.galleryId)).subscribe({
                 next: (data) => {
                     if (data){
@@ -185,11 +205,11 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
     }
 
     /************ Local storage routines ***********/
-    localStorageGalleryName():string{
+    private localStorageGalleryName():string{
        return 'Gallery-'+this.galleryId+'-'+this.galleryPanelType;
     }
 
-    loadLocalGalleryImages(){
+    private loadLocalGalleryImages(){
         if (this.galleryId) {
             var storedGallery=localStorage.getItem(this.localStorageGalleryName());
 
@@ -200,13 +220,20 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
         }
     }
 
-    saveGalleryToLocalStorage(){
+    private saveGalleryToLocalStorage(){
         if (this.galleryId) {
             var data = JSON.stringify(this.gallery); 
             localStorage.setItem(this.localStorageGalleryName(),data);
         }
     }
 
+    /****************** TEMPORARY ROUTINES UNTIL WE COME UP WITH A DELETE DESIGN **********/
+    toggleDeleteNextClickedImage(){
+        this.deleteOnNextClick = !this.deleteOnNextClick;
+    }
+    cancelDeleteNextClickedImage(){
+        this.deleteOnNextClick = false;
+    }
     /*********** clipboard functions for our testing purposes - these buttons are hidden on production server  */
 
     putGalleryOnClipboard(){
