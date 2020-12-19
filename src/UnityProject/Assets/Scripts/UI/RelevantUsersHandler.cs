@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿/*using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,7 +22,7 @@ public class RelevantUsersHandler : MonoBehaviour
     {
         return;
     }
-    /*
+    
             // TODO: fix this implementation
             ClearUsers();
             if (relevantUsers == null || relevantUsers.Count <= 0)
@@ -54,7 +54,7 @@ public class RelevantUsersHandler : MonoBehaviour
             relUser.transform.localPosition = Vector3.zero;
 
             relUser.GetComponent<RelevantUserPopulator>().Populate(user);
-        }*/
+        }
 
         private void ClearUsers()
     {
@@ -71,4 +71,4 @@ public class RelevantUsersHandler : MonoBehaviour
             GameObject.Destroy(child.gameObject);
         }
     }
-}
+}*/

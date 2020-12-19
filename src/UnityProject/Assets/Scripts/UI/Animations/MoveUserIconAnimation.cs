@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using Assets.Scripts.Networking.DataModels;
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -131,7 +132,7 @@ public class MoveUserIconAnimation : AnimationBase
         };
         return animations;
     }
-    public void AssignUserAndRegister(User relevantUser, int order, int totalNumIcons)
+    public void AssignUserAndRegister(UnityUser relevantUser, int order, int totalNumIcons)
     {
         this.IconOrder = order;
         this.IconCountTotal = totalNumIcons;

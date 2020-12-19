@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.Networking.DataModels
 {
-    public class UnityImageVoteRevealOptions
+    public class Legacy_UnityImageVoteRevealOptions
     {
-        public IReadOnlyList<User> _RelevantUsers { get; set; }
+        public IReadOnlyList<Legacy_User> _RelevantUsers { get; set; }
         public bool? _RevealThisImage { get; set; }
     }
 }

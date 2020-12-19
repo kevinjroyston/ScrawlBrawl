@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Networking.DataModels;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ public class VoteRevealUserImageHandler : MonoBehaviour
     {
     }
 
-    public void HandleUsers(IReadOnlyList<User> users, IDictionary<string, int> userIdsToScoreDelta)
+    public void HandleUsers(IReadOnlyList<UnityUser> users, IDictionary<string, int> userIdsToScoreDelta)
     {
         ClearUsers();
         if (users == null || users.Count <= 0)
@@ -34,13 +35,13 @@ public class VoteRevealUserImageHandler : MonoBehaviour
         }
     }
 
-    private void InstantiateRelevantUser(Transform parent, User user, int scoreDelta, int order = 1, int total = 1)
+    private void InstantiateRelevantUser(Transform parent, UnityUser user, int scoreDelta, int order = 1, int total = 1)
     {
         var relUser = Instantiate(PlayerIconPrefab, parent);
         relUser.transform.localScale = new Vector3(1f, 1f, 1f);
         relUser.transform.localPosition = Vector3.zero;
 
-        relUser.GetComponent<RelevantUserPopulator>().Populate(user, true, scoreDelta, order, total);
+        //relUser.GetComponent<RelevantUserPopulator>().Populate(user, true, scoreDelta, order, total);
     }
 
     private void ClearUsers()

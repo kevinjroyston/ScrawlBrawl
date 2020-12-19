@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -82,4 +82,4 @@ public class FixedDimensionAutoScaleGridLayoutGroup : GridLayoutGroup//, ParentU
     {
         return Mathf.Min((rect.rect.height - padding.vertical) / GetFixedHeight(), (rect.rect.width - padding.horizontal) / aspectRatio / GetFixedWidth());
     }
-}
+}*/

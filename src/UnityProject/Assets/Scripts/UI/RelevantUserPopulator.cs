@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿/*using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,4 +17,4 @@ public class RelevantUserPopulator : MonoBehaviour
         DisplayName.text = user.DisplayName;
         DisplayName.transform.parent.gameObject.SetActive(showName);
     }
-}
+}*/

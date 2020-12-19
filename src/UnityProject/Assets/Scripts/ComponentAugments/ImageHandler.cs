@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -101,13 +101,13 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
                     BackgroundImage.color = Color.clear;
                 }
             }
-            /*if (Background!= null)
+            if (Background!= null)
             {
                 Background.preserveAspect = true;
 
                 // Default to invisible background, overridden if subimages present.
                 Background.color = new Color(0f, 0f, 0f, 0f);
-            }*/
+            }
 
             int gridColCount = value._SpriteGridWidth.GetValueOrDefault(1);
             int gridRowCount = value._SpriteGridHeight.GetValueOrDefault(1);
@@ -132,10 +132,10 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
                     var autoScaleScript = ImageGrids[i].GetComponent<FixedDimensionAutoScaleGridLayoutGroup>();
                     autoScaleScript.aspectRatio = aspectRatio;
                     autoScaleScript.fixedDimensions = new Vector2(gridColCount, gridRowCount);
-                    /*if (i == 0)
+                    if (i == 0)
                     {
                         Background = ImageGrids[0].GetComponent<Image>();
-                    }*/
+                    }
                 }
 
                 for (int i = 0; i < value.PngSprites.Count; i++)
@@ -154,7 +154,7 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
                     Sprite sprite = value.PngSprites[i];
 
                     // Set background if we have any sub images.
-                    /*if (i == 0 && Background != null)
+                    if (i == 0 && Background != null)
                     {
                         Background.sprite = Sprite.Create(
                             new Texture2D(
@@ -167,7 +167,7 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
                             SpriteMeshType.FullRect);
                         Background.color = value?._BackgroundColor?.ToColor() ?? Color.white;
                         Background.preserveAspect = true;
-                    }*/
+                    }
 
                     image.preserveAspect = true;
                     image.sprite = value.PngSprites[i];
@@ -336,3 +336,4 @@ public class ImageHandler : MonoBehaviour, UnityObjectHandlerInterface
     }
 
 }
+*/

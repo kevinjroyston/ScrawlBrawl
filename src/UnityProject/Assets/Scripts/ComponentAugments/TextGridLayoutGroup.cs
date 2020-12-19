@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Networking.DataModels.Enums;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,12 +19,12 @@ public class TextGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
     protected override void Awake()
     {
         base.Awake();
-        this.iTVView.AddOptionsListener((UnityViewOptions options) =>
+        this.iTVView.AddOptionsListener((Dictionary<UnityViewOptions, object> options) =>
         {
             if (options != null)
             {
-                placementAxis = options._PrimaryAxis ?? placementAxis;
-                dimensionMax = options._PrimaryAxisMaxCount ?? dimensionMax;
+                placementAxis = (Axis) (options[UnityViewOptions.PrimaryAxis] ?? placementAxis);
+                dimensionMax = (int) (options[UnityViewOptions.PrimaryAxisMaxCount] ?? dimensionMax);
                 SetOptions();
             }     
         });
