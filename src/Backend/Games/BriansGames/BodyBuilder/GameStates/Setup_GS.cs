@@ -20,6 +20,7 @@ using Backend.GameInfrastructure.DataModels.Enums;
 using Backend.GameInfrastructure;
 using Common.DataModels.Enums;
 using Common.Code.Extensions;
+using Backend.Games.Common.ThreePartPeople.Extensions;
 
 namespace Backend.Games.BriansGames.BodyBuilder.GameStates
 {
@@ -120,9 +121,12 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                             Prompt = Invariant($"You are drawing the \"{person.UserSubmittedDrawingsByUser[user].Type}\" of \"{person.Name}\""),
                             Drawing = new DrawingPromptMetadata()
                             {
-                                WidthInPx = ThreePartPeopleConstants.Widths[person.UserSubmittedDrawingsByUser[user].Type],
-                                HeightInPx = ThreePartPeopleConstants.Heights[person.UserSubmittedDrawingsByUser[user].Type],
-                                CanvasBackground = ThreePartPeopleConstants.Backgrounds[person.UserSubmittedDrawingsByUser[user].Type],
+                                /* WidthInPx = ThreePartPeopleConstants.Widths[person.UserSubmittedDrawingsByUser[user].Type],
+                                   HeightInPx = ThreePartPeopleConstants.Heights[person.UserSubmittedDrawingsByUser[user].Type],
+                                   CanvasBackground = ThreePartPeopleConstants.Backgrounds[person.UserSubmittedDrawingsByUser[user].Type], */
+                                GalleryOptions = new GalleryOptionMetadata(){
+                                    GalleryId = person.UserSubmittedDrawingsByUser[user].Type.GetGalleryId(),
+                                }
                             },
                         },
                     },

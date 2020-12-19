@@ -20,12 +20,12 @@ import Galleries from '@core/models/gallerytypes';
 
 
 export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
-    _galleryId:string;
+    private _galleryId:string;
     @Input() drawingOptions: DrawingPromptMetadata;
     @Input() showColorSelector: boolean = true;
     @Input() showEraser: boolean = true;
     @Input() showBrushSizeSelector: boolean = true;
-    @Input() set galleryId(value: string) { this._galleryId = value; this.setGalleryId(value) }
+    @Input() set galleryId(value: string) { this.setGalleryId(value) }
              get galleryId(): string { return this._galleryId}
 
     @Input() galleryEditor: boolean;
@@ -44,7 +44,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     constructor(private _colorPicker: MatBottomSheet) {
     }
 
-    updateDrawingOptionsForGalleryId(id){
+    private updateDrawingOptionsForGalleryId(id){
         let gallery = Galleries.galleryFromId(this.galleryId);
         if (!this.drawingOptions) { /* if we are in a stand alone gallery editor, we do not have a drawing prompt, create one */
             this.drawingOptions = {
@@ -61,14 +61,17 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
         }
         this.drawingOptions.widthInPx = gallery.imageWidth;
         this.drawingOptions.heightInPx = gallery.imageHeight;
+        this.drawingOptions.canvasBackground = gallery.canvasBackground;
     }
 
-    setGalleryId(id){
-
+    private setGalleryId(id){
+        if (this._galleryId == id) { return }
+        
+        this._galleryId = id; 
         this.updateDrawingOptionsForGalleryId(id);
 
         if (this.galleryTool) {
-            this.galleryTool.setGalleryId(id);
+            this.galleryTool.galleryId=id;
         }
     }
 
@@ -92,11 +95,10 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
 
         // If there is no required color list or if the defaultLineColor is in the color list, default to that.
         let tempColor = this.drawingDirective.defaultLineColor;
-        if (!this.drawingOptions || !this.drawingOptions.colorList || this.drawingOptions.colorList.includes(tempColor))
-        {
+        if (!this.drawingOptions || !this.drawingOptions.colorList || this.drawingOptions.colorList.includes(tempColor)) {
             this.selectedColor = tempColor;
         }
-  
+
     }
 
     onDrawingChange(event){

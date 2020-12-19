@@ -1,4 +1,4 @@
-<mat-tab-group>
+<mat-tab-group (selectedIndexChange)="onTabClick($event)">
     <mat-tab label="Samples">
         <gallerypanel #gallerySamples [galleryPanelType]="'Samples'" [drawingOptions]="drawingOptions" [drawingDirective]="drawingDirective"></gallerypanel>
     </mat-tab>
@@ -12,7 +12,7 @@
 <div style="display:inline;height: 30px;">Click to save as favorite:</div>
 <img #currentImage style="display:inline;" class="galleryimg-current" id="galC" (click)="onCurrentBtnClick()"> &nbsp;
 <div *ngIf="galleryEditor">
-    <ion-icon name="trash-outline" style="vertical-align: bottom;"></ion-icon>
-    <div *ngIf="galleryOptions.allowCopy" (click)="favoritesToClipboard()" style="cursor:pointer">clip Favs</div>
+    <ion-icon name="trash-outline" style="vertical-align: bottom;" (click)="onDeleteClicked()"></ion-icon>
+    <div *ngIf="galleryOptions.allowCopy" (click)="favoritesToClipboard()" style="cursor:pointer">copy Favs</div>
     <div *ngIf="galleryOptions.allowPaste" (click)="favoritesFromClipboard()" style="cursor:pointer">paste Favs</div>
 </div>

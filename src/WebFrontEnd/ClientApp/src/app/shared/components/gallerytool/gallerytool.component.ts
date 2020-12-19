@@ -24,39 +24,54 @@ export class GalleryTool implements AfterViewInit {
     @ViewChild("gallerySamples") gallerySamples: GalleryPanel;
     @ViewChild("currentImage") galleryImageCurrent: ElementRef;
 
-    galleryId: string;
+    private _galleryId : string;
+    set galleryId(value: string){ this.setGalleryId(value) } 
+    get galleryId(): string {return this._galleryId}
+
     onChange;
     lastDrawingChange: string = "";
     galleryOptions = environment.galleryOptions;
+    currentTab:GalleryPanel;
 
     constructor() {
     }
 
-    storeMostRecent(){
+    storeMostRecentDrawing(){
         if (this.lastDrawingChange != "") {
             this.galleryRecent.storeImageInGallery(this.lastDrawingChange);
             this.lastDrawingChange = "";
         }
     }
-    setGalleryId(galId){
-        if (galId != this.galleryId) {
-            this.storeMostRecent(); /* we navigated to a different gallery, save what they were working on in last gallery */
+    
+    private setGalleryId(id){
+        if (id == this._galleryId) { return }
 
-            if (this.drawingDirective && this.drawingDirective.ctx){
-                this.drawingDirective.ctx.clearRect(0, 0, this.drawingDirective.ctx.canvas.width, this.drawingDirective.ctx.canvas.height);
-            }
-            this.galleryId = galId;
-            this.galleryFavorites.setGalleryId(galId);
-            this.galleryRecent.setGalleryId(galId);
-            this.gallerySamples.setGalleryId(galId);
+        this.storeMostRecentDrawing(); /* we navigated to a different gallery, save what they were working on in last gallery */
+
+        if (this.drawingDirective && this.drawingDirective.ctx){ /* clear the drawing */
+            this.drawingDirective.ctx.clearRect(0, 0, this.drawingDirective.ctx.canvas.width, this.drawingDirective.ctx.canvas.height);
         }
+        this._galleryId = id;
+        this.galleryFavorites.galleryId = id;
+        this.galleryRecent.galleryId = id;
+        this.gallerySamples.galleryId = id;
+    }
+
+    onTabClick(index){
+        switch (index){
+            case 0 : this.currentTab = this.gallerySamples; break;
+            case 1 : this.currentTab = this.galleryRecent; break;
+            case 2 : this.currentTab = this.galleryFavorites; break;
+        }
+        this.currentTab.cancelDeleteNextClickedImage();
     }
 
     ngOnInit() {
+        this.currentTab = this.gallerySamples;
     }
 
     ngOnDestroy() {
-        this.storeMostRecent();
+        this.storeMostRecentDrawing();
     }
 
     ngAfterViewInit(){
@@ -68,8 +83,6 @@ export class GalleryTool implements AfterViewInit {
         if (this.galleryImageCurrent) {
             this.galleryImageCurrent.nativeElement.src = event;
         }
-//        this.onChange(event)         
-        
     }
     onCurrentBtnClick(){
         this.galleryFavorites.storeImageInGallery(this.lastDrawingChange)
@@ -80,6 +93,10 @@ export class GalleryTool implements AfterViewInit {
     }
 
     registerOnTouched(fn: any): void {
+    }
+
+    onDeleteClicked(){
+        this.currentTab.toggleDeleteNextClickedImage();
     }
 
     favoritesToClipboard(){
