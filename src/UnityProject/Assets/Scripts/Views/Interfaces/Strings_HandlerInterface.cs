@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.Views.Interfaces
 {
+    [Serializable]
     public enum StringType
     {
         View_Title,
@@ -16,9 +17,10 @@ namespace Assets.Scripts.Views.Interfaces
         Object_Footer,
         Object_ImageIdentifier,
     }
+
     public interface Strings_HandlerInterface
     {
-        public StringType Type { get; set; }
-        public void UpdateValue(UnityField<string> value);
+        StringType Type { get; set; }
+        void UpdateValue(UnityField<string> value);
     }
 }

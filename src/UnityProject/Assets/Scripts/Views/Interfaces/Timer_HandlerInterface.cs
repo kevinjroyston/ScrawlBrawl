@@ -13,6 +13,6 @@ namespace Assets.Scripts.Views.Interfaces
     }
     public interface Timer_HandlerInterface
     {
-        public void UpdateValue(TimerHolder value);
+        void UpdateValue(TimerHolder value);
     }
 }

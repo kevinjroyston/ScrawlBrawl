@@ -13,6 +13,7 @@ namespace Assets.Scripts.Views
     public class UnityViewHandler : ITVView
     {
         private UnityView UnityView { get; set; }
+
         public List<TVScreenId> ScreenId;
         private List<Strings_HandlerInterface> StringHandlers { get; set; } = new List<Strings_HandlerInterface>();
         private List<Options_HandlerInterface<UnityViewOptions>> ViewOptionsHandlers { get; set; } = new List<Options_HandlerInterface<UnityViewOptions>>();

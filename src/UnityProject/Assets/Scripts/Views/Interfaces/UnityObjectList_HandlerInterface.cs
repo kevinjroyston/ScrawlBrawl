@@ -9,6 +9,6 @@ namespace Assets.Scripts.Views.Interfaces
 {
     public interface UnityObjectList_HandlerInterface 
     {
-        public void UpdateValue(UnityField<IReadOnlyList<UnityObject>> list);
+        void UpdateValue(UnityField<IReadOnlyList<UnityObject>> list);
     }
 }

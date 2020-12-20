@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.Networking.DataModels.Enums;
+﻿/*using Assets.Scripts.Networking.DataModels.Enums;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -119,3 +119,4 @@ public class TextGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
 
     int oldCellCount = 0;
 }
+*/

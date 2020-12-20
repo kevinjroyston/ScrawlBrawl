@@ -9,6 +9,6 @@ namespace Assets.Scripts.Views.Interfaces
 {
     public interface UsersList_HandlerInterface
     {
-        public void UpdateValue(IReadOnlyList<UnityUser> list);
+        void UpdateValue(IReadOnlyList<UnityUser> list);
     }
 }

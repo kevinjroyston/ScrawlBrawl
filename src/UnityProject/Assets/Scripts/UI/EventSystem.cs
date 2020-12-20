@@ -32,7 +32,7 @@ public class EventSystem : MonoBehaviour
             Id = gameEvent.id,
             Listener = listener,
             Persists = persistant,
-            OneShot = oneShot,
+            OneShot = !persistant && oneShot,
         };
         eventListenerPairs.Add(pair);
 
