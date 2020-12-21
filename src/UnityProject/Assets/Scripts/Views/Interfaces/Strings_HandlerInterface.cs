@@ -18,7 +18,7 @@ namespace Assets.Scripts.Views.Interfaces
         Object_ImageIdentifier,
     }
 
-    public interface Strings_HandlerInterface
+    public interface Strings_HandlerInterface : HandlerInterface<UnityField<string>>
     {
         StringType Type { get; set; }
         void UpdateValue(UnityField<string> value);

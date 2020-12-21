@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static GameEvent;
 
 namespace Assets.Scripts.Views
 {
@@ -15,11 +16,11 @@ namespace Assets.Scripts.Views
         private UnityView UnityView { get; set; }
 
         public List<TVScreenId> ScreenId;
-        private List<Strings_HandlerInterface> StringHandlers { get; set; } = new List<Strings_HandlerInterface>();
-        private List<Options_HandlerInterface<UnityViewOptions>> ViewOptionsHandlers { get; set; } = new List<Options_HandlerInterface<UnityViewOptions>>();
-        private List<Timer_HandlerInterface> TimerHandlers { get; set; } = new List<Timer_HandlerInterface>();
-        private List<UnityObjectList_HandlerInterface> ObjectListHandlers { get; set; }
-        private List<UsersList_HandlerInterface> UsersListHandlers { get; set; }
+        private List<Component> StringHandlers { get; set; } = new List<Component>();
+        private List<Component> ViewOptionsHandlers { get; set; } = new List<Component>();
+        private List<Component> TimerHandlers { get; set; } = new List<Component>();
+        private List<Component> ObjectListHandlers { get; set; }
+        private List<Component> UsersListHandlers { get; set; }
 
         void Awake()
         {
@@ -30,6 +31,13 @@ namespace Assets.Scripts.Views
             gameObject.SetActive(false);   
         }
 
+        private void Start()
+        {
+            /*EventSystem.Singleton.RegisterListener(
+                listener: (gameEvent) => SetActiveAllChildren(transform, false),
+                gameEvent: new GameEvent { eventType = EventEnum.ExitingState },
+                persistant: true);*/
+        }
         public override void EnterView(UnityView view)
         {
             base.EnterView(view);
@@ -41,51 +49,55 @@ namespace Assets.Scripts.Views
 
         private void CallHandlers()
         {
-            foreach (Strings_HandlerInterface stringHandler in StringHandlers)
+            foreach (Component stringHandler in StringHandlers)
             {
-                if (stringHandler.Type == StringType.View_Title)
+                if (((Strings_HandlerInterface) stringHandler).Type == StringType.View_Title)
                 {
-                    stringHandler.UpdateValue(UnityView.Title);
+                    Helpers.SetActiveAndUpdate(stringHandler, UnityView.Title);
+
                 } 
-                else if (stringHandler.Type == StringType.View_Instructions)
+                else if (((Strings_HandlerInterface)stringHandler).Type == StringType.View_Instructions)
                 {
-                    stringHandler.UpdateValue(UnityView.Instructions);
+                    Helpers.SetActiveAndUpdate(stringHandler, UnityView.Instructions);
                 }
             }
 
-            foreach (Options_HandlerInterface<UnityViewOptions> viewOptionHandler in ViewOptionsHandlers)
+            foreach (Component viewOptionHandler in ViewOptionsHandlers)
             {
-                viewOptionHandler.UpdateValue(UnityView.Options);
+                Helpers.SetActiveAndUpdate(viewOptionHandler, UnityView.Options);
             }
 
-            foreach (Timer_HandlerInterface timerHandler in TimerHandlers)
+            foreach (Component timerHandler in TimerHandlers)
             {
-                timerHandler.UpdateValue(new TimerHolder()
-                {
-                    ServerTime = UnityView.ServerTime,
-                    StateEndTime = UnityView.StateEndTime,
-                });
+                Helpers.SetActiveAndUpdate(
+                    timerHandler,
+                    new TimerHolder()
+                    {
+                        ServerTime = UnityView.ServerTime,
+                        StateEndTime = UnityView.StateEndTime,
+                    });
             }
 
-            foreach (UnityObjectList_HandlerInterface objectListHandler in ObjectListHandlers)
+            foreach (Component objectListHandler in ObjectListHandlers)
             {
-                objectListHandler.UpdateValue(UnityView.UnityObjects);
+                Helpers.SetActiveAndUpdate(objectListHandler, UnityView.UnityObjects);
             }
 
-            foreach (UsersList_HandlerInterface usersListHandler in UsersListHandlers)
+            foreach (Component usersListHandler in UsersListHandlers)
             {
-                usersListHandler.UpdateValue(UnityView.Users);
+                Helpers.SetActiveAndUpdate(usersListHandler, UnityView.Users);
             }
             
         }
 
+
         private void UpdateHandlers()
         {
-            StringHandlers = gameObject.GetComponentsInChildren<Strings_HandlerInterface>().ToList();
-            ViewOptionsHandlers = gameObject.GetComponentsInChildren<Options_HandlerInterface<UnityViewOptions>>().ToList();
-            TimerHandlers = gameObject.GetComponentsInChildren<Timer_HandlerInterface>().ToList();
-            ObjectListHandlers = gameObject.GetComponentsInChildren<UnityObjectList_HandlerInterface>().ToList();
-            UsersListHandlers = gameObject.GetComponentsInChildren<UsersList_HandlerInterface>().ToList();
+            StringHandlers = gameObject.GetComponentsInChildren(typeof(Strings_HandlerInterface)).ToList();
+            ViewOptionsHandlers = gameObject.GetComponentsInChildren(typeof(Options_HandlerInterface<UnityViewOptions>)).ToList();
+            TimerHandlers = gameObject.GetComponentsInChildren(typeof(Timer_HandlerInterface)).ToList();
+            ObjectListHandlers = gameObject.GetComponentsInChildren(typeof(UnityObjectList_HandlerInterface)).ToList();
+            UsersListHandlers = gameObject.GetComponentsInChildren(typeof(UsersList_HandlerInterface)).ToList();
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Assets.Scripts.Views.Interfaces
         public int? SpriteGridHeight { get; set; }
         public UnityField<IReadOnlyList<int>> BackgroundColor { get; set; }
     }
-    public interface Sprite_HandlerInterface
+    public interface Sprite_HandlerInterface : HandlerInterface<SpriteHolder>
     {
         void UpdateValue(SpriteHolder value);
     }

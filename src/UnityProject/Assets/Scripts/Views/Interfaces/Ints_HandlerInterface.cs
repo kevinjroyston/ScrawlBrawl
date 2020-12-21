@@ -11,7 +11,7 @@ namespace Assets.Scripts.Views.Interfaces
     {
         Object_VoteCount
     }
-    public interface Ints_HandlerInterface
+    public interface Ints_HandlerInterface : HandlerInterface<UnityField<int?>>
     {
         IntType Type { get; set; }
         void UpdateValue(UnityField<int?> value);

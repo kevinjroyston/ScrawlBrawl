@@ -11,7 +11,7 @@ namespace Assets.Scripts.Views.Interfaces
         public DateTime? ServerTime { get; set; }
         public DateTime? StateEndTime { get; set; }
     }
-    public interface Timer_HandlerInterface
+    public interface Timer_HandlerInterface : HandlerInterface<TimerHolder>
     {
         void UpdateValue(TimerHolder value);
     }

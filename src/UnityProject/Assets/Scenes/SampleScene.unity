@@ -1395,10 +1395,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 0
-  m_MinHeight: 0
-  m_PreferredWidth: 0
-  m_PreferredHeight: 0
+  m_MinWidth: 155.01538
+  m_MinHeight: 155.01538
+  m_PreferredWidth: 155.01538
+  m_PreferredHeight: 155.01538
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -1690,10 +1690,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 0
-  m_MinHeight: 0
-  m_PreferredWidth: 0
-  m_PreferredHeight: 0
+  m_MinWidth: 155.01538
+  m_MinHeight: 155.01538
+  m_PreferredWidth: 155.01538
+  m_PreferredHeight: 155.01538
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -1967,9 +1967,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a52d0fd8ddd8c743acdafb99998230e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  placementAxis: 0
-  dimensionMax: 10
-  iTVView: {fileID: 0}
 --- !u!114 &396747030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2120,6 +2117,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6a78c36b7782e44d967a0a1dc167b67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TextComponent: {fileID: 0}
   textType: 0
 --- !u!1 &477148840
 GameObject:
@@ -2690,10 +2688,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 0
-  m_MinHeight: 0
-  m_PreferredWidth: 0
-  m_PreferredHeight: 0
+  m_MinWidth: 155.01538
+  m_MinHeight: 155.01538
+  m_PreferredWidth: 155.01538
+  m_PreferredHeight: 155.01538
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -4421,6 +4419,7 @@ GameObject:
   m_Component:
   - component: {fileID: 734999337}
   - component: {fileID: 734999338}
+  - component: {fileID: 734999339}
   m_Layer: 0
   m_Name: Scoreboard
   m_TagString: Untagged
@@ -4458,6 +4457,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 734999336}
   m_CullTransparentMesh: 0
+--- !u!114 &734999339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734999336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667e8e0f55c8b564084ada3533ebdde2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ScreenId: 05000000
 --- !u!1 &747384920
 GameObject:
   m_ObjectHideFlags: 0
@@ -4681,10 +4693,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 0
-  m_MinHeight: 0
-  m_PreferredWidth: 0
-  m_PreferredHeight: 0
+  m_MinWidth: 155.01538
+  m_MinHeight: 155.01538
+  m_PreferredWidth: 155.01538
+  m_PreferredHeight: 155.01538
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -4837,10 +4849,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 0
-  m_MinHeight: 0
-  m_PreferredWidth: 0
-  m_PreferredHeight: 0
+  m_MinWidth: 143.94286
+  m_MinHeight: 143.94286
+  m_PreferredWidth: 143.94286
+  m_PreferredHeight: 143.94286
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -4893,7 +4905,6 @@ GameObject:
   - component: {fileID: 811210919}
   - component: {fileID: 811210918}
   - component: {fileID: 811210917}
-  - component: {fileID: 811210920}
   m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
@@ -4981,19 +4992,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 811210915}
   m_CullTransparentMesh: 0
---- !u!114 &811210920
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 811210915}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6a78c36b7782e44d967a0a1dc167b67, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  textType: 0
 --- !u!1 &812186664
 GameObject:
   m_ObjectHideFlags: 0
@@ -5582,10 +5580,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 0
-  m_MinHeight: 0
-  m_PreferredWidth: 0
-  m_PreferredHeight: 0
+  m_MinWidth: 155.01538
+  m_MinHeight: 155.01538
+  m_PreferredWidth: 155.01538
+  m_PreferredHeight: 155.01538
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -5790,6 +5788,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6a78c36b7782e44d967a0a1dc167b67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TextComponent: {fileID: 0}
   textType: 1
 --- !u!1 &900302038
 GameObject:
@@ -6696,10 +6695,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 0
-  m_MinHeight: 0
-  m_PreferredWidth: 0
-  m_PreferredHeight: 0
+  m_MinWidth: 155.01538
+  m_MinHeight: 155.01538
+  m_PreferredWidth: 155.01538
+  m_PreferredHeight: 155.01538
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -6885,6 +6884,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1051610921}
   - component: {fileID: 1051610922}
+  - component: {fileID: 1051610923}
   m_Layer: 0
   m_Name: TitleHolder
   m_TagString: Untagged
@@ -6932,6 +6932,20 @@ MonoBehaviour:
   m_FlexibleWidth: 10
   m_FlexibleHeight: 2
   m_LayoutPriority: 1
+--- !u!114 &1051610923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1051610920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6a78c36b7782e44d967a0a1dc167b67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextComponent: {fileID: 811210918}
+  textType: 0
 --- !u!1 &1100625178
 GameObject:
   m_ObjectHideFlags: 0
@@ -7350,6 +7364,7 @@ GameObject:
   - component: {fileID: 1177880470}
   - component: {fileID: 1177880471}
   - component: {fileID: 1177880473}
+  - component: {fileID: 1177880472}
   m_Layer: 0
   m_Name: ImageView
   m_TagString: Untagged
@@ -7389,6 +7404,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1177880469}
   m_CullTransparentMesh: 0
+--- !u!114 &1177880472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1177880469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667e8e0f55c8b564084ada3533ebdde2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ScreenId: 06000000
 --- !u!114 &1177880473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7426,6 +7454,7 @@ GameObject:
   - component: {fileID: 1182172998}
   - component: {fileID: 1182172997}
   - component: {fileID: 1182172996}
+  - component: {fileID: 1182172999}
   m_Layer: 0
   m_Name: VoteRevealImageView
   m_TagString: Untagged
@@ -7502,6 +7531,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4030c0ef21e54584581b90ffab389fda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1182172999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1182172994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667e8e0f55c8b564084ada3533ebdde2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ScreenId: 08000000
 --- !u!1 &1214592428
 GameObject:
   m_ObjectHideFlags: 0
@@ -7660,10 +7702,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 0
-  m_MinHeight: 0
-  m_PreferredWidth: 0
-  m_PreferredHeight: 0
+  m_MinWidth: 155.01538
+  m_MinHeight: 155.01538
+  m_PreferredWidth: 155.01538
+  m_PreferredHeight: 155.01538
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -7754,9 +7796,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a52d0fd8ddd8c743acdafb99998230e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  placementAxis: 0
-  dimensionMax: 10
-  iTVView: {fileID: 0}
 --- !u!114 &1238123063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7961,10 +8000,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 0
-  m_MinHeight: 0
-  m_PreferredWidth: 0
-  m_PreferredHeight: 0
+  m_MinWidth: 155.01538
+  m_MinHeight: 155.01538
+  m_PreferredWidth: 155.01538
+  m_PreferredHeight: 155.01538
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -8150,10 +8189,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 0
-  m_MinHeight: 0
-  m_PreferredWidth: 0
-  m_PreferredHeight: 0
+  m_MinWidth: 155.01538
+  m_MinHeight: 155.01538
+  m_PreferredWidth: 155.01538
+  m_PreferredHeight: 155.01538
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -8768,10 +8807,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 0
-  m_MinHeight: 0
-  m_PreferredWidth: 0
-  m_PreferredHeight: 0
+  m_MinWidth: 143.94286
+  m_MinHeight: 143.94286
+  m_PreferredWidth: 143.94286
+  m_PreferredHeight: 143.94286
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -8824,6 +8863,7 @@ GameObject:
   - component: {fileID: 1443247902}
   - component: {fileID: 1443247904}
   - component: {fileID: 1443247903}
+  - component: {fileID: 1443247905}
   m_Layer: 0
   m_Name: VoteRevealTextView
   m_TagString: Untagged
@@ -8900,6 +8940,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1443247900}
   m_CullTransparentMesh: 0
+--- !u!114 &1443247905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1443247900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667e8e0f55c8b564084ada3533ebdde2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ScreenId: 
 --- !u!1 &1462122227
 GameObject:
   m_ObjectHideFlags: 0
@@ -9612,10 +9665,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 0
-  m_MinHeight: 0
-  m_PreferredWidth: 0
-  m_PreferredHeight: 0
+  m_MinWidth: 143.94286
+  m_MinHeight: 143.94286
+  m_PreferredWidth: 143.94286
+  m_PreferredHeight: 143.94286
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -10978,6 +11031,7 @@ GameObject:
   - component: {fileID: 1980333268}
   - component: {fileID: 1980333267}
   - component: {fileID: 1980333266}
+  - component: {fileID: 1980333269}
   m_Layer: 0
   m_Name: TextView
   m_TagString: Untagged
@@ -11054,6 +11108,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4030c0ef21e54584581b90ffab389fda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1980333269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1980333264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667e8e0f55c8b564084ada3533ebdde2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ScreenId: 07000000
 --- !u!1 &1999920789
 GameObject:
   m_ObjectHideFlags: 0
@@ -11219,10 +11286,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 0
-  m_MinHeight: 0
-  m_PreferredWidth: 0
-  m_PreferredHeight: 0
+  m_MinWidth: 155.01538
+  m_MinHeight: 155.01538
+  m_PreferredWidth: 155.01538
+  m_PreferredHeight: 155.01538
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -11292,7 +11359,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bba09fd6a3e6fc14fad8fd7e096f41ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TypeToPrefabList: []
+  TypeToPrefabList:
+  - Type: 0
+    Prefab: {fileID: 958200141029690273, guid: f01a60ea2d78bc245b181d85162ab70c, type: 3}
 --- !u!4 &2014838810
 Transform:
   m_ObjectHideFlags: 0
@@ -11551,10 +11620,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 0
-  m_MinHeight: 0
-  m_PreferredWidth: 0
-  m_PreferredHeight: 0
+  m_MinWidth: 143.94286
+  m_MinHeight: 143.94286
+  m_PreferredWidth: 143.94286
+  m_PreferredHeight: 143.94286
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1

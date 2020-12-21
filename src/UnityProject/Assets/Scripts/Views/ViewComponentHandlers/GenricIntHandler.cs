@@ -7,7 +7,8 @@ using UnityEngine.UI;
 
 public class GenricIntHandler : MonoBehaviour, Ints_HandlerInterface
 {
-    private Text TextComponent { get; set; }
+    [Tooltip("If already applied to text object can be left blank")]
+    public Text TextComponent;
 
     public IntType Type { get => integerType; set => integerType = value; }
 
@@ -18,7 +19,7 @@ public class GenricIntHandler : MonoBehaviour, Ints_HandlerInterface
 
     public void UpdateValue(UnityField<int?> field)
     {
-        if (TextComponent != null && field != null && field.Value != null)
+        if (field != null && field.Value != null)
         {
             int val = field.Value ?? 0;
             string valueString = val.ToString();
@@ -30,8 +31,4 @@ public class GenricIntHandler : MonoBehaviour, Ints_HandlerInterface
         }
     }
 
-    void Awake()
-    {
-        TextComponent = gameObject.GetComponent<Text>();  
-    }
 }

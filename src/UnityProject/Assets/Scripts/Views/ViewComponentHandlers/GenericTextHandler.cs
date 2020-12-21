@@ -7,7 +7,8 @@ using UnityEngine.UI;
 
 public class GenericTextHandler : MonoBehaviour, Strings_HandlerInterface
 {
-    private Text TextComponent { get; set; }
+    [Tooltip("If already applied to text object can be left blank")]
+    public Text TextComponent;
 
     public StringType Type { get => textType; set => textType = value; }
 
@@ -16,14 +17,6 @@ public class GenericTextHandler : MonoBehaviour, Strings_HandlerInterface
 
     public void UpdateValue(UnityField<string> field)
     {
-        if (TextComponent != null)
-        {
-            TextComponent.text = field?.Value ?? string.Empty;
-        }
-    }
-
-    void Awake()
-    {
-         TextComponent = gameObject.GetComponent<Text>();  
+         TextComponent.text = field?.Value ?? string.Empty;
     }
 }

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.Views.Interfaces
 {
-    public interface Options_HandlerInterface<T> : HandlerInterface<Dictionary<T, object>>
+    public interface HandlerInterface<T>
     {
-        void UpdateValue(Dictionary<T, object> options);
+        void UpdateValue(T value);
     }
 }

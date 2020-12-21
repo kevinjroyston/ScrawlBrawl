@@ -112,6 +112,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6a78c36b7782e44d967a0a1dc167b67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TextComponent: {fileID: 4200084594949836866}
   textType: 2
 --- !u!1 &245732853010421378
 GameObject:
@@ -125,7 +126,6 @@ GameObject:
   - component: {fileID: 4775604661649532335}
   - component: {fileID: 7957746443236290024}
   - component: {fileID: 8997956734419857920}
-  - component: {fileID: 2826233040207829536}
   m_Layer: 0
   m_Name: VoteCount
   m_TagString: Untagged
@@ -207,20 +207,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_AspectMode: 2
   m_AspectRatio: 1
---- !u!114 &2826233040207829536
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 245732853010421378}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b81f1bc9341dc544b23af8dad1f0d99, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  integerType: 0
-  showPlus: 0
 --- !u!1 &272053788141012050
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,6 +269,7 @@ MonoBehaviour:
   SpriteObjectPrefab: {fileID: 3440341579452285512, guid: c59ffe1d461a2cf4a86865ef279026b6,
     type: 3}
   BackgroundImage: {fileID: 4689843705774137828}
+  BlurMask: {fileID: 5313831369598500535}
 --- !u!1 &800937734571461495
 GameObject:
   m_ObjectHideFlags: 0
@@ -294,6 +281,8 @@ GameObject:
   - component: {fileID: 7244336795898691169}
   - component: {fileID: 8010398897049928954}
   - component: {fileID: 3221431553010894533}
+  - component: {fileID: 4706185211356512646}
+  - component: {fileID: 4109392440434526877}
   m_Layer: 0
   m_Name: DummyScore
   m_TagString: Untagged
@@ -348,6 +337,54 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: 0.3
   m_LayoutPriority: 1
+--- !u!114 &4706185211356512646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800937734571461495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b81f1bc9341dc544b23af8dad1f0d99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextComponent: {fileID: 4109392440434526877}
+  integerType: 0
+  showPlus: 0
+--- !u!114 &4109392440434526877
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800937734571461495}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: This is a dummy text value, please keep disabled. Unity Sucks
 --- !u!1 &958200141029690273
 GameObject:
   m_ObjectHideFlags: 0
@@ -778,13 +815,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 2fe833551f9ed04418b108e3bb322d47, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1154,7 +1191,6 @@ GameObject:
   - component: {fileID: 445910865794314623}
   - component: {fileID: 9005909003244505805}
   - component: {fileID: 1991585010070702114}
-  - component: {fileID: 2846087022601839056}
   m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
@@ -1242,19 +1278,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &2846087022601839056
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3903044391079863251}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6a78c36b7782e44d967a0a1dc167b67, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  textType: 5
 --- !u!1 &3977420273987508775
 GameObject:
   m_ObjectHideFlags: 0
@@ -1266,6 +1289,7 @@ GameObject:
   - component: {fileID: 1760463587792855409}
   - component: {fileID: 1074583197808755084}
   - component: {fileID: 4597154152944181548}
+  - component: {fileID: 6294432265581574928}
   m_Layer: 0
   m_Name: ScoreHolder
   m_TagString: Untagged
@@ -1343,6 +1367,21 @@ MonoBehaviour:
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
+--- !u!114 &6294432265581574928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3977420273987508775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b81f1bc9341dc544b23af8dad1f0d99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextComponent: {fileID: 7957746443236290024}
+  integerType: 0
+  showPlus: 0
 --- !u!1 &4168009696828326328
 GameObject:
   m_ObjectHideFlags: 0
@@ -1733,6 +1772,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6a78c36b7782e44d967a0a1dc167b67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TextComponent: {fileID: 0}
   textType: 4
 --- !u!1 &6804495192444420539
 GameObject:
@@ -1854,6 +1894,7 @@ GameObject:
   - component: {fileID: 6282804153548387887}
   - component: {fileID: 5643105449943060897}
   - component: {fileID: 837624184654058717}
+  - component: {fileID: 4999512950276980288}
   m_Layer: 0
   m_Name: ImageIdentifier
   m_TagString: Untagged
@@ -1909,6 +1950,20 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &4999512950276980288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7139616067880138905}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6a78c36b7782e44d967a0a1dc167b67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextComponent: {fileID: 9005909003244505805}
+  textType: 5
 --- !u!1 &7267182754280516690
 GameObject:
   m_ObjectHideFlags: 0
@@ -2022,8 +2077,8 @@ MonoBehaviour:
   m_IgnoreLayout: 0
   m_MinWidth: -1
   m_MinHeight: -1
-  m_PreferredWidth: 110.76924
-  m_PreferredHeight: 55.38462
+  m_PreferredWidth: 112.15386
+  m_PreferredHeight: 56.07693
   m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -2316,4 +2371,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6a78c36b7782e44d967a0a1dc167b67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TextComponent: {fileID: 7233078079472361656}
   textType: 3

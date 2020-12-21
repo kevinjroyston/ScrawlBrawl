@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.Views.Interfaces
 {
-    public interface UsersList_HandlerInterface
+    public interface UsersList_HandlerInterface : HandlerInterface<IReadOnlyList<UnityUser>>
     {
         void UpdateValue(IReadOnlyList<UnityUser> list);
     }

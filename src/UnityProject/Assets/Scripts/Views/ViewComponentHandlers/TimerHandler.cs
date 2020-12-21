@@ -21,10 +21,6 @@ public class TimerHandler : MonoBehaviour, Timer_HandlerInterface
         }
     }
     private bool startedTimerSound = false;
-    void Awake()
-    {
-        TextComponent = gameObject.GetComponent<Text>();  
-    }
     public void Update()
     {
         timeRemainingInSeconds -= Time.deltaTime;

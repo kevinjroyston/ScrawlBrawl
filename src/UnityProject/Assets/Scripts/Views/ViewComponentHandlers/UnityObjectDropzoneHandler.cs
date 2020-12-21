@@ -38,7 +38,7 @@ public class UnityObjectDropzoneHandler : UnityEngine.EventSystems.UIBehaviour, 
     public void UpdateValue(UnityField<IReadOnlyList<UnityObject>> list)
     {
         UnityObjects = list?.Value?.ToList() ?? new List<UnityObject>();
-
+        LoadAllObjects(UnityObjects);
     }
 
     public void DestroyAllObjects(GameEvent gameEvent)

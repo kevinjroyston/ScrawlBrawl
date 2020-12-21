@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using static GameEvent;
 
 namespace Assets.Scripts.Views
 {
@@ -15,10 +16,10 @@ namespace Assets.Scripts.Views
     {
         private UnityObject UnityObject { get; set; }
         public UnityObjectType UnityObjectType => UnityObject.Type;
-        private List<Sprite_HandlerInterface> SpriteHandlers { get; set; } = new List<Sprite_HandlerInterface>();
-        private List<Strings_HandlerInterface> StringHandlers { get; set; } = new List<Strings_HandlerInterface>();
-        private List<Ints_HandlerInterface> IntHandlers { get; set; } = new List<Ints_HandlerInterface>();
-        private List<Options_HandlerInterface<UnityObjectOptions>> ObjectOptionHandlers { get; set; } = new List<Options_HandlerInterface<UnityObjectOptions>>();
+        private List<Component> SpriteHandlers { get; set; } = new List<Component>();
+        private List<Component> StringHandlers { get; set; } = new List<Component>();
+        private List<Component> IntHandlers { get; set; } = new List<Component>();
+        private List<Component> ObjectOptionHandlers { get; set; } = new List<Component>();
 
         /// <summary>
         /// first float is inner(image grid) aspect ratio, second float is outer(entire card w/o padding) aspect ratio for perfect fit UI
@@ -66,7 +67,10 @@ namespace Assets.Scripts.Views
         }
         private void Start()
         {
-            
+            /*EventSystem.Singleton.RegisterListener(
+              listener: (gameEvent) => SetActiveAllChildren(transform, false),
+              gameEvent: new GameEvent { eventType = EventEnum.ExitingState },
+              persistant: true);*/
         }
 
 
@@ -130,57 +134,55 @@ namespace Assets.Scripts.Views
 
         private void CallHandlers()
         {
-            foreach (Strings_HandlerInterface stringHandler in StringHandlers)
+            foreach (Component stringHandler in StringHandlers)
             {
-                if (stringHandler.Type == StringType.Object_Title)
+                UnityField<string> value = null;
+                switch (((Strings_HandlerInterface)stringHandler).Type)
                 {
-                    stringHandler.UpdateValue(UnityObject.Title);
+                    case StringType.Object_Title: value = UnityObject.Title; break;
+                    case StringType.Object_Header: value = UnityObject.Header; break;
+                    case StringType.Object_Footer: value = UnityObject.Footer; break;
+                    case StringType.Object_ImageIdentifier: value = UnityObject.ImageIdentifier; break;
+                    default: break;
                 }
-                else if (stringHandler.Type == StringType.Object_Header)
-                {
-                    stringHandler.UpdateValue(UnityObject.Header);
-                }
-                else if (stringHandler.Type == StringType.Object_Footer)
-                {
-                    stringHandler.UpdateValue(UnityObject.Footer);
-                }
-                else if (stringHandler.Type == StringType.Object_ImageIdentifier)
-                {
-                    stringHandler.UpdateValue(UnityObject.ImageIdentifier);
-                }
+                Helpers.SetActiveAndUpdate(stringHandler, value);
             }
 
-            foreach (Sprite_HandlerInterface spriteHandler in SpriteHandlers)
+            foreach (Component spriteHandler in SpriteHandlers)
             {
-                spriteHandler.UpdateValue(new SpriteHolder()
-                {
-                    Sprites = UnityObject.Sprites,
-                    SpriteGridWidth = UnityObject.SpriteGridWidth,
-                    SpriteGridHeight = UnityObject.SpriteGridHeight,
-                    BackgroundColor = UnityObject.BackgroundColor
-                });
+                Helpers.SetActiveAndUpdate(
+                    spriteHandler, 
+                    new SpriteHolder()
+                    {
+                        Sprites = UnityObject.Sprites,
+                        SpriteGridWidth = UnityObject.SpriteGridWidth,
+                        SpriteGridHeight = UnityObject.SpriteGridHeight,
+                        BackgroundColor = UnityObject.BackgroundColor
+                    });
+
             }
 
-            foreach (Ints_HandlerInterface intHandler in IntHandlers)
+            foreach (Component intHandler in IntHandlers)
             {
-                if (intHandler.Type == IntType.Object_VoteCount)
+                if (((Ints_HandlerInterface)intHandler).Type == IntType.Object_VoteCount)
                 {
-                    intHandler.UpdateValue(UnityObject.VoteCount);
+                    Helpers.SetActiveAndUpdate(intHandler, UnityObject.VoteCount);
                 }
             }
-
-            foreach (Options_HandlerInterface<UnityObjectOptions> objectOptionsHandler in ObjectOptionHandlers)
+                
+            foreach (Component objectOptionsHandler in ObjectOptionHandlers)
             {
-                objectOptionsHandler.UpdateValue(UnityObject.Options);
+                Helpers.SetActiveAndUpdate(objectOptionsHandler, UnityObject.Options);
             }
         }
 
         private void UpdateHandlers()
         {
-            StringHandlers = gameObject.GetComponentsInChildren<Strings_HandlerInterface>().ToList();
-            SpriteHandlers = gameObject.GetComponentsInChildren<Sprite_HandlerInterface>().ToList();
-            IntHandlers = gameObject.GetComponentsInChildren<Ints_HandlerInterface>().ToList();
-            ObjectOptionHandlers = gameObject.GetComponentsInChildren<Options_HandlerInterface<UnityObjectOptions>>().ToList();
+            StringHandlers = gameObject.GetComponentsInChildren(typeof(Strings_HandlerInterface)).ToList();
+            SpriteHandlers = gameObject.GetComponentsInChildren(typeof(Sprite_HandlerInterface)).ToList();
+            IntHandlers = gameObject.GetComponentsInChildren(typeof(Ints_HandlerInterface)).ToList();
+            ObjectOptionHandlers = gameObject.GetComponentsInChildren(typeof(Options_HandlerInterface<UnityObjectOptions>)).ToList();
         }
     }
+
 }
