@@ -24,9 +24,9 @@ export class GalleryTool implements AfterViewInit {
     @ViewChild("gallerySamples") gallerySamples: GalleryPanel;
     @ViewChild("currentImage") galleryImageCurrent: ElementRef;
 
-    private _galleryId : string;
-    set galleryId(value: string){ this.setGalleryId(value) } 
-    get galleryId(): string {return this._galleryId}
+    private _drawingType : string;
+    set drawingType(value: string){ this.setDrawingType(value) } 
+    get drawingType(): string {return this._drawingType}
 
     onChange;
     lastDrawingChange: string = "";
@@ -43,18 +43,19 @@ export class GalleryTool implements AfterViewInit {
         }
     }
     
-    private setGalleryId(id){
-        if (id == this._galleryId) { return }
+    private setDrawingType(typ){
+        if (typ == this._drawingType) { return }
 
         this.storeMostRecentDrawing(); /* we navigated to a different gallery, save what they were working on in last gallery */
 
         if (this.drawingDirective && this.drawingDirective.ctx){ /* clear the drawing */
             this.drawingDirective.ctx.clearRect(0, 0, this.drawingDirective.ctx.canvas.width, this.drawingDirective.ctx.canvas.height);
+            this.drawingDirective.handleClearUndo();
         }
-        this._galleryId = id;
-        this.galleryFavorites.galleryId = id;
-        this.galleryRecent.galleryId = id;
-        this.gallerySamples.galleryId = id;
+        this._drawingType = typ;
+        this.galleryFavorites.drawingType = typ;
+        this.galleryRecent.drawingType = typ;
+        this.gallerySamples.drawingType = typ;
     }
 
     onTabClick(index){
@@ -105,6 +106,11 @@ export class GalleryTool implements AfterViewInit {
     favoritesFromClipboard(){
         this.galleryFavorites.addClipboardToGallery();
     }
-    
+
+    @HostListener('window:keydown',['$event'])
+    onKeyPress($event: KeyboardEvent) {
+        if(($event.ctrlKey || $event.metaKey) && $event.keyCode == 90)
+          this.drawingDirective.onPerformUndo();
+    }    
 }
 

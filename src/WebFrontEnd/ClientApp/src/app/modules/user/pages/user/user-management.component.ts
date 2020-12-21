@@ -14,7 +14,7 @@ export class UserManagementComponent {
     public userForm;
     
     galleryTypes = [...Galleries.galleryTypes]; /* needed so html page can see it */
-    currentGalleryId = this.galleryTypes[0].galleryId;
+    currentDrawingType = this.galleryTypes[0].drawingType;
     
     constructor(@Inject(API) private api: API)
     {

@@ -7,16 +7,16 @@ using static Backend.Games.Common.ThreePartPeople.DataModels.Person;
 
 namespace Backend.Games.Common.ThreePartPeople.Extensions
 {
-    public static class DrawingTypeExtensions
+    public static class BodyPartTypeExtensions
     {
-        public static GalleryId GetGalleryId(this DrawingType drawingType)
+        public static DrawingType GetDrawingType(this BodyPartType bodyPartType)
         {
-            switch (drawingType)
+            switch (bodyPartType)
             {
-                case DrawingType.Head: return GalleryId.Head;
-                case DrawingType.Body: return GalleryId.Body;
-                case DrawingType.Legs: return GalleryId.Legs;
-                default: return GalleryId.Generic;
+                case BodyPartType.Head: return DrawingType.Head;
+                case BodyPartType.Body: return DrawingType.Body;
+                case BodyPartType.Legs: return DrawingType.Legs;
+                default: return DrawingType.Generic;
             }
         }
     }

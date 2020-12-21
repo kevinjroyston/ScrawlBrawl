@@ -121,12 +121,7 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                             Prompt = Invariant($"You are drawing the \"{person.UserSubmittedDrawingsByUser[user].Type}\" of \"{person.Name}\""),
                             Drawing = new DrawingPromptMetadata()
                             {
-                                /* WidthInPx = ThreePartPeopleConstants.Widths[person.UserSubmittedDrawingsByUser[user].Type],
-                                   HeightInPx = ThreePartPeopleConstants.Heights[person.UserSubmittedDrawingsByUser[user].Type],
-                                   CanvasBackground = ThreePartPeopleConstants.Backgrounds[person.UserSubmittedDrawingsByUser[user].Type], */
-                                GalleryOptions = new GalleryOptionMetadata(){
-                                    GalleryId = person.UserSubmittedDrawingsByUser[user].Type.GetGalleryId(),
-                                }
+                                DrawingType = person.UserSubmittedDrawingsByUser[user].Type.GetDrawingType(),
                             },
                         },
                     },
@@ -189,7 +184,7 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                 {
                     PeopleUserDrawing temp = new PeopleUserDrawing
                     {
-                        Type = (Setup_Person.DrawingType)j,
+                        Type = (Setup_Person.BodyPartType)j,
                         Owner = users[(i + j + 1) % users.Count],
                         Id = randomlyOrderedPeople[i].Id
                     };

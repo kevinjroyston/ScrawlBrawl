@@ -2,15 +2,13 @@ import { Directive, ElementRef, HostListener, AfterViewInit, ViewChild, Input, O
 import {throttle} from 'app/utils/throttle'
 import PastColorsService from './colorpicker/pastColors';
 
+const MaxUndoCount = 20;
 
 @Directive({
     selector: '[appDrawing]',
 })
 
 export class DrawingDirective {
-    userIsDrawing:boolean;
-    lastX:number;
-    lastY: number;
     ctx: any;
     @Input() lineColor: string;
     @Input() lineWidth: number;
@@ -21,7 +19,10 @@ export class DrawingDirective {
     @Output() drawingEmitter = new EventEmitter();
     defaultLineColor: string;
     element;
-    undoArray: string[] = [];
+    private undoArray: string[] = [];
+    private userIsDrawing:boolean;
+    private lastX:number;
+    private lastY: number;
 
     constructor(element: ElementRef) {
         console.log("Instantiating canvas");
@@ -78,7 +79,7 @@ export class DrawingDirective {
     }
 
     // store it for an undo
-    if (this.undoArray.length >= 20) { this.undoArray.shift(); }
+    if (this.undoArray.length >= MaxUndoCount) { this.undoArray.shift(); }
     this.undoArray.push(imgStr);
     console.log('saved undo '+this.undoArray.length)
   }
@@ -86,6 +87,11 @@ export class DrawingDirective {
   stopDrawing() {
     this.userIsDrawing = false;
     this.onImageChange(null);
+  }
+
+  handleClearUndo(){
+    this.undoArray.length = 0;
+    this.onImageChange(null,false) /* set base undo image */
   }
 
   onPerformUndo() {
@@ -244,14 +250,12 @@ export class DrawingDirective {
 }
 
 export interface GalleryOptionsMetadata {
-  galleryId: string;
   galleryAutoLoadMostRecent: boolean;
 }
 
 export interface DrawingPromptMetadata {
+  drawingType: string;
   colorList: string[];
-  widthInPx: number;
-  heightInPx: number;
   premadeDrawing: string;
   canvasBackground: string;
   galleryOptions: GalleryOptionsMetadata;

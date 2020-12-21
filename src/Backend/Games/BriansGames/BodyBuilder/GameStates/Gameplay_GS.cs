@@ -41,9 +41,9 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                     {
                         StringList = new string[]
                         {
-                            CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Head].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Head],ThreePartPeopleConstants.Heights[DrawingType.Head]),
-                            CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Body].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Body],ThreePartPeopleConstants.Heights[DrawingType.Body]),
-                            CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Legs].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Legs],ThreePartPeopleConstants.Heights[DrawingType.Legs])
+                            CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[BodyPartType.Head].Drawing,ThreePartPeopleConstants.Widths[BodyPartType.Head],ThreePartPeopleConstants.Heights[BodyPartType.Head]),
+                            CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[BodyPartType.Body].Drawing,ThreePartPeopleConstants.Widths[BodyPartType.Body],ThreePartPeopleConstants.Heights[BodyPartType.Body]),
+                            CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[BodyPartType.Legs].Drawing,ThreePartPeopleConstants.Widths[BodyPartType.Legs],ThreePartPeopleConstants.Heights[BodyPartType.Legs])
                         },
                     },
                     new SubPrompt
@@ -51,9 +51,9 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                         Prompt = "Which body part do you want to trade?",
                         Answers = new string[]
                         {
-                            CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Head].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Head],ThreePartPeopleConstants.Heights[DrawingType.Head]),
-                            CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Body].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Body],ThreePartPeopleConstants.Heights[DrawingType.Body]),
-                            CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[DrawingType.Legs].Drawing,ThreePartPeopleConstants.Widths[DrawingType.Legs],ThreePartPeopleConstants.Heights[DrawingType.Legs]),
+                            CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[BodyPartType.Head].Drawing,ThreePartPeopleConstants.Widths[BodyPartType.Head],ThreePartPeopleConstants.Heights[BodyPartType.Head]),
+                            CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[BodyPartType.Body].Drawing,ThreePartPeopleConstants.Widths[BodyPartType.Body],ThreePartPeopleConstants.Heights[BodyPartType.Body]),
+                            CommonHelpers.HtmlImageWrapper(PlayerTrade.BodyPartDrawings[BodyPartType.Legs].Drawing,ThreePartPeopleConstants.Widths[BodyPartType.Legs],ThreePartPeopleConstants.Heights[BodyPartType.Legs]),
                             "None"
                         },
                     }
@@ -121,7 +121,7 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
 
         }
 
-        private void ProcessUserInput(User user, DrawingType? answer)
+        private void ProcessUserInput(User user, BodyPartType? answer)
         {
             Gameplay_Person PlayerHand = RoundTracker.AssignedPeople[user];
             Gameplay_Person PlayerTrade = RoundTracker.UnassignedPeople[RoundTracker.UsersToSeatNumber[user]];
@@ -140,15 +140,15 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
             RotateSeats();
             UserTimeoutAction UserTimeoutHandler(User user, UserFormSubmission input)
             {
-                DrawingType? answer = (DrawingType?)input?.SubForms?[1]?.RadioAnswer;
+                BodyPartType? answer = (BodyPartType?)input?.SubForms?[1]?.RadioAnswer;
 
                 if (answer == null)
                 {
                     // Make a random decision.
-                    DrawingType randAnswer = (DrawingType)Rand.Next(3);
+                    BodyPartType randAnswer = (BodyPartType)Rand.Next(3);
                 }
 
-                if (answer != DrawingType.None)
+                if (answer != BodyPartType.None)
                 {
                     // Normal flow.
                     ProcessUserInput(user, answer);
@@ -159,12 +159,12 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
 
             (bool, string) PromptedUserFormSubmission( User user, UserFormSubmission submission)
             {
-                DrawingType? answer = (DrawingType?)submission.SubForms[1].RadioAnswer;
+                BodyPartType? answer = (BodyPartType?)submission.SubForms[1].RadioAnswer;
                 if (answer == null)
                 {
                     return (false, "Please enter a valid option");
                 }
-                if (answer != DrawingType.None)
+                if (answer != BodyPartType.None)
                 {
                     ProcessUserInput(user, answer);
                 }
@@ -188,9 +188,9 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                             {
                                 StringList = new string[]
                                 {
-                                    CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Head].Drawing, ThreePartPeopleConstants.Widths[DrawingType.Head], ThreePartPeopleConstants.Heights[DrawingType.Head]),
-                                    CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Body].Drawing, ThreePartPeopleConstants.Widths[DrawingType.Body], ThreePartPeopleConstants.Heights[DrawingType.Body]),
-                                    CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[DrawingType.Legs].Drawing, ThreePartPeopleConstants.Widths[DrawingType.Legs], ThreePartPeopleConstants.Heights[DrawingType.Legs])
+                                    CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[BodyPartType.Head].Drawing, ThreePartPeopleConstants.Widths[BodyPartType.Head], ThreePartPeopleConstants.Heights[BodyPartType.Head]),
+                                    CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[BodyPartType.Body].Drawing, ThreePartPeopleConstants.Widths[BodyPartType.Body], ThreePartPeopleConstants.Heights[BodyPartType.Body]),
+                                    CommonHelpers.HtmlImageWrapper(PlayerHand.BodyPartDrawings[BodyPartType.Legs].Drawing, ThreePartPeopleConstants.Widths[BodyPartType.Legs], ThreePartPeopleConstants.Heights[BodyPartType.Legs])
                                 },
                             },
                         },
@@ -237,9 +237,9 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
             List<PeopleUserDrawing> bodies;
             List<PeopleUserDrawing> legs;
             
-            heads = setup_People.Select(val => val.BodyPartDrawings[DrawingType.Head]).Where(val => !string.IsNullOrWhiteSpace(val.Drawing)).OrderBy(_ => Rand.Next()).ToList();
-            bodies = setup_People.Select(val => val.BodyPartDrawings[DrawingType.Body]).Where(val => !string.IsNullOrWhiteSpace(val.Drawing)).OrderBy(_ => Rand.Next()).ToList();
-            legs = setup_People.Select(val => val.BodyPartDrawings[DrawingType.Legs]).Where(val => !string.IsNullOrWhiteSpace(val.Drawing)).OrderBy(_ => Rand.Next()).ToList();
+            heads = setup_People.Select(val => val.BodyPartDrawings[BodyPartType.Head]).Where(val => !string.IsNullOrWhiteSpace(val.Drawing)).OrderBy(_ => Rand.Next()).ToList();
+            bodies = setup_People.Select(val => val.BodyPartDrawings[BodyPartType.Body]).Where(val => !string.IsNullOrWhiteSpace(val.Drawing)).OrderBy(_ => Rand.Next()).ToList();
+            legs = setup_People.Select(val => val.BodyPartDrawings[BodyPartType.Legs]).Where(val => !string.IsNullOrWhiteSpace(val.Drawing)).OrderBy(_ => Rand.Next()).ToList();
 
             if (heads.Count != bodies.Count || bodies.Count != legs.Count || heads.Count != 2*this.Lobby.GetAllUsers().Count)
             {
@@ -252,9 +252,9 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                 {
                     Owner = user,
                 };
-                temp.BodyPartDrawings[DrawingType.Head] = heads.First();
-                temp.BodyPartDrawings[DrawingType.Body] = bodies.First();
-                temp.BodyPartDrawings[DrawingType.Legs] = legs.First();
+                temp.BodyPartDrawings[BodyPartType.Head] = heads.First();
+                temp.BodyPartDrawings[BodyPartType.Body] = bodies.First();
+                temp.BodyPartDrawings[BodyPartType.Legs] = legs.First();
                 heads.RemoveAt(0);
                 bodies.RemoveAt(0);
                 legs.RemoveAt(0);
@@ -269,9 +269,9 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                 {
                     Owner = null,
                 };
-                temp.BodyPartDrawings[DrawingType.Head] = heads.First();
-                temp.BodyPartDrawings[DrawingType.Body] = bodies.First();
-                temp.BodyPartDrawings[DrawingType.Legs] = legs.First();
+                temp.BodyPartDrawings[BodyPartType.Head] = heads.First();
+                temp.BodyPartDrawings[BodyPartType.Body] = bodies.First();
+                temp.BodyPartDrawings[BodyPartType.Legs] = legs.First();
                 heads.RemoveAt(0);
                 bodies.RemoveAt(0);
                 legs.RemoveAt(0);
@@ -306,9 +306,9 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
         }
         private void CheckPlayerWon(User user)
         {
-            Guid headId = RoundTracker.AssignedPeople[user].BodyPartDrawings[DrawingType.Head].Id;
-            Guid bodyId = RoundTracker.AssignedPeople[user].BodyPartDrawings[DrawingType.Body].Id;
-            Guid legsId = RoundTracker.AssignedPeople[user].BodyPartDrawings[DrawingType.Legs].Id;
+            Guid headId = RoundTracker.AssignedPeople[user].BodyPartDrawings[BodyPartType.Head].Id;
+            Guid bodyId = RoundTracker.AssignedPeople[user].BodyPartDrawings[BodyPartType.Body].Id;
+            Guid legsId = RoundTracker.AssignedPeople[user].BodyPartDrawings[BodyPartType.Legs].Id;
             if (headId == bodyId && bodyId == legsId && !RoundTracker.AssignedPeople[user].DoneWithRound)
             {
                 NumPlayersDoneWithRound++;

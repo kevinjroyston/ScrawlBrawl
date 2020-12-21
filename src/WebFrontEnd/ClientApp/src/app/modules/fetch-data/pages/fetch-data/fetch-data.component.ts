@@ -48,7 +48,7 @@ export class FetchDataComponent
 
     galleryEditorVisible = false;
     galleryTypes = [...Galleries.galleryTypes]; /* so html page can see the reference.  ... is SPREAD command: https://www.samanthaming.com/tidbits/35-es6-way-to-clone-an-array/ */
-    currentGalleryId = this.galleryTypes[0].galleryId;
+    currentDrawingType = this.galleryTypes[0].drawingType;
 
     constructor(
         formBuilder: FormBuilder,

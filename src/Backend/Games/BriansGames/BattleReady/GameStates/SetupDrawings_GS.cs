@@ -19,7 +19,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
     public class SetupDrawings_GS : SetupGameState
     {
         private Random Rand { get; } = new Random();
-        private Dictionary<User, List<DrawingType>> UsersToRandomizedDrawingTypes { get; set; } = new Dictionary<User, List<DrawingType>>();
+        private Dictionary<User, List<BodyPartType>> UsersToRandomizedBodyPartTypes { get; set; } = new Dictionary<User, List<BodyPartType>>();
         private int NumExpectedPerUser { get; set; }
         private ConcurrentBag<PeopleUserDrawing> Drawings { get; set; }
         public SetupDrawings_GS(
@@ -39,7 +39,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
             
             foreach(User user in lobby.GetAllUsers())
             {
-                UsersToRandomizedDrawingTypes.Add(user, ThreePartPeopleConstants.DrawingTypesList.OrderBy(_ => Rand.Next()).ToList());
+                UsersToRandomizedBodyPartTypes.Add(user, ThreePartPeopleConstants.BodyPartTypesList.OrderBy(_ => Rand.Next()).ToList());
             }
         }
 
@@ -47,9 +47,9 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
         {
             if (counter % 3 == 0)
             {
-                UsersToRandomizedDrawingTypes[user] = ThreePartPeopleConstants.DrawingTypesList.OrderBy(_ => Rand.Next()).ToList();
+                UsersToRandomizedBodyPartTypes[user] = ThreePartPeopleConstants.BodyPartTypesList.OrderBy(_ => Rand.Next()).ToList();
             }
-            DrawingType drawingType = UsersToRandomizedDrawingTypes[user][counter % 3];
+            BodyPartType bodyPartType = UsersToRandomizedBodyPartTypes[user][counter % 3];
             return new UserPrompt()
             {
                 UserPromptId = UserPromptId.BattleReady_BodyPartDrawing,
@@ -59,16 +59,13 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                 {
                     new SubPrompt
                     {
-                        Prompt = Invariant($"Draw any \"{drawingType.ToString()}\""),
+                        Prompt = Invariant($"Draw any \"{bodyPartType.ToString()}\""),
                         Drawing = new DrawingPromptMetadata()
                         {
-                            /* WidthInPx = ThreePartPeopleConstants.Widths[drawingType],   these are now set through gallerytype on the front end
-                              HeightInPx = ThreePartPeopleConstants.Heights[drawingType],
-                              CanvasBackground = ThreePartPeopleConstants.Backgrounds[drawingType], */
-                            GalleryOptions = new GalleryOptionMetadata(){
-                                GalleryId = drawingType.GetGalleryId(),
-                            },
-
+                            /* WidthInPx = ThreePartPeopleConstants.Widths[bodyPartType],   these are now set through gallerytype on the front end
+                              HeightInPx = ThreePartPeopleConstants.Heights[bodyPartType],
+                              CanvasBackground = ThreePartPeopleConstants.Backgrounds[bodyPartType], */
+                            DrawingType = bodyPartType.GetDrawingType(),
                         },
                     },
                 },
@@ -81,7 +78,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
             {
                 Drawing = input.SubForms[0].Drawing,
                 Owner = user,
-                Type = UsersToRandomizedDrawingTypes[user][counter % 3]
+                Type = UsersToRandomizedBodyPartTypes[user][counter % 3]
             });
             return (true, string.Empty);
         }
@@ -93,7 +90,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                 {
                     Drawing = input.SubForms[0].Drawing,
                     Owner = user,
-                    Type = UsersToRandomizedDrawingTypes[user][counter % 3]
+                    Type = UsersToRandomizedBodyPartTypes[user][counter % 3]
                 });
             }
             return UserTimeoutAction.None;

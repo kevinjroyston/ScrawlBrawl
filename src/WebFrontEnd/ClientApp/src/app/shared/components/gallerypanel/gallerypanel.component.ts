@@ -28,9 +28,9 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
     
     @ViewChild("galleryPictures") galleryPictures: ElementRef;
 
-    private _galleryId : string;
-    set galleryId(value: string){ this.setGalleryId(value) } 
-    get galleryId(): string {return this._galleryId}
+    private _drawingType : string;
+    set drawingType(value: string){ this.setDrawingType(value) } 
+    get drawingType(): string {return this._drawingType}
 
     private onChange;
     private gallery: GalleryDrawing[]=[];
@@ -41,7 +41,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
     }
 
     private loadTheGallery(){
-        if (this.galleryId) {
+        if (this.drawingType) {
             if (this.galleryPanelType==Galleries.samples) {
                 this.fetchGallerySamples(); 
             } else {
@@ -58,18 +58,18 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
         this.loadLocalGalleryImages(); /* in the future we will support loading from DB */
     }
 
-    private setGalleryId(galId){
-       if ((galId) && (galId != this._galleryId)){
+    private setDrawingType(typ){
+       if ((typ) && (typ != this._drawingType)){
             this.clearExistingGallery();
-            this._galleryId  = galId;
-            this.galleryType=Galleries.galleryFromId(this.galleryId);
+            this._drawingType  = typ;
+            this.galleryType=Galleries.galleryFromDrawingType(typ);
             this.loadTheGallery();
        }
     }
 
     ngAfterViewInit(){
         if (this.drawingOptions && this.drawingOptions.galleryOptions) {
-            this.galleryId=this.drawingOptions.galleryOptions.galleryId;
+            this.drawingType=this.drawingOptions.drawingType;
         }
     }
 
@@ -95,7 +95,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
     }
 
     storeImageInGallery(imgStr){
-        if ((imgStr=='') || (this.galleryId==Galleries.samples)) {return}  // can't write to samples
+        if ((imgStr=='') || (this.drawingType==Galleries.samples)) {return}  // can't write to samples
         let alreadyInList:boolean=false;
         this.gallery.forEach(function (drawing,index){if (drawing.image==imgStr){alreadyInList=true; return}})
         if (!alreadyInList){
@@ -194,7 +194,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 
     /************ Fetch Samples from the fixed assets ***********/
     private fetchGallerySamples(){
-        this.fixedAsset.fetchFixedAsset(this.fixedAsset.determineGalleryURI(this.galleryId)).subscribe({
+        this.fixedAsset.fetchFixedAsset(this.fixedAsset.determineGalleryURI(this.drawingType)).subscribe({
                 next: (data) => {
                     if (data){
                         this.gallery  =  JSON.parse(data);
@@ -206,11 +206,11 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 
     /************ Local storage routines ***********/
     private localStorageGalleryName():string{
-       return 'Gallery-'+this.galleryId+'-'+this.galleryPanelType;
+       return 'Gallery-'+this.drawingType+'-'+this.galleryPanelType;
     }
 
     private loadLocalGalleryImages(){
-        if (this.galleryId) {
+        if (this.drawingType) {
             var storedGallery=localStorage.getItem(this.localStorageGalleryName());
 
             if (storedGallery) {
@@ -221,7 +221,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
     }
 
     private saveGalleryToLocalStorage(){
-        if (this.galleryId) {
+        if (this.drawingType) {
             var data = JSON.stringify(this.gallery); 
             localStorage.setItem(this.localStorageGalleryName(),data);
         }
@@ -237,9 +237,10 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
     /*********** clipboard functions for our testing purposes - these buttons are hidden on production server  */
 
     putGalleryOnClipboard(){
-        var data = JSON.stringify(this.gallery.filter(img => img.image.length > 0));  /* don't write out sample images ***********/
-        navigator.clipboard.writeText(data).then().catch(e => console.error(e));
-        alert("Your gallery is on the clipboard.");
+        var data = JSON.stringify(this.gallery); 
+        navigator.clipboard.writeText(data)
+            .then(()=>{alert("Your gallery is on the clipboard.")})
+            .catch(e => console.error(e));
     }
 
 

@@ -91,7 +91,9 @@ namespace Backend.Games.BriansGames.OOTTINLTOO.GameStates
                             new SubPrompt
                             {
                                 Prompt = Invariant($"Your prompt:\"{(challenge.OddOneOut == user ? challenge.DeceptionPrompt : challenge.RealPrompt)}\""),
-                                Drawing = new DrawingPromptMetadata(),
+                                Drawing = new DrawingPromptMetadata(){
+                                    GalleryOptions = null
+                                },
                             },
                         },
                         SubmitButton = true

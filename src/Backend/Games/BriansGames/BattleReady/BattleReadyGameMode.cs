@@ -148,9 +148,9 @@ namespace Backend.Games.BriansGames.BattleReady
                     }
                     if (counter == 1)
                     {
-                        int numHeadsNeeded = Math.Max(0, minDrawingsRequired / 3 - this.Drawings.Where(drawing => drawing.Type == DrawingType.Head).ToList().Count);
-                        int numBodiesNeeded = Math.Max(0, minDrawingsRequired / 3 - this.Drawings.Where(drawing => drawing.Type == DrawingType.Body).ToList().Count);
-                        int numLegsNeeded = Math.Max(0, minDrawingsRequired / 3 - this.Drawings.Where(drawing => drawing.Type == DrawingType.Legs).ToList().Count);
+                        int numHeadsNeeded = Math.Max(0, minDrawingsRequired / 3 - this.Drawings.Where(drawing => drawing.Type == BodyPartType.Head).ToList().Count);
+                        int numBodiesNeeded = Math.Max(0, minDrawingsRequired / 3 - this.Drawings.Where(drawing => drawing.Type == BodyPartType.Body).ToList().Count);
+                        int numLegsNeeded = Math.Max(0, minDrawingsRequired / 3 - this.Drawings.Where(drawing => drawing.Type == BodyPartType.Legs).ToList().Count);
 
                         if (numHeadsNeeded + numBodiesNeeded + numLegsNeeded > 0)
                         {
@@ -199,15 +199,15 @@ namespace Backend.Games.BriansGames.BattleReady
                 List<PeopleUserDrawing> orderedDrawings = Drawings.OrderBy(drawing => drawing.CreationTime).ToList();
                 // Trim extra prompts/drawings.
                 headDrawings = MemberHelpers<PeopleUserDrawing>.Select_Ordered(
-                    orderedDrawings.FindAll((drawing) => drawing.Type == DrawingType.Head),
+                    orderedDrawings.FindAll((drawing) => drawing.Type == BodyPartType.Head),
                     expectedDrawingsPerUser * lobby.GetAllUsers().Count / 3);
 
                 bodyDrawings = MemberHelpers<PeopleUserDrawing>.Select_Ordered(
-                    orderedDrawings.FindAll((drawing) => drawing.Type == DrawingType.Body),
+                    orderedDrawings.FindAll((drawing) => drawing.Type == BodyPartType.Body),
                     expectedDrawingsPerUser * lobby.GetAllUsers().Count / 3);
 
                 legsDrawings = MemberHelpers<PeopleUserDrawing>.Select_Ordered(
-                    orderedDrawings.FindAll((drawing) => drawing.Type == DrawingType.Legs),
+                    orderedDrawings.FindAll((drawing) => drawing.Type == BodyPartType.Legs),
                     expectedDrawingsPerUser * lobby.GetAllUsers().Count / 3);
 
             });

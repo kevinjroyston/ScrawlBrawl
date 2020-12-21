@@ -1,8 +1,8 @@
 <div class="drawb">
     <!-- Drawing Canvas -->
     <div class="drawb-canvas">
-        <canvas appDrawing class="draw-canvas" [width]="drawingOptions.widthInPx" [height]="drawingOptions.heightInPx" [ngStyle]="{'background-image': 'url(' + drawingOptions.canvasBackground + ')'}" [premadeDrawing]="drawingOptions.premadeDrawing" [lineColor]="selectedColor"
-            [lineWidth]="selectedBrushSize" [eraserMode]="eraserMode" (drawingEmitter)="onDrawingChange($event)">
+        <canvas appDrawing class="draw-canvas" [width]="drawingWidth" [height]="drawingHeight" [ngStyle]="{'background-image': 'url(' + drawingOptions.canvasBackground + ')'}" [premadeDrawing]="drawingOptions.premadeDrawing" [lineColor]="selectedColor" [lineWidth]="selectedBrushSize"
+            [eraserMode]="eraserMode" (drawingEmitter)="onDrawingChange($event)">
         </canvas>
     </div>
 

@@ -194,8 +194,7 @@ namespace Backend.APIs.Controllers
                         Drawing = new DrawingPromptMetadata
                         {
                             CanvasBackground="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
-                            HeightInPx=200,
-                            WidthInPx=300,
+                            DrawingType=Common.DataModels.Enums.DrawingType.Generic,
                         }
                     },
                     new SubPrompt
@@ -204,10 +203,7 @@ namespace Backend.APIs.Controllers
                         Drawing = new DrawingPromptMetadata
                         {
                             PremadeDrawing="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
-//                            GalleryType="HEAD",
-                            //GameId="BodyBuilder",
-                            HeightInPx=300,
-                            WidthInPx=200,
+                            DrawingType=Common.DataModels.Enums.DrawingType.Generic,
                         }
                     },
                     new SubPrompt
@@ -215,8 +211,7 @@ namespace Backend.APIs.Controllers
                         Prompt = "This is a drawing with no premade or storage",
                         Drawing = new DrawingPromptMetadata
                         {
-                            HeightInPx=300,
-                            WidthInPx=200,
+                            DrawingType=Common.DataModels.Enums.DrawingType.Generic,
                         }
                     },
                     new SubPrompt
@@ -227,7 +222,7 @@ namespace Backend.APIs.Controllers
 
                     },
                     SubmitButton = true
-                }) ;
+                }); ;
             }
         }
     }
