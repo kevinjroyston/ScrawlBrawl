@@ -2,7 +2,7 @@
     <!-- Drawing Canvas -->
     <div class="drawb-canvas">
         <canvas appDrawing class="draw-canvas" [width]="drawingWidth" [height]="drawingHeight" [ngStyle]="{'background-image': 'url(' + drawingOptions.canvasBackground + ')'}" [premadeDrawing]="drawingOptions.premadeDrawing" [lineColor]="selectedColor" [lineWidth]="selectedBrushSize"
-            [eraserMode]="eraserMode" (drawingEmitter)="onDrawingChange($event)">
+            [eraserMode]="drawingMode==drawingModes.Erase" [floodFillMode]="drawingMode==drawingModes.FloodFill" (drawingEmitter)="onDrawingChange($event)">
         </canvas>
     </div>
 
@@ -14,12 +14,16 @@
                 Tools
             </div>
             <div class="drawb-tools">
-                <scrawlbrawl-iconbutton (click)="eraserMode=false" [active]="!eraserMode">
+                <scrawlbrawl-iconbutton (click)="drawingMode=drawingModes.Draw" [active]="drawingMode==drawingModes.Draw">
                     <ion-icon name="brush-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
 
-                <scrawlbrawl-iconbutton (click)="eraserMode=true" [active]="eraserMode">
+                <scrawlbrawl-iconbutton (click)="drawingMode=drawingModes.Erase" [active]="drawingMode==drawingModes.Erase">
                     <eraser-svg></eraser-svg>
+                </scrawlbrawl-iconbutton>
+
+                <scrawlbrawl-iconbutton (click)="drawingMode=drawingModes.FloodFill" [active]="drawingMode==drawingModes.FloodFill">
+                    <ion-icon name="color-fill-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
             </div>
         </div>

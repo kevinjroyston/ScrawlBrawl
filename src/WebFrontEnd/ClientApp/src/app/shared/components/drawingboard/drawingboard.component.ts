@@ -6,6 +6,13 @@ import {DrawingDirective,DrawingPromptMetadata} from '@shared/components/drawing
 import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-sheet';
 import Galleries from '@core/models/gallerytypes';
 
+export enum DrawingModes
+{
+   Draw,
+   Erase,
+   FloodFill
+}
+
 @Component({
     selector: 'drawingboard',
     templateUrl: './drawingboard.component.html',
@@ -20,6 +27,8 @@ import Galleries from '@core/models/gallerytypes';
 
 
 export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
+    drawingModes = DrawingModes;
+
 //    private _drawingOptions:DrawingPromptMetadata;
     private _drawingType:string;
     @Input() showColorSelector: boolean = true;
@@ -35,6 +44,10 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
 
     @ViewChild(DrawingDirective) drawingDirective;
     @ViewChild('galleryTool') galleryTool: GalleryTool;
+
+    drawingMode : DrawingModes = DrawingModes.Draw;
+
+    floodFillMode = false;
 
     drawingHeight;
     drawingWidth;
