@@ -17,16 +17,4 @@ public class EnterLobbyId : ITVView
     {
         TestClient.ConnectToLobby(UserInput.text.Trim());
     }
-
-    public override void EnterView(UnityView currentView)
-    {
-        base.EnterView(currentView);
-        gameObject.SetActive(true);
-    }
-
-    public override void ExitView()
-    {
-        base.ExitView();
-        gameObject.SetActive(false);
-    }
 }

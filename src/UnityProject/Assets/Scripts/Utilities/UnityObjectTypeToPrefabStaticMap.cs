@@ -10,6 +10,7 @@ public class UnityObjectTypeToPrefabStaticMap : MonoBehaviour
     public static UnityObjectTypeToPrefabStaticMap Singleton;
     public List<UnityObjectTypeToPrefab> TypeToPrefabList;
     public Dictionary<UnityObjectType, GameObject> Mapping { get; set; }
+
     public void Awake()
     {
         Singleton = this;

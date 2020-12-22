@@ -19,6 +19,7 @@ namespace Assets.Scripts.Views
         private List<Component> SpriteHandlers { get; set; } = new List<Component>();
         private List<Component> StringHandlers { get; set; } = new List<Component>();
         private List<Component> IntHandlers { get; set; } = new List<Component>();
+        private List<Component> IdListHandlers { get; set; } = new List<Component>();
         private List<Component> ObjectOptionHandlers { get; set; } = new List<Component>();
 
         /// <summary>
@@ -170,6 +171,17 @@ namespace Assets.Scripts.Views
                 }
             }
                 
+            foreach (Component idHandler in IdListHandlers)
+            {
+                List<Guid> value = null;
+                switch (((IdList_HandlerInterface)idHandler).Type)
+                {
+                    case IdType.Object_UsersWhoVotedFor: value = UnityObject.UsersWhoVotedFor; break;
+                    default: break;
+                }
+                Helpers.SetActiveAndUpdate(idHandler, value);
+            }
+
             foreach (Component objectOptionsHandler in ObjectOptionHandlers)
             {
                 Helpers.SetActiveAndUpdate(objectOptionsHandler, UnityObject.Options);
@@ -181,6 +193,7 @@ namespace Assets.Scripts.Views
             StringHandlers = gameObject.GetComponentsInChildren(typeof(Strings_HandlerInterface)).ToList();
             SpriteHandlers = gameObject.GetComponentsInChildren(typeof(Sprite_HandlerInterface)).ToList();
             IntHandlers = gameObject.GetComponentsInChildren(typeof(Ints_HandlerInterface)).ToList();
+            IdListHandlers = gameObject.GetComponentsInChildren(typeof(IdList_HandlerInterface)).ToList();
             ObjectOptionHandlers = gameObject.GetComponentsInChildren(typeof(Options_HandlerInterface<UnityObjectOptions>)).ToList();
         }
     }

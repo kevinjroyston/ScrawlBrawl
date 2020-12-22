@@ -15,6 +15,7 @@ namespace Assets.Scripts.Networking.DataModels
         public UnityField<string> Instructions { get; set; }
         public DateTime? ServerTime { get; set; }
         public DateTime? StateEndTime { get; set; }
+        public bool IsRevealing { get; set; }
         public Dictionary<UnityViewOptions, object> Options { get; set; }
     }
 }

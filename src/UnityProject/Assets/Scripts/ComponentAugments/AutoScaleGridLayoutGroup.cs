@@ -1,4 +1,4 @@
-﻿/*using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,7 +12,6 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
     /// Width / Height
     /// </summary>
     public float aspectRatio = 1.0f;
-    ImageHandler scaler = null;
 
     public bool imageHandlerDrivenAspectRatio = true;
     public int pretendThereIsAlwaysAtLeastThisManyDrawings = 0;
@@ -35,11 +34,6 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
         gridLayoutGroup.startAxis = Axis.Horizontal;
         gridLayoutGroup.constraint = Constraint.FixedColumnCount;
 
-        if (imageHandlerDrivenAspectRatio)
-        {
-            scaler = transform.GetComponentInChildren<ImageHandler>();
-            scaler?.RegisterAspectRatioListener(AspectRatioListener);
-        }
 
         OnRectTransformDimensionsChange();
     }
@@ -64,11 +58,6 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
             rect = GetComponentInParent<RectTransform>();
             Debug.LogWarning("No rect");
             return;
-        }
-        if (scaler == null && imageHandlerDrivenAspectRatio)
-        {
-            scaler = transform.GetComponentInChildren<ImageHandler>();
-            scaler?.RegisterAspectRatioListener(AspectRatioListener);
         }
 
         if (rect?.rect != null && rect.rect.height > 0 && rect.rect.width > 0)
@@ -135,4 +124,3 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
         return Mathf.FloorToInt(returnVal);
     }
 }
-*/

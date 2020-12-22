@@ -11,6 +11,7 @@ public abstract class ITVView : MonoBehaviour
     public List<Action<Dictionary<UnityViewOptions, object>>> Listeners { get; private set; } = new List<Action<Dictionary<UnityViewOptions, object>>>();
     public virtual void EnterView(UnityView currentView)
     {
+        gameObject.SetActive(true);
         foreach (Action<Dictionary<UnityViewOptions, object>> listener in Listeners)
         {
             listener(currentView?.Options);
@@ -18,7 +19,7 @@ public abstract class ITVView : MonoBehaviour
     }
     public virtual void ExitView()
     {
-
+        gameObject.SetActive(false); 
     }
     
     public virtual void AddOptionsListener(Action<Dictionary<UnityViewOptions, object>> listener)

@@ -122,6 +122,7 @@ public class ViewManager : MonoBehaviour
             },
             ServerTime = legacyView.ServerTime,
             StateEndTime = legacyView._StateEndTime,
+            IsRevealing = legacyView._VoteRevealUsers?.Count > 0,
             Options = new Dictionary<UnityViewOptions, object>()
             {
                 {UnityViewOptions.PrimaryAxis, legacyView._Options?._PrimaryAxis },
@@ -138,7 +139,7 @@ public class ViewManager : MonoBehaviour
         {
             Id = legacy.Id,
             DisplayName = legacy.DisplayName,
-            SelfPortait = legacy.SelfPortrait,
+            SelfPortrait = legacy.SelfPortrait,
             Score = legacy.Score,
             ScoreDeltaReveal = legacy.ScoreDeltaReveal,
             ScoreDeltaScoreboard = legacy.ScoreDeltaScoreboard,

@@ -7,8 +7,13 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.Views.Interfaces
 {
-    public interface UsersList_HandlerInterface : HandlerInterface<IReadOnlyList<UnityUser>>
+    public class UsersListHolder
     {
-        void UpdateValue(IReadOnlyList<UnityUser> list);
+        public IReadOnlyList<UnityUser> Users { get; set; }
+        public bool IsRevealing { get; set; } = false;
+    }
+    public interface UsersList_HandlerInterface : HandlerInterface<UsersListHolder>
+    {
+        void UpdateValue(UsersListHolder users);
     }
 }

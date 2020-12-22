@@ -44,7 +44,6 @@ namespace Assets.Scripts.Views
             UnityView = view;
             UpdateHandlers();
             CallHandlers();
-            gameObject.SetActive(true);
         }
 
         private void CallHandlers()
@@ -85,7 +84,13 @@ namespace Assets.Scripts.Views
 
             foreach (Component usersListHandler in UsersListHandlers)
             {
-                Helpers.SetActiveAndUpdate(usersListHandler, UnityView.Users);
+                Helpers.SetActiveAndUpdate(
+                    usersListHandler, 
+                    new UsersListHolder
+                    {
+                        Users = UnityView.Users,
+                        IsRevealing = UnityView.IsRevealing
+                    });
             }
             
         }

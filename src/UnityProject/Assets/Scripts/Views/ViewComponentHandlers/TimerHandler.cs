@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class TimerHandler : MonoBehaviour, Timer_HandlerInterface
 {
-    private Text TextComponent { get; set; }
+    public Text TextComponent;
 
     private double timeRemainingInSeconds = 0;
 

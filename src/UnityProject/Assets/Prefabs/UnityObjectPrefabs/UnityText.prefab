@@ -79,6 +79,7 @@ GameObject:
   - component: {fileID: 7641994925147477168}
   - component: {fileID: 5197578043087591377}
   - component: {fileID: 4375819964059360945}
+  - component: {fileID: 6275961375663404479}
   m_Layer: 0
   m_Name: Footer
   m_TagString: Untagged
@@ -166,6 +167,20 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: 0.06
   m_LayoutPriority: 1
+--- !u!114 &6275961375663404479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 981948374479524349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6a78c36b7782e44d967a0a1dc167b67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextComponent: {fileID: 5197578043087591377}
+  textType: 4
 --- !u!1 &1163203981785708223
 GameObject:
   m_ObjectHideFlags: 0
@@ -483,6 +498,7 @@ GameObject:
   - component: {fileID: 4047642937031889938}
   - component: {fileID: 4087474518712477883}
   - component: {fileID: 6989992382133046671}
+  - component: {fileID: 4939004540433612517}
   m_Layer: 0
   m_Name: Header
   m_TagString: Untagged
@@ -570,6 +586,20 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: 0.06
   m_LayoutPriority: 1
+--- !u!114 &4939004540433612517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3002386766475015189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6a78c36b7782e44d967a0a1dc167b67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextComponent: {fileID: 4087474518712477883}
+  textType: 3
 --- !u!1 &3500533900696572666
 GameObject:
   m_ObjectHideFlags: 0
@@ -579,7 +609,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8979478844083435726}
-  - component: {fileID: 9206011715738751959}
   m_Layer: 0
   m_Name: RelevantUsersRightDropZone
   m_TagString: Untagged
@@ -606,21 +635,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0.000030517578, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &9206011715738751959
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3500533900696572666}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4ad67be4fa5a2044afcc1d88bbaaeb4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  aspectRatio: 1
-  imageHandlerDrivenAspectRatio: 1
-  pretendThereIsAlwaysAtLeastThisManyDrawings: 0
 --- !u!1 &4227775433666397757
 GameObject:
   m_ObjectHideFlags: 0
@@ -674,8 +688,8 @@ MonoBehaviour:
   m_IgnoreLayout: 0
   m_MinWidth: -1
   m_MinHeight: -1
-  m_PreferredWidth: 107.153854
-  m_PreferredHeight: 53.576927
+  m_PreferredWidth: 108.076935
+  m_PreferredHeight: 54.038467
   m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -760,7 +774,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5966155543093031937}
-  - component: {fileID: 5717475439584937894}
   m_Layer: 0
   m_Name: RelevantUserSingleDropZone
   m_TagString: Untagged
@@ -787,21 +800,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &5717475439584937894
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4477083110621102986}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4ad67be4fa5a2044afcc1d88bbaaeb4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  aspectRatio: 1
-  imageHandlerDrivenAspectRatio: 1
-  pretendThereIsAlwaysAtLeastThisManyDrawings: 0
 --- !u!1 &4597520629173235866
 GameObject:
   m_ObjectHideFlags: 0
@@ -813,6 +811,7 @@ GameObject:
   - component: {fileID: 858409948404891180}
   - component: {fileID: 1335590903999453602}
   - component: {fileID: 6289128006499228894}
+  - component: {fileID: 6014010256918590400}
   m_Layer: 0
   m_Name: ImageIdentifier
   m_TagString: Untagged
@@ -868,6 +867,20 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &6014010256918590400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4597520629173235866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6a78c36b7782e44d967a0a1dc167b67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextComponent: {fileID: 2315911091733758670}
+  textType: 5
 --- !u!1 &4619440872132496188
 GameObject:
   m_ObjectHideFlags: 0
@@ -1077,7 +1090,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7489160782642932822}
-  - component: {fileID: 5299326675927740694}
   m_Layer: 0
   m_Name: RelevantUsersLeftDropZone
   m_TagString: Untagged
@@ -1104,21 +1116,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &5299326675927740694
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5716380562764416879}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4ad67be4fa5a2044afcc1d88bbaaeb4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  aspectRatio: 1
-  imageHandlerDrivenAspectRatio: 1
-  pretendThereIsAlwaysAtLeastThisManyDrawings: 0
 --- !u!1 &5758750915726501479
 GameObject:
   m_ObjectHideFlags: 0
@@ -1130,6 +1127,7 @@ GameObject:
   - component: {fileID: 4800848554855142186}
   - component: {fileID: 747687060167784478}
   - component: {fileID: 4198647676836990064}
+  - component: {fileID: 8635021873041544536}
   m_Layer: 0
   m_Name: VerticleScoreHolder
   m_TagString: Untagged
@@ -1154,7 +1152,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.84, y: 0.1}
   m_AnchorMax: {x: 1.14, y: 0.9}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -0.0000076293945}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &747687060167784478
@@ -1185,6 +1183,21 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &8635021873041544536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5758750915726501479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b81f1bc9341dc544b23af8dad1f0d99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextComponent: {fileID: 1753972902076843536}
+  integerType: 0
+  showPlus: 0
 --- !u!1 &5878494561059324834
 GameObject:
   m_ObjectHideFlags: 0
@@ -1195,7 +1208,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5878494561059324835}
   - component: {fileID: 3203561469803709519}
-  - component: {fileID: 6272267671190920254}
   - component: {fileID: 4675074446462072082}
   m_Layer: 0
   m_Name: UnityText
@@ -1232,28 +1244,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5878494561059324834}
   m_CullTransparentMesh: 0
---- !u!114 &6272267671190920254
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5878494561059324834}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 175f6c9b595026c4ea56550c5e6f0d30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TextId: {fileID: 2315911091733758670}
-  Title: {fileID: 7390720299657812033}
-  Header: {fileID: 4087474518712477883}
-  VerticalScore: {fileID: 0}
-  TextIdHolder: {fileID: 4597520629173235866}
-  VerticalScoreHolder: {fileID: 0}
-  VoteCount: {fileID: 3654449415599826411}
-  Footer: {fileID: 5197578043087591377}
-  ScoreHolder: {fileID: 7776041938833789476}
-  DummyScore: {fileID: 6324512909692666740}
 --- !u!114 &4675074446462072082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1273,7 +1263,7 @@ MonoBehaviour:
     eventType: 0
     id: 
   startDelay: 0
-  endDurration: 0
+  endDuration: 0
   registerOnEnable: 1
   persistant: 0
   oneShot: 1
@@ -1288,6 +1278,8 @@ GameObject:
   - component: {fileID: 4058204736000177762}
   - component: {fileID: 3743064139461528825}
   - component: {fileID: 8100986951709953734}
+  - component: {fileID: 3933390872924538633}
+  - component: {fileID: 4460964122417532404}
   m_Layer: 0
   m_Name: DummyScore
   m_TagString: Untagged
@@ -1342,6 +1334,54 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: 0.1
   m_LayoutPriority: 1
+--- !u!114 &3933390872924538633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6324512909692666740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b81f1bc9341dc544b23af8dad1f0d99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextComponent: {fileID: 4460964122417532404}
+  integerType: 0
+  showPlus: 0
+--- !u!114 &4460964122417532404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6324512909692666740}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Disabled Text to get arround Unity being dumb. Please leave disabled
 --- !u!1 &6772082889344875766
 GameObject:
   m_ObjectHideFlags: 0
@@ -1354,6 +1394,7 @@ GameObject:
   - component: {fileID: 4050819524435516809}
   - component: {fileID: 7390720299657812033}
   - component: {fileID: 8289607195952024922}
+  - component: {fileID: 1453936533107431498}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -1441,6 +1482,20 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: 0.12
   m_LayoutPriority: 1
+--- !u!114 &1453936533107431498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6772082889344875766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6a78c36b7782e44d967a0a1dc167b67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextComponent: {fileID: 7390720299657812033}
+  textType: 2
 --- !u!1 &6895480390486089345
 GameObject:
   m_ObjectHideFlags: 0
@@ -1928,7 +1983,7 @@ GameObject:
   - component: {fileID: 4951358238167345522}
   - component: {fileID: 5922517056505416079}
   - component: {fileID: 7139596307366095151}
-  - component: {fileID: 8488864715299965781}
+  - component: {fileID: 6208511568100174760}
   m_Layer: 0
   m_Name: ScoreHolder
   m_TagString: Untagged
@@ -2006,7 +2061,7 @@ MonoBehaviour:
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
---- !u!114 &8488864715299965781
+--- !u!114 &6208511568100174760
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2015,14 +2070,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 7776041938833789476}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 969d549e7b59aa046a9fedbaeb7ae04e, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b81f1bc9341dc544b23af8dad1f0d99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RelevantUserPrefab: {fileID: 4290861889265694557, guid: e37a7a4f30fa7ee4db6f88654b37625d,
-    type: 3}
-  RelevantUserLeftDropZone: {fileID: 5716380562764416879}
-  RelevantUserRightDropZone: {fileID: 3500533900696572666}
-  RelevantUserSingleDropZone: {fileID: 4477083110621102986}
+  TextComponent: {fileID: 3654449415599826411}
+  integerType: 0
+  showPlus: 0
 --- !u!1 &7836976485342617930
 GameObject:
   m_ObjectHideFlags: 0
