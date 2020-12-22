@@ -37,12 +37,8 @@ namespace Common.DataModels
         {
             public const string UserId = "^([0-9A-Za-z]){50}$";
         }
-        private static List<DrawingType> BodyPartDrawingTypes { get; } = new List<DrawingType>()
-        {
-            DrawingType.Head,
-            DrawingType.Body,
-            DrawingType.Legs,
-        };
+        private static bool drawingIsBodyPart(DrawingType drawingType) 
+          { return (drawingType == DrawingType.Head || drawingType == DrawingType.Body || drawingType == DrawingType.Legs); }
 
         public static class Drawings
         {
@@ -56,7 +52,7 @@ namespace Common.DataModels
                 {
                     return Empty360by360;
                 }
-                else if (BodyPartDrawingTypes.Contains(drawingType))
+                else if (drawingIsBodyPart(drawingType))
                 {
                     return DefaultBodyPartDrawing;
                 }

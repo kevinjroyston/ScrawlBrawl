@@ -2,16 +2,10 @@ import { Component, ViewEncapsulation, Input, AfterViewInit, ViewChild, ElementR
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {ColorPickerComponent} from '../colorpicker/colorpicker.component'
 import {GalleryTool} from '@shared/components/gallerytool/gallerytool.component';
-import {DrawingDirective,DrawingPromptMetadata} from '@shared/components/drawingdirective.component';
+import {DrawingDirective,DrawingPromptMetadata,DrawingModes} from '@shared/components/drawingdirective.component';
 import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-sheet';
 import Galleries from '@core/models/gallerytypes';
 
-export enum DrawingModes
-{
-   Draw,
-   Erase,
-   FloodFill
-}
 
 @Component({
     selector: 'drawingboard',
@@ -27,16 +21,13 @@ export enum DrawingModes
 
 
 export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
-    drawingModes = DrawingModes;
+    drawingModes = DrawingModes; /* so html can see it */
 
-//    private _drawingOptions:DrawingPromptMetadata;
     private _drawingType:string;
     @Input() showColorSelector: boolean = true;
     @Input() showEraser: boolean = true;
     @Input() showBrushSizeSelector: boolean = true;
     @Input() drawingOptions:DrawingPromptMetadata;
-//    @Input() set drawingOptions(value: DrawingPromptMetadata) { this.setDrawingOptions(value) }
-//             get drawingOptions(): DrawingPromptMetadata { return this._drawingOptions}
     @Input() set drawingType(value: string) { this.setDrawingType(value) }
              get drawingType(): string { return this._drawingType}
 
@@ -46,8 +37,6 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     @ViewChild('galleryTool') galleryTool: GalleryTool;
 
     drawingMode : DrawingModes = DrawingModes.Draw;
-
-    floodFillMode = false;
 
     drawingHeight;
     drawingWidth;
