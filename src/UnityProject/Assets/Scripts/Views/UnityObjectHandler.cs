@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using static GameEvent;
+using static TypeEnums;
 
 namespace Assets.Scripts.Views
 {
@@ -16,11 +17,7 @@ namespace Assets.Scripts.Views
     {
         private UnityObject UnityObject { get; set; }
         public UnityObjectType UnityObjectType => UnityObject.Type;
-        private List<Component> SpriteHandlers { get; set; } = new List<Component>();
-        private List<Component> StringHandlers { get; set; } = new List<Component>();
-        private List<Component> IntHandlers { get; set; } = new List<Component>();
-        private List<Component> IdListHandlers { get; set; } = new List<Component>();
-        private List<Component> ObjectOptionHandlers { get; set; } = new List<Component>();
+        private List<Component> Handlers { get; set; } = new List<Component>();
 
         /// <summary>
         /// first float is inner(image grid) aspect ratio, second float is outer(entire card w/o padding) aspect ratio for perfect fit UI
@@ -135,66 +132,69 @@ namespace Assets.Scripts.Views
 
         private void CallHandlers()
         {
-            foreach (Component stringHandler in StringHandlers)
+            foreach (Component handlerComponent in Handlers)
             {
-                UnityField<string> value = null;
-                switch (((Strings_HandlerInterface)stringHandler).Type)
+                HandlerInterface handlerInterface = (HandlerInterface)handlerComponent;
+                if (handlerInterface.Scope != HandlerScope.UnityObject)
                 {
-                    case StringType.Object_Title: value = UnityObject.Title; break;
-                    case StringType.Object_Header: value = UnityObject.Header; break;
-                    case StringType.Object_Footer: value = UnityObject.Footer; break;
-                    case StringType.Object_ImageIdentifier: value = UnityObject.ImageIdentifier; break;
-                    default: break;
+                    continue;
                 }
-                Helpers.SetActiveAndUpdate(stringHandler, value);
-            }
-
-            foreach (Component spriteHandler in SpriteHandlers)
-            {
-                Helpers.SetActiveAndUpdate(
-                    spriteHandler, 
-                    new SpriteHolder()
+                List<dynamic> values = new List<dynamic>();
+                foreach (HandlerId handlerId in handlerInterface.HandlerIds)
+                {
+                    switch (handlerId.HandlerType)
                     {
-                        Sprites = UnityObject.Sprites,
-                        SpriteGridWidth = UnityObject.SpriteGridWidth,
-                        SpriteGridHeight = UnityObject.SpriteGridHeight,
-                        BackgroundColor = UnityObject.BackgroundColor
-                    });
-
-            }
-
-            foreach (Component intHandler in IntHandlers)
-            {
-                if (((Ints_HandlerInterface)intHandler).Type == IntType.Object_VoteCount)
-                {
-                    Helpers.SetActiveAndUpdate(intHandler, UnityObject.VoteCount);
+                        case HandlerType.Sprite:
+                            values.Add(
+                                new SpriteHolder()
+                                {
+                                    Sprites = UnityObject.Sprites,
+                                    SpriteGridWidth = UnityObject.SpriteGridWidth,
+                                    SpriteGridHeight = UnityObject.SpriteGridHeight,
+                                    BackgroundColor = UnityObject.BackgroundColor
+                                });
+                            break;
+                        case HandlerType.IdList:
+                            switch (handlerId.SubType)
+                            {
+                                case IdType.Object_UsersWhoVotedFor: values.Add(UnityObject.UsersWhoVotedFor); break;
+                                default:
+                                    throw new ArgumentException($"Unknown subtype id: '{HandlerType.IdList}-{handlerId.SubType}'");
+                            }
+                            break;
+                        case HandlerType.Strings:
+                            switch (handlerId.SubType)
+                            {
+                                case StringType.Object_Title: values.Add(UnityObject.Title); break;
+                                case StringType.Object_Header: values.Add(UnityObject.Header); break;
+                                case StringType.Object_Footer: values.Add(UnityObject.Footer); break;
+                                case StringType.Object_ImageIdentifier: values.Add(UnityObject.ImageIdentifier); break;
+                                default:
+                                    throw new ArgumentException($"Unknown subtype id: '{HandlerType.Strings}-{handlerId.SubType}'");
+                            }
+                            break;
+                        case HandlerType.Ints:
+                            switch (handlerId.SubType)
+                            {
+                                case IntType.Object_VoteCount: values.Add(UnityObject.VoteCount); break;
+                                default:
+                                    throw new ArgumentException($"Unknown subtype id: '{HandlerType.Ints}-{handlerId.SubType}'");
+                            }
+                            break;
+                        case HandlerType.ObjectOptions:
+                            values.Add(UnityObject.Options);
+                            break;
+                        default:
+                            throw new ArgumentException($"Unknown handler id: '{handlerId.SubType}'");
+                    }
+                    Helpers.SetActiveAndUpdate(handlerComponent, values);
                 }
-            }
-                
-            foreach (Component idHandler in IdListHandlers)
-            {
-                List<Guid> value = null;
-                switch (((IdList_HandlerInterface)idHandler).Type)
-                {
-                    case IdType.Object_UsersWhoVotedFor: value = UnityObject.UsersWhoVotedFor; break;
-                    default: break;
-                }
-                Helpers.SetActiveAndUpdate(idHandler, value);
-            }
-
-            foreach (Component objectOptionsHandler in ObjectOptionHandlers)
-            {
-                Helpers.SetActiveAndUpdate(objectOptionsHandler, UnityObject.Options);
             }
         }
 
         private void UpdateHandlers()
         {
-            StringHandlers = gameObject.GetComponentsInChildren(typeof(Strings_HandlerInterface)).ToList();
-            SpriteHandlers = gameObject.GetComponentsInChildren(typeof(Sprite_HandlerInterface)).ToList();
-            IntHandlers = gameObject.GetComponentsInChildren(typeof(Ints_HandlerInterface)).ToList();
-            IdListHandlers = gameObject.GetComponentsInChildren(typeof(IdList_HandlerInterface)).ToList();
-            ObjectOptionHandlers = gameObject.GetComponentsInChildren(typeof(Options_HandlerInterface<UnityObjectOptions>)).ToList();
+            Handlers = gameObject.GetComponentsInChildren(typeof(HandlerInterface)).ToList();
         }
     }
 

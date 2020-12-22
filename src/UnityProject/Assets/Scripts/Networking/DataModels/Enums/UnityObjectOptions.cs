@@ -9,6 +9,5 @@ namespace Assets.Scripts.Networking.DataModels.Enums
     public enum UnityObjectOptions
     {
         RevealThisImage,
-
     }
 }

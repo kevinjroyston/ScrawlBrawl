@@ -8,10 +8,15 @@ using Assets.Scripts.Views;
 using static GameEvent;
 using UnityEngine.UI;
 using static UnityEngine.UI.GridLayoutGroup;
+using static TypeEnums;
+using Assets.Scripts.Views.DataModels;
 
-public class UnityObjectDropzoneHandler : MonoBehaviour, UnityObjectList_HandlerInterface
+public class UnityObjectDropzoneHandler : MonoBehaviour, HandlerInterface
 {
     List<UnityObject> UnityObjects { get; set; } = new List<UnityObject>();
+
+    public List<HandlerId> HandlerIds => HandlerType.UnityObjectList.ToHandlerIdList();
+    public HandlerScope Scope => HandlerScope.View;
 
     public GameObject DropZone;
 
@@ -78,4 +83,8 @@ public class UnityObjectDropzoneHandler : MonoBehaviour, UnityObjectList_Handler
 
     }
 
+    public void UpdateValue(List<dynamic> objects)
+    {
+        this.UpdateValue(objects[0]);
+    }
 }

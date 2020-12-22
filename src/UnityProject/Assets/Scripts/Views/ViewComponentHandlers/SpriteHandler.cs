@@ -5,13 +5,18 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using Assets.Scripts.Networking.DataModels;
+using Assets.Scripts.Views.DataModels;
+using static TypeEnums;
 
-public class SpriteHandler : MonoBehaviour, Sprite_HandlerInterface
+public class SpriteHandler : MonoBehaviour, HandlerInterface
 {
     public GameObject SpriteGridPrefab;
     public GameObject SpriteObjectPrefab;
     public Image BackgroundImage;
     public Image BlurMask;
+    public List<HandlerId> HandlerIds => HandlerType.Sprite.ToHandlerIdList();
+    public HandlerScope Scope => HandlerScope.UnityObject;
 
 
     private List<Image> Images { get; set; } = new List<Image>();
@@ -21,6 +26,7 @@ public class SpriteHandler : MonoBehaviour, Sprite_HandlerInterface
     private List<Sprite> Sprites { get; set; }
     private Color BackgroundColor { get; set; }
     private float AspectRatio { get; set; } = 1f;
+
     public void UpdateValue(SpriteHolder spriteHolder)  
     {
         BlurController.Singleton.blurMasks.Add(BlurMask);
@@ -97,5 +103,10 @@ public class SpriteHandler : MonoBehaviour, Sprite_HandlerInterface
             Images[i].color = new Color(0f, 0f, 0f, 0f);
         }
         
+    }
+
+    public void UpdateValue(List<dynamic> objects)
+    {
+        this.UpdateValue(objects[0]);
     }
 }

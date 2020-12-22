@@ -2,27 +2,30 @@
 using Assets.Scripts.Views.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public static class Helpers 
 {
 
-    public static void SetActiveAndUpdate<T>(Component handlerComponent, T value)
+    public static void SetActiveAndUpdate(Component handlerComponent, List<dynamic> values)
     {
-        HandlerInterface<T> handlerInterface = (HandlerInterface<T>)handlerComponent;
-        handlerComponent.gameObject.SetActive(value != null);
-        if (value != null)
+        HandlerInterface handlerInterface = (HandlerInterface)handlerComponent;
+        bool shouldBeActive = values.Any(val => !IsFieldNull(val));
+
+        handlerComponent.gameObject.SetActive(shouldBeActive);
+        if (shouldBeActive)
         {
-            handlerInterface.UpdateValue(value);
+            handlerInterface.UpdateValue(values);
         }
     }
-    public static void SetActiveAndUpdate<T>(Component handlerComponent, UnityField<T> field) 
+
+    private static bool IsFieldNull<T>(T field)
     {
-        HandlerInterface<UnityField<T>> handlerInterface = (HandlerInterface<UnityField<T>>)handlerComponent;
-        handlerComponent.gameObject.SetActive(field != null && field.Value != null);
-        if (field != null && field.Value != null)
-        {
-            handlerInterface.UpdateValue(field);
-        }
+        return field == null;
+    }
+    private static bool IsFieldNull<T>(UnityField<T> field)
+    {
+        return field == null || field.Value == null;
     }
 }

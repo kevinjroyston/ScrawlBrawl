@@ -1,15 +1,21 @@
-﻿using Assets.Scripts.Views.Interfaces;
+﻿using Assets.Scripts.Views.DataModels;
+using Assets.Scripts.Views.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static TypeEnums;
 
-public class TimerHandler : MonoBehaviour, Timer_HandlerInterface
+public class TimerHandler : MonoBehaviour, HandlerInterface
 {
     public Text TextComponent;
 
     private double timeRemainingInSeconds = 0;
+    private bool startedTimerSound = false;
+
+    public List<HandlerId> HandlerIds => HandlerType.Timer.ToHandlerIdList();
+    public HandlerScope Scope => HandlerScope.View;
 
     public void UpdateValue(TimerHolder timerHolder)
     {
@@ -20,7 +26,7 @@ public class TimerHandler : MonoBehaviour, Timer_HandlerInterface
             timeRemainingInSeconds = ((DateTime)currentTime).Subtract((DateTime) endTime).TotalSeconds;
         }
     }
-    private bool startedTimerSound = false;
+
     public void Update()
     {
         timeRemainingInSeconds -= Time.deltaTime;
@@ -44,5 +50,10 @@ public class TimerHandler : MonoBehaviour, Timer_HandlerInterface
             TextComponent.text = string.Empty;
         }
 
+    }
+
+    public void UpdateValue(List<dynamic> objects)
+    {
+        this.UpdateValue(objects[0]);
     }
 }

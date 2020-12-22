@@ -1,12 +1,17 @@
 ﻿using Assets.Scripts.Networking.DataModels;
+using Assets.Scripts.Views.DataModels;
 using Assets.Scripts.Views.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static TypeEnums;
 
-public class PlayerBarHandler : MonoBehaviour, UsersList_HandlerInterface
+public class PlayerBarHandler : MonoBehaviour, HandlerInterface
 {
     public GameObject DropZone;
+    public List<HandlerId> HandlerIds => HandlerType.UsersList.ToHandlerIdList();
+    public HandlerScope Scope => HandlerScope.View;
+
     public void UpdateValue(UsersListHolder usersHolder)
     {
         IReadOnlyList<UnityUser> users = usersHolder.Users;
@@ -59,5 +64,10 @@ public class PlayerBarHandler : MonoBehaviour, UsersList_HandlerInterface
         {
             GameObject.Destroy(child.gameObject);
         }
+    }
+
+    public void UpdateValue(List<dynamic> objects)
+    {
+        this.UpdateValue(objects[0]);
     }
 }
