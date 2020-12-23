@@ -125,6 +125,9 @@ export class FetchDataComponent
                 if (this.userForm) {
                     this.userForm.reset();
                 }
+
+                this.galleryEditorVisible = false;
+
                 // Store the new user prompt and populate the corresponding formControls
                 this.userPrompt = prompt;
                 let subFormCount: number = 0;
