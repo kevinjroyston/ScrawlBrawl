@@ -87,10 +87,13 @@ export class DrawingDirective {
         this.emitImageChange(imgStr);
     }
 
-    // store it for an undo
-    if (this.undoArray.length >= MaxUndoCount) { this.undoArray.shift(); }
-    this.undoArray.push(imgStr);
-    console.log('saved undo '+this.undoArray.length)
+    if (this.undoArray.length == 0 ||  imgStr != this.undoArray[this.undoArray.length-1]) {
+        // store it for an undo, if not already last thing on stack  #SB-169
+        if (this.undoArray.length >= MaxUndoCount) { this.undoArray.shift(); }
+        this.undoArray.push(imgStr);
+        console.log('saved undo '+this.undoArray.length)
+    }
+
   }
 
   stopDrawing() {
@@ -138,8 +141,9 @@ export class DrawingDirective {
             let r=parseInt( rgb[0].substring(4) ) ; // skip rgb(
             let g=parseInt( rgb[1] ) ; // this is just g
             let b=parseInt( rgb[2] ) ; // parseInt scraps trailing )
-            drawingUtils.floodFill(this.ctx,Math.round(this.lastX),Math.round(this.lastY),r,g,b);
-            this.onImageChange(null);
+            if (drawingUtils.floodFill(this.ctx,Math.round(this.lastX),Math.round(this.lastY),r,g,b)) {
+                this.onImageChange(null);
+            }
         } else {
             // begins new line
             this.drawCircle(this.lastX, this.lastY);
