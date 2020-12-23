@@ -10,6 +10,8 @@ using UnityEngine.UI;
 using static UnityEngine.UI.GridLayoutGroup;
 using static TypeEnums;
 using Assets.Scripts.Views.DataModels;
+using Assets.Scripts.Networking.DataModels.Enums;
+using Assets.Scripts.Extensions;
 
 public class UnityObjectDropzoneHandler : MonoBehaviour, HandlerInterface
 {
@@ -79,6 +81,21 @@ public class UnityObjectDropzoneHandler : MonoBehaviour, HandlerInterface
         for (int i = 0; i < objects.Count; i++)
         {
             DropZone.transform.GetChild(i).GetComponent<UnityObjectHandler>().HandleUnityObject(objects[i]);
+        }
+
+
+
+        if (objects.Any(unityObject => unityObject.Options.ShouldRevealThisObject()) ) // only shake the objects if one of them is going to be revealed
+        {
+            EventSystem.Singleton.RegisterListener(
+                listener: (GameEvent gameEvent) => EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ShakeRevealImages }, allowDuplicates: false),
+                gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.CallShakeOrShowDelta });
+        }
+        else
+        {
+            EventSystem.Singleton.RegisterListener(
+               listener: (GameEvent gameEvent) => EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ShowDeltaScores }, allowDuplicates: false),
+               gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.CallShakeOrShowDelta });
         }
 
     }

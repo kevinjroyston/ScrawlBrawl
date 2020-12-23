@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Networking.DataModels;
+using Assets.Scripts.Views.ViewComponentHandlers;
 using JetBrains.Annotations;
 using System;
 using System.Collections;
@@ -17,7 +18,7 @@ public class MoveUserIconAnimation : AnimationBase
     {
         MoveToTargetGameEvent targetGameEvent = (MoveToTargetGameEvent)gameEvent;
         Image createdMarker = Instantiate(ScoreProjectilePrefab, rect);
-        createdMarker.color = gameObject.GetComponent<Colorizer>().AssignedColor;
+        createdMarker.color = gameObject.GetComponent<ColorizerHandler>().AssignedColor;
         RectTransform targetScoreRect = targetGameEvent.TargetRect;
         RectTransform markerRect = createdMarker.rectTransform;
 
@@ -110,7 +111,7 @@ public class MoveUserIconAnimation : AnimationBase
             .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.PlayPop });
         if (IconOrder == IconCountTotal)
         {
-            targetScaleDown.SetCallEventOnComplete(new GameEvent() { eventType = GameEvent.EventEnum.CallShakeRevealImages });
+            targetScaleDown.SetCallEventOnComplete(new GameEvent() { eventType = GameEvent.EventEnum.CallShakeOrShowDelta });
         }
 
 

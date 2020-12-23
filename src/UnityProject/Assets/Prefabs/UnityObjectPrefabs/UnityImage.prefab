@@ -497,7 +497,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startEvent:
-    eventType: 13
+    eventType: 12
     id: 
   endEvent:
     eventType: 0
@@ -643,7 +643,7 @@ GameObject:
   - component: {fileID: 778682848155374791}
   - component: {fileID: 547050767652119230}
   - component: {fileID: 1680903036230200362}
-  - component: {fileID: 9005256032425105799}
+  - component: {fileID: 2421961196471868673}
   m_Layer: 0
   m_Name: CircleBack
   m_TagString: Untagged
@@ -737,7 +737,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_AspectMode: 3
   m_AspectRatio: 1
---- !u!114 &9005256032425105799
+--- !u!114 &2421961196471868673
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -746,16 +746,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2072538342895698751}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4fe13912885344f4cae0213b81527827, type: 3}
+  m_Script: {fileID: 11500000, guid: 7d09826f0643db54e8cc83920c43e197, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OptionalColors:
-  - {r: 0.30588236, g: 0.7568628, b: 0.8588236, a: 1}
-  - {r: 0.48235297, g: 0.8588236, b: 0.30588236, a: 1}
-  - {r: 0.93725497, g: 0.4039216, b: 0.49803925, a: 1}
-  - {r: 0.35686275, g: 0.3137255, b: 0.86274517, a: 1}
-  AssignedColor: {r: 0, g: 0, b: 0, a: 0}
   TargetImage: {fileID: 778682848155374791}
+  AssignedColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &2117494390848115600
 GameObject:
   m_ObjectHideFlags: 0
@@ -1094,7 +1089,7 @@ GameObject:
   - component: {fileID: 2716971244679643706}
   - component: {fileID: 4430390124274320961}
   - component: {fileID: 4901969237852308644}
-  - component: {fileID: 2689342467347660956}
+  - component: {fileID: 8514179222111469453}
   m_Layer: 0
   m_Name: CircleBack
   m_TagString: Untagged
@@ -1160,7 +1155,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2689342467347660956
+--- !u!114 &8514179222111469453
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1169,16 +1164,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 3789549007986681753}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4fe13912885344f4cae0213b81527827, type: 3}
+  m_Script: {fileID: 11500000, guid: 7d09826f0643db54e8cc83920c43e197, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OptionalColors:
-  - {r: 0.30588236, g: 0.7568628, b: 0.8588236, a: 1}
-  - {r: 0.48235297, g: 0.8588236, b: 0.30588236, a: 1}
-  - {r: 0.93725497, g: 0.4039216, b: 0.49803925, a: 1}
-  - {r: 0.35686275, g: 0.3137255, b: 0.86274517, a: 1}
-  AssignedColor: {r: 0, g: 0, b: 0, a: 0}
   TargetImage: {fileID: 4901969237852308644}
+  AssignedColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &3903044391079863251
 GameObject:
   m_ObjectHideFlags: 0
@@ -1289,7 +1279,7 @@ GameObject:
   - component: {fileID: 1760463587792855409}
   - component: {fileID: 1074583197808755084}
   - component: {fileID: 4597154152944181548}
-  - component: {fileID: 951564978997659307}
+  - component: {fileID: 1794956834611292665}
   m_Layer: 0
   m_Name: ScoreHolder
   m_TagString: Untagged
@@ -1367,7 +1357,7 @@ MonoBehaviour:
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
---- !u!114 &951564978997659307
+--- !u!114 &1794956834611292665
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

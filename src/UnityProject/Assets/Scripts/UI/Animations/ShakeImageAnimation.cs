@@ -13,7 +13,7 @@ public class ShakeImageAnimation : AnimationBase
             rateOfChange: 0.001f,
             time: 3.7f)
             .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.PlayDrumRoll }, allowDuplicates: false)
-            .SetCallEventOnComplete(new GameEvent() { eventType = GameEvent.EventEnum.CallRevealImages }, allowDuplicates: false);
+            .SetCallEventOnComplete(new GameEvent() { eventType = GameEvent.EventEnum.RevealImages }, allowDuplicates: false);
 
         animations.Add(shake);
         

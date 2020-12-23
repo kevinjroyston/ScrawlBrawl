@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿/*using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,4 +22,4 @@ public class Colorizer : MonoBehaviour
     {
         return ((a % b) + b) % b;
     }
-}
+}*/

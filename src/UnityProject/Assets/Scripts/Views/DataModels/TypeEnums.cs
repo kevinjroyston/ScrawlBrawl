@@ -23,6 +23,7 @@ public static class TypeEnums
         Timer,
         UnityObjectList,
         UsersList,
+        Color,
     }
 
     public class HandlerId

@@ -73,8 +73,12 @@ public class ShowScoreDeltaAnimation : AnimationBase
 
     public void AssignUserAndRegister(int scoreDeltaInt)
     {
-        scoreDelta = "+" + scoreDeltaInt;
+        if (scoreDeltaInt >= 0)
+        {
+            scoreDelta = "+" + scoreDeltaInt;
+        }
         //startEvent.id = relevantUser.UserId.ToString();
+        startEvent.eventType = GameEvent.EventEnum.ShowDeltaScores;
         CallRegisterForAnimation();    
     }
 }

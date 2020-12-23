@@ -21,9 +21,8 @@ public class GameEvent
         TenSecondsLeft,
         PlayPop,
         ShakeRevealImages,
-        CallShakeRevealImages,
+        CallShakeOrShowDelta,
         RevealImages,
-        CallRevealImages,
         PlayDrumRoll,
         ShowDeltaScores,
     }

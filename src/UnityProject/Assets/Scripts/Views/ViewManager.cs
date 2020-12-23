@@ -111,7 +111,7 @@ public class ViewManager : MonoBehaviour
             {
                 Value = legacyView._UnityImages?.Select((Legacy_UnityImage image) => LegacyToNewUnityObject(image)).ToList().AsReadOnly()
             },
-            Users = legacyView._Users?.Select((Legacy_User user) => LegacyToNewUnityUser(user)).ToList().AsReadOnly(),
+            Users = legacyView._Users?.Select((Legacy_User user) => LegacyToNewUnityUser(user, legacyView._UserIdToDeltaScores?[user.Id.ToString()] ?? 0)).ToList().AsReadOnly(),
             Title = new UnityField<string>()
             {
                 Value = legacyView._Title
@@ -133,7 +133,7 @@ public class ViewManager : MonoBehaviour
       
     }
 
-    private UnityUser LegacyToNewUnityUser(Legacy_User legacy)
+    private UnityUser LegacyToNewUnityUser(Legacy_User legacy, int scoreDelta)
     {
         return new UnityUser()
         {
@@ -141,7 +141,7 @@ public class ViewManager : MonoBehaviour
             DisplayName = legacy.DisplayName,
             SelfPortrait = legacy.SelfPortrait,
             Score = legacy.Score,
-            ScoreDeltaReveal = legacy.ScoreDeltaReveal,
+            ScoreDeltaReveal = scoreDelta,
             ScoreDeltaScoreboard = legacy.ScoreDeltaScoreboard,
             Activity = legacy.Activity,
             Status = legacy.Status

@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Networking.DataModels;
+﻿using Assets.Scripts.Extensions;
+using Assets.Scripts.Networking.DataModels;
 using Assets.Scripts.Networking.DataModels.Enums;
 using Assets.Scripts.Views.Interfaces;
 using System;
@@ -30,18 +31,10 @@ namespace Assets.Scripts.Views
             UpdateHandlers();
             CallHandlers();
 
-
-            if ((bool) (unityObject.Options?[UnityObjectOptions.RevealThisImage] ?? false)) // only shake the objects if one of them is going to be revealed
+            RevealImageAnimation revealAnimation = gameObject.GetComponent<RevealImageAnimation>();
+            if (revealAnimation != null && UnityObject.Options.ShouldRevealThisObject())
             {
-                EventSystem.Singleton.RegisterListener(
-                    listener: (GameEvent gameEvent) => EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ShakeRevealImages }, allowDuplicates: false),
-                    gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.CallShakeRevealImages });
-            }
-            else
-            {
-                EventSystem.Singleton.RegisterListener(
-                   listener: (GameEvent gameEvent) => EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ShowDeltaScores }, allowDuplicates: false),
-                   gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.CallShakeRevealImages });
+                revealAnimation.RegisterForRevealEvent();
             }
 
                /* /// Aspect ratio shenanigans
@@ -117,17 +110,6 @@ namespace Assets.Scripts.Views
             float? flexHeight = obj?.transform?.GetComponent<LayoutElement>()?.flexibleHeight;
             return ((obj?.activeInHierarchy == true) && flexHeight.HasValue) ? flexHeight.Value : defaultValue;
         }
-        private void CallColorizers(string identifier)
-        {
-            Colorizer[] colorizers = GetComponentsInChildren<Colorizer>();
-            if (colorizers != null)
-            {
-                foreach (Colorizer colorizer in colorizers)
-                {
-                    colorizer.RefreshColor(identifier);
-                }
-            }
-        }
 
 
         private void CallHandlers()
@@ -158,6 +140,7 @@ namespace Assets.Scripts.Views
                             switch (handlerId.SubType)
                             {
                                 case IdType.Object_UsersWhoVotedFor: values.Add(UnityObject.UsersWhoVotedFor); break;
+                                case IdType.Object_OwnerIds: values.Add(new List<Guid>() { UnityObject.ImageOwnerId.GetValueOrDefault(Guid.Empty) }); break;
                                 default:
                                     throw new ArgumentException($"Unknown subtype id: '{HandlerType.IdList}-{handlerId.SubType}'");
                             }
@@ -187,8 +170,8 @@ namespace Assets.Scripts.Views
                         default:
                             throw new ArgumentException($"Unknown handler id: '{handlerId.SubType}'");
                     }
-                    Helpers.SetActiveAndUpdate(handlerComponent, values);
                 }
+                Helpers.SetActiveAndUpdate(handlerComponent, values);
             }
         }
 

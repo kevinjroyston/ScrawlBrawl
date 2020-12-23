@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Views.DataModels;
+﻿using Assets.Scripts.Networking.DataModels;
+using Assets.Scripts.Views.DataModels;
 using Assets.Scripts.Views.Interfaces;
 using System;
 using System.Collections;
@@ -14,26 +15,32 @@ public class VoteCountHandler : MonoBehaviour, HandlerInterface
     public Text TextComponent; 
     public List<HandlerId> HandlerIds => new List<HandlerId>
     {
-        HandlerType.IdList.ToHandlerId(IdType.Object_UsersWhoVotedFor),
-        HandlerType.IdList.ToHandlerId(IdType.Object_OwnerIds)
+        HandlerType.Ints.ToHandlerId(IntType.Object_VoteCount),
+        HandlerType.IdList.ToHandlerId(IdType.Object_UsersWhoVotedFor)
     };
 
-    public void UpdateValue(List<Guid> usersWhoVotedFor, List<Guid> ownerIds)
+    public void UpdateValue(UnityField<int?> voteCount, List<Guid> usersWhoVotedFor)
     {
-        usersWhoVotedFor = usersWhoVotedFor != null ? usersWhoVotedFor : new List<Guid>();
-        ownerIds = ownerIds != null ? ownerIds : new List<Guid>();
+        int voteCountInt = voteCount?.Value ?? 0;
 
-        foreach (Guid userId in usersWhoVotedFor)
+        if (usersWhoVotedFor != null)
         {
-            EventSystem.Singleton.PublishEvent(new MoveToTargetGameEvent()
+            TextComponent.text = "0";
+            foreach (Guid userId in usersWhoVotedFor)
             {
-                eventType = GameEvent.EventEnum.MoveToTarget,
-                id = userId.ToString(),
-                TargetRect = VoteCountHolder,
-                AnimationCompletedCallback = IncreaseScore
-            });
+                EventSystem.Singleton.PublishEvent(new MoveToTargetGameEvent()
+                {
+                    eventType = GameEvent.EventEnum.MoveToTarget,
+                    id = userId.ToString(),
+                    TargetRect = VoteCountHolder,
+                    AnimationCompletedCallback = IncreaseScore
+                });
+            }
         }
-
+        else
+        {
+            TextComponent.text = voteCountInt.ToString();
+        }
 
     }
 
