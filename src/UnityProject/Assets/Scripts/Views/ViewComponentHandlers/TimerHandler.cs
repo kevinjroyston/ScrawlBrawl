@@ -11,7 +11,7 @@ public class TimerHandler : MonoBehaviour, HandlerInterface
 {
     public Text TextComponent;
 
-    private double timeRemainingInSeconds = 0;
+    private double timeRemainingInSeconds = -1;
     private bool startedTimerSound = false;
 
     public List<HandlerId> HandlerIds => HandlerType.Timer.ToHandlerIdList();
@@ -23,7 +23,7 @@ public class TimerHandler : MonoBehaviour, HandlerInterface
         DateTime? endTime = timerHolder.StateEndTime;
         if (currentTime != null && endTime != null)
         {
-            timeRemainingInSeconds = ((DateTime)currentTime).Subtract((DateTime) endTime).TotalSeconds;
+            timeRemainingInSeconds = ((DateTime) endTime).Subtract((DateTime) currentTime).TotalSeconds;
         }
     }
 
@@ -34,7 +34,7 @@ public class TimerHandler : MonoBehaviour, HandlerInterface
         {
             startedTimerSound = false;
         }
-        if (timeRemainingInSeconds <= 10 && !startedTimerSound)
+        if (timeRemainingInSeconds <= 10 && timeRemainingInSeconds >= 0 && !startedTimerSound)
         {
             startedTimerSound = true;
             EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.TenSecondsLeft });
