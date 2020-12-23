@@ -53,7 +53,7 @@ export function floodFill(ctx, startX, startY, newR, newG, newB){
         b = colorData.data[pixelIndex + 2],
         a = colorData.data[pixelIndex + 3];
 
-    if (!(newR === r && newG === g && newB === b)) { // they did not click on the same color
+    if (!(newR === r && newG === g && newB === b && a==255)) { // they did not click on the same color
         performFloodFill(ctx, startX, startY, r, g, b, a, newR, newG, newB);
         ctx.putImageData(colorData, 0, 0);
     }
@@ -61,7 +61,7 @@ export function floodFill(ctx, startX, startY, newR, newG, newB){
 }
 
 function pixelsMatch(c1,c2): boolean {
-  return (Math.abs(parseInt(c1)-parseInt(c2)) < 10);
+  return (Math.abs(parseInt(c1)-parseInt(c2)) < 25);
 }
 
 function matchTargetColor(pixelIndex, startR, startG, startB, startA, newR, newG, newB) {
@@ -79,7 +79,8 @@ function matchTargetColor(pixelIndex, startR, startG, startB, startA, newR, newG
     }
   
     if (a < 255) {  // we are not a match and we clicked a solid color but we ran into a transparent, return false, but remove transparency
-      setPixelColor(pixelIndex,r,g,b);
+//      colorData.data[pixelIndex + 3] = 255;
+//      setPixelColor(pixelIndex,startR,startG,startB);
     }
   }
 

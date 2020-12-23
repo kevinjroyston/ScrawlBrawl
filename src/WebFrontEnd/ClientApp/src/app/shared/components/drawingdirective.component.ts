@@ -94,8 +94,10 @@ export class DrawingDirective {
   }
 
   stopDrawing() {
-    this.userIsDrawing = false;
-    this.onImageChange(null);
+    if (this.userIsDrawing){
+        this.userIsDrawing = false;
+        this.onImageChange(null);
+    } 
   }
 
   handleClearUndo(){
@@ -183,7 +185,7 @@ export class DrawingDirective {
   @HostListener('touchend')
   onmouseup() {
     if (this.userIsDrawing) {
-//        event.preventDefault(); not needed since canvas does not care about mouse movements, and preventing affects gestures
+      event.preventDefault(); // plr SB-169
       this.stopDrawing();
     }
   }
