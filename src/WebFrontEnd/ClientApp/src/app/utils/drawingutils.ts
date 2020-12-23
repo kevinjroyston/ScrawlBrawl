@@ -41,10 +41,10 @@ export function convertColorToRGB(clr:string): string {
 
 var colorData = null;
 
-export function floodFill(ctx, startX, startY, newR, newG, newB){
+export function floodFill(ctx, startX, startY, newR, newG, newB):boolean{
     let canvasWidth = ctx.canvas.width;
     let canvasHeight = ctx.canvas.height;
-    if (colorData) { return } /* already filling */
+    if (colorData) { return false } /* already filling */
     colorData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
 
     var pixelIndex = (startY * canvasWidth + startX) * 4,
@@ -58,6 +58,7 @@ export function floodFill(ctx, startX, startY, newR, newG, newB){
         ctx.putImageData(colorData, 0, 0);
     }
     colorData = null;
+    return true;
 }
 
 function pixelsMatch(c1,c2): boolean {
