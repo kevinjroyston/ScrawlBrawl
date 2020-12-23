@@ -22,9 +22,9 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
     {
         private Random Rand = new Random();
         private ConcurrentBag<PeopleUserDrawing> Drawings { get; set; }
-        private ConcurrentDictionary<User, DrawingType> UsersToTypeDrawing { get; set; } = new ConcurrentDictionary<User, DrawingType>();
+        private ConcurrentDictionary<User, BodyPartType> UsersToTypeDrawing { get; set; } = new ConcurrentDictionary<User, BodyPartType>();
 
-        private ConcurrentDictionary<DrawingType, int> DrawingTypeToNumNeeded { get; set; } = new ConcurrentDictionary<DrawingType, int>();
+        private ConcurrentDictionary<BodyPartType, int> BodyPartTypeToNumNeeded { get; set; } = new ConcurrentDictionary<BodyPartType, int>();
 
         public ExtraSetupDrawing_GS(
             Lobby lobby,
@@ -38,15 +38,15 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
         {
             this.Drawings = drawings;
 
-            DrawingTypeToNumNeeded.AddOrReplace(DrawingType.Head, numHeadsNeeded);
-            DrawingTypeToNumNeeded.AddOrReplace(DrawingType.Body, numBodiesNeeded);
-            DrawingTypeToNumNeeded.AddOrReplace(DrawingType.Legs, numLegsNeeded);
+            BodyPartTypeToNumNeeded.AddOrReplace(BodyPartType.Head, numHeadsNeeded);
+            BodyPartTypeToNumNeeded.AddOrReplace(BodyPartType.Body, numBodiesNeeded);
+            BodyPartTypeToNumNeeded.AddOrReplace(BodyPartType.Legs, numLegsNeeded);
         }
         public override UserPrompt CountingPromptGenerator(User user, int counter)
         {
-            DrawingType drawingType = MathHelpers.GetWeightedRandom(DrawingTypeToNumNeeded);
+            BodyPartType bodyPartType = MathHelpers.GetWeightedRandom(BodyPartTypeToNumNeeded);
 
-            UsersToTypeDrawing.AddOrReplace(user, drawingType);
+            UsersToTypeDrawing.AddOrReplace(user, bodyPartType);
             return new UserPrompt()
             {
                 UserPromptId = UserPromptId.BattleReady_ExtraBodyPartDrawing,
@@ -56,17 +56,10 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                 {
                     new SubPrompt
                     {
-                        Prompt = Invariant($"Draw any \"{drawingType.ToString()}\""),
+                        Prompt = Invariant($"Draw any \"{bodyPartType.ToString()}\""),
                         Drawing = new DrawingPromptMetadata()
                         {
-                            /* WidthInPx = ThreePartPeopleConstants.Widths[drawingType],   these are now set through gallerytype on the front end
-                              HeightInPx = ThreePartPeopleConstants.Heights[drawingType],
-                              CanvasBackground = ThreePartPeopleConstants.Backgrounds[drawingType], */
-                            GalleryOptions = new GalleryOptionMetadata(){
-                                GalleryId = drawingType.GetGalleryId(),
-                            },
-                            
-
+                            DrawingType = bodyPartType.GetDrawingType(),
                         },
                     },
                 },
@@ -75,24 +68,24 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
         }
         public override (bool, string) CountingFormSubmitHandler(User user, UserFormSubmission input, int counter)
         {
-            DrawingType drawingType = UsersToTypeDrawing[user];
+            BodyPartType bodyPartType = UsersToTypeDrawing[user];
             this.Drawings.Add(new PeopleUserDrawing
             {
                 Drawing = input.SubForms[0].Drawing,
                 Owner = user,
-                Type = drawingType
+                Type = bodyPartType
             });
 
-            if (drawingType != DrawingType.None)
+            if (bodyPartType != BodyPartType.None)
             {
-                DrawingTypeToNumNeeded[drawingType]--;
+                BodyPartTypeToNumNeeded[bodyPartType]--;
 
-                if (DrawingTypeToNumNeeded[drawingType] <= 0)
+                if (BodyPartTypeToNumNeeded[bodyPartType] <= 0)
                 {
-                    List<User> usersDrawingThisType = UsersToTypeDrawing.Keys.Where(user => UsersToTypeDrawing[user] == drawingType).ToList();
-                    foreach (User userDrawingType in usersDrawingThisType)
+                    List<User> usersDrawingThisType = UsersToTypeDrawing.Keys.Where(user => UsersToTypeDrawing[user] == bodyPartType).ToList();
+                    foreach (User userBodyPartType in usersDrawingThisType)
                     {
-                        userDrawingType.UserState.HurryUsers();
+                        userBodyPartType.UserState.HurryUsers();
                     }
                 }
             }

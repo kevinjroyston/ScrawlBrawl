@@ -36,14 +36,16 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                             new SubPrompt
                             {
                                 Prompt = Invariant($"Your prompt:\"{(promptToDraw.Imposter == user ? promptToDraw.FakePrompt : promptToDraw.RealPrompt)}\""),
-                                Drawing = new DrawingPromptMetadata(),
+                                Drawing = new DrawingPromptMetadata(){
+                                    GalleryOptions = null
+                                },
                             },
                         },
                     SubmitButton = true
                 },
                 formSubmitHandler: (User user, UserFormSubmission input) =>
                 {
-                    promptToDraw.UsersToDrawings.AddOrReplace(user, new UserDrawing() { Drawing = input.SubForms[0].Drawing, Owner = user} );
+                    promptToDraw.UsersToDrawings.AddOrReplace(user, new UserDrawing() { Drawing = input.SubForms[0].Drawing, Owner = user });
                     return (true, string.Empty);
                 },
                 exit: new WaitForUsers_StateExit(
@@ -64,7 +66,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                             return SimplePromptUserState.DefaultWaitingPrompt(user);
                         }
                     }),
-                maxPromptDuration: writingTimeDuration);
+                maxPromptDuration: writingTimeDuration) ;
 
             this.Entrance.Transition(getDrawingsUserState);
             getDrawingsUserState.Transition(this.Exit);

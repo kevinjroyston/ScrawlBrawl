@@ -41,7 +41,7 @@ namespace Common.DataModels.Requests
             {
                 Id = prompt.Id,
                 ShortAnswer = prompt.ShortAnswer ? (partialSubmission?.ShortAnswer ?? "N/A") : null,
-                Drawing = (prompt.Drawing != null) ? (partialSubmission?.Drawing ?? Constants.Drawings.DefaultDrawing(prompt.Drawing.WidthInPx, prompt.Drawing.HeightInPx)) : null,
+                Drawing = (prompt.Drawing != null) ? (partialSubmission?.Drawing ?? Constants.Drawings.DefaultDrawing(prompt.Drawing.DrawingType)) : null,
                 Selector= (prompt.Selector != null) ? (partialSubmission?.Selector ?? (int?)0) : null,
                 Slider= (prompt.Slider != null) ? (partialSubmission?.Slider ?? (prompt.Slider.Range ? new List<int> { prompt.Slider.Min, prompt.Slider.Max } : new List<int> { prompt.Slider.Min }) ): null,
                 DropdownChoice = (prompt.Dropdown != null) ? (partialSubmission?.DropdownChoice ?? (int?)0): null,

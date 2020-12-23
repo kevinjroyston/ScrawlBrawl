@@ -34,7 +34,8 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                         new SubPrompt
                         {
                             Drawing = new DrawingPromptMetadata{
-                                ColorList = CommonConstants.DefaultColorPalette.ToList() 
+                                ColorList = CommonConstants.DefaultColorPalette.ToList(),
+                                GalleryOptions = null
                             }
                         }
                     },

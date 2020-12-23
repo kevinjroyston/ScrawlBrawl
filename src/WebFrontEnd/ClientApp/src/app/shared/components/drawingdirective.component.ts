@@ -1,27 +1,37 @@
 import { Directive, ElementRef, HostListener, AfterViewInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import {throttle} from 'app/utils/throttle'
 import PastColorsService from './colorpicker/pastColors';
+import * as drawingUtils from 'app/utils/drawingutils';
 
+const MaxUndoCount = 20;
+
+export enum DrawingModes
+{
+   Draw,
+   Erase,
+   FloodFill
+}
 
 @Directive({
     selector: '[appDrawing]',
 })
 
+
 export class DrawingDirective {
-    userIsDrawing:boolean;
-    lastX:number;
-    lastY: number;
     ctx: any;
     @Input() lineColor: string;
     @Input() lineWidth: number;
     @Input() premadeDrawing: string;
-    @Input() eraserMode: boolean;
+    @Input() drawingMode: DrawingModes;
     @Input() galleryAutoLoadMostRecent: boolean;
     @Input() galleryEditor: boolean = false;
     @Output() drawingEmitter = new EventEmitter();
     defaultLineColor: string;
     element;
-    undoArray: string[] = [];
+    private undoArray: string[] = [];
+    private userIsDrawing:boolean;
+    private lastX:number;
+    private lastY: number;
 
     constructor(element: ElementRef) {
         console.log("Instantiating canvas");
@@ -78,7 +88,7 @@ export class DrawingDirective {
     }
 
     // store it for an undo
-    if (this.undoArray.length >= 20) { this.undoArray.shift(); }
+    if (this.undoArray.length >= MaxUndoCount) { this.undoArray.shift(); }
     this.undoArray.push(imgStr);
     console.log('saved undo '+this.undoArray.length)
   }
@@ -86,6 +96,11 @@ export class DrawingDirective {
   stopDrawing() {
     this.userIsDrawing = false;
     this.onImageChange(null);
+  }
+
+  handleClearUndo(){
+    this.undoArray.length = 0;
+    this.onImageChange(null,false) /* set base undo image */
   }
 
   onPerformUndo() {
@@ -108,24 +123,28 @@ export class DrawingDirective {
     @HostListener('mousedown', ['$event'])
     @HostListener('touchstart', ['$event'])
     onmousedown(event) {
-//        event.preventDefault(); not needed since canvas does not care about mouse movements, and preventing affects gestures
-
       if (this.userIsDrawing) {
         console.log("down but already drawing");
         this.stopDrawing();
-      }
-      else {
+      } else {
 
         if (document.activeElement instanceof HTMLElement)  // pull focus from any input so it hides the keyboard on mobile
           document.activeElement.blur();
 
         [this.lastX, this.lastY] = this.getCoords(event);
 
-        // begins new line
-        //this.ctx.beginPath();
-        this.drawCircle(this.lastX, this.lastY);
-
-        this.userIsDrawing = true;
+        if (this.drawingMode==DrawingModes.FloodFill) {
+            let rgb = drawingUtils.convertColorToRGB(this.getColor()).split( ',' );
+            let r=parseInt( rgb[0].substring(4) ) ; // skip rgb(
+            let g=parseInt( rgb[1] ) ; // this is just g
+            let b=parseInt( rgb[2] ) ; // parseInt scraps trailing )
+            drawingUtils.floodFill(this.ctx,Math.round(this.lastX),Math.round(this.lastY),r,g,b);
+            this.onImageChange(null);
+        } else {
+            // begins new line
+            this.drawCircle(this.lastX, this.lastY);
+            this.userIsDrawing = true;
+        }
       }
     }
 
@@ -160,19 +179,15 @@ export class DrawingDirective {
 
   @HostListener('document:mouseup')
   @HostListener('document:touchend')
-    @HostListener('mouseup')
-    @HostListener('touchend')
-    onmouseup() {
-      if (this.userIsDrawing) {
+  @HostListener('mouseup')
+  @HostListener('touchend')
+  onmouseup() {
+    if (this.userIsDrawing) {
 //        event.preventDefault(); not needed since canvas does not care about mouse movements, and preventing affects gestures
-        this.stopDrawing();
-      }
+      this.stopDrawing();
     }
+  }
 
-    @HostListener('mouseleave')
-    @HostListener('touchleave')
-    onmouseleave() {
-    }
   
   @HostListener('window:scroll', ['$event']) 
   @throttle(200)
@@ -182,76 +197,77 @@ export class DrawingDirective {
       this.stopDrawing();
     }
   } 
-    drawLine(lX, lY, cX, cY): void {
-        if (this.eraserMode)
-            this.ctx.globalCompositeOperation = "destination-out";
-        // line from
-        this.ctx.beginPath();
-        this.ctx.moveTo(lX, lY);
-        // to
-        this.ctx.lineTo(cX, cY);
-        // color
-        this.ctx.strokeStyle = this.getColor();
-        //this.ctx.lineJoin = "round";
-        this.ctx.lineWidth = this.lineWidth;
-        // draw it
-        this.ctx.stroke();
-        this.ctx.globalCompositeOperation = "source-over";
-    }
 
-    getColor(): string {
-        if (this.lineColor && this.lineColor != "") {
-            return this.lineColor;
-        }
-        return this.defaultLineColor;
-    }
+  drawLine(lX, lY, cX, cY): void {
+      if (this.drawingMode==DrawingModes.Erase)
+          this.ctx.globalCompositeOperation = "destination-out";
+      // line from
+      this.ctx.beginPath();
+      this.ctx.moveTo(lX, lY);
+      // to
+      this.ctx.lineTo(cX, cY);
+      // color
+      this.ctx.strokeStyle = this.getColor();
+      //this.ctx.lineJoin = "round";
+      this.ctx.lineWidth = this.lineWidth;
+      // draw it
+      this.ctx.stroke();
+      this.ctx.globalCompositeOperation = "source-over";
+  }
 
-    drawCircle(x, y): void {
-        if (this.eraserMode)
-           this.ctx.globalCompositeOperation = "destination-out";
-        this.ctx.beginPath();
-        var radius = this.lineWidth/2.1; // Arc radius
-        var startAngle = 0; // Starting point on circle
-        var endAngle = Math.PI * 2; // End point on circle
+  getColor(): string {
+      if (this.lineColor && this.lineColor != "") {
+          return this.lineColor;
+      }
+      return this.defaultLineColor;
+  }
 
-        this.ctx.moveTo(x, y);
-        this.ctx.strokeStyle = this.getColor();
-        this.ctx.lineWidth = 0;
-        this.ctx.arc(x, y, radius, startAngle, endAngle);
-        this.ctx.fillStyle = this.getColor();
-        this.ctx.fill();
-        this.ctx.globalCompositeOperation = "source-over";
-    }
 
-    getCoords(event) {
-        let currentX : number, currentY : number;
-        if (event.changedTouches) { // only for touch
-            currentX = event.changedTouches[0].pageX - this.element.offsetLeft - this.element.clientLeft;
-            currentY = event.changedTouches[0].pageY - this.element.offsetTop - this.element.clientTop;
 
-        }
-        else if (event.offsetX !== undefined) {
-            currentX = event.offsetX;
-            currentY = event.offsetY;
-        }
-        else {
-            currentX = event.layerX - event.currentTarget.offsetLeft;
-            currentY = event.layerY - event.currentTarget.offsetTop;
-        }
+  drawCircle(x, y): void {
+    if (this.drawingMode==DrawingModes.Erase)
+          this.ctx.globalCompositeOperation = "destination-out";
+      this.ctx.beginPath();
+      var radius = this.lineWidth/2.1; // Arc radius
+      var startAngle = 0; // Starting point on circle
+      var endAngle = Math.PI * 2; // End point on circle
 
-        return [currentX * (this.element.width / this.element.clientWidth), currentY * (this.element.height / this.element.clientHeight)];
-    }
+      this.ctx.moveTo(x, y);
+      this.ctx.strokeStyle = this.getColor();
+      this.ctx.lineWidth = 0;
+      this.ctx.arc(x, y, radius, startAngle, endAngle);
+      this.ctx.fillStyle = this.getColor();
+      this.ctx.fill();
+      this.ctx.globalCompositeOperation = "source-over";
+  }
+
+  getCoords(event) {
+      let currentX : number, currentY : number;
+      if (event.changedTouches) { // only for touch
+          currentX = event.changedTouches[0].pageX - this.element.offsetLeft - this.element.clientLeft;
+          currentY = event.changedTouches[0].pageY - this.element.offsetTop - this.element.clientTop;
+
+      }
+      else if (event.offsetX !== undefined) {
+          currentX = event.offsetX;
+          currentY = event.offsetY;
+      }
+      else {
+          currentX = event.layerX - event.currentTarget.offsetLeft;
+          currentY = event.layerY - event.currentTarget.offsetTop;
+      }
+
+      return [currentX * (this.element.width / this.element.clientWidth), currentY * (this.element.height / this.element.clientHeight)];
+  }
 }
 
 export interface GalleryOptionsMetadata {
-  galleryId: string;
   galleryAutoLoadMostRecent: boolean;
 }
 
 export interface DrawingPromptMetadata {
+  drawingType: string;
   colorList: string[];
-  widthInPx: number;
-  heightInPx: number;
   premadeDrawing: string;
   canvasBackground: string;
   galleryOptions: GalleryOptionsMetadata;

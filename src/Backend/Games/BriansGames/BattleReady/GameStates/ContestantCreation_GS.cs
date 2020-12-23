@@ -65,8 +65,8 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                             {
                                 Selector = new SelectorPromptMetadata()
                                 {
-                                    HeightInPx = ThreePartPeopleConstants.Heights[DrawingType.Head],
-                                    WidthInPx = ThreePartPeopleConstants.Widths[DrawingType.Head],
+                                    HeightInPx = ThreePartPeopleConstants.Heights[BodyPartType.Head],
+                                    WidthInPx = ThreePartPeopleConstants.Widths[BodyPartType.Head],
                                     ImageList = prompt.UsersToUserHands[user].Heads.Select(userDrawing => userDrawing.Drawing).ToArray()
                                 }
                             },
@@ -74,8 +74,8 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                             {
                                 Selector = new SelectorPromptMetadata()
                                 {
-                                    HeightInPx = ThreePartPeopleConstants.Heights[DrawingType.Body],
-                                    WidthInPx = ThreePartPeopleConstants.Widths[DrawingType.Body],
+                                    HeightInPx = ThreePartPeopleConstants.Heights[BodyPartType.Body],
+                                    WidthInPx = ThreePartPeopleConstants.Widths[BodyPartType.Body],
                                     ImageList = prompt.UsersToUserHands[user].Bodies.Select(userDrawing => userDrawing.Drawing).ToArray()
                                 }
                             },
@@ -83,8 +83,8 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                             {
                                 Selector = new SelectorPromptMetadata()
                                 {
-                                    HeightInPx = ThreePartPeopleConstants.Heights[DrawingType.Legs],
-                                    WidthInPx = ThreePartPeopleConstants.Widths[DrawingType.Legs],
+                                    HeightInPx = ThreePartPeopleConstants.Heights[BodyPartType.Legs],
+                                    WidthInPx = ThreePartPeopleConstants.Widths[BodyPartType.Legs],
                                     ImageList = prompt.UsersToUserHands[user].Legs.Select(userDrawing => userDrawing.Drawing).ToArray()
                                 }
                             },
@@ -104,10 +104,10 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                         prompt.UsersToUserHands[user].Legs[(int)input.SubForms[2].Selector].Owner.AddScore(BattleReadyConstants.PointsForPartUsed);
                         prompt.UsersToUserHands[user].Contestant = new Person
                         {
-                            BodyPartDrawings = new Dictionary<DrawingType, PeopleUserDrawing>{
-                                {DrawingType.Head, prompt.UsersToUserHands[user].Heads[(int)input.SubForms[0].Selector] },
-                                {DrawingType.Body, prompt.UsersToUserHands[user].Bodies[(int)input.SubForms[1].Selector] },
-                                {DrawingType.Legs, prompt.UsersToUserHands[user].Legs[(int)input.SubForms[2].Selector] }
+                            BodyPartDrawings = new Dictionary<BodyPartType, PeopleUserDrawing>{
+                                {BodyPartType.Head, prompt.UsersToUserHands[user].Heads[(int)input.SubForms[0].Selector] },
+                                {BodyPartType.Body, prompt.UsersToUserHands[user].Bodies[(int)input.SubForms[1].Selector] },
+                                {BodyPartType.Legs, prompt.UsersToUserHands[user].Legs[(int)input.SubForms[2].Selector] }
                             },
                             Name = input.SubForms[3].ShortAnswer,
                             Owner = user

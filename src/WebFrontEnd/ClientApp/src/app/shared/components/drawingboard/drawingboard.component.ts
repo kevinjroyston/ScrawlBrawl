@@ -2,9 +2,10 @@ import { Component, ViewEncapsulation, Input, AfterViewInit, ViewChild, ElementR
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {ColorPickerComponent} from '../colorpicker/colorpicker.component'
 import {GalleryTool} from '@shared/components/gallerytool/gallerytool.component';
-import {DrawingDirective,DrawingPromptMetadata} from '@shared/components/drawingdirective.component';
+import {DrawingDirective,DrawingPromptMetadata,DrawingModes} from '@shared/components/drawingdirective.component';
 import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-sheet';
 import Galleries from '@core/models/gallerytypes';
+
 
 @Component({
     selector: 'drawingboard',
@@ -20,19 +21,25 @@ import Galleries from '@core/models/gallerytypes';
 
 
 export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
-    private _galleryId:string;
-    @Input() drawingOptions: DrawingPromptMetadata;
+    drawingModes = DrawingModes; /* so html can see it */
+
+    private _drawingType:string;
     @Input() showColorSelector: boolean = true;
     @Input() showEraser: boolean = true;
     @Input() showBrushSizeSelector: boolean = true;
-    @Input() set galleryId(value: string) { this.setGalleryId(value) }
-             get galleryId(): string { return this._galleryId}
+    @Input() drawingOptions:DrawingPromptMetadata;
+    @Input() set drawingType(value: string) { this.setDrawingType(value) }
+             get drawingType(): string { return this._drawingType}
 
     @Input() galleryEditor: boolean;
 
     @ViewChild(DrawingDirective) drawingDirective;
     @ViewChild('galleryTool') galleryTool: GalleryTool;
 
+    drawingMode : DrawingModes = DrawingModes.Draw;
+
+    drawingHeight;
+    drawingWidth;
     onChange;
     selectedColor: string;
     selectedBrushSize: number = 10;
@@ -44,34 +51,34 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     constructor(private _colorPicker: MatBottomSheet) {
     }
 
-    private updateDrawingOptionsForGalleryId(id){
-        let gallery = Galleries.galleryFromId(this.galleryId);
+    private updateDrawingOptionsForDrawingType(typ){
+        let gallery = Galleries.galleryFromDrawingType(typ);
         if (!this.drawingOptions) { /* if we are in a stand alone gallery editor, we do not have a drawing prompt, create one */
             this.drawingOptions = {
+                drawingType: typ,
                 colorList: null,
-                widthInPx: gallery.imageWidth,
-                heightInPx: gallery.imageHeight,
                 premadeDrawing: "",
                 canvasBackground: "",
                 galleryOptions:{    
-                    galleryId: this.galleryId,
                     galleryAutoLoadMostRecent: false,
                 }
             }
         }
-        this.drawingOptions.widthInPx = gallery.imageWidth;
-        this.drawingOptions.heightInPx = gallery.imageHeight;
-        this.drawingOptions.canvasBackground = gallery.canvasBackground;
+        this.drawingWidth = gallery.imageWidth;
+        this.drawingHeight = gallery.imageHeight;
+        if (this.galleryEditor || !this.drawingOptions.canvasBackground) {  // use the gallery background, unless the drawing prompt gave us one
+            this.drawingOptions.canvasBackground = gallery.canvasBackground;
+        }
     }
 
-    private setGalleryId(id){
-        if (this._galleryId == id) { return }
+    private setDrawingType(typ){
+        if (this._drawingType == typ) { return }
         
-        this._galleryId = id; 
-        this.updateDrawingOptionsForGalleryId(id);
+        this._drawingType = typ; 
+        this.updateDrawingOptionsForDrawingType(typ);
 
         if (this.galleryTool) {
-            this.galleryTool.galleryId=id;
+            this.galleryTool.drawingType=typ;
         }
     }
 
@@ -83,9 +90,9 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
 
     ngAfterViewInit(){
         // If this is a prompt from the backend drawingOptions will be defined here.
-        // If it is a gallery editor created on the front end, then drawingOptions is created above when the galleryId input is set
-        if (this.drawingOptions && this.drawingOptions.galleryOptions) {
-            this.galleryId = this.drawingOptions.galleryOptions.galleryId;
+        // If it is a gallery editor created on the front end, then drawingOptions is created above when the drawingType input is set
+        if (this.drawingOptions) {
+            this.drawingType = this.drawingOptions.drawingType;
         }
         
         // If there is a required color list default to first color.

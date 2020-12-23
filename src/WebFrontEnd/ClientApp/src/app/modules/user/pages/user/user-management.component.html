@@ -1,11 +1,11 @@
 <div class="plrskip-user-wrapper">
-    <select #galleryDD class="Dropdown" (change)="currentGalleryId=galleryDD.value">
-            <option *ngFor="let gallery of galleryTypes; let i = index" [selected]="(currentGalleryId==gallery.galleryId)" value="{{gallery.galleryId}}">
+    <select #galleryDD class="Dropdown" (change)="currentDrawingType=galleryDD.value">
+            <option *ngFor="let gallery of galleryTypes; let i = index" [selected]="(currentDrawingType==gallery.drawingType)" value="{{gallery.drawingType}}">
                 {{gallery.galleryDesc}}
             </option>
         </select>
     <div>
-        <drawingboard [galleryEditor]="true" [galleryId]="currentGalleryId"></drawingboard>
+        <drawingboard [galleryEditor]="true" [drawingType]="currentDrawingType"></drawingboard>
     </div>
 </div>
 <div>

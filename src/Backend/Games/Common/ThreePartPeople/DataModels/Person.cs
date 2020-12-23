@@ -22,46 +22,46 @@ namespace Backend.Games.Common.ThreePartPeople.DataModels
         /// <summary>
         /// Initialize to defaults, TODO: improve this.
         /// </summary>
-        public Dictionary<DrawingType, PeopleUserDrawing> BodyPartDrawings { get; set; } = new Dictionary<DrawingType, PeopleUserDrawing>()
+        public Dictionary<BodyPartType, PeopleUserDrawing> BodyPartDrawings { get; set; } = new Dictionary<BodyPartType, PeopleUserDrawing>()
         {
             {
-                DrawingType.Head, new PeopleUserDrawing()
+                BodyPartType.Head, new PeopleUserDrawing()
                 {
                     Owner = new User("dummy"),
-                    Type = DrawingType.Head,
-                    Drawing = ThreePartPeopleConstants.Backgrounds[DrawingType.Head]
+                    Type = BodyPartType.Head,
+                    Drawing = ThreePartPeopleConstants.Backgrounds[BodyPartType.Head]
                 }
             },
             {
-                DrawingType.Body, new PeopleUserDrawing()
+                BodyPartType.Body, new PeopleUserDrawing()
                 {
                     Owner = new User("dummy"),
-                    Type = DrawingType.Body,
-                    Drawing = ThreePartPeopleConstants.Backgrounds[DrawingType.Body]
+                    Type = BodyPartType.Body,
+                    Drawing = ThreePartPeopleConstants.Backgrounds[BodyPartType.Body]
                 }
             },
             {
-                DrawingType.Legs, new PeopleUserDrawing()
+                BodyPartType.Legs, new PeopleUserDrawing()
                 {
                     Owner = new User("dummy"),
-                    Type = DrawingType.Legs,
-                    Drawing = ThreePartPeopleConstants.Backgrounds[DrawingType.Legs]
+                    Type = BodyPartType.Legs,
+                    Drawing = ThreePartPeopleConstants.Backgrounds[BodyPartType.Legs]
                 }
             }
         };
 
-        public enum DrawingType
+        public enum BodyPartType
         {
             Head, Body, Legs, None
         }
 
         public class PeopleUserDrawing : UserDrawing
         {
-            public DrawingType Type { get; set; }
+            public BodyPartType Type { get; set; }
         }
         public IReadOnlyList<string> GetOrderedDrawings()
         {
-            return new List<string> { BodyPartDrawings[DrawingType.Head].Drawing, BodyPartDrawings[DrawingType.Body].Drawing, BodyPartDrawings[DrawingType.Legs].Drawing }.AsReadOnly();
+            return new List<string> { BodyPartDrawings[BodyPartType.Head].Drawing, BodyPartDrawings[BodyPartType.Body].Drawing, BodyPartDrawings[BodyPartType.Legs].Drawing }.AsReadOnly();
         }
        
         public override UnityImage GetUnityImage(
