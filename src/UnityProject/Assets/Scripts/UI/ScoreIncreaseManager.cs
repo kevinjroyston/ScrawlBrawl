@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -21,4 +21,4 @@ public class ScoreIncreaseManager : MonoBehaviour
     {
         scoreText.text = "" + (Convert.ToInt32(scoreText.text) + 1);
     }
-}
+}*/

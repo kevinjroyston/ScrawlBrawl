@@ -14,7 +14,6 @@ public class GameEvent
         ImageCreated,
         UserSubmitted,
         MoveToTarget,
-        IncreaseScore,
         VoteRevealBubbleCreated,
         VoteRevealBubbleMove,
         AnimationStarted,
@@ -33,4 +32,5 @@ public class GameEvent
     public string id;
 
     public DateTime eventTime;
+
 }

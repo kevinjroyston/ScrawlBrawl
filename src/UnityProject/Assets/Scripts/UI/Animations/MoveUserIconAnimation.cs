@@ -19,7 +19,6 @@ public class MoveUserIconAnimation : AnimationBase
         Image createdMarker = Instantiate(ScoreProjectilePrefab, rect);
         createdMarker.color = gameObject.GetComponent<Colorizer>().AssignedColor;
         RectTransform targetScoreRect = targetGameEvent.TargetRect;
-        string targetId = targetGameEvent.TargetUserId;
         RectTransform markerRect = createdMarker.rectTransform;
 
         Vector2 iconRadiusVector = rect.localToWorldMatrix.MultiplyVector(new Vector2(rect.rect.width, rect.rect.height));
@@ -107,8 +106,8 @@ public class MoveUserIconAnimation : AnimationBase
             .setEaseOutBack()
             .PlayAfter(targetScaleUp)
             .addOnStart(() => Destroy(createdMarker))
-            .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.PlayPop })
-            .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.IncreaseScore, id = targetId });
+            .addOnStart(targetGameEvent.AnimationCompletedCallback)
+            .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.PlayPop });
         if (IconOrder == IconCountTotal)
         {
             targetScaleDown.SetCallEventOnComplete(new GameEvent() { eventType = GameEvent.EventEnum.CallShakeRevealImages });

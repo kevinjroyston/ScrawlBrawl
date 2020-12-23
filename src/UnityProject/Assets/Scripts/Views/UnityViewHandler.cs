@@ -77,19 +77,12 @@ namespace Assets.Scripts.Views
                             }
                             break;
                         case HandlerType.Timer:
-                            if (UnityView.ServerTime != null && UnityView.StateEndTime != null)
-                            {
-                                values.Add(
-                                    new TimerHolder()
-                                    {
-                                        ServerTime = UnityView.ServerTime,
-                                        StateEndTime = UnityView.StateEndTime,
-                                    });
-                            }
-                            else
-                            {
-                                values.Add(null);
-                            }
+                            values.Add(
+                                new TimerHolder()
+                                {
+                                    ServerTime = UnityView.ServerTime,
+                                    StateEndTime = UnityView.StateEndTime,
+                                });
                             break;
                         case HandlerType.UsersList:
                             values.Add(

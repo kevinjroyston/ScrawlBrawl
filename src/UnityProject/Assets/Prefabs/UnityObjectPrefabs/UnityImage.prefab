@@ -1289,7 +1289,7 @@ GameObject:
   - component: {fileID: 1760463587792855409}
   - component: {fileID: 1074583197808755084}
   - component: {fileID: 4597154152944181548}
-  - component: {fileID: 6294432265581574928}
+  - component: {fileID: 951564978997659307}
   m_Layer: 0
   m_Name: ScoreHolder
   m_TagString: Untagged
@@ -1367,7 +1367,7 @@ MonoBehaviour:
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
---- !u!114 &6294432265581574928
+--- !u!114 &951564978997659307
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1376,12 +1376,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 3977420273987508775}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b81f1bc9341dc544b23af8dad1f0d99, type: 3}
+  m_Script: {fileID: 11500000, guid: 5689ed2ec9f649b4594b5a977f918d0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  VoteCountHolder: {fileID: 2869935246231121813}
   TextComponent: {fileID: 7957746443236290024}
-  integerType: 0
-  showPlus: 0
 --- !u!1 &4168009696828326328
 GameObject:
   m_ObjectHideFlags: 0
@@ -2034,7 +2033,6 @@ GameObject:
   - component: {fileID: 2869935246231121813}
   - component: {fileID: 2108403437981619666}
   - component: {fileID: 6632051394969700096}
-  - component: {fileID: 847430473929186465}
   m_Layer: 0
   m_Name: VoteCountHolder
   m_TagString: Untagged
@@ -2097,19 +2095,6 @@ MonoBehaviour:
   aspectRatio: 2
   updateMin: 0
   updatePreferred: 1
---- !u!114 &847430473929186465
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7382733499985497662}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25f49639ad501bb439496e5fd1cee338, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scoreText: {fileID: 7957746443236290024}
 --- !u!1 &7486317171801654656
 GameObject:
   m_ObjectHideFlags: 0
