@@ -27,6 +27,11 @@ public class SpriteHandler : MonoBehaviour, HandlerInterface
     private Color BackgroundColor { get; set; }
     private float AspectRatio { get; set; } = 1f;
 
+    public void OnDestroy()
+    {
+        BlurController.Singleton.blurMasks.Remove(BlurMask);
+    }
+
     public void UpdateValue(SpriteHolder spriteHolder)  
     {
         BlurController.Singleton.blurMasks.Add(BlurMask);

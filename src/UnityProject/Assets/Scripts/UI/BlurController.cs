@@ -1,10 +1,15 @@
-﻿using System;
+﻿using Assets.Scripts.Networking.DataModels;
+using Assets.Scripts.Networking.DataModels.Enums;
+using Assets.Scripts.Views.DataModels;
+using Assets.Scripts.Views.Interfaces;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static TypeEnums;
 
-public class BlurController : MonoBehaviour
+public class BlurController : MonoBehaviour, HandlerInterface
 {
     public SuperBlur.SuperBlur superBlur;
     public List<Image> blurMasks = new List<Image>();
@@ -20,19 +25,44 @@ public class BlurController : MonoBehaviour
     {
         Singleton = this;
     }
-    public void UpdateBlur(float? startValue, float? endValue, DateTime? startTime, DateTime? endTime, DateTime? serverCurrentTime)
+
+    public List<HandlerId> HandlerIds => new List<HandlerId>()
     {
+        HandlerType.ViewOptions.ToHandlerId(),
+        HandlerType.Timer.ToHandlerId()
+    };
+    public HandlerScope Scope => HandlerScope.View;
+
+    public void UpdateValue(Dictionary<UnityViewOptions, object> options, TimerHolder serverTimeHolder)
+    {
+        UnityField<float?> blurOptions = (UnityField<float?>) options[UnityViewOptions.BlurAnimate];
+        float? startValue = blurOptions.StartValue;
+        float? endValue = blurOptions.EndValue;
+        if (blurOptions?.StartTime == null
+            || blurOptions?.EndTime == null
+            || serverTimeHolder?.ServerTime == null)
+        {
+            return;
+        }
+        DateTime startTime = blurOptions.StartTime.Value;
+        DateTime endTime = blurOptions.EndTime.Value;
+        DateTime serverCurrentTime = serverTimeHolder.ServerTime.Value;
         foreach (Image mask in blurMasks)
         {
             mask.enabled = true;
         }
         this.startValue = startValue ?? 1;
         this.endValue = endValue ?? 0;
-        this.timeTilStart = (float)startTime?.Subtract(serverCurrentTime?? (DateTime)startTime).TotalSeconds;
-        this.timeTilEnd = (float)endTime?.Subtract(serverCurrentTime?? (DateTime)endTime).TotalSeconds;
+        this.timeTilStart = (float)startTime.Subtract(serverCurrentTime).TotalSeconds;
+        this.timeTilEnd = (float)endTime.Subtract(serverCurrentTime).TotalSeconds;
 
         superBlur.downsample = 0;
         superBlur.iterations = 6;
+    }
+
+    public void UpdateValue(List<dynamic> objects)
+    {
+        this.UpdateValue(objects[0], objects[1]);
     }
     public void ResetMasks()
     {

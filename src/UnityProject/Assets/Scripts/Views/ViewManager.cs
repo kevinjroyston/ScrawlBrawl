@@ -82,7 +82,7 @@ public class ViewManager : MonoBehaviour
 
     public void ChangeView(TVScreenId? id, Legacy_UnityView view, bool newScene = false)
     {
-        if (CurrentView.HasValue)
+        if (CurrentView.HasValue && AvailableTVViews.ContainsKey(CurrentView.Value))
         {
             AvailableTVViews[CurrentView.Value].ExitView();
         }
@@ -127,7 +127,13 @@ public class ViewManager : MonoBehaviour
             {
                 {UnityViewOptions.PrimaryAxis, legacyView._Options?._PrimaryAxis },
                 {UnityViewOptions.PrimaryAxisMaxCount, legacyView._Options?._PrimaryAxisMaxCount },
-                {UnityViewOptions.BlurAnimate, legacyView._Options?._BlurAnimate }
+                {UnityViewOptions.BlurAnimate, new UnityField<float?>
+                {
+                    StartTime = legacyView._Options?._BlurAnimate?._StartTime,
+                    EndTime = legacyView._Options?._BlurAnimate?._EndTime,
+                    StartValue = legacyView._Options?._BlurAnimate?._StartValue,
+                    EndValue = legacyView._Options?._BlurAnimate?._EndValue,
+                }}
             }
         };
       
