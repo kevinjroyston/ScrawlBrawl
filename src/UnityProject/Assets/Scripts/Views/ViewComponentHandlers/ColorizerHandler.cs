@@ -20,6 +20,7 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
         [HideInInspector]
         public Color AssignedColor;
         public HandlerScope Scope => HandlerScope.UnityObject;
+        private System.Random random = new System.Random();
 
         public void UpdateValue(List<Guid> field)
         {
@@ -27,6 +28,10 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
             if (field?.Count > 0)
             {
                 str = field[0].ToString();
+            }
+            else
+            {
+                str = random.Next(100).ToString();
             }
             AssignedColor = ColorizerManager.Singleton.GetColor(str);
             TargetImage.color = AssignedColor;
