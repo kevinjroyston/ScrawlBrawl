@@ -87,15 +87,20 @@ export class DrawingDirective {
         this.emitImageChange(imgStr);
     }
 
-    // store it for an undo
-    if (this.undoArray.length >= MaxUndoCount) { this.undoArray.shift(); }
-    this.undoArray.push(imgStr);
-    console.log('saved undo '+this.undoArray.length)
+    if (this.undoArray.length == 0 ||  imgStr != this.undoArray[this.undoArray.length-1]) {
+        // store it for an undo, if not already last thing on stack  #SB-169
+        if (this.undoArray.length >= MaxUndoCount) { this.undoArray.shift(); }
+        this.undoArray.push(imgStr);
+        console.log('saved undo '+this.undoArray.length)
+    }
+
   }
 
   stopDrawing() {
-    this.userIsDrawing = false;
-    this.onImageChange(null);
+    if (this.userIsDrawing){
+        this.userIsDrawing = false;
+        this.onImageChange(null);
+    } 
   }
 
   handleClearUndo(){
@@ -138,8 +143,9 @@ export class DrawingDirective {
             let r=parseInt( rgb[0].substring(4) ) ; // skip rgb(
             let g=parseInt( rgb[1] ) ; // this is just g
             let b=parseInt( rgb[2] ) ; // parseInt scraps trailing )
-            drawingUtils.floodFill(this.ctx,Math.round(this.lastX),Math.round(this.lastY),r,g,b);
-            this.onImageChange(null);
+            if (drawingUtils.floodFill(this.ctx,Math.round(this.lastX),Math.round(this.lastY),r,g,b)) {
+                this.onImageChange(null);
+            }
         } else {
             // begins new line
             this.drawCircle(this.lastX, this.lastY);
@@ -183,7 +189,7 @@ export class DrawingDirective {
   @HostListener('touchend')
   onmouseup() {
     if (this.userIsDrawing) {
-//        event.preventDefault(); not needed since canvas does not care about mouse movements, and preventing affects gestures
+      event.preventDefault(); // plr SB-169
       this.stopDrawing();
     }
   }

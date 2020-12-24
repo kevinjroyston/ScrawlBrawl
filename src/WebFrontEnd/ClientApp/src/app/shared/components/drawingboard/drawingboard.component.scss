@@ -20,6 +20,7 @@
 
 .draw-canvas {
     width: 100%;
+    max-width: 1080px;
     //height: 100%;
     background-size: 100% 100%;
     background-color: var(--card-background);
@@ -99,6 +100,7 @@
     display: flex;
     &>scrawlbrawl-iconbutton {
         margin-right: 15px;
+        min-width: 35px;
     }
 }
 
@@ -106,6 +108,7 @@
     display: flex;
     &>scrawlbrawl-iconbutton {
         margin-right: 15px;
+        min-width: 35px;
     }
 }
 

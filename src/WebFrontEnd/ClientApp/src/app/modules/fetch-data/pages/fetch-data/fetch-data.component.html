@@ -59,8 +59,9 @@
         <div *ngIf="!userPrompt.submitButton">
             <br><br>
             <scrawlbutton (click)="galleryEditorVisible=!galleryEditorVisible">Gallery Editor</scrawlbutton>
+            <br><br>
             <div [hidden]="!galleryEditorVisible">
-                <select #galleryDD class="Dropdown" (change)="currentGalleryId=galleryDD.value">
+                <select #galleryDD class="Dropdown" (change)="currentDrawingType=galleryDD.value">
                     <option *ngFor="let gallery of galleryTypes; let i = index" [selected]="(currentDrawingType==gallery.drawingType)" value="{{gallery.drawingType}}">
                         {{gallery.galleryDesc}}
                     </option>
