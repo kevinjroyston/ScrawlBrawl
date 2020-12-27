@@ -209,19 +209,37 @@ input[type=range] {
 }
 
 @media only screen and (max-width: 768px) {
-    .drawb {
-        flex-direction: column;
-    }
     .drawb-settings {
         display: flex;
         flex-wrap: wrap;
         border-left: 1px solid var(--white-secondary);
     }
     .drawb-setting {
-        padding: .5rem 1rem .5rem 0;
+        padding: .5rem 1rem;
         border-bottom: 0 !important;
         width: 50%;
         flex-grow: 1;
+
+        &:nth-of-type(2){
+            display: none;
+        }
+    }
+
+    .drawb-tools-section{
+        padding: .25rem;
+
+        & > scrawlbrawl-iconbutton {
+            width: 35px;
+            height: 35px;
+        }
+    
+        & > scrawlbrawl-iconbutton:not(:first-of-type){
+            margin-top: 10px;
+        }
+    
+        ion-icon {
+            font-size: 21px;
+        }
     }
 }
 
