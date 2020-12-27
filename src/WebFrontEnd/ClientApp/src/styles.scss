@@ -3,13 +3,7 @@
 @import "styles/animations";
 @import "styles/theme";
 @import "styles/common";
-.mat-tab-label {
-    min-width: 0!important;
-}
-
-.galleryPics>img {
-    cursor: pointer;
-}
+@import 'styles/mixins';
 
 html,
 body {
@@ -108,11 +102,6 @@ input {
     color: var(--text-color);
 }
 
-.mat-dialog-container {
-    background: var(--card-background) !important;
-    color: var(--text-color) !important;
-}
-
 ion-icon {
     font-size: 30px;
 }
@@ -125,6 +114,46 @@ ion-icon {
     stroke: var(--text-color);
 }
 
+.mat-tab-label {
+    min-width: 0!important;
+}
+
+.mat-tooltip {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-size: 12px;
+    background: rgba(40, 40, 40, .9);
+}
+
+.mat-dialog-container {
+    background: var(--card-background) !important;
+    color: var(--text-color) !important;
+}
+
+.galleryPics {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 600px;
+    height: 400px;
+    justify-content: space-evenly;
+    background-color: var(--surface-background);
+
+    .galleryImage {
+        @include responsive(3);
+        transition: all cubic-bezier(0.19, 1, 0.22, 1);
+        padding: .75rem; 
+    }
+
+    img {
+        width: 100%;
+        cursor: pointer;
+        box-shadow: var(--shadow-md);
+
+        &:hover {
+            box-shadow: var(--shadow-lg);
+        }
+    }
+}
 
 /* Remove */
 

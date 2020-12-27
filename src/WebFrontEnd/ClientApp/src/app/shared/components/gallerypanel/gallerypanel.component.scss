@@ -1,8 +1,19 @@
+@import 'styles/mixins';
+
 .galleryPics {
     display: flex;
     flex-wrap: wrap;
-    align-content: space-between;
-    max-height: 80px;
-    align-items: flex-start;
-    //    min-height: 100vh;
+    justify-content: space-evenly;
+    background-color: var(--surface-background);
+
+    img {
+        @include responsive(3);
+        transition: all cubic-bezier(0.19, 1, 0.22, 1);
+        box-shadow: var(--shadow-md);
+        cursor: pointer;
+
+        &:hover {
+            box-shadow: var(--shadow-lg);
+        }
+    }
 }

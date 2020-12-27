@@ -5,6 +5,7 @@ import {GalleryTool} from '@shared/components/gallerytool/gallerytool.component'
 import {DrawingDirective,DrawingPromptMetadata,DrawingModes} from '@shared/components/drawingdirective.component';
 import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-sheet';
 import Galleries from '@core/models/gallerytypes';
+import { EventManager } from '@angular/platform-browser';
 
 
 @Component({
@@ -48,7 +49,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     showGallery: boolean = true;
     eraserMode: boolean = false; // Todo make brush-mode enum + group brush options into one object
 
-    constructor(private _colorPicker: MatBottomSheet) {
+    constructor(private _colorPicker: MatBottomSheet, private _gallery: MatBottomSheet) {
     }
 
     private updateDrawingOptionsForDrawingType(typ){
@@ -80,6 +81,10 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
         if (this.galleryTool) {
             this.galleryTool.drawingType=typ;
         }
+    }
+
+    protected saveToFavorites () {
+        this.galleryTool.onCurrentBtnClick();
     }
 
     ngOnInit() {
@@ -143,6 +148,17 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
             panelClass: 'sb-colorpicker-dialog'
         }
         this._colorPicker.open(ColorPickerComponent, bottomConfig)
+    }
+
+    openGallery = (event: MouseEvent) : void => {
+        event.preventDefault();
+        const bottomConfig = new MatBottomSheetConfig();
+        bottomConfig.data = {
+            drawingOptions: this.drawingOptions,
+            galleryEditor: this.galleryEditor,
+            drawingDirective: this.drawingDirective
+        }
+        this._gallery.open(GalleryTool, bottomConfig);
     }
 }
 

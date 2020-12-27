@@ -1,11 +1,13 @@
-import { Component, ViewEncapsulation, Input, AfterViewInit, ViewChild, ElementRef, HostListener  } from '@angular/core';
+import { Component, Inject, ViewEncapsulation, Input, AfterViewInit, ViewChild, ElementRef, HostListener  } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {DrawingDirective,DrawingPromptMetadata} from '@shared/components/drawingdirective.component';
 import {GalleryPanel} from '@shared/components/gallerypanel/gallerypanel.component';
 import {MatTabsModule} from '@angular/material/tabs';
+import {MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
 import { environment } from '../../../../environments/environment';
 
 import Galleries from '@core/models/gallerytypes';
+import { DrawingBoard } from '../drawingboard/drawingboard.component';
 
 @Component({
     selector: 'gallerytool',
@@ -13,8 +15,6 @@ import Galleries from '@core/models/gallerytypes';
     styleUrls: ['./gallerytool.component.scss'],
     encapsulation: ViewEncapsulation.Emulated
 })
-
-
 export class GalleryTool implements AfterViewInit {
     @Input() drawingOptions: DrawingPromptMetadata;
     @Input() drawingDirective: DrawingDirective;
@@ -33,7 +33,18 @@ export class GalleryTool implements AfterViewInit {
     galleryOptions = environment.galleryOptions;
     currentTab:GalleryPanel;
 
-    constructor() {
+    constructor(private _bottomSheetRef: MatBottomSheetRef<GalleryTool>, @Inject(MAT_BOTTOM_SHEET_DATA) public data) {
+        this.initializeBottomSheet(data);
+    }
+
+    private initializeBottomSheet(data) {
+        this.drawingOptions = data.drawingOptions;
+        this.drawingDirective = data.drawingDirective;
+        this.galleryEditor = data.galleryEditor;
+    }
+
+    public closeSheet() {
+        this._bottomSheetRef.dismiss();
     }
 
     storeMostRecentDrawing(){
@@ -85,9 +96,10 @@ export class GalleryTool implements AfterViewInit {
             this.galleryImageCurrent.nativeElement.src = event;
         }
     }
+
     onCurrentBtnClick(){
         this.galleryFavorites.storeImageInGallery(this.lastDrawingChange)
-      }
+    }
   
     registerOnChange(fn: any): void {
         this.onChange = fn;

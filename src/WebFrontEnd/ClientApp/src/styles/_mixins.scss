@@ -1,0 +1,4 @@
+@mixin responsive($number){
+    flex: 0 0 percentage(1/$number);
+    width: percentage(1/$number);
+}

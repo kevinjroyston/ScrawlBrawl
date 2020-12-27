@@ -15,20 +15,20 @@
                 <div class="drawb-setting" ></div>
                 <div class="drawb-setting-color" *ngIf="showColorSelector && ((!drawingOptions.colorList) || (drawingOptions.colorList.length==0))">
                     <div class='drawb-colors'>
-                        <div class="color-input" (click)='openColorPicker($event)' [ngStyle]="{ 'background-color': selectedColor}">
+                        <div class="color-input" matTooltip="Color" (click)='openColorPicker($event)' [ngStyle]="{'background-color': selectedColor}">
                         </div>
                     </div>
                 </div>
             </div>
     
-            <div *ngIf="showColorSelector && drawingOptions.colorList && drawingOptions.colorList.length> 1">
+            <div *ngIf="showColorSelector && drawingOptions.colorList && drawingOptions.colorList.length > 1">
                 <mat-radio-group class="color-picker-group" [(ngModel)]="selectedColor" (change)="eraserMode=false">
                     <div class="color-picker-dot" *ngFor="let colorChoice of drawingOptions.colorList; let i = index" [ngStyle]="{'background-color': colorChoice}">
                         <mat-radio-button [value]="colorChoice" [checked]="i==0"></mat-radio-button>
                     </div>
                 </mat-radio-group>
             </div>
-            <div #galleryPanel [hidden]="!showGallery" class="drawb-setting" *ngIf="drawingOptions.galleryOptions">
+            <div #galleryPanel [hidden]="true" class="drawb-setting" *ngIf="drawingOptions.galleryOptions">
                 <gallerytool #galleryTool [drawingOptions]="drawingOptions" [galleryEditor]="galleryEditor" [drawingDirective]="drawingDirective"></gallerytool>
             </div>
         </div>
@@ -43,23 +43,26 @@
     <div class="drawb-right">
         <div class="drawb-tools" *ngIf="showEraser">
             <div class="drawb-tools-section">
-                <scrawlbrawl-iconbutton matTooltip="Brush" [mdTooltipClass]="{'tooltip': true}" (click)="drawingMode=drawingModes.Draw" [active]="drawingMode==drawingModes.Draw">
+                <scrawlbrawl-iconbutton matTooltip="Brush" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" (click)="drawingMode=drawingModes.Draw" [active]="drawingMode==drawingModes.Draw">
                     <ion-icon name="brush-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
-                <scrawlbrawl-iconbutton matTooltip="Erase" [mdTooltipClass]="{'tooltip': true}" (click)="drawingMode=drawingModes.Erase" [active]="drawingMode==drawingModes.Erase">
+                <scrawlbrawl-iconbutton matTooltip="Erase" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" (click)="drawingMode=drawingModes.Erase" [active]="drawingMode==drawingModes.Erase">
                     <eraser-svg></eraser-svg>
                 </scrawlbrawl-iconbutton>
-                <scrawlbrawl-iconbutton matTooltip="Fill" [mdTooltipClass]="{'tooltip': true}" (click)="drawingMode=drawingModes.FloodFill" [active]="drawingMode==drawingModes.FloodFill">
+                <scrawlbrawl-iconbutton matTooltip="Fill" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" (click)="drawingMode=drawingModes.FloodFill" [active]="drawingMode==drawingModes.FloodFill">
                     <ion-icon name="color-fill-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
             </div>
             <div class="drawb-tools-section">
-                <scrawlbrawl-iconbutton matTooltip="Undo" [mdTooltipClass]="{'tooltip': true}" (click)="drawingDirective.onPerformUndo()">
+                <scrawlbrawl-iconbutton matTooltip="Undo" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" (click)="drawingDirective.onPerformUndo()">
                     <ion-icon name="arrow-back-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
             </div>
             <div class="drawb-tools-section">
-                <scrawlbrawl-iconbutton matTooltip="Favorite" [mdTooltipClass]="{'tooltip': true}" *ngIf="drawingOptions.galleryOptions" (click)="showGallery=!showGallery">
+                <scrawlbrawl-iconbutton matTooltip="Gallery" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" *ngIf="drawingOptions.galleryOptions" (click)="openGallery($event)">
+                    <ion-icon name="images-outline"></ion-icon>
+                </scrawlbrawl-iconbutton>
+                <scrawlbrawl-iconbutton matTooltip="Favorite" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" *ngIf="drawingOptions.galleryOptions" (click)="saveToFavorites()">
                     <ion-icon name="star-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
             </div>

@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, Input, AfterViewInit, ViewChild, ElementRef, HostListener  } from '@angular/core';
+import { Component, ViewEncapsulation, Input, AfterViewInit, ViewChild, ElementRef, HostListener, Output, EventEmitter } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {ColorPickerComponent} from '../colorpicker/colorpicker.component'
 import {DrawingDirective,DrawingPromptMetadata} from '@shared/components/drawingdirective.component';
@@ -19,6 +19,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
     private _drawingDirective: DrawingDirective;
     private _drawingOptions: DrawingPromptMetadata;
     private _galleryPanelType: string;
+    @Output() closeSheet = new EventEmitter<string>();
     @Input() set drawingDirective(value: DrawingDirective) { this._drawingDirective = value; this.loadMostRecentDrawing() }
              get drawingDirective(): DrawingDirective { return this._drawingDirective}
     @Input() set drawingOptions(value: DrawingPromptMetadata){ this._drawingOptions = value; this.loadMostRecentDrawing() }
@@ -127,7 +128,6 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
         }
     }
 
-    
     ngOnInit() {
     }
     
@@ -154,11 +154,12 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
     }
 
     private galleryDisplayImage(imgStr) { /* add an image to the galleryPictures div */
-        var img=document.createElement('img');
-        img.width=40;
-        img.height=40;
+        let wrapper = document.createElement('div');
+        wrapper.className = "galleryImage";
+        let img = document.createElement('img');
+        wrapper.appendChild(img);
         img.src=imgStr;
-        this.galleryPictures.nativeElement.append(img);
+        this.galleryPictures.nativeElement.append(wrapper);
     }
 
     @HostListener('click', ['$event.target'])
@@ -177,6 +178,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
                 }
             } else { // otherwise  move it to the drawing 
                 this.drawingDirective.loadImageString(img.src);
+                this.closeSheet.next();
             }
             event.preventDefault;
             
