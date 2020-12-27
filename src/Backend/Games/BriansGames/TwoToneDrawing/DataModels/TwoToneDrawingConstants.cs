@@ -2,9 +2,8 @@
 {
     public static class TwoToneDrawingConstants
     {
-        public const int PointsForMakingWinningDrawing = 500;
+        public const int PointsPerVote = 100;
         public const int PointsForVotingForWinningDrawing = 100;
-        public const int PointsToLoseForBadSelfVote= -100;
 
         public const double SetupTimerMin = 45;
         public const double SetupTimerAve = 90;

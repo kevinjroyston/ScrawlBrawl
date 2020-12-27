@@ -12,8 +12,5 @@ namespace Backend.Games.BriansGames.ImposterDrawing.DataModels
         public string FakePrompt { get; set; }
         public ConcurrentDictionary<User, UserDrawing> UsersToDrawings { get; set; } = new ConcurrentDictionary<User, UserDrawing>();
         public User Imposter { get; set; }
-        public ConcurrentDictionary<User, User> UsersToVotes { get; set; } = new ConcurrentDictionary<User, User>();
-        public ConcurrentDictionary<User, int> UsersToNumVotesRecieved { get; set; } = new ConcurrentDictionary<User, int>();
-        public object UsersToAnswers { get; internal set; }
     }
 }

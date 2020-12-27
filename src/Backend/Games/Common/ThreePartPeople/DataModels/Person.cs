@@ -63,7 +63,6 @@ namespace Backend.Games.Common.ThreePartPeople.DataModels
         {
             return new List<string> { BodyPartDrawings[BodyPartType.Head].Drawing, BodyPartDrawings[BodyPartType.Body].Drawing, BodyPartDrawings[BodyPartType.Legs].Drawing }.AsReadOnly();
         }
-       
         public override UnityImage GetUnityImage(
             Color? backgroundColor = null,
             string imageIdentifier = null,
@@ -73,29 +72,11 @@ namespace Backend.Games.Common.ThreePartPeople.DataModels
             int? voteCount = null,
             UnityImageVoteRevealOptions voteRevealOptions = null)
         {
-            backgroundColor ??= Color.White;
-
-            List<int> backgroundColorList = new List<int>
-            {
-                Convert.ToInt32(backgroundColor.Value.R),
-                Convert.ToInt32(backgroundColor.Value.G),
-                Convert.ToInt32(backgroundColor.Value.B)
-            };
-
-            return new UnityImage
-            {
-                Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = GetOrderedDrawings() },
-                BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = backgroundColorList },
-                SpriteGridWidth = new StaticAccessor<int?> { Value = 1 },
-                SpriteGridHeight = new StaticAccessor<int?> { Value = 3 },
-                ImageIdentifier = new StaticAccessor<string> { Value = imageIdentifier},
-                ImageOwnerId = new StaticAccessor<Guid?> { Value = imageOwnerId},
-                Title = new StaticAccessor<string> { Value = title },
-                Header = new StaticAccessor<string> { Value = header },
-                VoteCount = new StaticAccessor<int?> { Value = voteCount},
-                VoteRevealOptions = new StaticAccessor<UnityImageVoteRevealOptions> { Value = voteRevealOptions },
-            };
-            
+            UnityImage baseImage = base.GetUnityImage(backgroundColor, imageIdentifier, imageOwnerId, title, header, voteCount, voteRevealOptions);
+            baseImage.Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = GetOrderedDrawings() };
+            baseImage.SpriteGridWidth = new StaticAccessor<int?> { Value = 1 };
+            baseImage.SpriteGridHeight = new StaticAccessor<int?> { Value = 3 };
+            return baseImage;
         }
     }
 }

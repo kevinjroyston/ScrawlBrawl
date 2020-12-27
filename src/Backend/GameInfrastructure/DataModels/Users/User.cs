@@ -33,7 +33,7 @@ namespace Backend.GameInfrastructure.DataModels.Users
                 if (String.IsNullOrWhiteSpace(LobbyId)) { return null; }
 
                 if ((String.IsNullOrWhiteSpace(CachedLobbyId)) || (LobbyId != CachedLobbyId))
-                { 
+                {
                     CachedLobbyId = LobbyId;
                     CachedLobby = GameManager.Singleton.GetLobby(LobbyId);
                 }
@@ -79,9 +79,12 @@ namespace Backend.GameInfrastructure.DataModels.Users
         /// </summary>
         public string SelfPortrait { get; set; }
 
-        public int Score { get; set; }
-        public int ScoreDeltaReveal { get; private set; } = 0;
-        public int ScoreDeltaScoreboard { get; private set; } = 0;
+        // Legacy Score stubs. To be removed.
+        public int Score => ScoreHolder.ScoreAggregates[Users.Score.Scope.Total];
+        public int ScoreDeltaReveal => ScoreHolder.ScoreAggregates[Users.Score.Scope.Reveal];
+        public int ScoreDeltaScoreboard => ScoreHolder.ScoreAggregates[Users.Score.Scope.Scoreboard];
+
+        public Score ScoreHolder { get; } = new Score();
 
         /// <summary>
         /// Gets the activity level of the user by looking at their <see cref="LastPingTime"/>.
@@ -175,27 +178,10 @@ namespace Backend.GameInfrastructure.DataModels.Users
             hash.Add(IsPartyLeader);
             hash.Add(DisplayName);
             hash.Add(SelfPortrait);
-            hash.Add(Score); 
+            hash.Add(ScoreHolder.GetIAccessorHashCode()); 
             hash.Add(Status);
             hash.Add(Identifier);
-            hash.Add(ScoreDeltaReveal);
-            hash.Add(ScoreDeltaScoreboard);
             return hash.ToHashCode();
-        }
-        public void ResetScoreDeltaReveal()
-        {
-            this.ScoreDeltaReveal = 0;
-        }
-        public void ResetScoreDeltaScoreBoard()
-        {
-            this.ScoreDeltaScoreboard = 0;
-        }
-
-        public void AddScore(int amount)
-        {
-            this.Score += amount;
-            this.ScoreDeltaReveal += amount;
-            this.ScoreDeltaScoreboard += amount;
         }
     }
 }

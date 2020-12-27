@@ -18,6 +18,7 @@ using Common.DataModels.Responses;
 using Backend.GameInfrastructure;
 using Common.Code.Extensions;
 using Common.DataModels.Enums;
+using Backend.APIs.DataModels.UnityObjects;
 
 namespace Backend.Games.KevinsGames.Mimic
 {
@@ -212,39 +213,46 @@ namespace Backend.Games.KevinsGames.Mimic
         {
             List<UserDrawing> drawings = roundTracker.UsersToDisplay.Select(user => roundTracker.UsersToUserDrawings[user]).ToList();
             int indexOfOriginal = roundTracker.UsersToDisplay.IndexOf(roundTracker.originalDrawer);
+            drawings[indexOfOriginal].ShouldHighlightReveal = true;
 
             return new BlurredImageVoteAndRevealState(
                 lobby: this.Lobby,
                 drawings: drawings,
                 blurRevealDelay: MimicConstants.BlurDelay,
                 blurRevealLength: MimicConstants.BlurLength,
-                voteCountManager: (Dictionary<User, (int, double)> usersToVotes) =>
-                {
-                    CountVotes(usersToVotes, roundTracker);
-                },
                 votingTime: votingTime)
             {
-                VotingTitle = "Find the Original!",
-                IndexesOfObjectsToReveal = new List<int>() { indexOfOriginal },
+                VotingViewOverrides = new UnityViewOverrides
+                {
+                    Title = "Find the Original!",
+                },
+                VoteCountManager=CountVotes(roundTracker)
             };
         }
-        private void CountVotes(Dictionary<User, (int, double)> usersToVotes, RoundTracker roundTracker)
+        private Action<List<UserDrawing>,Dictionary<User,VoteInfo>> CountVotes(RoundTracker roundTracker)
         {
-            foreach (User user in usersToVotes.Keys)
+            return (List<UserDrawing> drawings, Dictionary<User, VoteInfo> votes) =>
             {
-                User userVotedFor = roundTracker.UsersToDisplay[usersToVotes[user].Item1];
-                userVotedFor.AddScore(MimicConstants.PointsForVote);
-
-                if (userVotedFor == roundTracker.originalDrawer)
+                foreach ((User user, VoteInfo vote) in votes)
                 {
-                    user.AddScore(CommonHelpers.PointsForSpeed(
-                                maxPoints: MimicConstants.PointsForCorrectPick(this.Lobby.GetAllUsers().Count),
-                                minPoints: MimicConstants.PointsForCorrectPick(this.Lobby.GetAllUsers().Count) / 10,
+                    User userVotedFor = ((UserDrawing)vote.ObjectsVotedFor[0]).Owner;
+                    if (userVotedFor == roundTracker.originalDrawer)
+                    {
+                        user.ScoreHolder.AddScore(
+                            CommonHelpers.PointsForSpeed(
+                                maxPoints: MimicConstants.PointsForCorrectPick(drawings.Count),
+                                minPoints: MimicConstants.PointsForCorrectPick(drawings.Count) / 10,
                                 startTime: MimicConstants.BlurDelay,
                                 endTime: MimicConstants.BlurDelay + MimicConstants.BlurLength,
-                                secondsTaken: usersToVotes[user].Item2));
+                                secondsTaken: vote.TimeTakenInMs / 1000.0f),
+                            Score.Reason.CorrectAnswerSpeed);
+                    }
+                    else
+                    {
+                        userVotedFor.ScoreHolder.AddScore(MimicConstants.PointsForVote, Score.Reason.ReceivedVotes);
+                    }
                 }
-            }
+            };
         }
         public void ValidateOptions(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {

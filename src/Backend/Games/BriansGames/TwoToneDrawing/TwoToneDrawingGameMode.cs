@@ -19,6 +19,8 @@ using static System.FormattableString;
 using Backend.GameInfrastructure;
 using Common.DataModels.Responses;
 using Common.DataModels.Enums;
+using Backend.Games.Common.DataModels.UserCreatedObjects.UserCreatedUnityObjects;
+using Backend.APIs.DataModels.UnityObjects;
 
 namespace Backend.Games.BriansGames.TwoToneDrawing
 {
@@ -150,20 +152,23 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
         private State GetVotingAndRevealState(ChallengeTracker challenge, TimeSpan? votingTime)
         {
             AssignUsersToChallenge(challenge);
-            List<string> randomizedTeamIds = challenge.TeamIdToDrawingMapping.Keys.OrderBy(_=> Rand.Next()).ToList();
+            List<string> randomizedTeamIds = challenge.TeamIdToDrawingMapping.Keys.OrderBy(_ => Rand.Next()).ToList();
             IReadOnlyList<string> orderedColors = challenge.Colors.AsReadOnly();
-            List<List<UserDrawing>> stackedDrawings = randomizedTeamIds.Select(teamId => orderedColors.Select(color=>(UserDrawing)challenge.TeamIdToDrawingMapping[teamId][color]).ToList()).ToList();
+            List<UserDrawingStack<TeamUserDrawing>> stackedDrawings = randomizedTeamIds.Select(
+                teamId => new UserDrawingStack<TeamUserDrawing>
+                {
+                    UserDrawings = orderedColors.Select(color=>challenge.TeamIdToDrawingMapping[teamId][color]).ToList()
+                }).ToList();
 
-            return new StackedDrawingVoteAndRevealState(
+            return new StackedDrawingVoteAndRevealState<TeamUserDrawing>(
                 lobby: this.Lobby,
                 stackedDrawings: stackedDrawings,
-                voteCountManager: (Dictionary<User, int> usersToVotes) =>
-                {
-                    CountVotes(usersToVotes, challenge, randomizedTeamIds);
-                },
                 votingTime: votingTime)
                 {
-                    VotingTitle = Invariant($"Which one is the best \"{challenge.Prompt}\"?"),
+                    VotingViewOverrides = new UnityViewOverrides
+                    {
+                        Title =Invariant($"Which one is the best \"{challenge.Prompt}\"?"),
+                    },
                     PromptAnswerAddOnGenerator = (User user, int answer) =>
                     {
                         if (challenge.TeamIdToDrawingMapping[randomizedTeamIds[answer]].Values.Any(drawing => drawing.Owner == user))
@@ -175,51 +180,33 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                             return "";
                         }
                     },
+                    VoteCountManager = CountVotes(challenge)
                 };
         }
-        private void CountVotes(Dictionary<User, int> usersToVotes, ChallengeTracker challenge, List<string> randomizedTeamIds)
+        private Action<List<UserDrawingStack<TeamUserDrawing>>,Dictionary<User,VoteInfo>> CountVotes(ChallengeTracker challenge)
         {
-            List<List<User>> usersVotedForEachAnswer = new List<List<User>>();
-            int mostVotes = 0;
-            for (int i = 0; i < randomizedTeamIds.Count; i++)
+            return (List<UserDrawingStack<TeamUserDrawing>> choices, Dictionary<User, VoteInfo> votes) =>
             {
-                usersVotedForEachAnswer.Add(new List<User>());
-            }
-            foreach (User user in usersToVotes.Keys)
-            {
-                int indexVotedFor = usersToVotes[user];
-                usersVotedForEachAnswer[indexVotedFor].Add(user);
-                if (usersVotedForEachAnswer[indexVotedFor].Count > mostVotes)
+                foreach ((User user, VoteInfo vote) in votes)
                 {
-                    mostVotes = usersVotedForEachAnswer[indexVotedFor].Count;
-                }
-            }
-            for (int i = 0; i < usersVotedForEachAnswer.Count; i++)
-            {
-                List<User> users = usersVotedForEachAnswer[i];
-                if (users.Count == mostVotes)
-                {
-                    foreach (User drawingUser in challenge.TeamIdToDrawingMapping[randomizedTeamIds[i]].Values.Select(drawing => drawing.Owner))
+                    List<User> drawingStackOwners =((UserDrawingStack<TeamUserDrawing>)vote.ObjectsVotedFor[0]).UserDrawings.Select(drawing => drawing.Owner).ToList();
+                    foreach(User votedForUser in drawingStackOwners)
                     {
-                        // 500 points if they helped draw the best drawing.
-                        drawingUser.AddScore(TwoToneDrawingConstants.PointsForMakingWinningDrawing);
+                        if(votedForUser != user)
+                        {
+                            votedForUser.ScoreHolder.AddScore(TwoToneDrawingConstants.PointsPerVote, Score.Reason.ReceivedVotes);
+                        }
                     }
                 }
-                foreach (User user in users)
+                int mostVotes = choices.Max((drawingStack) => drawingStack.VotesCastForThisObject.Count);
+                foreach(UserDrawingStack<TeamUserDrawing> drawingStack in choices.Where((drawingStack)=>drawingStack.VotesCastForThisObject.Count == mostVotes))
                 {
-                    if (users.Count == mostVotes)
+                    foreach(User userWhoVoted in drawingStack.VotesCastForThisObject.Select(vote => vote.UserWhoVoted))
                     {
-                        // If the user voted for the drawing with the most votes, give them 100 points
-                        user.AddScore(TwoToneDrawingConstants.PointsForVotingForWinningDrawing);
-                    }
-                    else if (challenge.TeamIdToDrawingMapping[randomizedTeamIds[i]].Values.Any(drawing => drawing.Owner == user))
-                    {
-                        // If the drawing didn't get the most votes and the user voted for themselves subtract points
-                        user.AddScore(TwoToneDrawingConstants.PointsToLoseForBadSelfVote);
+                        userWhoVoted.ScoreHolder.AddScore(TwoToneDrawingConstants.PointsForVotingForWinningDrawing, Score.Reason.VotedWithCrowd);
                     }
                 }
-            }
-            
+            };
         }
         private void AssignUsersToChallenge(ChallengeTracker challenge)
         {

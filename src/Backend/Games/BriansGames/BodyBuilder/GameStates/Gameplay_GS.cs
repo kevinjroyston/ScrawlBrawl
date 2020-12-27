@@ -61,9 +61,6 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                 SubmitButton = true,
             };
         }
-
-        
-       
         private int CurrentFinishingPosition { get; set; } = 1;
         private int NumPlayersDoneWithRound { get; set; } = 0;
         private int RoundMaxTurnLimit { get; }
@@ -290,7 +287,7 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                 {
                     RoundTracker.AssignedPeople[user].BeenScored = true;
                     RoundTracker.AssignedPeople[user].FinishedPosition = Invariant($"{CurrentFinishingPosition}");
-                    user.AddScore(WinningScoresByPlace[CurrentFinishingPosition]);
+                    user.ScoreHolder.AddScore(WinningScoresByPlace[CurrentFinishingPosition], Score.Reason.Finished);
                     someoneFinished = true;
                 }
             }

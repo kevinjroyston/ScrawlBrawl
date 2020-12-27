@@ -67,7 +67,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                                 {
                                     HeightInPx = ThreePartPeopleConstants.Heights[BodyPartType.Head],
                                     WidthInPx = ThreePartPeopleConstants.Widths[BodyPartType.Head],
-                                    ImageList = prompt.UsersToUserHands[user].Heads.Select(userDrawing => userDrawing.Drawing).ToArray()
+                                    ImageList = prompt.UsersToUserHands[user].HeadChoices.Select(userDrawing => userDrawing.Drawing).ToArray()
                                 }
                             },
                             new SubPrompt
@@ -76,7 +76,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                                 {
                                     HeightInPx = ThreePartPeopleConstants.Heights[BodyPartType.Body],
                                     WidthInPx = ThreePartPeopleConstants.Widths[BodyPartType.Body],
-                                    ImageList = prompt.UsersToUserHands[user].Bodies.Select(userDrawing => userDrawing.Drawing).ToArray()
+                                    ImageList = prompt.UsersToUserHands[user].BodyChoices.Select(userDrawing => userDrawing.Drawing).ToArray()
                                 }
                             },
                             new SubPrompt
@@ -85,7 +85,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                                 {
                                     HeightInPx = ThreePartPeopleConstants.Heights[BodyPartType.Legs],
                                     WidthInPx = ThreePartPeopleConstants.Widths[BodyPartType.Legs],
-                                    ImageList = prompt.UsersToUserHands[user].Legs.Select(userDrawing => userDrawing.Drawing).ToArray()
+                                    ImageList = prompt.UsersToUserHands[user].LegChoices.Select(userDrawing => userDrawing.Drawing).ToArray()
                                 }
                             },
                             new SubPrompt
@@ -99,19 +99,13 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                     },
                     formSubmitHandler: (User user, UserFormSubmission input) =>
                     {
-                        prompt.UsersToUserHands[user].Heads[(int)input.SubForms[0].Selector].Owner.AddScore(BattleReadyConstants.PointsForPartUsed);
-                        prompt.UsersToUserHands[user].Bodies[(int)input.SubForms[1].Selector].Owner.AddScore(BattleReadyConstants.PointsForPartUsed);
-                        prompt.UsersToUserHands[user].Legs[(int)input.SubForms[2].Selector].Owner.AddScore(BattleReadyConstants.PointsForPartUsed);
-                        prompt.UsersToUserHands[user].Contestant = new Person
-                        {
-                            BodyPartDrawings = new Dictionary<BodyPartType, PeopleUserDrawing>{
-                                {BodyPartType.Head, prompt.UsersToUserHands[user].Heads[(int)input.SubForms[0].Selector] },
-                                {BodyPartType.Body, prompt.UsersToUserHands[user].Bodies[(int)input.SubForms[1].Selector] },
-                                {BodyPartType.Legs, prompt.UsersToUserHands[user].Legs[(int)input.SubForms[2].Selector] }
-                            },
-                            Name = input.SubForms[3].ShortAnswer,
-                            Owner = user
-                        };
+                        prompt.UsersToUserHands[user].BodyPartDrawings = new Dictionary<BodyPartType, PeopleUserDrawing>{
+                                {BodyPartType.Head, prompt.UsersToUserHands[user].HeadChoices[(int)input.SubForms[0].Selector] },
+                                {BodyPartType.Body, prompt.UsersToUserHands[user].BodyChoices[(int)input.SubForms[1].Selector] },
+                                {BodyPartType.Legs, prompt.UsersToUserHands[user].LegChoices[(int)input.SubForms[2].Selector] }
+                            };
+                        prompt.UsersToUserHands[user].Name = input.SubForms[3].ShortAnswer;
+                        prompt.UsersToUserHands[user].Owner = user;
                         return (true, String.Empty);
                     }
                     ));

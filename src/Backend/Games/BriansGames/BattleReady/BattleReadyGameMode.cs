@@ -22,6 +22,8 @@ using Backend.GameInfrastructure;
 using Common.DataModels.Enums;
 using Common.Code.Helpers;
 using Common.DataModels.Interfaces;
+using Backend.APIs.DataModels.UnityObjects;
+using static Backend.Games.BriansGames.BattleReady.DataModels.Prompt;
 
 namespace Backend.Games.BriansGames.BattleReady
 {
@@ -248,10 +250,10 @@ namespace Backend.Games.BriansGames.BattleReady
                         prompt.UsersToUserHands.TryAdd(user, new Prompt.UserHand
                         {
                             // Users have even probabilities regardless of how many drawings they submitted.
-                            Heads = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(headDrawings, numOfEachPartInHand),
-                            Bodies = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(bodyDrawings, numOfEachPartInHand),
-                            Legs = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(legsDrawings, numOfEachPartInHand),
-                            Contestant = new Person()
+                            HeadChoices = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(headDrawings, numOfEachPartInHand),
+                            BodyChoices = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(bodyDrawings, numOfEachPartInHand),
+                            LegChoices = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(legsDrawings, numOfEachPartInHand),
+                            Owner = user
                         });
 
                         if (!RoundTracker.UsersToAssignedPrompts.ContainsKey(user))
@@ -296,7 +298,7 @@ namespace Backend.Games.BriansGames.BattleReady
             {
                 return () =>
                 {
-                    List<Person> winnersPeople = roundPrompts.Select((prompt) => prompt.UsersToUserHands[prompt.Winner].Contestant).ToList();
+                    List<Person> winnersPeople = roundPrompts.Select((prompt) => (Person)prompt.UsersToUserHands[prompt.Winner]).ToList();
                     
                     countRounds++;
                     GameState displayPeople = new DisplayPeople_GS(
@@ -340,38 +342,53 @@ namespace Backend.Games.BriansGames.BattleReady
         private State GetVotingAndRevealState(Prompt prompt, TimeSpan? votingTime)
         {
             List<User> randomizedUsersToDisplay = prompt.UsersToUserHands.Keys.OrderBy(_ => Rand.Next()).ToList();
-            List<Person> peopleToVoteOn = randomizedUsersToDisplay.Select(user => prompt.UsersToUserHands[user].Contestant).ToList();
-            List<string> imageTitles = randomizedUsersToDisplay.Select(user => prompt.UsersToUserHands[user].Contestant.Name).ToList();
+            List<UserHand> peopleToVoteOn = randomizedUsersToDisplay.Select(user => prompt.UsersToUserHands[user]).ToList();
+            List<string> imageTitles = randomizedUsersToDisplay.Select(user => prompt.UsersToUserHands[user].Name).ToList();
             List<string> imageHeaders = randomizedUsersToDisplay.Select(user => user.DisplayName).ToList();
 
-            return new ThreePartPersonVoteAndRevealState(
+            var voteAndReveal = new ThreePartPersonVoteAndRevealState<UserHand>(
                 lobby: this.Lobby,
                 people: peopleToVoteOn,
-                voteCountManager: (Dictionary<User, int> usersToVotes) =>
-                {
-                    CountVotes(usersToVotes, prompt, randomizedUsersToDisplay);
-                },
                 votingTime: votingTime)
             {
-                VotingTitle = prompt.Text,
-                ObjectTitles = imageTitles,
-                ShowObjectTitlesForVoting = true,
-                ObjectHeaders = imageHeaders,
-                ShowObjectHeadersForVoting = false
-            };
-        }
-        private void CountVotes(Dictionary<User, int> usersToVotes, Prompt prompt, List<User> answerUsers)
-        {
-
-            foreach (User user in usersToVotes.Keys)
-            {
-                User userVotedFor = answerUsers[usersToVotes[user]];
-                userVotedFor.AddScore(BattleReadyConstants.PointsForVote);
-                prompt.UsersToUserHands[userVotedFor].VotesForContestant++;
-                if (prompt.Winner == null || prompt.UsersToUserHands[userVotedFor].VotesForContestant > prompt.UsersToUserHands[prompt.Winner].VotesForContestant)
+                VotingViewOverrides = new UnityViewOverrides
                 {
-                    prompt.Winner = userVotedFor;
+                    Title = prompt.Text,
+                },
+                RevealViewOverrides = new UnityViewOverrides
+                {
+                    Title = prompt.Text,
+                },
+                VoteCountManager = CountVotes
+            };
+            voteAndReveal.AddExitListener(()=>
+            {
+                // Determine winner.
+                foreach ((User user, UserHand userHand) in prompt.UsersToUserHands)
+                {
+                    if (prompt.Winner == null || userHand.VotesCastForThisObject.Count > prompt.UsersToUserHands[prompt.Winner].VotesCastForThisObject.Count)
+                    {
+                        prompt.Winner = user;
+                    }
                 }
+            });
+            return voteAndReveal;
+        }
+        private void CountVotes(List<UserHand> choices, Dictionary<User, VoteInfo> votes)
+        {
+            // Points for using drawings.
+            foreach (UserHand hand in choices)
+            {
+                hand.BodyPartDrawings[BodyPartType.Head].Owner.ScoreHolder.AddScore(BattleReadyConstants.PointsForPartUsed, Score.Reason.DrawingUsed);
+                hand.BodyPartDrawings[BodyPartType.Body].Owner.ScoreHolder.AddScore(BattleReadyConstants.PointsForPartUsed, Score.Reason.DrawingUsed);
+                hand.BodyPartDrawings[BodyPartType.Legs].Owner.ScoreHolder.AddScore(BattleReadyConstants.PointsForPartUsed, Score.Reason.DrawingUsed);
+            }
+
+            // Points for vote.
+            foreach ((User user, VoteInfo voteInfo) in votes)
+            {
+                User userVotedFor = ((UserHand)voteInfo.ObjectsVotedFor[0]).Owner;
+                userVotedFor.ScoreHolder.AddScore(BattleReadyConstants.PointsForVote, Score.Reason.ReceivedVotes);
             }
         }
     }

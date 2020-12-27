@@ -51,7 +51,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
             {
                 if (differentUser.Equals(userToVoteResults[user]))
                 {
-                    user.AddScore(FriendQuizConstants.PointsForExtraRound);
+                    user.ScoreHolder.AddScore(FriendQuizConstants.PointsForExtraRound, Score.Reason.CorrectAnswer);
                 }
 
                 question.ExtraRoundUserToVotesRecieved.AddOrUpdate(

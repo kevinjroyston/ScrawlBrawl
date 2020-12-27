@@ -3,7 +3,7 @@
     public static class BattleReadyConstants
     {
         public const int PointsForVote = 100;
-        public const int PointsForPartUsed = 100;
+        public const int PointsForPartUsed = 50;
 
         public const double SetupPerDrawingTimerMin = 45;
         public const double SetupPerDrawingTimerAve = 90;
