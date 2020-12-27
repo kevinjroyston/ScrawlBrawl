@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-
 }
 
 .user-wrapper{
@@ -19,13 +18,13 @@
     margin-bottom: .5rem;
 }
 
-.user-actions{
-    max-width: 200px;
-}
-
 .drawingboard{
     width: 700px;
     height: 700px;
+}
+
+.user-actions{
+    max-width: 200px;
 }
 
 .plrskip-user-wrapper {
@@ -33,6 +32,18 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    width: 700px;
+    min-width: 700px;
+}
+
+@media only screen and (max-width: 768px) {
+    .plrskip-user-wrapper{
+        min-width: auto;
+        padding: .5rem;
+        width: 100%;
+    }
+
+    .drawingboard {
+        width: 100%;
+        height: auto;
+    }
 }
