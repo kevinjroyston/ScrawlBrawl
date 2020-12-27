@@ -14,19 +14,18 @@ import {NotificationService} from '@core/services/notification.service';
     styleUrls: ['./gallerypanel.component.scss'],
     encapsulation: ViewEncapsulation.Emulated
 })
-
 export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 
     private _drawingDirective: DrawingDirective;
     private _drawingOptions: DrawingPromptMetadata;
-    private _galleryPanelType: string;
+    private _galleryPanelType: Galleries.GalleryPanelType;
     @Output() closeSheet = new EventEmitter<string>();
     @Input() set drawingDirective(value: DrawingDirective) { this._drawingDirective = value; this.loadMostRecentDrawing() }
              get drawingDirective(): DrawingDirective { return this._drawingDirective}
     @Input() set drawingOptions(value: DrawingPromptMetadata){ this._drawingOptions = value; this.loadMostRecentDrawing() }
              get drawingOptions(): DrawingPromptMetadata {return this._drawingOptions}
-    @Input() set galleryPanelType(value: string){ this._galleryPanelType = value; this.loadMostRecentDrawing() }   /* Favorites | Recent | Sample */
-             get galleryPanelType(): string {return this._galleryPanelType}
+    @Input() set galleryPanelType(value: Galleries.GalleryPanelType){ this._galleryPanelType = value; this.loadMostRecentDrawing() }   /* Favorites | Recent | Sample */
+             get galleryPanelType(): Galleries.GalleryPanelType {return this._galleryPanelType}
     
     @ViewChild("galleryPictures") galleryPictures: ElementRef;
 
@@ -44,7 +43,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 
     private loadTheGallery(){
         if (this.drawingType) {
-            if (this.galleryPanelType==Galleries.samples) {
+            if (this.galleryPanelType == Galleries.GalleryPanelType.SAMPLES) {
                 this.fetchGallerySamples(); 
             } else {
                 this.loadGalleryImages();
@@ -79,7 +78,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
         // if the gallery option galleryAutoLoadMostRecent is true, then take the last "recent" image and put it on the canvas
         // this will get called multiple times until all of the variables are populated
         if (this.galleryPanelType && this.drawingDirective && this.drawingOptions && this.drawingOptions.galleryOptions) {
-          if ((this.drawingOptions.galleryOptions.galleryAutoLoadMostRecent) && (this.galleryPanelType==Galleries.recent) && (this.gallery.length > 0)) {
+          if ((this.drawingOptions.galleryOptions.galleryAutoLoadMostRecent) && (this.galleryPanelType==Galleries.GalleryPanelType.RECENT) && (this.gallery.length > 0)) {
               this.drawingDirective.loadImageString(this.gallery[this.gallery.length-1].image);
           }
         }
@@ -87,7 +86,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 
     private maxGallerySize():number {
         // find the max based on gallerytype and panel type
-        if (this.galleryPanelType!=Galleries.recent) {
+        if (this.galleryPanelType!=Galleries.GalleryPanelType.RECENT) {
           return this.galleryType.maxLocalFavorites
         } else {
           return this.galleryType.maxLocalRecent
@@ -95,7 +94,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
     }
 
     storeImageInGallery(imgStr, onDestroy = false){
-        if ((imgStr=='') || (this.drawingType==Galleries.samples)) {return}  // can't write to samples
+        if ((imgStr=='') || (this.drawingType==Galleries.GalleryPanelType.SAMPLES)) {return}  // can't write to samples
         let alreadyInList : boolean=false;
         this.gallery.forEach((drawing,index) => {
             if (drawing.image == imgStr){
@@ -109,7 +108,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
         if (!alreadyInList){
             /* if we are at max length for this gallery type, error if favorites, delete the first (oldest) image if recent */
             if (this.gallery.length >= this.maxGallerySize())  {
-                if (this.galleryPanelType==Galleries.favorites) {
+                if (this.galleryPanelType == Galleries.GalleryPanelType.FAVORITES) {
                     this.notificationService.addMessage("You can only save "+this.maxGallerySize()+" favorites.", null, {panelClass: ['error-snackbar']});
                     return;
                 }
@@ -120,7 +119,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 
             this.saveTheGallery();
             this.galleryDisplayImage(drawing.image);
-            this.notificationService.addMessage("Image successfully favorited.", null, {panelClass: ['success-snackbar']});
+            this.notificationService.addMessage("Image successfully saved.", null, {panelClass: ['success-snackbar']});
         }
     }
 
@@ -163,10 +162,10 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 
     private galleryDisplayImage(imgStr) { /* add an image to the galleryPictures div */
         let wrapper = document.createElement('div');
-        wrapper.className = "galleryImage";
         let img = document.createElement('img');
+        wrapper.className = "galleryImage";
         wrapper.appendChild(img);
-        img.src=imgStr;
+        img.src = imgStr;
         this.galleryPictures.nativeElement.append(wrapper);
     }
 
@@ -177,7 +176,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
              /* we clicked on an image, see if we are deletiting it */
             if (this.deleteOnNextClick) {
                 this.deleteOnNextClick = false;
-                if (this.galleryPanelType==Galleries.samples) {
+                if (this.galleryPanelType == Galleries.GalleryPanelType.SAMPLES) {
                     alert("You cannot delete from Samples.")
                 } else {
                     if (confirm("Are you sure you want to delete this image?")){

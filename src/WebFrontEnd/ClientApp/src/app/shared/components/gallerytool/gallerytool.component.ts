@@ -29,7 +29,8 @@ export class GalleryTool implements AfterViewInit {
     onChange;
     lastDrawingChange: string = "";
     galleryOptions = environment.galleryOptions;
-    currentTab:GalleryPanel;
+    currentTab: GalleryPanel;
+    galleryPanelTypes = Galleries.GalleryPanelType;
 
     constructor(private _bottomSheetRef: MatBottomSheetRef<GalleryTool>, @Inject(MAT_BOTTOM_SHEET_DATA) public data) {
         this.initializeBottomSheet(data);

@@ -2,6 +2,7 @@
     display: flex;
     box-shadow: var(--shadow-lg);
     background-color: var(--card-background);
+    height: 100%;
 }
 
 .drawb-top {
@@ -11,10 +12,6 @@
 
 .drawb-left {
     flex: 1;
-}
-
-.drawb-canvas {
-    flex-basis: 65%;
 }
 
 .radio-group {

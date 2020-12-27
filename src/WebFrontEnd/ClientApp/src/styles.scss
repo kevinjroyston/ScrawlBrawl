@@ -152,10 +152,12 @@ ion-icon {
         @include responsive(3);
         transition: all cubic-bezier(0.19, 1, 0.22, 1);
         padding: .75rem; 
+        max-height: 50%;
     }
 
     img {
         width: 100%;
+        height: 100%;
         cursor: pointer;
         box-shadow: var(--shadow-md);
 

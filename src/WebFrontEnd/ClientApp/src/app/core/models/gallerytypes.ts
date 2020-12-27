@@ -4,6 +4,12 @@ namespace Galleries  {
     export const recent: string = 'Recent';
     export const samples: string = 'Samples';
 
+    export enum GalleryPanelType {
+        SAMPLES = "Samples",
+        RECENT = "Recent",
+        FAVORITES = "Favorite"
+    }
+
     export class GalleryType {
         drawingType: string;
         galleryDesc: string;
