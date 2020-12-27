@@ -1,6 +1,6 @@
 .drawb {
     display: flex;
-    border: var(--border);
+    box-shadow: var(--shadow-lg);
     background-color: var(--card-background);
 }
 

@@ -5,9 +5,7 @@ import {GalleryPanel} from '@shared/components/gallerypanel/gallerypanel.compone
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
 import { environment } from '../../../../environments/environment';
-
 import Galleries from '@core/models/gallerytypes';
-import { DrawingBoard } from '../drawingboard/drawingboard.component';
 
 @Component({
     selector: 'gallerytool',

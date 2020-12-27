@@ -109,6 +109,16 @@ ion-icon {
 
 /* Mat */
 
+.error-snackbar {
+    background: #f44336;
+    color: var(--white-primary);
+}
+
+.success-snackbar {
+    background: #4caf50;
+    color: var(--white-primary);
+}
+
 .mat-progress-spinner circle,
 .mat-spinner circle {
     stroke: var(--text-color);

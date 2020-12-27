@@ -6,6 +6,7 @@ import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-she
 import { FixedAsset } from '@core/http/fixedassets';
 import { Inject } from '@angular/core';
 import Galleries from '@core/models/gallerytypes';
+import {NotificationService} from '@core/services/notification.service';
 
 @Component({
     selector: 'gallerypanel',
@@ -38,7 +39,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
     private galleryType: Galleries.GalleryType;
     private deleteOnNextClick: boolean = false;
     
-    constructor(@Inject(FixedAsset) private fixedAsset: FixedAsset, private _colorPicker: MatBottomSheet) {
+    constructor(@Inject(FixedAsset) private fixedAsset: FixedAsset, private _colorPicker: MatBottomSheet, public notificationService : NotificationService) {
     }
 
     private loadTheGallery(){
@@ -84,8 +85,6 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
         }
     }
 
-
-
     private maxGallerySize():number {
         // find the max based on gallerytype and panel type
         if (this.galleryPanelType!=Galleries.recent) {
@@ -103,7 +102,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
             /* if we are at max length for this gallery type, error if favorites, delete the first (oldest) image if recent */
             if (this.gallery.length >= this.maxGallerySize())  {
                 if (this.galleryPanelType==Galleries.favorites) {
-                    alert("You can only save "+this.maxGallerySize()+" favorites.");
+                    this.notificationService.addMessage("You can only save "+this.maxGallerySize()+" favorites.", null, {panelClass: ['error-snackbar']});
                     return;
                 }
                 this.gallery.splice(0, 1);
@@ -113,6 +112,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 
             this.saveTheGallery();
             this.galleryDisplayImage(drawing.image);
+            this.notificationService.addMessage("Image successfully favorited.", null, {panelClass: ['success-snackbar']});
         }
     }
 
