@@ -17,7 +17,7 @@ This file contains the VIEWER that used to play games on  ScrawlBrawl.tv
 
 You must restart the viewer between each game.
 
-
+Screen will turn blank if the connected lobby does not have any users in it yet.
 --------------------------------
 ************* NOTES ************
 --------------------------------
