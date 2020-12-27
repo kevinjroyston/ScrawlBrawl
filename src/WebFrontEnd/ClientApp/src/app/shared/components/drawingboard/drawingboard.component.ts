@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation, Input, AfterViewInit, ViewChild, ElementRef, HostListener  } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {ColorPickerComponent} from '../colorpicker/colorpicker.component'
-import {GalleryTool} from '@shared/components/gallerytool/gallerytool.component';
+import {GalleryTool} from '@shared/components/gallery/gallerytool/gallerytool.component';
 import {DrawingDirective,DrawingPromptMetadata,DrawingModes} from '@shared/components/drawingdirective.component';
 import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-sheet';
 import Galleries from '@core/models/gallerytypes';

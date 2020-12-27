@@ -10,6 +10,10 @@ namespace Galleries  {
         FAVORITES = "Favorite"
     }
 
+    export interface GalleryDrawing {
+        image: string;
+    }
+
     export class GalleryType {
         drawingType: string;
         galleryDesc: string;

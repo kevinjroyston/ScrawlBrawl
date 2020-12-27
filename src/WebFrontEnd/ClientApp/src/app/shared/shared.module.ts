@@ -34,9 +34,9 @@ import { YoutubeIcon } from './components/svgs/socials/youtube';
 import { FacebookIcon } from './components/svgs/socials/facebook';
 import { ColorPickerComponent } from './components/colorpicker/colorpicker.component';
 import { SimpleLinkComponent } from './components/simplebuttons/link/link.component';
-import {MatTabsModule} from '@angular/material/tabs';
-import {GalleryTool} from './components/gallerytool/gallerytool.component';
-import {GalleryPanel} from './components/gallerypanel/gallerypanel.component';
+import { GalleryTool } from './components/gallery/gallerytool/gallerytool.component';
+import { GalleryPanel } from './components/gallery/gallerypanel/gallerypanel.component';
+import { GalleryPicture } from './components/gallery/gallerypicture/gallerypicture.component';
 
 @NgModule({
   imports: [
@@ -47,7 +47,6 @@ import {GalleryPanel} from './components/gallerypanel/gallerypanel.component';
     ColorPickerModule,
     UiSwitchModule,
     FormsModule,
-    MatTabsModule,
     ReactiveFormsModule,
     RouterModule
   ],
@@ -61,6 +60,7 @@ import {GalleryPanel} from './components/gallerypanel/gallerypanel.component';
     DrawingDirective,
     GalleryPanel,
     GalleryTool,
+    GalleryPicture,
     SelectorDirective,
     GameAssetDirective,
     IconButtonComponent,

@@ -3,7 +3,6 @@
 @import "styles/animations";
 @import "styles/theme";
 @import "styles/common";
-@import 'styles/mixins';
 
 html,
 body {
@@ -138,33 +137,6 @@ ion-icon {
 .mat-dialog-container {
     background: var(--card-background) !important;
     color: var(--text-color) !important;
-}
-
-.galleryPics {
-    display: flex;
-    flex-wrap: wrap;
-    width: 600px;
-    height: 400px;
-    justify-content: space-evenly;
-    background-color: var(--surface-background);
-
-    .galleryImage {
-        @include responsive(3);
-        transition: all cubic-bezier(0.19, 1, 0.22, 1);
-        padding: .75rem; 
-        max-height: 50%;
-    }
-
-    img {
-        width: 100%;
-        height: 100%;
-        cursor: pointer;
-        box-shadow: var(--shadow-md);
-
-        &:hover {
-            box-shadow: var(--shadow-lg);
-        }
-    }
 }
 
 /* Remove */

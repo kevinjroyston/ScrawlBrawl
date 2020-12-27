@@ -1,10 +1,10 @@
 import { Component, Inject, ViewEncapsulation, Input, AfterViewInit, ViewChild, ElementRef, HostListener  } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {DrawingDirective,DrawingPromptMetadata} from '@shared/components/drawingdirective.component';
-import {GalleryPanel} from '@shared/components/gallerypanel/gallerypanel.component';
+import {GalleryPanel} from '@shared/components/gallery/gallerypanel/gallerypanel.component';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../../environments/environment';
 import Galleries from '@core/models/gallerytypes';
 
 @Component({

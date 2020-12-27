@@ -1,0 +1,8 @@
+.galleryPics {
+    display: flex;
+    flex-wrap: wrap;
+    width: 600px;
+    height: 400px;
+    justify-content: space-evenly;
+    background-color: var(--surface-background);
+}

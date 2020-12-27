@@ -1,0 +1,11 @@
+<div id="galleryRow" class="grid-container">
+    <div class="galleryPics" id="galleryPictures">
+        <gallerypicture 
+            *ngFor="let drawing of gallery" 
+            [galleryPanelType]="galleryPanelType" 
+            [drawing]="drawing"
+            (deleteDrawing)="removeImageFromGallery(drawing.image)"
+        >
+        </gallerypicture>
+    </div>
+</div>
