@@ -94,14 +94,15 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
         }
     }
 
-    storeImageInGallery(imgStr){
+    storeImageInGallery(imgStr, onDestroy = false){
         if ((imgStr=='') || (this.drawingType==Galleries.samples)) {return}  // can't write to samples
-        let alreadyInList:boolean=false;
+        let alreadyInList : boolean=false;
         this.gallery.forEach((drawing,index) => {
-            if (drawing.image==imgStr){
-                alreadyInList=true; 
-                console.log('hello')
-                this.notificationService.addMessage("Image is already in favorites", null, {panelClass: ['error-snackbar']});
+            if (drawing.image == imgStr){
+                alreadyInList=true;
+                if (!onDestroy) {
+                    this.notificationService.addMessage("Image is already in favorites", null, {panelClass: ['error-snackbar']});
+                }
                 return
             }
         })

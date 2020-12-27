@@ -45,9 +45,9 @@ export class GalleryTool implements AfterViewInit {
         this._bottomSheetRef.dismiss();
     }
 
-    storeMostRecentDrawing(){
+    storeMostRecentDrawing(onDestroy = false){
         if (this.lastDrawingChange != "") {
-            this.galleryRecent.storeImageInGallery(this.lastDrawingChange);
+            this.galleryRecent.storeImageInGallery(this.lastDrawingChange, onDestroy);
             this.lastDrawingChange = "";
         }
     }
@@ -81,7 +81,7 @@ export class GalleryTool implements AfterViewInit {
     }
 
     ngOnDestroy() {
-        this.storeMostRecentDrawing();
+        this.storeMostRecentDrawing(true);
     }
 
     ngAfterViewInit(){
