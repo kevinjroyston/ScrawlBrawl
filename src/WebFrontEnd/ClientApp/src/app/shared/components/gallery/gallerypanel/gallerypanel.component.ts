@@ -36,7 +36,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 
     private loadTheGallery(){
         if (this.drawingType) {
-            if (this.galleryPanelType == Galleries.GalleryPanelType.SAMPLES) {
+            if (this.galleryPanelType === Galleries.GalleryPanelType.SAMPLES) {
                 this.fetchGallerySamples(); 
             } else {
                 this.loadGalleryImages();
@@ -53,7 +53,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
     }
 
     private setDrawingType(typ){
-       if ((typ) && (typ != this._drawingType)){
+       if ((typ) && (typ !== this._drawingType)){
             this.clearExistingGallery();
             this._drawingType  = typ;
             this.galleryType = Galleries.galleryFromDrawingType(typ);
@@ -79,7 +79,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 
     private maxGallerySize():number {
         // find the max based on gallerytype and panel type
-        if (this.galleryPanelType != Galleries.GalleryPanelType.RECENT) {
+        if (this.galleryPanelType !== Galleries.GalleryPanelType.RECENT) {
           return this.galleryType.maxLocalFavorites
         } else {
           return this.galleryType.maxLocalRecent
@@ -87,10 +87,10 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
     }
 
     storeImageInGallery(imgStr, onDestroy = false){
-        if ((imgStr=='') || (this.drawingType == Galleries.GalleryPanelType.SAMPLES)) {return}  // can't write to samples
+        if ((imgStr=='') || (this.drawingType === Galleries.GalleryPanelType.SAMPLES)) {return}  // can't write to samples
         let alreadyInList : boolean=false;
         this.gallery.forEach((drawing,index) => {
-            if (drawing.image == imgStr){
+            if (drawing.image === imgStr){
                 alreadyInList=true;
                 if (!onDestroy) {
                     this.notificationService.addMessage("Image is already in favorites", null, {panelClass: ['error-snackbar']});
@@ -101,8 +101,8 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
         if (!alreadyInList){
             /* if we are at max length for this gallery type, error if favorites, delete the first (oldest) image if recent */
             if (this.gallery.length >= this.maxGallerySize())  {
-                if (this.galleryPanelType == Galleries.GalleryPanelType.FAVORITES) {
-                    this.notificationService.addMessage("You can only save "+this.maxGallerySize()+" favorites.", null, {panelClass: ['error-snackbar']});
+                if (this.galleryPanelType === Galleries.GalleryPanelType.FAVORITES) {
+                    this.notificationService.addMessage(`You can only save ${this.maxGallerySize()} favorites.`, null, {panelClass: ['error-snackbar']});
                     return;
                 }
                 this.gallery.splice(0, 1);
@@ -111,7 +111,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
             this.gallery.push(drawing);
 
             this.saveTheGallery();
-            this.notificationService.addMessage("Image successfully saved.", null, {panelClass: ['success-snackbar']});
+            this.notificationService.addMessage(`Image successfully saved to ${this.galleryType.galleryDesc} - ${this.galleryPanelType}.`, null, {panelClass: ['success-snackbar']});
         }
     }
 
@@ -123,7 +123,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
             if (placeInList >= 0){
                 this.gallery.splice(placeInList, 1);
                 this.saveTheGallery();
-                this.notificationService.addMessage("Image successfully deleted.", null, {panelClass: ['success-snackbar']});
+                this.notificationService.addMessage(`Image successfully deleted from ${this.galleryType.galleryDesc}`, null, {panelClass: ['success-snackbar']});
             }
         }
     }
@@ -159,7 +159,6 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
 
     /************ Fetch Samples from the fixed assets ***********/
     private fetchGallerySamples(){
-        console.log('hello')
         this.fixedAsset.fetchFixedAsset(this.fixedAsset.determineGalleryURI(this.drawingType)).subscribe({
             next: (data) => {
                 if (data) {
