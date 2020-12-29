@@ -29,6 +29,8 @@ import { BluePencilCharacter } from './components/svgs/characters/bluepencil';
 import { YellowCrayonCharacter } from './components/svgs/characters/yellowcrayon';
 import { BlackPenCharacter } from './components/svgs/characters/blackpen';
 import { TwitchIcon } from './components/svgs/socials/twitch';
+import { DiscordIcon } from './components/svgs/socials/discord';
+import { RedditIcon } from './components/svgs/socials/reddit';
 import { TwitterIcon } from './components/svgs/socials/twitter';
 import { YoutubeIcon } from './components/svgs/socials/youtube';
 import { FacebookIcon } from './components/svgs/socials/facebook';
@@ -79,7 +81,9 @@ import {GalleryPanel} from './components/gallerypanel/gallerypanel.component';
     TwitchIcon,
     TwitterIcon,
     YoutubeIcon,
-    FacebookIcon
+    FacebookIcon,
+    RedditIcon,
+    DiscordIcon
   ],
   exports: [
     CommonModule,
@@ -114,7 +118,9 @@ import {GalleryPanel} from './components/gallerypanel/gallerypanel.component';
     TwitchIcon,
     TwitterIcon,
     YoutubeIcon,
-    FacebookIcon
+    FacebookIcon,
+    RedditIcon,
+    DiscordIcon
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
