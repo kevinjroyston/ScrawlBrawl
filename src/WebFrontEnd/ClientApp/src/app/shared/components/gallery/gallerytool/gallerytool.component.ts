@@ -63,6 +63,7 @@ export class GalleryTool implements AfterViewInit {
             this.drawingDirective.handleClearUndo();
         }
         this._drawingType = typ;
+        this.drawingOptions.drawingType = typ;
         this.galleryFavorites.drawingType = typ;
         this.galleryRecent.drawingType = typ;
         this.gallerySamples.drawingType = typ;
