@@ -9,12 +9,12 @@
         public const double SetupPerDrawingTimerAve = 90;
         public const double SetupPerDrawingTimerMax = 120;
 
-        public const double SetupPerPromptTimerMin = 30;
-        public const double SetupPerPromptTimerAve = 60;
+        public const double SetupPerPromptTimerMin = 45;
+        public const double SetupPerPromptTimerAve = 90;
         public const double SetupPerPromptTimerMax = 120;
 
-        public const double PerCreationTimerMin = 30;
-        public const double PerCreationTimerAve = 60;
+        public const double PerCreationTimerMin = 45;
+        public const double PerCreationTimerAve = 90;
         public const double PerCreationTimerMax = 120;
 
         public const double VotingTimerMin = 30;

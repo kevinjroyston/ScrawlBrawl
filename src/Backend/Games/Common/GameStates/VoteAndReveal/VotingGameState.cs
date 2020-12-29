@@ -12,6 +12,7 @@ using System.Linq;
 using Backend.GameInfrastructure;
 using Backend.GameInfrastructure.DataModels.Enums;
 using FluentAssertions;
+using System.Collections.Concurrent;
 
 namespace Backend.Games.Common.GameStates.VoteAndReveal
 {
@@ -19,14 +20,14 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
     {
         private Func<User, List<T>, UserPrompt> PromptGenerator { get; set; }
         private List<T> ObjectList { get; set; }
-        private Dictionary<User, UserPrompt> PromptsPerUser { get; set; } = new Dictionary<User, UserPrompt>();
-        private Dictionary<User, VoteInfo> UserVotes { get; set; } = new Dictionary<User, VoteInfo>();
+        private ConcurrentDictionary<User, UserPrompt> PromptsPerUser { get; set; } = new ConcurrentDictionary<User, UserPrompt>();
+        private ConcurrentDictionary<User, VoteInfo> UserVotes { get; set; } = new ConcurrentDictionary<User, VoteInfo>();
         protected DateTime StartingTime { get; private set; }
         public VotingGameState(
             Lobby lobby,
             Func<User, List<T>, UserPrompt> votingUserPromptGenerator,
             List<T> votingObjects,
-            Action<List<T>, Dictionary<User,VoteInfo>> votingExitListener,
+            Action<List<T>, IDictionary<User,VoteInfo>> votingExitListener,
             UnityView votingUnityView,
             List<User> votingUsers,
             TimeSpan? votingTime = null) : base(lobby)
@@ -62,16 +63,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
 
         private (bool, string) FormSubmitHandler(User user, UserFormSubmission submission)
         {
-            SubPrompt subPrompt = this.PromptsPerUser[user].SubPrompts[0];
-            T objectVotedFor = null;
-            if (subPrompt.Answers != null)
-            {
-                objectVotedFor = this.ObjectList[submission.SubForms[0].RadioAnswer.Value];
-            }
-            else if (subPrompt?.Selector?.ImageList != null)
-            {
-                objectVotedFor = this.ObjectList[submission.SubForms[0].RadioAnswer.Value];
-            }
+            T objectVotedFor = TryExtractObjectVotedFor(user, submission);
             objectVotedFor.Should().NotBeNull(because: "Could not find an object voted for");
             VoteInfo vote = new VoteInfo
             {
@@ -99,18 +91,24 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
                 subPrompt.Selector.ImageList.Should().HaveCount(this.ObjectList.Count, "Answers list length should match length of voting object list");
             }
         }
-        private UserTimeoutAction FormTimeoutHandler(User user, UserFormSubmission submission)
+
+        private T TryExtractObjectVotedFor(User user, UserFormSubmission submission)
         {
             SubPrompt subPrompt = this.PromptsPerUser[user].SubPrompts[0];
             T objectVotedFor = null;
-            if (subPrompt.Answers != null)
+            if (subPrompt?.Answers != null && (submission?.SubForms?.FirstOrDefault()?.RadioAnswer != null))
             {
-                objectVotedFor = this.ObjectList[submission.SubForms[0].RadioAnswer.Value];
+                objectVotedFor = this.ObjectList[submission.SubForms.FirstOrDefault().RadioAnswer.Value];
             }
-            else if (subPrompt?.Selector?.ImageList != null)
+            else if (subPrompt?.Selector?.ImageList != null && (submission?.SubForms?.FirstOrDefault()?.Selector != null))
             {
-                objectVotedFor = this.ObjectList[submission.SubForms[0].RadioAnswer.Value];
+                objectVotedFor = this.ObjectList[submission.SubForms[0].Selector.Value];
             }
+            return objectVotedFor;
+        }
+        private UserTimeoutAction FormTimeoutHandler(User user, UserFormSubmission submission)
+        {
+            T objectVotedFor = TryExtractObjectVotedFor(user, submission);
 
             // TODO: Support ability to not count a vote.
             if (objectVotedFor == null)

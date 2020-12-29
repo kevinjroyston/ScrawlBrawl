@@ -13,7 +13,7 @@ namespace Backend.GameInfrastructure.DataModels.Users
         public IReadOnlyDictionary<Scope, int> ScoreAggregates => _ScoreAggregates;
         public IReadOnlyDictionary<Scope, IReadOnlyDictionary<Reason, int>> ScoreBreakdowns => _ScoreBreakdowns.ToDictionary((kvp)=>kvp.Key, (kvp)=>(IReadOnlyDictionary<Reason,int>)kvp.Value);
 
-        private ConcurrentDictionary<Scope, int> _ScoreAggregates { get; set; }
+        private ConcurrentDictionary<Scope, int> _ScoreAggregates { get; set; } = new ConcurrentDictionary<Scope, int>();
 
         private ConcurrentDictionary<Scope, ConcurrentDictionary<Reason, int>> _ScoreBreakdowns { get; set; } = new ConcurrentDictionary<Scope, ConcurrentDictionary<Reason, int>>();
 
@@ -35,6 +35,8 @@ namespace Backend.GameInfrastructure.DataModels.Users
             Imposter_GoodNormal,
             Imposter_GoodImposter,
         }
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public IReadOnlyDictionary<Reason, string> ReasonDescriptions { get; } = new Dictionary<Reason, string>
         {
             { Reason.Other, "Other" },

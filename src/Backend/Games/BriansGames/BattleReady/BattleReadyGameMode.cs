@@ -50,15 +50,15 @@ namespace Backend.Games.BriansGames.BattleReady
                 {
                     new GameModeOptionResponse
                     {
-                        Description = "Number of rounds",
+                        Description = "Number of rounds, a round contains numerous battles",
                         ResponseType = ResponseType.Integer,
-                        DefaultValue = 3,
+                        DefaultValue = 2,
                         MinValue = 1,
-                        MaxValue = 30,
+                        MaxValue = 10,
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Number of prompts for each user per round",
+                        Description = "Number of contestants each user creates each round",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 2,
                         MinValue = 1,
@@ -66,7 +66,7 @@ namespace Backend.Games.BriansGames.BattleReady
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Number of drawings expected per user",
+                        Description = "Number of drawings per user during setup",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 4,
                         MinValue = 2,
@@ -74,11 +74,11 @@ namespace Backend.Games.BriansGames.BattleReady
                     },
                     new GameModeOptionResponse
                     {
-                        Description = "Number of players per prompt",
+                        Description = "Number of players per battle",
                         ResponseType = ResponseType.Integer,
-                        DefaultValue = 2,
+                        DefaultValue = 3,
                         MinValue = 2,
-                        MaxValue = 10,
+                        MaxValue = 20,
                     },
                     new GameModeOptionResponse
                     {
@@ -374,7 +374,7 @@ namespace Backend.Games.BriansGames.BattleReady
             });
             return voteAndReveal;
         }
-        private void CountVotes(List<UserHand> choices, Dictionary<User, VoteInfo> votes)
+        private void CountVotes(List<UserHand> choices, IDictionary<User, VoteInfo> votes)
         {
             // Points for using drawings.
             foreach (UserHand hand in choices)

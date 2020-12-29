@@ -212,6 +212,8 @@ namespace Backend.Games.BriansGames.ImposterDrawing
                 drawings: drawings,
                 votingTime: votingTime)
             {
+                VotingPromptTitle = (user)=>"Find the Imposter!",
+                VotingPromptDescription = (User user)=>$"{((prompt.Imposter == user)?($"You created this prompt. Real:'{prompt.RealPrompt}', Imposter:'{prompt.FakePrompt}'"):(!prompt.UsersToDrawings.ContainsKey(user) ? "You didn't draw anything for this prompt" : $"Your prompt was: '{(prompt.Imposter==user?prompt.FakePrompt:prompt.RealPrompt)}'"))}",
                 VotingViewOverrides = new UnityViewOverrides
                 {
                     Title = "Find the Imposter!",
@@ -226,9 +228,9 @@ namespace Backend.Games.BriansGames.ImposterDrawing
             };
         }
 
-        private Action<List<UserDrawing>, Dictionary<User, VoteInfo>> CountVotes(Prompt prompt)
+        private Action<List<UserDrawing>, IDictionary<User, VoteInfo>> CountVotes(Prompt prompt)
         {
-            return (List<UserDrawing> choices, Dictionary<User, VoteInfo> votes) =>
+            return (List<UserDrawing> choices, IDictionary<User, VoteInfo> votes) =>
             {
                 foreach ((User user, VoteInfo vote) in votes)
                 {

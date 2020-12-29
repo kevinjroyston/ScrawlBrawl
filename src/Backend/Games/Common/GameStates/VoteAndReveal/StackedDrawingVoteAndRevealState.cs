@@ -16,12 +16,15 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
     {
         public Func<User, int, string> PromptAnswerAddOnGenerator { get; set; } = (User user, int answer) => "";
         public override Func<User, List<UserDrawingStack<T>>, UserPrompt> VotingPromptGenerator { get; set; }
+        public string VotingPromptTitle { get; set; } = "Pick the best submission!";
+        public string VotingPromptDescription { get; set; }
 
         private UserPrompt DefaultVotingPromptGenerator(User user, List<UserDrawingStack<T>> choices) {
             return new UserPrompt()
             {
                 UserPromptId = UserPromptId.Voting,
-                Title = "Pick the best submission!",
+                Title = this.VotingPromptTitle,
+                Description = this.VotingPromptDescription,
                 SubPrompts = new SubPrompt[]
             {
                 new SubPrompt()

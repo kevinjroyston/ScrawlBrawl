@@ -229,9 +229,9 @@ namespace Backend.Games.KevinsGames.Mimic
                 VoteCountManager=CountVotes(roundTracker)
             };
         }
-        private Action<List<UserDrawing>,Dictionary<User,VoteInfo>> CountVotes(RoundTracker roundTracker)
+        private Action<List<UserDrawing>,IDictionary<User,VoteInfo>> CountVotes(RoundTracker roundTracker)
         {
-            return (List<UserDrawing> drawings, Dictionary<User, VoteInfo> votes) =>
+            return (List<UserDrawing> drawings, IDictionary<User, VoteInfo> votes) =>
             {
                 foreach ((User user, VoteInfo vote) in votes)
                 {

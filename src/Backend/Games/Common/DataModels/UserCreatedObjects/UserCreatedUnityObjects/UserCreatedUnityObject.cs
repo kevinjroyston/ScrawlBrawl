@@ -66,7 +66,7 @@ namespace Backend.Games.Common.DataModels
                 imageIdentifier: numericId.ToString(),
                 title: this.UnityImageRevealOverrides.Title,
                 header: this.UnityImageRevealOverrides.Header,
-                imageOwnerId: this.Owner.Id,
+                imageOwnerId: this.Owner?.Id,
                 voteRevealOptions: new UnityImageVoteRevealOptions()
                 {
                     RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = this.VotesCastForThisObject.Select((vote) => vote.UserWhoVoted).ToList() },

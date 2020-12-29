@@ -19,7 +19,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
         public Lobby Lobby { get; private set; }
         public List<T> Objects { get; private set; }
         public abstract Func<User, List<T>, UserPrompt> VotingPromptGenerator { get; set; }
-        public Action<List<T>, Dictionary<User, VoteInfo>> VoteCountManager { get; set; }
+        public Action<List<T>, IDictionary<User, VoteInfo>> VoteCountManager { get; set; }
         public UnityViewOverrides? VotingViewOverrides { get; set; } = new UnityViewOverrides { Title = Constants.UIStrings.VotingUnityTitle };
         public UnityViewOverrides? RevealViewOverrides { get; set; }
         public VoteAndRevealState(Lobby lobby, List<T> objectsToVoteOn, List<User> votingUsers = null, TimeSpan? votingTime = null) 

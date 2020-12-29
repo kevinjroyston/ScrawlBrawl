@@ -84,6 +84,8 @@ namespace Backend.GameInfrastructure.DataModels.Users
         public int ScoreDeltaReveal => ScoreHolder.ScoreAggregates[Users.Score.Scope.Reveal];
         public int ScoreDeltaScoreboard => ScoreHolder.ScoreAggregates[Users.Score.Scope.Scoreboard];
 
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public Score ScoreHolder { get; } = new Score();
 
         /// <summary>

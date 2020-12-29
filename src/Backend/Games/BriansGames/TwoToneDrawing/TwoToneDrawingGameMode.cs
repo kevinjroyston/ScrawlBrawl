@@ -167,7 +167,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                 {
                     VotingViewOverrides = new UnityViewOverrides
                     {
-                        Title =Invariant($"Which one is the best \"{challenge.Prompt}\"?"),
+                        Title = Invariant($"Which one is the best \"{challenge.Prompt}\"?"),
                     },
                     PromptAnswerAddOnGenerator = (User user, int answer) =>
                     {
@@ -183,9 +183,9 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                     VoteCountManager = CountVotes(challenge)
                 };
         }
-        private Action<List<UserDrawingStack<TeamUserDrawing>>,Dictionary<User,VoteInfo>> CountVotes(ChallengeTracker challenge)
+        private Action<List<UserDrawingStack<TeamUserDrawing>>,IDictionary<User,VoteInfo>> CountVotes(ChallengeTracker challenge)
         {
-            return (List<UserDrawingStack<TeamUserDrawing>> choices, Dictionary<User, VoteInfo> votes) =>
+            return (List<UserDrawingStack<TeamUserDrawing>> choices, IDictionary<User, VoteInfo> votes) =>
             {
                 foreach ((User user, VoteInfo vote) in votes)
                 {

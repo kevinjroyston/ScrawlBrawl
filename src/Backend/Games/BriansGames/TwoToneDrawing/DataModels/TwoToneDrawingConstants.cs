@@ -6,7 +6,7 @@
         public const int PointsForVotingForWinningDrawing = 100;
 
         public const double SetupTimerMin = 45;
-        public const double SetupTimerAve = 90;
+        public const double SetupTimerAve = 120;
         public const double SetupTimerMax = 180;
 
         public const double PerDrawingTimerMin = 45;

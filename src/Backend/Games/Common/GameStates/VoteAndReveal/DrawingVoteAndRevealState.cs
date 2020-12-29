@@ -13,19 +13,25 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
 {
     public class DrawingVoteAndRevealState : VoteAndRevealState<UserDrawing>
     {
-        public override Func<User, List<UserDrawing>, UserPrompt> VotingPromptGenerator { get ; set; } = (User user, List<UserDrawing> choices) => new UserPrompt()
-        {
-            UserPromptId = UserPromptId.Voting,
-            Title = null, // TODO: abstract this.
-            SubPrompts = new SubPrompt[]
+        public override Func<User, List<UserDrawing>, UserPrompt> VotingPromptGenerator { get; set; }
+        public Func<User,string> VotingPromptTitle { get; set; }
+        public Func<User,string> VotingPromptDescription { get; set; }
+        private UserPrompt DefaultVotingPromptGenerator(User user, List<UserDrawing> choices) {
+            return new UserPrompt()
             {
-                new SubPrompt()
+                UserPromptId = UserPromptId.Voting,
+                Title = this.VotingPromptTitle?.Invoke(user),
+                Description = this.VotingPromptDescription?.Invoke(user),
+                SubPrompts = new SubPrompt[]
                 {
-                    Selector = new SelectorPromptMetadata(){ ImageList = choices.Select(userDrawing => userDrawing.Drawing).ToArray() },
-                }
-            },
-            SubmitButton = true
-        };
+                    new SubPrompt()
+                    {
+                        Selector = new SelectorPromptMetadata(){ ImageList = choices.Select(userDrawing => userDrawing.Drawing).ToArray() },
+                    }
+                },
+                SubmitButton = true
+            };
+        }
 
         public DrawingVoteAndRevealState(
             Lobby lobby,
@@ -33,6 +39,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             List<User> votingUsers = null,
             TimeSpan? votingTime = null) : base(lobby, drawings, votingUsers, votingTime)
         {
+            VotingPromptGenerator ??= this.DefaultVotingPromptGenerator;
         }
     }
 }
