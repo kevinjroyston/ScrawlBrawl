@@ -1,10 +1,10 @@
-import { Component, ViewEncapsulation, Input, AfterViewInit, ViewChild, ElementRef, HostListener  } from '@angular/core';
+import { Component, Inject, ViewEncapsulation, Input, AfterViewInit, ViewChild, ElementRef, HostListener  } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {DrawingDirective,DrawingPromptMetadata} from '@shared/components/drawingdirective.component';
-import {GalleryPanel} from '@shared/components/gallerypanel/gallerypanel.component';
+import {GalleryPanel} from '@shared/components/gallery/gallerypanel/gallerypanel.component';
 import {MatTabsModule} from '@angular/material/tabs';
-import { environment } from '../../../../environments/environment';
-
+import {MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
+import { environment } from '../../../../../environments/environment';
 import Galleries from '@core/models/gallerytypes';
 
 @Component({
@@ -13,8 +13,6 @@ import Galleries from '@core/models/gallerytypes';
     styleUrls: ['./gallerytool.component.scss'],
     encapsulation: ViewEncapsulation.Emulated
 })
-
-
 export class GalleryTool implements AfterViewInit {
     @Input() drawingOptions: DrawingPromptMetadata;
     @Input() drawingDirective: DrawingDirective;
@@ -31,14 +29,26 @@ export class GalleryTool implements AfterViewInit {
     onChange;
     lastDrawingChange: string = "";
     galleryOptions = environment.galleryOptions;
-    currentTab:GalleryPanel;
+    currentTab: GalleryPanel;
+    galleryPanelTypes = Galleries.GalleryPanelType;
 
-    constructor() {
+    constructor(private _bottomSheetRef: MatBottomSheetRef<GalleryTool>, @Inject(MAT_BOTTOM_SHEET_DATA) public data) {
+        this.initializeBottomSheet(data);
     }
 
-    storeMostRecentDrawing(){
+    private initializeBottomSheet(data) {
+        this.drawingOptions = data.drawingOptions;
+        this.drawingDirective = data.drawingDirective;
+        this.galleryEditor = data.galleryEditor;
+    }
+
+    public closeSheet() {
+        this._bottomSheetRef.dismiss();
+    }
+
+    storeMostRecentDrawing(onDestroy = false){
         if (this.lastDrawingChange != "") {
-            this.galleryRecent.storeImageInGallery(this.lastDrawingChange);
+            this.galleryRecent.storeImageInGallery(this.lastDrawingChange, onDestroy);
             this.lastDrawingChange = "";
         }
     }
@@ -53,6 +63,7 @@ export class GalleryTool implements AfterViewInit {
             this.drawingDirective.handleClearUndo();
         }
         this._drawingType = typ;
+        this.drawingOptions.drawingType = typ;
         this.galleryFavorites.drawingType = typ;
         this.galleryRecent.drawingType = typ;
         this.gallerySamples.drawingType = typ;
@@ -72,7 +83,7 @@ export class GalleryTool implements AfterViewInit {
     }
 
     ngOnDestroy() {
-        this.storeMostRecentDrawing();
+        this.storeMostRecentDrawing(true);
     }
 
     ngAfterViewInit(){
@@ -85,9 +96,10 @@ export class GalleryTool implements AfterViewInit {
             this.galleryImageCurrent.nativeElement.src = event;
         }
     }
+
     onCurrentBtnClick(){
         this.galleryFavorites.storeImageInGallery(this.lastDrawingChange)
-      }
+    }
   
     registerOnChange(fn: any): void {
         this.onChange = fn;

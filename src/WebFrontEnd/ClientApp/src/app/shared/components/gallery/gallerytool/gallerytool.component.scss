@@ -1,0 +1,17 @@
+.galleryimg-current {
+    display: flex;
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--blue-primary);
+}
+
+.gallery-tool{
+    position: relative;
+}
+
+.close-gallery{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 2;
+}

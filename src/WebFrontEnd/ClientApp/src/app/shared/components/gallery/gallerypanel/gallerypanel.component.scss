@@ -1,0 +1,16 @@
+.galleryPics {
+    display: flex;
+    flex-wrap: wrap;
+    width: 600px;
+    height: 400px;
+    justify-content: space-evenly;
+    background-color: var(--surface-background);
+}
+
+@media only screen and (max-width: 768px) {
+    .galleryPics{
+        width: auto;
+        height: auto;
+        min-height: 250px;
+    }
+}

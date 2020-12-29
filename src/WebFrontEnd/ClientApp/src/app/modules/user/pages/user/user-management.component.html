@@ -1,15 +1,19 @@
-<div class="plrskip-user-wrapper">
-    <select #galleryDD class="Dropdown" (change)="currentDrawingType=galleryDD.value">
-            <option *ngFor="let gallery of galleryTypes; let i = index" [selected]="(currentDrawingType==gallery.drawingType)" value="{{gallery.drawingType}}">
-                {{gallery.galleryDesc}}
-            </option>
-        </select>
-    <div>
-        <drawingboard [galleryEditor]="true" [drawingType]="currentDrawingType"></drawingboard>
-    </div>
-</div>
-<div>
-    <scrawlbutton (click)="onDeleteUser()">
-        Leave Lobby
-    </scrawlbutton>
+<div class="user-wrapper">
+    <div class="plrskip-user-wrapper">
+        <div class="actions">
+            <select #galleryDD class="Dropdown" (change)="currentDrawingType=galleryDD.value">
+                <option *ngFor="let gallery of galleryTypes; let i = index" [selected]="(currentDrawingType==gallery.drawingType)" value="{{gallery.drawingType}}">
+                    {{gallery.galleryDesc}}
+                </option>
+            </select>
+            <div class="user-actions">
+                <scrawlbutton (click)="onDeleteUser()">
+                    Leave Lobby
+                </scrawlbutton>
+            </div>
+        </div>
+        <div class='drawingboard'>
+            <drawingboard [galleryEditor]="true" [drawingType]="currentDrawingType"></drawingboard>
+        </div>
+    </div>    
 </div>

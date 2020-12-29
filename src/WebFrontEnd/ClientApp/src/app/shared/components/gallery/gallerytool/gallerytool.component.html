@@ -1,0 +1,23 @@
+<div class="gallery-tool">
+    <mat-tab-group (selectedIndexChange)="onTabClick($event)">
+        <mat-tab label="Samples">
+            <gallerypanel (closeSheet)="closeSheet()" #gallerySamples [galleryPanelType]="galleryPanelTypes.SAMPLES" [drawingOptions]="drawingOptions" [drawingDirective]="drawingDirective"></gallerypanel>
+        </mat-tab>
+        <mat-tab label="Recent">
+            <gallerypanel (closeSheet)="closeSheet()" #galleryRecent [galleryPanelType]="galleryPanelTypes.RECENT" [drawingOptions]="drawingOptions" [drawingDirective]="drawingDirective"></gallerypanel>
+        </mat-tab>
+        <mat-tab label="Favorites">
+            <gallerypanel (closeSheet)="closeSheet()" #galleryFavorites [galleryPanelType]="galleryPanelTypes.FAVORITES" [drawingOptions]="drawingOptions" [drawingDirective]="drawingDirective"></gallerypanel>
+        </mat-tab>
+    </mat-tab-group>
+    <div class="close-gallery">
+        <simplebutton color="red" size="small" (onClick)="closeSheet()">
+            Close
+        </simplebutton>
+    </div>
+    <div *ngIf="galleryEditor">
+        <div *ngIf="galleryOptions.allowCopy" (click)="favoritesToClipboard()" style="cursor:pointer">copy Favs</div>
+        <div *ngIf="galleryOptions.allowPaste" (click)="favoritesFromClipboard()" style="cursor:pointer">paste Favs</div>
+    </div>
+</div>
+

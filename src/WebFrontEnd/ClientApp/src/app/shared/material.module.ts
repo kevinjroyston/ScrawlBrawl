@@ -4,7 +4,9 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { MatRadioModule } from '@angular/material/radio';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {MatBottomSheetModule} from '@angular/material/bottom-sheet'
+import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatTabsModule} from '@angular/material/tabs';
 
 @NgModule({
     imports: [
@@ -12,14 +14,18 @@ import {MatBottomSheetModule} from '@angular/material/bottom-sheet'
         MatDialogModule,
         MatTooltipModule,
         MatProgressSpinnerModule,
-        MatBottomSheetModule
+        MatBottomSheetModule,
+        MatSnackBarModule,
+        MatTabsModule
     ],
     exports: [
         MatRadioModule,
         MatDialogModule,
         MatTooltipModule,
         MatProgressSpinnerModule,
-        MatBottomSheetModule
+        MatBottomSheetModule,
+        MatSnackBarModule,
+        MatTabsModule
     ]
 })
 

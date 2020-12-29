@@ -1,0 +1,49 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.user-wrapper{
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.actions{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: .5rem;
+}
+
+.drawingboard{
+    width: 700px;
+    height: 700px;
+}
+
+.user-actions{
+    max-width: 200px;
+}
+
+.plrskip-user-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 700px;
+}
+
+@media only screen and (max-width: 768px) {
+    .plrskip-user-wrapper{
+        min-width: auto;
+        padding: .5rem;
+        width: 100%;
+    }
+
+    .drawingboard {
+        width: 100%;
+        height: auto;
+    }
+}

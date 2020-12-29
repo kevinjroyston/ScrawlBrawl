@@ -1,10 +1,16 @@
 .drawb {
     display: flex;
-    border: var(--border);
+    box-shadow: var(--shadow-lg);
+    background-color: var(--card-background);
 }
 
-.drawb-canvas {
-    flex-basis: 65%;
+.drawb-top {
+    display: flex;
+    width: 100%;
+}
+
+.drawb-left {
+    flex: 1;
 }
 
 .radio-group {
@@ -20,12 +26,8 @@
 
 .draw-canvas {
     width: 100%;
-    max-width: 1080px;
-    //height: 100%;
+    height: auto;
     background-size: 100% 100%;
-    background-color: var(--card-background);
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
     pointer-events: all;
     &:hover {
         cursor: crosshair;
@@ -34,11 +36,6 @@
 
 .drawb-settings {
     background: var(--input-background);
-    flex-basis: 35%;
-    padding: 0 1rem;
-    border-left: var(--border);
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
 }
 
 #size-controller {
@@ -75,12 +72,21 @@
     transform: scale(1.1);
 }
 
+.drawb-setting-color{
+    display: flex;
+    padding: .5rem;
+    border-bottom: var(--border);
+}
+
 .drawb-setting {
     display: flex;
+    flex: 1;
     flex-direction: column;
-    padding: 1rem 0;
-    &:not(:last-child) {
-        border-bottom: var(--border);
+    padding: .5rem;
+    border-bottom: var(--border);
+
+    &:not(:last-of-type){
+        border-right: var(--border);
     }
 }
 
@@ -98,17 +104,29 @@
 
 .drawb-tools {
     display: flex;
-    &>scrawlbrawl-iconbutton {
-        margin-right: 15px;
-        min-width: 35px;
-    }
+    flex-direction: column;
+    align-items: center;
+    border-left: var(--border);
+    height: 100%;
 }
 
-.drawb-actions {
+.drawb-tools-section {
     display: flex;
-    &>scrawlbrawl-iconbutton {
-        margin-right: 15px;
-        min-width: 35px;
+    flex-direction: column;
+    border-bottom: var(--border);
+    padding: .5rem;
+
+    & > scrawlbrawl-iconbutton {
+        width: 40px;
+        height: 40px;
+    }
+
+    & > scrawlbrawl-iconbutton:not(:first-of-type){
+        margin-top: 10px;
+    }
+
+    ion-icon {
+        font-size: 22px;
     }
 }
 
@@ -187,19 +205,36 @@ input[type=range] {
 }
 
 @media only screen and (max-width: 768px) {
-    .drawb {
-        flex-direction: column;
-    }
     .drawb-settings {
         display: flex;
         flex-wrap: wrap;
         border-left: 1px solid var(--white-secondary);
     }
     .drawb-setting {
-        padding: .5rem 1rem .5rem 0;
-        border-bottom: 0 !important;
+        padding: .5rem 1rem;
         width: 50%;
         flex-grow: 1;
+
+        &:nth-of-type(2){
+            display: none;
+        }
+    }
+
+    .drawb-tools-section{
+        padding: .25rem;
+
+        & > scrawlbrawl-iconbutton {
+            width: 35px;
+            height: 35px;
+        }
+    
+        & > scrawlbrawl-iconbutton:not(:first-of-type){
+            margin-top: 10px;
+        }
+    
+        ion-icon {
+            font-size: 21px;
+        }
     }
 }
 
