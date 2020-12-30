@@ -37,7 +37,7 @@ namespace Backend.GameInfrastructure.DataModels.Users
         }
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public IReadOnlyDictionary<Reason, string> ReasonDescriptions { get; } = new Dictionary<Reason, string>
+        public static IReadOnlyDictionary<Reason, string> ReasonDescriptions { get; } = new Dictionary<Reason, string>
         {
             { Reason.Other, "Other" },
             { Reason.CorrectAnswer, "Correct Answer" },
@@ -58,6 +58,7 @@ namespace Backend.GameInfrastructure.DataModels.Users
                 {
                     ResetScore(scp);
                 }
+                return;
             }
 
             _ScoreAggregates[scope.Value] = 0;
@@ -72,6 +73,7 @@ namespace Backend.GameInfrastructure.DataModels.Users
                 {
                     ResetScoreBreakdownsOnly(scp);
                 }
+                return;
             }
 
             _ScoreBreakdowns[scope.Value] = new ConcurrentDictionary<Reason, int>();

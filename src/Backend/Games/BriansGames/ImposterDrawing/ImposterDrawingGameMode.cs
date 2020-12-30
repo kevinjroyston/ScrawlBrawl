@@ -213,7 +213,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing
                 votingTime: votingTime)
             {
                 VotingPromptTitle = (user)=>"Find the Imposter!",
-                VotingPromptDescription = (User user)=>$"{((prompt.Imposter == user)?($"You created this prompt. Real:'{prompt.RealPrompt}', Imposter:'{prompt.FakePrompt}'"):(!prompt.UsersToDrawings.ContainsKey(user) ? "You didn't draw anything for this prompt" : $"Your prompt was: '{(prompt.Imposter==user?prompt.FakePrompt:prompt.RealPrompt)}'"))}",
+                VotingPromptDescription = (User user)=>$"{((prompt.Owner == user)?($"You created this prompt. Real:'{prompt.RealPrompt}', Imposter:'{prompt.FakePrompt}'"):(!prompt.UsersToDrawings.ContainsKey(user) ? "You didn't draw anything for this prompt" : $"Your prompt was: '{(prompt.Imposter==user?prompt.FakePrompt:prompt.RealPrompt)}'"))}",
                 VotingViewOverrides = new UnityViewOverrides
                 {
                     Title = "Find the Imposter!",
