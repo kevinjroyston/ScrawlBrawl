@@ -45,7 +45,18 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                 },
                 formSubmitHandler: (User user, UserFormSubmission input) =>
                 {
-                    promptToDraw.UsersToDrawings.AddOrReplace(user, new UserDrawing() { Drawing = input.SubForms[0].Drawing, Owner = user });
+                    promptToDraw.UsersToDrawings.AddOrReplace(
+                        user,
+                        new UserDrawing()
+                        {
+                            Drawing = input.SubForms[0].Drawing,
+                            Owner = user,
+                            ShouldHighlightReveal = promptToDraw.Imposter == user,
+                            UnityImageRevealOverrides= new UnityObjectOverrides
+                            {
+                                Title = user.DisplayName,
+                            }
+                        });
                     return (true, string.Empty);
                 },
                 exit: new WaitForUsers_StateExit(

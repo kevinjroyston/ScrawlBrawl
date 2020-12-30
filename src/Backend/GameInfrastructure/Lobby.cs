@@ -19,6 +19,7 @@ using Backend.APIs.DataModels.Enums;
 using Common.Code.Extensions;
 using Common.DataModels.UnityObjects;
 using Backend.GameInfrastructure.ControlFlows;
+using Backend.Games.Common;
 
 namespace Backend.GameInfrastructure
 {
@@ -309,14 +310,15 @@ namespace Backend.GameInfrastructure
                     InitializeAllGameStates();
                     previousEndOfGameRestart.Transition(this.WaitForLobbyStart);
 
-                    foreach (User user in this.UsersInLobby)
-                    {
-                        user.Score = 0;
-                    }
+                    CommonHelpers.ResetScores(this.UsersInLobby.ToList());
                     break;
                 case EndOfGameRestartType.KeepScore:
                     InitializeAllGameStates();
                     previousEndOfGameRestart.Transition(this.WaitForLobbyStart);
+
+                    CommonHelpers.ResetScores(this.UsersInLobby.ToList(), Score.Scope.Reveal);
+                    CommonHelpers.ResetScores(this.UsersInLobby.ToList(), Score.Scope.Scoreboard);
+                    CommonHelpers.ResetScoreBreakdownsOnly(this.UsersInLobby.ToList(), Score.Scope.Total);
                     break;
                 default:
                     throw new Exception("Unknown restart game type");

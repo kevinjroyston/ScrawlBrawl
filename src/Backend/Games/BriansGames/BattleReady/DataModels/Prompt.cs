@@ -1,4 +1,5 @@
-﻿using Backend.GameInfrastructure.DataModels.Users;
+﻿using Backend.APIs.DataModels.UnityObjects;
+using Backend.GameInfrastructure.DataModels.Users;
 using Backend.Games.Common.DataModels;
 using Backend.Games.Common.ThreePartPeople.DataModels;
 using Common.DataModels.Interfaces;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Drawing;
 using static Backend.Games.Common.ThreePartPeople.DataModels.Person;
 
 namespace Backend.Games.BriansGames.BattleReady.DataModels
@@ -14,13 +16,11 @@ namespace Backend.Games.BriansGames.BattleReady.DataModels
     {
         public string Text { get; set; }
         public User Winner { get; set; }
-        public class UserHand
+        public class UserHand : Person
         {
-            public List<PeopleUserDrawing> Heads { get; set; } = new List<PeopleUserDrawing>();
-            public List<PeopleUserDrawing> Bodies { get; set; } = new List<PeopleUserDrawing>();
-            public List<PeopleUserDrawing> Legs { get; set; } = new List<PeopleUserDrawing>();
-            public Person Contestant { get; set; } = new Person();
-            public int VotesForContestant { get; set; } = 0;
+            public List<PeopleUserDrawing> HeadChoices { get; set; } = new List<PeopleUserDrawing>();
+            public List<PeopleUserDrawing> BodyChoices { get; set; } = new List<PeopleUserDrawing>();
+            public List<PeopleUserDrawing> LegChoices { get; set; } = new List<PeopleUserDrawing>();
         }
         public ConcurrentDictionary<User, UserHand> UsersToUserHands { get; set; } = new ConcurrentDictionary<User, UserHand>();
 

@@ -3,13 +3,9 @@
     public static class MimicConstants
     {
         public const int PointsForVote = 100;
-        public static int PointsToLooseForForgeting(int numberOfPLayersInLobby)
+        public static int PointsForCorrectPick(int numChoices)
         {
-            return numberOfPLayersInLobby *100;
-        }
-        public static int PointsForCorrectPick(int numberOfPLayersInLobby)
-        {
-            return numberOfPLayersInLobby * 20;
+            return numChoices * 100;
         }
         public const float MimicTimerMultiplier = 2.0f;
 

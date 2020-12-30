@@ -2,6 +2,9 @@
 using System;
 using System.Drawing;
 using System.Collections.Generic;
+using Backend.Games.Common.GameStates.VoteAndReveal;
+using Backend.GameInfrastructure.DataModels.Users;
+using System.Linq;
 
 namespace Backend.Games.Common.DataModels
 {
@@ -22,29 +25,9 @@ namespace Backend.Games.Common.DataModels
             int? voteCount = null,
             UnityImageVoteRevealOptions voteRevealOptions = null)
         {
-            backgroundColor ??= Color.White;
-
-            List<int> backgroundColorList = new List<int>
-            {
-                Convert.ToInt32(backgroundColor.Value.R),
-                Convert.ToInt32(backgroundColor.Value.G),
-                Convert.ToInt32(backgroundColor.Value.B)
-            };
-
-            return new UnityImage
-            {
-                Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string>() { this.Drawing }.AsReadOnly() },
-                BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = backgroundColorList },
-                SpriteGridWidth = new StaticAccessor<int?> { Value = 1 },
-                SpriteGridHeight = new StaticAccessor<int?> { Value = 1 },
-                ImageIdentifier = new StaticAccessor<string> { Value = imageIdentifier },
-                ImageOwnerId = new StaticAccessor<Guid?> { Value = imageOwnerId },
-                Title = new StaticAccessor<string> { Value = title },
-                Header = new StaticAccessor<string> { Value = header },
-                VoteCount = new StaticAccessor<int?> { Value = voteCount},
-                VoteRevealOptions = new StaticAccessor<UnityImageVoteRevealOptions> { Value = voteRevealOptions},
-            };
-
+            UnityImage baseImage = base.GetUnityImage(backgroundColor, imageIdentifier, imageOwnerId, title, header, voteCount, voteRevealOptions);
+            baseImage.Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string>() { this.Drawing }.AsReadOnly() };
+            return baseImage;
         }
     }
 }

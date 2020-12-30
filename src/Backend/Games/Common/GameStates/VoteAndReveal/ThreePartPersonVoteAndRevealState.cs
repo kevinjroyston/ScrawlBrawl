@@ -11,83 +11,37 @@ using Backend.GameInfrastructure;
 
 namespace Backend.Games.Common.GameStates.VoteAndReveal
 {
-    public class ThreePartPersonVoteAndRevealState : VoteAndRevealState<Person>
+    public class ThreePartPersonVoteAndRevealState<T> : VoteAndRevealState<T> where T:Person
     {
-        private Action<Dictionary<User, int>> VoteCountingManager { get; set; }
-        public ThreePartPersonVoteAndRevealState(
-            Lobby lobby,
-            List<Person> people,
-            Action<Dictionary<User, int>> voteCountManager,
-            List<User> votingUsers = null,
-            TimeSpan? votingTime = null) : base(lobby, people, votingUsers, votingTime)
-        {
-            this.VoteCountingManager = voteCountManager;
-        }
+        public override Func<User, List<T>, UserPrompt> VotingPromptGenerator { get; set; }
+        public string VotingPromptTitle { get; set; } = "Pick the best submission!";
+        public string VotingPromptDescription { get; set; }
 
-        public override UserPrompt VotingPromptGenerator(User user)
+        private UserPrompt DefaultVotingPromptGenerator(User user, List<T> choices)
         {
             return new UserPrompt()
             {
                 UserPromptId = UserPromptId.Voting,
-                Title = VotingTitle,
+                Title = this.VotingPromptTitle,
+                Description = this.VotingPromptDescription,
                 SubPrompts = new SubPrompt[]
+            {
+                new SubPrompt()
                 {
-                    new SubPrompt()
-                    {
-                        Prompt = VotingPromptTexts?[0] ?? null,
-                        Answers =  Objects.Select(person => person.Name).ToArray() ,
-                    }
-                },
+                    Answers =  choices.Select(person => person.Name).ToArray() ,
+                }
+            },
                 SubmitButton = true
             };
         }
-        public override UnityImage VotingUnityObjectGenerator(int objectIndex)
+
+            public ThreePartPersonVoteAndRevealState(
+            Lobby lobby,
+            List<T> people,
+            List<User> votingUsers = null,
+            TimeSpan? votingTime = null) : base(lobby, people, votingUsers, votingTime)
         {
-            return this.Objects[objectIndex].GetUnityImage(
-                imageIdentifier: (objectIndex + 1).ToString(),
-                title: this.ShowObjectTitlesForVoting ? this.ObjectTitles?[objectIndex] : null,
-                header: this.ShowObjectHeadersForVoting ? this.ObjectHeaders?[objectIndex] : null);
-        }
-        public override UnityImage RevealUnityObjectGenerator(int objectIndex)
-        {
-            return this.Objects[objectIndex].GetUnityImage(
-                imageIdentifier: (objectIndex + 1).ToString(),
-                title: this.ObjectTitles?[objectIndex],
-                header: this.ObjectHeaders?[objectIndex],
-                imageOwnerId: this.Objects[objectIndex].Owner.Id,
-                voteRevealOptions: new UnityImageVoteRevealOptions()
-                {
-                    RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = AnswersToUsersWhoVoted.ContainsKey(objectIndex) ? AnswersToUsersWhoVoted[objectIndex] : new List<User>() },
-                    RevealThisImage = new StaticAccessor<bool?> { Value = IndexesOfObjectsToReveal.Contains(objectIndex) }
-                });
-        }
-        public override List<int> VotingFormSubmitManager(User user, UserFormSubmission submission)
-        {
-            return new List<int>() { submission.SubForms[0].RadioAnswer.Value };
-        }
-        public override List<int> VotingTimeoutManager(User user, UserFormSubmission submission)
-        {
-            if (submission.SubForms.Count > 0
-                && submission.SubForms[0].RadioAnswer != null)
-            {
-                return new List<int>() { submission.SubForms[0].RadioAnswer.Value };
-            }
-            else
-            {
-                return new List<int>();
-            }
-        }
-        public override void VoteCountManager(Dictionary<User, (List<int>, double)> usersToVotes)
-        {
-            Dictionary<User, int> singleAnswerDict = new Dictionary<User, int>();
-            foreach (User user in usersToVotes.Keys)
-            {
-                if (usersToVotes[user].Item1.Count > 0)
-                {
-                    singleAnswerDict.Add(user, usersToVotes[user].Item1[0]);
-                }
-            }
-            VoteCountingManager(singleAnswerDict);
+            VotingPromptGenerator ??= DefaultVotingPromptGenerator;
         }
     }
 }

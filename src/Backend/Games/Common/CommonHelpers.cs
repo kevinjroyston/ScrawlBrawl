@@ -17,11 +17,18 @@ namespace Backend.Games.Common
             return Invariant($"<img width=\"{width}\" height=\"{height}\" src=\"{image}\"/>");
         }
 
-        public static void ResetAllRevealDeltas(List<User> users)
+        public static void ResetScores(List<User> users, Score.Scope? scope = null)
         {
             foreach (User user in users)
             {
-                user.ResetScoreDeltaReveal();
+                user.ScoreHolder.ResetScore(scope);
+            }
+        }
+        public static void ResetScoreBreakdownsOnly(List<User> users, Score.Scope? scope = null)
+        {
+            foreach (User user in users)
+            {
+                user.ScoreHolder.ResetScoreBreakdownsOnly(scope);
             }
         }
         public static TimeSpan GetTimerFromLength(double length, double minTimerLength, double aveTimerLength, double maxTimerLength, double minLength = 0, double aveLength = 5, double maxLength = 10)

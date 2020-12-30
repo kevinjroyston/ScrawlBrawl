@@ -2,8 +2,12 @@
 {
     public static class ImposterDrawingConstants
     {
-        public const int TotalPointsToAwardPerVote = 100;
-        public const int PointsToLooseForWrongVote = -50;
+        // Freebie - Lost*NumVotes will be clipped to be >= 0
+        public const int FreebiePointsForNormal = 150;
+        public const int LostPointsForBadNormal = 50;
+
+        public const int PointsForCorrectAnswer = 500;
+        public const int BonusPointsForGoodImposter = 300;
 
         public const double SetupTimerMin = 45;
         public const double SetupTimerAve = 120;

@@ -1,4 +1,5 @@
-﻿using Backend.GameInfrastructure;
+﻿using Backend.APIs.DataModels.UnityObjects;
+using Backend.GameInfrastructure;
 using Backend.GameInfrastructure.DataModels;
 using Backend.GameInfrastructure.DataModels.States.StateGroups;
 using Backend.GameInfrastructure.DataModels.Users;
@@ -209,57 +210,54 @@ namespace Backend.Games.BriansGames.ImposterDrawing
             return new DrawingVoteAndRevealState(
                 lobby: this.Lobby,
                 drawings: drawings,
-                voteCountManager: (Dictionary<User, int> usersToVotes) =>
-                {
-                    CountVotes(usersToVotes, prompt, randomizedUsersToShow);
-                },
                 votingTime: votingTime)
+            {
+                VotingPromptTitle = (user)=>"Find the Imposter!",
+                VotingPromptDescription = (User user)=>$"{((prompt.Owner == user)?($"You created this prompt. Real:'{prompt.RealPrompt}', Imposter:'{prompt.FakePrompt}'"):(!prompt.UsersToDrawings.ContainsKey(user) ? "You didn't draw anything for this prompt" : $"Your prompt was: '{(prompt.Imposter==user?prompt.FakePrompt:prompt.RealPrompt)}'"))}",
+                VotingViewOverrides = new UnityViewOverrides
                 {
-                    VotingTitle = "Find the Imposter!",
-                    VotingInstructions = possibleNone ? "Someone didn't finish so there may not be an imposter in this group" : "",
-                    RevealTitle = Invariant($"<color=green>{prompt.Imposter.DisplayName}</color> was the imposter!"),
-                    RevealInstructions = Invariant($"Real: '{prompt.RealPrompt}', Imposter: <color=green>'{prompt.FakePrompt}'</color>"),
-                    IndexesOfObjectsToReveal = new List<int>() { indexOfImposter },
-                    ObjectTitles = userNames,
-                    ShowObjectTitlesForVoting = false,
+                    Title = "Find the Imposter!",
+                    Instructions = possibleNone ? "Someone didn't finish so there may not be an imposter in this group" : "",
+                },
+                RevealViewOverrides = new UnityViewOverrides
+                {
+                    Title = Invariant($"<color=green>{prompt.Imposter.DisplayName}</color> was the imposter!"),
+                    Instructions = Invariant($"Real: '{prompt.RealPrompt}', Imposter: <color=green>'{prompt.FakePrompt}'</color>"),
+                },
+                VoteCountManager = CountVotes(prompt)
             };
         }
 
-        private void CountVotes(Dictionary<User, int> usersToVotes, Prompt prompt, List<User> randomizedUsers)
+        private Action<List<UserDrawing>, IDictionary<User, VoteInfo>> CountVotes(Prompt prompt)
         {
-            List<User> correctUsers = new List<User>();
-            foreach (User user in usersToVotes.Keys)
+            return (List<UserDrawing> choices, IDictionary<User, VoteInfo> votes) =>
             {
-                if (randomizedUsers[usersToVotes[user]] == prompt.Imposter)
+                foreach ((User user, VoteInfo vote) in votes)
                 {
-                    correctUsers.Add(user);
-                }
-                else
-                {
-                    if (randomizedUsers[usersToVotes[user]] != user)
+                    if (((UserDrawing)vote.ObjectsVotedFor[0]).Owner == prompt.Imposter)
                     {
-                        randomizedUsers[usersToVotes[user]].AddScore(ImposterDrawingConstants.PointsToLooseForWrongVote); // user was voted for when they weren't the imposter so they lose points
+                        user.ScoreHolder.AddScore(ImposterDrawingConstants.PointsForCorrectAnswer, Score.Reason.CorrectAnswer);
                     }
                 }
-            }
 
-            int totalPointsToAward = usersToVotes.Count * ImposterDrawingConstants.TotalPointsToAwardPerVote; // determine the total number of points to distribute
-            foreach (User user in correctUsers)
-            {
-                user.AddScore(totalPointsToAward / correctUsers.Count); //distribute those evenly to the correct users
-            }
-
-            // If EVERYBODY figures out the diff, the owner loses some points but not as many.
-            if (correctUsers.Where(user => user != prompt.Owner).Count() == (this.Lobby.GetAllUsers().Count - 1))
-            {
-                prompt.Owner.AddScore(totalPointsToAward / -4);
-            }
-
-            // If the owner couldnt find the diff, they lose a bunch of points.
-            if (!correctUsers.Contains(prompt.Owner))
-            {
-                prompt.Owner.AddScore(totalPointsToAward / -2);
-            }
+                foreach (UserDrawing drawing in choices)
+                {
+                    if(drawing.Owner != prompt.Imposter)
+                    {
+                        // Calculates how good a job a non-imposter did.
+                        int playersMisled = drawing.VotesCastForThisObject.Where(vote => vote.UserWhoVoted != drawing.Owner).Count();
+                        int pointDeduction = playersMisled * ImposterDrawingConstants.LostPointsForBadNormal;
+                        int netPoints = Math.Max(0, ImposterDrawingConstants.FreebiePointsForNormal - pointDeduction);
+                        drawing.Owner.ScoreHolder.AddScore(netPoints, Score.Reason.Imposter_GoodNormal);
+                    }
+                    else
+                    {
+                        // Calculates how good a job the imposter did.
+                        float portionVotersCorrect = (drawing.VotesCastForThisObject.Count() * 1.0f / votes.Count());
+                        drawing.Owner.ScoreHolder.AddScore((int)Math.Round(portionVotersCorrect * ImposterDrawingConstants.BonusPointsForGoodImposter), Score.Reason.Imposter_GoodImposter);
+                    }
+                }
+            };
         }
     }
 }

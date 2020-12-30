@@ -70,7 +70,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                             {
                                 if (questionsToUserAnswers[question][user] == question.UsersToAnswers[userToShow])
                                 {
-                                    user.AddScore( FriendQuizConstants.PointsForCorrectAnswer);
+                                    user.ScoreHolder.AddScore(FriendQuizConstants.PointsForCorrectAnswer, Score.Reason.CorrectAnswer);
                                 }
                             }
                         }
