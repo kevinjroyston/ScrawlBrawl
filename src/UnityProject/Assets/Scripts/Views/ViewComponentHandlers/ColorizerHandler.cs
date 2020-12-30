@@ -27,7 +27,14 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
             string str = "0";
             if (field?.Count > 0)
             {
-                str = field[0].ToString();
+                if (!field[0].Equals(Guid.Empty))
+                {
+                    str = field[0].ToString();
+                }
+                else
+                {
+                    str = random.Next(100).ToString();
+                }
             }
             else
             {

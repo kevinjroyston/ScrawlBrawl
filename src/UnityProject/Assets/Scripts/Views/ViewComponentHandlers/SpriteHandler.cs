@@ -8,8 +8,9 @@ using UnityEngine.UI;
 using Assets.Scripts.Networking.DataModels;
 using Assets.Scripts.Views.DataModels;
 using static TypeEnums;
+using Assets.Scripts.ComponentAugments;
 
-public class SpriteHandler : MonoBehaviour, HandlerInterface
+public class SpriteHandler : MonoBehaviour, HandlerInterface, CustomAspectRatio
 {
     public GameObject SpriteGridPrefab;
     public GameObject SpriteObjectPrefab;
@@ -25,11 +26,17 @@ public class SpriteHandler : MonoBehaviour, HandlerInterface
     private int SpriteGridHeight { get; set; }
     private List<Sprite> Sprites { get; set; }
     private Color BackgroundColor { get; set; }
-    private float AspectRatio { get; set; } = 1f;
+
+    private Action<float> AspectRatioListener { get; set; }
 
     public void OnDestroy()
     {
         BlurController.Singleton.blurMasks.Remove(BlurMask);
+    }
+
+    public void RegisterAspectRatioListener(Action<float> listener)
+    {
+        AspectRatioListener = listener;
     }
 
     public void UpdateValue(SpriteHolder spriteHolder)  
@@ -77,9 +84,11 @@ public class SpriteHandler : MonoBehaviour, HandlerInterface
             }
 
             var autoScaleScript = ImageGrids[i].GetComponent<ImageGridHandler>();
-            autoScaleScript.aspectRatio = AspectRatio;
+            autoScaleScript.aspectRatio = Sprites[0].rect.width * 1.0f / Sprites[0].rect.height;
             autoScaleScript.fixedDimensions = new Vector2(SpriteGridWidth, SpriteGridHeight);
         }
+
+        AspectRatioListener?.Invoke(Sprites[0].rect.width * 1.0f / Sprites[0].rect.height * SpriteGridWidth * 1.0f / SpriteGridHeight);
 
         for (int i = 0; i < Sprites.Count; i++)
         {

@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Networking.DataModels;
 using Assets.Scripts.Networking.DataModels.Enums;
+using Assets.Scripts.Views.DataModels;
 using Assets.Scripts.Views.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -97,7 +98,18 @@ namespace Assets.Scripts.Views
                             throw new ArgumentException($"Unknown handler id: '{handlerId.HandlerType}'");
                     }
                 }
-                Helpers.SetActiveAndUpdate(handlerComponent, values);
+                if (values.Count > 0)
+                {
+                    Helpers.SetActiveAndUpdate(handlerComponent, values);
+                }
+            }
+
+            foreach (ScopeLoadedListener loadedListener in gameObject.GetComponentsInChildren<ScopeLoadedListener>())
+            {
+                if (loadedListener.Scope == HandlerScope.View)
+                {
+                    loadedListener.OnCompleteLoad();
+                }
             }
         }
 

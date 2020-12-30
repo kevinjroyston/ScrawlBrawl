@@ -39,11 +39,20 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
     }
 
     public void Update()
-    {
+    {         
         if (oldCellCount != transform.childCount)
         {
             OnRectTransformDimensionsChange();
         }
+    }
+    public void RegisterAspectRatioListener(AspectRatioConfiguration aspectRatioConfiguration)
+    {
+        aspectRatioConfiguration.RegisterAspectRatioListener(
+                    (float aspectRatio) =>
+                    {
+                        this.aspectRatio = aspectRatio;
+                        this.OnRectTransformDimensionsChange();
+                    });
     }
 
     protected override void OnRectTransformDimensionsChange()

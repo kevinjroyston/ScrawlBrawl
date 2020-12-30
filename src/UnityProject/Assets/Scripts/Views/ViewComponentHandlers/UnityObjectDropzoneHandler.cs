@@ -74,7 +74,11 @@ public class UnityObjectDropzoneHandler : MonoBehaviour, HandlerInterface
         // Instantiate more image objects if needed
         for (int i = DropZone.transform.childCount; i < objects.Count; i++)
         {
-            Instantiate(UnityObjectTypeToPrefabStaticMap.Singleton.Mapping[objects[i].Type], DropZone.transform);
+            GameObject unityObject = Instantiate(UnityObjectTypeToPrefabStaticMap.Singleton.Mapping[objects[i].Type], DropZone.transform);
+            if (i == 0)
+            {
+                DropZone.GetComponent<AutoScaleGridLayoutGroup>().RegisterAspectRatioListener(unityObject.GetComponent<AspectRatioConfiguration>());
+            }
         }
 
         // Set the image object sprites accordingly.
@@ -83,7 +87,7 @@ public class UnityObjectDropzoneHandler : MonoBehaviour, HandlerInterface
             DropZone.transform.GetChild(i).GetComponent<UnityObjectHandler>().HandleUnityObject(objects[i]);
         }
 
-
+        
 
         if (objects.Any(unityObject => unityObject.Options.ShouldRevealThisObject()) ) // only shake the objects if one of them is going to be revealed
         {

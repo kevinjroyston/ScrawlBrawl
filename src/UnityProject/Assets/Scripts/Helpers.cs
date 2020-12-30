@@ -8,7 +8,7 @@ using static TypeEnums;
 
 public static class Helpers 
 {
-
+    private static System.Random random = new System.Random();
     public static void SetActiveAndUpdate(Component handlerComponent, List<dynamic> values)
     {
         HandlerInterface handlerInterface = (HandlerInterface)handlerComponent;

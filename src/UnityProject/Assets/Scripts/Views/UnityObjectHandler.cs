@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.Extensions;
 using Assets.Scripts.Networking.DataModels;
 using Assets.Scripts.Networking.DataModels.Enums;
+using Assets.Scripts.Views.DataModels;
 using Assets.Scripts.Views.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -140,7 +141,7 @@ namespace Assets.Scripts.Views
                             switch (handlerId.SubType)
                             {
                                 case IdType.Object_UsersWhoVotedFor: values.Add(UnityObject.UsersWhoVotedFor); break;
-                                case IdType.Object_OwnerIds: values.Add(new List<Guid>() { UnityObject.ImageOwnerId.GetValueOrDefault(Guid.Empty) }); break;
+                                case IdType.Object_OwnerIds: values.Add(new List<Guid>() { UnityObject.ImageOwnerId.GetValueOrDefault(UnityObject.UnityObjectId) }); break;
                                 default:
                                     throw new ArgumentException($"Unknown subtype id: '{HandlerType.IdList}-{handlerId.SubType}'");
                             }
@@ -172,6 +173,14 @@ namespace Assets.Scripts.Views
                     }
                 }
                 Helpers.SetActiveAndUpdate(handlerComponent, values);
+            }
+
+            foreach (ScopeLoadedListener loadedListener in gameObject.GetComponentsInChildren<ScopeLoadedListener>())
+            {
+                if (loadedListener.Scope == HandlerScope.UnityObject)
+                {
+                    loadedListener.OnCompleteLoad();
+                }
             }
         }
 
