@@ -37,25 +37,6 @@ namespace Assets.Scripts.Views
             {
                 revealAnimation.RegisterForRevealEvent();
             }
-
-               /* /// Aspect ratio shenanigans
-                float innerAspectRatio = ((float)gridColCount) / ((float)gridRowCount) * aspectRatio;
-                // Code doesnt work if there are no inner images, in this case just default to A.R. 2.0
-                float outerAspectRatio = 2f;
-
-                if (GetFlexibleHeightOrDefault(SpriteZoneHolder) > 0.01f)
-                {
-                    outerAspectRatio =
-                         innerAspectRatio
-                         / (GetFlexibleHeightOrDefault(Title)
-                             + GetFlexibleHeightOrDefault(Header)
-                             + GetFlexibleHeightOrDefault(ScoreHolder)
-                             + GetFlexibleHeightOrDefault(Footer)
-                             + GetFlexibleHeightOrDefault(DummyScore)
-                             + GetFlexibleHeightOrDefault(SpriteZoneHolder))
-                         * GetFlexibleHeightOrDefault(SpriteZoneHolder);
-                }
-                CallAspectRatioListeners(innerAspectRatio, outerAspectRatio);*/
         }
         private void Start()
         {
@@ -63,53 +44,6 @@ namespace Assets.Scripts.Views
               listener: (gameEvent) => SetActiveAllChildren(transform, false),
               gameEvent: new GameEvent { eventType = EventEnum.ExitingState },
               persistant: true);*/
-        }
-
-
-        private float lastUsedInnerAspectRatio = 1f;
-        private float lastUsedOuterAspectRatio = 1f;
-        public void RegisterAspectRatioListener(Action<float, float> listener)
-        {
-            AspectRatioListeners.Add(listener);
-            listener.Invoke(lastUsedInnerAspectRatio, lastUsedOuterAspectRatio);
-        }
-
-        public float minAspectRatio = .3f;
-        public float maxAspectRatio = 3.3f;
-        private void CallAspectRatioListeners(float innerValue, float outerValue)
-        {
-            if (innerValue < minAspectRatio)
-            {
-                innerValue = minAspectRatio;
-            }
-            else if (innerValue > maxAspectRatio)
-            {
-                innerValue = maxAspectRatio;
-            }
-            if (outerValue < minAspectRatio)
-            {
-                outerValue = minAspectRatio;
-            }
-            else if (outerValue > maxAspectRatio)
-            {
-                outerValue = maxAspectRatio;
-            }
-            lastUsedInnerAspectRatio = innerValue;
-            lastUsedOuterAspectRatio = outerValue;
-            foreach (var func in AspectRatioListeners)
-            {
-                // Tells the listeners what size this layout group would ideally like to be
-                func.Invoke(innerValue, outerValue);
-            }
-        }
-        private float GetFlexibleHeightOrDefault(Component comp, float defaultValue = 0f)
-        {
-            return GetFlexibleHeightOrDefault(comp?.gameObject, defaultValue);
-        }
-        private float GetFlexibleHeightOrDefault(GameObject obj, float defaultValue = 0f)
-        {
-            float? flexHeight = obj?.transform?.GetComponent<LayoutElement>()?.flexibleHeight;
-            return ((obj?.activeInHierarchy == true) && flexHeight.HasValue) ? flexHeight.Value : defaultValue;
         }
 
 

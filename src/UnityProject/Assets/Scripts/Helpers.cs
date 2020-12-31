@@ -27,7 +27,9 @@ public static class Helpers
     }
     private static bool IsFieldNull<T>(UnityField<T> field)
     {
-        return field == null || field.Value == null;
+        return field == null 
+            || field.Value == null
+            || field.Value.Equals(string.Empty);
     }
     private static bool IsFieldNull(TimerHolder field)
     {

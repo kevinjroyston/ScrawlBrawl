@@ -7,7 +7,7 @@ public class GlobalViewListeners : MonoBehaviour
 {
     public static GlobalViewListeners Singleton;
     public List<GameObject> GlobalViewListenerObjects;
-    public List<Component> GlobalViewHanlderInterfaces { get; private set; } = new List<Component>();
+    public List<Component> GlobalViewHandlerInterfaces { get; private set; } = new List<Component>();
 
     public void Awake()
     {
@@ -21,7 +21,7 @@ public class GlobalViewListeners : MonoBehaviour
             }
             else
             {
-                GlobalViewHanlderInterfaces.Add((Component) objectHandlerInterface);
+                GlobalViewHandlerInterfaces.Add((Component) objectHandlerInterface);
             }
         }
     }

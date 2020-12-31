@@ -19,7 +19,7 @@ namespace Assets.Scripts.Networking.DataModels
         Waiting,
     }
 
-    public class UnityUser : OptionsInterface<UnityUserOptions>
+    public class UnityUser
     {
         public Guid Id { get; set; }
         public string DisplayName { get; set; }
@@ -37,8 +37,6 @@ namespace Assets.Scripts.Networking.DataModels
         public int ScoreDeltaScoreboard { get; set; }
         public UserActivity Activity {get; set;}
         public UserStatus Status { get; set; }
-
-        public Dictionary<UnityUserOptions, object> Options { get; set; }
 
     }
 }

@@ -9,7 +9,6 @@ using static TypeEnums;
 
 public class GenericTextHandler : MonoBehaviour, HandlerInterface
 {
-    [Tooltip("If already applied to text object can be left blank")]
     public Text TextComponent;
 
     public List<HandlerId> HandlerIds => HandlerType.Strings.ToHandlerIdList(this.textType);

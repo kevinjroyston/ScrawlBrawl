@@ -116,7 +116,7 @@ namespace Assets.Scripts.Views
         private void UpdateHandlers()
         {
             Handlers = gameObject.GetComponentsInChildren(typeof(HandlerInterface)).ToList();
-            Handlers.AddRange(GlobalViewListeners.Singleton.GlobalViewHanlderInterfaces);
+            Handlers.AddRange(GlobalViewListeners.Singleton.GlobalViewHandlerInterfaces);
         }
     }
 }

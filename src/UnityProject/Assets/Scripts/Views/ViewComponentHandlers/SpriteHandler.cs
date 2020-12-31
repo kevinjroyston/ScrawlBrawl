@@ -9,11 +9,10 @@ using Assets.Scripts.Networking.DataModels;
 using Assets.Scripts.Views.DataModels;
 using static TypeEnums;
 using Assets.Scripts.ComponentAugments;
+using static PrefabLookup;
 
 public class SpriteHandler : MonoBehaviour, HandlerInterface, CustomAspectRatio
 {
-    public GameObject SpriteGridPrefab;
-    public GameObject SpriteObjectPrefab;
     public Image BackgroundImage;
     public Image BlurMask;
     public List<HandlerId> HandlerIds => HandlerType.Sprite.ToHandlerIdList();
@@ -76,7 +75,7 @@ public class SpriteHandler : MonoBehaviour, HandlerInterface, CustomAspectRatio
         {
             if (ImageGrids.Count <= i)
             {
-                var grid = GameObject.Instantiate(SpriteGridPrefab);
+                var grid = GameObject.Instantiate(PrefabLookup.Singleton.Mapping[PrefabType.SpriteGrid]);
                 grid.transform.SetParent(transform);
                 grid.transform.localScale = new Vector3(1f, 1f, 1f);
                 grid.transform.localPosition = Vector3.zero;
@@ -94,7 +93,7 @@ public class SpriteHandler : MonoBehaviour, HandlerInterface, CustomAspectRatio
         {
             if (Images.Count <= i)
             {
-                var subImage = GameObject.Instantiate(SpriteObjectPrefab);
+                var subImage = GameObject.Instantiate(PrefabLookup.Singleton.Mapping[PrefabType.SpriteObject]);
                 Images.Add(subImage.GetComponent<Image>());
             }
 

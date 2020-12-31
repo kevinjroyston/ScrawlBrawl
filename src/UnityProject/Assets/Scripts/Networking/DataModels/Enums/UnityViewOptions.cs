@@ -8,8 +8,8 @@ namespace Assets.Scripts.Networking.DataModels.Enums
 {
     public enum UnityViewOptions
     {
-        PrimaryAxisMaxCount,
-        PrimaryAxis,
-        BlurAnimate,
+        PrimaryAxisMaxCount = 0,
+        PrimaryAxis = 1,
+        BlurAnimate = 2,
     }
 }
