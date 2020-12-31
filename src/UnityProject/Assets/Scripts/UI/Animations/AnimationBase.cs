@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Networking.DataModels;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ public abstract class AnimationBase: MonoBehaviour
     protected RectTransform rect;
     public bool registerOnEnable = true;
     private bool missedRegistration = false;
-    public User relevantUser;
+    public UnityUser relevantUser;
     public bool persistant = false;
     public bool oneShot = true;
     List<LTDescr> animations = new List<LTDescr>();

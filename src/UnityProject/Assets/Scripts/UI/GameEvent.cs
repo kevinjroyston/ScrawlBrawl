@@ -14,7 +14,6 @@ public class GameEvent
         ImageCreated,
         UserSubmitted,
         MoveToTarget,
-        IncreaseScore,
         VoteRevealBubbleCreated,
         VoteRevealBubbleMove,
         AnimationStarted,
@@ -22,9 +21,8 @@ public class GameEvent
         TenSecondsLeft,
         PlayPop,
         ShakeRevealImages,
-        CallShakeRevealImages,
+        CallShakeOrShowDelta,
         RevealImages,
-        CallRevealImages,
         PlayDrumRoll,
         ShowDeltaScores,
     }
@@ -33,4 +31,5 @@ public class GameEvent
     public string id;
 
     public DateTime eventTime;
+
 }

@@ -5,8 +5,12 @@ using UnityEngine;
 
 public static class ListExtensions 
 {
-    public static Color ToColor(this IReadOnlyList<int> list)
+    public static Color? ToColor(this IReadOnlyList<int> list)
     {
+        if (list == null)
+        {
+            return null;
+        }
         if (list.Count < 3 || list.Count > 4)
         {
             throw new System.Exception($"Can't convert this list (length: {list.Count}) to a color");

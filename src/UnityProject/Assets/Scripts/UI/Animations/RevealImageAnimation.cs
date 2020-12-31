@@ -45,9 +45,9 @@ public class RevealImageAnimation : AnimationBase
 
         return animations;
     }
-    public void AssignIdAndRegister(string id)
+    public void RegisterForRevealEvent()
     {
-        startEvent.id = id;
+        startEvent.eventType = GameEvent.EventEnum.RevealImages;
         CallRegisterForAnimation();      
     }
 

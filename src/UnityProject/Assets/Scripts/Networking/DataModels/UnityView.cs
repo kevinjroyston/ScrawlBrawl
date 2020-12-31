@@ -1,20 +1,21 @@
-﻿using System;
-using System.Collections;
+﻿using Assets.Scripts.Networking.DataModels.Enums;
+using System;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-public class UnityView
+namespace Assets.Scripts.Networking.DataModels
 {
-    public Guid _Id { get; set; }
-    //public UnityViewOptions Options { get; set; }
-    public IReadOnlyList<UnityImage> _UnityImages { get; set; }
-    public TVScreenId _ScreenId { get; set; }
-    public IReadOnlyList<User> _Users { get; set; }
-    public IReadOnlyList<User> _VoteRevealUsers { get; set; }
-    public Dictionary<string, int> _UserIdToDeltaScores { get; set; }
-    public string _Title { get; set; }
-    public string _Instructions { get; set; }
-    public DateTime ServerTime { get; set; }
-    public DateTime? _StateEndTime { get; set; }
-    public UnityViewOptions _Options { get; set; }
+    public class UnityView : OptionsInterface<UnityViewOptions>
+    {
+        public UnityField<IReadOnlyList<UnityObject>> UnityObjects { get; set; }
+        public IReadOnlyList<UnityUser> Users { get; set; }
+        public UnityField<string> Title { get; set; }
+        public UnityField<string> Instructions { get; set; }
+        public DateTime? ServerTime { get; set; }
+        public DateTime? StateEndTime { get; set; }
+        public bool IsRevealing { get; set; }
+        public Dictionary<UnityViewOptions, object> Options { get; set; }
+    }
 }

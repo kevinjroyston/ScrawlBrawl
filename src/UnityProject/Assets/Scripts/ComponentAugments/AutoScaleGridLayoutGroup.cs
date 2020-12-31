@@ -12,7 +12,6 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
     /// Width / Height
     /// </summary>
     public float aspectRatio = 1.0f;
-    ImageHandler scaler = null;
 
     public bool imageHandlerDrivenAspectRatio = true;
     public int pretendThereIsAlwaysAtLeastThisManyDrawings = 0;
@@ -35,21 +34,25 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
         gridLayoutGroup.startAxis = Axis.Horizontal;
         gridLayoutGroup.constraint = Constraint.FixedColumnCount;
 
-        if (imageHandlerDrivenAspectRatio)
-        {
-            scaler = transform.GetComponentInChildren<ImageHandler>();
-            scaler?.RegisterAspectRatioListener(AspectRatioListener);
-        }
 
         OnRectTransformDimensionsChange();
     }
 
     public void Update()
-    {
+    {         
         if (oldCellCount != transform.childCount)
         {
             OnRectTransformDimensionsChange();
         }
+    }
+    public void RegisterAspectRatioListener(AspectRatioConfiguration aspectRatioConfiguration)
+    {
+        aspectRatioConfiguration.RegisterAspectRatioListener(
+                    (float aspectRatio) =>
+                    {
+                        this.aspectRatio = aspectRatio;
+                        this.OnRectTransformDimensionsChange();
+                    });
     }
 
     protected override void OnRectTransformDimensionsChange()
@@ -64,11 +67,6 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
             rect = GetComponentInParent<RectTransform>();
             Debug.LogWarning("No rect");
             return;
-        }
-        if (scaler == null && imageHandlerDrivenAspectRatio)
-        {
-            scaler = transform.GetComponentInChildren<ImageHandler>();
-            scaler?.RegisterAspectRatioListener(AspectRatioListener);
         }
 
         if (rect?.rect != null && rect.rect.height > 0 && rect.rect.width > 0)
@@ -114,7 +112,8 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
         int numRows = RowsPerColumnCount(numCols);
         numRows = (numRows == 0 ? 1 : numRows);
         numCols = Mathf.Min(numCols, cellCount);
-        return Mathf.Min((rect.rect.height - gridLayoutGroup.padding.vertical - gridLayoutGroup.spacing.y * (numRows-1)) / (float)numRows, (rect.rect.width - gridLayoutGroup.padding.horizontal - (gridLayoutGroup.spacing.x) * (numCols-1)) / aspectRatio /(float)numCols);
+        return Mathf.Min((rect.rect.height - gridLayoutGroup.padding.vertical - gridLayoutGroup.spacing.y * (numRows-1)) / (float)numRows,
+            (rect.rect.width - gridLayoutGroup.padding.horizontal - (gridLayoutGroup.spacing.x) * (numCols-1)) / aspectRatio /(float)numCols);
     }
 
     /// <summary>

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.Networking.DataModels;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,17 +16,5 @@ public class EnterLobbyId : ITVView
     public void ButtonPressed()
     {
         TestClient.ConnectToLobby(UserInput.text.Trim());
-    }
-
-    public override void EnterView(UnityView currentView)
-    {
-        base.EnterView(currentView);
-        gameObject.SetActive(true);
-    }
-
-    public override void ExitView()
-    {
-        base.ExitView();
-        gameObject.SetActive(false);
     }
 }

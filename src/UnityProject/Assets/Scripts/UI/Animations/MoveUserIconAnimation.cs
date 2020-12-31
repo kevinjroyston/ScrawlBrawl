@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using Assets.Scripts.Networking.DataModels;
+using Assets.Scripts.Views.ViewComponentHandlers;
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,9 +18,8 @@ public class MoveUserIconAnimation : AnimationBase
     {
         MoveToTargetGameEvent targetGameEvent = (MoveToTargetGameEvent)gameEvent;
         Image createdMarker = Instantiate(ScoreProjectilePrefab, rect);
-        createdMarker.color = gameObject.GetComponent<Colorizer>().AssignedColor;
+        createdMarker.color = gameObject.GetComponent<ColorizerHandler>().AssignedColor;
         RectTransform targetScoreRect = targetGameEvent.TargetRect;
-        string targetId = targetGameEvent.TargetUserId;
         RectTransform markerRect = createdMarker.rectTransform;
 
         Vector2 iconRadiusVector = rect.localToWorldMatrix.MultiplyVector(new Vector2(rect.rect.width, rect.rect.height));
@@ -106,11 +107,11 @@ public class MoveUserIconAnimation : AnimationBase
             .setEaseOutBack()
             .PlayAfter(targetScaleUp)
             .addOnStart(() => Destroy(createdMarker))
-            .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.PlayPop })
-            .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.IncreaseScore, id = targetId });
+            .addOnStart(targetGameEvent.AnimationCompletedCallback)
+            .SetCallEventOnStart(new GameEvent() { eventType = GameEvent.EventEnum.PlayPop });
         if (IconOrder == IconCountTotal)
         {
-            targetScaleDown.SetCallEventOnComplete(new GameEvent() { eventType = GameEvent.EventEnum.CallShakeRevealImages });
+            targetScaleDown.SetCallEventOnComplete(new GameEvent() { eventType = GameEvent.EventEnum.CallShakeOrShowDelta });
         }
 
 
@@ -131,7 +132,7 @@ public class MoveUserIconAnimation : AnimationBase
         };
         return animations;
     }
-    public void AssignUserAndRegister(User relevantUser, int order, int totalNumIcons)
+    public void AssignUserAndRegister(UnityUser relevantUser, int order, int totalNumIcons)
     {
         this.IconOrder = order;
         this.IconCountTotal = totalNumIcons;

@@ -20,7 +20,7 @@ public class TestClient : MonoBehaviour
     // Hacky fix to send the update from the main thread.
     private bool Dirty { get; set; } = false;
     private bool LobbyClosed { get; set; } = false;
-    private UnityView CurrentView { get; set; }
+    private Legacy_UnityView CurrentView { get; set; }
 
     private bool ConfigDirty { get; set; } = false;
     private ConfigurationMetadata ConfigurationMeta { get; set; }
@@ -59,7 +59,7 @@ public class TestClient : MonoBehaviour
             }));
 
         hubConnection.On("UpdateState",
-            new Action<UnityView>((view) =>
+            new Action<Legacy_UnityView>((view) =>
             {
                 CurrentView = view;
                 Dirty = true;
