@@ -78,14 +78,14 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                 }
             });
 
-            List<UnityImage> displayTexts = questionsToShow.Select((Question question) =>
+            List<Legacy_UnityImage> displayTexts = questionsToShow.Select((Question question) =>
             {
                 string title = "<b>" + question.Text + "</b> ";
                 List<string> answers = Question.AnswerTypeToStrings[question.AnswerType].Where((string ans) => ans != "Abstain").ToList();
 
                 string formattedText = string.Join(" | ", answers);
 
-                return new UnityImage()
+                return new Legacy_UnityImage()
                 {
                     Title = new StaticAccessor<string> { Value = title },
                     Header = new StaticAccessor<string> { Value = formattedText }
@@ -93,14 +93,14 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
             }).ToList();
             this.Entrance.Transition(guessAnswers);
             guessAnswers.Transition(this.Exit);
-            this.UnityView = new UnityView(this.Lobby)
+            this.UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.TextView },
                 Title = new StaticAccessor<string> { Value = Invariant($"How do you think {userToShow.DisplayName} answered these questions?")},
-                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = displayTexts},
-                Options = new StaticAccessor<UnityViewOptions>
+                UnityImages = new StaticAccessor<IReadOnlyList<Legacy_UnityImage>> { Value = displayTexts},
+                Options = new StaticAccessor<Legacy_UnityViewOptions>
                 {
-                    Value = new UnityViewOptions()
+                    Value = new Legacy_UnityViewOptions()
                     {
                         PrimaryAxis = new StaticAccessor<Axis?> { Value = Axis.Vertical },
                         PrimaryAxisMaxCount = new StaticAccessor<int?> { Value = 8 }

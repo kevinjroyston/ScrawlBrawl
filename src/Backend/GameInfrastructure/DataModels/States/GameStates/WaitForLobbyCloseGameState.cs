@@ -29,15 +29,15 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             this.Entrance.Transition(this.Exit);
 
             // I have created a monstrosity.
-            this.UnityView = new UnityView(this.Lobby)
+            this.UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForLobbyToStart },
                 Title = new StaticAccessor<string> { Value = Invariant($"Lobby code: {lobby.LobbyId}") },
                 Instructions = new StaticAccessor<string> { Value = "Players joined so far:" },
-                UnityImages = new DynamicAccessor<IReadOnlyList<UnityImage>>
+                UnityImages = new DynamicAccessor<IReadOnlyList<Legacy_UnityImage>>
                 {
                     DynamicBacker = () => this.Lobby.GetAllUsers().OrderBy((User user)=>user.LobbyJoinTime).Select(usr =>
-                        new UnityImage(usr.Id)
+                        new Legacy_UnityImage(usr.Id)
                         {
                             Title = new StaticAccessor<string> { Value = usr.DisplayName },
                             Base64Pngs = new StaticAccessor<IReadOnlyList<string>>

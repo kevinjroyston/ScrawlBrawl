@@ -16,16 +16,16 @@ namespace Backend.Games.Common.DataModels
         }
         public string Drawing { get; set; }
 
-        public override UnityImage GetUnityImage(
+        public override Legacy_UnityImage GetUnityImage(
             Color? backgroundColor = null,
             string imageIdentifier = null,
             Guid? imageOwnerId = null,
             string title = null,
             string header = null,
             int? voteCount = null,
-            UnityImageVoteRevealOptions voteRevealOptions = null)
+            Legayc_UnityImageVoteRevealOptions voteRevealOptions = null)
         {
-            UnityImage baseImage = base.GetUnityImage(backgroundColor, imageIdentifier, imageOwnerId, title, header, voteCount, voteRevealOptions);
+            Legacy_UnityImage baseImage = base.GetUnityImage(backgroundColor, imageIdentifier, imageOwnerId, title, header, voteCount, voteRevealOptions);
             baseImage.Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = new List<string>() { this.Drawing }.AsReadOnly() };
             return baseImage;
         }

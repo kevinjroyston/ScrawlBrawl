@@ -171,7 +171,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                 return getDrawings;
             });
 
-            this.UnityView = new UnityView(this.Lobby)
+            this.UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
                 Instructions = new StaticAccessor<string> { Value = "Complete all the prompts on your devices." },

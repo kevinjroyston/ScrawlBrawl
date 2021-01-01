@@ -70,7 +70,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                 [question.UsersToAnswers[differentUser]];
 
             string instructions = question.Text + ":    " + (question.UsersToAnswers.Count - 1) + " players put " + majorityAnswer + " or Abstained, 1 player put " + outlierAnswer;
-            this.UnityView = new UnityView(lobby)
+            this.UnityView = new Legacy_UnityView(lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.TextView },
                 Title = new StaticAccessor<string> { Value = "Oh! It looks like we have an outlier." },

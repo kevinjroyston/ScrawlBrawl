@@ -21,14 +21,14 @@ namespace Backend.Games.Common.DataModels
         public UnityObjectOverrides UnityImageRevealOverrides { get; set; }
         public UnityObjectOverrides UnityImageVotingOverrides { get; set; }
 
-        public virtual UnityImage GetUnityImage(
+        public virtual Legacy_UnityImage GetUnityImage(
             Color? backgroundColor = null,
             string imageIdentifier = null,
             Guid? imageOwnerId = null,
             string title = null,
             string header = null,
             int? voteCount = null,
-            UnityImageVoteRevealOptions voteRevealOptions = null)
+            Legayc_UnityImageVoteRevealOptions voteRevealOptions = null)
         {
             backgroundColor ??= Color.White;
 
@@ -39,7 +39,7 @@ namespace Backend.Games.Common.DataModels
                 Convert.ToInt32(backgroundColor.Value.B)
             };
 
-            return new UnityImage
+            return new Legacy_UnityImage
             {
                 BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = backgroundColorList },
                 SpriteGridWidth = new StaticAccessor<int?> { Value = 1 },
@@ -49,25 +49,25 @@ namespace Backend.Games.Common.DataModels
                 Title = new StaticAccessor<string> { Value = title },
                 Header = new StaticAccessor<string> { Value = header },
                 VoteCount = new StaticAccessor<int?> { Value = voteCount },
-                VoteRevealOptions = new StaticAccessor<UnityImageVoteRevealOptions> { Value = voteRevealOptions },
+                VoteRevealOptions = new StaticAccessor<Legayc_UnityImageVoteRevealOptions> { Value = voteRevealOptions },
             };
 
         }
-        public UnityImage VotingUnityObjectGenerator(int numericId)
+        public Legacy_UnityImage VotingUnityObjectGenerator(int numericId)
         {
             return GetUnityImage(
                 imageIdentifier: numericId.ToString(),
                 title: this.UnityImageVotingOverrides.Title,
                 header: this.UnityImageVotingOverrides.Header);
         }
-        public UnityImage RevealUnityObjectGenerator(int numericId)
+        public Legacy_UnityImage RevealUnityObjectGenerator(int numericId)
         {
             return GetUnityImage(
                 imageIdentifier: numericId.ToString(),
                 title: this.UnityImageRevealOverrides.Title,
                 header: this.UnityImageRevealOverrides.Header,
                 imageOwnerId: this.Owner?.Id,
-                voteRevealOptions: new UnityImageVoteRevealOptions()
+                voteRevealOptions: new Legayc_UnityImageVoteRevealOptions()
                 {
                     RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = this.VotesCastForThisObject.Select((vote) => vote.UserWhoVoted).ToList() },
                     RevealThisImage = new StaticAccessor<bool?> { Value = this.ShouldHighlightReveal }

@@ -28,7 +28,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             Func<User, List<T>, UserPrompt> votingUserPromptGenerator,
             List<T> votingObjects,
             Action<List<T>, IDictionary<User,VoteInfo>> votingExitListener,
-            UnityView votingUnityView,
+            Legacy_UnityView votingUnityView,
             List<User> votingUsers,
             TimeSpan? votingTime = null) : base(lobby)
         {

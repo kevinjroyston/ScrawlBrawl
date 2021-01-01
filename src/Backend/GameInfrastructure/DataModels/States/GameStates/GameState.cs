@@ -32,9 +32,9 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
         }
 
         #region TVRendering
-        protected UnityView UnityView { get; set; } = new UnityView(null) { ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.NoUnityViewConfigured } };
+        protected Legacy_UnityView UnityView { get; set; } = new Legacy_UnityView(null) { ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.NoUnityViewConfigured } };
 
-        public UnityView GetActiveUnityView()
+        public Legacy_UnityView GetActiveUnityView()
         {
             if (UnityView == null)
             {

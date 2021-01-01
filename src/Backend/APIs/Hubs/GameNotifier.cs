@@ -52,7 +52,7 @@ namespace Backend.APIs.Hubs
                 try
                 {
                     // Gets the Unity view of the active GameState.
-                    UnityView view = lobby.GetActiveUnityView();
+                    Legacy_UnityView view = lobby.GetActiveUnityView();
 
                     // Refresh will re-fetch all dynamic values. Returning true if they changed from last fetch.
                     bool needToRefresh = view?.Refresh() ?? false;

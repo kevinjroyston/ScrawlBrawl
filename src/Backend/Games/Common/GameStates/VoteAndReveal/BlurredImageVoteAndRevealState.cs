@@ -40,16 +40,16 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             this.BlurRevealDelay = blurRevealDelay;
             this.BlurRevealLength = blurRevealLength;
         }
-        public override UnityView VotingUnityViewGenerator()
+        public override Legacy_UnityView VotingUnityViewGenerator()
         {
-            UnityView view = base.VotingUnityViewGenerator();
-            view.Options = new StaticAccessor<UnityViewOptions>
+            Legacy_UnityView view = base.VotingUnityViewGenerator();
+            view.Options = new StaticAccessor<Legacy_UnityViewOptions>
             {
-                Value = new UnityViewOptions()
+                Value = new Legacy_UnityViewOptions()
                 {
-                    BlurAnimate = new StaticAccessor<UnityViewAnimationOptions<float?>>
+                    BlurAnimate = new StaticAccessor<Legacy_UnityViewAnimationOptions<float?>>
                     {
-                        Value = new UnityViewAnimationOptions<float?>()
+                        Value = new Legacy_UnityViewAnimationOptions<float?>()
                         {
                             StartValue = new StaticAccessor<float?> { Value = 1.0f },
                             EndValue = new StaticAccessor<float?> { Value = 0.0f },

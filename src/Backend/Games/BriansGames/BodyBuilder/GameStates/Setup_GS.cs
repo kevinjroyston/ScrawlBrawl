@@ -162,7 +162,7 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                 return drawingsStateChains;
             });
 
-            this.UnityView = new UnityView(this.Lobby)
+            this.UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
                 Instructions = new StaticAccessor<string> { Value = "Complete all the prompts on your devices." },

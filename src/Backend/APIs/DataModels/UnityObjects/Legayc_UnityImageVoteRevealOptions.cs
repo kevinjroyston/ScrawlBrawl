@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Backend.APIs.DataModels.UnityObjects
 {
-    public class UnityImageVoteRevealOptions
+    public class Legayc_UnityImageVoteRevealOptions
     {
         public bool Refresh()
         {
@@ -14,12 +14,12 @@ namespace Backend.APIs.DataModels.UnityObjects
 
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public IAccessor<IReadOnlyList<User>> RelevantUsers { private get; set; }
+        public IAccessor<IReadOnlyList<User>> RelevantUsers { get; set; }
         public IReadOnlyList<User> _RelevantUsers { get => RelevantUsers?.Value; }
 
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public IAccessor<bool?> RevealThisImage { private get; set; }
+        public IAccessor<bool?> RevealThisImage { get; set; }
         public bool? _RevealThisImage { get => RevealThisImage?.Value; }
     }
 }

@@ -67,7 +67,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
             this.Entrance.Transition(writingUserState);
             writingUserState.Transition(this.Exit);
 
-            this.UnityView = new UnityView(this.Lobby)
+            this.UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
                 Title = new StaticAccessor<string> { Value = "Time To Write" },

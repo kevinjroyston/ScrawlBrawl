@@ -21,7 +21,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
 
         public VoteRevealGameState(
             Lobby lobby,
-            UnityView voteRevealUnityView,
+            Legacy_UnityView voteRevealUnityView,
             Func<User, UserPrompt> waitingPromptGenerator = null) : base(
                 lobby: lobby,
                 exit: new WaitForPartyLeader_StateExit(

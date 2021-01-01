@@ -2,7 +2,7 @@
 
 namespace Backend.APIs.DataModels.UnityObjects
 {
-    public class UnityViewAnimationOptions<T>
+    public class Legacy_UnityViewAnimationOptions<T>
     {
         public bool Refresh()
         {

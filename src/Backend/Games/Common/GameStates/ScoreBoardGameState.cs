@@ -28,14 +28,14 @@ namespace Backend.Games.Common.GameStates
                       partyLeaderPromptGenerator: PartyLeaderSkipButton))
         {
             this.Entrance.Transition(this.Exit);
-            this.UnityView = new UnityView(this.Lobby)
+            this.UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.Scoreboard },
                 Title = new StaticAccessor<string> { Value = title },
-                UnityImages = new DynamicAccessor<IReadOnlyList<UnityImage>>
+                UnityImages = new DynamicAccessor<IReadOnlyList<Legacy_UnityImage>>
                 {
                     DynamicBacker = () => this.Lobby.GetAllUsers().OrderByDescending(usr => usr.Score).Select(usr =>
-                        new UnityImage
+                        new Legacy_UnityImage
                         {
                             Title = new StaticAccessor<string> { Value = usr.DisplayName },
                             Base64Pngs = new StaticAccessor<IReadOnlyList<string>>

@@ -78,7 +78,7 @@ namespace Backend.Games.Common.GameStates
                 extraChain.Transition(this.Exit);
             }
 
-            this.UnityView = new UnityView(lobby)
+            this.UnityView = new Legacy_UnityView(lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
                 Title = new StaticAccessor<string> { Value = "Oh! It seems like we didn't get enough to move on. Keep em comming!" },
