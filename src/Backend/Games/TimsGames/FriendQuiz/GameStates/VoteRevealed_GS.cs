@@ -56,7 +56,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
 
             this.Entrance.Transition(this.Exit);
 
-            this.UnityView = new Legacy_UnityView(this.Lobby)
+            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.TextView },
                 Title = new StaticAccessor<string> { Value = Invariant($"How do you think {userToShow.DisplayName} answered these questions?") },

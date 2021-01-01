@@ -57,7 +57,7 @@ namespace Backend.Games.BriansGames.Common.GameStates
                     ));
             }
         
-            this.UnityView = new Legacy_UnityView(this.Lobby)
+            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
                 UnityImages = new StaticAccessor<IReadOnlyList<Legacy_UnityImage>> { Value = unityImages },

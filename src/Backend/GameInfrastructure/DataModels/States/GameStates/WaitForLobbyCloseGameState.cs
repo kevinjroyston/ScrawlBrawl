@@ -29,7 +29,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             this.Entrance.Transition(this.Exit);
 
             // I have created a monstrosity.
-            this.UnityView = new Legacy_UnityView(this.Lobby)
+            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForLobbyToStart },
                 Title = new StaticAccessor<string> { Value = Invariant($"Lobby code: {lobby.LobbyId}") },

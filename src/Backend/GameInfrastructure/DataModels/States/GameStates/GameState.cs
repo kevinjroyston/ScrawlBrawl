@@ -32,15 +32,16 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
         }
 
         #region TVRendering
-        protected Legacy_UnityView UnityView { get; set; } = new Legacy_UnityView(null) { ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.NoUnityViewConfigured } };
+        protected Legacy_UnityView Legacy_UnityView { get; set; } = new Legacy_UnityView(null) { ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.NoUnityViewConfigured } };
+        protected UnityView UnityView { get; set; } // TODO = new UnityView(null) { ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.NoUnityViewConfigured } };
 
-        public Legacy_UnityView GetActiveUnityView()
+        public Legacy_UnityView GetActiveLegacyUnityView()
         {
-            if (UnityView == null)
-            {
-                throw new Exception("Unity View not defined for this game state!!");
-            }
-             return UnityView;
+            return Legacy_UnityView;
+        }
+        public UnityView GetActiveUnityView()
+        {
+            return UnityView;
         }
         #endregion
     }

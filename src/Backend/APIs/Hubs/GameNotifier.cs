@@ -52,16 +52,34 @@ namespace Backend.APIs.Hubs
                 try
                 {
                     // Gets the Unity view of the active GameState.
-                    Legacy_UnityView view = lobby.GetActiveUnityView();
+                    Legacy_UnityView legacy_view = lobby.GetActiveLegacyUnityView();
 
                     // Refresh will re-fetch all dynamic values. Returning true if they changed from last fetch.
-                    bool needToRefresh = view?.Refresh() ?? false;
+                    bool needToRefresh = legacy_view?.Refresh() ?? false;
 
+
+                    UnityView view = lobby.GetActiveUnityView();
+
+                    needToRefresh |= view?.Dirty ?? false;
+
+                    if ((legacy_view == null) == (view == null))
+                    {
+                        throw new Exception("Gamestate did not properly setup views");
+                    }
                     // Check if we need to send data over the wire.
                     if (needToRefresh)
                     {
-                        // Push updates to all clients.
-                        UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("UpdateState", view);
+                        if (view != null)
+                        {
+                            // Push updates to all clients.
+                            UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("UpdateState", view);
+                        }
+                        else
+                        {
+                            // Push updates to all clients.
+                            UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("UpdateState", new UnityView(legacy_view));
+                        }
+
                     }
 
 

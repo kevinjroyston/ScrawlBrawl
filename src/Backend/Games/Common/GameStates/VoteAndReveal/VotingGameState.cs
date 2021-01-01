@@ -50,7 +50,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             votingUserState.Transition(this.Exit);
             votingUserState.AddExitListener(()=>votingExitListener(this.ObjectList, this.UserVotes));
 
-            this.UnityView = votingUnityView;
+            this.Legacy_UnityView = votingUnityView;
         }
 
         private UserPrompt InternalPromptGenerator(User user)

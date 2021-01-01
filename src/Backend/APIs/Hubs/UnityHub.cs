@@ -37,7 +37,7 @@ namespace Backend.APIs.Hubs
                     LeaveAllGroups();
                     Groups.AddToGroupAsync(Context.ConnectionId, lobby.LobbyId);
 
-                    Legacy_UnityView view = lobby.GetActiveUnityView();
+                    UnityView view = lobby.GetActiveUnityView();
                     Clients.Caller.SendAsync("UpdateState", view);
                     Clients.Caller.SendAsync("ConfigureMetadata", lobby.ConfigMetaData);
                 }

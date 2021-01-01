@@ -39,7 +39,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
             this.Entrance.Transition(contestantsMultiStateChain);
             contestantsMultiStateChain.Transition(this.Exit);
 
-            this.UnityView = new Legacy_UnityView(this.Lobby)
+            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
                 Instructions = new StaticAccessor<string> { Value = "Make your contestants on your devices." },

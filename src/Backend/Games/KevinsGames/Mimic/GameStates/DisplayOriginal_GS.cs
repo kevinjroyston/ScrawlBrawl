@@ -17,7 +17,7 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                   stateTimeoutDuration: displayTimeDuration,
                   exit: new WaitForStateTimeoutDuration_StateExit())
         {
-            this.UnityView = new Legacy_UnityView(this.Lobby)
+            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
                 Title = new StaticAccessor<string> { Value = "Memorize this drawing" },

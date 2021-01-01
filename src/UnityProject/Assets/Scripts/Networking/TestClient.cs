@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Assets.Scripts.Networking.DataModels;
 
 /// <summary>
 /// This class opens a connection to the server and listens for updates. From the main thread the secondary connection thread is
@@ -20,7 +21,7 @@ public class TestClient : MonoBehaviour
     // Hacky fix to send the update from the main thread.
     private bool Dirty { get; set; } = false;
     private bool LobbyClosed { get; set; } = false;
-    private Legacy_UnityView CurrentView { get; set; }
+    private UnityView CurrentView { get; set; }
 
     private bool ConfigDirty { get; set; } = false;
     private ConfigurationMetadata ConfigurationMeta { get; set; }
@@ -59,7 +60,7 @@ public class TestClient : MonoBehaviour
             }));
 
         hubConnection.On("UpdateState",
-            new Action<Legacy_UnityView>((view) =>
+            new Action<UnityView>((view) =>
             {
                 CurrentView = view;
                 Dirty = true;
@@ -98,7 +99,7 @@ public class TestClient : MonoBehaviour
             }
             else
             {
-                ViewManager.Singleton.SwitchToView(CurrentView?._ScreenId ?? TVScreenId.Unknown, CurrentView);
+                ViewManager.Singleton.SwitchToView(CurrentView?.ScreenId ?? TVScreenId.Unknown, CurrentView);
             }
         }
 

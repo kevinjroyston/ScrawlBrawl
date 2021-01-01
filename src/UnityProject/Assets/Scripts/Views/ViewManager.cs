@@ -54,11 +54,11 @@ public class ViewManager : MonoBehaviour
         }
         ConfigMetaData = newMetaData;
     }
-    public void SwitchToView(TVScreenId? id, Legacy_UnityView view)
+    public void SwitchToView(TVScreenId? id, UnityView view)
     {
-        if (view != null && view._Id != lastGuid)
+        if (view != null && view.Id != lastGuid)
         {
-            lastGuid = view._Id;
+            lastGuid = view.Id;
             EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ExitingState });
             AnimationManagerScript.Singleton.SendAnimationWrapUp(0.6f);
             StartCoroutine(TransitionSceneCoroutine(0.6f, id, view));
@@ -70,7 +70,7 @@ public class ViewManager : MonoBehaviour
         }
     }
 
-    IEnumerator TransitionSceneCoroutine(float delay, TVScreenId? id, Legacy_UnityView view)
+    IEnumerator TransitionSceneCoroutine(float delay, TVScreenId? id, UnityView view)
     {
         yield return new WaitForSeconds(delay);
         AnimationManagerScript.Singleton.ResetAndStopAllAnimations();
@@ -81,7 +81,7 @@ public class ViewManager : MonoBehaviour
         EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.EnteredState });
     }
 
-    public void ChangeView(TVScreenId? id, Legacy_UnityView view, bool newScene = false)
+    public void ChangeView(TVScreenId? id, UnityView view, bool newScene = false)
     {
         if (CurrentView.HasValue && AvailableTVViews.ContainsKey(CurrentView.Value))
         {
@@ -94,7 +94,7 @@ public class ViewManager : MonoBehaviour
 
         if (id.HasValue && AvailableTVViews.ContainsKey(id.Value))
         {
-            AvailableTVViews[id.Value].EnterView(LegacyToNewUnityView(view));
+            AvailableTVViews[id.Value].EnterView(view);
         }
         else
         {
@@ -103,6 +103,7 @@ public class ViewManager : MonoBehaviour
         CurrentView = id;
     }
 
+    /*
     // Converts old Data structures to new ones, same values different places
     private UnityView LegacyToNewUnityView(Legacy_UnityView legacyView)
     {
@@ -163,7 +164,7 @@ public class ViewManager : MonoBehaviour
             toReturn = new UnityImage()
             {
                 Type = UnityObjectType.Image,
-                Sprites = legacy.PngSprites,
+                //Sprites = legacy.PngSprites,
                 SpriteGridWidth = legacy._SpriteGridWidth,
                 SpriteGridHeight = legacy._SpriteGridHeight,
             };
@@ -212,4 +213,5 @@ public class ViewManager : MonoBehaviour
 
         return toReturn;
     }
+    */
 }

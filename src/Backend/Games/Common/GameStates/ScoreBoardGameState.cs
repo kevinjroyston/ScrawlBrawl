@@ -28,7 +28,7 @@ namespace Backend.Games.Common.GameStates
                       partyLeaderPromptGenerator: PartyLeaderSkipButton))
         {
             this.Entrance.Transition(this.Exit);
-            this.UnityView = new Legacy_UnityView(this.Lobby)
+            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.Scoreboard },
                 Title = new StaticAccessor<string> { Value = title },

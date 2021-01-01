@@ -54,7 +54,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                     };
                 }
             }).ToList();
-            this.UnityView = new Legacy_UnityView(this.Lobby)
+            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.TextView },
                 Title = new StaticAccessor<string> { Value = "Here are the results" },

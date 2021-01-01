@@ -30,7 +30,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
                     waitingPromptGenerator: waitingPromptGenerator))
         {
             this.Entrance.Transition(this.Exit);
-            this.UnityView = voteRevealUnityView;
+            this.Legacy_UnityView = voteRevealUnityView;
         }
     }
 }

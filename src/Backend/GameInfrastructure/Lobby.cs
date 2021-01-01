@@ -191,7 +191,16 @@ namespace Backend.GameInfrastructure
         /// Returns the unity view that needs to be potentially sent to the clients.
         /// </summary>
         /// <returns>The active unity view</returns>
-        public Legacy_UnityView GetActiveUnityView()
+        public Legacy_UnityView GetActiveLegacyUnityView()
+        {
+            return this.CurrentGameState?.GetActiveLegacyUnityView();
+        }
+
+        /// <summary>
+        /// Returns the unity view that needs to be potentially sent to the clients.
+        /// </summary>
+        /// <returns>The active unity view</returns>
+        public UnityView GetActiveUnityView()
         {
             return this.CurrentGameState?.GetActiveUnityView();
         }
