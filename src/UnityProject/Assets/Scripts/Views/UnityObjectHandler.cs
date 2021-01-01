@@ -163,7 +163,8 @@ namespace Assets.Scripts.Views
                             throw new ArgumentException($"Unknown subtype id: '{HandlerType.SliderValueList}-{handlerId.SubType}'");
                     }
                 default:
-                    throw new ArgumentException($"Unknown handler id: '{handlerId.SubType}'");
+                    throw new ArgumentException($"Unknown handler id: '{handlerId.HandlerType}'");
+
             }
         }
         #endregion
