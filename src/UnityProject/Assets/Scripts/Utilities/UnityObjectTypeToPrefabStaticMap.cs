@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using Assets.Scripts.Networking.DataModels;
 using System.Linq;
+using Assets.Scripts.Networking.DataModels.UnityObjects;
 
 public class UnityObjectTypeToPrefabStaticMap : MonoBehaviour
 {

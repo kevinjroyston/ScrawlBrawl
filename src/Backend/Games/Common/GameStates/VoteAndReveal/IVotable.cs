@@ -12,7 +12,10 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
     /// </summary>
     public interface IVotable
     {
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public List<VoteInfo> VotesCastForThisObject { get; }
+
         public abstract UnityImage VotingUnityObjectGenerator(int numericId);
         public abstract UnityImage RevealUnityObjectGenerator(int numericId);
         public bool ShouldHighlightReveal { get; }
