@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Networking.DataModels.Enums;
+using Assets.Scripts.Networking.DataModels.UnityObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;

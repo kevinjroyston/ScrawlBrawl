@@ -24,6 +24,7 @@ public static class TypeEnums
         UnityObjectList,
         UsersList,
         Color,
+        SliderValueList,
     }
 
     public class HandlerId
@@ -72,6 +73,13 @@ public static class TypeEnums
         Object_Header,
         Object_Footer,
         Object_ImageIdentifier,
+    }
+
+    [Serializable]
+    public enum SliderType
+    {
+        MainSliderValue,
+        GuessSliderValues,
     }
     public class TimerHolder
     {

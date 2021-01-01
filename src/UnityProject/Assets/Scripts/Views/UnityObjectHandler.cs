@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.Extensions;
 using Assets.Scripts.Networking.DataModels;
 using Assets.Scripts.Networking.DataModels.Enums;
+using Assets.Scripts.Networking.DataModels.UnityObjects;
 using Assets.Scripts.Views.DataModels;
 using Assets.Scripts.Views.Interfaces;
 using System;
@@ -61,16 +62,6 @@ namespace Assets.Scripts.Views
                 {
                     switch (handlerId.HandlerType)
                     {
-                        case HandlerType.Sprite:
-                            values.Add(
-                                new SpriteHolder()
-                                {
-                                    Sprites = UnityObject.Sprites,
-                                    SpriteGridWidth = UnityObject.SpriteGridWidth,
-                                    SpriteGridHeight = UnityObject.SpriteGridHeight,
-                                    BackgroundColor = UnityObject.BackgroundColor
-                                });
-                            break;
                         case HandlerType.IdList:
                             switch (handlerId.SubType)
                             {
@@ -103,7 +94,21 @@ namespace Assets.Scripts.Views
                             values.Add(UnityObject.Options);
                             break;
                         default:
-                            throw new ArgumentException($"Unknown handler id: '{handlerId.SubType}'");
+                            switch (UnityObject.Type)
+                            {
+                                case UnityObjectType.Image:
+                                    values.Add(UnityImageSubHandler(handlerId));
+                                    break;
+                                case UnityObjectType.Text:
+                                    // No extra data in Text for it to be listening for, dont know what they were looking for
+                                    throw new ArgumentException($"Unknown handler id: '{handlerId.SubType}'");
+                                case UnityObjectType.Slider:
+                                    values.Add(UnitySliderSubHandler(handlerId));
+                                    break;
+                                default:
+                                    throw new ArgumentException($"Unknown Object Type: : '{UnityObject.Type}'");
+                            }
+                            break;
                     }
                 }
                 Helpers.SetActiveAndUpdate(handlerComponent, values);
@@ -122,6 +127,46 @@ namespace Assets.Scripts.Views
         {
             Handlers = gameObject.GetComponentsInChildren(typeof(HandlerInterface)).ToList();
         }
+
+        #region ObjectType SubHandlers
+        private object UnityImageSubHandler(HandlerId handlerId)
+        {
+            UnityImage castedImage = (UnityImage)UnityObject;
+            switch (handlerId.HandlerType)
+            {
+                case HandlerType.Sprite:
+                    return new SpriteHolder()
+                    {
+                        Sprites = castedImage.Sprites,
+                        SpriteGridWidth = castedImage.SpriteGridWidth,
+                        SpriteGridHeight = castedImage.SpriteGridHeight,
+                        BackgroundColor = castedImage.BackgroundColor
+                    };
+                default:
+                    throw new ArgumentException($"Unknown handler id: '{handlerId.SubType}'");
+            }
+        }
+
+        private object UnitySliderSubHandler(HandlerId handlerId)
+        {
+            UnitySlider castedSlider = (UnitySlider)UnityObject;
+            switch (handlerId.HandlerType)
+            {
+                case HandlerType.SliderValueList:
+                    switch (handlerId.SubType)
+                    {
+                        case SliderType.MainSliderValue:
+                            return new List<SliderValueHolder>() { castedSlider.MainSliderValue };
+                        case SliderType.GuessSliderValues:
+                            return castedSlider.GuessSliderValues;
+                        default:
+                            throw new ArgumentException($"Unknown subtype id: '{HandlerType.SliderValueList}-{handlerId.SubType}'");
+                    }
+                default:
+                    throw new ArgumentException($"Unknown handler id: '{handlerId.SubType}'");
+            }
+        }
+        #endregion
     }
 
 }

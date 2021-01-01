@@ -12,6 +12,7 @@ using static TypeEnums;
 using Assets.Scripts.Views.DataModels;
 using Assets.Scripts.Networking.DataModels.Enums;
 using Assets.Scripts.Extensions;
+using Assets.Scripts.Networking.DataModels.UnityObjects;
 
 public class UnityObjectDropzoneHandler : MonoBehaviour, HandlerInterface
 {

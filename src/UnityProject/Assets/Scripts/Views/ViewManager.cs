@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Assets.Scripts.Networking.DataModels.Enums;
+using Assets.Scripts.Networking.DataModels.UnityObjects;
 
 public class ViewManager : MonoBehaviour
 {
