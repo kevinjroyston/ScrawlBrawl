@@ -62,13 +62,14 @@ namespace Backend.APIs.Hubs
 
                     needToRefresh |= view?.Dirty ?? false;
 
-                    if ((legacy_view == null) == (view == null))
-                    {
-                        throw new Exception("Gamestate did not properly setup views");
-                    }
+
                     // Check if we need to send data over the wire.
                     if (needToRefresh)
                     {
+                        if ((legacy_view == null) == (view == null))
+                        {
+                            throw new Exception("Gamestate did not properly setup views");
+                        }
                         if (view != null)
                         {
                             // Push updates to all clients.
