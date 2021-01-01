@@ -66,7 +66,7 @@ namespace Assets.Scripts.Views
                             switch (handlerId.SubType)
                             {
                                 case IdType.Object_UsersWhoVotedFor: values.Add(UnityObject.UsersWhoVotedFor); break;
-                                case IdType.Object_OwnerIds: values.Add(new List<Guid>() { UnityObject.ImageOwnerId.GetValueOrDefault(UnityObject.UnityObjectId) }); break;
+                                case IdType.Object_OwnerIds: values.Add(new List<Guid>() { UnityObject.OwnerUserId.GetValueOrDefault(UnityObject.UnityObjectId) }); break;
                                 default:
                                     throw new ArgumentException($"Unknown subtype id: '{HandlerType.IdList}-{handlerId.SubType}'");
                             }

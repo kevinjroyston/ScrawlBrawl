@@ -23,7 +23,7 @@ namespace Assets.Scripts.Networking.DataModels.UnityObjects
         public UnityField<string> Header { get; set; }
         public UnityField<string> Footer { get; set; }
         public UnityField<string> ImageIdentifier { get; set; }
-        public Guid? ImageOwnerId { get; set; }
+        public Guid? OwnerUserId { get; set; }
         public UnityField<int?> VoteCount { get; set; }
         public UnityField<IReadOnlyList<int>> BackgroundColor { get; set; }
         public Guid UnityObjectId { get; set; }

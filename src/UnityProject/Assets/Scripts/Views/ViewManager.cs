@@ -56,7 +56,7 @@ public class ViewManager : MonoBehaviour
     }
     public void SwitchToView(TVScreenId? id, Legacy_UnityView view)
     {
-        if (view != null &&  view._Id != lastGuid)
+        if (view != null && view._Id != lastGuid)
         {
             lastGuid = view._Id;
             EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ExitingState });
@@ -67,7 +67,7 @@ public class ViewManager : MonoBehaviour
         {
             ChangeView(id, view);
             EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.UserSubmitted });
-        }       
+        }
     }
 
     IEnumerator TransitionSceneCoroutine(float delay, TVScreenId? id, Legacy_UnityView view)
@@ -137,7 +137,7 @@ public class ViewManager : MonoBehaviour
                 }}
             }
         };
-      
+
     }
 
     private UnityUser LegacyToNewUnityUser(Legacy_User legacy, int scoreDelta)
@@ -157,51 +157,59 @@ public class ViewManager : MonoBehaviour
 
     private UnityObject LegacyToNewUnityObject(Legacy_UnityImage legacy)
     {
-        UnityObjectType type;
+        UnityObject toReturn = null;
         if (legacy.PngSprites?.Count > 0)
         {
-            type = UnityObjectType.Image;
-        } else
-        {
-            type = UnityObjectType.Text;
+            toReturn = new UnityImage()
+            {
+                Type = UnityObjectType.Image,
+                Sprites = legacy.PngSprites,
+                SpriteGridWidth = legacy._SpriteGridWidth,
+                SpriteGridHeight = legacy._SpriteGridHeight,
+            };
         }
-        return new UnityObject()
+        else
         {
-            UsersWhoVotedFor = legacy._VoteRevealOptions?._RelevantUsers?.Select((Legacy_User user) => user.Id).ToList(),
-            Type = type,
-            Sprites = legacy.PngSprites,
-            SpriteGridWidth = legacy._SpriteGridWidth,
-            SpriteGridHeight = legacy._SpriteGridHeight,
-            Title = new UnityField<string>()
+            toReturn = new UnityText()
             {
-                Value = legacy._Title
-            },
-            Header = new UnityField<string>()
-            {
-                Value = legacy._Header
-            },
-            Footer = new UnityField<string>()
-            {
-                Value = legacy._Footer
-            },
-            ImageIdentifier = new UnityField<string>()
-            {
-                Value = legacy._ImageIdentifier
-            },
-            ImageOwnerId = legacy._ImageOwnerId,
-            VoteCount = new UnityField<int?>()
-            {
-                Value = legacy._VoteCount
-            },
-            BackgroundColor = new UnityField<IReadOnlyList<int>>()
-            {
-                Value = legacy._BackgroundColor
-            },
-            UnityObjectId = legacy._UnityImageId,
-            Options = new Dictionary<UnityObjectOptions, object>()
-            {
-                {UnityObjectOptions.RevealThisImage, legacy._VoteRevealOptions?._RevealThisImage }
-            }
+                Type = UnityObjectType.Text
+            };
+        }
+
+
+        toReturn.UsersWhoVotedFor = legacy._VoteRevealOptions?._RelevantUsers?.Select((Legacy_User user) => user.Id).ToList();
+
+        toReturn.Title = new UnityField<string>()
+        {
+            Value = legacy._Title
         };
+        toReturn.Header = new UnityField<string>()
+        {
+            Value = legacy._Header
+        };
+        toReturn.Footer = new UnityField<string>()
+        {
+            Value = legacy._Footer
+        };
+        toReturn.ImageIdentifier = new UnityField<string>()
+        {
+            Value = legacy._ImageIdentifier
+        };
+        toReturn.OwnerUserId = legacy._ImageOwnerId;
+        toReturn.VoteCount = new UnityField<int?>()
+        {
+            Value = legacy._VoteCount
+        };
+        toReturn.BackgroundColor = new UnityField<IReadOnlyList<int>>()
+        {
+            Value = legacy._BackgroundColor
+        };
+        toReturn.UnityObjectId = legacy._UnityImageId;
+        toReturn.Options = new Dictionary<UnityObjectOptions, object>()
+        {
+            {UnityObjectOptions.RevealThisImage, legacy._VoteRevealOptions?._RevealThisImage }
+        };
+
+        return toReturn;
     }
 }
