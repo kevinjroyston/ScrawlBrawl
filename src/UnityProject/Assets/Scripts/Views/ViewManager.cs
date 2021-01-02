@@ -65,19 +65,33 @@ public class ViewManager : MonoBehaviour
         }
         else
         {
-            ChangeView(id, view);
+            ChangeView(id, LegacyToNewUnityView(view));
             EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.UserSubmitted });
         }
     }
 
     IEnumerator TransitionSceneCoroutine(float delay, TVScreenId? id, UnityView view)
+    /// <summary>
+    /// Use this to lock unity on a custom view made in Test Client
+    /// ====================================================================================
+    /// THIS CODE IS ONLY FOR DEBUGGING PURPOSES AND SHOULD NOT BE CALLED EVER ON PRODUCTION
+    /// ====================================================================================
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="view"></param>
+    public void SetDebugCustomView(TVScreenId? id, UnityView view)
+    {
+        ChangeView(id, view);
+    }
+
+    IEnumerator TransitionSceneCoroutine(float delay, TVScreenId? id, Legacy_UnityView view)
     {
         yield return new WaitForSeconds(delay);
         AnimationManagerScript.Singleton.ResetAndStopAllAnimations();
         EventSystem.Singleton.ResetDataStructures();
         BlurController.Singleton.ResetMasks();
 
-        ChangeView(id, view, true);
+        ChangeView(id, LegacyToNewUnityView(view), true);
         EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.EnteredState });
     }
 

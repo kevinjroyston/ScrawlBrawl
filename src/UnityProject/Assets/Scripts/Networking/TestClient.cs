@@ -139,7 +139,41 @@ public class TestClient : MonoBehaviour
         hubConnection.SendAsync("JoinRoom", lobby);
     }
 
-    public void Update()
+    public void Start()
+    {
+        #region Debug Unity View 
+        /// This is paired with ViewManager.SetDebugCustomView() to allow testing of views without having to do anything on backend
+        /// To use uncomment out this code, modify the UnityView being passed in and COMMENT OUT THE UPDATE LOOP
+        /// When you are done please revert back the comments
+        /// ====================================================================================
+        /// THIS CODE IS ONLY FOR DEBUGGING PURPOSES AND SHOULD NOT BE CALLED EVER ON PRODUCTION
+        /// ====================================================================================
+
+        ViewManager.Singleton.SetDebugCustomView(
+            TVScreenId.VoteRevealImageView,
+            new UnityView()
+            {
+                UnityObjects = new UnityField<IReadOnlyList<UnityObject>>
+                {
+                    Value = new List<UnitySlider>()
+                    {
+                        new UnitySlider()
+                        {
+                            SliderBounds = (0, 10),
+                            MainSliderValue = new SliderValueHolder()
+                            {
+                                UserId = Guid.NewGuid(),
+
+                            }
+                        }
+                    }
+                }
+            });
+
+        #endregion
+    }
+
+    /*public void Update()
     {
         // If the Dirty bit is set that means the networking thread got a response from the server. Since it is not possible
         // to make certain types of calls outside of the main thread we listen for it here and make the call here.
@@ -171,7 +205,7 @@ public class TestClient : MonoBehaviour
         {
             StartCoroutine(DelayedConnectToHub());
         }
-    }
+    } */
 
     /// <summary>
     /// Restarts the connection after a 5 second delay.
