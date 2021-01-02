@@ -18,10 +18,6 @@ namespace Backend.APIs.DataModels.UnityObjects
         [System.Text.Json.Serialization.JsonIgnore]
         private Lobby Lobby { get; }
 
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public bool Dirty { get; set; } = true;
-
         public UnityField<IReadOnlyList<UnityObject>> UnityObjects { get; set; }
         public TVScreenId? ScreenId { get; set; }
         public Guid Id { get; } = Guid.NewGuid();
@@ -51,7 +47,7 @@ namespace Backend.APIs.DataModels.UnityObjects
                     Value = legacy._UnityImages.Select(image => new UnityImage(image)).ToList().AsReadOnly()
                 };
             }
-            else
+            else if (legacy._UnityImages?.Count > 0)
             {
                 this.UnityObjects = new UnityField<IReadOnlyList<UnityObject>>
                 {
@@ -76,10 +72,6 @@ namespace Backend.APIs.DataModels.UnityObjects
                     EndValue = legacy._Options?._BlurAnimate?._EndValue,
                 }}
             };
-        }
-        protected void OnPropertyChanging(string propertyName)
-        {
-            Dirty = true;
         }
     }
 }

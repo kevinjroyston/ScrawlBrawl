@@ -6,6 +6,7 @@ using Backend.APIs.DataModels.UnityObjects;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Backend.APIs.Hubs
 {
@@ -51,9 +52,13 @@ namespace Backend.APIs.Hubs
             {
                 try
                 {
-                    UnityView view = lobby.GetActiveUnityView();
+                    UnityView view = lobby.GetActiveUnityView(returnNullIfNoChange:true);
 
-                    UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("UpdateState", view);
+                    if (view != null)
+                    {
+                        // SignalR's serialization is abysmal and client has no insight into the issue. pull serialization out.
+                        UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("UpdateState", JsonConvert.SerializeObject(view));
+                    }
 
                     bool needToRefreshMetadata = lobby.ConfigMetaData?.Refresh() ?? false;
 

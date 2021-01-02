@@ -7,6 +7,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Assets.Scripts.Networking.DataModels;
+using Newtonsoft.Json;
+using Assets.Scripts.Networking.DataModels.Enums;
+using Newtonsoft.Json.Linq;
+using static UnityEngine.UI.GridLayoutGroup;
+using Assets.Scripts.Networking.DataModels.UnityObjects;
 
 /// <summary>
 /// This class opens a connection to the server and listens for updates. From the main thread the secondary connection thread is
@@ -41,7 +46,7 @@ public class TestClient : MonoBehaviour
         hubConnection = new HubConnectionBuilder()
 #if DEBUG
             .WithUrl("http://localhost:50403/signalr")
-            //.WithUrl("https://api.test.scrawlbrawl.tv/signalr")
+    //.WithUrl("https://api.test.scrawlbrawl.tv/signalr")
 
 #else
             .WithUrl("https://api.scrawlbrawl.tv/signalr")
@@ -49,6 +54,7 @@ public class TestClient : MonoBehaviour
             .ConfigureLogging(logging =>
             {
                 logging.AddProvider(new DebugLoggerProvider());
+                logging.SetMinimumLevel(LogLevel.Debug);
             })
             .Build();
 
@@ -60,9 +66,9 @@ public class TestClient : MonoBehaviour
             }));
 
         hubConnection.On("UpdateState",
-            new Action<UnityView>((view) =>
+            new Action<string>((view) =>
             {
-                CurrentView = view;
+                CurrentView = ParseJObjects(JsonConvert.DeserializeObject<UnityView>(view));
                 Dirty = true;
             }));
 
@@ -74,6 +80,56 @@ public class TestClient : MonoBehaviour
             }));
 
         ConnectToHub();
+    }
+
+    /// <summary>
+    /// Iterates through all "object" dictionaries and parses objects.
+    /// </summary>
+    /// <param name="view"></param>
+    /// <returns></returns>
+    public UnityView ParseJObjects(UnityView view)
+    {
+        foreach (UnityViewOptions key in view.Options.Keys.ToList())
+        {
+            switch (key)
+            {
+                case UnityViewOptions.BlurAnimate:
+                    view.Options[key] = ((JObject)view.Options[key]).ToObject<UnityField<float?>>();
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        if (view.UnityObjects?.Value != null)
+        {
+            List<UnityObject> unityObjects = new List<UnityObject>();
+            foreach (object obj in view.UnityObjects.Value)
+            {
+                JObject jObject = (JObject)obj;
+                switch (jObject["Type"].ToObject<UnityObjectType>())
+                {
+                    case UnityObjectType.Image:
+                        unityObjects.Add(jObject.ToObject<UnityImage>());
+                        break;
+                    case UnityObjectType.Slider:
+                        unityObjects.Add(jObject.ToObject<UnitySlider>());
+                        break;
+                    case UnityObjectType.Text:
+                        unityObjects.Add(jObject.ToObject<UnityText>());
+                        break;
+                    default:
+                        throw new NotImplementedException("Not implemented");
+                }
+            }
+            view.UnityObjects.Value = unityObjects.AsReadOnly();
+        }
+        if (view.UnityObjects?.StartValue != null || view.UnityObjects?.EndValue !=null)
+        {
+            throw new NotImplementedException("not implemented");
+        }
+
+        return view;
     }
 
     string LobbyId = null;

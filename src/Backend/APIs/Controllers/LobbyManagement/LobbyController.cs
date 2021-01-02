@@ -94,6 +94,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
             } while (GameManager.GetLobby(lobbyId) != null);
 
             Lobby newLobby = ActivatorUtilities.CreateInstance<Lobby>(this.ServiceProvider, lobbyId, user);
+            newLobby.InitializeAllGameStates();
 
             if (!GameManager.RegisterLobby(newLobby))
             {

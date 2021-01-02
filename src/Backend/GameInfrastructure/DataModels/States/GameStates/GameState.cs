@@ -25,18 +25,30 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
         public GameState(Lobby lobby, TimeSpan? stateTimeoutDuration = null, StateEntrance entrance = null, StateExit exit = null) : base(stateTimeoutDuration: stateTimeoutDuration, entrance: entrance, exit: exit)
         {
             Lobby = lobby;
+            UnityView = new UnityView(lobby) { ScreenId = TVScreenId.NoUnityViewConfigured };
             this.Entrance.AddExitListener(() =>
             {
                 // When we are leaving the entrance / entering this state. Tell our lobby to update the current gamestate to be this one.
                 this.Lobby.TransitionCurrentGameState(this);
             });
-
-            ((INotifyPropertyChanged)UnityView).PropertyChanged += OnViewChanged;
         }
 
         #region TVRendering
         protected Legacy_UnityView Legacy_UnityView { get; set; } = new Legacy_UnityView(null) { ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.NoUnityViewConfigured } };
-        protected UnityView UnityView { get; set; }  = new UnityView(lobby: null) { ScreenId = TVScreenId.NoUnityViewConfigured };
+        private UnityView InternalUnityView;// = new UnityView(lobby: null) { ScreenId = TVScreenId.NoUnityViewConfigured };
+        protected UnityView UnityView
+        {
+            get
+            {
+                return InternalUnityView;
+            }
+            set
+            {
+                ((INotifyPropertyChanged)value).PropertyChanged += OnViewChanged;
+                InternalUnityView = value;
+                UnityViewDirty = true;
+            }
+        }
         public bool UnityViewDirty { get; set; } = true;
 
         private void OnViewChanged(object sender, EventArgs e)
