@@ -17,7 +17,10 @@ public class GenericTextHandler : MonoBehaviour, HandlerInterface
 
     public void UpdateValue(UnityField<string> field)
     {
-         TextComponent.text = field?.Value ?? string.Empty;
+        if (TextComponent != null)
+        {
+            TextComponent.text = field?.Value ?? string.Empty;
+        }
     }
 
     public void UpdateValue(List<dynamic> objects)

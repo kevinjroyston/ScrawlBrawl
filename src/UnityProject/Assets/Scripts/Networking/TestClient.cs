@@ -12,6 +12,7 @@ using Assets.Scripts.Networking.DataModels.Enums;
 using Newtonsoft.Json.Linq;
 using static UnityEngine.UI.GridLayoutGroup;
 using Assets.Scripts.Networking.DataModels.UnityObjects;
+using Assets.Scripts.Networking.DataModels.Enums;
 
 /// <summary>
 /// This class opens a connection to the server and listens for updates. From the main thread the secondary connection thread is
@@ -149,6 +150,37 @@ public class TestClient : MonoBehaviour
         /// THIS CODE IS ONLY FOR DEBUGGING PURPOSES AND SHOULD NOT BE CALLED EVER ON PRODUCTION
         /// ====================================================================================
 
+        List<UnityUser> fakeUsers = new List<UnityUser>()
+        {
+            new UnityUser()
+            {
+                Id = Guid.NewGuid(),
+                DisplayName = "Test User 1",
+                Activity = UserActivity.Active,
+                Status = UserStatus.AnsweringPrompts,
+            },
+            new UnityUser()
+            {
+                Id = Guid.NewGuid(),
+                DisplayName = "Test User 2",
+                Activity = UserActivity.Active,
+                Status = UserStatus.Waiting,
+            },
+            new UnityUser()
+            {
+                Id = Guid.NewGuid(),
+                DisplayName = "Test User 3",
+                Activity = UserActivity.Active,
+                Status = UserStatus.Waiting,
+            },
+            new UnityUser()
+            {
+                Id = Guid.NewGuid(),
+                DisplayName = "Test User 4",
+                Activity = UserActivity.Active,
+                Status = UserStatus.Waiting,
+            },
+        };
         ViewManager.Singleton.SetDebugCustomView(
             TVScreenId.VoteRevealImageView,
             new UnityView()
@@ -157,17 +189,190 @@ public class TestClient : MonoBehaviour
                 {
                     Value = new List<UnitySlider>()
                     {
+                       
                         new UnitySlider()
                         {
+                            OwnerUserId = fakeUsers[0].Id,
+                            Type = UnityObjectType.Slider,
                             SliderBounds = (0, 10),
                             MainSliderValue = new SliderValueHolder()
                             {
                                 UserId = Guid.NewGuid(),
-
-                            }
-                        }
+                                ValueRange = (2,4),
+                            },
+                            Title = new UnityField<string>()
+                            {
+                                Value = "Test Title"
+                            },
+                            /*Header = new UnityField<string>()
+                            {
+                                Value = "Test Header"
+                            },
+                            Footer = new UnityField<string>()
+                            {
+                                Value = "Test Footer"
+                            },*/
+                            ImageIdentifier = new UnityField<string>()
+                            {
+                                Value = "7"
+                            },
+                            UnityObjectId = Guid.NewGuid(),
+                        },
+                        new UnitySlider()
+                        {
+                            OwnerUserId = fakeUsers[0].Id,
+                            Type = UnityObjectType.Slider,
+                            SliderBounds = (0, 10),
+                            MainSliderValue = new SliderValueHolder()
+                            {
+                                UserId = Guid.NewGuid(),
+                                ValueRange = (2,4),
+                            },
+                            Title = new UnityField<string>()
+                            {
+                                Value = "Test Title"
+                            },
+                            /*Header = new UnityField<string>()
+                            {
+                                Value = "Test Header"
+                            },
+                            Footer = new UnityField<string>()
+                            {
+                                Value = "Test Footer"
+                            },*/
+                            ImageIdentifier = new UnityField<string>()
+                            {
+                                Value = "7"
+                            },
+                            UnityObjectId = Guid.NewGuid(),
+                        },
+                        new UnitySlider()
+                        {
+                            OwnerUserId = fakeUsers[0].Id,
+                            Type = UnityObjectType.Slider,
+                            SliderBounds = (0, 10),
+                            MainSliderValue = new SliderValueHolder()
+                            {
+                                UserId = Guid.NewGuid(),
+                                ValueRange = (2,4),
+                            },
+                            Title = new UnityField<string>()
+                            {
+                                Value = "Test Title"
+                            },
+                            /*Header = new UnityField<string>()
+                            {
+                                Value = "Test Header"
+                            },
+                            Footer = new UnityField<string>()
+                            {
+                                Value = "Test Footer"
+                            },*/
+                            ImageIdentifier = new UnityField<string>()
+                            {
+                                Value = "7"
+                            },
+                            UnityObjectId = Guid.NewGuid(),
+                        },
+                        new UnitySlider()
+                        {
+                            OwnerUserId = fakeUsers[0].Id,
+                            Type = UnityObjectType.Slider,
+                            SliderBounds = (0, 10),
+                            MainSliderValue = new SliderValueHolder()
+                            {
+                                UserId = Guid.NewGuid(),
+                                ValueRange = (2,4),
+                            },
+                            Title = new UnityField<string>()
+                            {
+                                Value = "Test Title"
+                            },
+                            /*Header = new UnityField<string>()
+                            {
+                                Value = "Test Header"
+                            },
+                            Footer = new UnityField<string>()
+                            {
+                                Value = "Test Footer"
+                            },*/
+                            ImageIdentifier = new UnityField<string>()
+                            {
+                                Value = "7"
+                            },
+                            UnityObjectId = Guid.NewGuid(),
+                        },
+                        new UnitySlider()
+                        {
+                            OwnerUserId = fakeUsers[0].Id,
+                            Type = UnityObjectType.Slider,
+                            SliderBounds = (0, 10),
+                            MainSliderValue = new SliderValueHolder()
+                            {
+                                UserId = Guid.NewGuid(),
+                                ValueRange = (2,4),
+                            },
+                            Title = new UnityField<string>()
+                            {
+                                Value = "Test Title"
+                            },
+                            /*Header = new UnityField<string>()
+                            {
+                                Value = "Test Header"
+                            },
+                            Footer = new UnityField<string>()
+                            {
+                                Value = "Test Footer"
+                            },*/
+                            ImageIdentifier = new UnityField<string>()
+                            {
+                                Value = "7"
+                            },
+                            UnityObjectId = Guid.NewGuid(),
+                        },
+                        new UnitySlider()
+                        {
+                            OwnerUserId = fakeUsers[0].Id,
+                            Type = UnityObjectType.Slider,
+                            SliderBounds = (0, 10),
+                            MainSliderValue = new SliderValueHolder()
+                            {
+                                UserId = Guid.NewGuid(),
+                                ValueRange = (2,4),
+                            },
+                            Title = new UnityField<string>()
+                            {
+                                Value = "Test Title"
+                            },
+                            /*Header = new UnityField<string>()
+                            {
+                                Value = "Test Header"
+                            },
+                            Footer = new UnityField<string>()
+                            {
+                                Value = "Test Footer"
+                            },*/
+                            ImageIdentifier = new UnityField<string>()
+                            {
+                                Value = "7"
+                            },
+                            UnityObjectId = Guid.NewGuid(),
+                        },
                     }
-                }
+                },
+                Users = fakeUsers.AsReadOnly(),
+                Title = new UnityField<string>()
+                {
+                    Value = "Test Title"
+                },
+                Instructions = new UnityField<string>()
+                {
+                    Value = "Test Instructions"
+                },
+                ServerTime = DateTime.UtcNow,
+                StateEndTime = null,
+                IsRevealing = true,
+                Options = new Dictionary<UnityViewOptions, object>()
             });
 
         #endregion
