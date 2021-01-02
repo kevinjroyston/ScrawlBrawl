@@ -3,6 +3,7 @@ using Backend.GameInfrastructure.ControlFlows.Exit;
 using Backend.APIs.DataModels.UnityObjects;
 using System;
 using Common.DataModels.Enums;
+using System.ComponentModel;
 
 namespace Backend.GameInfrastructure.DataModels.States.GameStates
 {
@@ -29,12 +30,19 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
                 // When we are leaving the entrance / entering this state. Tell our lobby to update the current gamestate to be this one.
                 this.Lobby.TransitionCurrentGameState(this);
             });
+
+            ((INotifyPropertyChanged)UnityView).PropertyChanged += OnViewChanged;
         }
 
         #region TVRendering
         protected Legacy_UnityView Legacy_UnityView { get; set; } = new Legacy_UnityView(null) { ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.NoUnityViewConfigured } };
         protected UnityView UnityView { get; set; }  = new UnityView(lobby: null) { ScreenId = TVScreenId.NoUnityViewConfigured };
+        public bool UnityViewDirty { get; set; } = true;
 
+        private void OnViewChanged(object sender, EventArgs e)
+        {
+            UnityViewDirty = true;
+        }
         public Legacy_UnityView GetActiveLegacyUnityView()
         {
             return Legacy_UnityView;
