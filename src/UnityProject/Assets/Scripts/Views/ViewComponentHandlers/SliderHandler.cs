@@ -44,7 +44,7 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
 
         private void ShowSliderHolder(SliderValueHolder sliderHolder, bool isMain = true)
         {
-            /*GameObject toInstantiate;
+            GameObject toInstantiate;
             float y;
             if (isMain)
             {
@@ -58,12 +58,11 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
             }
             if (sliderHolder.SingleValue != null)
             {
-                float x = Helpers.GetRelativePosition(sliderHolder.SingleValue, sliderHolder.min)
             } 
             else if (sliderHolder.ValueRange != null)
             {
 
-            }*/
+            }
         }
         public void UpdateValue(List<dynamic> objects)
         {

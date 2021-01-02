@@ -35,4 +35,13 @@ public static class Helpers
     {
         return field?.ServerTime == null || field?.StateEndTime == null;
     }
+
+    /// <summary>
+    /// Returns x1s relative position between min1 and max1 remapped to be between min2 and max2
+    /// </summary>
+    public static float GetRelativePosition(float x1, float min1, float max1, float min2, float max2)
+    {
+        float relativeTo1 = (x1 - min1) / (max1 - min1);
+        return (max2 - min2) * relativeTo1 + min2;
+    }
 }
