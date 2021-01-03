@@ -23,7 +23,6 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                   exit: new WaitForPartyLeader_StateExit(
                       lobby: lobby,
                       partyLeaderPromptGenerator: Prompts.PartyLeaderSkipRevealButton(),
-//                      waitingPromptGenerator: (User user) => {return Prompts.DisplayText()(user)})
                       waitingPromptGenerator:  Prompts.DisplayText()
                       )
                   )
