@@ -66,11 +66,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                     {
                         if (user == promptToDraw.Owner)
                         {
-                            return new UserPrompt()
-                            {
-                                UserPromptId = UserPromptId.SitTight,
-                                Description = "You won't be drawing for this one. Sit tight"
-                            };
+                            return Prompts.DisplayText("They are drawing your prompt.  You won't be drawing for this one. Sit tight", UserPromptId.SitTight)(user);
                         }
                         else
                         {

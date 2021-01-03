@@ -7,27 +7,31 @@ using Backend.APIs.DataModels.UnityObjects;
 using System;
 using Backend.GameInfrastructure;
 using Common.DataModels.Enums;
+using System.Linq;
+using Backend.GameInfrastructure.DataModels.States.UserStates;
 
 namespace Backend.Games.Common.GameStates.VoteAndReveal
 {
     public class VoteRevealGameState : GameState
     {
-        private static UserPrompt PartyLeaderSkipButton(User user) => new UserPrompt()
-        {
-            UserPromptId = UserPromptId.PartyLeader_SkipReveal,
-            Title = "Skip Reveal",
-            SubmitButton = true
-        };
-
         public VoteRevealGameState(
             Lobby lobby,
-            UnityView voteRevealUnityView,
-            Func<User, UserPrompt> waitingPromptGenerator = null) : base(
+            string promptTitle,
+            UnityView voteRevealUnityView) : base(
                 lobby: lobby,
                 exit: new WaitForPartyLeader_StateExit(
                     lobby: lobby,
-                    partyLeaderPromptGenerator: PartyLeaderSkipButton,
-                    waitingPromptGenerator: waitingPromptGenerator))
+                    partyLeaderPromptGenerator: Prompts.ShowScoreBreakdowns(
+                        lobby: lobby, 
+                        promptTitle: promptTitle,
+                        userPromptId: UserPromptId.PartyLeader_SkipReveal,
+                        userScoreBreakdownScope: Score.Scope.Reveal,
+                        showPartyLeaderSkipButton: true),
+
+                    waitingPromptGenerator: Prompts.ShowScoreBreakdowns(
+                        lobby: lobby,
+                        promptTitle: promptTitle,
+                        userScoreBreakdownScope: Score.Scope.Reveal)))
         {
             this.Entrance.Transition(this.Exit);
             this.UnityView = voteRevealUnityView;

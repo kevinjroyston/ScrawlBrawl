@@ -170,13 +170,13 @@ namespace BackendAutomatedTestingClient.WebClient
             };
         }
 
-        public static UserFormSubmission SubmitSkipReveal(string userId)
+        public static UserFormSubmission SubmitSkipReveal(string userId, UserPrompt prompt)
         {
             Debug.Assert(userId.Length == 50);
 
             return new UserFormSubmission
             {
-
+                SubForms = prompt?.SubPrompts?.Select((SubPrompt subPrompt) => new UserSubForm()).ToList()
             };
         }
     }

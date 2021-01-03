@@ -69,11 +69,11 @@ namespace BackendAutomatedTestingClient.Games
                     copyFrom: new List<GameStep>
                     {
                         TestCaseHelpers.AllPlayers(UserPromptId.Voting, NumPlayers),
-                        TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipReveal, NumPlayers),
+                        TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipReveal, NumPlayers, UserPromptId.RevealScoreBreakdowns),
                     },
                     repeatCounter: NumPlayers);
-                round.Add(TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipReveal, NumPlayers));
-                round.Add(TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipScoreboard, NumPlayers));
+                round.Add(TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipReveal, NumPlayers, UserPromptId.Waiting));
+                round.Add(TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipScoreboard, NumPlayers, UserPromptId.RevealScoreBreakdowns));
 
                 toReturn.AppendRepetitiveGameSteps(round, NumRounds);
 

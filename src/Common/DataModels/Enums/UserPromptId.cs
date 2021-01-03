@@ -9,6 +9,7 @@ namespace Common.DataModels.Enums
         Waiting = 2,
         Voting = 3,
         SitTight = 4,
+        RevealScoreBreakdowns = 5,
 
         PartyLeader_DefaultPrompt = 10,
         PartyLeader_GameEnd = 11,

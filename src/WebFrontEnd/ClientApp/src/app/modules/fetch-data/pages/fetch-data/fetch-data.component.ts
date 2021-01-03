@@ -246,6 +246,7 @@ interface UserPrompt {
     currentServerTime: Date;
     autoSubmitAtTime: Date;
     submitButton: boolean;
+    submitButtonText: string;
     title: string;
     description: string;
     subPrompts: SubPrompt[];

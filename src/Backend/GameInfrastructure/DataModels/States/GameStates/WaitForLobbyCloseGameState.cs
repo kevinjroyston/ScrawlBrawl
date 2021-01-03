@@ -8,6 +8,8 @@ using System.Linq;
 using static System.FormattableString;
 using Common.DataModels.Enums;
 using Common.Code.Validation;
+using Common.DataModels.Responses;
+using Backend.GameInfrastructure.DataModels.States.UserStates;
 
 namespace Backend.GameInfrastructure.DataModels.States.GameStates
 {
@@ -22,7 +24,8 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             : base(
                   lobby: lobby,
                   entrance: entrance,
-                  exit: new WaitForTrigger_StateExit())
+                  exit: new WaitForTrigger_StateExit(Prompts.DisplayText(Prompts.Text.WaitingForGameToStart))
+                  )
         {
             Arg.NotNull(lobby, nameof(lobby));
 

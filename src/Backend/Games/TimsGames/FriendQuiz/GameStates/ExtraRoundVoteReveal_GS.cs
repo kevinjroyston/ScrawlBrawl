@@ -10,23 +10,21 @@ using System.Collections.Generic;
 using System.Linq;
 using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
+using Backend.GameInfrastructure.DataModels.States.UserStates;
 
 namespace Backend.Games.TimsGames.FriendQuiz.GameStates
 {
     public class ExtraRoundVoteReveal_GS : GameState
     {
-        private static UserPrompt PartyLeaderSkipButton(User user) => new UserPrompt()
-        {
-            UserPromptId = UserPromptId.PartyLeader_SkipReveal,
-            Title = "Skip Reveal",
-            SubmitButton = true
-        };
         public ExtraRoundVoteReveal_GS(Lobby lobby, Question question, User differentUser, List<User> randomizedUsers, TimeSpan? maxWaitTime = null)
             : base(
                   lobby: lobby,
                   exit: new WaitForPartyLeader_StateExit(
                       lobby: lobby,
-                      partyLeaderPromptGenerator: PartyLeaderSkipButton))
+                      partyLeaderPromptGenerator: Prompts.PartyLeaderSkipRevealButton(),
+                      waitingPromptGenerator: Prompts.DisplayText()
+                      )
+                  )
         {
             this.Entrance.Transition(this.Exit);
 

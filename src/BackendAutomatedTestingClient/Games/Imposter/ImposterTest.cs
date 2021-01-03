@@ -28,11 +28,12 @@ namespace BackendAutomatedTestingClient.Games
                 case UserPromptId.PartyLeader_SkipReveal:
                 case UserPromptId.PartyLeader_SkipScoreboard:
                     Console.WriteLine($"{TestName}:Submitting Skip");
-                    return SkipReveal(player);
+                    return CommonSubmissions.SubmitSkipReveal(player.UserId, userPrompt);
                 case UserPromptId.Voting:
                     Console.WriteLine($"{TestName}:Submitting Voting");
                     return Vote(player);
                 case UserPromptId.SitTight:
+                case UserPromptId.RevealScoreBreakdowns:
                 case UserPromptId.Waiting:
                     return null;
                 default:
@@ -67,10 +68,6 @@ namespace BackendAutomatedTestingClient.Games
         protected virtual UserFormSubmission Vote(LobbyPlayer player)
         {
             return CommonSubmissions.SubmitSingleSelector(player.UserId);
-        }
-        protected virtual UserFormSubmission SkipReveal(LobbyPlayer player)
-        {
-            return CommonSubmissions.SubmitSkipReveal(player.UserId);
         }
     }
 }
