@@ -95,6 +95,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
 
             Lobby newLobby = ActivatorUtilities.CreateInstance<Lobby>(this.ServiceProvider, lobbyId, user);
 
+
             if (!GameManager.RegisterLobby(newLobby))
             {
                 return StatusCode(500, "Failed to create lobby, try again");

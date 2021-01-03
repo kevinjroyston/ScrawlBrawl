@@ -28,7 +28,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
         {
             this.Entrance.Transition(this.Exit);
 
-            List<UnityImage> unityImages = randomizedUsers.Select((User user) =>
+            List<Legacy_UnityImage> unityImages = randomizedUsers.Select((User user) =>
             {
                 int votesRecieved = 0;
                 if (question.ExtraRoundUserToVotesRecieved.ContainsKey(user))
@@ -37,7 +37,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                 }
                 if (user.Equals(differentUser))
                 {
-                    return new UnityImage()
+                    return new Legacy_UnityImage()
                     {
                         Title = new StaticAccessor<string> { Value = "<color=green><b>" + user.DisplayName + "</b></color>" },
                         VoteCount = new StaticAccessor<int?> { Value = votesRecieved }
@@ -45,21 +45,21 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                 }
                 else
                 {
-                    return new UnityImage()
+                    return new Legacy_UnityImage()
                     {
                         Title = new StaticAccessor<string> { Value = user.DisplayName },
                         VoteCount = new StaticAccessor<int?> { Value = votesRecieved }
                     };
                 }
             }).ToList();
-            this.UnityView = new UnityView(this.Lobby)
+            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.TextView },
                 Title = new StaticAccessor<string> { Value = "Here are the results" },
-                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages.AsReadOnly() },
-                Options = new StaticAccessor<UnityViewOptions>
+                UnityImages = new StaticAccessor<IReadOnlyList<Legacy_UnityImage>> { Value = unityImages.AsReadOnly() },
+                Options = new StaticAccessor<Legacy_UnityViewOptions>
                 {
-                    Value = new UnityViewOptions()
+                    Value = new Legacy_UnityViewOptions()
                     {
                         PrimaryAxis = new StaticAccessor<Axis?> { Value = Axis.Horizontal },
                         PrimaryAxisMaxCount = new StaticAccessor<int?> { Value = 5 }

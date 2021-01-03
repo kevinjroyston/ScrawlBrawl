@@ -81,7 +81,7 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
             this.TurnTimeLimit = perRoundTimeoutDuration;
             this.RoundMaxTurnLimit = roundTimeoutLimit;
             this.Entrance.Transition(AddGameplayCycle());
-            var unityImages = new List<UnityImage>();
+            var unityImages = new List<Legacy_UnityImage>();
             string instructions = null;
             string title = null;
 
@@ -96,7 +96,7 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                 for (int i = 0; i < roundTracker.UnassignedPeople.Count; i++)
                 {
                     var lambdaSafeIndex = i;
-                    unityImages.Add(new UnityImage
+                    unityImages.Add(new Legacy_UnityImage
                     {
                         Base64Pngs = new DynamicAccessor<IReadOnlyList<string>> { DynamicBacker = () => roundTracker.UnassignedPeople[lambdaSafeIndex].GetOrderedDrawings() },
                         BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = new List<int> { 255, 255, 255 } },
@@ -108,10 +108,10 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                 
             }
 
-            this.UnityView = new UnityView(this.Lobby)
+            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
-                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages },
+                UnityImages = new StaticAccessor<IReadOnlyList<Legacy_UnityImage>> { Value = unityImages },
                 Title = new StaticAccessor<string> { Value = title },
                 Instructions = new StaticAccessor<string> { Value = instructions },
             };

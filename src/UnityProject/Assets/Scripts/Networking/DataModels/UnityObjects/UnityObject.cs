@@ -17,7 +17,7 @@ namespace Assets.Scripts.Networking.DataModels.UnityObjects
     }
     public abstract class UnityObject : OptionsInterface<UnityObjectOptions>
     {
-        public List<Guid> UsersWhoVotedFor { get; set; }
+        public IReadOnlyList<Guid> UsersWhoVotedFor { get; set; }
         public UnityObjectType Type { get; set; }
         public UnityField<string> Title { get; set; }
         public UnityField<string> Header { get; set; }

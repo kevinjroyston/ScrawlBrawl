@@ -77,7 +77,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
 
             this.Entrance.Transition(getDrawingsUserState);
             getDrawingsUserState.Transition(this.Exit);
-            this.UnityView = new UnityView(this.Lobby)
+            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
                 Instructions = new StaticAccessor<string> { Value = "Complete the drawings on your devices" },

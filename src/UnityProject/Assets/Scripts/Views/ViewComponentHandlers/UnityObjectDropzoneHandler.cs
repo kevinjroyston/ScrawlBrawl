@@ -28,9 +28,9 @@ public class UnityObjectDropzoneHandler : MonoBehaviour, HandlerInterface
         EventSystem.Singleton.RegisterListener(DestroyAllObjects, new GameEvent() { eventType = EventEnum.ExitingState }, persistant: true);
     }
 
-    public void UpdateValue(UnityField<IReadOnlyList<UnityObject>> list)
+    public void UpdateValue(UnityField<IReadOnlyList<object>> list)
     {
-        UnityObjects = list?.Value?.ToList() ?? new List<UnityObject>();
+        UnityObjects = list?.Value?.Cast<UnityObject>().ToList() ?? new List<UnityObject>();
         LoadAllObjects(UnityObjects);
     }
 

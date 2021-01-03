@@ -6,6 +6,7 @@ using Backend.APIs.DataModels.UnityObjects;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Backend.APIs.Hubs
 {
@@ -51,19 +52,13 @@ namespace Backend.APIs.Hubs
             {
                 try
                 {
-                    // Gets the Unity view of the active GameState.
-                    UnityView view = lobby.GetActiveUnityView();
+                    UnityView view = lobby.GetActiveUnityView(returnNullIfNoChange:true);
 
-                    // Refresh will re-fetch all dynamic values. Returning true if they changed from last fetch.
-                    bool needToRefresh = view?.Refresh() ?? false;
-
-                    // Check if we need to send data over the wire.
-                    if (needToRefresh)
+                    if (view != null)
                     {
-                        // Push updates to all clients.
-                        UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("UpdateState", view);
+                        // SignalR's serialization is abysmal and client has no insight into the issue. pull serialization out.
+                        UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("UpdateState", JsonConvert.SerializeObject(view));
                     }
-
 
                     bool needToRefreshMetadata = lobby.ConfigMetaData?.Refresh() ?? false;
 

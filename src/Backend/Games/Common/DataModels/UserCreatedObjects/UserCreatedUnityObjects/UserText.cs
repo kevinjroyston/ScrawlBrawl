@@ -8,14 +8,14 @@ namespace Backend.Games.Common.DataModels
     public class UserText : UserCreatedUnityObject
     {
         public string Text { get; set; }
-        public override UnityImage GetUnityImage(
+        public override Legacy_UnityImage GetUnityImage(
             Color? backgroundColor = null,
             string imageIdentifier = null,
             Guid? imageOwnerId = null,
             string title = null,
             string header = null,
             int? voteCount = null,
-            UnityImageVoteRevealOptions voteRevealOptions = null)
+            Legacy_UnityImageVoteRevealOptions voteRevealOptions = null)
         {
             List<int> backgroundColorList = new List<int>
             {
@@ -24,7 +24,7 @@ namespace Backend.Games.Common.DataModels
                 Convert.ToInt32(backgroundColor.Value.B)
             };
 
-            return new UnityImage
+            return new Legacy_UnityImage
             {
                 BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = backgroundColorList },
                 SpriteGridWidth = new StaticAccessor<int?> { Value = 1 },
@@ -34,7 +34,7 @@ namespace Backend.Games.Common.DataModels
                 Title = new StaticAccessor<string> { Value = title },
                 Header = new StaticAccessor<string> { Value = header },
                 VoteCount = new StaticAccessor<int?> { Value = voteCount },
-                VoteRevealOptions = new StaticAccessor<UnityImageVoteRevealOptions> { Value = voteRevealOptions },
+                VoteRevealOptions = new StaticAccessor<Legacy_UnityImageVoteRevealOptions> { Value = voteRevealOptions },
             };
 
         }

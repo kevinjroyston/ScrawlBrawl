@@ -44,7 +44,7 @@ namespace Backend.Games.BriansGames.Common.GameStates
             imageIdentifier ??= (person) => null;
             imageTitle ??= (person) => null;
             imageHeader ??= (person) => null;
-            var unityImages = new List<UnityImage>();
+            var unityImages = new List<Legacy_UnityImage>();
             foreach(Person person in peopleList)
             {
                 unityImages.Add(person.GetUnityImage(
@@ -55,10 +55,10 @@ namespace Backend.Games.BriansGames.Common.GameStates
                     ));
             }
         
-            this.UnityView = new UnityView(this.Lobby)
+            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
-                UnityImages = new StaticAccessor<IReadOnlyList<UnityImage>> { Value = unityImages },
+                UnityImages = new StaticAccessor<IReadOnlyList<Legacy_UnityImage>> { Value = unityImages },
                 Title = new StaticAccessor<string> { Value = title },
             };
         }

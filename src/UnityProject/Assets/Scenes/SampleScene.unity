@@ -316,6 +316,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 17478373}
   m_CullTransparentMesh: 0
+--- !u!1 &26118809 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5008243696256944455, guid: 8ff2b60c71131364d8532907420e797a,
+    type: 3}
+  m_PrefabInstance: {fileID: 208403609}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &46989670
 GameObject:
   m_ObjectHideFlags: 0
@@ -1157,7 +1163,8 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6346684873678939785, guid: 8ff2b60c71131364d8532907420e797a, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 8ff2b60c71131364d8532907420e797a, type: 3}
 --- !u!1 &209659235
 GameObject:
@@ -3497,7 +3504,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e9f223164c0e8a4fbba205e0eee68dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DropZone: {fileID: 0}
 --- !u!114 &818657559
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4824,6 +4830,25 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1733956774}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1134818464 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5008243696035052141, guid: 8ff2b60c71131364d8532907420e797a,
+    type: 3}
+  m_PrefabInstance: {fileID: 208403609}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1134818465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1134818464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c5026d8b62424e479a0a4b5db7ea0a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DropZone: {fileID: 26118809}
 --- !u!224 &1140885442 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5008243696035052146, guid: 8ff2b60c71131364d8532907420e797a,
@@ -7074,7 +7099,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e9f223164c0e8a4fbba205e0eee68dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DropZone: {fileID: 0}
 --- !u!114 &1681740305
 MonoBehaviour:
   m_ObjectHideFlags: 0

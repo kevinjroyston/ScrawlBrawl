@@ -4,6 +4,7 @@ using Backend.APIs.DataModels.UnityObjects;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Backend.APIs.Hubs
 {
@@ -37,8 +38,10 @@ namespace Backend.APIs.Hubs
                     LeaveAllGroups();
                     Groups.AddToGroupAsync(Context.ConnectionId, lobby.LobbyId);
 
-                    UnityView view = lobby.GetActiveUnityView();
-                    Clients.Caller.SendAsync("UpdateState", view);
+                    UnityView view = lobby.GetActiveUnityView(returnNullIfNoChange:false);
+
+                    // SignalR's serialization is abysmal and client has no insight into the issue. pull serialization out.
+                    Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(view));
                     Clients.Caller.SendAsync("ConfigureMetadata", lobby.ConfigMetaData);
                 }
             }

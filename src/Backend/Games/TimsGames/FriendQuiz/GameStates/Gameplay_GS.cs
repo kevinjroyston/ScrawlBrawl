@@ -53,7 +53,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
             this.Entrance.Transition(askQuestions);
             askQuestions.Transition(this.Exit);
 
-            this.UnityView = new UnityView(lobby)
+            this.Legacy_UnityView = new Legacy_UnityView(lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
                 Instructions = new StaticAccessor<string> { Value = "Answer all the questions on your phones" },

@@ -1,99 +1,78 @@
-﻿using Backend.GameInfrastructure;
-using Backend.GameInfrastructure.DataModels.Users;
+﻿using Backend.APIs.DataModels.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using PostSharp.Patterns.Model;
+using System.ComponentModel;
+using Backend.GameInfrastructure;
 using Common.DataModels.Enums;
 
 namespace Backend.APIs.DataModels.UnityObjects
 {
-    public class UnityView
+    [NotifyPropertyChanged]
+    public class UnityView : OptionsInterface<UnityViewOptions>
     {
         // TODO: standardize on one json framework.
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         private Lobby Lobby { get; }
+
+        public UnityField<IReadOnlyList<UnityObject>> UnityObjects { get; set; }
+        public TVScreenId? ScreenId { get; set; }
+        public Guid Id { get; } = Guid.NewGuid();
+        public IReadOnlyList<UnityUser> Users { get; set; }
+        public UnityField<string> Title { get; set; }
+        public UnityField<string> Instructions { get; set; }
+        public DateTime? ServerTime { get { return DateTime.UtcNow; } }
+        public DateTime? StateEndTime { get; set; }
+        public bool IsRevealing { get; set; }
+        public Dictionary<UnityViewOptions, object> Options { get; set; }
+
         public UnityView(Lobby lobby)
         {
             this.Lobby = lobby;
-            if(lobby != null)
+            if (lobby != null)
             {
-                this.Users = new DynamicAccessor<IReadOnlyList<User>> { DynamicBacker = () => Lobby.GetAllUsers() };
+                this.Users = Lobby.GetAllUsers().Select(user => new UnityUser(user)).ToList().AsReadOnly();
             }
         }
-        public bool Refresh()
+
+        public UnityView(Legacy_UnityView legacy)
         {
-            // First Refresh is always dirty.
-            bool modified = this.Dirty;
-            this.Dirty = false;
-
-            modified |= this.Options?.Refresh() ?? false;
-            modified |= this.ScreenId?.Refresh() ?? false;
-            modified |= this.Users?.Refresh() ?? false;
-            modified |= this.Title?.Refresh() ?? false;
-            modified |= this.Instructions?.Refresh() ?? false;
-            modified |= this.VoteRevealUsers?.Refresh() ?? false;
-            modified |= this.UserIdToDeltaScores?.Refresh() ?? false;
-            modified |= this.UnityImages?.Refresh() ?? false;
-            modified |= this.UnityImages?.Value?.Select(image => image?.Refresh() ?? false).ToList().Any(val => val) ?? false;
-            return modified;
+            if (legacy._UnityImages?.Count > 0 && legacy._UnityImages?[0]?._Base64Pngs?.Count > 0)
+            {
+                this.UnityObjects = new UnityField<IReadOnlyList<UnityObject>> 
+                {
+                    Value = legacy._UnityImages.Select(image => new UnityImage(image)).ToList().AsReadOnly()
+                };
+            }
+            else if (legacy._UnityImages?.Count > 0)
+            {
+                this.UnityObjects = new UnityField<IReadOnlyList<UnityObject>>
+                {
+                    Value = legacy._UnityImages.Select(image => new UnityText(image)).ToList().AsReadOnly()
+                };
+            }
+            this.Id = legacy._Id ?? Guid.NewGuid();
+            this.ScreenId = legacy._ScreenId;
+            this.Users = legacy._Users.Select(user => new UnityUser(user)).ToList().AsReadOnly();
+            this.Title = new UnityField<string> { Value = legacy._Title };
+            this.Instructions = new UnityField<string> { Value = legacy._Instructions };
+            this.StateEndTime = legacy._StateEndTime;
+            this.IsRevealing = legacy._VoteRevealUsers?.Count > 0;
+            this.Options = new Dictionary<UnityViewOptions, object>()
+            {
+                {UnityViewOptions.PrimaryAxis, legacy._Options?._PrimaryAxis },
+                {UnityViewOptions.PrimaryAxisMaxCount, legacy._Options?._PrimaryAxisMaxCount },
+                {UnityViewOptions.BlurAnimate, new UnityField<float?>
+                {
+                    StartTime = legacy._Options?._BlurAnimate?._StartTime,
+                    EndTime = legacy._Options?._BlurAnimate?._EndTime,
+                    StartValue = legacy._Options?._BlurAnimate?._StartValue,
+                    EndValue = legacy._Options?._BlurAnimate?._EndValue,
+                }}
+            };
         }
-
-        /// <summary>
-        /// Tracks the first notification of a given UnityView;
-        /// </summary>
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        private bool Dirty { get; set; } = true;
-
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public IAccessor<UnityViewOptions> Options { private get; set; }
-        public UnityViewOptions _Options { get => Options?.Value; }
-
-        public DateTime ServerTime { get { return DateTime.UtcNow; } }
-
-        public DateTime? _StateEndTime
-        {
-            get => this.Lobby?.GetAllUsers().Select(user => user.EarliestStateTimeout).Append(this.Lobby.GetCurrentGameState().ApproximateStateEndTime).Min();
-        }
-
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public IAccessor<IReadOnlyList<UnityImage>> UnityImages { private get; set; }
-        public IReadOnlyList<UnityImage> _UnityImages { get => UnityImages?.Value; }
-
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public IAccessor<TVScreenId> ScreenId { private get; set; }
-        public TVScreenId? _ScreenId { get => ScreenId?.Value; }
-
-        public Guid? _Id { get; } = Guid.NewGuid();
-
-        // TODO: Streamline what data is being sent about the user here
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public IAccessor<IReadOnlyList<User>> Users { private get; set; }
-        public IReadOnlyList<User> _Users { get => Users?.Value; }
-
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public IAccessor<IDictionary<string, int>> UserIdToDeltaScores { private get; set; }
-        public IDictionary<string, int> _UserIdToDeltaScores { get => UserIdToDeltaScores?.Value; }
-        
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public IAccessor<IReadOnlyList<User>> VoteRevealUsers { private get; set; }
-        public IReadOnlyList<User> _VoteRevealUsers { get => VoteRevealUsers?.Value; }
-
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public IAccessor<string> Title { private get; set; }
-        public string _Title { get => Title?.Value; }
-
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public IAccessor<string> Instructions { private get; set; }
-        public string _Instructions { get => Instructions?.Value; }
     }
 }

@@ -15,6 +15,8 @@ using Microsoft.IdentityModel.Logging;
 using Backend.APIs.AuthorizationPolicies;
 using Backend.GameInfrastructure.DataModels;
 
+using Newtonsoft.Json;
+
 namespace Backend
 {
     public class Startup

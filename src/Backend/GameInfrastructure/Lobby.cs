@@ -191,9 +191,32 @@ namespace Backend.GameInfrastructure
         /// Returns the unity view that needs to be potentially sent to the clients.
         /// </summary>
         /// <returns>The active unity view</returns>
-        public UnityView GetActiveUnityView()
+        public UnityView GetActiveUnityView(bool returnNullIfNoChange)
         {
-            return this.CurrentGameState?.GetActiveUnityView();
+            UnityView currentView = this.CurrentGameState?.GetActiveUnityView();
+            Legacy_UnityView currentLegacyView = this.CurrentGameState?.GetActiveLegacyUnityView();
+            /*if (currentView != null && currentLegacyView != null)
+            {
+                throw new Exception("Gamestate did not properly setup views");
+            }*/
+
+            if (currentLegacyView != null)
+            {
+                if (!returnNullIfNoChange || currentLegacyView.Refresh())
+                {
+                    return new UnityView(currentLegacyView);
+                }
+            }
+            else
+            if (currentView != null)
+            {
+                if (!returnNullIfNoChange || (this.CurrentGameState?.UnityViewDirty ?? false))
+                {
+                    return currentView;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>

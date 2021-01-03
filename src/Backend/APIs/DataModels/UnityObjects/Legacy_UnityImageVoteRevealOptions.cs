@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Backend.APIs.DataModels.UnityObjects
 {
-    public class UnityImageVoteRevealOptions
+    public class Legacy_UnityImageVoteRevealOptions
     {
         public bool Refresh()
         {

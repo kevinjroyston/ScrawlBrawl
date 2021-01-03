@@ -17,7 +17,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
         public VoteRevealGameState(
             Lobby lobby,
             string promptTitle,
-            UnityView voteRevealUnityView) : base(
+            Legacy_UnityView voteRevealUnityView) : base(
                 lobby: lobby,
                 exit: new WaitForPartyLeader_StateExit(
                     lobby: lobby,
@@ -34,7 +34,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
                         userScoreBreakdownScope: Score.Scope.Reveal)))
         {
             this.Entrance.Transition(this.Exit);
-            this.UnityView = voteRevealUnityView;
+            this.Legacy_UnityView = voteRevealUnityView;
         }
     }
 }

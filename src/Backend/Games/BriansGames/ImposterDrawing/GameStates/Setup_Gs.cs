@@ -61,7 +61,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
             this.Entrance.Transition(getPromptsState);
             getPromptsState.Transition(this.Exit);
 
-            this.UnityView = new UnityView(this.Lobby)
+            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
             {
                 ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
                 Instructions = new StaticAccessor<string> { Value = "On your devices try to create a real and fake prompt that only you will spot" },

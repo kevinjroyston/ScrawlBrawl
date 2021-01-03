@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static TypeEnums;
 
-public class GenricIntHandler : MonoBehaviour, HandlerInterface
+public class GenericIntHandler : MonoBehaviour, HandlerInterface
 {
     public Text TextComponent;
 
