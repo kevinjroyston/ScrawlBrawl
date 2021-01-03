@@ -185,7 +185,7 @@ public class TestClient : MonoBehaviour
             TVScreenId.VoteRevealImageView,
             new UnityView()
             {
-                UnityObjects = new UnityField<IReadOnlyList<UnityObject>>
+                UnityObjects = new UnityField<IReadOnlyList<object>>
                 {
                     Value = new List<UnitySlider>()
                     {
