@@ -28,7 +28,7 @@ namespace Backend.Games.Common.DataModels
             string title = null,
             string header = null,
             int? voteCount = null,
-            Legayc_UnityImageVoteRevealOptions voteRevealOptions = null)
+            Legacy_UnityImageVoteRevealOptions voteRevealOptions = null)
         {
             backgroundColor ??= Color.White;
 
@@ -49,7 +49,7 @@ namespace Backend.Games.Common.DataModels
                 Title = new StaticAccessor<string> { Value = title },
                 Header = new StaticAccessor<string> { Value = header },
                 VoteCount = new StaticAccessor<int?> { Value = voteCount },
-                VoteRevealOptions = new StaticAccessor<Legayc_UnityImageVoteRevealOptions> { Value = voteRevealOptions },
+                VoteRevealOptions = new StaticAccessor<Legacy_UnityImageVoteRevealOptions> { Value = voteRevealOptions },
             };
 
         }
@@ -67,7 +67,7 @@ namespace Backend.Games.Common.DataModels
                 title: this.UnityImageRevealOverrides.Title,
                 header: this.UnityImageRevealOverrides.Header,
                 imageOwnerId: this.Owner?.Id,
-                voteRevealOptions: new Legayc_UnityImageVoteRevealOptions()
+                voteRevealOptions: new Legacy_UnityImageVoteRevealOptions()
                 {
                     RelevantUsers = new StaticAccessor<IReadOnlyList<User>> { Value = this.VotesCastForThisObject.Select((vote) => vote.UserWhoVoted).ToList() },
                     RevealThisImage = new StaticAccessor<bool?> { Value = this.ShouldHighlightReveal }

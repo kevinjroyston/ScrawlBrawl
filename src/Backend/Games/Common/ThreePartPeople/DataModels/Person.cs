@@ -70,7 +70,7 @@ namespace Backend.Games.Common.ThreePartPeople.DataModels
             string title = null,
             string header = null,
             int? voteCount = null,
-            Legayc_UnityImageVoteRevealOptions voteRevealOptions = null)
+            Legacy_UnityImageVoteRevealOptions voteRevealOptions = null)
         {
             Legacy_UnityImage baseImage = base.GetUnityImage(backgroundColor, imageIdentifier, imageOwnerId, title, header, voteCount, voteRevealOptions);
             baseImage.Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = GetOrderedDrawings() };

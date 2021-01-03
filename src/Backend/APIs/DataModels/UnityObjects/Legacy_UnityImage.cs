@@ -102,8 +102,8 @@ namespace Backend.APIs.DataModels.UnityObjects
 
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public IAccessor<Legayc_UnityImageVoteRevealOptions> VoteRevealOptions { get; set; }
-        public Legayc_UnityImageVoteRevealOptions _VoteRevealOptions { get => VoteRevealOptions?.Value; }
+        public IAccessor<Legacy_UnityImageVoteRevealOptions> VoteRevealOptions { get; set; }
+        public Legacy_UnityImageVoteRevealOptions _VoteRevealOptions { get => VoteRevealOptions?.Value; }
 
         // TODO: add some validation to this setter.
         [Newtonsoft.Json.JsonIgnore]

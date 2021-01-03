@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Backend.APIs.DataModels.UnityObjects
 {
-    public class UnityField<T> 
+    public class UnityField<T> : OptionsInterface<UnityFieldOptions>
     {
         public T Value { get; set; }
         public DateTime? StartTime { get; set; }

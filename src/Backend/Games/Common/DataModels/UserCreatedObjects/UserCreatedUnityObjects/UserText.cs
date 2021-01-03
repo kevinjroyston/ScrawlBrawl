@@ -15,7 +15,7 @@ namespace Backend.Games.Common.DataModels
             string title = null,
             string header = null,
             int? voteCount = null,
-            Legayc_UnityImageVoteRevealOptions voteRevealOptions = null)
+            Legacy_UnityImageVoteRevealOptions voteRevealOptions = null)
         {
             List<int> backgroundColorList = new List<int>
             {
@@ -34,7 +34,7 @@ namespace Backend.Games.Common.DataModels
                 Title = new StaticAccessor<string> { Value = title },
                 Header = new StaticAccessor<string> { Value = header },
                 VoteCount = new StaticAccessor<int?> { Value = voteCount },
-                VoteRevealOptions = new StaticAccessor<Legayc_UnityImageVoteRevealOptions> { Value = voteRevealOptions },
+                VoteRevealOptions = new StaticAccessor<Legacy_UnityImageVoteRevealOptions> { Value = voteRevealOptions },
             };
 
         }
