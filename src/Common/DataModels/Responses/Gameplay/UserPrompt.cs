@@ -45,6 +45,11 @@ namespace Common.DataModels.Responses
         /// <summary>
         /// The title/text to display
         /// </summary>
+        public string SubmitButtonText { get; set; } = "Submit";
+
+        /// <summary>
+        /// The title/text to display
+        /// </summary>
         public string Title { get; set; }
 
         /// <summary>

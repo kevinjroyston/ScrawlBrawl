@@ -10,17 +10,12 @@ using Backend.GameInfrastructure.ControlFlows.Exit;
 using Backend.GameInfrastructure.Extensions;
 using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
+using Backend.GameInfrastructure.DataModels.States.UserStates;
 
 namespace Backend.Games.BriansGames.Common.GameStates
 {
     public class DisplayPeople_GS : GameState
     {
-        private static UserPrompt PartyLeaderSkipButton(User user) => new UserPrompt()
-        {
-            UserPromptId = UserPromptId.PartyLeader_SkipReveal,
-            Title = "Skip Reveal",
-            SubmitButton = true
-        };
         public DisplayPeople_GS(
             Lobby lobby,
             string title,
@@ -33,7 +28,10 @@ namespace Backend.Games.BriansGames.Common.GameStates
                   lobby: lobby,
                   exit: new WaitForPartyLeader_StateExit(
                       lobby: lobby,
-                      partyLeaderPromptGenerator: PartyLeaderSkipButton))
+                      partyLeaderPromptGenerator: Prompts.PartyLeaderSkipRevealButton(),
+                      waitingPromptGenerator: Prompts.DisplayText()
+                      )
+                  )
         {
             if(peopleList == null || peopleList.Count == 0)
             {

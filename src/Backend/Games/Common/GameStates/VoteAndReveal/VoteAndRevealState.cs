@@ -11,6 +11,7 @@ using System.Linq;
 using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
 using Common.Code.Extensions;
+using Backend.GameInfrastructure.DataModels.States.UserStates;
 
 namespace Backend.Games.Common.GameStates.VoteAndReveal
 {
@@ -33,7 +34,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
                 {
                     if (counter == 0)
                     {
-                        CommonHelpers.ResetScores(this.Lobby.GetAllUsers().ToList(), Score.Scope.Reveal);
+                        this.Lobby.ResetScores(Score.Scope.Reveal);
 
                         return new VotingGameState<T>(
                             lobby: lobby,
@@ -46,9 +47,12 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
                     }
                     else if (counter == 1)
                     {
-                        return new VoteRevealGameState(
+                        var revealGameState = new VoteRevealGameState(
                             lobby: lobby,
+                            promptTitle: Prompts.Text.ShowScores,
                             voteRevealUnityView: RevealUnityViewGenerator());
+                        revealGameState.AddPerUserExitListener((User user) => user.ScoreHolder.ResetScore(Score.Scope.Reveal));
+                        return revealGameState;
                     }
                     else
                     {
@@ -88,7 +92,6 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             foreach (User user in Lobby.GetAllUsers())
             {
                 usersToScoreDelta.Add(user.Id.ToString(), user.ScoreHolder.ScoreAggregates[Score.Scope.Reveal]);
-                user.ScoreHolder.ResetScore(Score.Scope.Reveal);
             }
             return new Legacy_UnityView(this.Lobby)
             {

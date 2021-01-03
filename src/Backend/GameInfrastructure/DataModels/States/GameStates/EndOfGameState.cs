@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Common.DataModels.Enums;
+using Backend.GameInfrastructure.DataModels.States.UserStates;
 
 namespace Backend.GameInfrastructure.DataModels.States.GameStates
 {
@@ -43,6 +44,13 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
                   exit: new WaitForPartyLeader_StateExit(
                       lobby: lobby,
                       partyLeaderPromptGenerator: ContinuePrompt,
+                      waitingPromptGenerator: Prompts.ShowScoreBreakdowns(
+                        lobby: lobby,
+                        promptTitle: "Your score breakdowns", 
+                        userScoreBreakdownScope: Score.Scope.Total,
+                        userScoreScope: Score.Scope.Total,
+                        leaderboardScope: Score.Scope.Total),
+
                       partyLeaderFormSubmitListener: (User user, UserFormSubmission submission) =>
                       {
                           int? selectedIndex = submission.SubForms[0].RadioAnswer;

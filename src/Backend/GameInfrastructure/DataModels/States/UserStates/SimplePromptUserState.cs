@@ -16,11 +16,9 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
     /// </summary>
     public class SimplePromptUserState : UserState
     {
-        public static UserPrompt DefaultWaitingPrompt(User user) => new UserPrompt()
-        {
-            UserPromptId = UserPromptId.Waiting,
-            Description = "Waiting for other players . . ."
-        };
+        public static UserPrompt DefaultWaitingPrompt(User user)
+        { return Prompts.DisplayText()(user); }
+
         public static UserPrompt YouHaveThePowerPrompt(User _) => new UserPrompt()
         {
             UserPromptId = UserPromptId.PartyLeader_DefaultPrompt,

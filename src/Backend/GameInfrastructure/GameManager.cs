@@ -83,6 +83,7 @@ namespace Backend.GameInfrastructure
 
                 }
             },
+            SubmitButtonText ="Join",
             SubmitButton = true,
         };
         #endregion

@@ -333,15 +333,15 @@ namespace Backend.GameInfrastructure
                     InitializeAllGameStates();
                     previousEndOfGameRestart.Transition(this.WaitForLobbyStart);
 
-                    CommonHelpers.ResetScores(this.UsersInLobby.ToList());
+                    this.ResetScores();
                     break;
                 case EndOfGameRestartType.KeepScore:
                     InitializeAllGameStates();
                     previousEndOfGameRestart.Transition(this.WaitForLobbyStart);
 
-                    CommonHelpers.ResetScores(this.UsersInLobby.ToList(), Score.Scope.Reveal);
-                    CommonHelpers.ResetScores(this.UsersInLobby.ToList(), Score.Scope.Scoreboard);
-                    CommonHelpers.ResetScoreBreakdownsOnly(this.UsersInLobby.ToList(), Score.Scope.Total);
+                    this.ResetScores(Score.Scope.Reveal);
+                    this.ResetScores(Score.Scope.Scoreboard);
+                    this.ResetScoreBreakdownsOnly(Score.Scope.Total);
                     break;
                 default:
                     throw new Exception("Unknown restart game type");
