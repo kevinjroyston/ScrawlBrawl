@@ -15,10 +15,8 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
     {
         public RectTransform SliderBody;
         public HandlerScope Scope => HandlerScope.UnityObject;
-        private float bodyLeft;
-        private float bodyRight;
-        private float bodyTop;
-        private float bodyBottom;
+
+        private float sliderBodyAspectRatio;
         private float sliderMin;
         private float sliderMax;
 
@@ -31,10 +29,7 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
 
         public void UpdateValue((float, float) sliderBounds, List<SliderValueHolder> mainSliderHolders, List<SliderValueHolder> guessSliderHolders)
         {
-            bodyLeft = -SliderBody.sizeDelta.x / 2;
-            bodyRight = SliderBody.sizeDelta.x / 2;
-            bodyBottom = -SliderBody.sizeDelta.y / 2;
-            bodyTop = SliderBody.sizeDelta.y / 2;
+            sliderBodyAspectRatio = 
 
             sliderMin = sliderBounds.Item1;
             sliderMax = sliderBounds.Item2;
@@ -77,8 +72,9 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
                     min2: 0f,
                     max2: 1f);
                 GameObject singleValueTick = Instantiate(toInstantiate, transform);
-                singleValueTick.GetComponent<RectTransform>().anchorMin = new Vector2(x, y);
-                singleValueTick.GetComponent<RectTransform>().anchorMax = new Vector2(x, y);
+                RectTransform singleValueRectTrans = singleValueTick.GetComponent<RectTransform>();
+                singleValueRectTrans.anchorMin = new Vector2(x, y);
+                singleValueRectTrans.anchorMax = new Vector2(x, y);
             } 
             else if (sliderHolder.ValueRange != null)
             {
@@ -99,17 +95,38 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
                 GameObject valueRangeRect = Instantiate(PrefabLookup.Singleton.Mapping[PrefabLookup.PrefabType.SliderRange], transform);
                 GameObject valueRangeTick1 = Instantiate(toInstantiate, transform);
                 GameObject valueRangeTick2 = Instantiate(toInstantiate, transform);
+                RectTransform valueRangeRectTransform = valueRangeRect.GetComponent<RectTransform>();
+                RectTransform valueRangeRectTransform1 = valueRangeTick1.GetComponent<RectTransform>();
+                RectTransform valueRangeRectTransform2 = valueRangeTick2.GetComponent<RectTransform>();
 
-                valueRangeRect.GetComponent<RectTransform>().anchorMin = new Vector2(x1, y - 0.1f);
-                valueRangeRect.GetComponent<RectTransform>().anchorMax = new Vector2(x2, y + 0.1f);
-                valueRangeRect.GetComponent<RectTransform>().sizeDelta = new Vector2(0, 0);
+                valueRangeRectTransform.anchorMin = new Vector2(x1, y - 0.1f);
+                valueRangeRectTransform.anchorMax = new Vector2(x2, y + 0.1f);
+                valueRangeRectTransform.sizeDelta = new Vector2(0, 0);
 
-                valueRangeTick1.GetComponent<RectTransform>().anchorMin = new Vector2(x1, y);
-                valueRangeTick1.GetComponent<RectTransform>().anchorMax = new Vector2(x1, y);
-                valueRangeTick2.GetComponent<RectTransform>().anchorMin = new Vector2(x2, y);
-                valueRangeTick2.GetComponent<RectTransform>().anchorMax = new Vector2(x2, y);
+                valueRangeRectTransform1.anchorMin = new Vector2(x1, y);
+                valueRangeRectTransform1.anchorMax = new Vector2(x1, y);
+                valueRangeRectTransform2.anchorMin = new Vector2(x2, y);
+                valueRangeRectTransform2.anchorMax = new Vector2(x2, y);
 
             }
+        }
+        private void CreateTick(GameObject toInstantiate, float x, float y)
+        {
+            GameObject createdTick = Instantiate(toInstantiate, transform);
+            RectTransform createdRectTransform = createdTick.GetComponent<RectTransform>();
+            createdRectTransform.anchorMin = new Vector2(x, y);
+            createdRectTransform.anchorMax = new Vector2(x, y);
+        }
+        private float CalculateAspectRatio()
+        {
+            RectTransform holderRectTransform = gameObject.GetComponent<RectTransform>();
+            float bodyAnchorWidth = SliderBody.anchorMax.x - SliderBody.anchorMin.x;
+            float bodyAnchorHeight = SliderBody.anchorMax.y - SliderBody.anchorMin.y;
+
+            float bodyRelativeWidth = holderRectTransform.rect.width * bodyAnchorWidth;
+            float bodyRelativeHeight = holderRectTransform.rect.width * bodyAnchorHeight;
+
+            SliderBody.rect.w
         }
         public void UpdateValue(List<dynamic> objects)
         {
