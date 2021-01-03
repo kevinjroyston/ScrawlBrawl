@@ -21,7 +21,7 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
         /// <param name="waitingPromptGenerator">The prompt generator to use while waiting for the trigger. The outlet of this state will be overwritten</param>
         public WaitForTrigger_StateExit(Func<User, UserPrompt> waitingPromptGenerator = null) : base()
         {
-            this.WaitingState = new SimplePromptUserState(promptGenerator: waitingPromptGenerator ?? SimplePromptUserState.DefaultWaitingPrompt);
+            this.WaitingState = new SimplePromptUserState(promptGenerator: waitingPromptGenerator ?? Prompts.DisplayText());
             this.WaitingState.AddPerUserEntranceListener((User user) => this.InvokeEntranceListeners(user));
         }
 
