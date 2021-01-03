@@ -34,6 +34,7 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
         }
         public static class Text
         {
+            public const string WaitingForGameToStart = "Waiting for host to start game";
             public const string Waiting = "Waiting for other players . . .";
             public const string SkipReveal = "Skip Reveal";
             public const string ShowScores = "Check Out The Scores";

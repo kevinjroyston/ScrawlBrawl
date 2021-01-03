@@ -141,7 +141,7 @@ public class TestClient : MonoBehaviour
     }
 
     public void Start()
-    {
+    {   
         #region Debug Unity View 
         /// This is paired with ViewManager.SetDebugCustomView() to allow testing of views without having to do anything on backend
         /// To use uncomment out this code, modify the UnityView being passed in and COMMENT OUT THE UPDATE LOOP
@@ -150,6 +150,7 @@ public class TestClient : MonoBehaviour
         /// THIS CODE IS ONLY FOR DEBUGGING PURPOSES AND SHOULD NOT BE CALLED EVER ON PRODUCTION
         /// ====================================================================================
 
+        /*
         List<UnityUser> fakeUsers = new List<UnityUser>()
         {
             new UnityUser()
@@ -222,18 +223,6 @@ public class TestClient : MonoBehaviour
                             {
                                 Value = "Test Title"
                             },
-                            /*Header = new UnityField<string>()
-                            {
-                                Value = "Test Header"
-                            },
-                            Footer = new UnityField<string>()
-                            {
-                                Value = "Test Footer"
-                            },
-                            ImageIdentifier = new UnityField<string>()
-                            {
-                                Value = "7"
-                            },*/
                             UnityObjectId = Guid.NewGuid(),
                         },
                         new UnitySlider()
@@ -263,23 +252,11 @@ public class TestClient : MonoBehaviour
                             {
                                 Value = "Test Title"
                             },
-                            /*Header = new UnityField<string>()
-                            {
-                                Value = "Test Header"
-                            },
-                            Footer = new UnityField<string>()
-                            {
-                                Value = "Test Footer"
-                            },
-                            ImageIdentifier = new UnityField<string>()
-                            {
-                                Value = "7"
-                            },*/
                             UnityObjectId = Guid.NewGuid(),
                         },
                     }
                 },
-                Users = fakeUsers.AsReadOnly(),
+                Users = fakeUsers,
                 Title = new UnityField<string>()
                 {
                     Value = "Test Title"
@@ -293,11 +270,12 @@ public class TestClient : MonoBehaviour
                 IsRevealing = true,
                 Options = new Dictionary<UnityViewOptions, object>()
             });
-
+            
+             */
         #endregion
     }
 
-    /*public void Update()
+    public void Update()
     {
         // If the Dirty bit is set that means the networking thread got a response from the server. Since it is not possible
         // to make certain types of calls outside of the main thread we listen for it here and make the call here.
@@ -329,7 +307,7 @@ public class TestClient : MonoBehaviour
         {
             StartCoroutine(DelayedConnectToHub());
         }
-    } */
+    } 
 
     /// <summary>
     /// Restarts the connection after a 5 second delay.
