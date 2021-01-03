@@ -58,6 +58,7 @@ namespace Backend.GameInfrastructure
             this.Owner = owner;
             this.GameManager = gameManager;
             this.InMemoryConfiguration = inMemoryConfiguration;
+            InitializeAllGameStates();
         }
 
         /// <summary>
@@ -133,7 +134,7 @@ namespace Backend.GameInfrastructure
         /// UserStates will need to be reinitialized on startup and replay. These are used to stage players in and out of IGameModes as well as show relevant information
         /// to the TV client.
         /// </summary>
-        public void InitializeAllGameStates()
+        private void InitializeAllGameStates()
         {
             this.WaitForLobbyStart = new WaitForLobbyCloseGameState(this);
             this.EndOfGameRestart = new EndOfGameState(this, PrepareToRestartGame);
