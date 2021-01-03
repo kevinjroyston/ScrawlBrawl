@@ -126,7 +126,7 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
             float bodyRelativeWidth = holderRectTransform.rect.width * bodyAnchorWidth;
             float bodyRelativeHeight = holderRectTransform.rect.width * bodyAnchorHeight;
 
-            SliderBody.rect.w
+            return bodyAnchorWidth / bodyRelativeHeight;
         }
         public void UpdateValue(List<dynamic> objects)
         {
