@@ -45,11 +45,11 @@ namespace BackendAutomatedTestingClient.Games
                             onePrompt:UserPromptId.Waiting,
                             allPrompt: UserPromptId.Mimic_RecreateDrawing),
                         TestCaseHelpers.AllPlayers(UserPromptId.Voting, NumPlayers),
-                        TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipReveal, NumPlayers)
+                        TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipReveal, NumPlayers, UserPromptId.RevealScoreBreakdowns)
                     },
                     repeatCounter: NumPlayers * NumStartingDrawings);
 
-                toReturn.Add(TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipScoreboard, NumPlayers));
+                toReturn.Add(TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipScoreboard, NumPlayers, UserPromptId.RevealScoreBreakdowns));
 
                 return toReturn;
             }

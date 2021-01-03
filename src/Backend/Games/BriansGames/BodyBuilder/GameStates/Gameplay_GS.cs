@@ -178,7 +178,6 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                     {
                         UserPromptId = UserPromptId.BodyBuilder_FinishedPerson,
                         Title = "You are done! This is your final person",
-
                         SubPrompts = new SubPrompt[]
                         {
                             new SubPrompt

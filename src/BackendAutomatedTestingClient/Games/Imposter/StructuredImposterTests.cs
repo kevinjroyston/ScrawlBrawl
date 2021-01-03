@@ -36,8 +36,8 @@ namespace BackendAutomatedTestingClient.Games
                             onePrompt:UserPromptId.SitTight,
                             allPrompt: UserPromptId.ImposterSyndrome_Draw),
                         TestCaseHelpers.AllPlayers(UserPromptId.Voting, NumPlayers),
-                        TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipReveal, NumPlayers),
-                        TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipScoreboard, NumPlayers)
+                        TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipReveal, NumPlayers, UserPromptId.RevealScoreBreakdowns),
+                        TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipScoreboard, NumPlayers, UserPromptId.RevealScoreBreakdowns)
                     },
                     repeatCounter: NumPlayers);
 

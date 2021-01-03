@@ -35,19 +35,25 @@ namespace Backend.GameInfrastructure.DataModels.Users
             Imposter_GoodNormal,
             Imposter_GoodImposter,
         }
+
+        public Score()
+        {
+            ResetScore();
+        }
+
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public static IReadOnlyDictionary<Reason, string> ReasonDescriptions { get; } = new Dictionary<Reason, string>
         {
             { Reason.Other, "Other" },
             { Reason.CorrectAnswer, "Correct Answer" },
-            { Reason.Imposter_GoodNormal, "Blended in when not imposter" },
-            { Reason.Imposter_GoodImposter, "Standing out as imposter" },
             { Reason.ReceivedVotes, "Received Votes" },
             { Reason.CorrectAnswerSpeed, "Correct Answer (Speed)" },
             { Reason.DrawingUsed, "Drawing Used" },
             { Reason.Finished, "Finished (Speed)" },
             { Reason.VotedWithCrowd, "In agreement with other voters" },
+            { Reason.Imposter_GoodNormal, "Blended in when not imposter" },
+            { Reason.Imposter_GoodImposter, "Standing out as imposter" },
         };
         public void ResetScore(Scope? scope = null)
         {

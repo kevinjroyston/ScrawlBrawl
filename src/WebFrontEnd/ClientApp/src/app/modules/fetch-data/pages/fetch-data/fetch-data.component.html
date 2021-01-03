@@ -52,7 +52,7 @@
             {{ userPrompt.error }}
         </div>
         <scrawlbutton class='submit-prompt' *ngIf="userPrompt.submitButton" color="green" (click)="onSubmit(userForm.value)">
-            Submit
+            {{userPrompt.submitButtonText}}
         </scrawlbutton>
         <div *ngIf="userPrompt.submitButton" gameAsset [gameAssetClass]="'game-css'" [gameAssetType]="'prompts-css'" [gameAssetID]="userPrompt.gameIdString">
         </div>

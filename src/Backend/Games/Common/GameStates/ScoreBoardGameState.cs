@@ -8,24 +8,31 @@ using Backend.GameInfrastructure.ControlFlows.Exit;
 using Backend.GameInfrastructure.Extensions;
 using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
+using Backend.GameInfrastructure.DataModels.States.UserStates;
 
 namespace Backend.Games.Common.GameStates
 {
     public class ScoreBoardGameState : GameState
     {
-        private static UserPrompt PartyLeaderSkipButton(User user) => new UserPrompt()
-        {
-            UserPromptId = UserPromptId.PartyLeader_SkipScoreboard,
-            Title = "Skip Scoreboard",
-            SubmitButton = true
-        };
 
         public ScoreBoardGameState(Lobby lobby, string title = "Scores:")
             : base(
                   lobby,
                   exit: new WaitForPartyLeader_StateExit(
                       lobby: lobby,
-                      partyLeaderPromptGenerator: PartyLeaderSkipButton))
+                    partyLeaderPromptGenerator: Prompts.ShowScoreBreakdowns(
+                        lobby: lobby,
+                        promptTitle: "Scoreboard",
+                        userScoreScope: Score.Scope.Total,
+                        leaderboardScope : Score.Scope.Total,
+                        userPromptId: UserPromptId.PartyLeader_SkipScoreboard,
+                        showPartyLeaderSkipButton: true),
+                    waitingPromptGenerator: Prompts.ShowScoreBreakdowns(
+                        lobby: lobby,
+                        promptTitle: "Scoreboard",
+                        userScoreScope: Score.Scope.Total,
+                        leaderboardScope: Score.Scope.Total
+                        )))
         {
             this.Entrance.Transition(this.Exit);
             this.UnityView = new UnityView(this.Lobby)

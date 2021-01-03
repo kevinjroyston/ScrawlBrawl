@@ -31,8 +31,9 @@ namespace BackendAutomatedTestingClient.Games
                 case UserPromptId.PartyLeader_SkipReveal:
                 case UserPromptId.PartyLeader_SkipScoreboard:
                     Console.WriteLine($"{TestName}:Submitting Skip");
-                    return SkipReveal(player);
+                    return CommonSubmissions.SubmitSkipReveal(player.UserId, userPrompt);
                 case UserPromptId.BodyBuilder_FinishedPerson:
+                case UserPromptId.RevealScoreBreakdowns:
                 case UserPromptId.Waiting:
                     return null;
                 default:
@@ -83,9 +84,5 @@ namespace BackendAutomatedTestingClient.Games
             };
         }
 
-        private UserFormSubmission SkipReveal(LobbyPlayer player)
-        {
-            return CommonSubmissions.SubmitSkipReveal(player.UserId);
-        }
     }
 }
