@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5008243696035052146}
   - component: {fileID: 5008243696035052147}
-  - component: {fileID: 6346684873678939785}
+  - component: {fileID: 1773411970891087521}
   m_Layer: 0
   m_Name: IconDropZone
   m_TagString: Untagged
@@ -58,7 +58,7 @@ MonoBehaviour:
   m_FlexibleWidth: 5
   m_FlexibleHeight: 2
   m_LayoutPriority: 1
---- !u!114 &6346684873678939785
+--- !u!114 &1773411970891087521
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -67,7 +67,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5008243696035052141}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e9f223164c0e8a4fbba205e0eee68dc, type: 3}
+  m_Script: {fileID: 11500000, guid: 6c5026d8b62424e479a0a4b5db7ea0a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   DropZone: {fileID: 5008243696256944455}

@@ -54,6 +54,7 @@ namespace Backend.APIs.DataModels.UnityObjects
                     Value = legacy._UnityImages.Select(image => new UnityText(image)).ToList().AsReadOnly()
                 };
             }
+            this.Id = legacy._Id ?? Guid.NewGuid();
             this.ScreenId = legacy._ScreenId;
             this.Users = legacy._Users.Select(user => new UnityUser(user)).ToList().AsReadOnly();
             this.Title = new UnityField<string> { Value = legacy._Title };

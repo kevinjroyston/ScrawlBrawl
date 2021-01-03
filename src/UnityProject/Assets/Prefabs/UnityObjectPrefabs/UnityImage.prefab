@@ -264,10 +264,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 458449314db4fd64b962a01aa08c81cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpriteGridPrefab: {fileID: 502030004276576915, guid: 6de754643478e0247a4b70f54c46f606,
-    type: 3}
-  SpriteObjectPrefab: {fileID: 3440341579452285512, guid: c59ffe1d461a2cf4a86865ef279026b6,
-    type: 3}
   BackgroundImage: {fileID: 4689843705774137828}
   BlurMask: {fileID: 5313831369598500535}
 --- !u!1 &800937734571461495
@@ -281,8 +277,8 @@ GameObject:
   - component: {fileID: 7244336795898691169}
   - component: {fileID: 8010398897049928954}
   - component: {fileID: 3221431553010894533}
-  - component: {fileID: 4706185211356512646}
   - component: {fileID: 4109392440434526877}
+  - component: {fileID: 6862216426018984542}
   m_Layer: 0
   m_Name: DummyScore
   m_TagString: Untagged
@@ -337,21 +333,6 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: 0.3
   m_LayoutPriority: 1
---- !u!114 &4706185211356512646
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 800937734571461495}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b81f1bc9341dc544b23af8dad1f0d99, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TextComponent: {fileID: 4109392440434526877}
-  integerType: 0
-  showPlus: 0
 --- !u!114 &4109392440434526877
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -385,6 +366,18 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: This is a dummy text value, please keep disabled. Unity Sucks
+--- !u!114 &6862216426018984542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800937734571461495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9e10b5512d662e4482b1b3931072fdc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &958200141029690273
 GameObject:
   m_ObjectHideFlags: 0
@@ -520,8 +513,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93ee429b88d02584c921c4534288f12f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minAspectRatio: 0.3
-  maxAspectRatio: 3.3
 --- !u!114 &5941904992910686829
 MonoBehaviour:
   m_ObjectHideFlags: 0
