@@ -70,7 +70,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                         }
                         else
                         {
-                            return SimplePromptUserState.DefaultWaitingPrompt(user);
+                            return Prompts.DisplayText("Waiting for others to draw.")(user);
                         }
                     }),
                 maxPromptDuration: writingTimeDuration) ;

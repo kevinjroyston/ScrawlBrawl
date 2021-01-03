@@ -195,7 +195,7 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                 }
                 else
                 {
-                    return SimplePromptUserState.DefaultWaitingPrompt(user);
+                    return Prompts.DisplayText()(user);
                 }
             });
   

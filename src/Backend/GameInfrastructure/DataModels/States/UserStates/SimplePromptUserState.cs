@@ -16,9 +16,6 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
     /// </summary>
     public class SimplePromptUserState : UserState
     {
-        public static UserPrompt DefaultWaitingPrompt(User user)
-        { return Prompts.DisplayText()(user); }
-
         public static UserPrompt YouHaveThePowerPrompt(User _) => new UserPrompt()
         {
             UserPromptId = UserPromptId.PartyLeader_DefaultPrompt,
@@ -31,7 +28,7 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
         private Func<User, UserFormSubmission, (bool, string)> FormSubmitHandler { get; set; }
         private Func<User, UserFormSubmission, UserTimeoutAction> UserTimeoutHandler { get; set; }
         public SimplePromptUserState(Func<User, UserPrompt> promptGenerator = null, TimeSpan? maxPromptDuration = null, Func<User, UserFormSubmission, (bool, string)> formSubmitHandler = null, StateEntrance entrance = null, StateExit exit = null, Func<User, UserFormSubmission, UserTimeoutAction> userTimeoutHandler = null)
-            : base(maxPromptDuration, promptGenerator ?? DefaultWaitingPrompt, entrance: entrance, exit: exit)
+            : base(maxPromptDuration, promptGenerator ?? Prompts.DisplayText(), entrance: entrance, exit: exit)
         {
             if (userTimeoutHandler != null)
             {
