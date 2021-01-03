@@ -16,9 +16,13 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
         public RectTransform SliderBody;
         public HandlerScope Scope => HandlerScope.UnityObject;
 
-        private float sliderBodyAspectRatio;
-        private float sliderMin;
-        private float sliderMax;
+        private float SliderBodyAspectRatio;
+        private float SliderBodyAnchorMinX;
+        private float SliderBodyAnchorMaxX;
+        private float SliderBodyAnchorMinY;
+        private float SliderBodyAnchorHeight;
+        private float SliderMin;
+        private float SliderMax;
 
         public List<HandlerId> HandlerIds => new List<HandlerId>()
         { 
@@ -29,10 +33,14 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
 
         public void UpdateValue((float, float) sliderBounds, List<SliderValueHolder> mainSliderHolders, List<SliderValueHolder> guessSliderHolders)
         {
-            sliderBodyAspectRatio = 
+            SliderBodyAspectRatio = gameObject.GetComponent<FixedAspectRatio>().AspectRatio;
+            SliderBodyAnchorMinX = SliderBody.anchorMin.x;
+            SliderBodyAnchorMaxX = SliderBody.anchorMax.x;
+            SliderBodyAnchorMinY = SliderBody.anchorMin.y;
+            SliderBodyAnchorHeight = SliderBody.anchorMax.y - SliderBody.anchorMin.y;
+            SliderMin = sliderBounds.Item1;
+            SliderMax = sliderBounds.Item2;
 
-            sliderMin = sliderBounds.Item1;
-            sliderMax = sliderBounds.Item2;
             if (mainSliderHolders != null)
             {
                 foreach (SliderValueHolder sliderHolder in mainSliderHolders)
@@ -53,80 +61,74 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
         {
             GameObject toInstantiate;
             float y;
+            float anchorHeight;
             if (isMain)
             {
                 toInstantiate = PrefabLookup.Singleton.Mapping[PrefabLookup.PrefabType.SliderValue];
                 y = 0.5f;
+                anchorHeight = SliderBodyAnchorHeight * 1.05f;
             }
             else
             {
                 toInstantiate = PrefabLookup.Singleton.Mapping[PrefabLookup.PrefabType.SliderGuess];
-                y = 0f;
+                y = SliderBodyAnchorMinY;
+                anchorHeight = SliderBodyAnchorHeight * 0.3f;
             }
             if (sliderHolder.SingleValue != null)
             {
                 float x = Helpers.GetRelativePosition(
                     x1: (float)sliderHolder.SingleValue,
-                    min1: sliderMin,
-                    max1: sliderMax,
+                    min1: SliderMin,
+                    max1: SliderMax,
                     min2: 0f,
                     max2: 1f);
-                GameObject singleValueTick = Instantiate(toInstantiate, transform);
-                RectTransform singleValueRectTrans = singleValueTick.GetComponent<RectTransform>();
-                singleValueRectTrans.anchorMin = new Vector2(x, y);
-                singleValueRectTrans.anchorMax = new Vector2(x, y);
+
+                CreateTick(toInstantiate, x, y, anchorHeight, sliderHolder.UserId.ToString());
             } 
             else if (sliderHolder.ValueRange != null)
             {
                 float x1 = Helpers.GetRelativePosition(
                     x1: (((float, float)) sliderHolder.ValueRange).Item1,
-                    min1: sliderMin,
-                    max1: sliderMax,
-                    min2: 0,
-                    max2: 1);
+                    min1: SliderMin,
+                    max1: SliderMax,
+                    min2: SliderBodyAnchorMinX,
+                    max2: SliderBodyAnchorMaxX);
 
                 float x2 = Helpers.GetRelativePosition(
                     x1: (((float, float))sliderHolder.ValueRange).Item2,
-                    min1: sliderMin,
-                    max1: sliderMax,
-                    min2: 0,
-                    max2: 1);
+                    min1: SliderMin,
+                    max1: SliderMax,
+                    min2: SliderBodyAnchorMinX,
+                    max2: SliderBodyAnchorMaxX);
 
-                GameObject valueRangeRect = Instantiate(PrefabLookup.Singleton.Mapping[PrefabLookup.PrefabType.SliderRange], transform);
-                GameObject valueRangeTick1 = Instantiate(toInstantiate, transform);
-                GameObject valueRangeTick2 = Instantiate(toInstantiate, transform);
-                RectTransform valueRangeRectTransform = valueRangeRect.GetComponent<RectTransform>();
-                RectTransform valueRangeRectTransform1 = valueRangeTick1.GetComponent<RectTransform>();
-                RectTransform valueRangeRectTransform2 = valueRangeTick2.GetComponent<RectTransform>();
-
-                valueRangeRectTransform.anchorMin = new Vector2(x1, y - 0.1f);
-                valueRangeRectTransform.anchorMax = new Vector2(x2, y + 0.1f);
-                valueRangeRectTransform.sizeDelta = new Vector2(0, 0);
-
-                valueRangeRectTransform1.anchorMin = new Vector2(x1, y);
-                valueRangeRectTransform1.anchorMax = new Vector2(x1, y);
-                valueRangeRectTransform2.anchorMin = new Vector2(x2, y);
-                valueRangeRectTransform2.anchorMax = new Vector2(x2, y);
-
+                CreateRange(x1, x2, y, anchorHeight * 0.75f, sliderHolder.UserId.ToString());
+                //CreateTick(toInstantiate, x1, y, anchorHeight);
+                //CreateTick(toInstantiate, x2, y, anchorHeight);
             }
         }
-        private void CreateTick(GameObject toInstantiate, float x, float y)
+        private void CreateTick(GameObject toInstantiate, float x, float y, float anchorHeight, string colorId)
         {
+            float anchorWidth = anchorHeight / SliderBodyAspectRatio;
+
             GameObject createdTick = Instantiate(toInstantiate, transform);
             RectTransform createdRectTransform = createdTick.GetComponent<RectTransform>();
-            createdRectTransform.anchorMin = new Vector2(x, y);
-            createdRectTransform.anchorMax = new Vector2(x, y);
+
+            createdRectTransform.anchorMin = new Vector2(x - anchorWidth / 2, y - anchorHeight / 2);
+            createdRectTransform.anchorMax = new Vector2(x + anchorWidth / 2, y + anchorHeight / 2);
+            createdRectTransform.sizeDelta = new Vector2(0, 0);
+
+            createdTick.GetComponent<SliderColorizer>().Colorize(colorId);
         }
-        private float CalculateAspectRatio()
+        private void CreateRange(float x1, float x2, float y, float anchorHeight, string colorId)
         {
-            RectTransform holderRectTransform = gameObject.GetComponent<RectTransform>();
-            float bodyAnchorWidth = SliderBody.anchorMax.x - SliderBody.anchorMin.x;
-            float bodyAnchorHeight = SliderBody.anchorMax.y - SliderBody.anchorMin.y;
+            GameObject createdRange = Instantiate(PrefabLookup.Singleton.Mapping[PrefabLookup.PrefabType.SliderRange], transform);
+            RectTransform createdRectTransform = createdRange.GetComponent<RectTransform>();
 
-            float bodyRelativeWidth = holderRectTransform.rect.width * bodyAnchorWidth;
-            float bodyRelativeHeight = holderRectTransform.rect.width * bodyAnchorHeight;
+            createdRectTransform.anchorMin = new Vector2(x1, y - anchorHeight / 2); 
+            createdRectTransform.anchorMax = new Vector2(x2, y + anchorHeight / 2);
+            createdRectTransform.sizeDelta = new Vector2(0, 0);
 
-            return bodyAnchorWidth / bodyRelativeHeight;
+            createdRange.GetComponent<SliderColorizer>().Colorize(colorId);
         }
         public void UpdateValue(List<dynamic> objects)
         {

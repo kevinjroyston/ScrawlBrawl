@@ -189,7 +189,7 @@ public class TestClient : MonoBehaviour
                 {
                     Value = new List<UnitySlider>()
                     {
-                       
+
                         new UnitySlider()
                         {
                             OwnerUserId = fakeUsers[0].Id,
@@ -199,6 +199,24 @@ public class TestClient : MonoBehaviour
                             {
                                 UserId = Guid.NewGuid(),
                                 ValueRange = (2,4),
+                            },
+                            GuessSliderValues = new List<SliderValueHolder>()
+                            {
+                                new SliderValueHolder()
+                                {
+                                    UserId = Guid.NewGuid(),
+                                    SingleValue = 3
+                                },
+                                new SliderValueHolder()
+                                {
+                                    UserId = Guid.NewGuid(),
+                                    SingleValue = 5
+                                },
+                                new SliderValueHolder()
+                                {
+                                    UserId = Guid.NewGuid(),
+                                    SingleValue = 9
+                                },
                             },
                             Title = new UnityField<string>()
                             {
@@ -211,11 +229,11 @@ public class TestClient : MonoBehaviour
                             Footer = new UnityField<string>()
                             {
                                 Value = "Test Footer"
-                            },*/
+                            },
                             ImageIdentifier = new UnityField<string>()
                             {
                                 Value = "7"
-                            },
+                            },*/
                             UnityObjectId = Guid.NewGuid(),
                         },
                         new UnitySlider()
@@ -226,7 +244,20 @@ public class TestClient : MonoBehaviour
                             MainSliderValue = new SliderValueHolder()
                             {
                                 UserId = Guid.NewGuid(),
-                                ValueRange = (2,4),
+                                SingleValue = 7,
+                            },
+                            GuessSliderValues = new List<SliderValueHolder>()
+                            {
+                                new SliderValueHolder()
+                                {
+                                    UserId = Guid.NewGuid(),
+                                    ValueRange = (0,10)
+                                },
+                                new SliderValueHolder()
+                                {
+                                    UserId = Guid.NewGuid(),
+                                    ValueRange = (4,7)
+                                },
                             },
                             Title = new UnityField<string>()
                             {
@@ -239,123 +270,11 @@ public class TestClient : MonoBehaviour
                             Footer = new UnityField<string>()
                             {
                                 Value = "Test Footer"
-                            },*/
+                            },
                             ImageIdentifier = new UnityField<string>()
                             {
                                 Value = "7"
-                            },
-                            UnityObjectId = Guid.NewGuid(),
-                        },
-                        new UnitySlider()
-                        {
-                            OwnerUserId = fakeUsers[0].Id,
-                            Type = UnityObjectType.Slider,
-                            SliderBounds = (0, 10),
-                            MainSliderValue = new SliderValueHolder()
-                            {
-                                UserId = Guid.NewGuid(),
-                                ValueRange = (2,4),
-                            },
-                            Title = new UnityField<string>()
-                            {
-                                Value = "Test Title"
-                            },
-                            /*Header = new UnityField<string>()
-                            {
-                                Value = "Test Header"
-                            },
-                            Footer = new UnityField<string>()
-                            {
-                                Value = "Test Footer"
                             },*/
-                            ImageIdentifier = new UnityField<string>()
-                            {
-                                Value = "7"
-                            },
-                            UnityObjectId = Guid.NewGuid(),
-                        },
-                        new UnitySlider()
-                        {
-                            OwnerUserId = fakeUsers[0].Id,
-                            Type = UnityObjectType.Slider,
-                            SliderBounds = (0, 10),
-                            MainSliderValue = new SliderValueHolder()
-                            {
-                                UserId = Guid.NewGuid(),
-                                ValueRange = (2,4),
-                            },
-                            Title = new UnityField<string>()
-                            {
-                                Value = "Test Title"
-                            },
-                            /*Header = new UnityField<string>()
-                            {
-                                Value = "Test Header"
-                            },
-                            Footer = new UnityField<string>()
-                            {
-                                Value = "Test Footer"
-                            },*/
-                            ImageIdentifier = new UnityField<string>()
-                            {
-                                Value = "7"
-                            },
-                            UnityObjectId = Guid.NewGuid(),
-                        },
-                        new UnitySlider()
-                        {
-                            OwnerUserId = fakeUsers[0].Id,
-                            Type = UnityObjectType.Slider,
-                            SliderBounds = (0, 10),
-                            MainSliderValue = new SliderValueHolder()
-                            {
-                                UserId = Guid.NewGuid(),
-                                ValueRange = (2,4),
-                            },
-                            Title = new UnityField<string>()
-                            {
-                                Value = "Test Title"
-                            },
-                            /*Header = new UnityField<string>()
-                            {
-                                Value = "Test Header"
-                            },
-                            Footer = new UnityField<string>()
-                            {
-                                Value = "Test Footer"
-                            },*/
-                            ImageIdentifier = new UnityField<string>()
-                            {
-                                Value = "7"
-                            },
-                            UnityObjectId = Guid.NewGuid(),
-                        },
-                        new UnitySlider()
-                        {
-                            OwnerUserId = fakeUsers[0].Id,
-                            Type = UnityObjectType.Slider,
-                            SliderBounds = (0, 10),
-                            MainSliderValue = new SliderValueHolder()
-                            {
-                                UserId = Guid.NewGuid(),
-                                ValueRange = (2,4),
-                            },
-                            Title = new UnityField<string>()
-                            {
-                                Value = "Test Title"
-                            },
-                            /*Header = new UnityField<string>()
-                            {
-                                Value = "Test Header"
-                            },
-                            Footer = new UnityField<string>()
-                            {
-                                Value = "Test Footer"
-                            },*/
-                            ImageIdentifier = new UnityField<string>()
-                            {
-                                Value = "7"
-                            },
                             UnityObjectId = Guid.NewGuid(),
                         },
                     }

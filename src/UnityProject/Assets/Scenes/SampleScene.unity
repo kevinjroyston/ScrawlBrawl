@@ -8937,6 +8937,9 @@ MonoBehaviour:
   TypeToPrefabList:
   - Type: 0
     Prefab: {fileID: 958200141029690273, guid: f01a60ea2d78bc245b181d85162ab70c, type: 3}
+  - Type: 3
+    Prefab: {fileID: 7646451866682479599, guid: b6ae7057a1b2e5e4cb5d7b554e72c3ac,
+      type: 3}
 --- !u!4 &2014838810
 Transform:
   m_ObjectHideFlags: 0
@@ -8981,6 +8984,13 @@ MonoBehaviour:
   - Type: 5
     Prefab: {fileID: 3440341579452285512, guid: c59ffe1d461a2cf4a86865ef279026b6,
       type: 3}
+  - Type: 6
+    Prefab: {fileID: 8880306564865450082, guid: 39483740453897b42a3dc2ae46aef07b,
+      type: 3}
+  - Type: 7
+    Prefab: {fileID: 94698678005846684, guid: dcb2c1538e82350438bc56752388f0f5, type: 3}
+  - Type: 8
+    Prefab: {fileID: 697023066888354523, guid: 45eecf117ef802541b8eb594aea243c7, type: 3}
 --- !u!114 &2014838812
 MonoBehaviour:
   m_ObjectHideFlags: 0
