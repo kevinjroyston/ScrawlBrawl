@@ -65,7 +65,7 @@ public class ViewManager : MonoBehaviour
         }
         else
         {
-            ChangeView(id, LegacyToNewUnityView(view));
+            ChangeView(id, view);
             EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.UserSubmitted });
         }
     }

@@ -37,6 +37,7 @@ public class BlurController : MonoBehaviour, HandlerInterface
     {
         if (!options.ContainsKey(UnityViewOptions.BlurAnimate))
         {
+            gameObject.SetActive(false);
             return;
         }
         UnityField<float?> blurOptions = (UnityField<float?>) options[UnityViewOptions.BlurAnimate];
