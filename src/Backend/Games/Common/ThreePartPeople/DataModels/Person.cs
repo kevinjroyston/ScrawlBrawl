@@ -9,7 +9,7 @@ using Backend.Games.Common.GameStates.VoteAndReveal;
 
 namespace Backend.Games.Common.ThreePartPeople.DataModels
 {
-    public class Person : UserCreatedUnityObject, IVotable
+    public class Person : UserCreatedUnityObject
     {
 
         public string Name { get; set; } = "N/A";
