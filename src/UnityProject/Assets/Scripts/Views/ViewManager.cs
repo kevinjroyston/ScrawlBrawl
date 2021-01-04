@@ -70,6 +70,19 @@ public class ViewManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Use this to lock unity on a custom view made in Test Client
+    /// ====================================================================================
+    /// THIS CODE IS ONLY FOR DEBUGGING PURPOSES AND SHOULD NOT BE CALLED EVER ON PRODUCTION
+    /// ====================================================================================
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="view"></param>
+    public void SetDebugCustomView(TVScreenId? id, UnityView view)
+    {
+        ChangeView(id, view);
+    }
+
     IEnumerator TransitionSceneCoroutine(float delay, TVScreenId? id, UnityView view)
     {
         yield return new WaitForSeconds(delay);

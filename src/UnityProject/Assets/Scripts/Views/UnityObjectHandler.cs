@@ -162,6 +162,8 @@ namespace Assets.Scripts.Views
                         default:
                             throw new ArgumentException($"Unknown subtype id: '{HandlerType.SliderValueList}-{handlerId.SubType}'");
                     }
+                case HandlerType.SliderBoundsTuple:
+                    return castedSlider.SliderBounds;
                 default:
                     throw new ArgumentException($"Unknown handler id: '{handlerId.HandlerType}'");
 

@@ -9,11 +9,12 @@ namespace Assets.Scripts.Networking.DataModels.UnityObjects
     public class SliderValueHolder
     {
         public float? SingleValue { get; set; }
-        public (float?, float?) ValueRange { get; set; }
+        public (float, float)? ValueRange { get; set; }
         public Guid UserId { get; set; }
     }
     public class UnitySlider : UnityObject
     {
+        public (float, float) SliderBounds { get; set; }
         public SliderValueHolder MainSliderValue { get; set; }
         public IReadOnlyList<SliderValueHolder> GuessSliderValues { get; set; }
     }

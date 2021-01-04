@@ -30,6 +30,9 @@ public class PrefabLookup : MonoBehaviour
         ScoreDeltaText,
         ScoreProjectile,
         SpriteGrid,
-        SpriteObject
+        SpriteObject,
+        SliderValue,
+        SliderGuess,
+        SliderRange,
     }
 }

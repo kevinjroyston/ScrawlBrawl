@@ -12,6 +12,7 @@ using Assets.Scripts.Networking.DataModels.Enums;
 using Newtonsoft.Json.Linq;
 using static UnityEngine.UI.GridLayoutGroup;
 using Assets.Scripts.Networking.DataModels.UnityObjects;
+using Assets.Scripts.Networking.DataModels.Enums;
 
 /// <summary>
 /// This class opens a connection to the server and listens for updates. From the main thread the secondary connection thread is
@@ -139,6 +140,141 @@ public class TestClient : MonoBehaviour
         hubConnection.SendAsync("JoinRoom", lobby);
     }
 
+    public void Start()
+    {   
+        #region Debug Unity View 
+        /// This is paired with ViewManager.SetDebugCustomView() to allow testing of views without having to do anything on backend
+        /// To use uncomment out this code, modify the UnityView being passed in and COMMENT OUT THE UPDATE LOOP
+        /// When you are done please revert back the comments
+        /// ====================================================================================
+        /// THIS CODE IS ONLY FOR DEBUGGING PURPOSES AND SHOULD NOT BE CALLED EVER ON PRODUCTION
+        /// ====================================================================================
+
+        /*
+        List<UnityUser> fakeUsers = new List<UnityUser>()
+        {
+            new UnityUser()
+            {
+                Id = Guid.NewGuid(),
+                DisplayName = "Test User 1",
+                Activity = UserActivity.Active,
+                Status = UserStatus.AnsweringPrompts,
+            },
+            new UnityUser()
+            {
+                Id = Guid.NewGuid(),
+                DisplayName = "Test User 2",
+                Activity = UserActivity.Active,
+                Status = UserStatus.Waiting,
+            },
+            new UnityUser()
+            {
+                Id = Guid.NewGuid(),
+                DisplayName = "Test User 3",
+                Activity = UserActivity.Active,
+                Status = UserStatus.Waiting,
+            },
+            new UnityUser()
+            {
+                Id = Guid.NewGuid(),
+                DisplayName = "Test User 4",
+                Activity = UserActivity.Active,
+                Status = UserStatus.Waiting,
+            },
+        };
+        ViewManager.Singleton.SetDebugCustomView(
+            TVScreenId.VoteRevealImageView,
+            new UnityView()
+            {
+                UnityObjects = new UnityField<IReadOnlyList<object>>
+                {
+                    Value = new List<UnitySlider>()
+                    {
+
+                        new UnitySlider()
+                        {
+                            OwnerUserId = fakeUsers[0].Id,
+                            Type = UnityObjectType.Slider,
+                            SliderBounds = (0, 10),
+                            MainSliderValue = new SliderValueHolder()
+                            {
+                                UserId = Guid.NewGuid(),
+                                ValueRange = (2,4),
+                            },
+                            GuessSliderValues = new List<SliderValueHolder>()
+                            {
+                                new SliderValueHolder()
+                                {
+                                    UserId = Guid.NewGuid(),
+                                    SingleValue = 3
+                                },
+                                new SliderValueHolder()
+                                {
+                                    UserId = Guid.NewGuid(),
+                                    SingleValue = 5
+                                },
+                                new SliderValueHolder()
+                                {
+                                    UserId = Guid.NewGuid(),
+                                    SingleValue = 9
+                                },
+                            },
+                            Title = new UnityField<string>()
+                            {
+                                Value = "Test Title"
+                            },
+                            UnityObjectId = Guid.NewGuid(),
+                        },
+                        new UnitySlider()
+                        {
+                            OwnerUserId = fakeUsers[0].Id,
+                            Type = UnityObjectType.Slider,
+                            SliderBounds = (0, 10),
+                            MainSliderValue = new SliderValueHolder()
+                            {
+                                UserId = Guid.NewGuid(),
+                                SingleValue = 7,
+                            },
+                            GuessSliderValues = new List<SliderValueHolder>()
+                            {
+                                new SliderValueHolder()
+                                {
+                                    UserId = Guid.NewGuid(),
+                                    ValueRange = (0,10)
+                                },
+                                new SliderValueHolder()
+                                {
+                                    UserId = Guid.NewGuid(),
+                                    ValueRange = (4,7)
+                                },
+                            },
+                            Title = new UnityField<string>()
+                            {
+                                Value = "Test Title"
+                            },
+                            UnityObjectId = Guid.NewGuid(),
+                        },
+                    }
+                },
+                Users = fakeUsers,
+                Title = new UnityField<string>()
+                {
+                    Value = "Test Title"
+                },
+                Instructions = new UnityField<string>()
+                {
+                    Value = "Test Instructions"
+                },
+                ServerTime = DateTime.UtcNow,
+                StateEndTime = null,
+                IsRevealing = true,
+                Options = new Dictionary<UnityViewOptions, object>()
+            });
+            
+             */
+        #endregion
+    }
+
     public void Update()
     {
         // If the Dirty bit is set that means the networking thread got a response from the server. Since it is not possible
@@ -171,7 +307,7 @@ public class TestClient : MonoBehaviour
         {
             StartCoroutine(DelayedConnectToHub());
         }
-    }
+    } 
 
     /// <summary>
     /// Restarts the connection after a 5 second delay.
