@@ -41,7 +41,6 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             public const string YourPoints = "Your Points This Round";
             public const string YourScore = "Your Total Score";
             public const string TopScores = "Top Total Scores";
-            public const string WaitingForGameToStart = "Waiting for the game to start";
         }
 
         public static Func<User, UserPrompt> ShowScoreBreakdowns(
