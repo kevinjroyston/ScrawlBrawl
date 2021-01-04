@@ -43,6 +43,7 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             public const string YourScore = "Your Total Score";
             public const string TopScores = "Top Total Scores";
             public const string LookAtTheScreen = "Look at the screen!";
+            
         }
 
         public static Func<User, UserPrompt> ShowScoreBreakdowns(
