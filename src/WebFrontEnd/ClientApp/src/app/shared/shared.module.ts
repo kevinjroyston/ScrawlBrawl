@@ -31,6 +31,8 @@ import { BlackPenCharacter } from './components/svgs/characters/blackpen';
 import { TwitchIcon } from './components/svgs/socials/twitch';
 import { TwitterIcon } from './components/svgs/socials/twitter';
 import { YoutubeIcon } from './components/svgs/socials/youtube';
+import { DiscordIcon } from './components/svgs/socials/discord';
+import { RedditIcon } from './components/svgs/socials/reddit';
 import { FacebookIcon } from './components/svgs/socials/facebook';
 import { ColorPickerComponent } from './components/colorpicker/colorpicker.component';
 import { SimpleLinkComponent } from './components/simplebuttons/link/link.component';
@@ -79,6 +81,8 @@ import { GalleryPicture } from './components/gallery/gallerypicture/gallerypictu
     TwitchIcon,
     TwitterIcon,
     YoutubeIcon,
+    DiscordIcon,
+    RedditIcon,
     FacebookIcon
   ],
   exports: [
@@ -114,6 +118,8 @@ import { GalleryPicture } from './components/gallery/gallerypicture/gallerypictu
     TwitchIcon,
     TwitterIcon,
     YoutubeIcon,
+    DiscordIcon,
+    RedditIcon,
     FacebookIcon
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
