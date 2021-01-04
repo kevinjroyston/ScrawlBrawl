@@ -57,6 +57,9 @@
                 <scrawlbrawl-iconbutton matTooltip="Undo" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" (click)="drawingDirective.onPerformUndo()">
                     <ion-icon name="arrow-back-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
+                <scrawlbrawl-iconbutton matTooltip="Clear" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" (click)="drawingDirective.clearDrawing()">
+                    <ion-icon [style.color]="'var(--red-secondary)'" name="trash-outline"></ion-icon>
+                </scrawlbrawl-iconbutton>
             </div>
             <div class="drawb-tools-section">
                 <scrawlbrawl-iconbutton matTooltip="Gallery" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" *ngIf="drawingOptions.galleryOptions" (click)="openGallery($event)">

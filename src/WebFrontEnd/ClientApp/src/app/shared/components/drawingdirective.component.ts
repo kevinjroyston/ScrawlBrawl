@@ -79,6 +79,11 @@ export class DrawingDirective {
     this.drawingEmitter.emit(imgStr);
   }
 
+  public clearDrawing() {
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    this.onImageChange(null);
+  }
+
   onImageChange(imgStr:string, emitChange=true) {
     if (!imgStr){
         imgStr = this.element.toDataURL();
