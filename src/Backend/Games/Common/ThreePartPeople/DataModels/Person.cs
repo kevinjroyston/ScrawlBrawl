@@ -5,10 +5,11 @@ using Backend.APIs.DataModels.UnityObjects;
 using System.Drawing;
 using Backend.GameInfrastructure.DataModels.Users;
 using Common.DataModels.Enums;
+using Backend.Games.Common.GameStates.VoteAndReveal;
 
 namespace Backend.Games.Common.ThreePartPeople.DataModels
 {
-    public class Person : UserCreatedUnityObject
+    public class Person : UserCreatedUnityObject, IVotable
     {
 
         public string Name { get; set; } = "N/A";

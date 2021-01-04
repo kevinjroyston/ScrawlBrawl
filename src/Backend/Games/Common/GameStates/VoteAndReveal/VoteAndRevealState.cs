@@ -71,7 +71,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             List<Legacy_UnityImage> unityObjects = new List<Legacy_UnityImage>();
             for (int i = 0; i < this.Objects.Count(); i++)
             {
-                unityObjects.Add(this.Objects[i].VotingUnityObjectGenerator(i));
+                unityObjects.Add(this.Objects[i].VotingUnityObjectGenerator(i + 1));
             }
             return new Legacy_UnityView(this.Lobby)
             {
@@ -86,7 +86,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             List<Legacy_UnityImage> unityObjects = new List<Legacy_UnityImage>();
             for (int i = 0; i < this.Objects.Count(); i++)
             {
-                unityObjects.Add(this.Objects[i].RevealUnityObjectGenerator(i));
+                unityObjects.Add(this.Objects[i].RevealUnityObjectGenerator(i + 1));
             }
             Dictionary<string, int> usersToScoreDelta = new Dictionary<string, int>();
             foreach (User user in Lobby.GetAllUsers())
