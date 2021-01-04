@@ -10,4 +10,4 @@ namespace Assets.Scripts.Networking.DataModels.Enums
     {
         RevealThisImage = 0,
     }
-}
+}   

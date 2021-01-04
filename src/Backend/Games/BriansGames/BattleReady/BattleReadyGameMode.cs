@@ -342,11 +342,23 @@ namespace Backend.Games.BriansGames.BattleReady
         private State GetVotingAndRevealState(Prompt prompt, TimeSpan? votingTime)
         {
             List<User> randomizedUsersToDisplay = prompt.UsersToUserHands.Keys.OrderBy(_ => Rand.Next()).ToList();
-            List<UserHand> peopleToVoteOn = randomizedUsersToDisplay.Select(user => prompt.UsersToUserHands[user]).ToList();
+            List<Person> peopleToVoteOn = randomizedUsersToDisplay.Select(user => (Person)prompt.UsersToUserHands[user]).ToList();
+            foreach (Person person in peopleToVoteOn)
+            {
+                person.UnityImageVotingOverrides = new UnityObjectOverrides()
+                {
+                    Title = person.Name
+                };
+                person.UnityImageRevealOverrides = new UnityObjectOverrides()
+                {
+                    Title = person.Name,
+                    Header = person.Owner.DisplayName,
+                };
+            }
             List<string> imageTitles = randomizedUsersToDisplay.Select(user => prompt.UsersToUserHands[user].Name).ToList();
             List<string> imageHeaders = randomizedUsersToDisplay.Select(user => user.DisplayName).ToList();
 
-            var voteAndReveal = new ThreePartPersonVoteAndRevealState<UserHand>(
+            var voteAndReveal = new ThreePartPersonVoteAndRevealState<Person>(
                 lobby: this.Lobby,
                 people: peopleToVoteOn,
                 votingTime: votingTime)
@@ -374,14 +386,14 @@ namespace Backend.Games.BriansGames.BattleReady
             });
             return voteAndReveal;
         }
-        private void CountVotes(List<UserHand> choices, IDictionary<User, VoteInfo> votes)
+        private void CountVotes(List<Person> choices, IDictionary<User, VoteInfo> votes)
         {
             // Points for using drawings.
-            foreach (UserHand hand in choices)
+            foreach (Person person in choices)
             {
-                hand.BodyPartDrawings[BodyPartType.Head].Owner.ScoreHolder.AddScore(BattleReadyConstants.PointsForPartUsed, Score.Reason.DrawingUsed);
-                hand.BodyPartDrawings[BodyPartType.Body].Owner.ScoreHolder.AddScore(BattleReadyConstants.PointsForPartUsed, Score.Reason.DrawingUsed);
-                hand.BodyPartDrawings[BodyPartType.Legs].Owner.ScoreHolder.AddScore(BattleReadyConstants.PointsForPartUsed, Score.Reason.DrawingUsed);
+                person.BodyPartDrawings[BodyPartType.Head].Owner.ScoreHolder.AddScore(BattleReadyConstants.PointsForPartUsed, Score.Reason.DrawingUsed);
+                person.BodyPartDrawings[BodyPartType.Body].Owner.ScoreHolder.AddScore(BattleReadyConstants.PointsForPartUsed, Score.Reason.DrawingUsed);
+                person.BodyPartDrawings[BodyPartType.Legs].Owner.ScoreHolder.AddScore(BattleReadyConstants.PointsForPartUsed, Score.Reason.DrawingUsed);
             }
 
             // Points for vote.
