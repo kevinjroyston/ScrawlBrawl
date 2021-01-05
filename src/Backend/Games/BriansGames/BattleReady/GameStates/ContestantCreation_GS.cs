@@ -49,6 +49,10 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
         private List<State> MakePeopleUserStateChain(User user)
         {
             List<State> stateChain = new List<State>();
+            if (!RoundTracker.UsersToAssignedPrompts.ContainsKey(user))
+            {
+                return stateChain;
+            }
             foreach(Prompt promptIter in RoundTracker.UsersToAssignedPrompts[user])
             {
                 Prompt prompt = promptIter;

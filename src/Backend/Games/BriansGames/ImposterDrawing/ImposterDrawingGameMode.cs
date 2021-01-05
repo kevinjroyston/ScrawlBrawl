@@ -178,6 +178,13 @@ namespace Backend.Games.BriansGames.ImposterDrawing
             int indexOfImposter = 0;
             List<User> randomizedUsersToShow = prompt.UsersToDrawings.Keys.OrderBy(_=>Rand.Next()).ToList();
             List<UserDrawing> drawings = randomizedUsersToShow.Select(user => prompt.UsersToDrawings[user]).ToList();
+            /*foreach (UserDrawing drawing in drawings)
+            {
+                drawing.UnityImageRevealOverrides = new UnityObjectOverrides()
+                {
+                    Title = drawing.Owner.Equals(prompt.Imposter) ?  prompt.FakePrompt : prompt.RealPrompt 
+                };
+            }*/
             List<string> userNames = randomizedUsersToShow.Select(user => user.DisplayName).ToList();
             bool noneIsCorrect = possibleNone && !randomizedUsersToShow.Contains(prompt.Imposter);
             if (!noneIsCorrect)

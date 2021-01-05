@@ -25,6 +25,7 @@ public static class TypeEnums
         UsersList,
         Color,
         SliderValueList,
+        SliderBoundsTuple,
     }
 
     public class HandlerId

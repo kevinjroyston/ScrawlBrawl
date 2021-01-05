@@ -35,6 +35,11 @@ public class BlurController : MonoBehaviour, HandlerInterface
 
     public void UpdateValue(Dictionary<UnityViewOptions, object> options, TimerHolder serverTimeHolder)
     {
+        if (!options.ContainsKey(UnityViewOptions.BlurAnimate))
+        {
+            gameObject.SetActive(false);
+            return;
+        }
         UnityField<float?> blurOptions = (UnityField<float?>) options[UnityViewOptions.BlurAnimate];
         float? startValue = blurOptions.StartValue;
         float? endValue = blurOptions.EndValue;
