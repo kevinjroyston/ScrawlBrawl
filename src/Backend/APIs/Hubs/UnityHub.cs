@@ -68,7 +68,7 @@ namespace Backend.APIs.Hubs
         }
         public void JoinRoom(string versionLobbyString)
         {
-            Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(CommonUnityViews.GenerateInvalidVersionView()));   
+            Clients.Caller.SendAsync("UpdateState", CommonUnityViews.GenerateInvalidVersionLegacyView());   
         }
         private bool TryTruncateVersionString(string version, out double result)
         {
