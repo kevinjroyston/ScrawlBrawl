@@ -10,7 +10,7 @@ namespace Backend.Games.Common
 {
     public class CommonUnityViews
     {
-        public static UnityView GenerateInvalidVersionView(double serverVersion, double? unityVersion = null) //atm version numbers unused
+        public static UnityView GenerateInvalidVersionView()
         {
             return new UnityView(lobby: null)
             {
@@ -21,7 +21,25 @@ namespace Backend.Games.Common
                 },
                 Instructions = new UnityField<string>()
                 {
-                    Value = "Go to https://www.scrawlbrawl.tv/lobby to update it"
+                    Value = "Go to scrawlbrawl.tv/lobby to update it"
+                },
+            };
+        }
+        public static Legacy_UnityView GenerateInvalidVersionLegacyView()
+        {
+            return new Legacy_UnityView(lobby: null)
+            {
+                ScreenId = new StaticAccessor<TVScreenId>()
+                {
+                    Value = TVScreenId.ShowDrawings
+                },
+                Title = new StaticAccessor<string>()
+                {
+                    Value = "Your Unity Client Needs To Be Updated"
+                },
+                Instructions = new StaticAccessor<string>()
+                {
+                    Value = "Go to scrawlbrawl.tv/lobby to update it"
                 },
             };
         }

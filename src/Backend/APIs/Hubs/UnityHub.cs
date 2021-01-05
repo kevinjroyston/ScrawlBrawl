@@ -14,9 +14,8 @@ namespace Backend.APIs.Hubs
     /// </summary>
     public class UnityHub : Hub
     {
-        private const double ServerVersion = 1.0;
+        private const string ServerVersion = "1.0.0";
 
-        private bool VersionRegistered = false;
 
         private GameManager GameManager { get; set; }
         public UnityHub(GameManager gameManager)
@@ -33,13 +32,19 @@ namespace Backend.APIs.Hubs
         {
             await Task.Yield();
         }
-        public void JoinRoom(string lobbyFriendlyName)
+
+        public void ConnectToLobby(string lobbyFriendlyName, string clientVersion)
         {
-            if (!VersionRegistered)
+            double truncatedServerVersion = 0;
+            double truncatedClientVersion = 0;
+            if (!TryTruncateVersionString(ServerVersion, out truncatedServerVersion)
+                || !TryTruncateVersionString(clientVersion, out truncatedClientVersion)
+                || truncatedClientVersion < truncatedServerVersion)
             {
-                Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(CommonUnityViews.GenerateInvalidVersionView(ServerVersion)));
+                Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(CommonUnityViews.GenerateInvalidVersionView()));
                 return;
             }
+
 
             try
             {
@@ -49,7 +54,7 @@ namespace Backend.APIs.Hubs
                     LeaveAllGroups();
                     Groups.AddToGroupAsync(Context.ConnectionId, lobby.LobbyId);
 
-                    UnityView view = lobby.GetActiveUnityView(returnNullIfNoChange:false);
+                    UnityView view = lobby.GetActiveUnityView(returnNullIfNoChange: false);
 
                     // SignalR's serialization is abysmal and client has no insight into the issue. pull serialization out.
                     Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(view));
@@ -61,17 +66,21 @@ namespace Backend.APIs.Hubs
                 Console.Error.WriteLine(e);
             }
         }
-        public void RegisterVersion(double unityVersion)
+        public void JoinRoom(string versionLobbyString)
         {
-            if ((int)unityVersion < (int)ServerVersion) //compares the digits before the point to see if the unity client is out of date
-            {
-                Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(CommonUnityViews.GenerateInvalidVersionView(ServerVersion, unityVersion)));
-            }
-            else
-            {
-                VersionRegistered = true;
-            }
+            Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(CommonUnityViews.GenerateInvalidVersionView()));   
         }
+        private bool TryTruncateVersionString(string version, out double result)
+        {
+            int lastDot = version.LastIndexOf('.');
+            if (lastDot <= 0)
+            {
+                result = 0;
+                return false;
+            }
+            return double.TryParse(version.Substring(0, lastDot), out result);
+        }
+
         private void LeaveAllGroups()
         {
             List<Task> tasks = new List<Task>();
