@@ -10,15 +10,16 @@ Disclaimer: Running the application will result in logs, errors, and metrics (su
   - Install NodeJS (see nodejs.org)
   - Download this repository
   - Install .NET Core SDK
-  - TODO
+  - Install PostSharp Community
 ### Run
-  - TODO
   - VS 2019 - Backend, BackendAutomatedTestClient, BackendTests
   - Unity - Unity client
   - VS Code - Web Frontend
+### Manual First-time setup
+  - Ensure PostSharp license is set up
 
 ## To play over LAN / WiFi
-Disclaimer: Running this project in this manner involves adding an exclusion to your firewall which may put your computer at risk of an attack. Proceeding with the steps below is an acknowledgement that you understand, accept, and take responsibility for the risks and potential negative outcomes.
+Disclaimer: Running this project in this manner involves adding an exclusion to your firewall which may put your computer at risk of an attack. Proceeding with the steps below is an acknowledgement that you understand, accept, and take responsibility for the risks and potential negative outcomes. Also note, it has been many months since this flow has been tested/needed.
   - Add an inbound firewall rule to allow inbound TCP on the port you plan to use (ex: 50403)
   - Edit the ApplicationHost.config file to include a binding for your LAN IP (ctrl+f 'localhost' and add a new entry)
   - Run Visual Studio as an administrator (otherwise IIS express can't be bound to your LAN IP)
