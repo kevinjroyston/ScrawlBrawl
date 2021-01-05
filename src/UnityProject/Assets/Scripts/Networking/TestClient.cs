@@ -21,6 +21,7 @@ using Assets.Scripts.Networking.DataModels.Enums;
 /// </summary>
 public class TestClient : MonoBehaviour
 {
+    private const double ClientVersion = 0.1;
     private HubConnection hubConnection;
     private Task hubTask;
 
@@ -58,6 +59,8 @@ public class TestClient : MonoBehaviour
                 logging.SetMinimumLevel(LogLevel.Debug);
             })
             .Build();
+
+        hubConnection.SendAsync("RegisterVersion", ClientVersion);
 
         hubConnection.On("ConfigureMetadata",
             new Action<ConfigurationMetadata>((configMeta) =>

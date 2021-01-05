@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Backend.Games.Common;
 
 namespace Backend.APIs.Hubs
 {
@@ -13,6 +14,10 @@ namespace Backend.APIs.Hubs
     /// </summary>
     public class UnityHub : Hub
     {
+        private const double ServerVersion = 1.0;
+
+        private bool VersionRegistered = false;
+
         private GameManager GameManager { get; set; }
         public UnityHub(GameManager gameManager)
         {
@@ -30,6 +35,12 @@ namespace Backend.APIs.Hubs
         }
         public void JoinRoom(string lobbyFriendlyName)
         {
+            if (!VersionRegistered)
+            {
+                Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(CommonUnityViews.GenerateInvalidVersionView(ServerVersion)));
+                return;
+            }
+
             try
             {
                 Lobby lobby = GameManager.GetLobby(lobbyFriendlyName);
@@ -48,6 +59,17 @@ namespace Backend.APIs.Hubs
             catch (Exception e)
             {
                 Console.Error.WriteLine(e);
+            }
+        }
+        public void RegisterVersion(double unityVersion)
+        {
+            if ((int)unityVersion < (int)ServerVersion) //compares the digits before the point to see if the unity client is out of date
+            {
+                Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(CommonUnityViews.GenerateInvalidVersionView(ServerVersion, unityVersion)));
+            }
+            else
+            {
+                VersionRegistered = true;
             }
         }
         private void LeaveAllGroups()
