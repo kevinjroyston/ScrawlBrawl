@@ -39,8 +39,10 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             public const string SkipReveal = "Skip Reveal";
             public const string ShowScores = "Check Out The Scores";
             public const string YourPoints = "Your Points This Round";
+            public const string NoPointsThisRound = "No points scored this round";
             public const string YourScore = "Your Total Score";
             public const string TopScores = "Top Total Scores";
+            public const string LookAtTheScreen = "Look at the screen!";
         }
 
         public static Func<User, UserPrompt> ShowScoreBreakdowns(
@@ -59,7 +61,7 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
                 if (userScoreBreakdownScope.HasValue)
                 {
                     var scoreBreakdowns = user.ScoreHolder.ScoreBreakdowns[userScoreBreakdownScope.Value];
-                    subPrompts.Add(new SubPrompt { Prompt = Text.YourPoints, StringList = scoreBreakdowns.Keys.Select((Score.Reason reason) => $"{Score.ReasonDescriptions[reason]}: {scoreBreakdowns[reason]}").ToArray() });
+                    subPrompts.Add(new SubPrompt { Prompt = (scoreBreakdowns.Count == 0) ? Text.NoPointsThisRound:Text.YourPoints, StringList = scoreBreakdowns.Keys.Select((Score.Reason reason) => $"{Score.ReasonDescriptions[reason]}: {scoreBreakdowns[reason]}").ToArray() });
                 }
 
                 if (userScoreScope.HasValue)
