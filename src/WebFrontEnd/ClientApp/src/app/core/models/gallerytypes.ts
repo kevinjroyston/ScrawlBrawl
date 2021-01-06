@@ -27,6 +27,16 @@ namespace Galleries  {
     export const galleryTypes:ReadonlyArray<GalleryType> = 
      [
         {
+            drawingType:"PROFILE",
+            galleryDesc: "Profile Pictures",
+            imageWidth: 300,
+            imageHeight: 300,
+            maxLocalFavorites: 4,
+            maxLocalRecent: 3,    
+            canvasBackground: "",
+        },
+
+        {
             drawingType:"HEAD",
             galleryDesc: "Heads",
             imageWidth: 360,
@@ -53,16 +63,6 @@ namespace Galleries  {
             maxLocalFavorites: 6,
             maxLocalRecent: 4,    
             canvasBackground: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAADwCAYAAAA+VemSAAADhElEQVR4nO3aTYvTUBSA4ZNORUT8ws38/x8ngqCOCiqljVQGYRZdqn0nz7PM6ibnvuTSdFnX9Tgzu9mgn19nvryf+X43M+v9/S8zz17NvLydefpii0/l+pjTRaf9VuM9Ox5mftzNfPvwcGMsM/P87X9eHH+Y00W7/ZUu7J8474V1nVlPDzfG72uP/N5LzOmy/f0jWa51gX/TsszsbmZunjzcGOdryyafyHUyp4vWzR6f4TEQMIQJGMIEDGEChrDdVn+Bhkdg8QaGsPN34NNWj9K+LzaY00Wn83+hP87MmytdIHDZJ0doCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQJmAIEzCECRjCBAxhAoYwAUOYgCFMwBAmYAgTMIQJGMIEDGEChjABQ5iAIUzAECZgCBMwhAkYwgQMYQKGMAFDmIAhTMAQtqzrehQyJJ3O4R7MDpIO+5l5NzOvzQ9iZj7/AsBRSqqzpLyAAAAAAElFTkSuQmCC",
-        },
-
-        {
-            drawingType:"PROFILE",
-            galleryDesc: "Profile Pictures",
-            imageWidth: 300,
-            imageHeight: 300,
-            maxLocalFavorites: 4,
-            maxLocalRecent: 3,    
-            canvasBackground: "",
         },
 
         {
