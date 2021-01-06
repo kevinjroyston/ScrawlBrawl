@@ -47,7 +47,6 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     drawingOptionsCollapse: boolean = false;
     lastImageChange: string = "";
     showGallery: boolean = true;
-    eraserMode: boolean = false; // Todo make brush-mode enum + group brush options into one object
 
     constructor(private _colorPicker: MatBottomSheet, private _gallery: MatBottomSheet) {
     }
@@ -136,12 +135,13 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     }
 
     handleColorChange = (color: string) => {
-        this.selectedColor = color
+        this.selectedColor = color;
+        this.drawingMode = DrawingModes.Draw;
     }
 
     openColorPicker = (event: MouseEvent): void => {
         event.preventDefault();
-        this.eraserMode = false
+        this.drawingMode = DrawingModes.Draw;
         const bottomConfig = new MatBottomSheetConfig();
         bottomConfig.data = {
             handleColorChange: (color: string) => this.handleColorChange(color),
