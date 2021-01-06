@@ -21,6 +21,7 @@ using Assets.Scripts.Networking.DataModels.Enums;
 /// </summary>
 public class TestClient : MonoBehaviour
 {
+    private const string ClientVersion = "1.0.0";
     private HubConnection hubConnection;
     private Task hubTask;
 
@@ -59,6 +60,7 @@ public class TestClient : MonoBehaviour
             })
             .Build();
 
+
         hubConnection.On("ConfigureMetadata",
             new Action<ConfigurationMetadata>((configMeta) =>
             {
@@ -90,7 +92,7 @@ public class TestClient : MonoBehaviour
     /// <returns></returns>
     public UnityView ParseJObjects(UnityView view)
     {
-        foreach (UnityViewOptions key in view.Options.Keys.ToList())
+        foreach (UnityViewOptions key in view?.Options?.Keys?.ToList() ?? new List<UnityViewOptions>())
         {
             switch (key)
             {
@@ -137,11 +139,11 @@ public class TestClient : MonoBehaviour
     public void ConnectToLobby(string lobby)
     {
         LobbyId = lobby;
-        hubConnection.SendAsync("JoinRoom", lobby);
+        hubConnection.SendAsync("ConnectToLobby", lobby, ClientVersion);
     }
 
     public void Start()
-    {   
+    {
         #region Debug Unity View 
         /// This is paired with ViewManager.SetDebugCustomView() to allow testing of views without having to do anything on backend
         /// To use uncomment out this code, modify the UnityView being passed in and COMMENT OUT THE UPDATE LOOP

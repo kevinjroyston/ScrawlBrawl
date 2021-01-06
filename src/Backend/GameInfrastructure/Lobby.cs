@@ -138,6 +138,7 @@ namespace Backend.GameInfrastructure
         {
             this.WaitForLobbyStart = new WaitForLobbyCloseGameState(this);
             this.EndOfGameRestart = new EndOfGameState(this, PrepareToRestartGame);
+            TransitionCurrentGameState(this.WaitForLobbyStart);
         }
 
         /// <summary>
@@ -207,8 +208,7 @@ namespace Backend.GameInfrastructure
                     return new UnityView(currentLegacyView);
                 }
             }
-            else
-            if (currentView != null)
+            else if (currentView != null)
             {
                 if (!returnNullIfNoChange || (this.CurrentGameState?.UnityViewDirty ?? false))
                 {
