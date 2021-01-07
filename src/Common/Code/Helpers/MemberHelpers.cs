@@ -32,6 +32,8 @@ namespace Common.Code.Helpers
                 return output;
             }
 
+
+
             // Group input members by their sources, randomly ordering the group members
             Dictionary<Guid, Queue<M>> sourceToMemberMap = memberList
                 .GroupBy((member) => member.Source)
@@ -69,7 +71,6 @@ namespace Common.Code.Helpers
             Arg.GreaterThan(count, 0, nameof(count));
             Arg.NotNullOrEmpty(members, nameof(members));
 
-            Random random = new Random();
             List<M> memberList = members.ToList();
             List<M> output = new List<M>();
             if (memberList.Count <= count)
@@ -83,7 +84,7 @@ namespace Common.Code.Helpers
                 .GroupBy((member) => member.Source)
                 .ToDictionary(
                     group => group.Key,
-                    group => new Queue<M>(group.OrderBy((M val) => random.Next())));
+                    group => new Queue<M>(group.OrderBy((M val) => StaticRandom.Next())));
 
             // Instantiate all source weights to 1.0.
             Dictionary<Guid, double> sourceToDynamicWeight = sourceToMemberMap.ToDictionary(kvp => kvp.Key, kvp => 1.0);
