@@ -111,7 +111,7 @@ namespace Backend.Games.BriansGames.BattleReady
 
             int minDrawingsRequired = numOfEachPartInHand * 3; // the amount to make one playerHand to give everyone
 
-            int expectedPromptsPerUser = numPromptsPerRound * numRounds / lobby.GetAllUsers().Count;
+            int expectedPromptsPerUser = (int) Math.Ceiling(1.0*numPromptsPerRound * numRounds / lobby.GetAllUsers().Count);
 
             if (gameLength > 0)
             {
