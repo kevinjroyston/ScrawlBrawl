@@ -10,6 +10,7 @@ namespace Common.DataModels.Enums
         Voting = 3,
         SitTight = 4,
         RevealScoreBreakdowns = 5,
+        Query = 6,
 
         PartyLeader_DefaultPrompt = 10,
         PartyLeader_GameEnd = 11,

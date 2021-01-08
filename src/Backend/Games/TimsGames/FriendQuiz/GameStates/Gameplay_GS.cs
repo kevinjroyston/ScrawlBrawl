@@ -18,12 +18,12 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
 {
     public class Gameplay_GS : GameState
     {
-        public Gameplay_GS(Lobby lobby, List<Question> questions, TimeSpan? answerTimeDuration = null) : base(lobby)
+        public Gameplay_GS(Lobby lobby, Dictionary<User, List<Question>> usersToAssignedQuestions, TimeSpan? answerTimeDuration = null) : base(lobby)
         {
-            List<State> GetAsnwerUserStateChain(User user)
+            List<State> GetAnswerUserStateChain(User user)
             {
                 List<State> stateChain = new List<State>();
-                foreach (Question question in questions)
+                foreach (Question question in usersToAssignedQuestions.GetValueOrDefault(user, new List<Question>()))
                 {
                     stateChain.Add(new SimplePromptUserState(
                         promptGenerator: (User user) => new UserPrompt()
@@ -35,20 +35,36 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                             {
                                 new SubPrompt
                                 {
-                                    Answers = Question.AnswerTypeToStrings[question.AnswerType].ToArray()
+                                    Slider = new SliderPromptMetadata
+                                    {
+                                        Min = 0,
+                                        Max = FriendQuizConstants.SliderTickRange,
+                                        Range = false,
+                                        Value = new int[] { FriendQuizConstants.SliderTickRange / 2},
+                                        Ticks = question.TickValues.ToArray(),
+                                        TicksLabels = question.TickLabels.ToArray()
+                                    }
+                                },
+                                new SubPrompt
+                                {
+                                    Prompt = "Select Abstain if you do not want to share your answer. Select Answer if you do",
+                                    Answers = new string[] {"Answer", "Abstain"}
                                 }
                             },
                             SubmitButton = true
                         },
                         formSubmitHandler: (User user, UserFormSubmission input) =>
                         {
-                            question.UsersToAnswers.TryAdd(user, input.SubForms[0].RadioAnswer ?? 0);
+                            if ((input.SubForms?[1]?.RadioAnswer ?? 1) == 0)
+                            {
+                                question.MainAnswer = input.SubForms[0].RadioAnswer ?? 0;
+                            }
                             return (true, string.Empty);
                         }));
                 }
                 return stateChain;
             }
-            MultiStateChain askQuestions = new MultiStateChain(GetAsnwerUserStateChain, exit: new WaitForUsers_StateExit(lobby));
+            MultiStateChain askQuestions = new MultiStateChain(GetAnswerUserStateChain, exit: new WaitForUsers_StateExit(lobby));
 
             this.Entrance.Transition(askQuestions);
             askQuestions.Transition(this.Exit);
