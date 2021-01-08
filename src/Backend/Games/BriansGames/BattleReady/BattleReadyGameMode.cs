@@ -391,16 +391,16 @@ namespace Backend.Games.BriansGames.BattleReady
             // Points for using drawings.
             foreach (Person person in choices)
             {
-                person.BodyPartDrawings[BodyPartType.Head].Owner.ScoreHolder.AddScore(BattleReadyConstants.PointsForPartUsed, Score.Reason.DrawingUsed);
-                person.BodyPartDrawings[BodyPartType.Body].Owner.ScoreHolder.AddScore(BattleReadyConstants.PointsForPartUsed, Score.Reason.DrawingUsed);
-                person.BodyPartDrawings[BodyPartType.Legs].Owner.ScoreHolder.AddScore(BattleReadyConstants.PointsForPartUsed, Score.Reason.DrawingUsed);
+                if (person.BodyPartDrawings[BodyPartType.Head].Owner != person.Owner) person.BodyPartDrawings[BodyPartType.Head].Owner.ScoreHolder.AddScore(BattleReadyConstants.PointsForPartUsed, Score.Reason.DrawingUsed);
+                if (person.BodyPartDrawings[BodyPartType.Body].Owner != person.Owner) person.BodyPartDrawings[BodyPartType.Body].Owner.ScoreHolder.AddScore(BattleReadyConstants.PointsForPartUsed, Score.Reason.DrawingUsed);
+                if (person.BodyPartDrawings[BodyPartType.Legs].Owner != person.Owner) person.BodyPartDrawings[BodyPartType.Legs].Owner.ScoreHolder.AddScore(BattleReadyConstants.PointsForPartUsed, Score.Reason.DrawingUsed);
             }
 
             // Points for vote.
             foreach ((User user, VoteInfo voteInfo) in votes)
             {
                 User userVotedFor = ((UserHand)voteInfo.ObjectsVotedFor[0]).Owner;
-                userVotedFor.ScoreHolder.AddScore(BattleReadyConstants.PointsForVote, Score.Reason.ReceivedVotes);
+                if (userVotedFor != user) userVotedFor.ScoreHolder.AddScore(BattleReadyConstants.PointsForVote, Score.Reason.ReceivedVotes);
             }
         }
     }

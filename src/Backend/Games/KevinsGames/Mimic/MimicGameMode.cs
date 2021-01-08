@@ -45,7 +45,7 @@ namespace Backend.Games.KevinsGames.Mimic
                     {
                         Description = "Number of starting drawings from each person",
                         ResponseType = ResponseType.Integer,
-                        DefaultValue = 2,
+                        DefaultValue = 1,
                         MinValue = 1,
                         MaxValue = 30,
                     },
