@@ -170,6 +170,33 @@ namespace BackendAutomatedTestingClient.WebClient
             };
         }
 
+        public static UserFormSubmission SubmitSliders(string userId, bool range, int minBound = 0, int maxBound = 100, int numSliders = 1)
+        {
+            Debug.Assert(userId.Length == 50);
+            List<UserSubForm> subForms = new List<UserSubForm>();
+            for (int i = 0; i < numSliders; i++)
+            {
+                if (range)
+                {
+                    subForms.Add(new UserSubForm()
+                    {
+                        Slider = new List<int>() { minBound, maxBound }
+                    });
+                }
+                else
+                {
+                    subForms.Add(new UserSubForm()
+                    {
+                        Slider = new List<int>() { minBound }
+                    });
+                }
+            }
+            return new UserFormSubmission
+            {
+                SubForms = subForms
+            };
+        }
+
         public static UserFormSubmission SubmitSkipReveal(string userId, UserPrompt prompt)
         {
             Debug.Assert(userId.Length == 50);

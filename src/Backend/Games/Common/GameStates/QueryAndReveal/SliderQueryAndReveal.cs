@@ -40,12 +40,10 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
 
         public override UnityView QueryUnityViewGenerator()
         {
-            return new UnityView(this.Lobby)
-            {
-                ScreenId = TVScreenId.WaitForUserInputs,
-                Title = new UnityField<string> { Value = this.QueryViewOverrides?.Title },
-                Instructions = new UnityField<string> { Value = this.QueryViewOverrides?.Instructions },
-            };
+            UnityView unityView = base.QueryUnityViewGenerator();
+            unityView.ScreenId = TVScreenId.WaitForUserInputs;
+            unityView.UnityObjects = null;
+            return unityView;
         }
 
         private UserPrompt DefaultQueryPromptGenerator(User user, List<Question> questions)
@@ -61,10 +59,10 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
                     {
                         Min = SliderMin,
                         Max = SliderMax,
+                        Range = true,
                         TicksLabels = question.TickLabels.ToArray(),
                         Ticks = question.TickValues.ToArray(),
-                        Value = new int[] { SliderMin, SliderMax },
-                        Range = true,
+                        Value = new int[] { (int) ((SliderMin + SliderMax) * 0.25), (int)((SliderMin + SliderMax) * 0.75) },
                     }
                 }).ToArray(),
                 SubmitButton = true

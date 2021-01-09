@@ -87,7 +87,7 @@ namespace Backend.Games.TimsGames.FriendQuiz
             int numQuestionsToAnswer = (int)gameModeOptions[(int)GameModeOptionsEnum.NumAnswerQuestions].ValueParsed;
             //int minQuestions = (int)gameModeOptions[(int)GameModeOptionsEnum.MinQuestions].ValueParsed;
             //bool outlierExtraRound = (bool)gameModeOptions[(int)GameModeOptionsEnum.OutlierExtraRound].ValueParsed;
-            float gameLength = (float)gameModeOptions[(int)GameModeOptionsEnum.GameLength].ValueParsed;
+            int gameLength = (int)gameModeOptions[(int)GameModeOptionsEnum.GameLength].ValueParsed;
 
             TimeSpan? setupTimer = null;
             TimeSpan? answeringTimer = null;
@@ -117,39 +117,51 @@ namespace Backend.Games.TimsGames.FriendQuiz
             }
 
             //numQuestionsToAnswer = Math.Clamp(numQuestionsToAnswer, 1, lobby.GetAllUsers().Count * numQuestionSetup);
-
-            Setup = new Setup_GS(
-                lobby: lobby,
-                roundTracker: RoundTracker,
-                numExpectedPerUser: numQuestionSetup,
-                setupDuration: setupTimer);
-
-            List<UserQuestionsHolder> userQuestionsHolders = lobby.GetAllUsers().Select(user => new UserQuestionsHolder(user)).ToList();
-            List<Question> randomizedQuestions = RoundTracker.Questions.OrderBy(_ => Rand.Next()).ToList();
-            List<IGroup<Question>> assignments = MemberHelpers<Question>.Assign(userQuestionsHolders.Cast<IConstraints<Question>>().ToList(), randomizedQuestions, 10);
-
             Dictionary<User, List<Question>> usersToAssignedQuestions = new Dictionary<User, List<Question>>();
 
-            var pairings = userQuestionsHolders.Zip(assignments);
-            foreach ((UserQuestionsHolder holder, IGroup<Question> questions) in pairings)
+            StateChain gameStateChain = new StateChain(stateGenerator: (int counter) =>
             {
-                // Makes a copy of the questions so that it can handle multiple people answering the same question without them both overriding the same object
-                usersToAssignedQuestions.Add(holder.QuestionedUser, questions.Members.Select(question => new Question(question) { MainUser = holder.QuestionedUser}).ToList());
-            }
+                if (counter == 0)
+                {
+                    return new Setup_GS(
+                        lobby: lobby,
+                        roundTracker: RoundTracker,
+                        numExpectedPerUser: numQuestionSetup,
+                        setupDuration: setupTimer);
+                }
+                else if (counter == 1)
+                {
+                    List<UserQuestionsHolder> userQuestionsHolders = lobby.GetAllUsers().Select(user => new UserQuestionsHolder(user, numQuestionsToAnswer)).ToList();
+                    List<Question> randomizedQuestions = RoundTracker.Questions.OrderBy(_ => Rand.Next()).ToList();
+                    List<IGroup<Question>> assignments = MemberHelpers<Question>.Assign(userQuestionsHolders.Cast<IConstraints<Question>>().ToList(), randomizedQuestions, lobby.GetAllUsers().Count);
 
-            GameState answeringState = new Gameplay_GS(
-                    lobby: lobby,
-                    usersToAssignedQuestions: usersToAssignedQuestions,
-                    answerTimeDuration: answeringTimer);
+                    var pairings = userQuestionsHolders.Zip(assignments);
+                    foreach ((UserQuestionsHolder holder, IGroup<Question> questions) in pairings)
+                    {
+                        // Makes a copy of the questions so that it can handle multiple people answering the same question without them both overriding the same object
+                        usersToAssignedQuestions.Add(holder.QuestionedUser, questions.Members.Select(question => new Question(question) { MainUser = holder.QuestionedUser }).ToList());
+                    }
+                    return new Gameplay_GS(
+                        lobby: lobby,
+                        usersToAssignedQuestions: usersToAssignedQuestions,
+                        answerTimeDuration: answeringTimer);
+                }
+                else if (counter == 2)
+                {
 
-            List<User> randomizedUsers = usersToAssignedQuestions.Keys.OrderBy(_ => Rand.Next()).ToList();
-            User lastUser = randomizedUsers.Last();
-            StateChain queryChain = new StateChain(states : randomizedUsers.Select(user => GetUserQueryStateChain(user, user == lastUser)).Cast<State>().ToList());
+                    List<User> randomizedUsers = usersToAssignedQuestions.Keys.OrderBy(_ => Rand.Next()).ToList();
+                    User lastUser = randomizedUsers.Last();
+                    return new StateChain(states: randomizedUsers.Select(user => GetUserQueryStateChain(user, user == lastUser)).Cast<State>().ToList());
+                }
+                else
+                {
+                    return null;
+                }
+            });
+
             
-            this.Entrance.Transition(Setup);
-            Setup.Transition(answeringState);
-            answeringState.Transition(queryChain);
-            queryChain.Transition(this.Exit);
+            this.Entrance.Transition(gameStateChain);
+            gameStateChain.Transition(this.Exit);
 
             StateChain GetUserQueryStateChain(User user, bool final = false)
             {
@@ -170,6 +182,10 @@ namespace Backend.Games.TimsGames.FriendQuiz
                             QueryViewOverrides = new UnityViewOverrides()
                             {
                                 Title = $"How do you think {user.DisplayName} answered these questions?",
+                            },
+                            RevealViewOverrides = new UnityViewOverrides()
+                            {
+                                Title = $"This is how {user.DisplayName} answered those questions.",
                             },
                             QueryExitListener = CountQueries,
                         };
@@ -214,7 +230,7 @@ namespace Backend.Games.TimsGames.FriendQuiz
 
         private int CalculateScore(int mainValue, int ansMin, int ansMax)
         {
-            double rangeInverse = 1.0 - 1.0 * (ansMax - ansMin) / FriendQuizConstants.SliderTickRange;
+            double rangeInverse = Math.Pow(1.0 - 1.0 * (ansMax - ansMin) / FriendQuizConstants.SliderTickRange, 3);
             return (int) (rangeInverse * FriendQuizConstants.PointsForCorrectAnswer);
         }
     }

@@ -34,5 +34,6 @@ public class PrefabLookup : MonoBehaviour
         SliderValue,
         SliderGuess,
         SliderRange,
+        SliderTickLabel,
     }
 }

@@ -43,6 +43,6 @@ namespace Common.DataModels.Enums
 
         FriendQuiz_CreateQuestion = 80,
         FriendQuiz_AnswerQuestion = 81,
-        FriendQuiz_ExtraRoundVoting = 82,
+        FriendQuiz_Query = 82,
     }
 }

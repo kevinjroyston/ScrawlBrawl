@@ -18,7 +18,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
 {
     public class Gameplay_GS : GameState
     {
-        public Gameplay_GS(Lobby lobby, Dictionary<User, List<Question>> usersToAssignedQuestions, TimeSpan? answerTimeDuration = null) : base(lobby)
+        public Gameplay_GS(Lobby lobby, Dictionary<User, List<Question>> usersToAssignedQuestions, TimeSpan? answerTimeDuration = null) : base(lobby, answerTimeDuration)
         {
             List<State> GetAnswerUserStateChain(User user)
             {
@@ -57,7 +57,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                         {
                             if ((input.SubForms?[1]?.RadioAnswer ?? 1) == 0)
                             {
-                                question.MainAnswer = input.SubForms[0].RadioAnswer ?? 0;
+                                question.MainAnswer = input.SubForms[0].Slider?[0] ?? 0;
                             }
                             return (true, string.Empty);
                         }));
@@ -69,10 +69,10 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
             this.Entrance.Transition(askQuestions);
             askQuestions.Transition(this.Exit);
 
-            this.Legacy_UnityView = new Legacy_UnityView(lobby)
+            this.UnityView = new UnityView(lobby)
             {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
-                Instructions = new StaticAccessor<string> { Value = "Answer all the questions on your phones" },
+                ScreenId = TVScreenId.WaitForUserInputs,
+                Instructions = new UnityField<string> { Value = "Answer all the questions on your phones" },
             };
         }
     }

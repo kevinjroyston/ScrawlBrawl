@@ -10,10 +10,12 @@ namespace Backend.Games.TimsGames.FriendQuiz.DataModels
 {
     public class UserQuestionsHolder : Constraints<Question>
     { 
-        public UserQuestionsHolder (User user)
+        public UserQuestionsHolder (User user, int maxQuestionCount)
         {
+            this.MaxMemberCount = maxQuestionCount;
             this.QuestionedUser = user;
         }
+        public override bool? AllowDuplicateIds { get; set; } = false;
         public User QuestionedUser { get; set; }
         public List<Question> Questions { get; set; } = new List<Question>();
     }

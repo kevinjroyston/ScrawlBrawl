@@ -554,7 +554,7 @@ MonoBehaviour:
   m_PreferredWidth: -1
   m_PreferredHeight: 0
   m_FlexibleWidth: 1
-  m_FlexibleHeight: 0.1
+  m_FlexibleHeight: 0.2
   m_LayoutPriority: 1
 --- !u!114 &2698945793314723384
 MonoBehaviour:
@@ -714,7 +714,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.02, y: 0.2}
-  m_AnchorMax: {x: 0.98, y: 0.8}
+  m_AnchorMax: {x: 0.98, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}

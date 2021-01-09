@@ -11,5 +11,6 @@
         ShowDrawings = 6,
         TextView = 7,
         VoteRevealImageView = 8,
+        ObjectView = 9,
     }
 }

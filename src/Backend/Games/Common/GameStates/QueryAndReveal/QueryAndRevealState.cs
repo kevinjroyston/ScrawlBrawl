@@ -28,7 +28,6 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
         {
             this.Lobby = lobby;
             this.Objects = objectsToQuery;
-            RevealViewOverrides ??= QueryViewOverrides;
 
             StateChain VoteAndRevealChainGenerator()
             {
@@ -87,10 +86,12 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
         }
         public virtual UnityView RevealUnityViewGenerator()
         {
+            RevealViewOverrides ??= QueryViewOverrides;
+
             List<UnityObject> unityObjects = new List<UnityObject>();
             for (int i = 0; i < this.Objects.Count(); i++)
             {
-                unityObjects.Add(this.Objects[i].QueryUnityObjectGenerator(i + 1));
+                unityObjects.Add(this.Objects[i].RevealUnityObjectGenerator(i + 1));
             }
             return new UnityView(this.Lobby)
             {

@@ -152,18 +152,14 @@ namespace Assets.Scripts.Views
             UnitySlider castedSlider = (UnitySlider)UnityObject;
             switch (handlerId.HandlerType)
             {
-                case HandlerType.SliderValueList:
-                    switch (handlerId.SubType)
+                case HandlerType.SliderData:
+                    return new SliderDataHolder()
                     {
-                        case SliderType.MainSliderValue:
-                            return new List<SliderValueHolder>() { castedSlider.MainSliderValue };
-                        case SliderType.GuessSliderValues:
-                            return castedSlider.GuessSliderValues;
-                        default:
-                            throw new ArgumentException($"Unknown subtype id: '{HandlerType.SliderValueList}-{handlerId.SubType}'");
-                    }
-                case HandlerType.SliderBoundsTuple:
-                    return castedSlider.SliderBounds;
+                        SliderBounds = castedSlider.SliderBounds,
+                        TickLabels = castedSlider.TickLabels,
+                        MainSliderHolders = castedSlider.MainSliderValues,
+                        GuessSliderHolders = castedSlider.GuessSliderValues,
+                    };
                 default:
                     throw new ArgumentException($"Unknown handler id: '{handlerId.HandlerType}'");
 

@@ -27,7 +27,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
         {
             this.Lobby = lobby;
             this.Objects = objectsToVoteOn;
-            RevealViewOverrides ??= VotingViewOverrides;
+
             StateChain VoteAndRevealChainGenerator()
             {
                 StateChain voteAndRevealStateChain = new StateChain(stateGenerator: (int counter) =>
@@ -68,6 +68,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
 
         public virtual Legacy_UnityView VotingUnityViewGenerator()
         {
+            RevealViewOverrides ??= VotingViewOverrides;
             List<Legacy_UnityImage> unityObjects = new List<Legacy_UnityImage>();
             for (int i = 0; i < this.Objects.Count(); i++)
             {

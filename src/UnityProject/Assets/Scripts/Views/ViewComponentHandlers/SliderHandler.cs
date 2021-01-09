@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Networking.DataModels.UnityObjects;
+﻿using Assets.Scripts.Networking.DataModels;
+using Assets.Scripts.Networking.DataModels.UnityObjects;
 using Assets.Scripts.Views.DataModels;
 using Assets.Scripts.Views.Interfaces;
 using System;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 using static TypeEnums;
 
 namespace Assets.Scripts.Views.ViewComponentHandlers
@@ -20,27 +22,39 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
         private float SliderBodyAnchorMinX;
         private float SliderBodyAnchorMaxX;
         private float SliderBodyAnchorMinY;
+        private float SliderBodyAnchorMaxY;
         private float SliderBodyAnchorHeight;
         private float SliderMin;
         private float SliderMax;
 
         public List<HandlerId> HandlerIds => new List<HandlerId>()
         { 
-            HandlerType.SliderBoundsTuple.ToHandlerId(),
-            HandlerType.SliderValueList.ToHandlerId(SliderType.MainSliderValue),
-            HandlerType.SliderValueList.ToHandlerId(SliderType.GuessSliderValues)
+            HandlerType.SliderData.ToHandlerId(),
         };
 
-        public void UpdateValue((float, float) sliderBounds, List<SliderValueHolder> mainSliderHolders, List<SliderValueHolder> guessSliderHolders)
+        public void UpdateValue(SliderDataHolder sliderData)
         {
+            (float, float) sliderBounds = sliderData.SliderBounds;
+            IReadOnlyList<(float, string)> tickLabels = sliderData.TickLabels;
+            IReadOnlyList<SliderValueHolder> mainSliderHolders = sliderData.MainSliderHolders;
+            IReadOnlyList<SliderValueHolder> guessSliderHolders = sliderData.GuessSliderHolders;
+
             SliderBodyAspectRatio = gameObject.GetComponent<FixedAspectRatio>().AspectRatio;
             SliderBodyAnchorMinX = SliderBody.anchorMin.x;
             SliderBodyAnchorMaxX = SliderBody.anchorMax.x;
             SliderBodyAnchorMinY = SliderBody.anchorMin.y;
+            SliderBodyAnchorMaxY = SliderBody.anchorMax.y;
             SliderBodyAnchorHeight = SliderBody.anchorMax.y - SliderBody.anchorMin.y;
             SliderMin = sliderBounds.Item1;
             SliderMax = sliderBounds.Item2;
 
+            if (tickLabels != null)
+            {
+                foreach ((float location, string text) in tickLabels)
+                {
+                    CreateLabel(location, text);
+                }
+            }
             if (mainSliderHolders != null)
             {
                 foreach (SliderValueHolder sliderHolder in mainSliderHolders)
@@ -65,7 +79,7 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
             if (isMain)
             {
                 toInstantiate = PrefabLookup.Singleton.Mapping[PrefabLookup.PrefabType.SliderValue];
-                y = 0.5f;
+                y = (SliderBodyAnchorMaxY + SliderBodyAnchorMinY) / 2;
                 anchorHeight = SliderBodyAnchorHeight * 1.05f;
             }
             else
@@ -80,8 +94,8 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
                     x1: (float)sliderHolder.SingleValue,
                     min1: SliderMin,
                     max1: SliderMax,
-                    min2: 0f,
-                    max2: 1f);
+                    min2: SliderBodyAnchorMinX,
+                    max2: SliderBodyAnchorMaxX);
 
                 CreateTick(toInstantiate, x, y, anchorHeight, sliderHolder.UserId.ToString());
             } 
@@ -101,10 +115,31 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
                     min2: SliderBodyAnchorMinX,
                     max2: SliderBodyAnchorMaxX);
 
-                CreateRange(x1, x2, y, anchorHeight * 0.75f, sliderHolder.UserId.ToString());
+                CreateRange(x1, x2, y, anchorHeight * 0.9f, sliderHolder.UserId.ToString());
                 //CreateTick(toInstantiate, x1, y, anchorHeight);
                 //CreateTick(toInstantiate, x2, y, anchorHeight);
             }
+        }
+        private void CreateLabel(float location, string text)
+        {
+            float x = Helpers.GetRelativePosition(
+                    x1: location,
+                    min1: SliderMin,
+                    max1: SliderMax,
+                    min2: SliderBodyAnchorMinX,
+                    max2: SliderBodyAnchorMaxX);
+            float y = (1.0f + SliderBodyAnchorMaxY) / 2;
+            float anchorHeight = 1.0f - SliderBodyAnchorMaxY;
+            float anchorWidth = anchorHeight / SliderBodyAspectRatio;
+
+            GameObject createdLabel = Instantiate(PrefabLookup.Singleton.Mapping[PrefabLookup.PrefabType.SliderTickLabel], transform);
+            RectTransform createdRectTransform = createdLabel.GetComponent<RectTransform>();
+
+            createdRectTransform.anchorMin = new Vector2(x - anchorWidth / 2, y - anchorHeight / 2);
+            createdRectTransform.anchorMax = new Vector2(x + anchorWidth / 2, y + anchorHeight / 2);
+            createdRectTransform.sizeDelta = new Vector2(0, 0);
+
+            createdLabel.GetComponentInChildren<Text>().text = text;
         }
         private void CreateTick(GameObject toInstantiate, float x, float y, float anchorHeight, string colorId)
         {
@@ -132,7 +167,7 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
         }
         public void UpdateValue(List<dynamic> objects)
         {
-            UpdateValue(objects[0], objects[1], objects[2]);
+            UpdateValue((SliderDataHolder) objects[0]);
         }
     }
 }

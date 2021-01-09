@@ -16,6 +16,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.DataModels
         }
         public Question(Question copy) : base()
         {
+            this.AnswerType = copy.AnswerType;
             this.Owner = copy.Owner;
             this.Tags = copy.Tags;
             this.Text = copy.Text;
@@ -33,17 +34,17 @@ namespace Backend.Games.TimsGames.FriendQuiz.DataModels
 
         public static Dictionary<AnswerTypes, string> AnswerTypeToTypeName { get; } = new Dictionary<AnswerTypes, string>()
         {
-            {AnswerTypes.YesNo, "Yes <-> No" },
-            {AnswerTypes.AlwaysOftenSometimesNever, "Always <-> Never" },
-            {AnswerTypes.AgreeDisagree, "Agree <-> Disagree" },
+            {AnswerTypes.YesNo, "No <-> Yes" },
+            {AnswerTypes.AlwaysOftenSometimesNever, "Never <-> Always" },
+            {AnswerTypes.AgreeDisagree, "Disagree <-> Agree" },
             //{AnswerTypes.Custom, "Custom, Select this and enter bellow" },
         };
 
         private static Dictionary<AnswerTypes, List<string>> AnswerTypeToSliderTicks { get; } = new Dictionary<AnswerTypes, List<string>>()
         {
             {AnswerTypes.YesNo, new List<string>(){"No", "Yes"} },
-            {AnswerTypes.AlwaysOftenSometimesNever, new List<string>(){"Always", "Often", "Sometimes", "Never" } },
-            {AnswerTypes.AgreeDisagree, new List<string>(){"Strongly Agree", "Agree", "Disagree", "Strongly Disagree"} },
+            {AnswerTypes.AlwaysOftenSometimesNever, new List<string>(){ "Never", "Sometimes", "Often", "Always" } },
+            {AnswerTypes.AgreeDisagree, new List<string>(){"Strongly Disagree", "Disagree", "Agree", "Strongly Agree" } },
         };
 
         public AnswerTypes AnswerType { get; set; }
@@ -72,7 +73,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.DataModels
             get
             {
                 List<int> tickValues = new List<int>();
-                for (double d = 0; d <= 1; d += 1.0 / TickLabels.Count)
+                for (double d = 0; d <= 1; d += 1.0 / (TickLabels.Count - 1))
                 {
                     tickValues.Add((int)(d * FriendQuizConstants.SliderTickRange));
                 }
@@ -87,27 +88,32 @@ namespace Backend.Games.TimsGames.FriendQuiz.DataModels
 
         public UnityObject QueryUnityObjectGenerator(int numericId)
         {
-            return new UnitySlider()
-            {
-
-            };
+            return null;
         }
 
         public UnityObject RevealUnityObjectGenerator(int numericId)
         {
             return new UnitySlider()
             {
-                SliderBounds = (0, FriendQuizConstants.SliderTickRange),
-                MainSliderValue = new SliderValueHolder()
+                Title = new UnityField<string>()
                 {
-                    UserId = MainUser.Id,
-                    SingleValue = MainAnswer,
+                    Value = Text, 
+                },
+                SliderBounds = (0, FriendQuizConstants.SliderTickRange),
+                TickLabels = TickValues.Select(val => 1f * val).Zip(TickLabels).ToList(),
+                MainSliderValues = new List<SliderValueHolder>()
+                {
+                    new SliderValueHolder()
+                    {
+                        UserId = MainUser.Id,
+                        SingleValue = MainAnswer,
+                    },
                 },
                 GuessSliderValues = UserAnswers.Select(answer => new SliderValueHolder()
                 {
                     UserId = answer.UserQueried.Id,
                     ValueRange = answer.Answer,
-                }).ToList().AsReadOnly(),
+                }).ToList(),
 
             };
         }
