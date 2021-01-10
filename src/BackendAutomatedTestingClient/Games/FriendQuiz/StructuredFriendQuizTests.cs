@@ -52,10 +52,8 @@ namespace BackendAutomatedTestingClient.Games.FriendQuiz
                 toReturn.AppendRepetitiveGameSteps(
                     copyFrom: new List<GameStep>
                     {
-                        TestCaseHelpers.AllPlayers(
-                            numPlayers:NumPlayers,
-                            prompt: UserPromptId.FriendQuiz_Query),
-                        TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipReveal, NumPlayers, UserPromptId.Waiting),
+                        TestCaseHelpers.OneVsAll(UserPromptId.Waiting, NumPlayers, UserPromptId.FriendQuiz_Query),
+                        TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipReveal, NumPlayers, UserPromptId.RevealScoreBreakdowns),
                         TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipScoreboard, NumPlayers, UserPromptId.RevealScoreBreakdowns)
                     },
                     repeatCounter: NumPlayers);

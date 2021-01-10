@@ -14,7 +14,7 @@ namespace BackendAutomatedTestingClient.Games
     {
         // TODO: Let children override TestName like GameModeTitle (move to GameTest)
         private const string TestName = "TwoTone";
-        public override string GameModeTitle => "Chaotic Cooperation";
+        public override string GameModeTitle => "Chaotic Collaboration";
 
         public override UserFormSubmission HandleUserPrompt(UserPrompt userPrompt, LobbyPlayer player, int gameStep)
         {

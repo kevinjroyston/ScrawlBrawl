@@ -50,7 +50,7 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
         {
             return new UserPrompt()
             {
-                UserPromptId = UserPromptId.Query,
+                UserPromptId = UserPromptId.FriendQuiz_Query,
                 Title = this.QueryPromptTitle,
                 Description = this.QueryPromptDescription,
                 SubPrompts = questions.Select(question => new SubPrompt()

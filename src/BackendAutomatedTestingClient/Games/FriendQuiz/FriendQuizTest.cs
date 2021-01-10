@@ -55,14 +55,30 @@ namespace BackendAutomatedTestingClient.Games.FriendQuiz
                     },
                     new UserSubForm()
                     {
-                        Selector = 0
+                        RadioAnswer = 0
                     },
                 }
             };
         }
         protected virtual UserFormSubmission AnswerQuestion(LobbyPlayer player)
         {
-            return CommonSubmissions.SubmitSliders(player.UserId, range: false);
+
+            Debug.Assert(player.UserId.Length == 50);
+
+            return new UserFormSubmission
+            {
+                SubForms = new List<UserSubForm>()
+                {
+                    new UserSubForm()
+                    {
+                        Slider = new List<int>() { 0 }
+                    },
+                    new UserSubForm()
+                    {
+                        RadioAnswer = 0,
+                    },
+                }
+            };
         }
         protected virtual UserFormSubmission Query(LobbyPlayer player, int numSliders)
         {
