@@ -26,7 +26,7 @@ export const members : Member[] = [
     },
     {
         name: "Daniel Lee", 
-        image: "https://material.angular.io/assets/img/examples/shiba2.jpg", 
+        image: "/assets/About/DanielL.png", 
         role: "Full Stack / Lead Frontend Developer", 
         description: "Daniel is a software engineer at a large corporation"
     },

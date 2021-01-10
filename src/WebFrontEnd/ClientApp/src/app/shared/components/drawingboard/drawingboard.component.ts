@@ -76,6 +76,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
         
         this._drawingType = typ; 
         this.updateDrawingOptionsForDrawingType(typ);
+        this.drawingDirective.handleClearUndo();
 
         if (this.galleryTool) {
             this.galleryTool.drawingType=typ;
