@@ -93,16 +93,11 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                 formSubmitHandler: (User user, UserFormSubmission input) =>
                 {
                     List<string> colors = null;
-                    if (this.UseSingleColor)
+                    colors = input.SubForms.Where((subForm, index) => index > 0).Select((subForm) => this.UseSingleColor ? subForm.Color : subForm.ShortAnswer).Reverse().ToList();
+
+                    if (colors.Count != new HashSet<string>(colors).Count)
                     {
-                        colors = input.SubForms.Where((subForm, index) => index > 0).Select((subForm) => subForm.Color).Reverse().ToList();
-                        if (colors.Count != new HashSet<string>(colors).Count)
-                        {
-                            return (false, "Server doesn't handle identical colors well, change one slightly.");
-                        }
-                    } else
-                    {
-                        colors = input.SubForms.Where((subForm, index) => index > 0).Select((subForm) => subForm.ShortAnswer).Reverse().ToList();
+                        return (false, "Server doesn't handle identical "+ (UseSingleColor ? "colors" : "layer descriptions") + " colors well, change one slightly.");
                     }
 
                     bool success = this.SubChallenges.TryAdd(new ChallengeTracker
