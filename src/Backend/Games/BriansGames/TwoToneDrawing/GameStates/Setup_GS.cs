@@ -97,8 +97,9 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
 
                     if (colors.Count != new HashSet<string>(colors).Count)
                     {
-                        return (false, "Server doesn't handle identical "+ (UseSingleColor ? "colors" : "layer descriptions") + " colors well, change one slightly.");
+                        return (false, "Server doesn't handle identical "+ (UseSingleColor ? "colors" : "layer descriptions") + " well, change one slightly.");
                     }
+
 
                     bool success = this.SubChallenges.TryAdd(new ChallengeTracker
                     {
