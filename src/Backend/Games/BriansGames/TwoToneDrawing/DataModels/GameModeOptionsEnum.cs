@@ -2,7 +2,8 @@
 {
     public enum GameModeOptionsEnum
     {
-        numColors,
+        useSingleColor,
+        numLayers,
         numTeams,
         showOtherColors,
         GameLength,

@@ -49,10 +49,16 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             {
                 new GameModeOptionResponse
                 {
-                    Description = "Max number of colors per team",
+                    Description = "One Color Per Person",
+                    ResponseType = ResponseType.Boolean,
+                    DefaultValue = true,
+                },
+                new GameModeOptionResponse
+                {
+                    Description = "Max number of colors/layers per team",
                     ResponseType = ResponseType.Integer,
                     DefaultValue = 2,
-                    MinValue = 1,
+                    MinValue = 2,
                     MaxValue = 10,
                 },
                 new GameModeOptionResponse
@@ -65,7 +71,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                 },
                 new GameModeOptionResponse
                 {
-                    Description = "Show other colors",
+                    Description = "Show everyone the colors/layer descriptions",
                     DefaultValue = true,
                     ResponseType = ResponseType.Boolean
                 },
@@ -85,7 +91,8 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             ValidateOptions(lobby, gameModeOptions);
             this.Lobby = lobby;
 
-            int numColors = (int)gameModeOptions[(int)GameModeOptionsEnum.numColors].ValueParsed;
+            bool useSingleColor = (bool)gameModeOptions[(int)GameModeOptionsEnum.useSingleColor].ValueParsed;
+            int numLayers = (int)gameModeOptions[(int)GameModeOptionsEnum.numLayers].ValueParsed;
             int numTeams = (int)gameModeOptions[(int)GameModeOptionsEnum.numTeams].ValueParsed;
             bool showOtherColors = (bool)gameModeOptions[(int)GameModeOptionsEnum.showOtherColors].ValueParsed;
             int gameLength = (int)gameModeOptions[(int)GameModeOptionsEnum.GameLength].ValueParsed;
@@ -114,7 +121,8 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             Setup = new Setup_GS(
                 lobby: lobby,
                 challengeTrackers: this.SubChallenges,
-                numColorsPerTeam: numColors,
+                useSingleColor: useSingleColor,
+                numLayersPerTeam: numLayers,
                 numTeamsPerPrompt: numTeams,
                 showColors: showOtherColors,
                 setupTimer: setupTimer,

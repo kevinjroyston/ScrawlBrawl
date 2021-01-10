@@ -18,6 +18,7 @@ namespace BackendAutomatedTestingClient.Games
                 NumPlayers = NumPlayers,
                 GameModeOptions = new List<GameModeOptionRequest>()
                 {
+                    new GameModeOptionRequest(){ Value = "true"}, // one color per person
                     new GameModeOptionRequest(){ Value = ColorsPerTeam + "" }, // max num colors
                     new GameModeOptionRequest(){ Value = TeamsPerPrompt + "" }, // max num teams per prompt
                     new GameModeOptionRequest(){ Value = "true"}, // show other colors

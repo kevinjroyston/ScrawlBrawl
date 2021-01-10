@@ -56,6 +56,7 @@ export class LobbyManagementComponent {
     }
 
     async onDeleteLobby() {
+        if (!confirm("Are you sure you want to disband this lobby?")) return false;
         await this.api.request({ type: "Lobby", path: "Delete" }).subscribe({
             next: async () => { await this.onGetLobby() },
             error: async (error) => { this.error = error.error; await this.onGetLobby(); }
