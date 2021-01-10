@@ -24,8 +24,7 @@ public static class TypeEnums
         UnityObjectList,
         UsersList,
         Color,
-        SliderValueList,
-        SliderBoundsTuple,
+        SliderData
     }
 
     public class HandlerId

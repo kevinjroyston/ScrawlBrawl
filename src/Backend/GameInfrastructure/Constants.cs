@@ -32,6 +32,7 @@ namespace Backend.GameInfrastructure
             public static string DrawingPromptTitle = "Time to draw!";
             public static string SetupUnityTitle = "Setup Time!";
             public static string VotingUnityTitle = "Voting Time!";
+            public static string QueryUnityTitle = "Answer These Questions!";
         }
     }
 }

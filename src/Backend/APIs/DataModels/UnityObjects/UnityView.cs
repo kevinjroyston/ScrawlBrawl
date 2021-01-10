@@ -18,16 +18,16 @@ namespace Backend.APIs.DataModels.UnityObjects
         [System.Text.Json.Serialization.JsonIgnore]
         private Lobby Lobby { get; }
 
-        public UnityField<IReadOnlyList<UnityObject>> UnityObjects { get; set; }
+        public UnityField<IReadOnlyList<UnityObject>> UnityObjects { get; set; } = null;
         public TVScreenId? ScreenId { get; set; }
         public Guid Id { get; } = Guid.NewGuid();
-        public IReadOnlyList<UnityUser> Users { get; set; }
+        public IReadOnlyList<UnityUser> Users { get; set; } = new List<UnityUser>().AsReadOnly();
         public UnityField<string> Title { get; set; }
         public UnityField<string> Instructions { get; set; }
         public DateTime? ServerTime { get { return DateTime.UtcNow; } }
         public DateTime? StateEndTime { get; set; }
-        public bool IsRevealing { get; set; }
-        public Dictionary<UnityViewOptions, object> Options { get; set; }
+        public bool IsRevealing { get; set; } = false;
+        public Dictionary<UnityViewOptions, object> Options { get; set; } = new Dictionary<UnityViewOptions, object>();
 
         public UnityView(Lobby lobby)
         {
@@ -56,7 +56,7 @@ namespace Backend.APIs.DataModels.UnityObjects
             }
             this.Id = legacy._Id ?? Guid.NewGuid();
             this.ScreenId = legacy._ScreenId;
-            this.Users = legacy._Users.Select(user => new UnityUser(user)).ToList().AsReadOnly();
+            this.Users = legacy._Users?.Select(user => new UnityUser(user)).ToList().AsReadOnly();
             this.Title = new UnityField<string> { Value = legacy._Title };
             this.Instructions = new UnityField<string> { Value = legacy._Instructions };
             this.StateEndTime = legacy._StateEndTime;

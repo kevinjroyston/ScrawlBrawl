@@ -198,7 +198,15 @@ namespace BackendAutomatedTestingClient.TestFramework
             { 
                 GameTest test = testGenerator.Invoke();
                 int gameMode = games.FindIndex(gameData => gameData.Title == test.GameModeTitle);
-                test.Initialize(this.AutoSubmitPercentage, this.RandomSeed, gameMode, games[gameMode]);
+                if (gameMode >= 0)
+                {
+                    test.Initialize(this.AutoSubmitPercentage, this.RandomSeed, gameMode, games[gameMode]);
+                }
+                else
+                {
+                    Console.WriteLine($"\n Test game not found: {test.GameModeTitle}");
+                }
+
 
                 bool gameModeConstraintSatisified = (specifiedGameModes == null) || specifiedGameModes.Contains(test.GameModeTitle);
                 bool testNameConstraintSatisfied = (specifiedTests == null) || specifiedTests.Contains(testName);

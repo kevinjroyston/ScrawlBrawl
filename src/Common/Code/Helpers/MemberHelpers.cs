@@ -22,7 +22,7 @@ namespace Common.Code.Helpers
         public static List<M> Select_Ordered(IReadOnlyList<M> members, int count)
         {
             Arg.GreaterThan(count, 0, nameof(count));
-            Arg.NotNullOrEmpty(members, nameof(members));
+             
 
             List<M> memberList = members.ToList();
             List<M> output = new List<M>();

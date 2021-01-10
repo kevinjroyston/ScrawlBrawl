@@ -14,6 +14,11 @@ using System.Linq;
 using Common.DataModels.Responses;
 using Backend.GameInfrastructure;
 using Common.DataModels.Enums;
+using Backend.Games.Common;
+using Common.DataModels.Interfaces;
+using Common.Code.Helpers;
+using Backend.Games.Common.GameStates.QueryAndReveal;
+using Backend.APIs.DataModels.UnityObjects;
 
 namespace Backend.Games.TimsGames.FriendQuiz
 {
@@ -30,20 +35,29 @@ namespace Backend.Games.TimsGames.FriendQuiz
             MinPlayers = 3,
             MaxPlayers = null,
             Attributes = new GameModeAttributes
-                {
-                    ProductionReady = false,
-                },
+            {
+                ProductionReady = false,
+            },
             Options = new List<GameModeOptionResponse>
                 {
                     new GameModeOptionResponse
                     {
-                        Description = "Max number of questions to show for voting",
+                        Description = "Number of questions created by each user",
+                        ResponseType = ResponseType.Integer,
+                        DefaultValue = 2,
+                        MinValue = 1,
+                        MaxValue = 5,
+                    },
+                    new GameModeOptionResponse
+                    {
+                        Description = "Number of questions answered by each user",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 5,
                         MinValue = 1,
-                        MaxValue = 30,
+                        MaxValue = 10,
                     },
-                    new GameModeOptionResponse
+
+                    /*new GameModeOptionResponse
                     {
                         Description = "Min number of questions to show for voting",
                         ResponseType = ResponseType.Integer,
@@ -56,7 +70,7 @@ namespace Backend.Games.TimsGames.FriendQuiz
                         Description = "Outlier Extra Round",
                         ResponseType = ResponseType.Boolean,
                         DefaultValue = true,
-                    },
+                    },*/
                     new GameModeOptionResponse
                     {
                         Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
@@ -69,206 +83,155 @@ namespace Backend.Games.TimsGames.FriendQuiz
         };
         public FriendQuizGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            ValidateOptions(gameModeOptions);
-            int maxQuestions = (int)gameModeOptions[(int)GameModeOptionsEnum.MaxQuestions].ValueParsed;
-            int minQuestions = (int)gameModeOptions[(int)GameModeOptionsEnum.MinQuestions].ValueParsed;
-            bool outlierExtraRound = (bool)gameModeOptions[(int)GameModeOptionsEnum.OutlierExtraRound].ValueParsed;
-            float setupTimerLength = (int)gameModeOptions[(int)GameModeOptionsEnum.SetupTimerLength].ValueParsed;
-            float answerTimerLength = (int)gameModeOptions[(int)GameModeOptionsEnum.AnswerTimerLength].ValueParsed;
-            float votingTimerLength = (int)gameModeOptions[(int)GameModeOptionsEnum.VotingTimerLength].ValueParsed;
+            int numQuestionSetup = (int)gameModeOptions[(int)GameModeOptionsEnum.NumSubmitQuestions].ValueParsed;
+            int numQuestionsToAnswer = (int)gameModeOptions[(int)GameModeOptionsEnum.NumAnswerQuestions].ValueParsed;
+            //int minQuestions = (int)gameModeOptions[(int)GameModeOptionsEnum.MinQuestions].ValueParsed;
+            //bool outlierExtraRound = (bool)gameModeOptions[(int)GameModeOptionsEnum.OutlierExtraRound].ValueParsed;
+            int gameLength = (int)gameModeOptions[(int)GameModeOptionsEnum.GameLength].ValueParsed;
 
-            if(maxQuestions > lobby.GetAllUsers().Count)
+            TimeSpan? setupTimer = null;
+            TimeSpan? answeringTimer = null;
+            TimeSpan? votingTimer = null;
+
+            if (gameLength > 0)
             {
-                maxQuestions = lobby.GetAllUsers().Count;
+                setupTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
+                    minTimerLength: FriendQuizConstants.SetupTimerMin,
+                    aveTimerLength: FriendQuizConstants.SetupTimerAve,
+                    maxTimerLength: FriendQuizConstants.SetupTimerMax);
+                answeringTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
+                    minTimerLength: FriendQuizConstants.AnsweringTimerMin,
+                    aveTimerLength: FriendQuizConstants.AnsweringTimerAve,
+                    maxTimerLength: FriendQuizConstants.AnsweringTimerMax);
+                votingTimer = CommonHelpers.GetTimerFromLength(
+                    length: (double)gameLength,
+                    minTimerLength: FriendQuizConstants.VotingTimerMin,
+                    aveTimerLength: FriendQuizConstants.VotingTimerAve,
+                    maxTimerLength: FriendQuizConstants.VotingTimerMax);
+
+                setupTimer?.Multiply(numQuestionSetup);
+                answeringTimer?.Multiply(numQuestionsToAnswer);
+                votingTimer?.Multiply(numQuestionsToAnswer / 2.0);
             }
-            if (minQuestions > lobby.GetAllUsers().Count)
-            {
-                minQuestions = lobby.GetAllUsers().Count;
-            }
 
-            Setup = new Setup_GS(
-                lobby: lobby,
-                roundTracker: RoundTracker,
-                writingDuration: TimeSpan.FromSeconds(setupTimerLength));
+            //numQuestionsToAnswer = Math.Clamp(numQuestionsToAnswer, 1, lobby.GetAllUsers().Count * numQuestionSetup);
+            Dictionary<User, List<Question>> usersToAssignedQuestions = new Dictionary<User, List<Question>>();
 
-            StateChain CreateGamePlayLoop()
+            StateChain gameStateChain = new StateChain(stateGenerator: (int counter) =>
             {
-                List<Question> randomizedQuestions = RoundTracker.Questions.OrderBy(_ => Rand.Next()).ToList();
-                List<User> randomizedUsers = lobby.GetAllUsers().OrderBy(_ => Rand.Next()).ToList();
-                bool timeForScore = true;
-                StateChain gamePlayLoop = new StateChain(stateGenerator: (int counter) =>
+                if (counter == 0)
+                {
+                    return new Setup_GS(
+                        lobby: lobby,
+                        roundTracker: RoundTracker,
+                        numExpectedPerUser: numQuestionSetup,
+                        setupDuration: setupTimer);
+                }
+                else if (counter == 1)
+                {
+                    List<UserQuestionsHolder> userQuestionsHolders = lobby.GetAllUsers().Select(user => new UserQuestionsHolder(user, numQuestionsToAnswer)).ToList();
+                    List<Question> randomizedQuestions = RoundTracker.Questions.OrderBy(_ => Rand.Next()).ToList();
+                    List<IGroup<Question>> assignments = MemberHelpers<Question>.Assign(userQuestionsHolders.Cast<IConstraints<Question>>().ToList(), randomizedQuestions, lobby.GetAllUsers().Count);
+
+                    var pairings = userQuestionsHolders.Zip(assignments);
+                    foreach ((UserQuestionsHolder holder, IGroup<Question> questions) in pairings)
+                    {
+                        // Makes a copy of the questions so that it can handle multiple people answering the same question without them both overriding the same object
+                        usersToAssignedQuestions.Add(holder.QuestionedUser, questions.Members.Select(question => new Question(question) { MainUser = holder.QuestionedUser }).ToList());
+                    }
+                    return new Gameplay_GS(
+                        lobby: lobby,
+                        usersToAssignedQuestions: usersToAssignedQuestions,
+                        answerTimeDuration: answeringTimer);
+                }
+                else if (counter == 2)
+                {
+
+                    List<User> randomizedUsers = usersToAssignedQuestions.Keys.OrderBy(_ => Rand.Next()).ToList();
+                    User lastUser = randomizedUsers.Last();
+                    return new StateChain(states: randomizedUsers.Select(user => GetUserQueryStateChain(user, user == lastUser)).Cast<State>().ToList());
+                }
+                else
+                {
+                    return null;
+                }
+            });
+
+            
+            this.Entrance.Transition(gameStateChain);
+            gameStateChain.Transition(this.Exit);
+
+            StateChain GetUserQueryStateChain(User user, bool final = false)
+            {
+                return new StateChain(stateGenerator: (int counter) =>
                 {
                     if (counter == 0)
                     {
-                        return GetAnsweringStateChain(randomizedQuestions: randomizedQuestions);
-                    }
-                    else if (counter < randomizedUsers.Count + 1)
-                    {
-                        User userToShow = randomizedUsers[counter - 1];
-                        List<Question> questionsToShow = new List<Question>();
-                        foreach (Question question in randomizedQuestions)
+                        return new SliderQueryAndReveal(
+                           lobby: lobby,
+                           objectsToQuery: usersToAssignedQuestions[user],
+                           usersToQuery: lobby.GetAllUsers().Where(lobbyUser => lobbyUser != user).ToList(),
+                           queryTime: votingTimer)
                         {
-                            if (question.UsersToAnswers.ContainsKey(userToShow) && question.UsersToAnswers[userToShow] != 0 && questionsToShow.Count < maxQuestions)
+                            SliderMin = 0,
+                            SliderMax = FriendQuizConstants.SliderTickRange,
+                            QueryPromptTitle = $"How do you think {user.DisplayName} answered these questions?",
+                            QueryPromptDescription = "The tighter the range of your guess, the more points if you're correct",
+                            QueryViewOverrides = new UnityViewOverrides()
                             {
-                                questionsToShow.Add(question);
-                            }
-                        }
-
-                        if (questionsToShow.Count < minQuestions) // not enough complete answers to continue
-                        {
-                            return new StateChain(stateGenerator: (int counter) =>
+                                Title = $"How do you think {user.DisplayName} answered these questions?",
+                            },
+                            RevealViewOverrides = new UnityViewOverrides()
                             {
-                                return null;
-                            }); //gives an empty state chain so it skips
-                        }
-                        else
-                        {
-                            return GetVotingStateChain(questionsToShow, userToShow);
-                        }
-                        
+                                Title = $"This is how {user.DisplayName} answered those questions.",
+                            },
+                            QueryExitListener = CountQueries,
+                        };
                     }
-                    else
+                    else if (counter == 1)
                     {
-                        if (timeForScore)
+                        if (final)
                         {
-                            timeForScore = false;
                             return new ScoreBoardGameState(lobby, "Final Scores");
                         }
                         else
                         {
-                            return null;
+                            return new ScoreBoardGameState(lobby);
                         }
                     }
-                });
-                gamePlayLoop.Transition(this.Exit);
-                return gamePlayLoop;
-            }
-            this.Entrance.Transition(Setup);
-            Setup.Transition(CreateGamePlayLoop);
-
-            StateChain GetVotingStateChain(List<Question> questionsToShow, User userToShow)
-            {
-                return new StateChain(
-                    states: new List<State>() {
-                        new Voting_GS(
-                            lobby: lobby,
-                            questionsToShow: questionsToShow,
-                            userToShow: userToShow,
-                            votingTime: TimeSpan.FromSeconds(votingTimerLength)),
-                        new VoteRevealed_GS(
-                            lobby: lobby,
-                            questionsToShow: questionsToShow,
-                            userToShow: userToShow)});
-            }
-
-            StateChain GetAnsweringStateChain(List<Question> randomizedQuestions)
-            {
-                return new StateChain(
-                    stateGenerator: (int counter) =>
+                    else
                     {
-                        if(counter == 0)
-                        {
-                            return new Gameplay_GS(
-                                lobby: lobby,
-                                questions: randomizedQuestions,
-                                answerTimeDuration: TimeSpan.FromSeconds(answerTimerLength * randomizedQuestions.Count));
-                        }
-                        else
-                        {
-                            if (!outlierExtraRound)
-                            {
-                                return null;
-                            }
-                            List<State> extraRoundStateChain = new List<State>();
-                            List<Question> questionsToRemove = new List<Question>();
-                            foreach (Question question in randomizedQuestions)
-                            {
-                                User differentUser = null;
-                                int numAnswersChosen = 0;
-                                int numberOfAbstains = 0;
-                                List<int> answerGroups = new List<int>();
-                                for (int i = 0; i < Question.AnswerTypeToStrings[question.AnswerType].Count; i++)
-                                {
-                                    answerGroups.Add(0);
-                                }
-                                foreach (User user in question.UsersToAnswers.Keys)
-                                {
-                                    if (question.UsersToAnswers[user] == 0)
-                                    {
-                                        numberOfAbstains++;
-                                    }
-                                    else if (answerGroups[question.UsersToAnswers[user]] == 0)
-                                    {
-                                        if(numAnswersChosen == 1)
-                                        {
-                                            differentUser = user;
-                                        }
-                                        else if(numAnswersChosen > 1 || differentUser != null)
-                                        {
-                                            differentUser = null;
-                                        }
-                                        numAnswersChosen++;
-                                    }
-                                    
-                                    answerGroups[question.UsersToAnswers[user]] = answerGroups[question.UsersToAnswers[user]] + 1;
-                                }
-                                
-                                // checks if the number of outliers is within the threshold and that adding the extra round wouldnt remove too many questions from the end vote
-                                if (differentUser != null && (randomizedQuestions.Count - questionsToRemove.Count) > minQuestions && numberOfAbstains < (int)(lobby.GetAllUsers().Count * FriendQuizConstants.ExtraRoundAbstainPercentLimit))
-                                {
-                                    List<User> randomizedUsers = lobby.GetAllUsers().OrderBy(_ => Rand.Next()).ToList();
-                                    questionsToRemove.Add(question);
-                                    StateChain extraRoundVotingChain = new StateChain(
-                                        stateGenerator: (int counter) =>
-                                        {
-                                            if (counter == 0)
-                                            {
-                                                return new ExtraRound_GS(
-                                                    lobby: lobby,
-                                                    differentUser: differentUser,
-                                                    question: question,
-                                                    randomizedUsers: randomizedUsers);
-                                            }
-                                            else if (counter == 1)
-                                            {
-                                                return new ExtraRoundVoteReveal_GS(
-                                                    lobby: lobby,
-                                                    differentUser: differentUser,
-                                                    question: question,
-                                                    randomizedUsers: randomizedUsers);
-                                            }
-                                            else
-                                            {
-                                                return null;
-                                            }
-                                        });
-                                    extraRoundStateChain.Add(extraRoundVotingChain);
-                                }
-                            }
-                            foreach (Question question in questionsToRemove)
-                            {
-                                randomizedQuestions.Remove(question);
-                            }
-                            if(extraRoundStateChain.Count == 0)
-                            {
-                                return null;
-                            }
-                            else
-                            {
-                                return new StateChain(states: extraRoundStateChain);
-                            }
-                        }
-                    });
-                
+                        return null;
+                    }
+                });
+            }
+        }
+        private void CountQueries(List<Question> questions)
+        {
+            foreach(Question question in questions)
+            {
+                foreach(QueryInfo<(int, int)> queryInfo in question.UserAnswers)
+                {
+                    (int, int) answer = queryInfo.Answer;
+                    if (answer.Item1 <= question.MainAnswer && question.MainAnswer <= answer.Item2)
+                    {
+                        queryInfo.UserQueried.ScoreHolder.AddScore(
+                            amount: CalculateScore(
+                                mainValue: question.MainAnswer,
+                                ansMin: answer.Item1,
+                                ansMax: answer.Item2),
+                            reason: Score.Reason.CorrectAnswer);
+                    }
+                }
             }
         }
 
-        public void ValidateOptions(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
+        private int CalculateScore(int mainValue, int ansMin, int ansMax)
         {
-           if ((int)gameModeOptions[(int)GameModeOptionsEnum.MaxQuestions].ValueParsed < (int)gameModeOptions[(int)GameModeOptionsEnum.MinQuestions].ValueParsed)
-           {
-                throw new GameModeInstantiationException("Max cannot be less than min");
-           }
+            double rangeInverse = Math.Pow(1.0 - 1.0 * (ansMax - ansMin) / FriendQuizConstants.SliderTickRange, 3);
+            return (int) (rangeInverse * FriendQuizConstants.PointsForCorrectAnswer);
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Common.DataModels.Enums
         Voting = 3,
         SitTight = 4,
         RevealScoreBreakdowns = 5,
+        Query = 6,
 
         PartyLeader_DefaultPrompt = 10,
         PartyLeader_GameEnd = 11,
@@ -42,6 +43,6 @@ namespace Common.DataModels.Enums
 
         FriendQuiz_CreateQuestion = 80,
         FriendQuiz_AnswerQuestion = 81,
-        FriendQuiz_ExtraRoundVoting = 82,
+        FriendQuiz_Query = 82,
     }
 }
