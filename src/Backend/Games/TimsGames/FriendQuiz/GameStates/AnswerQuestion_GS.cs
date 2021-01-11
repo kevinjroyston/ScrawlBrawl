@@ -16,9 +16,9 @@ using Common.DataModels.Enums;
 
 namespace Backend.Games.TimsGames.FriendQuiz.GameStates
 {
-    public class Gameplay_GS : GameState
+    public class AnswerQuestion_GS : GameState
     {
-        public Gameplay_GS(Lobby lobby, Dictionary<User, List<Question>> usersToAssignedQuestions, TimeSpan? answerTimeDuration = null) : base(lobby, answerTimeDuration)
+        public AnswerQuestion_GS(Lobby lobby, Dictionary<User, List<Question>> usersToAssignedQuestions, TimeSpan? answerTimeDuration = null) : base(lobby, answerTimeDuration)
         {
             List<State> GetAnswerUserStateChain(User user)
             {
