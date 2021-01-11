@@ -141,7 +141,7 @@ namespace Backend.Games.TimsGames.FriendQuiz
                         // Makes a copy of the questions so that it can handle multiple people answering the same question without them both overriding the same object
                         usersToAssignedQuestions.Add(holder.QuestionedUser, questions.Members.Select(question => new Question(question) { MainUser = holder.QuestionedUser }).ToList());
                     }
-                    return new Gameplay_GS(
+                    return new QuestionAnswering_GS(
                         lobby: lobby,
                         usersToAssignedQuestions: usersToAssignedQuestions,
                         answerTimeDuration: answeringTimer);
