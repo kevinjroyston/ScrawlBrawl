@@ -1,7 +1,7 @@
 <div class='gamemode'>
     <img class="gamemode-img" gameAsset [gameAssetID]='gameModeID' />
     <div class="gamemode-content">
-        <h3>{{gameModeID}}</h3>
+        <h3>{{gameModeList.gameModeFromGameId(gameModeID).title}}</h3>
         <div gameAsset class="gamemode-text" [gameAssetClass]="'homepage-previews'" [gameAssetID]='gameModeID'>
         </div>
         <div class="action-wrapper">
