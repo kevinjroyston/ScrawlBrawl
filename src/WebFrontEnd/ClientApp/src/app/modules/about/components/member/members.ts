@@ -5,7 +5,7 @@ export const members : Member[] = [
         name: "Kevin Royston", 
         image: "/assets/About/KevinR.png", 
         role: "Creator / Lead Backend Developer / Mentor", 
-        description: "Kevin is a software engineer at a large corporation." 
+        description: "Kevin is a U.C. Berkeley alumni, a backend software engineer at a big tech company, and a life-long game developer!" 
     },
     {
         name: "Brian Royston", 
@@ -22,13 +22,13 @@ export const members : Member[] = [
         name: "Joe", 
         image: "/assets/About/JoeF.png", 
         role: "Designer", 
-        description: "He's Ya Boi"
+        description: "Joe is a UX Designer at a large corporation."
     },
     {
         name: "Daniel Lee", 
         image: "/assets/About/DanielL.png", 
         role: "Full Stack / Lead Frontend Developer", 
-        description: "Daniel is a software engineer at a large corporation"
+        description: "Daniel is a software engineer at a big tech company."
     },
     {
         name: "Scrawlers & Brawlers", 
