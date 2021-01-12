@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
     selector: 'twitch-icon',
-    templateUrl: '../../../../../../src/assets/svgs/socials/twitch.svg',
+    template: '<img src="/assets/svgs/socials/twitch.svg" height=27 width=27>',
     styleUrls: ['../svg.component.scss']
 })
 export class TwitchIcon {

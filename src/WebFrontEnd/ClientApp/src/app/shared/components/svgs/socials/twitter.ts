@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
     selector: 'twitter-icon',
-    templateUrl: '../../../../../../src/assets/svgs/socials/twitter.svg',
+    template: '<img src="/assets/svgs/socials/twitter.svg" height=27 width=27>',
     styleUrls: ['../svg.component.scss']
 })
 export class TwitterIcon {

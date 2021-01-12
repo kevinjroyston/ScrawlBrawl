@@ -57,6 +57,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 export class Slider implements ControlValueAccessor {
   @Input() sliderParameters: SliderPromptMetadata;
 
+  sliderSelection: string="";
   
   sliderValueToText(sp: SliderPromptMetadata, value): string {
     return "";
@@ -114,7 +115,7 @@ export class Slider implements ControlValueAccessor {
   ngOnInit() {
     console.log("on init - slider");
       console.log(this.sliderParameters);
-
+    this.sliderSelection = this.sliderParameters.range?"before":"none";
 
     /*
         this.createRotatorImages(this.sliderParameters.widthInPx, this.sliderParameters.heightInPx);
