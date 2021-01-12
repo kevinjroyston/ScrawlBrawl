@@ -4,30 +4,30 @@
     width: 100%;
 }
 
-.user-wrapper{
+.user-wrapper {
     display: flex;
     height: 100%;
     align-items: center;
     justify-content: center;
 }
 
-.actions{
+.actions {
     display: flex;
     width: 100%;
     justify-content: space-between;
     margin-bottom: .5rem;
 }
 
-.drawingboard{
+.drawingboard {
     width: 700px;
     height: 700px;
 }
 
-.user-actions{
+.user-actions {
     max-width: 200px;
 }
 
-.plrskip-user-wrapper {
+.user-wrapper-inner {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -36,12 +36,11 @@
 }
 
 @media only screen and (max-width: 768px) {
-    .plrskip-user-wrapper{
+    .user-wrapper-inner {
         min-width: auto;
         padding: .5rem;
         width: 100%;
     }
-
     .drawingboard {
         width: 100%;
         height: auto;

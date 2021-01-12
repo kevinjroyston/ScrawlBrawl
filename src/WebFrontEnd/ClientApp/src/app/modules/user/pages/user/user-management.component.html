@@ -1,5 +1,5 @@
 <div class="user-wrapper">
-    <div class="plrskip-user-wrapper">
+    <div class="user-wrapper-inner">
         <div class="actions">
             <select #galleryDD class="Dropdown" (change)="currentDrawingType=galleryDD.value">
                 <option *ngFor="let gallery of galleryTypes; let i = index" [selected]="(currentDrawingType==gallery.drawingType)" value="{{gallery.drawingType}}">
@@ -15,5 +15,5 @@
         <div class='drawingboard'>
             <drawingboard [galleryEditor]="true" [drawingType]="currentDrawingType"></drawingboard>
         </div>
-    </div>    
+    </div>
 </div>
