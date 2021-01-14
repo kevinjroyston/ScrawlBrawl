@@ -80,6 +80,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.DataModels
                 return tickValues;
             }
         }
+        public bool Abstained { get; set; } = false;
         public string Text { get; set; }
         public User MainUser { get; set; }
         public int MainAnswer { get; set; }

@@ -163,7 +163,7 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
             createdRectTransform.anchorMax = new Vector2(x2, y + anchorHeight / 2);
             createdRectTransform.sizeDelta = new Vector2(0, 0);
 
-            createdRange.GetComponent<SliderColorizer>().Colorize(colorId);
+            //createdRange.GetComponent<SliderColorizer>().Colorize(colorId);
         }
         public void UpdateValue(List<dynamic> objects)
         {

@@ -55,6 +55,7 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
                 Description = this.QueryPromptDescription,
                 SubPrompts = questions.Select(question => new SubPrompt()
                 {
+                    Prompt = question.Text,
                     Slider = new SliderPromptMetadata()
                     {
                         Min = SliderMin,
