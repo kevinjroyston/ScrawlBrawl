@@ -1,30 +1,4 @@
-$palette: (
-    --white-primary: #ffffff,
-    --white-secondary: #eaeaea,
-    --white-tertiary: #c6c6c6,
-    --black-primary: #1d1d1d,
-    --black-secondary: #352f2f,
-    --black-tertiary: #4f4f4f,
-    --green-primary: #2aac89,
-    --green-secondary: #45D7B0,
-    --green-tertiary: #6DF4D0,
-    --blue-primary: #2E53D2,
-    --blue-secondary: #5372E1,
-    --blue-tertiary: #8199F0,
-    --red-primary: #D05D5D,
-    --red-secondary: #E47272,
-    --red-tertiary: #F08181,
-    --yellow-primary: #E9E588,
-    --yellow-secondary: #F3F0A7,
-    --yellow-tertiary: #FFFDD4,
-    --purple-primary: #D292C8,
-    --purple-secondary: #F6CAEF,
-    --pastelgreen: #9DF1DB,
-    --pastelblue: #CFFCF9,
-    --pastelred: #F9D3D3,
-    --pastelyellow: #F6F5CC
-);
-
+$palette: ( --white-primary: #ffffff, --white-secondary: #eaeaea, --white-tertiary: #c6c6c6, --black-primary: #1d1d1d, --black-secondary: #352f2f, --black-tertiary: #4f4f4f, --green-primary: #2aac89, --green-secondary: #45d7b0, --green-tertiary: #6df4d0, --blue-primary: #2e53d2, --blue-secondary: #5372e1, --blue-tertiary: #8199f0, --red-primary: #d05d5d, --red-secondary: #e47272, --red-tertiary: #f08181, --yellow-primary: #e9e588, --yellow-secondary: #f3f0a7, --yellow-tertiary: #fffdd4, --purple-primary: #d292c8, --purple-secondary: #f6caef, --pastelgreen: #9df1db, --pastelblue: #cffcf9, --pastelred: #f9d3d3, --pastelyellow: #f6f5cc, );
 $background-light: rgb(246, 249, 252);
 $background-dark: #212121;
 $border-light: 1px solid rgb(236, 239, 241);
@@ -34,9 +8,9 @@ $text-light: #000000;
 $hero-background-light: map-get($palette, "--pastelyellow");
 $hero-background-dark: #121212;
 $navbar-light: map-get($palette, "--white-primary");
-$navbar-dark:#121212;
-$error-light: #B00020;
-$error-dark: #CF6679;
+$navbar-dark: #121212;
+$error-light: #b00020;
+$error-dark: #cf6679;
 $surface-light: rgb(246, 249, 252);
 $surface-dark: #303030;
 $input-light: map-get($palette, "--white-primary");
@@ -45,15 +19,8 @@ $card-light: map-get($palette, "--white-primary");
 $card-dark: #424242;
 $iconbutton-light-hover: map-get($palette, "--white-secondary");
 $iconbutton-dark-hover: map-get($palette, "--black-secondary");
-
-$colors: (
-    --border: ($border-light, $border-dark),
-    --background: ($background-light, $background-dark),
-    --text-color: ($text-light, $text-dark),
-    --hero-background: ($hero-background-light, $hero-background-dark),
-    --navbar-background: ($navbar-light, $navbar-dark),
-    --surface-background: ($surface-light, $surface-dark),
-    --card-background: ($card-light, $card-dark),
-    --input-background: ($input-light, $input-dark),
-    --iconbutton-hover: ($iconbutton-light-hover, $iconbutton-dark-hover)
-);
+$scrawlbutton-outline-light: map-get($palette, "--black-secondary");
+$scrawlbutton-outline-dark: map-get($palette, "--white-secondary");
+$scrawlbutton-outline-light-hover: map-get($palette, "--black-tertiary");
+$scrawlbutton-outline-dark-hover: map-get($palette, "--white-tertiary");
+$colors: ( --border: ( $border-light, $border-dark, ), --background: ( $background-light, $background-dark, ), --text-color: ( $text-light, $text-dark, ), --hero-background: ( $hero-background-light, $hero-background-dark, ), --navbar-background: ( $navbar-light, $navbar-dark, ), --surface-background: ( $surface-light, $surface-dark, ), --card-background: ( $card-light, $card-dark, ), --input-background: ( $input-light, $input-dark, ), --iconbutton-hover: ( $iconbutton-light-hover, $iconbutton-dark-hover, ), --scrawlbutton-outline: ( $scrawlbutton-outline-light, $scrawlbutton-outline-dark, ), --scrawlbutton-outline-hover: ( $scrawlbutton-outline-light-hover, $scrawlbutton-outline-dark-hover, ), );
