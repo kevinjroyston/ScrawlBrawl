@@ -57,15 +57,15 @@ namespace Backend.Games.BriansGames.HintHint.GameStates
                         {
                             if (realFakePair.RealHintGivers.Contains(user))
                             {
-                                RealHintPromptGenerator(user);
+                                return RealHintPromptGenerator(user);
                             }
                             else if (realFakePair.FakeHintGivers.Contains(user))
                             {
-                                
+                                return FakeHintPromptGenerator(user);
                             }
                             else
                             {
-                                
+                                return GuessPromptGenerator(user);
                             }
                         },
                         formSubmitHandler: (User user, UserFormSubmission input) =>
@@ -92,7 +92,7 @@ namespace Backend.Games.BriansGames.HintHint.GameStates
                 Instructions = new UnityField<string> { Value = "Be careful, someone may be trying to hint you to the wrong word." },
             };
 
-
+            #region PromptGenerators
             UserPrompt RealHintPromptGenerator(User user)
             {
                 string description = "You cannot say any of the following words:";
@@ -110,11 +110,90 @@ namespace Backend.Games.BriansGames.HintHint.GameStates
                     {
                         new SubPrompt
                         {
-                            ShortAnswer = 
+                            ShortAnswer = true
                         }
-                    }
+                    },
+                    SubmitButton = true
                 };
             }
+            UserPrompt FakeHintPromptGenerator(User user)
+            {
+                return new UserPrompt()
+                {
+                    UserPromptId = UserPromptId.HintHint_Hint,
+                    Title = "You are the fake!",
+                    Description = $"Try to get people to say {realFakePair.FakeGoal}, instead of {realFakePair.RealGoal}",
+                    SubPrompts = new SubPrompt[]
+                    {
+                        new SubPrompt
+                        {
+                            ShortAnswer = true
+                        }
+                    },
+                    SubmitButton = true
+                };
+            }
+            UserPrompt GuessPromptGenerator(User user)
+            {
+                return new UserPrompt()
+                {
+                    UserPromptId = UserPromptId.HintHint_Guess,
+                    Title = "What do you think they are hinting at?",
+                    SubPrompts = new SubPrompt[]
+                    {
+                        new SubPrompt
+                        {
+                            ShortAnswer = true
+                        }
+                    },
+                    SubmitButton = true
+                };
+            }
+            #endregion
+
+            #region FormAndTimeoutHandlers
+            (bool, string) RealHintFormSubmitHandler(User user, UserFormSubmission input)
+            {
+                string hint = input?.SubForms?[0].ShortAnswer ?? string.Empty;
+                if (realFakePair.BannedWords.Any(banned => hint.FuzzyEquals(banned))
+                    || hint.FuzzyEquals(realFakePair.RealGoal)
+                    || hint.FuzzyEquals(string.Empty))
+                {
+                    return (false, $"'{hint}' is not a valid hint");
+                }
+
+                hints.Add((hint, DateTime.UtcNow));
+                //Todo, update for view
+
+                return (true, string.Empty);
+            }
+            (bool, string) FakeHintFormSubmitHandler(User user, UserFormSubmission input)
+            {
+                string hint = input?.SubForms?[0].ShortAnswer ?? string.Empty;
+                if ( hint.FuzzyEquals(realFakePair.FakeGoal)
+                    || hint.FuzzyEquals(realFakePair.RealGoal)
+                    || hint.FuzzyEquals(string.Empty))
+                {
+                    return (false, $"'{hint}' is not a valid hint");
+                }
+
+                hints.Add((hint, DateTime.UtcNow));
+                //Todo, update for view
+
+                return (true, string.Empty);
+            }
+            (bool, string) GuessFormSubmitHandler(User user, UserFormSubmission input)
+            {
+                string guess = input?.SubForms?[0].ShortAnswer ?? string.Empty;
+                if (guess.FuzzyEquals(realFakePair.RealGoal))
+
+                guesses.Add((guess, DateTime.UtcNow));
+                //Todo, update for view
+
+                return (true, string.Empty);
+            }
+            #endregion
+
         }
 
     }
