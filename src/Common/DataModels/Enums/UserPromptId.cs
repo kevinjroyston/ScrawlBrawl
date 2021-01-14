@@ -44,5 +44,11 @@ namespace Common.DataModels.Enums
         FriendQuiz_CreateQuestion = 80,
         FriendQuiz_AnswerQuestion = 81,
         FriendQuiz_Query = 82,
+
+        HintHint_SetupRound1 = 90,
+        HintHint_SetupRound2 = 91,
+        HintHint_SetupRound3 = 92,
+        HintHint_Hint = 93,
+        HintHint_Guess = 94,
     }
 }

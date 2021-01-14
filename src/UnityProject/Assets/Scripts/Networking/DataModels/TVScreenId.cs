@@ -14,4 +14,5 @@ public enum TVScreenId
     TextView = 7,
     VoteRevealImageView = 8,
     ObjectView = 9,
+    HintGuessView = 10,
 }

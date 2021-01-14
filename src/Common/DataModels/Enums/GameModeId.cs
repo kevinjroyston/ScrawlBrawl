@@ -14,5 +14,6 @@ namespace Common.DataModels.Enums
         FriendQuiz,
         ImposterText,
         StoryTime,
+        HintHint,
     }
 }
