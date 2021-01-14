@@ -55,7 +55,11 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                         },
                         formSubmitHandler: (User user, UserFormSubmission input) =>
                         {
-                            if ((input.SubForms?[1]?.RadioAnswer ?? 1) == 0)
+                            if ((input.SubForms?[1]?.RadioAnswer ?? 1) == 1)
+                            {
+                                question.Abstained = true;
+                            }
+                            else
                             {
                                 question.MainAnswer = input.SubForms[0].Slider?[0] ?? 0;
                             }

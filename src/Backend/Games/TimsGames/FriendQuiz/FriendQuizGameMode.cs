@@ -110,19 +110,18 @@ namespace Backend.Games.TimsGames.FriendQuiz
                     minTimerLength: FriendQuizConstants.VotingTimerMin,
                     aveTimerLength: FriendQuizConstants.VotingTimerAve,
                     maxTimerLength: FriendQuizConstants.VotingTimerMax);
-
-                setupTimer?.Multiply(numQuestionSetup);
-                answeringTimer?.Multiply(numQuestionsToAnswer);
-                votingTimer?.Multiply(numQuestionsToAnswer / 2.0);
+                
             }
 
             //numQuestionsToAnswer = Math.Clamp(numQuestionsToAnswer, 1, lobby.GetAllUsers().Count * numQuestionSetup);
             Dictionary<User, List<Question>> usersToAssignedQuestions = new Dictionary<User, List<Question>>();
+            int maxNumAssigned = 1;
 
             StateChain gameStateChain = new StateChain(stateGenerator: (int counter) =>
             {
                 if (counter == 0)
                 {
+                    setupTimer = setupTimer?.Multiply(numQuestionSetup);
                     return new Setup_GS(
                         lobby: lobby,
                         roundTracker: RoundTracker,
@@ -136,11 +135,19 @@ namespace Backend.Games.TimsGames.FriendQuiz
                     List<IGroup<Question>> assignments = MemberHelpers<Question>.Assign(userQuestionsHolders.Cast<IConstraints<Question>>().ToList(), randomizedQuestions, lobby.GetAllUsers().Count);
 
                     var pairings = userQuestionsHolders.Zip(assignments);
+
                     foreach ((UserQuestionsHolder holder, IGroup<Question> questions) in pairings)
                     {
+                        if (questions.Members.Count() > maxNumAssigned)
+                        {
+                            maxNumAssigned = questions.Members.Count();
+                        }
                         // Makes a copy of the questions so that it can handle multiple people answering the same question without them both overriding the same object
                         usersToAssignedQuestions.Add(holder.QuestionedUser, questions.Members.Select(question => new Question(question) { MainUser = holder.QuestionedUser }).ToList());
                     }
+
+                    answeringTimer = answeringTimer?.Multiply(maxNumAssigned);
+
                     return new AnswerQuestion_GS(
                         lobby: lobby,
                         usersToAssignedQuestions: usersToAssignedQuestions,
@@ -148,10 +155,11 @@ namespace Backend.Games.TimsGames.FriendQuiz
                 }
                 else if (counter == 2)
                 {
+                    votingTimer = votingTimer?.Multiply(maxNumAssigned);
 
                     List<User> randomizedUsers = usersToAssignedQuestions.Keys.OrderBy(_ => Rand.Next()).ToList();
-                    User lastUser = randomizedUsers.Last();
-                    return new StateChain(states: randomizedUsers.Select(user => GetUserQueryStateChain(user, user == lastUser)).Cast<State>().ToList());
+
+                    return GetUserQueryStateChain(randomizedUsers);
                 }
                 else
                 {
@@ -163,49 +171,58 @@ namespace Backend.Games.TimsGames.FriendQuiz
             this.Entrance.Transition(gameStateChain);
             gameStateChain.Transition(this.Exit);
 
-            StateChain GetUserQueryStateChain(User user, bool final = false)
+            StateChain GetUserQueryStateChain(List<User> users)
             {
-                return new StateChain(stateGenerator: (int counter) =>
+                List<State> chain = new List<State>();
+                foreach (User user in users)
                 {
-                    if (counter == 0)
+                    List<Question> nonAbstainedQuestions = usersToAssignedQuestions[user].Where(question => !question.Abstained).ToList();
+                    if (nonAbstainedQuestions.Count > 0)
                     {
-                        return new SliderQueryAndReveal(
-                           lobby: lobby,
-                           objectsToQuery: usersToAssignedQuestions[user],
-                           usersToQuery: lobby.GetAllUsers().Where(lobbyUser => lobbyUser != user).ToList(),
-                           queryTime: votingTimer)
+                        chain.Add(new StateChain(stateGenerator: (int counter) =>
                         {
-                            SliderMin = 0,
-                            SliderMax = FriendQuizConstants.SliderTickRange,
-                            QueryPromptTitle = $"How do you think {user.DisplayName} answered these questions?",
-                            QueryPromptDescription = "The tighter the range of your guess, the more points if you're correct",
-                            QueryViewOverrides = new UnityViewOverrides()
+                            if (counter == 0)
                             {
-                                Title = $"How do you think {user.DisplayName} answered these questions?",
-                            },
-                            RevealViewOverrides = new UnityViewOverrides()
+                                return new SliderQueryAndReveal(
+                                   lobby: lobby,
+                                   objectsToQuery: nonAbstainedQuestions,
+                                   usersToQuery: lobby.GetAllUsers().Where(lobbyUser => lobbyUser != user).ToList(),
+                                   queryTime: votingTimer)
+                                {
+                                    SliderMin = 0,
+                                    SliderMax = FriendQuizConstants.SliderTickRange,
+                                    QueryPromptTitle = $"How do you think {user.DisplayName} answered these questions?",
+                                    QueryPromptDescription = "The tighter the range of your guess, the more points if you're correct",
+                                    QueryViewOverrides = new UnityViewOverrides()
+                                    {
+                                        Title = $"How do you think {user.DisplayName} answered these questions?",
+                                    },
+                                    RevealViewOverrides = new UnityViewOverrides()
+                                    {
+                                        Title = $"This is how {user.DisplayName} answered those questions.",
+                                    },
+                                    QueryExitListener = CountQueries,
+                                };
+                            }
+                            else if (counter == 1)
                             {
-                                Title = $"This is how {user.DisplayName} answered those questions.",
-                            },
-                            QueryExitListener = CountQueries,
-                        };
+                                if (user == users.Last())
+                                {
+                                    return new ScoreBoardGameState(lobby, "Final Scores");
+                                }
+                                else
+                                {
+                                    return new ScoreBoardGameState(lobby);
+                                }
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        }));
                     }
-                    else if (counter == 1)
-                    {
-                        if (final)
-                        {
-                            return new ScoreBoardGameState(lobby, "Final Scores");
-                        }
-                        else
-                        {
-                            return new ScoreBoardGameState(lobby);
-                        }
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                });
+                }
+                return new StateChain(chain);
             }
         }
         private void CountQueries(List<Question> questions)

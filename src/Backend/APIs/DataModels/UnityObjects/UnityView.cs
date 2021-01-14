@@ -25,7 +25,15 @@ namespace Backend.APIs.DataModels.UnityObjects
         public UnityField<string> Title { get; set; }
         public UnityField<string> Instructions { get; set; }
         public DateTime? ServerTime { get { return DateTime.UtcNow; } }
-        public DateTime? StateEndTime { get; set; }
+
+        private DateTime? OverrideStateEndTime { get; set; }
+
+        [IgnoreAutoChangeNotification, SafeForDependencyAnalysis]
+        public DateTime? StateEndTime
+        {
+            get => OverrideStateEndTime ?? this.Lobby?.GetAllUsers().Select(user => user.EarliestStateTimeout).Append(this.Lobby.GetCurrentGameState().ApproximateStateEndTime).Min();
+            set => OverrideStateEndTime = value;
+        }
         public bool IsRevealing { get; set; } = false;
         public Dictionary<UnityViewOptions, object> Options { get; set; } = new Dictionary<UnityViewOptions, object>();
 
@@ -59,7 +67,7 @@ namespace Backend.APIs.DataModels.UnityObjects
             this.Users = legacy._Users?.Select(user => new UnityUser(user)).ToList().AsReadOnly();
             this.Title = new UnityField<string> { Value = legacy._Title };
             this.Instructions = new UnityField<string> { Value = legacy._Instructions };
-            this.StateEndTime = legacy._StateEndTime;
+            this.OverrideStateEndTime = legacy._StateEndTime;
             this.IsRevealing = legacy._VoteRevealUsers?.Count > 0;
             this.Options = new Dictionary<UnityViewOptions, object>()
             {
