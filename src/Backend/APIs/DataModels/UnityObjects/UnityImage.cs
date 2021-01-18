@@ -1,10 +1,12 @@
-﻿using System;
+﻿using PostSharp.Patterns.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Backend.APIs.DataModels.UnityObjects
 {
+    [NotifyPropertyChanged]
     public class UnityImage : UnityObject
     {
         public IReadOnlyList<string> Base64Pngs { get; set; }
@@ -22,6 +24,10 @@ namespace Backend.APIs.DataModels.UnityObjects
         public UnityImage()
         {
             this.Type = UnityObjectType.Image;
+        }
+        public UnityImage(Guid UnityObjectId)
+        {
+            this.UnityObjectId = UnityObjectId;
         }
     }
 }

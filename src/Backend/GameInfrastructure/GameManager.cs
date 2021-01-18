@@ -15,6 +15,7 @@ using Common.DataModels.Requests;
 using Common.DataModels.Responses;
 using Common.DataModels.Enums;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Backend.GameInfrastructure
 {
@@ -96,6 +97,11 @@ namespace Backend.GameInfrastructure
             }
             Singleton = this;
             Logger = logger;
+        }
+
+        private void StatusCode(int v1, string v2)
+        {
+            throw new NotImplementedException();
         }
 
         public void ReportGameError(ErrorType type, string lobbyId, User user = null, Exception error = null)

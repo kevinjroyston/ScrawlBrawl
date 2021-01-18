@@ -1,4 +1,5 @@
 ﻿using Backend.GameInfrastructure.DataModels.Users;
+using PostSharp.Patterns.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Backend.APIs.DataModels.UnityObjects
 {
+    [NotifyPropertyChanged]
     public class UnityUser
     {
         public Guid Id => User.Id;

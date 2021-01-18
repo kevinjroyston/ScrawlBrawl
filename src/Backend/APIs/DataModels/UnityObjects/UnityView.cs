@@ -19,14 +19,21 @@ namespace Backend.APIs.DataModels.UnityObjects
         private Lobby Lobby { get; }
 
         public UnityField<IReadOnlyList<UnityObject>> UnityObjects { get; set; } = null;
+        [SafeForDependencyAnalysis]
+        private int UnityObjectsCount { get => UnityObjects?.Value?.Count() ?? 0; }
         public TVScreenId? ScreenId { get; set; }
         public Guid Id { get; } = Guid.NewGuid();
         public IReadOnlyList<UnityUser> Users { get; set; } = new List<UnityUser>().AsReadOnly();
+        [SafeForDependencyAnalysis]
+        private int UsersCount { get => Users?.Count() ?? 0; }
         public UnityField<string> Title { get; set; }
+        
         public UnityField<string> Instructions { get; set; }
+        
         public DateTime? ServerTime { get { return DateTime.UtcNow; } }
-
+        
         private DateTime? OverrideStateEndTime { get; set; }
+
 
         [IgnoreAutoChangeNotification, SafeForDependencyAnalysis]
         public DateTime? StateEndTime
@@ -34,7 +41,9 @@ namespace Backend.APIs.DataModels.UnityObjects
             get => OverrideStateEndTime ?? this.Lobby?.GetAllUsers().Select(user => user.EarliestStateTimeout).Append(this.Lobby.GetCurrentGameState().ApproximateStateEndTime).Min();
             set => OverrideStateEndTime = value;
         }
+        
         public bool IsRevealing { get; set; } = false;
+        
         public Dictionary<UnityViewOptions, object> Options { get; set; } = new Dictionary<UnityViewOptions, object>();
 
         public UnityView(Lobby lobby)
