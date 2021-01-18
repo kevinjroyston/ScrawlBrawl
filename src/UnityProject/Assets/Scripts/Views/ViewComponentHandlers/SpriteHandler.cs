@@ -118,8 +118,8 @@ public class SpriteHandler : MonoBehaviour, HandlerInterface, CustomAspectRatio
         
     }
 
-    public void UpdateValue(List<dynamic> objects)
+    public void UpdateValue(List<object> objects)
     {
-        this.UpdateValue(objects[0]);
+        this.UpdateValue((SpriteHolder) objects[0]);
     }
 }

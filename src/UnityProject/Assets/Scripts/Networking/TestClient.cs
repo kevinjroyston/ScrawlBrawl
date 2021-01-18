@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Microsoft.AspNetCore.SignalR.Client;
+using UnityEngine.UI;
+//using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +14,8 @@ using Newtonsoft.Json.Linq;
 using static UnityEngine.UI.GridLayoutGroup;
 using Assets.Scripts.Networking.DataModels.UnityObjects;
 using Assets.Scripts.Networking.DataModels.Enums;
+using System.Collections.Specialized;
+using System.Web;
 
 /// <summary>
 /// This class opens a connection to the server and listens for updates. From the main thread the secondary connection thread is
@@ -21,9 +24,15 @@ using Assets.Scripts.Networking.DataModels.Enums;
 /// </summary>
 public class TestClient : MonoBehaviour
 {
-    private const string ClientVersion = "1.0.0";
-    private HubConnection hubConnection;
+    private SignalRLib srLib;
+
+    private const string ClientVersion = "2.1.0";
     private Task hubTask;
+
+    private List<string> handlers = new List<string>() { "ConfigureMetadata", "UpdateState", "LobbyClose" };
+    private string signalRHubURL = "";
+
+    private bool Connected { get; set; } = false;
 
     // Hacky fix to send the update from the main thread.
     private bool Dirty { get; set; } = false;
@@ -40,329 +49,345 @@ public class TestClient : MonoBehaviour
     /// Set up the connection and callbacks.
     /// </summary>
     void Awake()
-    {
-        Application.runInBackground = true;
-        QualitySettings.vSyncCount = 0;  // VSync must be disabled
-        Application.targetFrameRate = 60;
-
-        hubConnection = new HubConnectionBuilder()
+        {
 #if DEBUG
-            .WithUrl("http://localhost:50403/signalr")
-    //.WithUrl("https://api.test.scrawlbrawl.tv/signalr")
+        signalRHubURL = "http://localhost:50403/signalr";
+
+        //signalRHubURL="https://api.test.scrawlbrawl.tv/signalr";
 
 #else
-            .WithUrl("https://api.scrawlbrawl.tv/signalr")
+        signalRHubURL="https://api.scrawlbrawl.tv/signalr";
 #endif
-            .ConfigureLogging(logging =>
-            {
-                logging.AddProvider(new DebugLoggerProvider());
-                logging.SetMinimumLevel(LogLevel.Debug);
-            })
-            .Build();
-
-
-        hubConnection.On("ConfigureMetadata",
-            new Action<ConfigurationMetadata>((configMeta) =>
-            {
-                ConfigurationMeta = configMeta;
-                ConfigDirty = true;
-            }));
-
-        hubConnection.On("UpdateState",
-            new Action<string>((view) =>
-            {
-                CurrentView = ParseJObjects(JsonConvert.DeserializeObject<UnityView>(view));
-                Dirty = true;
-            }));
-
-        hubConnection.On("LobbyClose",
-            new Action(() =>
-            {
-                LobbyClosed = true;
-                Dirty = true;
-            }));
-
-        ConnectToHub();
-    }
-
-    /// <summary>
-    /// Iterates through all "object" dictionaries and parses objects.
-    /// </summary>
-    /// <param name="view"></param>
-    /// <returns></returns>
-    public UnityView ParseJObjects(UnityView view)
-    {
-        foreach (UnityViewOptions key in view?.Options?.Keys?.ToList() ?? new List<UnityViewOptions>())
+#if UNITY_WEBGL
+        
+        if (Application.absoluteURL.Contains("localhost"))
         {
-            switch (key)
+            signalRHubURL = "http://localhost:50403/signalr";
+        }
+        else if (Application.absoluteURL.Contains("test.")) {
+            signalRHubURL="https://api.test.scrawlbrawl.tv/signalr";
+        }
+        else{
+            signalRHubURL = "https://api.scrawlbrawl.tv/signalr";
+        }
+#endif
+
+        Debug.Log("URL:"+Application.absoluteURL);
+        srLib = new SignalRLib(signalRHubURL, handlers, true);
+
+        Application.runInBackground = true;
+        QualitySettings.vSyncCount = 0;  // VSync must be disabled
+
+#if UNITY_WEBGL
+        Application.targetFrameRate = -1;  // https://docs.unity3d.com/ScriptReference/Application-targetFrameRate.html
+#else
+        Application.targetFrameRate = 60;
+#endif
+
+        srLib.ConnectionStarted += (object sender, ConnectionEventArgs e) =>
+        {
+            Debug.Log(e.ConnectionId);
+            Connected = true;  // just a flag we are using to know we connected, does not ensure we have not been disconnected
+            Uri uri = new Uri(Application.absoluteURL);
+            NameValueCollection qry = HttpUtility.ParseQueryString(uri.Query);
+
+            Console.WriteLine(uri.Query); //Query
+            if (qry["lobby"]!="")
             {
-                case UnityViewOptions.BlurAnimate:
-                    view.Options[key] = ((JObject)view.Options[key]).ToObject<UnityField<float?>>();
+                ConnectToLobby(qry["lobby"]);
+            }
+
+        };
+
+        srLib.HandlerInvoked += (object sender, HandlerEventArgs e) =>
+        {
+            Debug.Log("handler invoked");
+
+            switch (e.HandlerName)
+            {
+                case "ConfigureMetadata":
+                    ConfigurationMeta = JsonConvert.DeserializeObject<ConfigurationMetadata>(e.Payload);
+                    ConfigDirty = true;
+                    break;
+                case "UpdateState":
+                    try {
+                        CurrentView = ParseJObjects(JsonConvert.DeserializeObject<UnityView>(e.Payload));
+                    }
+                    catch (Exception err)
+                    {
+                        Debug.Log(err.Message);
+                    }
+                    Dirty = true;
+                    break;
+                case "LobbyClose":
+                    LobbyClosed = true;
+                    Dirty = true;
                     break;
                 default:
+                    Debug.Log($"Handler: '{e.HandlerName}' not defined");
                     break;
             }
+        };
+
+        // plr ConnectToHub();
         }
-        
-        if (view.UnityObjects?.Value != null)
+
+        /// <summary>
+        /// Iterates through all "object" dictionaries and parses objects.
+        /// </summary>
+        /// <param name="view"></param>
+        /// <returns></returns>
+        public UnityView ParseJObjects(UnityView view)
         {
-            List<UnityObject> unityObjects = new List<UnityObject>();
-            foreach (object obj in view.UnityObjects.Value)
+            foreach (UnityViewOptions key in view?.Options?.Keys?.ToList() ?? new List<UnityViewOptions>())
             {
-                JObject jObject = (JObject)obj;
-                switch (jObject["Type"].ToObject<UnityObjectType>())
+                switch (key)
                 {
-                    case UnityObjectType.Image:
-                        unityObjects.Add(jObject.ToObject<UnityImage>());
-                        break;
-                    case UnityObjectType.Slider:
-                        unityObjects.Add(jObject.ToObject<UnitySlider>());
-                        break;
-                    case UnityObjectType.Text:
-                        unityObjects.Add(jObject.ToObject<UnityText>());
+                    case UnityViewOptions.BlurAnimate:
+                        view.Options[key] = ((JObject)view.Options[key]).ToObject<UnityField<float?>>();
                         break;
                     default:
-                        throw new NotImplementedException("Not implemented");
+                        break;
                 }
             }
-            view.UnityObjects.Value = unityObjects.AsReadOnly();
-        }
-        if (view.UnityObjects?.StartValue != null || view.UnityObjects?.EndValue !=null)
-        {
-            throw new NotImplementedException("not implemented");
-        }
 
-        return view;
-    }
-
-    string LobbyId = null;
-    public void ConnectToLobby(string lobby)
-    {
-        LobbyId = lobby;
-        hubConnection.SendAsync("ConnectToLobby", lobby, ClientVersion);
-    }
-
-    public void Start()
-    {
-        #region Debug Unity View 
-        /// This is paired with ViewManager.SetDebugCustomView() to allow testing of views without having to do anything on backend
-        /// To use uncomment out this code, modify the UnityView being passed in and COMMENT OUT THE UPDATE LOOP
-        /// When you are done please revert back the comments
-        /// ====================================================================================
-        /// THIS CODE IS ONLY FOR DEBUGGING PURPOSES AND SHOULD NOT BE CALLED EVER ON PRODUCTION
-        /// ====================================================================================
-
-        /*
-        List<UnityUser> fakeUsers = new List<UnityUser>()
-        {
-            new UnityUser()
+            if (view.UnityObjects?.Value != null)
             {
-                Id = Guid.NewGuid(),
-                DisplayName = "Test User 1",
-                Activity = UserActivity.Active,
-                Status = UserStatus.AnsweringPrompts,
-            },
-            new UnityUser()
-            {
-                Id = Guid.NewGuid(),
-                DisplayName = "Test User 2",
-                Activity = UserActivity.Active,
-                Status = UserStatus.Waiting,
-            },
-            new UnityUser()
-            {
-                Id = Guid.NewGuid(),
-                DisplayName = "Test User 3",
-                Activity = UserActivity.Active,
-                Status = UserStatus.Waiting,
-            },
-            new UnityUser()
-            {
-                Id = Guid.NewGuid(),
-                DisplayName = "Test User 4",
-                Activity = UserActivity.Active,
-                Status = UserStatus.Waiting,
-            },
-        };
-        ViewManager.Singleton.SetDebugCustomView(
-            TVScreenId.VoteRevealImageView,
-            new UnityView()
-            {
-                UnityObjects = new UnityField<IReadOnlyList<object>>
+                List<UnityObject> unityObjects = new List<UnityObject>();
+                foreach (object obj in view.UnityObjects.Value)
                 {
-                    Value = new List<UnitySlider>()
+                    JObject jObject = (JObject)obj;
+                    switch (jObject["Type"].ToObject<UnityObjectType>())
                     {
-
-                        new UnitySlider()
-                        {
-                            OwnerUserId = fakeUsers[0].Id,
-                            Type = UnityObjectType.Slider,
-                            SliderBounds = (0, 10),
-                            MainSliderValue = new SliderValueHolder()
-                            {
-                                UserId = Guid.NewGuid(),
-                                ValueRange = (2,4),
-                            },
-                            GuessSliderValues = new List<SliderValueHolder>()
-                            {
-                                new SliderValueHolder()
-                                {
-                                    UserId = Guid.NewGuid(),
-                                    SingleValue = 3
-                                },
-                                new SliderValueHolder()
-                                {
-                                    UserId = Guid.NewGuid(),
-                                    SingleValue = 5
-                                },
-                                new SliderValueHolder()
-                                {
-                                    UserId = Guid.NewGuid(),
-                                    SingleValue = 9
-                                },
-                            },
-                            Title = new UnityField<string>()
-                            {
-                                Value = "Test Title"
-                            },
-                            UnityObjectId = Guid.NewGuid(),
-                        },
-                        new UnitySlider()
-                        {
-                            OwnerUserId = fakeUsers[0].Id,
-                            Type = UnityObjectType.Slider,
-                            SliderBounds = (0, 10),
-                            MainSliderValue = new SliderValueHolder()
-                            {
-                                UserId = Guid.NewGuid(),
-                                SingleValue = 7,
-                            },
-                            GuessSliderValues = new List<SliderValueHolder>()
-                            {
-                                new SliderValueHolder()
-                                {
-                                    UserId = Guid.NewGuid(),
-                                    ValueRange = (0,10)
-                                },
-                                new SliderValueHolder()
-                                {
-                                    UserId = Guid.NewGuid(),
-                                    ValueRange = (4,7)
-                                },
-                            },
-                            Title = new UnityField<string>()
-                            {
-                                Value = "Test Title"
-                            },
-                            UnityObjectId = Guid.NewGuid(),
-                        },
+                        case UnityObjectType.Image:
+                            unityObjects.Add(jObject.ToObject<UnityImage>());
+                            break;
+                        case UnityObjectType.Slider:
+                            unityObjects.Add(jObject.ToObject<UnitySlider>());
+                            break;
+                        case UnityObjectType.Text:
+                            unityObjects.Add(jObject.ToObject<UnityText>());
+                            break;
+                        default:
+                            throw new NotImplementedException("Not implemented");
                     }
-                },
-                Users = fakeUsers,
-                Title = new UnityField<string>()
-                {
-                    Value = "Test Title"
-                },
-                Instructions = new UnityField<string>()
-                {
-                    Value = "Test Instructions"
-                },
-                ServerTime = DateTime.UtcNow,
-                StateEndTime = null,
-                IsRevealing = true,
-                Options = new Dictionary<UnityViewOptions, object>()
-            });
-            
-             */
-        #endregion
-    }
-
-    public void Update()
-    {
-        // If the Dirty bit is set that means the networking thread got a response from the server. Since it is not possible
-        // to make certain types of calls outside of the main thread we listen for it here and make the call here.
-        if (Dirty)
-        {
-            Debug.Log($"Server update");
-            Dirty = false;
-            if (LobbyClosed)
-            {
-                LobbyClosed = false;
-                ViewManager.Singleton.OnLobbyClose();
-
+                }
+            view.UnityObjects.Value = unityObjects.Cast<object>().ToList();
             }
-            else
+            if (view.UnityObjects?.StartValue != null || view.UnityObjects?.EndValue !=null)
             {
-                ViewManager.Singleton.SwitchToView(CurrentView?.ScreenId ?? TVScreenId.Unknown, CurrentView);
+                throw new NotImplementedException("not implemented");
             }
+
+            return view;
         }
 
-        if (ConfigDirty)
+        string LobbyId = null;
+        public void ConnectToLobby(string lobby)
         {
-            Debug.Log($"Config Update");
-            ConfigDirty = false;
-            ViewManager.Singleton.UpdateConfigMetaData(ConfigurationMeta);
+            LobbyId = lobby;
+            srLib.SendToHub("ConnectWebLobby", LobbyId+"-"+ClientVersion);
         }
 
-        // If we aren't in the process of a delayed restart and the connection task failed. Begin a delayed restart.
-        if (!Restarting && (hubConnection?.State != HubConnectionState.Connected || hubTask==null || hubTask.IsFaulted || hubTask.IsCanceled))
+        public void Start()
         {
-            StartCoroutine(DelayedConnectToHub());
-        }
-    } 
+#region Debug Unity View 
+            /// This is paired with ViewManager.SetDebugCustomView() to allow testing of views without having to do anything on backend
+            /// To use uncomment out this code, modify the UnityView being passed in and COMMENT OUT THE UPDATE LOOP
+            /// When you are done please revert back the comments
+            /// ====================================================================================
+            /// THIS CODE IS ONLY FOR DEBUGGING PURPOSES AND SHOULD NOT BE CALLED EVER ON PRODUCTION
+            /// ====================================================================================
 
-    /// <summary>
-    /// Restarts the connection after a 5 second delay.
-    /// </summary>
-    /// <returns>A coroutine representing the task.</returns>
-    IEnumerator DelayedConnectToHub()
-    {
-        Restarting = true;
-        yield return new WaitForSeconds(5);
-        ConnectToHub();
-        Restarting = false;
-    }
-
-    public void OnApplicationQuit()
-    {
-        hubConnection?.DisposeAsync();
-    }
-
-    private void ConnectToHub()
-    {
-        if(hubConnection == null)
-        {
-            return;
-        }
-
-        if(hubTask!=null && !(hubConnection?.State != HubConnectionState.Connected || hubTask.IsFaulted || hubTask.IsCanceled))
-        {
-            Debug.Log("Hub restart requested but connection is active");
-            return;
-        }
-
-        hubTask = hubConnection
-            .StartAsync().ContinueWith(task =>
+            /*
+            List<UnityUser> fakeUsers = new List<UnityUser>()
             {
-                if (task.IsFaulted)
+                new UnityUser()
                 {
-                    Console.WriteLine("There was an error opening the connection:{0}",
-                                      task.Exception.GetBaseException());
-                    throw task.Exception.GetBaseException();
+                    Id = Guid.NewGuid(),
+                    DisplayName = "Test User 1",
+                    Activity = UserActivity.Active,
+                    Status = UserStatus.AnsweringPrompts,
+                },
+                new UnityUser()
+                {
+                    Id = Guid.NewGuid(),
+                    DisplayName = "Test User 2",
+                    Activity = UserActivity.Active,
+                    Status = UserStatus.Waiting,
+                },
+                new UnityUser()
+                {
+                    Id = Guid.NewGuid(),
+                    DisplayName = "Test User 3",
+                    Activity = UserActivity.Active,
+                    Status = UserStatus.Waiting,
+                },
+                new UnityUser()
+                {
+                    Id = Guid.NewGuid(),
+                    DisplayName = "Test User 4",
+                    Activity = UserActivity.Active,
+                    Status = UserStatus.Waiting,
+                },
+            };
+            ViewManager.Singleton.SetDebugCustomView(
+                TVScreenId.VoteRevealImageView,
+                new UnityView()
+                {
+                    UnityObjects = new UnityField<IReadOnlyList<object>>
+                    {
+                        Value = new List<UnitySlider>()
+                        {
+
+                            new UnitySlider()
+                            {
+                                OwnerUserId = fakeUsers[0].Id,
+                                Type = UnityObjectType.Slider,
+                                SliderBounds = (0, 10),
+                                MainSliderValue = new SliderValueHolder()
+                                {
+                                    UserId = Guid.NewGuid(),
+                                    ValueRange = (2,4),
+                                },
+                                GuessSliderValues = new List<SliderValueHolder>()
+                                {
+                                    new SliderValueHolder()
+                                    {
+                                        UserId = Guid.NewGuid(),
+                                        SingleValue = 3
+                                    },
+                                    new SliderValueHolder()
+                                    {
+                                        UserId = Guid.NewGuid(),
+                                        SingleValue = 5
+                                    },
+                                    new SliderValueHolder()
+                                    {
+                                        UserId = Guid.NewGuid(),
+                                        SingleValue = 9
+                                    },
+                                },
+                                Title = new UnityField<string>()
+                                {
+                                    Value = "Test Title"
+                                },
+                                UnityObjectId = Guid.NewGuid(),
+                            },
+                            new UnitySlider()
+                            {
+                                OwnerUserId = fakeUsers[0].Id,
+                                Type = UnityObjectType.Slider,
+                                SliderBounds = (0, 10),
+                                MainSliderValue = new SliderValueHolder()
+                                {
+                                    UserId = Guid.NewGuid(),
+                                    SingleValue = 7,
+                                },
+                                GuessSliderValues = new List<SliderValueHolder>()
+                                {
+                                    new SliderValueHolder()
+                                    {
+                                        UserId = Guid.NewGuid(),
+                                        ValueRange = (0,10)
+                                    },
+                                    new SliderValueHolder()
+                                    {
+                                        UserId = Guid.NewGuid(),
+                                        ValueRange = (4,7)
+                                    },
+                                },
+                                Title = new UnityField<string>()
+                                {
+                                    Value = "Test Title"
+                                },
+                                UnityObjectId = Guid.NewGuid(),
+                            },
+                        }
+                    },
+                    Users = fakeUsers,
+                    Title = new UnityField<string>()
+                    {
+                        Value = "Test Title"
+                    },
+                    Instructions = new UnityField<string>()
+                    {
+                        Value = "Test Instructions"
+                    },
+                    ServerTime = DateTime.UtcNow,
+                    StateEndTime = null,
+                    IsRevealing = true,
+                    Options = new Dictionary<UnityViewOptions, object>()
+                });
+
+                 */
+#endregion
+        }
+
+        public void Update()
+        {
+            // If the Dirty bit is set that means the networking thread got a response from the server. Since it is not possible
+            // to make certain types of calls outside of the main thread we listen for it here and make the call here.
+            if (Dirty)
+            {
+                Debug.Log($"Server update");
+                Dirty = false;
+                if (LobbyClosed)
+                {
+                    LobbyClosed = false;
+                    ViewManager.Singleton.OnLobbyClose();
+
                 }
                 else
                 {
-                    Console.WriteLine("Connected to Server");
-                    if(!string.IsNullOrWhiteSpace(LobbyId))
-                    {
-                        hubConnection.SendAsync("JoinRoom", LobbyId);
-                    }
-                    else
-                    {
-                        Dirty = true;
-                        LobbyClosed = true;
-                    }
+                    ViewManager.Singleton.SwitchToView(CurrentView?.ScreenId ?? TVScreenId.Unknown, CurrentView);
                 }
-            });
-    }
+            }
+
+            if (ConfigDirty)
+            {
+                Debug.Log($"Config Update");
+                ConfigDirty = false;
+                ViewManager.Singleton.UpdateConfigMetaData(ConfigurationMeta);
+            }
+
+            // If we aren't in the process of a delayed restart and the connection task failed. Begin a delayed restart.
+            // plr-old if (!Restarting && (hubConnection?.State != HubConnectionState.Connected || hubTask==null || hubTask.IsFaulted || hubTask.IsCanceled))
+            // NOTE: the Connected in the line below only says we EVER connected, not that we are still connected
+            if (!Restarting && (Connected || hubTask == null || hubTask.IsFaulted || hubTask.IsCanceled))
+            {
+                StartCoroutine(DelayedConnectToHub());
+            }
+        } 
+
+        /// <summary>
+        /// Restarts the connection after a 5 second delay.
+        /// </summary>
+        /// <returns>A coroutine representing the task.</returns>
+        IEnumerator DelayedConnectToHub()
+        {
+            Restarting = true;
+            yield return new WaitForSeconds(5);
+            ConnectToHub();
+            Restarting = false;
+        }
+
+        public void OnApplicationQuit()
+        {
+        }
+
+        private void ConnectToHub()
+        {
+            if(srLib == null)
+            {
+                return;
+            }
+
+            if(hubTask!=null && !(Connected || hubTask.IsFaulted || hubTask.IsCanceled))
+            {
+                Debug.Log("Hub restart requested but connection is active");
+                return;
+            }
+        }
+ 
 }

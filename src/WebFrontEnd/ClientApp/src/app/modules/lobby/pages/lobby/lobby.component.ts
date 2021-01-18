@@ -45,6 +45,10 @@ export class LobbyManagementComponent {
         });
     }
 
+    launchViewer(){
+        window.open('/viewer?lobby='+this.lobby.lobbyId,'_blank');
+    }
+    
     onCreateLobby = async () => {
         await this.api.request({ type: "Lobby", path: "Create" }).subscribe({
             next: async (result) => {

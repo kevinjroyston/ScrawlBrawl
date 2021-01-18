@@ -44,9 +44,9 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
             TargetImage.color = AssignedColor;
         }
 
-        public void UpdateValue(List<dynamic> objects)
+        public void UpdateValue(List<object> objects)
         {
-            UpdateValue(objects[0]);
+            UpdateValue((List < Guid >) objects[0]);
         }
     }
 }

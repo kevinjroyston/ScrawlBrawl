@@ -8,13 +8,10 @@ abbey
 abbreviation
 abdomen
 abnormality
-abolishment
-abrogation
 absence
 abundance
 academics
 academy
-accelerant
 accelerator
 accent
 acceptance
@@ -24,7 +21,6 @@ accommodation
 accompanist
 accomplishment
 accord
-accordance
 accordion
 accountability
 accountant
@@ -42,13 +38,10 @@ acre
 acrylic
 activation
 activist
-actress
 acupuncture
-adaptation
 adapter
 addiction
 address
-adjective
 admin
 administrator
 admire
@@ -68,14 +61,12 @@ advocacy
 advocate
 affect
 affinity
-afoul
 afterlife
 aftershave
 aftershock
 age
 agenda
 agent
-aggradation
 aglet
 agony
 agriculture
@@ -113,7 +104,6 @@ alligator
 allocation
 allowance
 alloy
-alluvium
 almanac
 almighty
 almond
@@ -127,7 +117,6 @@ alteration
 alternative
 altitude
 alto
-aluminium
 aluminum
 amazement
 amazon
@@ -153,9 +142,7 @@ ancestor
 anchovy
 android
 anesthesiologist
-anesthesiology
 angel
-angiosperm
 angora
 angstrom
 anguish
@@ -169,7 +156,6 @@ anorak
 answer
 ant
 anteater
-antecedent
 antechamber
 antelope
 antennae
@@ -207,8 +193,6 @@ aquifer
 arcade
 arch-rival
 archaeologist
-archaeology
-archeology
 archer
 architect
 architecture
@@ -334,7 +318,6 @@ bamboo
 ban
 banana
 band
-bandana
 bandanna
 bandolier
 bandwidth
@@ -350,10 +333,8 @@ banquette
 banyan
 baobab
 bar
-barbecue
 barbeque
 barber
-barbiturate
 bargain
 barge
 baritone
@@ -409,15 +390,12 @@ beetle
 beggar
 beginning
 begonia
-behalf
 behaviour
-beheading
 behest
 behold
 being
 belfry
 believer
-belligerency
 bellows
 belly
 belt
@@ -426,7 +404,6 @@ bend
 beneficiary
 benefit
 beret
-best-seller
 bestseller
 bet
 beverage
@@ -621,7 +598,6 @@ bumper
 bun
 bunch
 bungalow
-bunghole
 bunkhouse
 burden
 bureau
@@ -693,7 +669,6 @@ cape
 caper
 capital
 capitalism
-capitulation
 capon
 cappelletti
 cappuccino
@@ -704,7 +679,6 @@ caramel
 caravan
 carbohydrate
 carbon
-carboxyl
 cardboard
 cardigan
 career
@@ -756,14 +730,13 @@ cathedral
 cation
 catsup
 cauliflower
-causal
 causeway
 caution
 caviar
 cayenne
 ceiling
 celebrity
-celeriac
+celery
 cello
 celsius
 cement
@@ -779,16 +752,13 @@ ceramic
 ceramics
 cereal
 ceremony
-certainty
 certificate
-certification
 cesspool
 chafe
 chain
 chainstay
 chair
 chairlift
-chairman
 chairperson
 chaise
 chalet
@@ -856,7 +826,6 @@ cholesterol
 choosing
 chop
 chops
-chopstick
 chopsticks
 chord
 chorus
@@ -886,7 +855,6 @@ citizenship
 citron
 citrus
 civilian
-civilisation
 civilization
 claim
 clamp
@@ -972,7 +940,6 @@ collapse
 collard
 collateral
 colleague
-collectivisation
 collectivization
 collector
 collision
@@ -980,7 +947,6 @@ colloquy
 colon
 colonial
 colonialism
-colonisation
 colonization
 colony
 colorlessness

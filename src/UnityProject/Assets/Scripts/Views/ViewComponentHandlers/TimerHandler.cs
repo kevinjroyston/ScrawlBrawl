@@ -52,8 +52,8 @@ public class TimerHandler : MonoBehaviour, HandlerInterface
 
     }
 
-    public void UpdateValue(List<dynamic> objects)
+    public void UpdateValue(List<object> objects)
     {
-        this.UpdateValue(objects[0]);
+        this.UpdateValue((TimerHolder) objects[0]);
     }
 }

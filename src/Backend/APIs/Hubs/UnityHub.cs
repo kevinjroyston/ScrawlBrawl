@@ -14,7 +14,7 @@ namespace Backend.APIs.Hubs
     /// </summary>
     public class UnityHub : Hub
     {
-        private const string ServerVersion = "1.0.0";
+        private const string ServerVersion = "2.1.0";
 
 
         private GameManager GameManager { get; set; }
@@ -58,12 +58,20 @@ namespace Backend.APIs.Hubs
 
                     // SignalR's serialization is abysmal and client has no insight into the issue. pull serialization out.
                     Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(view));
-                    Clients.Caller.SendAsync("ConfigureMetadata", lobby.ConfigMetaData);
+                    Clients.Caller.SendAsync("ConfigureMetadata", JsonConvert.SerializeObject(lobby.ConfigMetaData));
                 }
             }
             catch (Exception e)
             {
                 Console.Error.WriteLine(e);
+            }
+        }
+        public void ConnectWebLobby(string lobbyAndVersion)
+        {  // webviewer can only send in a single string, this has "lobbyid-clientversion"
+            string[] webParams = lobbyAndVersion.Split("-");
+            if (webParams.Length > 1)
+            {
+                ConnectToLobby(webParams[0], webParams[1]);
             }
         }
         public void JoinRoom(string versionLobbyString)

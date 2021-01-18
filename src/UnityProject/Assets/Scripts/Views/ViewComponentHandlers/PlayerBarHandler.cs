@@ -14,7 +14,7 @@ public class PlayerBarHandler : MonoBehaviour, HandlerInterface
 
     public void UpdateValue(UsersListHolder usersHolder)
     {
-        IReadOnlyList<UnityUser> users = usersHolder.Users;
+        List<UnityUser> users = usersHolder.Users;
         bool isRevealing = usersHolder.IsRevealing;
         ClearUsers();
         if (users == null || users.Count <= 0)
@@ -66,8 +66,8 @@ public class PlayerBarHandler : MonoBehaviour, HandlerInterface
         }
     }
 
-    public void UpdateValue(List<dynamic> objects)
+    public void UpdateValue(List<object> objects)
     {
-        this.UpdateValue(objects[0]);
+        this.UpdateValue((UsersListHolder) objects[0]);
     }
 }

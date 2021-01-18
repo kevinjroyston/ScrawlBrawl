@@ -9,8 +9,8 @@ namespace Assets.Scripts.Networking.DataModels.UnityObjects
 {
     public class UnityImage : UnityObject
     {
-        public IReadOnlyList<string> Base64Pngs { private get; set; }
-        public IReadOnlyList<Sprite> Sprites
+        public List<string> Base64Pngs { private get; set; }
+        public List<Sprite> Sprites
         {
             get
             {

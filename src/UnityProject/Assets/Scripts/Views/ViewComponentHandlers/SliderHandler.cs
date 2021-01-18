@@ -35,9 +35,9 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
         public void UpdateValue(SliderDataHolder sliderData)
         {
             (float, float) sliderBounds = sliderData.SliderBounds;
-            IReadOnlyList<(float, string)> tickLabels = sliderData.TickLabels;
-            IReadOnlyList<SliderValueHolder> mainSliderHolders = sliderData.MainSliderHolders;
-            IReadOnlyList<SliderValueHolder> guessSliderHolders = sliderData.GuessSliderHolders;
+            List<(float, string)> tickLabels = sliderData.TickLabels;
+            List<SliderValueHolder> mainSliderHolders = sliderData.MainSliderHolders;
+            List<SliderValueHolder> guessSliderHolders = sliderData.GuessSliderHolders;
 
             SliderBodyAspectRatio = gameObject.GetComponent<FixedAspectRatio>().AspectRatio;
             SliderBodyAnchorMinX = SliderBody.anchorMin.x;
@@ -165,7 +165,7 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
 
             //createdRange.GetComponent<SliderColorizer>().Colorize(colorId);
         }
-        public void UpdateValue(List<dynamic> objects)
+        public void UpdateValue(List<object> objects)
         {
             UpdateValue((SliderDataHolder) objects[0]);
         }

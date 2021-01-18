@@ -30,9 +30,9 @@ public static class TypeEnums
     public class HandlerId
     {
         public HandlerType HandlerType { get; }
-        public dynamic SubType { get; }
+        public object SubType { get; }
 
-        public HandlerId(HandlerType handlerType, dynamic subType = null)
+        public HandlerId(HandlerType handlerType, object subType = null)
         {
             this.HandlerType = handlerType;
             this.SubType = subType;
@@ -88,14 +88,14 @@ public static class TypeEnums
     }
     public class UsersListHolder
     {
-        public IReadOnlyList<UnityUser> Users { get; set; }
+        public List<UnityUser> Users { get; set; }
         public bool IsRevealing { get; set; } = false;
     }
     public class SpriteHolder
     {
-        public IReadOnlyList<Sprite> Sprites { get; set; }
+        public List<Sprite> Sprites { get; set; }
         public int? SpriteGridWidth { get; set; }
         public int? SpriteGridHeight { get; set; }
-        public UnityField<IReadOnlyList<int>> BackgroundColor { get; set; }
+        public UnityField<List<int>> BackgroundColor { get; set; }
     }
 }

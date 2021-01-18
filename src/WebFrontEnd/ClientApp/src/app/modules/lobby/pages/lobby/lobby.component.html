@@ -11,11 +11,6 @@
                 <scrawlbrawl-iconbutton (click)="showInstructions()" matTooltip="Instructions" [mdTooltipClass]="{'tooltip': true}">
                     <ion-icon name="help-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
-                <a href="https://github.com/kevinjroyston/ScrawlBrawl/releases/latest/download/ScrawlBrawlClient.zip">
-                    <scrawlbrawl-iconbutton matTooltip="Download Game Viewer" [mdTooltipClass]="{'tooltip': true}">
-                        <ion-icon [style.color]="'var(--blue-primary)'" name="cloud-download-outline"></ion-icon>
-                    </scrawlbrawl-iconbutton>
-                </a>
                 <scrawlbrawl-iconbutton (click)="onDeleteLobby()" matTooltip="Delete Lobby" [mdTooltipClass]="{'tooltip': true}">
                     <ion-icon [style.color]="'var(--red-secondary)'" name="trash-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
@@ -25,6 +20,11 @@
         <div class="lobby-header-sections">
             <div>
                 <b>ID</b> {{ lobby.lobbyId.toUpperCase() }}
+                <div style="width:120px">
+                    <scrawlbutton (click)="launchViewer()">Launch Viewer</scrawlbutton>
+                </div>
+            </div>
+            <div><a (click)="launchViewer()">Launch Viewer</a>
             </div>
             <div>
                 <b>Players</b> {{ lobby.playerCount }}
