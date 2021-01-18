@@ -110,7 +110,7 @@ export const msalAngularConfig: MsalAngularConfiguration = {
         ...loginRequest.scopes,
         ...tokenRequest.scopes,
     ],
-  unprotectedResources: ["api/v1/Game/CurrentContent", "api/v1/Game/FormSubmit", "api/v1/Game/AutoFormSubmit", "api/v1/User/Delete", "api/v1/Lobby/Games", "assets"], // API calls to these coordinates will NOT activate MSALGuard
+  unprotectedResources: ["api/v1/Game/CurrentContent", "api/v1/Game/FormSubmit", "api/v1/Game/AutoFormSubmit", "api/v1/User/Delete", "api/v1/Lobby/Games", "viewer", "assets"], // API calls to these coordinates will NOT activate MSALGuard
     protectedResourceMap,     // Scopes to use
   extraQueryParameters: {}
 
