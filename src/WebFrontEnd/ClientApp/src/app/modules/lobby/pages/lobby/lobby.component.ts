@@ -46,7 +46,7 @@ export class LobbyManagementComponent {
     }
 
     launchViewer(){
-        window.open('/viewer?lobby='+this.lobby.lobbyId,'_blank');
+        window.open('/viewer/index.html?lobby='+this.lobby.lobbyId,'_blank');
     }
     
     onCreateLobby = async () => {
