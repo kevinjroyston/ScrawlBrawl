@@ -57,7 +57,7 @@ namespace Assets.Scripts.Views
                 {
                     continue;
                 }
-                List<dynamic> values = new List<dynamic>();
+                List<object> values = new List<object>();
                 foreach (HandlerId handlerId in handlerInterface.HandlerIds)
                 {
                     switch (handlerId.HandlerType)

@@ -67,7 +67,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             objectVotedFor.Should().NotBeNull(because: "Could not find an object voted for");
             VoteInfo vote = new VoteInfo
             {
-                ObjectsVotedFor = new List<dynamic> { objectVotedFor },
+                ObjectsVotedFor = new List<object> { objectVotedFor },
                 TimeTakenInMs = DateTime.UtcNow.Subtract(this.StartingTime).TotalMilliseconds,
                 UserWhoVoted = user
             };
@@ -117,7 +117,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             }
             VoteInfo vote = new VoteInfo
             {
-                ObjectsVotedFor = new List<dynamic> { objectVotedFor },
+                ObjectsVotedFor = new List<object> { objectVotedFor },
                 TimeTakenInMs = DateTime.UtcNow.Subtract(this.StartingTime).TotalMilliseconds,
                 UserWhoVoted = user
             };

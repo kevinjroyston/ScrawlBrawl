@@ -72,7 +72,7 @@ namespace Backend
                 options.AddDefaultPolicy(
                     builder =>
                     {
-                        builder.WithOrigins("https://scrawlbrawl.b2clogin.com/", Configuration.GetValue<string>("FrontendUrl")).AllowAnyHeader().AllowAnyMethod();
+                        builder.WithOrigins("https://scrawlbrawl.b2clogin.com/", Configuration.GetValue<string>("FrontendUrl")).AllowAnyHeader().AllowAnyMethod().AllowCredentials();
                     });
             });
 

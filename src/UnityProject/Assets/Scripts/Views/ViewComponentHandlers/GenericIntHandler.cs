@@ -31,8 +31,8 @@ public class GenericIntHandler : MonoBehaviour, HandlerInterface
         }
     }
 
-    public void UpdateValue(List<dynamic> objects)
+    public void UpdateValue(List<object> objects)
     {
-        UpdateValue(objects[0]);
+        UpdateValue((UnityField<int?>) objects[0]);
     }
 }

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/@microsoft/signalr@3.1.10/dist/browser/signalr.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | ScrawlBrawl</title>
+    <link rel="shortcut icon" href="/viewer/TemplateData/favicon.ico">
+    <link rel="stylesheet" href="/viewer/TemplateData/style.css">
+    <script src="/viewer/TemplateData/UnityProgress.js"></script>
+    <script src="/viewer/Build/UnityLoader.js"></script>
+    <script>
+        var unityInstance = UnityLoader.instantiate("unityContainer", "/viewer/Build/ScrawlBrawlWebViewer.json", {
+            onProgress: UnityProgress
+        });
+    </script>
+</head>
+
+<body>
+    <div class="webgl-content">
+        <div id="unityContainer" style="width: 960px; height: 540px"></div>
+        <div class="footer">
+            <div class="fullscreen" onclick="unityInstance.SetFullscreen(1)"></div>
+            <div class="title">Click Here to Activate ScrawlBrawl</div>
+        </div>
+    </div>
+</body>
+
+</html>

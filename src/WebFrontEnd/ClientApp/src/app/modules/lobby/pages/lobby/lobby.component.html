@@ -25,6 +25,11 @@
         <div class="lobby-header-sections">
             <div>
                 <b>ID</b> {{ lobby.lobbyId.toUpperCase() }}
+                <div style="width:120px">
+                    <scrawlbutton (click)="launchViewer()">Launch Viewer</scrawlbutton>
+                </div>
+            </div>
+            <div><a (click)="launchViewer()">Launch Viewer</a>
             </div>
             <div>
                 <b>Players</b> {{ lobby.playerCount }}

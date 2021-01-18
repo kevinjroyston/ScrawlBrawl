@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Networking.DataModels;
+using Assets.Scripts.Utilities;
 using Assets.Scripts.Views.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,11 +10,11 @@ using static TypeEnums;
 public static class Helpers 
 {
     private static System.Random random = new System.Random();
-    public static void SetActiveAndUpdate(Component handlerComponent, List<dynamic> values)
+    public static void SetActiveAndUpdate(Component handlerComponent, List<object> values)
     {
         HandlerInterface handlerInterface = (HandlerInterface)handlerComponent;
-        bool shouldBeActive = values.Any(val => !IsFieldNull(val));
         values = values.Select(val => IsFieldNull(val)? null : val).ToList();
+        bool shouldBeActive = values.Any(val => val!=null);
         handlerComponent.gameObject.SetActive(shouldBeActive);
         if (shouldBeActive)
         {
@@ -21,19 +22,14 @@ public static class Helpers
         }
     }
 
-    private static bool IsFieldNull<T>(T field)
+    private static bool IsFieldNull(object field)
     {
+        var temp = field as FieldValueNullOrEmpty;
+        if (temp != null) 
+        {
+            return temp.IsNullOrEmpty();
+        }
         return field == null;
-    }
-    private static bool IsFieldNull<T>(UnityField<T> field)
-    {
-        return field == null 
-            || field.Value == null
-            || field.Value.Equals(string.Empty);
-    }
-    private static bool IsFieldNull(TimerHolder field)
-    {
-        return field?.ServerTime == null || field?.StateEndTime == null;
     }
 
     /// <summary>

@@ -11,7 +11,7 @@ namespace Assets.Scripts.Views.Interfaces
     {
         HandlerScope Scope { get; }
         List<HandlerId> HandlerIds { get; }
-        void UpdateValue(List<dynamic> objects);
+        void UpdateValue(List<object> objects);
 
     }
 }

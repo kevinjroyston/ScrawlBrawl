@@ -23,8 +23,8 @@ public class GenericTextHandler : MonoBehaviour, HandlerInterface
         }
     }
 
-    public void UpdateValue(List<dynamic> objects)
+    public void UpdateValue(List<object> objects)
     {
-        UpdateValue(objects[0]);
+        UpdateValue((UnityField<string>) objects[0]);
     }
 }

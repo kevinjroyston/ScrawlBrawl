@@ -10,6 +10,6 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
     {
         public User UserWhoVoted { get; set; }
         public double TimeTakenInMs { get; set; }
-        public List<dynamic> ObjectsVotedFor { get; set; }
+        public List<object> ObjectsVotedFor { get; set; }
     }
 }

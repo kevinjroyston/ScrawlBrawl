@@ -65,9 +65,9 @@ public class BlurController : MonoBehaviour, HandlerInterface
         superBlur.iterations = 6;
     }
 
-    public void UpdateValue(List<dynamic> objects)
+    public void UpdateValue(List<object> objects)
     {
-        this.UpdateValue(objects[0], objects[1]);
+        this.UpdateValue((Dictionary<UnityViewOptions, object>) objects[0], (TimerHolder)objects[1]);
     }
     public void ResetMasks()
     {

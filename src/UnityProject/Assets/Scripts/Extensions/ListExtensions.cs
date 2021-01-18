@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class ListExtensions 
 {
-    public static Color? ToColor(this IReadOnlyList<int> list)
+    public static Color? ToColor(this List<int> list)
     {
         if (list == null)
         {

@@ -10,7 +10,7 @@ namespace Assets.Scripts.Networking.DataModels
 {
     public class UnityView : OptionsInterface<UnityViewOptions>
     {
-        public UnityField<IReadOnlyList<object>> UnityObjects { get; set; }
+        public UnityField<List<object>> UnityObjects { get; set; }
         public TVScreenId ScreenId { get; set; }
         public Guid Id { get; set; }
         public List<UnityUser> Users { get; set; }

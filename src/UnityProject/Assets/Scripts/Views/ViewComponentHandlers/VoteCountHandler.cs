@@ -19,7 +19,7 @@ public class VoteCountHandler : MonoBehaviour, HandlerInterface
         HandlerType.IdList.ToHandlerId(IdType.Object_UsersWhoVotedFor)
     };
 
-    public void UpdateValue(UnityField<int?> voteCount, IReadOnlyList<Guid> usersWhoVotedFor)
+    public void UpdateValue(UnityField<int?> voteCount, List<Guid> usersWhoVotedFor)
     {
         int voteCountInt = voteCount?.Value ?? 0;
 
@@ -44,9 +44,9 @@ public class VoteCountHandler : MonoBehaviour, HandlerInterface
 
     }
 
-    public void UpdateValue(List<dynamic> objects)
+    public void UpdateValue(List<object> objects)
     {
-        UpdateValue((UnityField<int?>)objects[0], (IReadOnlyList<Guid>)objects[1]);
+        UpdateValue((UnityField<int?>)objects[0], (List<Guid>)objects[1]);
     }
 
     public void IncreaseScore()

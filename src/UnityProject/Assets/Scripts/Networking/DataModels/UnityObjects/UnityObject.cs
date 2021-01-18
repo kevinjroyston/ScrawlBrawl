@@ -17,7 +17,7 @@ namespace Assets.Scripts.Networking.DataModels.UnityObjects
     }
     public abstract class UnityObject : OptionsInterface<UnityObjectOptions>
     {
-        public IReadOnlyList<Guid> UsersWhoVotedFor { get; set; }
+        public List<Guid> UsersWhoVotedFor { get; set; }
         public UnityObjectType Type { get; set; }
         public UnityField<string> Title { get; set; }
         public UnityField<string> Header { get; set; }
@@ -25,7 +25,7 @@ namespace Assets.Scripts.Networking.DataModels.UnityObjects
         public UnityField<string> ImageIdentifier { get; set; }
         public Guid? OwnerUserId { get; set; }
         public UnityField<int?> VoteCount { get; set; }
-        public UnityField<IReadOnlyList<int>> BackgroundColor { get; set; }
+        public UnityField<List<int>> BackgroundColor { get; set; }
         public Guid UnityObjectId { get; set; }
         public Dictionary<UnityObjectOptions, object> Options { get; set; }
     }

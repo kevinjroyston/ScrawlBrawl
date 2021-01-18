@@ -23,6 +23,8 @@
                         "tsConfig": "src/tsconfig.app.json",
                         "assets": [
                             "src/assets",
+                            "src/viewer/index.html",
+                            "src/viewer",
                             "src/favicon.ico"
                         ],
                         "styles": [
@@ -147,7 +149,9 @@
                         ],
                         "scripts": [],
                         "assets": [
-                            "src/assets"
+                            "src/assets",
+                            "src/viewer",
+                            "src/favicon.ico"
                         ]
                     }
                 },

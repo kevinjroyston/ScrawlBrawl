@@ -14,7 +14,7 @@ public class DummyScoreHandler : MonoBehaviour, HandlerInterface
         HandlerType.Ints.ToHandlerId(IntType.Object_VoteCount),
         HandlerType.IdList.ToHandlerId(IdType.Object_UsersWhoVotedFor)
     };
-    public void UpdateValue(List<dynamic> objects)
+    public void UpdateValue(List<object> objects)
     {
         //empty
     }

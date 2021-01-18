@@ -14,7 +14,7 @@ public class VoteRevealUserImageHandler : MonoBehaviour
     {
     }
 
-    public void HandleUsers(IReadOnlyList<UnityUser> users, IDictionary<string, int> userIdsToScoreDelta)
+    public void HandleUsers(List<UnityUser> users, IDictionary<string, int> userIdsToScoreDelta)
     {
         ClearUsers();
         if (users == null || users.Count <= 0)

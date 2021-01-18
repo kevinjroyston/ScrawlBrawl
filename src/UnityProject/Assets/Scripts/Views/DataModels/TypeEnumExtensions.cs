@@ -9,11 +9,11 @@ namespace Assets.Scripts.Views.DataModels
 {
     public static class TypeEnumExtensions
     {
-        public static HandlerId ToHandlerId(this HandlerType handlerType, dynamic subType = null)
+        public static HandlerId ToHandlerId(this HandlerType handlerType, object subType = null)
         {
             return new HandlerId(handlerType, subType);
         }
-        public static List<HandlerId> ToHandlerIdList(this HandlerType handlerType, dynamic subType = null)
+        public static List<HandlerId> ToHandlerIdList(this HandlerType handlerType, object subType = null)
         {
             return new List<HandlerId> { new HandlerId(handlerType, subType) };
         }
