@@ -35,5 +35,7 @@ public class PrefabLookup : MonoBehaviour
         SliderGuess,
         SliderRange,
         SliderTickLabel,
+        StackText,
+        UnityObjectHolder,
     }
 }

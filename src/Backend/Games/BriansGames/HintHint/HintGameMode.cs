@@ -1,11 +1,16 @@
 ﻿using Backend.GameInfrastructure;
+using Backend.GameInfrastructure.DataModels;
 using Backend.GameInfrastructure.DataModels.States.GameStates;
 using Backend.GameInfrastructure.DataModels.States.StateGroups;
+using Backend.GameInfrastructure.DataModels.Users;
 using Backend.GameInfrastructure.Extensions;
 using Backend.Games.BriansGames.HintHint.DataModels;
 using Backend.Games.BriansGames.HintHint.GameStates;
 using Backend.Games.Common;
+using Backend.Games.Common.GameStates;
+using Common.Code.Helpers;
 using Common.DataModels.Enums;
+using Common.DataModels.Interfaces;
 using Common.DataModels.Requests.LobbyManagement;
 using Common.DataModels.Responses;
 using System;
@@ -81,13 +86,13 @@ namespace Backend.Games.BriansGames.HintHint
         {
             ValidateOptions(gameModeOptions);
 
-            int numRealHints = (int)gameModeOptions[(int)GameModeOptionsEnum.NumRealHints].ValueParsed;
-            int numFakeHints = (int)gameModeOptions[(int)GameModeOptionsEnum.NumFakeHints].ValueParsed;
+            int numRealHintGivers = (int)gameModeOptions[(int)GameModeOptionsEnum.NumRealHints].ValueParsed;
+            int numFakeHintGivers = (int)gameModeOptions[(int)GameModeOptionsEnum.NumFakeHints].ValueParsed;
             int maxHints = (int)gameModeOptions[(int)GameModeOptionsEnum.MaxHints].ValueParsed;
             int maxGuesses = (int)gameModeOptions[(int)GameModeOptionsEnum.MaxGuesses].ValueParsed;
             int numBannedWords = 4;
             int gameLength = (int)gameModeOptions[(int)GameModeOptionsEnum.GameLength].ValueParsed;
-           
+
 
             TimeSpan? setupRound1Timer = null;
             TimeSpan? setupRound2Timer = null;
@@ -130,7 +135,9 @@ namespace Backend.Games.BriansGames.HintHint
                             return new SetupRound1_GS(lobby, realFakePairs, setupRound1Timer);
 
                         case 1:
-                            return new SetupRound2_GS(lobby, realFakePairs.ToList(), numBannedWords, setupRound2Timer);
+                            setupRound2Timer = setupRound2Timer?.Multiply(Math.Ceiling(1.0 * numBannedWords / numFakeHintGivers));
+                            AssignRealFakeUsers();
+                            return new SetupRound2_GS(lobby, realFakePairs.ToList(), (int) Math.Ceiling( 1.0 * numBannedWords / numFakeHintGivers), numBannedWords, setupRound2Timer);
 
                         case 2:
                             return new SetupRound3_GS(lobby, realFakePairs.ToList(), setupRound3Timer);
@@ -141,10 +148,75 @@ namespace Backend.Games.BriansGames.HintHint
 
                 });
 
-            this.Entrance.Transition(setupStateChain);
-            setupStateChain.Transition(this.Exit);
-        }
+            List<State> chain = new List<State>();
+            List<RealFakePair> randomizedRealFakePairs = realFakePairs.OrderBy(_ => Rand.Next()).ToList();
+            StateChain hintScoreChain = new StateChain(states: randomizedRealFakePairs.Select(realFakePair =>
+            {
+                return (State) new StateChain(stateGenerator: (int counter) =>
+                {
+                    switch (counter)
+                    {
+                        case 0:
+                            return new HintRound_GS(lobby, realFakePair, maxHints, maxGuesses, guessingTimer);
+                        case 1:
+                            return new HintGuessReveal(lobby, realFakePair);
+                        case 2:
+                            if (realFakePair.Equals(randomizedRealFakePairs.Last()))
+                            {
+                                return new ScoreBoardGameState(lobby, "Final Scores:");
+                            }
+                            else
+                            {
+                                return new ScoreBoardGameState(lobby);
+                            }
+                        default:
+                            return null;
+                    }
+                });
+            }).ToList());
 
+
+            StateChain gameplayStateChain = new StateChain(
+                stateGenerator: (int counter) =>
+                {
+                    switch (counter)
+                    {
+                        case 0:
+                            return setupStateChain;
+
+                        case 1:
+                            return hintScoreChain;
+
+                        default:
+                            return null;
+                    }
+
+                });
+
+            this.Entrance.Transition(gameplayStateChain);
+            gameplayStateChain.Transition(this.Exit);
+
+            void AssignRealFakeUsers()
+            {
+                foreach (RealFakePair rfp in realFakePairs)
+                {
+                    rfp.MaxMemberCount = numRealHintGivers + numFakeHintGivers;
+                }
+                List<RealFakePair> rfpList = realFakePairs.ToList();
+                List<IGroup<User>> groups = MemberHelpers<User>.Assign(
+                    constraints: rfpList.Cast<IConstraints<User>>().ToList(),
+                    members: lobby.GetAllUsers());
+                if (groups.Count != rfpList.Count)
+                {
+                    throw new Exception("Something went wrong assigning hint givers");
+                }
+                for (int i = 0; i < rfpList.Count; i++)
+                {
+                    rfpList[i].PopulateHintGivers(groups[i].Members.ToList(), numFakeHintGivers);
+                }
+            }
+        }
+        
         public void ValidateOptions(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             

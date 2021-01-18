@@ -7,6 +7,6 @@ namespace Backend.APIs.DataModels.Enums
 {
     public enum UnityFieldOptions
     {
-
+        ScrollingTextStack,
     }
 }

@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Fastenshtein" Version="1.0.0.5" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="JonSkeet.MiscUtil" Version="0.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.4" />

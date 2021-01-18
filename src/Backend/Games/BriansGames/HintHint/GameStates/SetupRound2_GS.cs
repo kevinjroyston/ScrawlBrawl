@@ -24,7 +24,8 @@ namespace Backend.Games.BriansGames.HintHint.GameStates
 {
     public class SetupRound2_GS : GameState
     {
-        public SetupRound2_GS(Lobby lobby, List<RealFakePair> realFakePairs, int numBannedWordsPerPerson, TimeSpan? setupDuration)
+        private Random Rand { get; set; } = new Random();
+        public SetupRound2_GS(Lobby lobby, List<RealFakePair> realFakePairs, int numBannedWordsPerPerson, int numTotalBanned, TimeSpan? setupDuration)
             : base(
                   lobby: lobby,
                   exit: new WaitForUsers_StateExit(lobby))
@@ -111,8 +112,13 @@ namespace Backend.Games.BriansGames.HintHint.GameStates
                 foreach (RealFakePair rfp in pairToInputSubForms.Keys)
                 {
                     rfp.BannedWords = new List<string>();
-                    foreach (UserSubForm subForm in pairToInputSubForms[rfp])
+                    foreach (UserSubForm subForm in pairToInputSubForms[rfp].OrderBy(_=> Rand.Next()))
                     {
+                        if (rfp.BannedWords.Count >= numTotalBanned)
+                        {
+                            break;
+                        }
+
                         if (subForm?.ShortAnswer != null 
                         && !rfp.BannedWords.Any(str => !str.FuzzyEquals(subForm.ShortAnswer))
                         && !rfp.RealGoal.FuzzyEquals(subForm.ShortAnswer))

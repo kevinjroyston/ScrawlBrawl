@@ -23,6 +23,11 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             };
         }
 
+        internal static Func<User, UserPrompt> ShowScoreBreakdowns(Lobby lobby, object promptTitle, object userPromptId, object userScoreBreakdownScope, bool showPartyLeaderSkipButton)
+        {
+            throw new NotImplementedException();
+        }
+
         public static Func<User, UserPrompt> DisplayText(string description = null, UserPromptId? promptId=null) {
             description ??= Text.Waiting;
             promptId ??= UserPromptId.Waiting;

@@ -34,6 +34,10 @@ namespace Backend.GameInfrastructure.DataModels.Users
             VotedWithCrowd,
             Imposter_GoodNormal,
             Imposter_GoodImposter,
+            Hint_GuessedReal,
+            Hint_HintedReal,
+            Hint_HintedFake,
+            Hint_Distracted,
         }
 
         public Score()
@@ -54,6 +58,10 @@ namespace Backend.GameInfrastructure.DataModels.Users
             { Reason.VotedWithCrowd, "In agreement with other voters" },
             { Reason.Imposter_GoodNormal, "Blended in when not imposter" },
             { Reason.Imposter_GoodImposter, "Standing out as imposter" },
+            { Reason.Hint_GuessedReal, "Guessed the real word" },
+            { Reason.Hint_HintedReal, "Got people to guess the real word" },
+            { Reason.Hint_HintedFake, "Got people to guess the fake word" },
+            { Reason.Hint_Distracted, "Got people to not guess the real word" },
         };
         public void ResetScore(Scope? scope = null)
         {

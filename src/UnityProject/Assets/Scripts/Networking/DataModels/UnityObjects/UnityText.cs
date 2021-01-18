@@ -8,6 +8,6 @@ namespace Assets.Scripts.Networking.DataModels.UnityObjects
 {
     class UnityText : UnityObject
     {
-        //empty
+        public UnityField<IReadOnlyList<string>> MainText;
     }
 }

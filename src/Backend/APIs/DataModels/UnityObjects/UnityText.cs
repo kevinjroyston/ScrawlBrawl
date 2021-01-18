@@ -7,6 +7,7 @@ namespace Backend.APIs.DataModels.UnityObjects
 {
     public class UnityText : UnityObject
     {
+        public UnityField<IReadOnlyList<string>> MainText;
         public UnityText(Legacy_UnityImage legacy) : base(legacy)
         {
             this.Type = UnityObjectType.Text;

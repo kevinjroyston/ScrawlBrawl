@@ -24,7 +24,8 @@ public static class TypeEnums
         UnityObjectList,
         UsersList,
         Color,
-        SliderData
+        SliderData,
+        TextStackList,
     }
 
     public class HandlerId
@@ -62,7 +63,8 @@ public static class TypeEnums
     [Serializable]
     public enum IntType
     {
-        Object_VoteCount
+        Object_VoteCount,
+        Object_TextStackFixedNumItems,
     }
     [Serializable]
     public enum StringType

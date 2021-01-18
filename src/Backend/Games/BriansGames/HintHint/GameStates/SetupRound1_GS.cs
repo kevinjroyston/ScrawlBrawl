@@ -44,7 +44,9 @@ namespace Backend.Games.BriansGames.HintHint.GameStates
                 },
                 formSubmitHandler: (User user, UserFormSubmission input) =>
                 {
-                    realFakePairs.Add(new RealFakePair() { RealGoal = input.SubForms[0].ShortAnswer });
+                    RealFakePair rfp = new RealFakePair() { RealGoal = input.SubForms[0].ShortAnswer, Creator = user };
+                    rfp.BannedMemberIds.Add(user.Id);
+                    realFakePairs.Add(rfp);
                     return (true, string.Empty);
                 },
                 userTimeoutHandler: (User user, UserFormSubmission input) =>

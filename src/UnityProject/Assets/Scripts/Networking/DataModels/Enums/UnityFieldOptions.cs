@@ -8,6 +8,6 @@ namespace Assets.Scripts.Networking.DataModels.Enums
 {
     public enum UnityFieldOptions
     {
-
+        ScrollingTextStack,
     }
 }

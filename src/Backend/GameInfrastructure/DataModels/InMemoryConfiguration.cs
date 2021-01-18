@@ -8,6 +8,7 @@ using Backend.Games.TimsGames.FriendQuiz;
 using Backend.Games.BriansGames.ImposterDrawing;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
+using Backend.Games.BriansGames.HintHint;
 
 namespace Backend.GameInfrastructure.DataModels
 {
@@ -90,6 +91,11 @@ namespace Backend.GameInfrastructure.DataModels
                 GameModeMetadata = FriendQuizGameMode.GameModeMetadata,
                 GameModeInstantiator = (lobby, options) => new FriendQuizGameMode(lobby, options)
             },
+            new GameModeMetadataHolder()
+            {
+                GameModeMetadata = HintGameMode.GameModeMetadata,
+                GameModeInstantiator = (lobby, options) => new HintGameMode(lobby, options)
+            }
             
             #region StoryTime (Removed)
             /*new GameModeMetadata

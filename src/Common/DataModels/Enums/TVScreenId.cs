@@ -13,5 +13,7 @@
         VoteRevealImageView = 8,
         ObjectView = 9,
         HintGuessView = 10,
+        HorizontalObjectView = 11,
+        VerticalObjectView = 12,
     }
 }

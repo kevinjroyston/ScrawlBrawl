@@ -67,8 +67,7 @@ namespace Assets.Scripts.Views
                             {
                                 case IdType.Object_UsersWhoVotedFor: values.Add(UnityObject.UsersWhoVotedFor); break;
                                 case IdType.Object_OwnerIds: values.Add(new List<Guid>() { UnityObject.OwnerUserId.GetValueOrDefault(UnityObject.UnityObjectId) }); break;
-                                default:
-                                    throw new ArgumentException($"Unknown subtype id: '{HandlerType.IdList}-{handlerId.SubType}'");
+                                default: values.Add(CheckSubHandlers(handlerId)); break;
                             }
                             break;
                         case HandlerType.Strings:
@@ -78,36 +77,21 @@ namespace Assets.Scripts.Views
                                 case StringType.Object_Header: values.Add(UnityObject.Header); break;
                                 case StringType.Object_Footer: values.Add(UnityObject.Footer); break;
                                 case StringType.Object_ImageIdentifier: values.Add(UnityObject.ImageIdentifier); break;
-                                default:
-                                    throw new ArgumentException($"Unknown subtype id: '{HandlerType.Strings}-{handlerId.SubType}'");
+                                default: values.Add(CheckSubHandlers(handlerId)); break;
                             }
                             break;
                         case HandlerType.Ints:
                             switch (handlerId.SubType)
                             {
                                 case IntType.Object_VoteCount: values.Add(UnityObject.VoteCount); break;
-                                default:
-                                    throw new ArgumentException($"Unknown subtype id: '{HandlerType.Ints}-{handlerId.SubType}'");
+                                default: values.Add(CheckSubHandlers(handlerId)); break;
                             }
                             break;
                         case HandlerType.ObjectOptions:
                             values.Add(UnityObject.Options);
                             break;
-                        default:
-                            switch (UnityObject.Type)
-                            {
-                                case UnityObjectType.Image:
-                                    values.Add(UnityImageSubHandler(handlerId));
-                                    break;
-                                case UnityObjectType.Text:
-                                    // No extra data in Text for it to be listening for, dont know what they were looking for
-                                    throw new ArgumentException($"Unknown handler id: '{handlerId.SubType}'");
-                                case UnityObjectType.Slider:
-                                    values.Add(UnitySliderSubHandler(handlerId));
-                                    break;
-                                default:
-                                    throw new ArgumentException($"Unknown Object Type: : '{UnityObject.Type}'");
-                            }
+                        default: 
+                            values.Add(CheckSubHandlers(handlerId));
                             break;
                     }
                 }
@@ -123,6 +107,23 @@ namespace Assets.Scripts.Views
             }
         }
 
+        private object CheckSubHandlers(HandlerId handlerId)
+        {
+            switch (UnityObject.Type)
+            {
+                case UnityObjectType.Image:
+                    return UnityImageSubHandler(handlerId);
+                case UnityObjectType.Text:
+                    // No extra data in Text for it to be listening for, dont know what they were looking for
+                    throw new ArgumentException($"Unknown handler id: '{handlerId.SubType}'");
+                case UnityObjectType.Slider:
+                    return UnitySliderSubHandler(handlerId);
+                case UnityObjectType.TextStack:
+                    return UnityTextStackSubHandler(handlerId);
+                default:
+                    throw new ArgumentException($"Unknown Object Type: : '{UnityObject.Type}'");
+            }
+        }
         private void UpdateHandlers()
         {
             Handlers = gameObject.GetComponentsInChildren(typeof(HandlerInterface)).ToList();
@@ -160,6 +161,27 @@ namespace Assets.Scripts.Views
                         MainSliderHolders = castedSlider.MainSliderValues,
                         GuessSliderHolders = castedSlider.GuessSliderValues,
                     };
+                default:
+                    throw new ArgumentException($"Unknown handler id: '{handlerId.HandlerType}'");
+
+            }
+        }
+
+        private object UnityTextStackSubHandler(HandlerId handlerId)
+        {
+            UnityTextStack castedStack = (UnityTextStack)UnityObject;
+            switch (handlerId.HandlerType)
+            {
+                case HandlerType.Ints:
+                    switch (handlerId.SubType)
+                    {
+                        case IntType.Object_TextStackFixedNumItems:
+                            return castedStack.FixedNumItems;
+                        default:
+                            throw new ArgumentException($"Unknown handler subtype: '{handlerId.SubType}'");
+                    }
+                case HandlerType.TextStackList:
+                    return castedStack.TextStackList;
                 default:
                     throw new ArgumentException($"Unknown handler id: '{handlerId.HandlerType}'");
 

@@ -14,6 +14,7 @@ namespace Assets.Scripts.Networking.DataModels.UnityObjects
         Text,
         String,
         Slider,
+        TextStack,
     }
     public abstract class UnityObject : OptionsInterface<UnityObjectOptions>
     {
