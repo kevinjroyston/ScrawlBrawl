@@ -14,7 +14,7 @@ namespace Backend.APIs.Hubs
     /// </summary>
     public class UnityHub : Hub
     {
-        private const string ServerVersion = "1.0.0";
+        private const string ServerVersion = "2.1.0";
 
 
         private GameManager GameManager { get; set; }

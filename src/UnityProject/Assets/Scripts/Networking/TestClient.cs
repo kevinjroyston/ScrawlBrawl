@@ -26,7 +26,7 @@ public class TestClient : MonoBehaviour
 {
     private SignalRLib srLib;
 
-    private const string ClientVersion = "1.0.1";
+    private const string ClientVersion = "2.1.0";
     private Task hubTask;
 
     private List<string> handlers = new List<string>() { "ConfigureMetadata", "UpdateState", "LobbyClose" };
@@ -71,15 +71,15 @@ public class TestClient : MonoBehaviour
             signalRHubURL = "https://api.scrawlbrawl.tv/signalr";
         }
 #endif
-signalRHubURL = "http://localhost:50403/signalr";
 
         Debug.Log("URL:"+Application.absoluteURL);
         srLib = new SignalRLib(signalRHubURL, handlers, true);
 
         Application.runInBackground = true;
-            QualitySettings.vSyncCount = 0;  // VSync must be disabled
+        QualitySettings.vSyncCount = 0;  // VSync must be disabled
+
 #if UNITY_WEBGL
-        Application.targetFrameRate = -1;
+        Application.targetFrameRate = -1;  // https://docs.unity3d.com/ScriptReference/Application-targetFrameRate.html
 #else
         Application.targetFrameRate = 60;
 #endif
@@ -88,13 +88,6 @@ signalRHubURL = "http://localhost:50403/signalr";
         {
             Debug.Log(e.ConnectionId);
             Connected = true;  // just a flag we are using to know we connected, does not ensure we have not been disconnected
-            /*          old code for logging hubConnection
-                        .ConfigureLogging(logging =>
-                             {
-                                 logging.AddProvider(new DebugLoggerProvider());
-                                 logging.SetMinimumLevel(LogLevel.Debug);
-                             })
-            */
             Uri uri = new Uri(Application.absoluteURL);
             NameValueCollection qry = HttpUtility.ParseQueryString(uri.Query);
 
@@ -381,7 +374,6 @@ signalRHubURL = "http://localhost:50403/signalr";
 
         public void OnApplicationQuit()
         {
-// plr         srLib?.DisposeAsync();
         }
 
         private void ConnectToHub()
@@ -396,31 +388,6 @@ signalRHubURL = "http://localhost:50403/signalr";
                 Debug.Log("Hub restart requested but connection is active");
                 return;
             }
-/* plr
-            hubTask = srLib
-                .StartAsync().ContinueWith(task =>
-                {
-                    if (task.IsFaulted)
-                    {
-                        Console.WriteLine("There was an error opening the connection:{0}",
-                                          task.Exception.GetBaseException());
-                        throw task.Exception.GetBaseException();
-                    }
-                    else
-                    {
-                        Console.WriteLine("Connected to Server");
-                        if(!string.IsNullOrWhiteSpace(LobbyId))
-                        {
-                            srLib.SendAsync("JoinRoom", LobbyId);
-                        }
-                        else
-                        {
-                            Dirty = true;
-                            LobbyClosed = true;
-                        }
-                    }
-                });
-*/
         }
  
 }
