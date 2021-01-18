@@ -31,7 +31,7 @@ namespace Backend.Games.BriansGames.HintHint
             Title = "Hint Hint",
             GameId = GameModeId.HintHint,
             Description = "Try to guess what's being hinted at, but be warned, one of hint givers may be trying to manipulate you!",     
-            MinPlayers = 6,
+            MinPlayers = 4,
             MaxPlayers = null,
             Attributes = new GameModeAttributes
             {

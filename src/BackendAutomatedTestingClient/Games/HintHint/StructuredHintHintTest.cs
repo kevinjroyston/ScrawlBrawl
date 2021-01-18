@@ -8,6 +8,7 @@ using System.Text;
 using static Common.DataModels.Requests.LobbyManagement.ConfigureLobbyRequest;
 using GameStep = System.Collections.Generic.IReadOnlyDictionary<Common.DataModels.Enums.UserPromptId, int>;
 using Common.Code.Extensions;
+using Common.DataModels.Enums;
 
 namespace BackendAutomatedTestingClient.Games.HintHint
 {
@@ -16,8 +17,6 @@ namespace BackendAutomatedTestingClient.Games.HintHint
         protected abstract int NumPlayers { get; }
         protected abstract int NumRealHintGivers { get; }
         protected abstract int NumFakeHintGivers { get; }
-        protected abstract int MaxHints { get; }
-        protected abstract int MaxGuesses { get; }
         protected abstract List<GuessType> Guesses { get; }
         private int GuessIndex { get; set; } = 0;
 
@@ -29,8 +28,8 @@ namespace BackendAutomatedTestingClient.Games.HintHint
                 {
                     new GameModeOptionRequest(){ Value = NumRealHintGivers + "" }, 
                     new GameModeOptionRequest(){ Value = NumFakeHintGivers + "" },
-                     new GameModeOptionRequest(){ Value = MaxHints + "" },
-                    new GameModeOptionRequest(){ Value = MaxGuesses + "" },
+                     new GameModeOptionRequest(){ Value = "50" },
+                    new GameModeOptionRequest(){ Value = "20" },
                     new GameModeOptionRequest(){ Value = "5" } // game speed
                 },
             };
@@ -41,31 +40,31 @@ namespace BackendAutomatedTestingClient.Games.HintHint
             {
                 var toReturn = new List<GameStep>();
 
-                toReturn.AppendRepetitiveGameSteps(
-                    copyFrom: new List<GameStep>
-                    {
-                        TestCaseHelpers.AllPlayers(
-                            numPlayers:NumPlayers,
-                            prompt: UserPromptId.FriendQuiz_CreateQuestion),
-                    },
-                    repeatCounter: NumQuestionsSetup);
+                toReturn.Add(TestCaseHelpers.AllPlayers(
+                            numPlayers: NumPlayers,
+                            prompt: UserPromptId.HintHint_SetupRound1));
+                toReturn.Add(TestCaseHelpers.AllPlayers(
+                            numPlayers: NumPlayers,
+                            prompt: UserPromptId.HintHint_SetupRound2));
+                toReturn.Add(TestCaseHelpers.AllPlayers(
+                            numPlayers: NumPlayers,
+                            prompt: UserPromptId.HintHint_SetupRound3));
 
-                toReturn.AppendRepetitiveGameSteps(
+                var roundHintGuesses = new List<GameStep>();
+                roundHintGuesses.AppendRepetitiveGameSteps(
                     copyFrom: new List<GameStep>
                     {
-                        TestCaseHelpers.AllPlayers(
-                            numPlayers:NumPlayers,
-                            prompt: UserPromptId.FriendQuiz_AnswerQuestion),
+                        new Dictionary<UserPromptId, int>
+                        {
+                            { UserPromptId.HintHint_Hint, NumRealHintGivers + NumFakeHintGivers },
+                            { UserPromptId.HintHint_Guess, NumPlayers - NumRealHintGivers - NumFakeHintGivers },
+                        },
                     },
-                    repeatCounter: Math.Min(NumQuestionsToAnswer, NumPlayers * NumQuestionsSetup));
-
+                    repeatCounter: Guesses.Count);
+                roundHintGuesses.Add(TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipReveal, NumPlayers, UserPromptId.RevealScoreBreakdowns));
+                roundHintGuesses.Add(TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipScoreboard, NumPlayers, UserPromptId.RevealScoreBreakdowns));
                 toReturn.AppendRepetitiveGameSteps(
-                    copyFrom: new List<GameStep>
-                    {
-                        TestCaseHelpers.OneVsAll(UserPromptId.Waiting, NumPlayers, UserPromptId.FriendQuiz_Query),
-                        TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipReveal, NumPlayers, UserPromptId.RevealScoreBreakdowns),
-                        TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipScoreboard, NumPlayers, UserPromptId.RevealScoreBreakdowns)
-                    },
+                    copyFrom: roundHintGuesses,
                     repeatCounter: NumPlayers);
 
 
@@ -90,4 +89,45 @@ namespace BackendAutomatedTestingClient.Games.HintHint
             }
         }
     }
+
+    [EndToEndGameTest("HintHint_Struct1")]
+    public class Struct_HH_Test1 : StructuredHintHintTest
+    {
+        protected override int NumPlayers => 5;
+        protected override int NumRealHintGivers => 2;
+        protected override int NumFakeHintGivers => 1;
+        protected override List<GuessType> Guesses => new List<GuessType>()
+        {
+            GuessType.Standard,
+            GuessType.Standard,
+            GuessType.Standard,
+            GuessType.Standard,
+            GuessType.Standard,
+            GuessType.Standard,
+            GuessType.Real,
+        };
+    }
+
+    [EndToEndGameTest("HintHint_Struct2")]
+    public class Struct_HH_Test2 : StructuredHintHintTest
+    {
+        protected override int NumPlayers => 10;
+        protected override int NumRealHintGivers => 3;
+        protected override int NumFakeHintGivers => 2;
+        protected override List<GuessType> Guesses => new List<GuessType>()
+        {
+            GuessType.Standard,
+            GuessType.Standard,
+            GuessType.Standard,
+            GuessType.Standard,
+            GuessType.Standard,
+            GuessType.Standard,
+            GuessType.Standard,
+            GuessType.Standard,
+            GuessType.Standard,
+            GuessType.Standard,
+            GuessType.Fake,
+        };
+    }
+
 }
