@@ -44,6 +44,11 @@ namespace Backend.APIs.DataModels.UnityObjects
                  {UnityObjectOptions.RevealThisImage, legacy._VoteRevealOptions?._RevealThisImage }
             };
         }
+        protected UnityObject(Guid UnityObjectId)
+        {
+            this.UnityObjectId = UnityObjectId;
+        }
+
         protected UnityObject()
         {
             this.UnityObjectId = Guid.NewGuid();

@@ -21,13 +21,13 @@ namespace Backend.APIs.DataModels.UnityObjects
             this.SpriteGridHeight = legacy._SpriteGridHeight;
         }
 
-        public UnityImage()
+        public UnityImage() : base()
         {
             this.Type = UnityObjectType.Image;
         }
-        public UnityImage(Guid UnityObjectId)
+        public UnityImage(Guid UnityObjectId) : base(UnityObjectId)
         {
-            this.UnityObjectId = UnityObjectId;
+            this.Type = UnityObjectType.Image;
         }
     }
 }

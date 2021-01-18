@@ -99,11 +99,6 @@ namespace Backend.GameInfrastructure
             Logger = logger;
         }
 
-        private void StatusCode(int v1, string v2)
-        {
-            throw new NotImplementedException();
-        }
-
         public void ReportGameError(ErrorType type, string lobbyId, User user = null, Exception error = null)
         {
             // Log error to console (TODO redirect to file on release builds).
