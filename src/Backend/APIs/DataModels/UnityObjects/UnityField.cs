@@ -1,4 +1,5 @@
 ﻿using Backend.APIs.DataModels.Enums;
+using PostSharp.Patterns.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Backend.APIs.DataModels.UnityObjects
 {
+    [NotifyPropertyChanged]
     public class UnityField<T> : OptionsInterface<UnityFieldOptions>
     {
         public T Value { get; set; }

@@ -210,8 +210,13 @@ namespace Backend.GameInfrastructure
             }
             else if (currentView != null)
             {
-                if (!returnNullIfNoChange || (this.CurrentGameState?.UnityViewDirty ?? false))
+                if (!returnNullIfNoChange)
                 {
+                    return currentView;
+                }
+                else if (this.CurrentGameState?.UnityViewDirty ?? false)
+                {
+                    this.CurrentGameState.UnityViewDirty = false;
                     return currentView;
                 }
             }

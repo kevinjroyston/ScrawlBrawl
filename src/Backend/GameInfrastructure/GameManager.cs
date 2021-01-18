@@ -15,6 +15,7 @@ using Common.DataModels.Requests;
 using Common.DataModels.Responses;
 using Common.DataModels.Enums;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Backend.GameInfrastructure
 {

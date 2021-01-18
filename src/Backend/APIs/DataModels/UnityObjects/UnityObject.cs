@@ -25,7 +25,7 @@ namespace Backend.APIs.DataModels.UnityObjects
         public Guid? OwnerUserId { get; set; }
         public UnityField<int?> VoteCount { get; set; }
         public UnityField<IReadOnlyList<int>> BackgroundColor { get; set; }
-        public Guid UnityObjectId { get; private set; }
+        public Guid UnityObjectId { get; protected set; }
         public Dictionary<UnityObjectOptions, object> Options { get; set; }
 
         protected UnityObject(Legacy_UnityImage legacy)
@@ -44,6 +44,11 @@ namespace Backend.APIs.DataModels.UnityObjects
                  {UnityObjectOptions.RevealThisImage, legacy._VoteRevealOptions?._RevealThisImage }
             };
         }
+        protected UnityObject(Guid UnityObjectId)
+        {
+            this.UnityObjectId = UnityObjectId;
+        }
+
         protected UnityObject()
         {
             this.UnityObjectId = Guid.NewGuid();
