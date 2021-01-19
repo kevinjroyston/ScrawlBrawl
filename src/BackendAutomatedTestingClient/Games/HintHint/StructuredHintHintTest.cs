@@ -90,7 +90,7 @@ namespace BackendAutomatedTestingClient.Games.HintHint
         }
     }
 
-    [EndToEndGameTest("HintHint_Struct1")]
+    //[EndToEndGameTest("HintHint_Struct1")]
     public class Struct_HH_Test1 : StructuredHintHintTest
     {
         protected override int NumPlayers => 5;
@@ -108,7 +108,7 @@ namespace BackendAutomatedTestingClient.Games.HintHint
         };
     }
 
-    [EndToEndGameTest("HintHint_Struct2")]
+  //  [EndToEndGameTest("HintHint_Struct2")]
     public class Struct_HH_Test2 : StructuredHintHintTest
     {
         protected override int NumPlayers => 10;

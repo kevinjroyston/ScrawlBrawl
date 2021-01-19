@@ -126,75 +126,62 @@ namespace Backend.Games.BriansGames.HintHint
 
             ConcurrentBag<RealFakePair> realFakePairs = new ConcurrentBag<RealFakePair>();
 
-            StateChain setupStateChain = new StateChain(
-                stateGenerator: (int counter) =>
-                {
-                    switch (counter)
-                    {
-                        case 0:
-                            return new SetupRound1_GS(lobby, realFakePairs, setupRound1Timer);
+            State SetupRound1Generator()
+            {
+                return new SetupRound1_GS(lobby, realFakePairs, setupRound1Timer);
+            }
 
-                        case 1:
-                            setupRound2Timer = setupRound2Timer?.Multiply(Math.Ceiling(1.0 * numBannedWords / numFakeHintGivers));
-                            AssignRealFakeUsers();
-                            return new SetupRound2_GS(lobby, realFakePairs.ToList(), (int) Math.Ceiling( 1.0 * numBannedWords / numFakeHintGivers), numBannedWords, setupRound2Timer);
+            State SetupRound2Generator()
+            {
+                setupRound2Timer = setupRound2Timer?.Multiply(Math.Ceiling(1.0 * numBannedWords / numFakeHintGivers));
+                AssignRealFakeUsers();
+                return new SetupRound2_GS(lobby, realFakePairs.ToList(), (int)Math.Ceiling(1.0 * numBannedWords / numFakeHintGivers), numBannedWords, setupRound2Timer);
+            }
+            State SetupRound3Generator()
+            {
+                return new SetupRound3_GS(lobby, realFakePairs.ToList(), setupRound3Timer);
+            }
 
-                        case 2:
-                            return new SetupRound3_GS(lobby, realFakePairs.ToList(), setupRound3Timer);
-
-                        default:
-                            return null;
-                    }
-
-                });
 
             List<State> chain = new List<State>();
             List<RealFakePair> randomizedRealFakePairs = realFakePairs.OrderBy(_ => Rand.Next()).ToList();
-            StateChain hintScoreChain = new StateChain(states: randomizedRealFakePairs.Select(realFakePair =>
+
+
+            State GetGamePlayLoop()
             {
-                return (State) new StateChain(stateGenerator: (int counter) =>
+                StateChain gamePlay = new StateChain(states: randomizedRealFakePairs.Select(realFakePair =>
                 {
-                    switch (counter)
+                    return (State)new StateChain(stateGenerator: (int counter) =>
                     {
-                        case 0:
-                            return new HintRound_GS(lobby, realFakePair, maxHints, maxGuesses, guessingTimer);
-                        case 1:
-                            return new HintGuessReveal(lobby, realFakePair);
-                        case 2:
-                            if (realFakePair.Equals(randomizedRealFakePairs.Last()))
-                            {
-                                return new ScoreBoardGameState(lobby, "Final Scores:");
-                            }
-                            else
-                            {
-                                return new ScoreBoardGameState(lobby);
-                            }
-                        default:
-                            return null;
-                    }
-                });
-            }).ToList());
+                        switch (counter)
+                        {
+                            case 0:
+                                return new HintRound_GS(lobby, realFakePair, maxHints, maxGuesses, guessingTimer);
+                            case 1:
+                                return new HintGuessReveal(lobby, realFakePair);
+                            case 2:
+                                if (realFakePair.Equals(randomizedRealFakePairs.Last()))
+                                {
+                                    return new ScoreBoardGameState(lobby, "Final Scores:");
+                                }
+                                else
+                                {
+                                    return new ScoreBoardGameState(lobby);
+                                }
+                            default:
+                                return null;
+                        }
+                    });
+                }).ToList());
+                return gamePlay;
+            }
 
-
-            StateChain gameplayStateChain = new StateChain(
-                stateGenerator: (int counter) =>
-                {
-                    switch (counter)
-                    {
-                        case 0:
-                            return setupStateChain;
-
-                        case 1:
-                            return hintScoreChain;
-
-                        default:
-                            return null;
-                    }
-
-                });
-
-            this.Entrance.Transition(gameplayStateChain);
-            gameplayStateChain.Transition(this.Exit);
+            this.Entrance.Transition(
+                SetupRound1Generator,
+                SetupRound2Generator,
+                SetupRound3Generator,
+                GetGamePlayLoop, 
+                () => this.Exit);
 
             void AssignRealFakeUsers()
             {

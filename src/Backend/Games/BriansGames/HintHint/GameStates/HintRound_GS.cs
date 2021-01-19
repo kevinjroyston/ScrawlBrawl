@@ -84,12 +84,12 @@ namespace Backend.Games.BriansGames.HintHint.GameStates
 
             StateChain hintGuessChain = new StateChain(stateGenerator: (int counter) =>
             {
-                if (userToNumLeft.Values.Any(numLeft => numLeft > 0) && !realGuessed && !fakeGuessed)
+                if (!realGuessed && !fakeGuessed && counter < Math.Max(maxHints, maxGuesses))
                 {
-                    return new SelectivePromptUserState(
-                        usersToPrompt: userToNumLeft.Keys.Where(user => userToNumLeft[user] > 0).ToList(),
+                    return new SimplePromptUserState(
                         promptGenerator: (User user) =>
                         {
+
                             if (realFakePair.RealHintGivers.Contains(user))
                             {
                                 return RealHintPromptGenerator(user);
@@ -328,6 +328,10 @@ namespace Backend.Games.BriansGames.HintHint.GameStates
             UserTimeoutAction GuessTimeourHandler(User user, UserFormSubmission input)
             {
                 string guess = input?.SubForms?[0].ShortAnswer ?? string.Empty;
+                if (string.IsNullOrWhiteSpace(guess))
+                {
+                    return UserTimeoutAction.None;
+                }
                 if (guess.FuzzyEquals(realFakePair.RealGoal) && !fakeGuessed)
                 {
                     guess = "<color=green>" + guess + "</color>";
