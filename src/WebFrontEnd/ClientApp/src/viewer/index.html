@@ -14,10 +14,26 @@
         var unityInstance = UnityLoader.instantiate("unityContainer", "/viewer/Build/ScrawlBrawlWebViewer.json", {
             onProgress: UnityProgress
         });
+
+        function onResize() {
+            var canvas = unityInstance.Module.canvas;
+            var container = unityInstance.container;
+            var w = window.innerWidth - 20;
+            var h = window.innerHeight;
+            var r = 1080 / 1920;
+            if (w * r > h) {
+                w = Math.min(w,
+                    Math.ceil(h / r));
+            }
+            h = Math.floor(w * r);
+
+            container.style.width = w + "px";
+            container.style.height = h + "px";
+        }
     </script>
 </head>
 
-<body>
+<body onload="setTimeout(onResize,10000)" onresize="onResize()">
     <div class="webgl-content">
         <div id="unityContainer" style="width: 960px; height: 540px"></div>
         <div class="footer">
