@@ -265,13 +265,22 @@ interface SubPrompt {
     slider: SliderPromptMetadata;
     selector: SelectorPromptMetadata;
 }
+interface RangeHighlightsType
+{
+    start: number;
+    end: number;
+    class: string; 
+}
+
 interface SliderPromptMetadata {
   min: number;
   max: number;
   value: string;
   ticks: number[];
   range: boolean;
+  enabled: boolean;
   ticksLabels: string[];
+  rangeHighlights: RangeHighlightsType[];
 }
 interface SelectorPromptMetadata {
   widthInPx: number;
