@@ -31,7 +31,7 @@ namespace Backend.APIs.Controllers
                 return new BadRequestResult();
             }
 
-            const bool tempDebug = false;
+            const bool tempDebug = true;
             if (!tempDebug)
             {
                 if (!Sanitize.SanitizeString(id, out string error, Constants.RegexStrings.UserId,50,50))
@@ -84,6 +84,8 @@ namespace Backend.APIs.Controllers
                             Min=0,
                             Max=300,
                             Range=false,
+                            Enabled=false,
+                            RangeHighlights= new RangeHighlightsType[] { new RangeHighlightsType{Start=10, End= 75, Class="" }},
                             Value= new int[] { 75 },
                             Ticks=new int[]{0,100,200,300},
                             TicksLabels= new string[]
@@ -103,7 +105,7 @@ namespace Backend.APIs.Controllers
                             Min=0,
                             Max=300,
                             Range=true,
-                            Value= new int[] { 100, 200 },
+                            Value = new int[] { 100, 200 },
                             Ticks=new int[]{0,100,200,300},
                             TicksLabels= new string[]
                             {
@@ -222,7 +224,7 @@ namespace Backend.APIs.Controllers
 
                     },
                     SubmitButton = true
-                }); ;
+                });
             }
         }
     }

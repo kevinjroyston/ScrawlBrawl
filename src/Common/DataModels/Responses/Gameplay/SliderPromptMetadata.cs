@@ -1,6 +1,12 @@
 ﻿namespace Common.DataModels.Responses
 {
 
+    public class RangeHighlightsType
+    {
+        public int Start { get; set; }
+        public int End { get; set; }
+        public string Class { get; set; }
+    }
     /// <summary>
     /// Class containing metadata about a selector prompt.
     /// </summary>
@@ -16,6 +22,9 @@
         public bool Range { get; set; }
         public int[] Ticks { get; set; }
 
+        public bool Enabled { get; set; } = true;
+
+        public RangeHighlightsType[] RangeHighlights { get; set; }
         public string[] TicksLabels { get; set; }
 
     }
