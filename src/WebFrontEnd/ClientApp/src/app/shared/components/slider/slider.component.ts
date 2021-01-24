@@ -58,9 +58,11 @@ export class Slider implements ControlValueAccessor {
   @Input() sliderParameters: SliderPromptMetadata;
 
   sliderSelection: string="";
-  
+  //sliderParameters.rangeHighlights
+  theRangeHighlights: RangeHighlightsType[];
+
   sliderValueToText(sp: SliderPromptMetadata, value): string {
-    return "";
+    return "test";
 /*
     if (sp.textValueList.length < 2) return "";
     let ind: number;
@@ -74,13 +76,14 @@ export class Slider implements ControlValueAccessor {
     sp.value = event.value;
 //    sp.currentTextValue = this.sliderValueToText(sp,event.value);
 }
+/*
   formatLabel = (sp: SliderPromptMetadata) => {
       return (value: number) => {
         if (!sp) return "";
         return this.sliderValueToText(sp,value);
       }
     }
-    
+*/    
   writeValue(obj: any): void {
     if (obj == null) {  // remove the slider
 
@@ -102,6 +105,7 @@ export class Slider implements ControlValueAccessor {
   constructor(element: ElementRef) {
     console.log("build slider");
     //    this.element = element.nativeElement;
+
   }
 
     valueChange(val: any) {
@@ -116,6 +120,9 @@ export class Slider implements ControlValueAccessor {
     console.log("on init - slider");
       console.log(this.sliderParameters);
     this.sliderSelection = this.sliderParameters.range?"before":"none";
+    if (this.sliderParameters && this.sliderParameters.rangeHighlights) {
+      this.theRangeHighlights = this.sliderParameters.rangeHighlights;
+    }
 
     /*
         this.createRotatorImages(this.sliderParameters.widthInPx, this.sliderParameters.heightInPx);
@@ -136,11 +143,20 @@ export class Slider implements ControlValueAccessor {
 
 }
 
+interface RangeHighlightsType
+{
+    start: number;
+    end: number;
+    class: string; 
+}
+
 interface SliderPromptMetadata {
   min: number;
   max: number;
   value: number[];
   ticks: number[];
   range: boolean;
+  enabled: boolean;
   ticksLabels: string[];
+  rangeHighlights: RangeHighlightsType[];
 }

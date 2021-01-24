@@ -1,56 +1,36 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, Provider, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { msalConfig, msalAngularConfig } from './app-config';
+import { MSALInstanceFactory, MSALGuardConfigFactory, MSALInterceptorConfigFactory } from './app-config';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { IPublicClientApplication, PublicClientApplication, InteractionType, BrowserCacheLocation } from '@azure/msal-browser';
+import { MsalGuard, MsalInterceptor, MsalBroadcastService, MsalInterceptorConfiguration, MsalModule, MsalService, MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 
-import {
-    MsalModule,
-    MsalInterceptor,
-    MSAL_CONFIG,
-    MSAL_CONFIG_ANGULAR,
-    MsalService,
-    BroadcastService,
-    MsalAngularConfiguration
-} from '@azure/msal-angular';
 
 import { CoreModule } from '@core/core.module';
 import { SharedModule } from '@shared/shared.module';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from '@layout/nav-menu/nav-menu.component';
 import { FooterComponent } from '@layout/footer/footer.component'
-import { Configuration } from 'msal';
 import { AppRoutingModule } from './app.routing';
 import { environment } from 'environments/environment';
 import { FooterService } from '@layout/footer/footer.service';
 import { NavMenuService } from '@layout/nav-menu/nav-menu.service';
 import { MatTabsModule } from '@angular/material/tabs';
 
-function MSALConfigFactory(): Configuration {
-    return msalConfig;
-}
 
-function MSALAngularConfigFactory(): MsalAngularConfiguration {
-    return msalAngularConfig;
-}
-
-export const providers : Provider[] = (<Provider[]>[
-  { 
-    provide: MSAL_CONFIG,
-    useFactory: MSALConfigFactory
-  },
-  {
-    provide: MSAL_CONFIG_ANGULAR,
-    useFactory: MSALAngularConfigFactory
-  },
-  MsalService
+export const providers: Provider[] = (<Provider[]>[
+  { provide: MSAL_INSTANCE, useFactory: MSALInstanceFactory },
+  { provide: MSAL_GUARD_CONFIG, useFactory: MSALGuardConfigFactory },
+  { provide: MSAL_INTERCEPTOR_CONFIG, useFactory: MSALInterceptorConfigFactory },
+  MsalService, MsalGuard, MsalBroadcastService
 ]).concat(environment.enableMsal ? [
   {
     provide: HTTP_INTERCEPTORS,
-    useClass: MsalInterceptor,    
+    useClass: MsalInterceptor,
     multi: true
   }
-]:[])
+] : [])
 
 
 @NgModule({
