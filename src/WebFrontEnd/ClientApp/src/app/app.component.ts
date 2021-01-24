@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MsalService, BroadcastService } from '@azure/msal-angular';
+import { MsalService, MsalBroadcastService } from '@azure/msal-angular';
 
 @Component({
     selector: 'app-root',
@@ -11,9 +11,10 @@ export class AppComponent implements OnInit {
     title = 'app';
     constructor(
         private msalService: MsalService,
-        private broadcastService: BroadcastService) {
+        private broadcastService: MsalBroadcastService) {
     }
     ngOnInit() {
+/*        
         this.broadcastService.subscribe('msal:acquireTokenSuccess', (payload) => {
             console.log('access token acquired at: ' + new Date().toString());
             console.log(payload);
@@ -23,6 +24,7 @@ export class AppComponent implements OnInit {
             console.log('access token acquisition fails');
             console.log(payload);
         });
+*/        
     }
 
     onActivate = (event) => {

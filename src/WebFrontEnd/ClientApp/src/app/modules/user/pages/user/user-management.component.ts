@@ -2,7 +2,7 @@ import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router'; 
 import { API } from '@core/http/api';
-import { MsalService, BroadcastService } from '@azure/msal-angular';
+import { MsalService, MsalBroadcastService } from '@azure/msal-angular';
 import Galleries from '@core/models/gallerytypes';
 
 @Component({
