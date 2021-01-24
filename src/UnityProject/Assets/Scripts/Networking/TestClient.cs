@@ -13,9 +13,7 @@ using Assets.Scripts.Networking.DataModels.Enums;
 using Newtonsoft.Json.Linq;
 using static UnityEngine.UI.GridLayoutGroup;
 using Assets.Scripts.Networking.DataModels.UnityObjects;
-using Assets.Scripts.Networking.DataModels.Enums;
 using System.Collections.Specialized;
-using System.Web;
 
 /// <summary>
 /// This class opens a connection to the server and listens for updates. From the main thread the secondary connection thread is
@@ -60,7 +58,7 @@ public class TestClient : MonoBehaviour
 #endif
 #if UNITY_WEBGL
         
-        if (Application.absoluteURL.Contains("localhost"))
+        if (Application.absoluteURL.Contains("localhost") || Application.absoluteURL=="")
         {
             signalRHubURL = "http://localhost:50403/signalr";
         }
@@ -88,13 +86,12 @@ public class TestClient : MonoBehaviour
         {
             Debug.Log(e.ConnectionId);
             Connected = true;  // just a flag we are using to know we connected, does not ensure we have not been disconnected
-            Uri uri = new Uri(Application.absoluteURL);
-            NameValueCollection qry = HttpUtility.ParseQueryString(uri.Query);
 
-            Console.WriteLine(uri.Query); //Query
-            if (qry["lobby"]!="")
+            Uri uri = new Uri(Application.absoluteURL);
+            string[] lobby = uri.Query.Split(new string[]{"lobby="},StringSplitOptions.None);
+            if (lobby.Length==2 && lobby[1].Length > 0)
             {
-                ConnectToLobby(qry["lobby"]);
+                ConnectToLobby(lobby[1].Split('&')[0].Truncate(10));
             }
 
         };
