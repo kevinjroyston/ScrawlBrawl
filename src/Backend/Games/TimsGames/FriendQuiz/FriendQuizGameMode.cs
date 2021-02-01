@@ -189,8 +189,6 @@ namespace Backend.Games.TimsGames.FriendQuiz
                                    usersToQuery: lobby.GetAllUsers().Where(lobbyUser => lobbyUser != user).ToList(),
                                    queryTime: votingTimer)
                                 {
-                                    SliderMin = 0,
-                                    SliderMax = FriendQuizConstants.SliderTickRange,
                                     QueryPromptTitle = $"How do you think {user.DisplayName} answered these questions?",
                                     QueryPromptDescription = "The tighter the range of your guess, the more points if you're correct",
                                     QueryViewOverrides = new UnityViewOverrides()
@@ -236,7 +234,7 @@ namespace Backend.Games.TimsGames.FriendQuiz
                     {
                         queryInfo.UserQueried.ScoreHolder.AddScore(
                             amount: CalculateScore(
-                                mainValue: question.MainAnswer,
+                                question: question,
                                 ansMin: answer.Item1,
                                 ansMax: answer.Item2),
                             reason: Score.Reason.CorrectAnswer);
@@ -245,9 +243,9 @@ namespace Backend.Games.TimsGames.FriendQuiz
             }
         }
 
-        private int CalculateScore(int mainValue, int ansMin, int ansMax)
+        private int CalculateScore(Question question, int ansMin, int ansMax)
         {
-            double rangeInverse = Math.Pow(1.0 - 1.0 * (ansMax - ansMin) / FriendQuizConstants.SliderTickRange, 3);
+            double rangeInverse = Math.Pow(1.0 - 1.0 * (ansMax - ansMin) / (question.MaxBound - question.MinBound), 3);
             return (int) (rangeInverse * FriendQuizConstants.PointsForCorrectAnswer);
         }
     }

@@ -20,8 +20,8 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
     public class Setup_GS: SetupGameState
     {
         private Random Rand { get; } = new Random();
-        private List<string> AnswerTypeStrings { get; set; } = new List<string>();
         private RoundTracker RoundTracker { get; set; }
+
         public Setup_GS(
             Lobby lobby,
             RoundTracker roundTracker,
@@ -35,10 +35,6 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                 setupDurration: setupDuration)
         {
             this.RoundTracker = roundTracker;
-            foreach (Question.AnswerTypes answerType in Enum.GetValues(typeof(Question.AnswerTypes)))
-            {
-                AnswerTypeStrings.Add(Question.AnswerTypeToTypeName[answerType]);
-            }
         }
 
         public override UserPrompt CountingPromptGenerator(User user, int counter)
@@ -49,44 +45,108 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                 Title = "Let's Make Some Questions",
                 Description = "Write a question and choose an answer type for it",
                 SubPrompts = new SubPrompt[]
+                {
+                    new SubPrompt
                     {
-                        new SubPrompt
-                        {
-                            ShortAnswer = true
-                        },
-                        new SubPrompt
-                        {
-                            Answers = AnswerTypeStrings.ToArray()
-                        },
+                        Prompt = "Question",
+                        ShortAnswer = true
                     },
+                    new SubPrompt
+                    {
+                        Prompt = "Left Label",
+                        ShortAnswer = true
+                    },
+                    new SubPrompt
+                    {
+                        Prompt = "Right Label",
+                        ShortAnswer = true
+                    },
+                    new SubPrompt
+                    {
+                        Prompt = "Question Type, (If you select 'Integer' the labels have to be numbers)",
+                        Answers = new string[] {"Generic", "Integer"}
+                    }
+                },
                 SubmitButton = true
             };
         }
 
         public override (bool, string) CountingFormSubmitHandler(User user, UserFormSubmission input, int counter)
         {
-            Question question = new Question()
+            Question question;
+
+            int leftLabelInt;
+            int rightLabelInt;
+            string leftLabel = input?.SubForms[1]?.ShortAnswer;
+            string rightLabel = input?.SubForms[2]?.ShortAnswer;
+
+            if (int.TryParse(leftLabel, out leftLabelInt)
+                && int.TryParse(rightLabel, out rightLabelInt)
+                && leftLabelInt < rightLabelInt
+                && rightLabelInt - leftLabelInt <= FriendQuizConstants.MaxSliderTickRange)
             {
-                Owner = user,
-                Text = input.SubForms[0].ShortAnswer,
-                AnswerType = (Question.AnswerTypes)(input.SubForms[1].RadioAnswer ?? 0)
-            };
+                question = new Question()
+                {
+                    Owner = user,
+                    Text = input.SubForms[0].ShortAnswer,
+                    MinBound = leftLabelInt,
+                    MaxBound = rightLabelInt,
+                    TickLabels = new List<string>() { leftLabel, rightLabel }
+                };
+            }
+            else
+            {
+                question = new Question()
+                {
+                    Owner = user,
+                    Text = input.SubForms[0].ShortAnswer,
+                    TickLabels = new List<string>() { leftLabel, rightLabel }
+                };
+            }
+
             RoundTracker.Questions.Add(question);
             return (true, string.Empty);
         }
 
         public override UserTimeoutAction CountingUserTimeoutHandler(User user, UserFormSubmission input, int counter)
         {
-            if (input?.SubForms?.Count == 2 
+            if (input?.SubForms?.Count == 4 
                 && input.SubForms[0].ShortAnswer != null
-                && input.SubForms[1].RadioAnswer != null)
+                && input.SubForms[1].ShortAnswer != null
+                && input.SubForms[2].ShortAnswer != null
+                && input.SubForms[3].RadioAnswer != null)
             {
-                Question question = new Question()
-                {   
-                    Owner = user,
-                    Text = input.SubForms[0].ShortAnswer,
-                    AnswerType = (Question.AnswerTypes)(input.SubForms[1].RadioAnswer ?? 0)
-                };
+                Question question;
+
+                int leftLabelInt;
+                int rightLabelInt;
+                string leftLabel = input?.SubForms[1]?.ShortAnswer;
+                string rightLabel = input?.SubForms[2]?.ShortAnswer;
+
+                if (int.TryParse(leftLabel, out leftLabelInt)
+                    && int.TryParse(rightLabel, out rightLabelInt)
+                    && leftLabelInt < rightLabelInt
+                    && rightLabelInt - leftLabelInt <= FriendQuizConstants.MaxSliderTickRange)
+                {
+                    question = new Question()
+                    {
+                        Owner = user,
+                        Text = input.SubForms[0].ShortAnswer,
+                        MinBound = leftLabelInt,
+                        MaxBound = rightLabelInt,
+                        TickLabels = new List<string>() { leftLabel, rightLabel }
+                    };
+                }
+                else
+                {
+                    question = new Question()
+                    {
+                        Owner = user,
+                        Text = input.SubForms[0].ShortAnswer,
+                        TickLabels = new List<string>() { leftLabel, rightLabel }
+                    };
+                }
+
                 RoundTracker.Questions.Add(question);
             }
 

@@ -29,7 +29,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                         promptGenerator: (User user) => new UserPrompt()
                         {
                             UserPromptId = UserPromptId.FriendQuiz_AnswerQuestion,
-                            Title = "Answer this question as truthfully as you can",
+                            Title = "Answer this question as best you can",
                             Description = question.Text,
                             SubPrompts = new SubPrompt[]
                             {
@@ -37,10 +37,10 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                                 {
                                     Slider = new SliderPromptMetadata
                                     {
-                                        Min = 0,
-                                        Max = FriendQuizConstants.SliderTickRange,
+                                        Min = question.MinBound,
+                                        Max = question.MaxBound,
                                         Range = false,
-                                        Value = new int[] { FriendQuizConstants.SliderTickRange / 2},
+                                        Value = new int[] { (question.MinBound + question.MaxBound) / 2},
                                         Ticks = question.TickValues.ToArray(),
                                         TicksLabels = question.TickLabels.ToArray()
                                     }

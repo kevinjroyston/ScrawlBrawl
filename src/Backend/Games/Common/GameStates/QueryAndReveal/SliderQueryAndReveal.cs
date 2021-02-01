@@ -18,8 +18,6 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
         public override Action<List<Question>> QueryExitListener { get; set; }
         public string QueryPromptTitle { get; set; } = "Answer these questions";
         public string QueryPromptDescription { get; set; }
-        public int SliderMin { get; set; } = 0;
-        public int SliderMax { get; set; } = 100;
 
         public SliderQueryAndReveal(
             Lobby lobby,
@@ -35,7 +33,7 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
             {
                 return (subForm.Slider[0], subForm.Slider[1]);
             }
-            return (SliderMin, SliderMax);
+            return (-1, -1);
         }
 
         public override UnityView QueryUnityViewGenerator()
@@ -58,12 +56,12 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
                     Prompt = question.Text,
                     Slider = new SliderPromptMetadata()
                     {
-                        Min = SliderMin,
-                        Max = SliderMax,
+                        Min = question.MinBound,
+                        Max = question.MaxBound,
                         Range = true,
                         TicksLabels = question.TickLabels.ToArray(),
                         Ticks = question.TickValues.ToArray(),
-                        Value = new int[] { (int) ((SliderMin + SliderMax) * 0.25), (int)((SliderMin + SliderMax) * 0.75) },
+                        Value = new int[] { (int) ((question.MinBound + question.MaxBound) * 0.25), (int)((question.MinBound + question.MaxBound) * 0.75) },
                     }
                 }).ToArray(),
                 SubmitButton = true
