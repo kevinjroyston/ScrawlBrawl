@@ -229,7 +229,7 @@ namespace Backend.Games.TimsGames.FriendQuiz
             {
                 foreach(QueryInfo<(int, int)?> queryInfo in question.UserAnswers)
                 {
-                    if (queryInfo.Answer != null)
+                    if (queryInfo?.Answer != null)
                     {
                         (int, int) answer = ((int,int)) queryInfo.Answer;
                         if (answer.Item1 <= question.MainAnswer && question.MainAnswer <= answer.Item2)
