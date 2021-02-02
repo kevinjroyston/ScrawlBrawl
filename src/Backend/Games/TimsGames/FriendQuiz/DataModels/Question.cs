@@ -21,13 +21,18 @@ namespace Backend.Games.TimsGames.FriendQuiz.DataModels
             this.Text = copy.Text;
             this.MainUser = copy.MainUser;
             this.MainAnswer = copy.MainAnswer;
-            this.UserAnswers = copy.UserAnswers;
+            //this.UserAnswers = copy.UserAnswers; Do not copy this
+            this.TickLabels = copy.TickLabels;
+            this.MinBound = copy.MinBound;
+            this.MaxBound = copy.MaxBound;
+            this.Numeric = copy.Numeric;
         }
 
-        public List<string> TickLabels { get; set; }
+        public List<string> TickLabels { get; set; } = new List<string> { "Min", "Max" };
 
         public int MinBound { get; set; } = 0;
         public int MaxBound { get; set; } = 100;
+        public bool Numeric { get; set; } = false;
 
         public List<int> TickValues { 
             get

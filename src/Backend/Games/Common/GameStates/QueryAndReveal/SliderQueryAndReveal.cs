@@ -61,7 +61,7 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
                         Range = true,
                         TicksLabels = question.TickLabels.ToArray(),
                         Ticks = question.TickValues.ToArray(),
-                        Value = new int[] { (int) ((question.MinBound + question.MaxBound) * 0.25), (int)((question.MinBound + question.MaxBound) * 0.75) },
+                        Value = new int[] { (int)(question.MinBound + (question.MaxBound - question.MinBound) * 0.25), (int)(question.MinBound + (question.MaxBound - question.MinBound) * 0.75) },
                     }
                 }).ToArray(),
                 SubmitButton = true

@@ -61,11 +61,6 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                         Prompt = "Right Label",
                         ShortAnswer = true
                     },
-                    new SubPrompt
-                    {
-                        Prompt = "Question Type, (If you select 'Integer' the labels have to be numbers)",
-                        Answers = new string[] {"Generic", "Integer"}
-                    }
                 },
                 SubmitButton = true
             };
@@ -91,6 +86,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                     Text = input.SubForms[0].ShortAnswer,
                     MinBound = leftLabelInt,
                     MaxBound = rightLabelInt,
+                    Numeric = true,
                     TickLabels = new List<string>() { leftLabel, rightLabel }
                 };
             }
@@ -110,11 +106,10 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
 
         public override UserTimeoutAction CountingUserTimeoutHandler(User user, UserFormSubmission input, int counter)
         {
-            if (input?.SubForms?.Count == 4 
+            if (input?.SubForms?.Count == 3
                 && input.SubForms[0].ShortAnswer != null
                 && input.SubForms[1].ShortAnswer != null
-                && input.SubForms[2].ShortAnswer != null
-                && input.SubForms[3].RadioAnswer != null)
+                && input.SubForms[2].ShortAnswer != null)
             {
                 Question question;
 
@@ -134,6 +129,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                         Text = input.SubForms[0].ShortAnswer,
                         MinBound = leftLabelInt,
                         MaxBound = rightLabelInt,
+                        Numeric = true,
                         TickLabels = new List<string>() { leftLabel, rightLabel }
                     };
                 }
