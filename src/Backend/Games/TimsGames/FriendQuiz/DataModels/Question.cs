@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Backend.Games.TimsGames.FriendQuiz.DataModels
 {
-    public class Question : UserCreatedObject, Common.GameStates.QueryAndReveal.IQueryable<(int, int)>
+    public class Question : UserCreatedObject, Common.GameStates.QueryAndReveal.IQueryable<(int, int)?>
     {
         public Question()
         {
@@ -45,7 +45,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.DataModels
         public User MainUser { get; set; }
         public int MainAnswer { get; set; }
         //public ConcurrentDictionary<User, (int, int)> UsersToGuesses { get; set; } = new ConcurrentDictionary<User, (int, int)>();
-        public List<QueryInfo<(int, int)>> UserAnswers { get; set; } = new List<QueryInfo<(int, int)>>();
+        public List<QueryInfo<(int, int)?>> UserAnswers { get; set; } = new List<QueryInfo<(int, int)?>>();
 
         public UnityObject QueryUnityObjectGenerator(int numericId)
         {

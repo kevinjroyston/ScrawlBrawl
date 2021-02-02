@@ -227,18 +227,21 @@ namespace Backend.Games.TimsGames.FriendQuiz
         {
             foreach(Question question in questions)
             {
-                foreach(QueryInfo<(int, int)> queryInfo in question.UserAnswers)
+                foreach(QueryInfo<(int, int)?> queryInfo in question.UserAnswers)
                 {
-                    (int, int) answer = queryInfo.Answer;
-                    if (answer.Item1 <= question.MainAnswer && question.MainAnswer <= answer.Item2)
+                    if (queryInfo.Answer != null)
                     {
-                        queryInfo.UserQueried.ScoreHolder.AddScore(
-                            amount: CalculateScore(
-                                question: question,
-                                ansMin: answer.Item1,
-                                ansMax: answer.Item2),
-                            reason: Score.Reason.CorrectAnswer);
-                    }
+                        (int, int) answer = ((int,int)) queryInfo.Answer;
+                        if (answer.Item1 <= question.MainAnswer && question.MainAnswer <= answer.Item2)
+                        {
+                            queryInfo.UserQueried.ScoreHolder.AddScore(
+                                amount: CalculateScore(
+                                    question: question,
+                                    ansMin: answer.Item1,
+                                    ansMax: answer.Item2),
+                                reason: Score.Reason.CorrectAnswer);
+                        }
+                    }             
                 }
             }
         }

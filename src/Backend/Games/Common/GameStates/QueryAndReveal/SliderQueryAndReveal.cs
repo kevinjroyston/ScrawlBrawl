@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Backend.Games.Common.GameStates.QueryAndReveal
 {
-    public class SliderQueryAndReveal : QueryAndRevealState<Question, (int, int)>
+    public class SliderQueryAndReveal : QueryAndRevealState<Question, (int, int)?>
     {
         public override Func<User, List<Question>, UserPrompt> QueryPromptGenerator { get; set; }
         public override Action<List<Question>> QueryExitListener { get; set; }
@@ -27,7 +27,7 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
         {
             QueryPromptGenerator ??= DefaultQueryPromptGenerator;
         }
-        public override (int, int) AnswerExtractor(UserSubForm subForm)
+        public override (int, int)? AnswerExtractor(UserSubForm subForm)
         {
             if (subForm?.Slider?.Count == 2)
             {

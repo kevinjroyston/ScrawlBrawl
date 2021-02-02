@@ -68,6 +68,25 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
 
         public override (bool, string) CountingFormSubmitHandler(User user, UserFormSubmission input, int counter)
         {
+            HandleInput(user, input);
+            return (true, string.Empty);
+        }
+
+        public override UserTimeoutAction CountingUserTimeoutHandler(User user, UserFormSubmission input, int counter)
+        {
+            if (input?.SubForms?.Count == 3
+                && input.SubForms[0].ShortAnswer != null
+                && input.SubForms[1].ShortAnswer != null
+                && input.SubForms[2].ShortAnswer != null)
+            {
+                HandleInput(user, input);
+            }
+
+            return UserTimeoutAction.None;
+        }
+
+        private void HandleInput(User user, UserFormSubmission input)
+        {
             Question question;
 
             int leftLabelInt;
@@ -101,52 +120,6 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
             }
 
             RoundTracker.Questions.Add(question);
-            return (true, string.Empty);
-        }
-
-        public override UserTimeoutAction CountingUserTimeoutHandler(User user, UserFormSubmission input, int counter)
-        {
-            if (input?.SubForms?.Count == 3
-                && input.SubForms[0].ShortAnswer != null
-                && input.SubForms[1].ShortAnswer != null
-                && input.SubForms[2].ShortAnswer != null)
-            {
-                Question question;
-
-                int leftLabelInt;
-                int rightLabelInt;
-                string leftLabel = input?.SubForms[1]?.ShortAnswer;
-                string rightLabel = input?.SubForms[2]?.ShortAnswer;
-
-                if (int.TryParse(leftLabel, out leftLabelInt)
-                    && int.TryParse(rightLabel, out rightLabelInt)
-                    && leftLabelInt < rightLabelInt
-                    && rightLabelInt - leftLabelInt <= FriendQuizConstants.MaxSliderTickRange)
-                {
-                    question = new Question()
-                    {
-                        Owner = user,
-                        Text = input.SubForms[0].ShortAnswer,
-                        MinBound = leftLabelInt,
-                        MaxBound = rightLabelInt,
-                        Numeric = true,
-                        TickLabels = new List<string>() { leftLabel, rightLabel }
-                    };
-                }
-                else
-                {
-                    question = new Question()
-                    {
-                        Owner = user,
-                        Text = input.SubForms[0].ShortAnswer,
-                        TickLabels = new List<string>() { leftLabel, rightLabel }
-                    };
-                }
-
-                RoundTracker.Questions.Add(question);
-            }
-
-            return UserTimeoutAction.None;
         }
     }
 }
