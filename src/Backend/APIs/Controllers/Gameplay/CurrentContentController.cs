@@ -84,6 +84,9 @@ namespace Backend.APIs.Controllers
                             Min=0,
                             Max=300,
                             Range=false,
+                            Enabled=false,
+                            ShowTooltip=Common.DataModels.Enums.SliderTooltipType.Show,
+                            RangeHighlights= new RangeHighlightsType[] { new RangeHighlightsType{Start=10, End= 75, Class="RangeHit" }},
                             Value= new int[] { 75 },
                             Ticks=new int[]{0,100,200,300},
                             TicksLabels= new string[]
@@ -103,6 +106,7 @@ namespace Backend.APIs.Controllers
                             Min=0,
                             Max=300,
                             Range=true,
+                            ShowTooltip=Common.DataModels.Enums.SliderTooltipType.Always,
                             Value= new int[] { 100, 200 },
                             Ticks=new int[]{0,100,200,300},
                             TicksLabels= new string[]
@@ -222,7 +226,7 @@ namespace Backend.APIs.Controllers
 
                     },
                     SubmitButton = true
-                }); ;
+                });
             }
         }
     }

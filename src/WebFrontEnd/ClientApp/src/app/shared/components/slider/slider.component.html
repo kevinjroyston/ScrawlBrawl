@@ -1,4 +1,4 @@
 <div class="sliderFrame">
-    <mv-slider [min]="sliderParameters.min" [max]="sliderParameters.max" [range]="sliderParameters.range" tooltip="show" [tooltipSplit]="true" [step]="1" tooltipPosition="top" [selection]="sliderSelection" [enabled]="true" [ticks]="sliderParameters.ticks"
-        handle="round" [ticksTooltip]="true" [value]="sliderParameters.value" [ticksLabels]="sliderParameters.ticksLabels" (valueChange)="valueChange($event)"></mv-slider>
+    <mv-slider [min]="sliderParameters.min" [max]="sliderParameters.max" [range]="sliderParameters.range" [tooltip]="sliderParameters.showTooltip" [tooltipSplit]="sliderParameters.range" [step]="1" tooltipPosition="top" [selection]="sliderSelection" [ticks]="sliderParameters.ticks"
+        handle="round" [rangeHighlights]="sliderParameters.rangeHighlights" [ticksTooltip]="true" [value]="sliderParameters.value" [ticksLabels]="sliderParameters.ticksLabels" (valueChange)="valueChange($event)" [enabled]="sliderParameters.enabled"></mv-slider>
 </div>
