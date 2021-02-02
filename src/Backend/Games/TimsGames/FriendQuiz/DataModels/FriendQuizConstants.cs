@@ -5,7 +5,7 @@
         public const int PointsForCorrectAnswer = 300;
         public const int PointsForExtraRound = 100;
         public const float ExtraRoundAbstainPercentLimit = 0.75f;
-        public const int SliderTickRange = 100;
+        public const int MaxSliderTickRange = 10000;
 
         public const double SetupTimerMin = 30;
         public const double SetupTimerAve = 60;

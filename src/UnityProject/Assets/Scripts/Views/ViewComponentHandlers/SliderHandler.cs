@@ -59,19 +59,19 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
             {
                 foreach (SliderValueHolder sliderHolder in mainSliderHolders)
                 {
-                    ShowSliderHolder(sliderHolder, true);
+                    ShowSliderHolder(sliderHolder, mainSliderHolders.Count(), true);
                 }
             }
             if (guessSliderHolders != null)
             {
                 foreach (SliderValueHolder sliderHolder in guessSliderHolders)
                 {
-                    ShowSliderHolder(sliderHolder, false);
+                    ShowSliderHolder(sliderHolder, guessSliderHolders.Count(), false);
                 }
             }
         }
 
-        private void ShowSliderHolder(SliderValueHolder sliderHolder, bool isMain = true)
+        private void ShowSliderHolder(SliderValueHolder sliderHolder, int numAnswers = 1, bool isMain = true)
         {
             GameObject toInstantiate;
             float y;
@@ -115,7 +115,7 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
                     min2: SliderBodyAnchorMinX,
                     max2: SliderBodyAnchorMaxX);
 
-                CreateRange(x1, x2, y, anchorHeight * 0.9f, sliderHolder.UserId.ToString());
+                CreateRange(x1, x2, y, anchorHeight * 0.9f, numAnswers);
                 //CreateTick(toInstantiate, x1, y, anchorHeight);
                 //CreateTick(toInstantiate, x2, y, anchorHeight);
             }
@@ -154,7 +154,7 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
 
             createdTick.GetComponent<SliderColorizer>().Colorize(colorId);
         }
-        private void CreateRange(float x1, float x2, float y, float anchorHeight, string colorId)
+        private void CreateRange(float x1, float x2, float y, float anchorHeight, int numAnswers)
         {
             GameObject createdRange = Instantiate(PrefabLookup.Singleton.Mapping[PrefabLookup.PrefabType.SliderRange], transform);
             RectTransform createdRectTransform = createdRange.GetComponent<RectTransform>();
@@ -163,6 +163,8 @@ namespace Assets.Scripts.Views.ViewComponentHandlers
             createdRectTransform.anchorMax = new Vector2(x2, y + anchorHeight / 2);
             createdRectTransform.sizeDelta = new Vector2(0, 0);
 
+            Image rangeImage = createdRange.GetComponent<Image>();
+            rangeImage.color = new Color(rangeImage.color.r, rangeImage.color.g, rangeImage.color.b, 1f / numAnswers);
             //createdRange.GetComponent<SliderColorizer>().Colorize(colorId);
         }
         public void UpdateValue(List<object> objects)

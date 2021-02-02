@@ -189,8 +189,6 @@ namespace Backend.Games.TimsGames.FriendQuiz
                                    usersToQuery: lobby.GetAllUsers().Where(lobbyUser => lobbyUser != user).ToList(),
                                    queryTime: votingTimer)
                                 {
-                                    SliderMin = 0,
-                                    SliderMax = FriendQuizConstants.SliderTickRange,
                                     QueryPromptTitle = $"How do you think {user.DisplayName} answered these questions?",
                                     QueryPromptDescription = "The tighter the range of your guess, the more points if you're correct",
                                     QueryViewOverrides = new UnityViewOverrides()
@@ -229,25 +227,28 @@ namespace Backend.Games.TimsGames.FriendQuiz
         {
             foreach(Question question in questions)
             {
-                foreach(QueryInfo<(int, int)> queryInfo in question.UserAnswers)
+                foreach(QueryInfo<(int, int)?> queryInfo in question.UserAnswers)
                 {
-                    (int, int) answer = queryInfo.Answer;
-                    if (answer.Item1 <= question.MainAnswer && question.MainAnswer <= answer.Item2)
+                    if (queryInfo.Answer != null)
                     {
-                        queryInfo.UserQueried.ScoreHolder.AddScore(
-                            amount: CalculateScore(
-                                mainValue: question.MainAnswer,
-                                ansMin: answer.Item1,
-                                ansMax: answer.Item2),
-                            reason: Score.Reason.CorrectAnswer);
-                    }
+                        (int, int) answer = ((int,int)) queryInfo.Answer;
+                        if (answer.Item1 <= question.MainAnswer && question.MainAnswer <= answer.Item2)
+                        {
+                            queryInfo.UserQueried.ScoreHolder.AddScore(
+                                amount: CalculateScore(
+                                    question: question,
+                                    ansMin: answer.Item1,
+                                    ansMax: answer.Item2),
+                                reason: Score.Reason.CorrectAnswer);
+                        }
+                    }             
                 }
             }
         }
 
-        private int CalculateScore(int mainValue, int ansMin, int ansMax)
+        private int CalculateScore(Question question, int ansMin, int ansMax)
         {
-            double rangeInverse = Math.Pow(1.0 - 1.0 * (ansMax - ansMin) / FriendQuizConstants.SliderTickRange, 3);
+            double rangeInverse = Math.Pow(1.0 - 1.0 * (ansMax - ansMin) / (question.MaxBound - question.MinBound), 3);
             return (int) (rangeInverse * FriendQuizConstants.PointsForCorrectAnswer);
         }
     }

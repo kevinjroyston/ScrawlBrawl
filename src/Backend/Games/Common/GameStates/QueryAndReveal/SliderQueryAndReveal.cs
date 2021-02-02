@@ -12,14 +12,12 @@ using System.Threading.Tasks;
 
 namespace Backend.Games.Common.GameStates.QueryAndReveal
 {
-    public class SliderQueryAndReveal : QueryAndRevealState<Question, (int, int)>
+    public class SliderQueryAndReveal : QueryAndRevealState<Question, (int, int)?>
     {
         public override Func<User, List<Question>, UserPrompt> QueryPromptGenerator { get; set; }
         public override Action<List<Question>> QueryExitListener { get; set; }
         public string QueryPromptTitle { get; set; } = "Answer these questions";
         public string QueryPromptDescription { get; set; }
-        public int SliderMin { get; set; } = 0;
-        public int SliderMax { get; set; } = 100;
 
         public SliderQueryAndReveal(
             Lobby lobby,
@@ -29,13 +27,13 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
         {
             QueryPromptGenerator ??= DefaultQueryPromptGenerator;
         }
-        public override (int, int) AnswerExtractor(UserSubForm subForm)
+        public override (int, int)? AnswerExtractor(UserSubForm subForm)
         {
             if (subForm?.Slider?.Count == 2)
             {
                 return (subForm.Slider[0], subForm.Slider[1]);
             }
-            return (SliderMin, SliderMax);
+            return null;
         }
 
         public override UnityView QueryUnityViewGenerator()
@@ -58,12 +56,12 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
                     Prompt = question.Text,
                     Slider = new SliderPromptMetadata()
                     {
-                        Min = SliderMin,
-                        Max = SliderMax,
+                        Min = question.MinBound,
+                        Max = question.MaxBound,
                         Range = true,
                         TicksLabels = question.TickLabels.ToArray(),
                         Ticks = question.TickValues.ToArray(),
-                        Value = new int[] { (int) ((SliderMin + SliderMax) * 0.25), (int)((SliderMin + SliderMax) * 0.75) },
+                        Value = new int[] { (int)(question.MinBound + (question.MaxBound - question.MinBound) * 0.25), (int)(question.MinBound + (question.MaxBound - question.MinBound) * 0.75) },
                     }
                 }).ToArray(),
                 SubmitButton = true
