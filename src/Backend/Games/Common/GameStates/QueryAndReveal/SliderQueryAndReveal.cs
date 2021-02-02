@@ -33,7 +33,7 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
             {
                 return (subForm.Slider[0], subForm.Slider[1]);
             }
-            return (-1, -1);
+            return null;
         }
 
         public override UnityView QueryUnityViewGenerator()
