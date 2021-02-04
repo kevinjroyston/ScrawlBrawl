@@ -18,5 +18,11 @@ namespace Common.DataModels.Enums
         Legs,
         Profile
     }
+    public enum SliderTooltipType
+    {
+        Hide,
+        Show,
+        Always
+    }
 
 }

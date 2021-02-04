@@ -59,6 +59,7 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
                         Min = question.MinBound,
                         Max = question.MaxBound,
                         Range = true,
+                        ShowTooltip = question.Numeric ? SliderTooltipType.Always : SliderTooltipType.Hide,
                         TicksLabels = question.TickLabels.ToArray(),
                         Ticks = question.TickValues.ToArray(),
                         Value = new int[] { (int)(question.MinBound + (question.MaxBound - question.MinBound) * 0.25), (int)(question.MinBound + (question.MaxBound - question.MinBound) * 0.75) },

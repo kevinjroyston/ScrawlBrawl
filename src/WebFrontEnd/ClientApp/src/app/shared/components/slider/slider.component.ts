@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, ElementRef, Input, Output, forwardRef } from '@angular/core';
+import { Component, ViewEncapsulation, ElementRef, AfterViewInit, Input, Output, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 /* https://www.npmjs.com/package/ngx-bootstrap-slider   */
@@ -52,25 +52,18 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
         multi: true,
         useExisting: Slider
     }],
-    encapsulation: ViewEncapsulation.Emulated
+    encapsulation: ViewEncapsulation.None,
 })
 export class Slider implements ControlValueAccessor {
   @Input() sliderParameters: SliderPromptMetadata;
 
+  el: ElementRef;
+
   sliderSelection: string="";
-  //sliderParameters.rangeHighlights
   theRangeHighlights: RangeHighlightsType[];
 
   sliderValueToText(sp: SliderPromptMetadata, value): string {
     return "test";
-/*
-    if (sp.textValueList.length < 2) return "";
-    let ind: number;
-    let w: number = Math.floor((sp.maxValue - sp.minValue) / (sp.textValueList.length - 1));
-    if (w < 1) return "";
-    let bin: number = Math.floor((value+(w/2)) / w)
-    return sp.textValueList[bin]
-*/
   }
   updateSetting(sp: SliderPromptMetadata, event) {
     sp.value = event.value;
@@ -100,11 +93,12 @@ export class Slider implements ControlValueAccessor {
   registerOnTouched(fn: any): void {
   }
   setDisabledState?(isDisabled: boolean): void {
+    if (isDisabled) console.log("slider disabled");
   }
 
   constructor(element: ElementRef) {
     console.log("build slider");
-    //    this.element = element.nativeElement;
+    this.el = element.nativeElement;
 
   }
 
@@ -123,22 +117,16 @@ export class Slider implements ControlValueAccessor {
     if (this.sliderParameters && this.sliderParameters.rangeHighlights) {
       this.theRangeHighlights = this.sliderParameters.rangeHighlights;
     }
-
-    /*
-        this.createRotatorImages(this.sliderParameters.widthInPx, this.sliderParameters.heightInPx);
-        for (let i = 0; i < this.sliderParameters.imageList.length; i++) {
-          this.addRotatorImage(this.sliderParameters.imageList[i]);
-        }
-        this.index = 0;
-        this.setImages(0);
-    */
   }
 
-
-
+  ngAfterViewInit() {
+    let myDivs = document.getElementsByClassName('slider-disabled');
+    for (var i = 0; i < myDivs.length; i++) {
+      myDivs[i].classList.remove('slider-disabled'); // we want the slider to behave disabled, but not look disabled
+    }
+  }
 
   onChange = function (s) { console.log("slider onchange called before initialization"); };
-  element;
 
 
 }
@@ -157,6 +145,7 @@ interface SliderPromptMetadata {
   ticks: number[];
   range: boolean;
   enabled: boolean;
+  showTooltip: string;
   ticksLabels: string[];
   rangeHighlights: RangeHighlightsType[];
 }

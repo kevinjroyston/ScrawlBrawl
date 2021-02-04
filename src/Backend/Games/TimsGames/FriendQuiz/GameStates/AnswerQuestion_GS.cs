@@ -40,6 +40,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                                         Min = question.MinBound,
                                         Max = question.MaxBound,
                                         Range = false,
+                                        ShowTooltip = question.Numeric?SliderTooltipType.Always:SliderTooltipType.Hide,
                                         Value = new int[] { (question.MinBound + question.MaxBound) / 2},
                                         Ticks = question.TickValues.ToArray(),
                                         TicksLabels = question.TickLabels.ToArray()
