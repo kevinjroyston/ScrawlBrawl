@@ -9,7 +9,7 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Backend.GameInfrastructure.DataModels;
 #if !DEBUG
-using Microsoft.AspNetCore.Authorization;
+//using Microsoft.AspNetCore.Authorization;
 #endif
 
 namespace Backend.APIs.Controllers.LobbyManagement
@@ -35,7 +35,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
         [HttpGet]
         [Route("Get")]
 #if !DEBUG
-    [Authorize(Policy = "LobbyManagement")]
+//    [Authorize(Policy = "LobbyManagement")]
 #endif
         public IActionResult GetLobby([FromQuery(Name = "Id")]string testHookId)
         {
@@ -61,7 +61,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
         [HttpPost]
         [Route("Create")]
 #if !DEBUG
-    [Authorize(Policy = "LobbyManagement")]
+ //   [Authorize(Policy = "LobbyManagement")]
 #endif
         public IActionResult CreateLobby([FromQuery(Name = "Id")]string testHookId)
         {
@@ -108,7 +108,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
         [HttpGet]
         [Route("Delete")]
 #if !DEBUG
-    [Authorize(Policy = "LobbyManagement")]
+ //   [Authorize(Policy = "LobbyManagement")]
 #endif
         public IActionResult DeleteLobby([FromQuery(Name = "Id")]string testHookId)
         {
@@ -135,7 +135,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
         [HttpPost]
         [Route("Configure")]
 #if !DEBUG
-    [Authorize(Policy = "LobbyManagement")]
+ //   [Authorize(Policy = "LobbyManagement")]
 #endif
         public IActionResult ConfigureLobby([FromBody]ConfigureLobbyRequest request, [FromQuery(Name ="Id")]string testHookId)
         {
@@ -165,7 +165,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
         [HttpGet]
         [Route("Start")]
 #if !DEBUG
-    [Authorize(Policy = "LobbyManagement")]
+ //   [Authorize(Policy = "LobbyManagement")]
 #endif
         public IActionResult StartLobby([FromQuery(Name = "Id")]string testHookId)
         {

@@ -1,5 +1,5 @@
 ﻿#if !DEBUG
-using System.Security.Claims;
+//using System.Security.Claims;
 #endif
 using System.Security.Principal;
 
@@ -9,9 +9,10 @@ namespace Backend.APIs.Helpers.Extensions
     {
         public static string GetUserId(this IPrincipal principal, string testHookId)
         {
-#if DEBUG
+            // DISABLE AUTH
+//#if DEBUG
             return testHookId;
-#else
+/*#else
             if (principal == null)
             {
                 return null;
@@ -19,7 +20,7 @@ namespace Backend.APIs.Helpers.Extensions
             var claimsIdentity = (ClaimsIdentity)principal.Identity;
             var claim = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier);
             return claim?.Value;
-#endif
+#endif*/
         }
 
         /*public static string GetUserAgent(this HttpRequest request)
