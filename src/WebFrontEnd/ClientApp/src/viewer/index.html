@@ -11,18 +11,12 @@
     <script src="/viewer/TemplateData/UnityProgress.js"></script>
     <script src="/viewer/Build/UnityLoader.js"></script>
     <script>
-        var resizeSeconds = 15;
         var unityInstance = UnityLoader.instantiate("unityContainer", "/viewer/Build/ScrawlBrawlWebViewer.json", {
             onProgress: UnityProgress
         });
 
         function timerResize() {
-            console.log("timer: " + resizeSeconds)
             onResize();
-            if (resizeSeconds > 0) {
-                resizeSeconds--;
-                setTimeout(timerResize, 1000);
-            }
         }
 
         function onResize() {
@@ -43,7 +37,7 @@
     </script>
 </head>
 
-<body onload="setTimeout(timerResize,1000)" onresize="onResize()">
+<body onload="setTimeout(timerResize,10000)" onresize="onResize()">
     <div class="webgl-content">
         <div id="unityContainer" style="width: 960px; height: 540px"></div>
         <div class="footer">
