@@ -5,7 +5,7 @@ export const socialLinks = {
   reddit:  "https://www.reddit.com/r/ScrawlBrawl/",
   twitch: "https://www.twitch.tv/scrawlbrawl",
   twitter: "https://twitter.com/ScrawlBrawlGame",
-  youtube: "https://youtube.com/ScrawlBrawlGame", /* needs correct link */
+  youtube: "https://www.youtube.com/channel/UCXaY71hm9tbl1xSb-FKfZRA", /* needs correct link */
 }
 
 export const footerLinks = {
