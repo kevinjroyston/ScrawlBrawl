@@ -1,7 +1,7 @@
 export const footerLinksOrder = ['Questions?', 'About', 'Have thoughts?']
 
 export const socialLinks = {
-  discord: "https://discord.gg/HwjmTxx",
+  discord: "https://discord.gg/b2TMsQF7NG",
   reddit:  "https://www.reddit.com/r/ScrawlBrawl/",
   twitch: "https://www.twitch.tv/scrawlbrawl",
   twitter: "https://twitter.com/ScrawlBrawlGame",
