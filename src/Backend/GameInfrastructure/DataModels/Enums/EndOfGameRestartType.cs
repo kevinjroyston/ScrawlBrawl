@@ -2,8 +2,6 @@
 {
     public enum EndOfGameRestartType
     {
-        KeepScore,
-        ResetScore,
-        Disband,
+        BackToLobby
     }
 }

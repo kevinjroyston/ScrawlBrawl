@@ -17,25 +17,10 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
     {
         public static UserPrompt ContinuePrompt(User user) => new UserPrompt()
         {
-            Title = "What shall we do next?",
+            Title = "Back to lobby",
             UserPromptId = UserPromptId.PartyLeader_GameEnd,
             RefreshTimeInMs = 5000,
-            SubPrompts = new SubPrompt[]
-            {
-                new SubPrompt()
-                {
-                    Prompt = "Lets play some more!",
-                    Answers = RestartTypes.Values.ToArray()
-                },
-            },
             SubmitButton = true,
-        };
-
-        private static readonly Dictionary<EndOfGameRestartType, string> RestartTypes = new Dictionary<EndOfGameRestartType, string>()
-        {
-            { EndOfGameRestartType.ResetScore, "Back to lobby, reset scores" },
-            { EndOfGameRestartType.KeepScore, "Back to lobby, keep scores" },
-            { EndOfGameRestartType.Disband, "Disband" }
         };
 
         public EndOfGameState(Lobby lobby, Action<EndOfGameRestartType> endOfGameRestartCallback)
@@ -53,12 +38,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
 
                       partyLeaderFormSubmitListener: (User user, UserFormSubmission submission) =>
                       {
-                          int? selectedIndex = submission.SubForms[0].RadioAnswer;
-                          if (selectedIndex == null)
-                          {
-                              throw new Exception("Should have been caught in user input validation");
-                          }
-                          endOfGameRestartCallback(RestartTypes.Keys.ToList()[selectedIndex.Value]);
+                          endOfGameRestartCallback(EndOfGameRestartType.BackToLobby);
                           return (true, string.Empty);
                       }))
         {
