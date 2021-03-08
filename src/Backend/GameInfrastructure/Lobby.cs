@@ -20,6 +20,8 @@ using Common.Code.Extensions;
 using Common.DataModels.UnityObjects;
 using Backend.GameInfrastructure.ControlFlows;
 using Backend.Games.Common;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Backend.GameInfrastructure
 {
@@ -29,7 +31,7 @@ namespace Backend.GameInfrastructure
         /// An email address denoting what authenticated user created this lobby.
         /// </summary>
         public AuthenticatedUser Owner { get; }
-        private ConcurrentBag<User> UsersInLobby { get; } = new ConcurrentBag<User>();
+        private ConcurrentDictionary<Guid, User> UsersInLobby { get; } = new ConcurrentDictionary<Guid, User>();
         public string LobbyId { get; }
 
         /// <summary>
@@ -50,7 +52,7 @@ namespace Backend.GameInfrastructure
         private GameManager GameManager { get; set; }
         private InMemoryConfiguration InMemoryConfiguration { get; set; }
 
-
+        private Task PollForDisconnectedUsersTask { get; set; }
 
         public Lobby(string friendlyName, AuthenticatedUser owner, GameManager gameManager, InMemoryConfiguration inMemoryConfiguration)
         {
@@ -59,6 +61,33 @@ namespace Backend.GameInfrastructure
             this.GameManager = gameManager;
             this.InMemoryConfiguration = inMemoryConfiguration;
             InitializeAllGameStates();
+        }
+
+        private async Task PollForDisconnectedUsers()
+        {
+            while (!IsGameInProgress())
+            {
+                DisconnectInactiveUsers();
+                await Task.Delay(2000);
+            }
+        }
+
+        public void DisconnectInactiveUsers()
+        {
+            List<User> inactive = GetAllUsers().Where(user => user.Activity == UserActivity.Inactive).ToList();
+            if (inactive.Count == 0)
+            {
+                return;
+            }
+
+            foreach(User user in inactive)
+            {
+                // For simplicity, tell the server to forget about the user. Could potentially lead to memory issues.
+                this.GameManager.UnregisterUser(user);
+
+                // Best effort remove the user.
+                this.UsersInLobby.Remove(user.Id, out User _);
+            }
         }
 
         /// <summary>
@@ -139,6 +168,7 @@ namespace Backend.GameInfrastructure
             this.WaitForLobbyStart = new WaitForLobbyCloseGameState(this);
             this.EndOfGameRestart = new EndOfGameState(this, PrepareToRestartGame);
             TransitionCurrentGameState(this.WaitForLobbyStart);
+            this.PollForDisconnectedUsersTask = this.PollForDisconnectedUsers();
         }
 
         /// <summary>
@@ -156,7 +186,7 @@ namespace Backend.GameInfrastructure
             }
 
             errorMsg = string.Empty;
-            if (this.UsersInLobby.Contains(user))
+            if (this.UsersInLobby.ContainsKey(user.Id))
             {
                 user.LobbyId = LobbyId;
                 return true;
@@ -168,12 +198,17 @@ namespace Backend.GameInfrastructure
                 return false;
             }
 
+            if (!this.UsersInLobby.TryAdd(user.Id, user))
+            {
+                return false;
+            }
+
             // Should be a quick check in most scenarios
-            if (!this.UsersInLobby.Any((user)=>user.IsPartyLeader))
+            if (!this.UsersInLobby.Values.Any((user)=>user.IsPartyLeader))
             {
                 user.IsPartyLeader = true;
             }
-            this.UsersInLobby.Add(user);
+
             user.SetLobbyJoinTime();
             user.LobbyId = LobbyId;
 
@@ -181,7 +216,7 @@ namespace Backend.GameInfrastructure
         }
         public void Inlet(User user, UserStateResult result, UserFormSubmission formSubmission)
         {
-            if (!this.UsersInLobby.Contains(user))
+            if (!this.UsersInLobby.ContainsKey(user.Id))
             {
                 throw new Exception("User not registered for this lobby");
             }
@@ -241,7 +276,7 @@ namespace Backend.GameInfrastructure
         /// </summary>
         public IReadOnlyList<User> GetUsers(UserActivity acitivity)
         {
-            return this.UsersInLobby.Where(user => user.Activity == acitivity).ToList().AsReadOnly();
+            return this.UsersInLobby.Values.Where(user => user.Activity == acitivity).ToList().AsReadOnly();
         }
 
         /// <summary>
@@ -249,7 +284,7 @@ namespace Backend.GameInfrastructure
         /// </summary>
         public IReadOnlyList<User> GetAllUsers()
         {
-            return this.UsersInLobby.ToList().AsReadOnly();
+            return this.UsersInLobby.Values.ToList().AsReadOnly();
         }
 
         public LobbyMetadataResponse GenerateLobbyMetadataResponseObject()
@@ -284,6 +319,7 @@ namespace Backend.GameInfrastructure
                 return false;
             }
 
+            DisconnectInactiveUsers();
             if (!this.SelectedGameMode.GameModeMetadata.IsSupportedPlayerCount(this.GetAllUsers().Count))
             {
                 errorMsg = Invariant($"Selected game mode has following restrictions: {this.SelectedGameMode.GameModeMetadata.RestrictionsToString()}");
@@ -311,8 +347,6 @@ namespace Backend.GameInfrastructure
             game.Transition(this.EndOfGameRestart);
             this.WaitForLobbyStart.LobbyHasClosed();
 
-
-
             return true;
         }
 
@@ -325,28 +359,11 @@ namespace Backend.GameInfrastructure
             this.Game = null;
             switch (restartType)
             {
-                case EndOfGameRestartType.Disband:
-                    UnregisterAllUsers();
-                    InitializeAllGameStates();
-
-                    // Banish the unregistered user to the shadow realm while it waits to be garbage collected.
-                    previousEndOfGameRestart.Transition(new WaitForUserInput_BlackholeInletConnector(
-                        awaitingInput: (User user) => true,
-                        handleUserTimeout: (User user, UserFormSubmission input) => UserTimeoutAction.None));
-                    break;
-                case EndOfGameRestartType.ResetScore:
+                case EndOfGameRestartType.BackToLobby:
                     InitializeAllGameStates();
                     previousEndOfGameRestart.Transition(this.WaitForLobbyStart);
 
                     this.ResetScores();
-                    break;
-                case EndOfGameRestartType.KeepScore:
-                    InitializeAllGameStates();
-                    previousEndOfGameRestart.Transition(this.WaitForLobbyStart);
-
-                    this.ResetScores(Score.Scope.Reveal);
-                    this.ResetScores(Score.Scope.Scoreboard);
-                    this.ResetScoreBreakdownsOnly(Score.Scope.Total);
                     break;
                 default:
                     throw new Exception("Unknown restart game type");

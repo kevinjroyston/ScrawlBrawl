@@ -32,49 +32,53 @@ namespace Backend.APIs.Controllers
             }
 
             const bool tempDebug = false;
-            if (!tempDebug)
+            if (tempDebug)
             {
-                if (!Sanitize.SanitizeString(id, out string error, Constants.RegexStrings.UserId,50,50))
-                {
-                    return BadRequest(error);
-                }
+                return DebugResponse();
+            }
 
-                User user = GameManager.MapIdentifierToUser(id, out bool newUser);
-                if (user != null)
-                {
-                    user.LastPingTime = DateTime.UtcNow;
-                }
+            if (!Sanitize.SanitizeString(id, out string error, Constants.RegexStrings.UserId, 50, 50))
+            {
+                return BadRequest(error);
+            }
 
-                try
+            User user = GameManager.MapIdentifierToUser(id, out bool newUser);
+            if (user != null)
+            {
+                user.LastPingTime = DateTime.UtcNow;
+            }
+
+            try
+            {
+                lock (user.LockObject)
                 {
-                    lock (user.LockObject)
+                    if (user?.UserState == null)
                     {
-                        if (user?.UserState == null)
-                        {
-                            Debug.Assert(false, "User not in a state!");
-                            Logger.LogWarning(message: $"User (name:'{user?.DisplayName}', id:'{id}') is not in a state");
-                            return BadRequest("Error finding/creating user object.");
-                        }
-
-                        return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
+                        Debug.Assert(false, "User not in a state!");
+                        Logger.LogWarning(message: $"User (name:'{user?.DisplayName}', id:'{id}') is not in a state");
+                        return BadRequest("Error finding/creating user object.");
                     }
-                }
-                catch (Exception e)
-                {
-                    // If this is reached, the game state is likely corrupted and the lobby will need to be restarted or the user evicted.
-                    GameManager.ReportGameError(ErrorType.GetContent, user?.LobbyId, user, e);
-                    return new BadRequestResult();
+
+                    return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
                 }
             }
-            else
+            catch (Exception e)
             {
-                return new JsonResult(new UserPrompt
-                {
-                    Id = Guid.Empty,
-                    Title = "This is a title",
-                    Description = "This is a description",
-                    RefreshTimeInMs = 10000,
-                    SubPrompts = new SubPrompt[]
+                // If this is reached, the game state is likely corrupted and the lobby will need to be restarted or the user evicted.
+                GameManager.ReportGameError(ErrorType.GetContent, user?.LobbyId, user, e);
+                return new BadRequestResult();
+            }
+        }
+
+        private IActionResult DebugResponse()
+        {
+            return new JsonResult(new UserPrompt
+            {
+                Id = Guid.Empty,
+                Title = "This is a title",
+                Description = "This is a description",
+                RefreshTimeInMs = 10000,
+                SubPrompts = new SubPrompt[]
                     {
                     new SubPrompt
                     {
@@ -225,9 +229,8 @@ namespace Backend.APIs.Controllers
                     }
 
                     },
-                    SubmitButton = true
-                });
-            }
+                SubmitButton = true
+            });
         }
     }
 }
