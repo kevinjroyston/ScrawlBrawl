@@ -39,23 +39,20 @@
                         },
                         "scripts": [
                             "./node_modules/hammerjs/hammer.min.js",
+                            "./src/viewer/Build/UnityLoader.js",
                             "./node_modules/bootstrap-slider/dist/bootstrap-slider.min.js"
                         ]
                     },
                     "configurations": {
                         "production": {
-                            "budgets": [
-                                {
-                                    "type": "anyComponentStyle",
-                                    "maximumWarning": "6kb"
-                                }
-                            ],
-                            "fileReplacements": [
-                                {
-                                    "replace": "src/environments/environment.ts",
-                                    "with": "src/environments/environment.prod.ts"
-                                }
-                            ],
+                            "budgets": [{
+                                "type": "anyComponentStyle",
+                                "maximumWarning": "6kb"
+                            }],
+                            "fileReplacements": [{
+                                "replace": "src/environments/environment.ts",
+                                "with": "src/environments/environment.prod.ts"
+                            }],
                             "optimization": true,
                             "outputHashing": "all",
                             "sourceMap": false,
@@ -66,18 +63,14 @@
                             "buildOptimizer": true
                         },
                         "staging": {
-                            "budgets": [
-                                {
-                                    "type": "anyComponentStyle",
-                                    "maximumWarning": "6kb"
-                                }
-                            ],
-                            "fileReplacements": [
-                                {
-                                    "replace": "src/environments/environment.ts",
-                                    "with": "src/environments/environment.staging.ts"
-                                }
-                            ],
+                            "budgets": [{
+                                "type": "anyComponentStyle",
+                                "maximumWarning": "6kb"
+                            }],
+                            "fileReplacements": [{
+                                "replace": "src/environments/environment.ts",
+                                "with": "src/environments/environment.staging.ts"
+                            }],
                             "optimization": true,
                             "outputHashing": "all",
                             "sourceMap": false,
@@ -88,18 +81,14 @@
                             "buildOptimizer": true
                         },
                         "substaging": {
-                            "budgets": [
-                                {
-                                    "type": "anyComponentStyle",
-                                    "maximumWarning": "6kb"
-                                }
-                            ],
-                            "fileReplacements": [
-                                {
-                                    "replace": "src/environments/environment.ts",
-                                    "with": "src/environments/environment.substaging.ts"
-                                }
-                            ],
+                            "budgets": [{
+                                "type": "anyComponentStyle",
+                                "maximumWarning": "6kb"
+                            }],
+                            "fileReplacements": [{
+                                "replace": "src/environments/environment.ts",
+                                "with": "src/environments/environment.substaging.ts"
+                            }],
                             "optimization": true,
                             "outputHashing": "all",
                             "sourceMap": false,

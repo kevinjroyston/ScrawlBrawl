@@ -213,6 +213,7 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             UserPromptHolder userPrompt = GetUserPromptHolder(user);
 
             userPrompt.Prompt.GameId = user.Lobby?.SelectedGameMode?.GameModeMetadata?.GameId;
+            userPrompt.Prompt.LobbyId = user.Lobby?.LobbyId; 
             if (userPrompt.Prompt.SubmitButton)
             {
                 // Set the Auto submit datetime

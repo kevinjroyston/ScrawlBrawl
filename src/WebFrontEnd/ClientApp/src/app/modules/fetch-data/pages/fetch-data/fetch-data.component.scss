@@ -21,7 +21,7 @@ simplebutton {
     width: 90%;
     flex-direction: column;
     margin: 0 auto;
-    & > * {
+    &>* {
         width: 100%;
     }
 }
@@ -183,7 +183,6 @@ input[type="text"] {
     .Error {
         margin-bottom: 1rem;
     }
-
     .form {
         width: 100%;
     }

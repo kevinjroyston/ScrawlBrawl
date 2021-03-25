@@ -17,6 +17,8 @@ namespace Common.DataModels.Responses
 
         public string GameIdString { get { return this.GameId?.ToString()??String.Empty; } }
 
+        public string LobbyId { get; set; } = String.Empty;
+
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public GameModeId? GameId { get; set; }

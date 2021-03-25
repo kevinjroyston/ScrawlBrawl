@@ -86,14 +86,19 @@ public class TestClient : MonoBehaviour
         {
             Debug.Log(e.ConnectionId);
             Connected = true;  // just a flag we are using to know we connected, does not ensure we have not been disconnected
+            if (!string.IsNullOrEmpty(this.LobbyId))
+            {
+                ConnectToLobby(this.LobbyId);
+            }
 
+/* no longer needed with embedded viewer
             Uri uri = new Uri(Application.absoluteURL);
             string[] lobby = uri.Query.Split(new string[]{"lobby="},StringSplitOptions.None);
             if (lobby.Length==2 && lobby[1].Length > 0)
             {
                 ConnectToLobby(lobby[1].Split('&')[0].Truncate(10));
             }
-
+*/
         };
 
         srLib.HandlerInvoked += (object sender, HandlerEventArgs e) =>
@@ -183,7 +188,10 @@ public class TestClient : MonoBehaviour
         public void ConnectToLobby(string lobby)
         {
             LobbyId = lobby;
-            srLib.SendToHub("ConnectWebLobby", LobbyId+"-"+ClientVersion);
+            if (Connected)
+            {
+                srLib.SendToHub("ConnectWebLobby", LobbyId + "-" + ClientVersion);
+            }
         }
 
         public void Start()

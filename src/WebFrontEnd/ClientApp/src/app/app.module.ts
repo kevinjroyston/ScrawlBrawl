@@ -17,6 +17,7 @@ import { environment } from 'environments/environment';
 import { FooterService } from '@layout/footer/footer.service';
 import { NavMenuService } from '@layout/nav-menu/nav-menu.service';
 import { MatTabsModule } from '@angular/material/tabs';
+import { ResizableModule } from 'angular-resizable-element';
 
 
 export const providers: Provider[] = (<Provider[]>[
@@ -48,6 +49,7 @@ export const providers: Provider[] = (<Provider[]>[
     AppRoutingModule,
     HttpClientModule,
     MsalModule,
+    ResizableModule
   ],
   providers: providers.concat([FooterService, NavMenuService]),
   bootstrap: [AppComponent],

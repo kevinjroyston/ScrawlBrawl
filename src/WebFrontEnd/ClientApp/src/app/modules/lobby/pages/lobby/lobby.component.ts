@@ -10,6 +10,8 @@ import {ErrorService} from '../../services/error.service'
 import Lobby from '@core/models/lobby'
 import GameModes from '@core/models/gamemodes'
 import { GameModeList } from '@core/http/gamemodelist';
+import { UnityComponent } from '@shared/components/unity/unity.component';
+import { UnityViewer } from '@core/http/viewerInjectable';
 
 @Component({
     selector: 'app-lobby-management',
@@ -22,7 +24,7 @@ export class LobbyManagementComponent {
     public error: string;
     @ViewChild(GameAssetDirective) gameAssetDirective;
 
-    constructor(@Inject(GameModeList) public gameModeList: GameModeList, @Inject(API) private api: API, private matDialog: MatDialog, public errorService: ErrorService)
+    constructor(@Inject(UnityViewer) private unityViewer:UnityViewer, @Inject(GameModeList) public gameModeList: GameModeList, @Inject(API) private api: API, private matDialog: MatDialog, public errorService: ErrorService)
     {
 /*        this.getGames().then(() => this.onGetLobby()) */
         this.onGetLobby()
@@ -32,6 +34,7 @@ export class LobbyManagementComponent {
         this.api.request({ type: "Lobby", path: "Get" }).subscribe({
             next: async (result) => {
                 this.lobby = result as Lobby.LobbyMetadata;
+                this.unityViewer.UpdateLobbyId(this.lobby.lobbyId);
                 
                 if (this.lobby != null && this.lobby.selectedGameMode != null && this.lobby.gameModeSettings != null) {
                     this.lobby.gameModeSettings.options.forEach((value: GameModes.GameModeOptionResponse, index: number, array: GameModes.GameModeOptionResponse[]) => {
