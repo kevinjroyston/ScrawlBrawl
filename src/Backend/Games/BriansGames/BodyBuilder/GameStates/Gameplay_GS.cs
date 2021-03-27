@@ -207,7 +207,6 @@ namespace Backend.Games.BriansGames.BodyBuilder.GameStates
                 userTimeoutHandler: UserTimeoutHandler,
                 exit: new WaitForUsers_StateExit(
                     lobby: this.Lobby,
-                    usersToWaitFor: WaitForUsersType.All,
                     waitingPromptGenerator: WaitingStatePromptGenerator));
             this.CurrentRoundUserState = promptAndWaitForUsers;
 

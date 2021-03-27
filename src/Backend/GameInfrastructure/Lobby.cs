@@ -52,8 +52,6 @@ namespace Backend.GameInfrastructure
         private GameManager GameManager { get; set; }
         private InMemoryConfiguration InMemoryConfiguration { get; set; }
 
-        private Task PollForDisconnectedUsersTask { get; set; }
-
         public Lobby(string friendlyName, AuthenticatedUser owner, GameManager gameManager, InMemoryConfiguration inMemoryConfiguration)
         {
             this.LobbyId = friendlyName;
@@ -61,15 +59,6 @@ namespace Backend.GameInfrastructure
             this.GameManager = gameManager;
             this.InMemoryConfiguration = inMemoryConfiguration;
             InitializeAllGameStates();
-        }
-
-        private async Task PollForDisconnectedUsers()
-        {
-            while (!IsGameInProgress())
-            {
-                DisconnectInactiveUsers();
-                await Task.Delay(2000);
-            }
         }
 
         public void DisconnectInactiveUsers()
@@ -84,6 +73,8 @@ namespace Backend.GameInfrastructure
             {
                 // For simplicity, tell the server to forget about the user. Could potentially lead to memory issues.
                 this.GameManager.UnregisterUser(user);
+
+                // TODO: check if user was party leader, find new party leader.
 
                 // Best effort remove the user.
                 this.UsersInLobby.Remove(user.Id, out User _);
@@ -168,7 +159,6 @@ namespace Backend.GameInfrastructure
             this.WaitForLobbyStart = new WaitForLobbyCloseGameState(this);
             this.EndOfGameRestart = new EndOfGameState(this, PrepareToRestartGame);
             TransitionCurrentGameState(this.WaitForLobbyStart);
-            this.PollForDisconnectedUsersTask = this.PollForDisconnectedUsers();
         }
 
         /// <summary>
@@ -319,7 +309,6 @@ namespace Backend.GameInfrastructure
                 return false;
             }
 
-            DisconnectInactiveUsers();
             if (!this.SelectedGameMode.GameModeMetadata.IsSupportedPlayerCount(this.GetAllUsers().Count))
             {
                 errorMsg = Invariant($"Selected game mode has following restrictions: {this.SelectedGameMode.GameModeMetadata.RestrictionsToString()}");

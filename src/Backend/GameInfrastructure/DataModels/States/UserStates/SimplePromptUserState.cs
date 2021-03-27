@@ -27,8 +27,8 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
 
         private Func<User, UserFormSubmission, (bool, string)> FormSubmitHandler { get; set; }
         private Func<User, UserFormSubmission, UserTimeoutAction> UserTimeoutHandler { get; set; }
-        public SimplePromptUserState(Func<User, UserPrompt> promptGenerator = null, TimeSpan? maxPromptDuration = null, Func<User, UserFormSubmission, (bool, string)> formSubmitHandler = null, StateEntrance entrance = null, StateExit exit = null, Func<User, UserFormSubmission, UserTimeoutAction> userTimeoutHandler = null)
-            : base(maxPromptDuration, promptGenerator ?? Prompts.DisplayText(), entrance: entrance, exit: exit)
+        public SimplePromptUserState(Func<User, UserPrompt> promptGenerator = null, TimeSpan? maxPromptDuration = null, Func<User, UserFormSubmission, (bool, string)> formSubmitHandler = null, StateExit exit = null, Func<User, UserFormSubmission, UserTimeoutAction> userTimeoutHandler = null)
+            : base(maxPromptDuration, promptGenerator ?? Prompts.DisplayText(), exit: exit)
         {
             if (userTimeoutHandler != null)
             {

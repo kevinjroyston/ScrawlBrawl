@@ -26,17 +26,15 @@ namespace Backend.GameInfrastructure.ControlFlows
                 return;
             }
 
-            // If the user is being hurried or they are inactive, call user timeout handler with nulls.
-            // Party leaders can't be timed out due to inactivity.
-            if ((user.StatesTellingMeToHurry.Count > 0) || (!user.IsPartyLeader && (user.Activity == UserActivity.Inactive)))
+            // Set user to answering prompts state if they arent being hurried and their current prompt has a submit button.
+            if (user.StatesTellingMeToHurry.Count == 0)
             {
-                // TODO: May need to pass in prompt rather than getting from user.UserState but should be okay for now.
-                HandleUserTimeout(user, UserFormSubmission.WithNulls(user.UserState?.UserRequestingCurrentPrompt(user)));
+                user.Status = UserStatus.AnsweringPrompts;
             }
             else
             {
-                // Set user to answering prompts state if they arent being hurried and their current prompt has a submit button.
-                user.Status = UserStatus.AnsweringPrompts;
+                // TODO: May need to pass in prompt rather than getting from user.UserState but should be okay for now.
+                HandleUserTimeout(user, UserFormSubmission.WithNulls(user.UserState?.UserRequestingCurrentPrompt(user)));
             }
         }
 

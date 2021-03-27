@@ -18,7 +18,7 @@ namespace Backend.GameInfrastructure.DataModels.States.StateGroups
         private int CurrentMaxChainIndex { get; set; } = 0;
 
         // State chain constructors do not support any form of empty lists or null.
-        public StateChain(List<State> states, StateEntrance entrance = null, StateExit exit = null, TimeSpan? stateDuration = null) : base(firstState:states.FirstOrDefault(),lastState:states.LastOrDefault(),entrance: entrance, exit: exit, stateTimeoutDuration: stateDuration)
+        public StateChain(List<State> states, StateExit exit = null, TimeSpan? stateDuration = null) : base(firstState:states.FirstOrDefault(),lastState:states.LastOrDefault(),exit: exit, stateTimeoutDuration: stateDuration)
         {
             TotalChainLength = states.Count;
             for (int i = 1; i < states.Count; i++)
@@ -40,7 +40,7 @@ namespace Backend.GameInfrastructure.DataModels.States.StateGroups
             }
         }
 
-        public StateChain(Func<int, State> stateGenerator, StateEntrance entrance = null, StateExit exit = null, TimeSpan? stateDuration = null) : base(entrance: entrance, exit: exit, stateTimeoutDuration: stateDuration)
+        public StateChain(Func<int, State> stateGenerator, StateExit exit = null, TimeSpan? stateDuration = null) : base(exit: exit, stateTimeoutDuration: stateDuration)
         {
             this.Entrance.Transition(ChainCounter(counter: 0, stateGenerator: stateGenerator));
             this.TotalChainLength = -1;

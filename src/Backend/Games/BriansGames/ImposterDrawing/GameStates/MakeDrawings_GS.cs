@@ -61,7 +61,6 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                 },
                 exit: new WaitForUsers_StateExit(
                     lobby: this.Lobby,
-                    usersToWaitFor: WaitForUsersType.All,
                     waitingPromptGenerator: (User user) =>
                     {
                         if (user == promptToDraw.Owner)

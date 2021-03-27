@@ -52,10 +52,11 @@ namespace Backend.GameInfrastructure.DataModels
         /// </summary>
         protected ConcurrentDictionary<User, (bool, bool)> UsersEnteredAndExitedState { get; } = new ConcurrentDictionary<User, (bool, bool)>();
 
-        public State(TimeSpan? stateTimeoutDuration, StateEntrance entrance, StateExit exit) : base(stateExit: exit)
+        public State(TimeSpan? stateTimeoutDuration, StateExit exit) : base(stateExit: exit)
         {
             this.StateTimeoutDuration = stateTimeoutDuration;
-            this.Entrance = entrance ?? new StateEntrance();
+            this.Entrance = new StateEntrance();
+            this.Exit.RegisterParentState(this);
 
             this.Entrance.AddPerUserExitListener((User user) =>
             {

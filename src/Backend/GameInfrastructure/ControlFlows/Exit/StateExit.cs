@@ -15,13 +15,22 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
 {
     public class StateExit : IInlet
     {
-
         protected IInlet InternalOutlet { get; set; }
         private Connector InternalOutletConnector { get; set; }
         private List<Action> Listeners { get; set; } = new List<Action>();
         private List<Action<User>> PerUserListeners { get; set; } = new List<Action<User>>();
         private bool CalledListeners { get; set; } = false;
         private object CalledListenersLock { get; } = new object();
+
+        /// <summary>
+        /// Not populated until after constructor finishes. :(
+        /// </summary>
+        protected State ParentState { get; private set; }
+
+        public void RegisterParentState(State parentState)
+        {
+            this.ParentState = parentState;
+        }
 
         public void SetInternalOutlet(Connector internalOutlet)
         {

@@ -55,7 +55,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                     });
                     return (true, string.Empty);
                 },
-                exit: new WaitForUsers_StateExit(lobby: this.Lobby, usersToWaitFor: WaitForUsersType.All),
+                exit: new WaitForUsers_StateExit(lobby: this.Lobby),
                 maxPromptDuration: setupTimeDuration);
 
             this.Entrance.Transition(getPromptsState);

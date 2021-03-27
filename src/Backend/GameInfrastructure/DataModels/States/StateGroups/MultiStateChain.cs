@@ -9,7 +9,7 @@ namespace Backend.GameInfrastructure.DataModels.States.StateGroups
 {
     public class MultiStateChain : StateGroup
     {
-        public MultiStateChain(Func<User, StateChain> stateChainGenerator, StateEntrance entrance = null, StateExit exit = null, TimeSpan? stateDuration = null) : base(entrance: entrance, exit: exit, stateTimeoutDuration: stateDuration)
+        public MultiStateChain(Func<User, StateChain> stateChainGenerator, StateExit exit = null, TimeSpan? stateDuration = null) : base( exit: exit, stateTimeoutDuration: stateDuration)
         {
             this.Entrance.Transition((User user) =>
             {
@@ -18,7 +18,7 @@ namespace Backend.GameInfrastructure.DataModels.States.StateGroups
                 return toReturn;
             });
         }
-        public MultiStateChain(Func<User, List<State>> stateChainGenerator, StateEntrance entrance = null, StateExit exit = null, TimeSpan? stateDuration = null) : base(entrance: entrance, exit: exit, stateTimeoutDuration: stateDuration)
+        public MultiStateChain(Func<User, List<State>> stateChainGenerator, StateExit exit = null, TimeSpan? stateDuration = null) : base(exit: exit, stateTimeoutDuration: stateDuration)
         {
             this.Entrance.Transition((User user) =>
             {

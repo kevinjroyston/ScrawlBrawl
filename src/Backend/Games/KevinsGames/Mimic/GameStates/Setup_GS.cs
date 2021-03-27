@@ -62,7 +62,7 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                     });
                     return (true, String.Empty);
                 },
-                exit: new WaitForUsers_StateExit(lobby: this.Lobby, usersToWaitFor: WaitForUsersType.All),
+                exit: new WaitForUsers_StateExit(lobby: this.Lobby),
                 maxPromptDuration: drawingTimeDuration
                 ));
             }

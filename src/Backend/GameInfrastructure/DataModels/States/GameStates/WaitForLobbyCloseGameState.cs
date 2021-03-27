@@ -20,10 +20,9 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             ((WaitForTrigger_StateExit)this.Exit)?.Trigger();
         }
 
-        public WaitForLobbyCloseGameState(Lobby lobby, StateEntrance entrance = null)
+        public WaitForLobbyCloseGameState(Lobby lobby)
             : base(
                   lobby: lobby,
-                  entrance: entrance,
                   exit: new WaitForTrigger_StateExit(Prompts.DisplayText(Prompts.Text.WaitingForGameToStart))
                   )
         {
