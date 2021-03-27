@@ -22,14 +22,12 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             List<User> usersToPrompt,
             Func<User, UserPrompt> promptGenerator = null,
             Func<User, UserFormSubmission, (bool, string)> formSubmitHandler = null,
-            StateEntrance entrance = null,
             StateExit exit = null,
             TimeSpan? maxPromptDuration = null,
             Func<User, UserFormSubmission, UserTimeoutAction> userTimeoutHandler = null)
             : base(
                   promptGenerator: promptGenerator,
                   formSubmitHandler: formSubmitHandler,
-                  entrance: entrance,
                   exit: exit,
                   maxPromptDuration: maxPromptDuration,
                   userTimeoutHandler: userTimeoutHandler)

@@ -22,7 +22,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
         /// Initializes a GameState to be used in a FSM.
         /// </summary>
         /// <param name="lobby">The lobby this gamestate belongs to.</param>
-        public GameState(Lobby lobby, TimeSpan? stateTimeoutDuration = null, StateEntrance entrance = null, StateExit exit = null) : base(stateTimeoutDuration: stateTimeoutDuration, entrance: entrance, exit: exit)
+        public GameState(Lobby lobby, TimeSpan? stateTimeoutDuration = null, StateExit exit = null) : base(stateTimeoutDuration: stateTimeoutDuration, exit: exit)
         {
             Lobby = lobby;
             UnityView = new UnityView(lobby) { ScreenId = TVScreenId.NoUnityViewConfigured };

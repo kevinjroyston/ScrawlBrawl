@@ -172,7 +172,7 @@ namespace Backend.Games.KevinsGames.Mimic
                                         randomizedUsersToDisplay = randomizedUsersToDisplay.OrderBy(_ => Rand.Next()).ToList();
                                         drawingsRoundTracker.UsersToDisplay = randomizedUsersToDisplay;
                                     });
-                                    return new StateChain(states: new List<State>() { displayGS, mimicsGS }, entrance: null, exit: null);
+                                    return new StateChain(states: new List<State>() { displayGS, mimicsGS }, exit: null);
                                 }
                                 else if (counter < maxDrawingsBeforeVote * 2)
                                 {

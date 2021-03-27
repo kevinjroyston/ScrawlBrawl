@@ -74,7 +74,7 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
         /// </summary>
         /// <param name="stateTimeoutDuration">The maximum amount of time to spend in this userstate.</param>
         /// <param name="promptGenerator">A function to be called the first time a user requests a prompt.</param>
-        public UserState(TimeSpan? stateTimeoutDuration, Func<User, UserPrompt> promptGenerator, StateEntrance entrance, StateExit exit) : base(stateTimeoutDuration: stateTimeoutDuration, entrance: entrance, exit: exit)
+        public UserState(TimeSpan? stateTimeoutDuration, Func<User, UserPrompt> promptGenerator, StateExit exit) : base(stateTimeoutDuration: stateTimeoutDuration, exit: exit)
         {
             this.PromptGenerator = promptGenerator ?? throw new Exception("Prompt generator cannot be null");
 
