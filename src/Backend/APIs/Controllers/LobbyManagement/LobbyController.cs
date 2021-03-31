@@ -8,6 +8,8 @@ using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Backend.GameInfrastructure.DataModels;
+using Backend.GameInfrastructure.DataModels.Users;
+using Backend.GameInfrastructure.DataModels.States.UserStates;
 #if !DEBUG
 //using Microsoft.AspNetCore.Authorization;
 #endif
@@ -30,7 +32,6 @@ namespace Backend.APIs.Controllers.LobbyManagement
         private ILogger<LobbyController> Logger { get; set; }
         private IServiceProvider ServiceProvider { get; set; }
         private InMemoryConfiguration InMemoryConfiguration { get; set; }
-
 
         [HttpGet]
         [Route("Get")]
@@ -101,6 +102,29 @@ namespace Backend.APIs.Controllers.LobbyManagement
             }
 
             user.OwnedLobby = newLobby;
+            return Ok(lobbyId);
+        }
+
+        [HttpPost]
+        [Route("Join")]
+        public IActionResult JoinLobby([FromBody] JoinLobbyRequest request, [FromQuery(Name = "Id")] string id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return new BadRequestResult();
+            }
+
+            User user = GameManager.MapIdentifierToUser(id, out bool newUser);
+            (bool, string) result = GameManager.RegisterUser(user, request);
+
+            if (!result.Item1)
+            {
+                return StatusCode(400, result.Item2);
+            }
+
+            UserState waitingState = new SimplePromptUserState();
+            user.TransitionUserState(waitingState);
+
             return new OkResult();
         }
 

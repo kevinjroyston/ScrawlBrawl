@@ -1,6 +1,7 @@
 import { Component, Inject, ViewEncapsulation, Pipe, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup} from '@angular/forms';
 import { DomSanitizer, SafeHtml, SafeStyle, SafeScript, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
+import GameplayPrompts from '@core/models/gameplay' 
 import { API } from '@core/http/api';
 import { isNullOrUndefined } from 'util';
 import { Router } from '@angular/router';
@@ -42,7 +43,7 @@ export class Safe {
 
 export class FetchDataComponent implements OnDestroy
 {
-    public userPrompt: UserPrompt;
+    public userPrompt: GameplayPrompts.UserPrompt;
     public userForm;
     private formBuilder: FormBuilder;
     private userPromptTimerId;
@@ -104,7 +105,7 @@ export class FetchDataComponent implements OnDestroy
         // fetch the current content from the server
         await this.api.request({ type: "Game", path: "CurrentContent"}).subscribe({
             next: async data => {
-                var prompt = data as UserPrompt;
+                var prompt = data as GameplayPrompts.UserPrompt;
                 if (prompt.submitButton) {
                     document.body.classList.add('makeRoomForToolbar');
                 } else {
@@ -168,9 +169,11 @@ export class FetchDataComponent implements OnDestroy
             }
         });
     }
+
     refreshUserPromptTimer(ms: number): void {
         this.userPromptTimerId = setTimeout(() => this.fetchUserPrompt(), ms);
     }
+
     autoSubmitUserPromptTimer(ms: number): void {
         if (ms <= 0) {
             this.onSubmit(this.userForm?.value, true)
@@ -288,19 +291,6 @@ interface UserPrompt {
     subPrompts: SubPrompt[];
     error: string;
 }
-interface SubPrompt {
-    id: string;
-    prompt: string;
-    color: string;
-    stringList: string[];
-    dropdown: string[];    
-    answers: string[];
-    colorPicker: boolean;
-    shortAnswer: boolean;
-    drawing: DrawingPromptMetadata;
-    slider: SliderPromptMetadata;
-    selector: SelectorPromptMetadata;
-}
 interface RangeHighlightsType
 {
     start: number;
@@ -317,9 +307,4 @@ interface SliderPromptMetadata {
   enabled: boolean;
   ticksLabels: string[];
   rangeHighlights: RangeHighlightsType[];
-}
-interface SelectorPromptMetadata {
-  widthInPx: number;
-  heightInPx: number;
-  imageList: string[];
 }
