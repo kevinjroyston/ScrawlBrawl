@@ -10,7 +10,11 @@ public class EnterLobbyId : ITVView
     public TestClient TestClient;
     public void Awake()
     {
+#if UNITY_EDITOR
         ViewManager.Singleton.RegisterAsDefaultTVView(this);
+#else
+        gameObject.SetActive(false);
+#endif
     }
 
     public void ButtonPressed()

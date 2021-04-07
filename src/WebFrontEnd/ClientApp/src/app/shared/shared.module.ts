@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from './material.module';
 import { DrawingBoard } from './components/drawingboard/drawingboard.component'
 import { Slider } from './components/slider/slider.component';
+import { UnityComponent } from './components/unity/unity.component';
 import { NgxBootstrapSliderModule } from 'ngx-bootstrap-slider';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { UiSwitchModule } from 'ngx-ui-switch';
@@ -39,6 +40,7 @@ import { SimpleLinkComponent } from './components/simplebuttons/link/link.compon
 import { GalleryTool } from './components/gallery/gallerytool/gallerytool.component';
 import { GalleryPanel } from './components/gallery/gallerypanel/gallerypanel.component';
 import { GalleryPicture } from './components/gallery/gallerypicture/gallerypicture.component';
+import { ResizableModule } from 'angular-resizable-element';
 
 @NgModule({
   imports: [
@@ -50,11 +52,13 @@ import { GalleryPicture } from './components/gallery/gallerypicture/gallerypictu
     UiSwitchModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule
+    RouterModule,
+    ResizableModule
   ],
   declarations: [
     DrawingBoard,
     Slider,
+    UnityComponent,
     ColorPickerComponent,
     ScrawlButtonComponent,
     SimpleButtonComponent,
@@ -96,6 +100,7 @@ import { GalleryPicture } from './components/gallery/gallerypicture/gallerypictu
     SimpleButtonComponent,
     SimpleLinkComponent,
     Slider,
+    UnityComponent,
     FormsModule,
     ReactiveFormsModule,
     DrawingDirective,

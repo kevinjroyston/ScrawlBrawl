@@ -8,6 +8,7 @@ import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-she
 import { ColorPickerComponent } from '@shared/components/colorpicker/colorpicker.component';
 import {DrawingPromptMetadata} from '@shared/components/drawingdirective.component';
 import Galleries from '@core/models/gallerytypes';
+import { UnityViewer } from '@core/http/viewerInjectable';
 
 @Pipe({ name: 'safe' })
 export class Safe {
@@ -54,7 +55,8 @@ export class FetchDataComponent
         formBuilder: FormBuilder,
         router: Router,
         private _colorPicker: MatBottomSheet,
-        @Inject(API) private api: API)
+        @Inject(API) private api: API,
+        @Inject(UnityViewer) private unityViewer:UnityViewer)
     {
       this.formBuilder = formBuilder;
       this.fetchUserPrompt();
@@ -86,6 +88,7 @@ export class FetchDataComponent
 
     async fetchUserPrompt() {
         console.log("fetchUserPrompt: userPromptTimerId="+this.userPromptTimerId);
+
         if (this.userPromptTimerId) {
           clearTimeout(this.userPromptTimerId);
           this.userPromptTimerId = null;
@@ -96,6 +99,8 @@ export class FetchDataComponent
             next: async data => {
                 var prompt = data as UserPrompt;
 
+                this.unityViewer.UpdateLobbyId(prompt.lobbyId);
+                
                 // Too lazy to figure out how to properly deserialize things.
                 prompt.autoSubmitAtTime = isNullOrUndefined(prompt.autoSubmitAtTime) ? null : new Date(prompt.autoSubmitAtTime);
                 prompt.currentServerTime = isNullOrUndefined(prompt.currentServerTime) ? null : new Date(prompt.currentServerTime);
@@ -245,6 +250,7 @@ export class FetchDataComponent
 interface UserPrompt {
     id: string;
     gameIdString: string;
+    lobbyId: string;
     refreshTimeInMs: number;
     currentServerTime: Date;
     autoSubmitAtTime: Date;

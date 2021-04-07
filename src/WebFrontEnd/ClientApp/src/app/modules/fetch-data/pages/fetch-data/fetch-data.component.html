@@ -3,6 +3,7 @@
 </div>
 <div class="fetch-data">
     <form ng-app="myApp" class="form" *ngIf="userPrompt" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)">
+        <unity *ngIf="userPrompt.submitButton && userPrompt.lobbyId" [viewerSize]="'smallViewer'"></unity>
         <h1 class="title" *ngIf="userPrompt.title">
             {{ userPrompt.title }}
         </h1>
@@ -58,6 +59,7 @@
         </div>
         <div *ngIf="!userPrompt.submitButton">
             <br><br>
+            <unity [viewerSize]="'largeViewer'"></unity>
             <scrawlbutton (click)="galleryEditorVisible=!galleryEditorVisible">Gallery Editor</scrawlbutton>
             <br><br>
             <div [hidden]="!galleryEditorVisible">
