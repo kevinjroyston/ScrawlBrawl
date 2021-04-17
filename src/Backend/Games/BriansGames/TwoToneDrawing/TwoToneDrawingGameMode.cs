@@ -69,12 +69,13 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                     MinValue = 2,
                     MaxValue = 20,
                 },
+                /*
                 new GameModeOptionResponse
                 {
                     Description = "Show everyone the colors/layer descriptions",
                     DefaultValue = true,
                     ResponseType = ResponseType.Boolean
-                },
+                },*/
                 new GameModeOptionResponse
                 {
                     Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
@@ -94,7 +95,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             bool useSingleColor = (bool)gameModeOptions[(int)GameModeOptionsEnum.useSingleColor].ValueParsed;
             int numLayers = (int)gameModeOptions[(int)GameModeOptionsEnum.numLayers].ValueParsed;
             int numTeams = (int)gameModeOptions[(int)GameModeOptionsEnum.numTeams].ValueParsed;
-            bool showOtherColors = (bool)gameModeOptions[(int)GameModeOptionsEnum.showOtherColors].ValueParsed;
+            bool showOtherColors = true; // (bool)gameModeOptions[(int)GameModeOptionsEnum.showOtherColors].ValueParsed;
             int gameLength = (int)gameModeOptions[(int)GameModeOptionsEnum.GameLength].ValueParsed;
             TimeSpan? setupTimer = null;
             TimeSpan? drawingTimer = null;

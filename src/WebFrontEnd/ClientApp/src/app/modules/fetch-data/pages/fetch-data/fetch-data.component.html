@@ -2,8 +2,23 @@
     <mat-spinner [diameter]="30"></mat-spinner>
 </div>
 <div class="fetch-data">
+
     <form ng-app="myApp" class="form" *ngIf="userPrompt" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)">
-        <unity *ngIf="userPrompt.submitButton && userPrompt.lobbyId" [viewerSize]="'smallViewer'"></unity>
+        <div *ngIf="userPrompt.submitButton" class="sticky-nav-wrapper">
+            <div class="sticky-nav">
+                <div *ngIf="timerDisplay!=''" class="timerPanel" [ngStyle]="{'background-color': timerColor}">{{timerDisplay}}</div>
+                <div class="Error" *ngIf="userPrompt.error">
+                    {{ userPrompt.error }}
+                </div>
+            </div>
+            <div class="sticky-nav">
+                <div style="width:100px;padding-top: 4px;">
+                    <scrawlbutton [ngStyle]="'max-width:40px'" *ngIf="userPrompt.submitButton" color="green" (click)="onSubmit(userForm.value)">
+                        {{userPrompt.submitButtonText}}
+                    </scrawlbutton>
+                </div>
+            </div>
+        </div>
         <h1 class="title" *ngIf="userPrompt.title">
             {{ userPrompt.title }}
         </h1>
@@ -14,8 +29,8 @@
             <div class="subprompt" *ngFor="let subPrompt of userPrompt.subPrompts; let j = index" formArrayName="subForms">
                 <div class="subprompt-inner" [formGroupName]="j">
                     <div class="prompt-wrapper">
-                        <h5 class="prompt" *ngIf="subPrompt.prompt">
-                            {{subPrompt.prompt}}
+                        <h5 class="prompt" *ngIf="subPrompt.prompt" [innerHTML]="subPrompt.prompt | safe: 'html'">
+
                         </h5>
                     </div>
                     <div *ngIf="subPrompt.stringList">
@@ -59,7 +74,7 @@
         </div>
         <div *ngIf="!userPrompt.submitButton">
             <br><br>
-            <unity [viewerSize]="'largeViewer'"></unity>
+            <!--unity [viewerSize]="'largeViewer'"></unity-->
             <scrawlbutton (click)="galleryEditorVisible=!galleryEditorVisible">Gallery Editor</scrawlbutton>
             <br><br>
             <div [hidden]="!galleryEditorVisible">
