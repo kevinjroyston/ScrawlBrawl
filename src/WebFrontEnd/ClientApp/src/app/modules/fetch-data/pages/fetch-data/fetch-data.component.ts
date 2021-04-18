@@ -9,6 +9,7 @@ import { ColorPickerComponent } from '@shared/components/colorpicker/colorpicker
 import {DrawingPromptMetadata} from '@shared/components/drawingdirective.component';
 import Galleries from '@core/models/gallerytypes';
 import { UnityViewer } from '@core/http/viewerInjectable';
+import * as drawingUtils from "app/utils/drawingutils";
 
 @Pipe({ name: 'safe' })
 export class Safe {
@@ -79,7 +80,7 @@ export class FetchDataComponent implements OnDestroy
     }
 
     handleColorChange = (color: string, subPrompt: number) => {
-        this.userPrompt.subPrompts[subPrompt].color = color
+        this.userPrompt.subPrompts[subPrompt].color = drawingUtils.convertColorToHexRGB(color);
     }
 
     openColorPicker = (event: MouseEvent, subPrompt: number): void => {
@@ -221,6 +222,9 @@ export class FetchDataComponent implements OnDestroy
             userSubmitData.subForms[i].id = this.userPrompt.subPrompts[i].id;
             if (this.userPrompt.subPrompts[i].shortAnswer) {
                 userSubmitData.subForms[i].shortAnswer=this.shortTermSanitize(userSubmitData.subForms[i].shortAnswer);
+            }
+            if (this.userPrompt.subPrompts[i].colorPicker) {
+                userSubmitData.subForms[i].color=drawingUtils.convertColorToRGB(this.userPrompt.subPrompts[i].color);
             }
             if (this.userPrompt.subPrompts[i].selector && !userSubmitData.subForms[i].selector) {
                 userSubmitData.subForms[i].selector="0";
