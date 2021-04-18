@@ -13,6 +13,10 @@ body {
     height: 100%;
 }
 
+.makeRoomForToolbar {
+    margin-top: 60px;
+}
+
 a {
     font-family: Poppins;
     font-weight: bold;
@@ -71,6 +75,7 @@ h5 {
     font-weight: 600;
     font-size: 18px;
     line-height: 32px;
+    text-align: center;
 }
 
 h6 {
@@ -107,6 +112,40 @@ input {
 
 ion-icon {
     font-size: 30px;
+}
+
+.keyText {
+    font-size: 14px;
+    font-style: italic;
+    color: var(--green-primary);
+}
+
+.theirPrompt {
+    border: 1px solid rgb(224, 224, 224);
+    padding-left: 5px;
+}
+
+.yourPrompt {
+    border: 1px solid var(--green-secondary);
+    padding-left: 5px;
+}
+
+.theirPrompt>p {
+    font-size: 10px;
+    letter-spacing: -0.2px;
+    word-spacing: -1.4px;
+    font-weight: normal;
+    margin-bottom: 1px;
+    color: black;
+}
+
+.yourPrompt>p {
+    font-size: 10px;
+    letter-spacing: -0.2px;
+    word-spacing: -1.4px;
+    font-weight: bold;
+    margin-bottom: 1px;
+    color: var(--green-primary);
 }
 
 

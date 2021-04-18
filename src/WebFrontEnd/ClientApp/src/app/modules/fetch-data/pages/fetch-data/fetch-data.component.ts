@@ -1,4 +1,4 @@
-import { Component, Inject, ViewEncapsulation, Pipe } from '@angular/core';
+import { Component, Inject, ViewEncapsulation, Pipe, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup} from '@angular/forms';
 import { DomSanitizer, SafeHtml, SafeStyle, SafeScript, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
 import { API } from '@core/http/api';
@@ -9,6 +9,7 @@ import { ColorPickerComponent } from '@shared/components/colorpicker/colorpicker
 import {DrawingPromptMetadata} from '@shared/components/drawingdirective.component';
 import Galleries from '@core/models/gallerytypes';
 import { UnityViewer } from '@core/http/viewerInjectable';
+import * as drawingUtils from "app/utils/drawingutils";
 
 @Pipe({ name: 'safe' })
 export class Safe {
@@ -39,14 +40,18 @@ export class Safe {
     encapsulation: ViewEncapsulation.Emulated
 })
 
-export class FetchDataComponent
+export class FetchDataComponent implements OnDestroy
 {
     public userPrompt: UserPrompt;
     public userForm;
     private formBuilder: FormBuilder;
     private userPromptTimerId;
     private autoSubmitTimerId;
+    private timerDisplayIntervalId;
 
+    timerDisplay = '';
+    timerRemaining = 0;
+    timerColor = 'green';
     galleryEditorVisible = false;
     galleryTypes = [...Galleries.galleryTypes]; /* so html page can see the reference.  ... is SPREAD command: https://www.samanthaming.com/tidbits/35-es6-way-to-clone-an-array/ */
     currentDrawingType = this.galleryTypes[0].drawingType;
@@ -66,14 +71,16 @@ export class FetchDataComponent
             this.userPromptTimerId = null;
           }
         if (this.autoSubmitTimerId) {
-            clearTimeout(this.autoSubmitTimerId);
-            this.autoSubmitTimerId = null;
+            this.clearAutoSubmitTimers();
           }
         });
     }
+    ngOnDestroy(): void {
+        document.body.classList.remove('makeRoomForToolbar');
+    }
 
     handleColorChange = (color: string, subPrompt: number) => {
-        this.userPrompt.subPrompts[subPrompt].color = color
+        this.userPrompt.subPrompts[subPrompt].color = drawingUtils.convertColorToHexRGB(color);
     }
 
     openColorPicker = (event: MouseEvent, subPrompt: number): void => {
@@ -98,13 +105,17 @@ export class FetchDataComponent
         await this.api.request({ type: "Game", path: "CurrentContent"}).subscribe({
             next: async data => {
                 var prompt = data as UserPrompt;
-
+                if (prompt.submitButton) {
+                    document.body.classList.add('makeRoomForToolbar');
+                } else {
+                    document.body.classList.remove('makeRoomForToolbar');
+                }
+      
                 this.unityViewer.UpdateLobbyId(prompt.lobbyId);
                 
                 // Too lazy to figure out how to properly deserialize things.
                 prompt.autoSubmitAtTime = isNullOrUndefined(prompt.autoSubmitAtTime) ? null : new Date(prompt.autoSubmitAtTime);
                 prompt.currentServerTime = isNullOrUndefined(prompt.currentServerTime) ? null : new Date(prompt.currentServerTime);
-
                 console.log('Fetched Prompt', prompt);
 
                 // if the current content has the same as id as the current, return
@@ -117,12 +128,13 @@ export class FetchDataComponent
 
                 // Clear the autosubmit timer
                 if (this.autoSubmitTimerId) {
-                  clearTimeout(this.autoSubmitTimerId);
-                  this.autoSubmitTimerId = null;
+                    this.clearAutoSubmitTimers();
                 }
+
 
                 // Start a new autosubmit timer
                 if (prompt && !isNullOrUndefined(prompt.autoSubmitAtTime)) {
+                    this.timerRemaining = prompt.autoSubmitAtTime.getTime() - prompt.currentServerTime.getTime();
                     this.autoSubmitUserPromptTimer(prompt.autoSubmitAtTime.getTime() - prompt.currentServerTime.getTime());
                 }
 
@@ -165,8 +177,21 @@ export class FetchDataComponent
             return;
         }
         this.autoSubmitTimerId = setTimeout(() => this.onSubmit(this.userForm?.value, true), ms);
+        this.timerColor = 'var(--green-secondary)';
+        this.timerDisplayIntervalId = setInterval(() => 
+             {this.timerRemaining-=1000; this.timerDisplay = new Date(this.timerRemaining).toISOString().substr(14, 5);
+                if (this.timerRemaining < 10000) this.timerColor = 'var(--red-secondary)'
+                else if (this.timerRemaining < 30000) this.timerColor = 'var(--yellow-secondary)';
+             }, 1000);
     }
 
+    private clearAutoSubmitTimers(){
+        clearTimeout(this.autoSubmitTimerId);
+        this.autoSubmitTimerId = null;
+        clearInterval(this.timerDisplayIntervalId);
+        this.timerDisplayIntervalId = null;
+        this.timerDisplay = '';
+    }
   shortTermSanitize(ans){
         /* see this line in backend  sanitize.cs
            str.All(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.?,'-".Contains); 
@@ -187,8 +212,7 @@ export class FetchDataComponent
           this.userPromptTimerId = null;
         }
         if (this.autoSubmitTimerId) {
-          clearTimeout(this.autoSubmitTimerId);
-          this.autoSubmitTimerId = null;
+            this.clearAutoSubmitTimers();
         }
 
 
@@ -198,6 +222,9 @@ export class FetchDataComponent
             userSubmitData.subForms[i].id = this.userPrompt.subPrompts[i].id;
             if (this.userPrompt.subPrompts[i].shortAnswer) {
                 userSubmitData.subForms[i].shortAnswer=this.shortTermSanitize(userSubmitData.subForms[i].shortAnswer);
+            }
+            if (this.userPrompt.subPrompts[i].colorPicker) {
+                userSubmitData.subForms[i].color=drawingUtils.convertColorToRGB(this.userPrompt.subPrompts[i].color);
             }
             if (this.userPrompt.subPrompts[i].selector && !userSubmitData.subForms[i].selector) {
                 userSubmitData.subForms[i].selector="0";

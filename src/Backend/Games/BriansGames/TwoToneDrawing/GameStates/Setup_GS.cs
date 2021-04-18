@@ -43,7 +43,8 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                     {
                         new SubPrompt
                         {
-                            Prompt = Invariant($"The drawing prompt. Suggestions: '{string.Join("', '",RandomLineFromFile.GetRandomLines(FileNames.Nouns, 5))}'"),
+//                            Prompt = Invariant($"The drawing prompt. Suggestions: '{string.Join("', '",RandomLineFromFile.GetRandomLines(FileNames.Nouns, 5))}'"),
+                            Prompt = "Drawing Title (describe the drawing)",
                             ShortAnswer = true,
                         },
                     };
@@ -85,7 +86,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                     {
                         UserPromptId = UserPromptId.ChaoticCooperation_Setup,
                         Title = "Game setup",
-                        Description = "In the boxes below, enter a drawing prompt and "+(UseSingleColor?"the colors": "a description of each layer") + " that will be given to different players.",
+                        Description = "In the boxes below, enter a drawing title and "+(UseSingleColor?"the colors": "a description of each layer") + " that will be given to different players.",
                         SubPrompts = subPrompts.ToArray(),
                         SubmitButton = true
                     };
@@ -121,6 +122,27 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
 
         private ConcurrentDictionary<ChallengeTracker, object> SubChallenges { get; set; }
 
+        private String LayerDescription(int layerNo, int numLayers, String description, bool yourLayer)
+        {
+            String result = "";
+           
+            if (yourLayer)  { result = "<div class=\"yourPrompt\"><p>You are drawing 👉 "; }
+            else { result = "<div class=\"theirPrompt\"><p>"; }
+
+            if (layerNo==0) 
+              { result += "Background Layer"; }  
+            else if (layerNo==(numLayers-1))
+              { result += "Foreground Layer"; }
+            else if (numLayers == 3)
+            { result += "Middle Layer"; }
+            else 
+            { result += "Layer "+layerNo++.ToString(); }
+
+            result += "</p>" + description + "</div>";
+
+            return result;
+        }
+
         private Random Rand { get; set; } = new Random();
 
         /// <summary>
@@ -151,9 +173,13 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                         {
                             new SubPrompt
                             {
-                                Prompt = Invariant($"Your prompt:\"{challenge.Prompt}\""),
-                                StringList = (this.UseSingleColor && this.ShowColors) ? challenge.Colors.Select(val=> val == challenge.UserSubmittedDrawings[user].Color ? Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>This is your color.") : Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>")).Reverse().ToArray() 
-                                                : (!this.UseSingleColor) ? challenge.Colors.Select(val=> val == challenge.UserSubmittedDrawings[user].Color ? val + "<-- YOU ARE DRAWING THIS" : val).Reverse().ToArray()
+                                Prompt = Invariant($"Your prompt:<br><span class=\"keyText\">{challenge.Prompt}</span>"),
+                                StringList = (this.UseSingleColor && this.ShowColors)
+                                               ? challenge.Colors.Select(val=> val == challenge.UserSubmittedDrawings[user].Color
+                                                    ? Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>This is your color.")
+                                                    : Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>")).Reverse().ToArray()
+                                               : (!this.UseSingleColor)
+                                                    ? challenge.Colors.Select((val,index)=> LayerDescription(index,this.LayersPerTeam,val,(val == challenge.UserSubmittedDrawings[user].Color))).Reverse().ToArray()
                                                     : null,
                                 Drawing = new DrawingPromptMetadata
                                 {
@@ -169,7 +195,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                         challenge.UserSubmittedDrawings[user].Drawing = input.SubForms[0].Drawing;
                         challenge.UserSubmittedDrawings[user].Owner = user;
                         return (true, string.Empty);
-                    }));
+                    })) ;
                 index++;
             }
 

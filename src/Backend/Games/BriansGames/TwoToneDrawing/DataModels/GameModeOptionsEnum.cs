@@ -5,7 +5,7 @@
         useSingleColor,
         numLayers,
         numTeams,
-        showOtherColors,
+//        showOtherColors,
         GameLength,
     }
 }

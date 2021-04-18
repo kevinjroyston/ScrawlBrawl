@@ -1,6 +1,21 @@
 export function convertColorToRGB(clr:string): string {
-/* expects a string in the format rgb(r,g,b) or   hsl(h,s,l) only supports the limited hsl format we currently use */
+/* expects a string in the format #rgb or rgb(r,g,b) or   hsl(h,s,l) only supports the limited hsl format we currently use */
     if (clr.startsWith('rgb')) { return clr }
+    if (clr.startsWith('#'))  {
+        var r,g,b;
+        if ( clr.charAt(0) == '#' ) {
+          clr = clr.substr(1);
+        }
+
+        r = clr.charAt(0) + clr.charAt(1);
+        g = clr.charAt(2) + clr.charAt(3);
+        b = clr.charAt(4) + clr.charAt(5);
+
+        r = parseInt( r,16 );
+        g = parseInt( g,16 );
+        b = parseInt( b,16);
+        return "rgb(" + r + "," + g + "," + b + ")";
+    }
 
     if (clr.startsWith('hsl'))  {
       let sep = clr.indexOf(",") > -1 ? "," : " ";
@@ -37,6 +52,13 @@ export function convertColorToRGB(clr:string): string {
       return "rgb(" + r + "," + g + "," + b + ")";
     }
     return "rgb(0,0,0)";  /* only here if type is not hsl or rgb */
+}
+
+export function convertColorToHexRGB(clr:string): string {
+  if (clr.startsWith('#')) { return clr }  // we already are in hex, done
+  clr = convertColorToRGB(clr);  // convert possible hsl to rgb()
+  const rgb2hex = (rgb) => `#${rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/).slice(1).map(n => parseInt(n, 10).toString(16).padStart(2, '0')).join('')}`
+  return rgb2hex(clr);
 }
 
 var colorData = null;
