@@ -14,25 +14,25 @@ namespace GameplayPrompts {
       error: string;
     }
     export interface SubPrompt {
-        id: string;
-        prompt: string;
-        color: string;
-        stringList: string[];
-        dropdown: string[];    
-        answers: string[];
-        colorPicker: boolean;
-        shortAnswer: boolean;
-        drawing: DrawingPromptMetadata;
-        slider: SliderPromptMetadata;
-        selector: SelectorPromptMetadata;
+      id: string;
+      prompt: string;
+      color: string;
+      stringList: string[];
+      dropdown: string[];    
+      answers: string[];
+      colorPicker: boolean;
+      shortAnswer: boolean;
+      drawing: DrawingPromptMetadata;
+      slider: SliderPromptMetadata;
+      selector: SelectorPromptMetadata;
     }
     export interface DrawingPromptMetadata {
-        colorList: string[];
-        widthInPx: number;
-        heightInPx: number;
-        premadeDrawing: string;
-        canvasBackground: string;
-        localStorageId: string;
+      colorList: string[];
+      widthInPx: number;
+      heightInPx: number;
+      premadeDrawing: string;
+      canvasBackground: string;
+      localStorageId: string;
     }
     export interface SliderPromptMetadata {
       min: number;
@@ -54,8 +54,7 @@ namespace GameplayPrompts {
         start: number;
         end: number;
         class: string; 
-    }
-    
+    }    
 }
 
 export default GameplayPrompts

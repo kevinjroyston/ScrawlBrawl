@@ -11,6 +11,7 @@ import {DrawingPromptMetadata} from '@shared/components/drawingdirective.compone
 import Galleries from '@core/models/gallerytypes';
 import { UnityViewer } from '@core/http/viewerInjectable';
 import * as drawingUtils from "app/utils/drawingutils";
+import { HttpHeaders } from '@angular/common/http';
 
 @Pipe({ name: 'safe' })
 export class Safe {
@@ -276,35 +277,4 @@ export class FetchDataComponent implements OnDestroy
         }
         return arr;
     }
-  }
-interface UserPrompt {
-    id: string;
-    gameIdString: string;
-    lobbyId: string;
-    refreshTimeInMs: number;
-    currentServerTime: Date;
-    autoSubmitAtTime: Date;
-    submitButton: boolean;
-    submitButtonText: string;
-    title: string;
-    description: string;
-    subPrompts: SubPrompt[];
-    error: string;
-}
-interface RangeHighlightsType
-{
-    start: number;
-    end: number;
-    class: string; 
-}
-
-interface SliderPromptMetadata {
-  min: number;
-  max: number;
-  value: string;
-  ticks: number[];
-  range: boolean;
-  enabled: boolean;
-  ticksLabels: string[];
-  rangeHighlights: RangeHighlightsType[];
 }
