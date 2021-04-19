@@ -48,6 +48,18 @@ export class LobbyManagementComponent {
         });
     }
 
+    putViewerLinkOnClipboard(){
+        navigator.clipboard.writeText("https://scrawlbrawl.tv/viewer/index.html?lobby="+this.lobby.lobbyId)
+            .then(()=>{alert("The link is on the clipboard.")})
+            .catch(e => console.error(e));
+    }
+
+    putGameLinkOnClipboard(){
+        navigator.clipboard.writeText("https://scrawlbrawl.tv/play?lobby="+this.lobby.lobbyId)
+            .then(()=>{alert("The link is on the clipboard.")})
+            .catch(e => console.error(e));
+    }
+
     launchViewer(){
         window.open('/viewer/index.html?lobby='+this.lobby.lobbyId,'_blank');
     }

@@ -49,6 +49,8 @@ export class FetchDataComponent implements OnDestroy
     private autoSubmitTimerId;
     private timerDisplayIntervalId;
 
+    private FetchDataKey = "fetchData-";
+
     timerDisplay = '';
     timerRemaining = 0;
     timerColor = 'green';
@@ -161,6 +163,14 @@ export class FetchDataComponent implements OnDestroy
                 // Reset the form again because you are a bad coder
                 if (this.userForm) {
                     this.userForm.reset();
+
+                // check for local storage id default values    
+/*                for (let i = 0; i < this.userForm.value.subForms.length; i++) {
+                    if (this.userPrompt.subPrompts[i].localStorageId) {
+                        this.userForm.value.subForms[i].shortAnswer = this.fetchLocalStorage(this.userPrompt.subPrompts[i].localStorageId)
+                    }
+                }
+*/        
                 }
             },
             error: async (error) => {
@@ -232,6 +242,9 @@ export class FetchDataComponent implements OnDestroy
             if (this.userPrompt.subPrompts[i].slider && !userSubmitData.subForms[i].slider) {
                 userSubmitData.subForms[i].slider = this.userPrompt.subPrompts[i].slider.value;
             }
+            if (this.userPrompt.subPrompts[i].localStorageId && userSubmitData.subForms[i].shortAnswer) {
+                this.storeLocalStorage(this.userPrompt.subPrompts[i].localStorageId,userSubmitData.subForms[i].shortAnswer)
+            }
         }
 
         var body = JSON.stringify(userSubmitData);
@@ -273,7 +286,24 @@ export class FetchDataComponent implements OnDestroy
         }
         return arr;
     }
-}
+
+    fetchLocalStorage(id):String{
+      if (id=="") return "";
+      if (id.startsWith('?')) {  // look for param on url
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(id.substr(1));
+      } else {
+        return  localStorage.getItem(this.FetchDataKey+id);
+      }
+    }
+
+    storeLocalStorage(id,value):void{
+        if (id=="") return;
+        if (!id.startsWith('?')) {  // look for param on url
+          localStorage.setItem(this.FetchDataKey+id,value);
+        }
+      }
+  }
 interface UserPrompt {
     id: string;
     gameIdString: string;
@@ -291,6 +321,7 @@ interface UserPrompt {
 interface SubPrompt {
     id: string;
     prompt: string;
+    localStorageId: string;
     color: string;
     stringList: string[];
     dropdown: string[];    

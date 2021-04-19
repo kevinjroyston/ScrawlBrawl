@@ -65,11 +65,13 @@ namespace Backend.GameInfrastructure
                 new SubPrompt()
                 {
                     Prompt = "Nickname",
+                    LocalStorageId = "Nickname",
                     ShortAnswer = true
                 },
                 new SubPrompt()
                 {
                     Prompt = "Lobby Code",
+                    LocalStorageId = "?lobby",
                     ShortAnswer = true
                 },
                 new SubPrompt()
