@@ -12,11 +12,6 @@ namespace Common.DataModels.Responses
         public string Prompt { get; set; }
 
         /// <summary>
-        /// If non blank the value will be remembered (loaded / saved) in local storage The prompt to answer.  If it starts with a ? it will be loaded from URL
-        /// </summary>
-        public string LocalStorageId { get; set; }
-
-        /// <summary>
         /// A list of strings w/o radio buttons.
         /// </summary>
         public string[] StringList { get; set; }

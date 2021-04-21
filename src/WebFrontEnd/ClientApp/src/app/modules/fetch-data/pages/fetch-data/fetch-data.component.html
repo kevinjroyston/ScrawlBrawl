@@ -58,7 +58,7 @@
                     <input type="color" *ngIf="subPrompt.colorPicker" formControlName="color" class="color-input" (click)='openColorPicker($event, j)' [value]="subPrompt.color" [ngStyle]="{'background-color': subPrompt.color}">
                     <!--input           *ngIf="subPrompt.colorPicker" formControlName="color" [(colorPicker)]="subPrompt.color" [style.background]="subPrompt.color" [readonly]="true" [cpPosition]="'bottom'" [ngModel]="subPrompt.color" [cpOutputFormat]="'rgba'" [cpAlphaChannel]="'disabled'" -->
 
-                    <input type="text" class="text-input" formControlName="shortAnswer" *ngIf="subPrompt.shortAnswer" [ngModel]="fetchLocalStorage(subPrompt.localStorageId)">
+                    <input type="text" class="text-input" formControlName="shortAnswer" *ngIf="subPrompt.shortAnswer">
 
                     <drawingboard *ngIf="subPrompt.drawing" [drawingOptions]="subPrompt.drawing" formControlName="drawing"></drawingboard>
                 </div>
