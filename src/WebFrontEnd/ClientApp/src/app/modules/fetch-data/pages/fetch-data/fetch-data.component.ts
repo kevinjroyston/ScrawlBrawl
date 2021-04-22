@@ -49,8 +49,6 @@ export class FetchDataComponent implements OnDestroy
     private autoSubmitTimerId;
     private timerDisplayIntervalId;
 
-    private FetchDataKey = "fetchData-";
-
     timerDisplay = '';
     timerRemaining = 0;
     timerColor = 'green';
@@ -163,7 +161,6 @@ export class FetchDataComponent implements OnDestroy
                 // Reset the form again because you are a bad coder
                 if (this.userForm) {
                     this.userForm.reset();
-
                 }
             },
             error: async (error) => {
@@ -276,7 +273,6 @@ export class FetchDataComponent implements OnDestroy
         }
         return arr;
     }
-
   }
 interface UserPrompt {
     id: string;
