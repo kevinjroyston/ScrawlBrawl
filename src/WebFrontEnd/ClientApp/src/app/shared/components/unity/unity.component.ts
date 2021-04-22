@@ -26,6 +26,13 @@ export class UnityComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.style = {
+      //      position: 'fixed',
+      //      left: '${event.rectangle.left}px',
+      //      top: '${event.rectangle.top}px',
+            width: '100%',
+            height: '540px'
+    };  
     this.unityViewer.InitializeViewer('gameContainer');
 /*    
     const loader = (window as any).UnityLoader;

@@ -4,14 +4,35 @@
 </div>
 
 <div class="lobby-wrapper" *ngIf="lobby">
+
+
+    <div class="lobby-header-viewer">
+        <h3 class="lobby-id">Viewer</h3>
+        <div class="unityViewer">
+            <unity [viewerSize]="'largeViewer'" style="height:100%"></unity>
+        </div>
+
+        <div class="lobby-header-sections">
+            <div class="icon-row">
+                <div style="width:200px">
+                    <scrawlbutton (click)="unityViewer.showFullScreen()">Show Full Screen</scrawlbutton>
+                </div>
+                <div style="width:240px">
+                    <scrawlbutton (click)="launchViewer()">Show Viewer in New Tab</scrawlbutton>
+                </div>
+                <div style="width:240px">
+                    <scrawlbutton (click)="putViewerLinkOnClipboard()">Viewer Link to Clipboard</scrawlbutton>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="lobby-header">
-        <unity></unity>
         <div class="lobby-top">
             <h3 class="lobby-id">Lobby</h3>
             <div class='icon-row'>
-                <scrawlbrawl-iconbutton (click)="showInstructions()" matTooltip="Instructions" [mdTooltipClass]="{'tooltip': true}">
-                    <ion-icon name="help-outline"></ion-icon>
-                </scrawlbrawl-iconbutton>
+                <div style="width:240px">
+                    <scrawlbutton (click)="putGameLinkOnClipboard()">Game Link to Clipboard</scrawlbutton>
+                </div>
                 <scrawlbrawl-iconbutton (click)="onDeleteLobby()" matTooltip="Delete Lobby" [mdTooltipClass]="{'tooltip': true}">
                     <ion-icon [style.color]="'var(--red-secondary)'" name="trash-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
@@ -21,12 +42,6 @@
         <div class="lobby-header-sections">
             <div>
                 <b>ID</b> {{ lobby.lobbyId.toUpperCase() }}
-                <div style="width:120px">
-                    <scrawlbutton (click)="launchViewer()">Launch Viewer</scrawlbutton>
-                </div>
-            </div>
-            <div>
-                <b>Players</b> {{ lobby.playerCount }}
             </div>
         </div>
     </div>

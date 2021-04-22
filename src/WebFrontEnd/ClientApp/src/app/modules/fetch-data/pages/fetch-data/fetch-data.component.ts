@@ -273,7 +273,7 @@ export class FetchDataComponent implements OnDestroy
         }
         return arr;
     }
-}
+  }
 interface UserPrompt {
     id: string;
     gameIdString: string;

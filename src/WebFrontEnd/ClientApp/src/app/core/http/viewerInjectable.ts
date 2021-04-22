@@ -31,12 +31,22 @@ export class UnityViewer{
 //        container.style.height = '540px'; //canvas.style.height;            
 //        container.style.width = canvas.style.width;
         var el = document.getElementById(this.containerId);
-
-        container.style.width = Math.round((el.clientHeight-1)*96/54)+'px';
-        container.style.height = el.clientHeight-1+'px';
-//        container.style.height = canvas.clientHeight-1+'px';
+        if (Math.round((el.clientHeight-1)*96/54) <= el.clientWidth) {
+          container.style.width = Math.round((el.clientHeight-1)*96/54)+'px';
+          container.style.height = el.clientHeight-1+'px';
+        }
+        else
+        {
+          container.style.width = el.clientWidth+'px';
+          container.style.height = Math.round((el.clientWidth)*54/96)+'px';
+        }
     }
 
+    showFullScreen(){
+        if (this.gameInstance) {
+            this.gameInstance.SetFullscreen(1);
+        }
+    }
     UpdateLobbyId(lobbyId) {
         this.lobbyId = lobbyId;
         if (lobbyId == this.currentLobbyId) return;

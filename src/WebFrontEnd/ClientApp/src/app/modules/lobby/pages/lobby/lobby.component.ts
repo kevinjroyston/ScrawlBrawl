@@ -24,7 +24,8 @@ export class LobbyManagementComponent {
     public error: string;
     @ViewChild(GameAssetDirective) gameAssetDirective;
 
-    constructor(@Inject(UnityViewer) private unityViewer:UnityViewer, @Inject(GameModeList) public gameModeList: GameModeList, @Inject(API) private api: API, private matDialog: MatDialog, public errorService: ErrorService)
+    constructor(@Inject(UnityViewer) private unityViewer:UnityViewer, @Inject(GameModeList) public gameModeList: GameModeList, @Inject(API) private api: API, 
+             @Inject('BASE_FRONTEND_URL') private baseFrontEndUrl: string,private matDialog: MatDialog, public errorService: ErrorService)
     {
 /*        this.getGames().then(() => this.onGetLobby()) */
         this.onGetLobby()
@@ -46,6 +47,18 @@ export class LobbyManagementComponent {
             },
             error: () => { this.lobby = null;}
         });
+    }
+
+    putViewerLinkOnClipboard(){
+        navigator.clipboard.writeText(this.baseFrontEndUrl+"viewer/index.html?lobby="+this.lobby.lobbyId)
+            .then(()=>{alert("The link is on the clipboard.")})
+            .catch(e => console.error(e));
+    }
+
+    putGameLinkOnClipboard(){
+        navigator.clipboard.writeText(this.baseFrontEndUrl+"play?lobby="+this.lobby.lobbyId)
+            .then(()=>{alert("The link is on the clipboard.")})
+            .catch(e => console.error(e));
     }
 
     launchViewer(){
