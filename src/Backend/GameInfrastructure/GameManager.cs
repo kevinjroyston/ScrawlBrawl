@@ -137,7 +137,6 @@ namespace Backend.GameInfrastructure
                 User user = new User(identifier);
                 if (Users.TryAdd(identifier, user))
                 {
-                    CreateUserRegistrationUserState().Inlet(user, UserStateResult.Success, null);
                     newUser = true;
                 }
                 else
@@ -250,9 +249,12 @@ namespace Backend.GameInfrastructure
 
         public (bool, string) RegisterUser(User user, JoinLobbyRequest request)
         {
-            return RegisterUser(request.LobbyID, user, request.DisplayName, request.SelfPortrait);
+            return RegisterUser(request.LobbyId, user, request.DisplayName, request.SelfPortrait);
         }
 
+        /// <summary>
+        /// Tries to register a user to a particular lobby.
+        /// </summary>
         private (bool, string) RegisterUser(string lobbyId, User user, string displayName, string selfPortrait)
         {
             string userIdentifier = Users.FirstOrDefault((kvp) => kvp.Value == user).Key;
@@ -264,6 +266,10 @@ namespace Backend.GameInfrastructure
             {
                 return (false, "Invalid Lobby Code.");
             }
+            if (user.LobbyId != null && !user.LobbyId.Equals(lobbyId, StringComparison.OrdinalIgnoreCase))
+            {
+                return (false, "User already in a different lobby.");
+            }
 
             user.DisplayName = displayName;
             user.SelfPortrait = selfPortrait;
@@ -273,23 +279,11 @@ namespace Backend.GameInfrastructure
                 return (false, "Lobby not found.");
             }
 
-            if (!string.IsNullOrWhiteSpace(user.LobbyId))
+            if (!LobbyIdToLobby[lobbyId].TryAddUser(user, out string errorMsg))
             {
-                // If the user is supposedly already registered to a lobby, try adding them again.
-                if (!LobbyIdToLobby[user.LobbyId].TryAddUser(user, out string errorMsg))
-                {
-                    // If that didn't work, clear them from this lobby.
-                    user.LobbyId = null;
-                    return (false, errorMsg);
-                }
+                return (false, errorMsg);
             }
-            else
-            {
-                if (!LobbyIdToLobby[lobbyId].TryAddUser(user, out string errorMsg))
-                {
-                    return (false, errorMsg);
-                }
-            }
+
             return (true, string.Empty);
         }
         #endregion

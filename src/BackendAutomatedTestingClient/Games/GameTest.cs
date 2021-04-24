@@ -26,8 +26,8 @@ namespace BackendAutomatedTestingClient.Games
         public abstract string GameModeTitle { get; }
 
         // TODO: Make below fields command line arguments.
-        public virtual TimeSpan DelayBetweenSubmissions { get; } = TimeSpan.FromMilliseconds(0);
-        public virtual TimeSpan PollingDelay { get; } = TimeSpan.FromMilliseconds(100);
+        public virtual TimeSpan DelayBetweenSubmissions { get; } = TimeSpan.FromMilliseconds(5);
+        public virtual TimeSpan PollingDelay { get; } = TimeSpan.FromMilliseconds(150);
         public virtual TimeSpan MaxTotalPollingTime { get; } = TimeSpan.FromSeconds(10);
 
         public abstract UserFormSubmission HandleUserPrompt(UserPrompt prompt, LobbyPlayer player, int gameStep);

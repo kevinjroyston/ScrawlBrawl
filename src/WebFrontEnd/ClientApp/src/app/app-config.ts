@@ -34,7 +34,6 @@ export const b2cPolicies = {
 }
 // #endregion
 
-
 // #region 2) Web API Configuration
 /** 
  * Enter here the coordinates of your Web API and scopes for access token request

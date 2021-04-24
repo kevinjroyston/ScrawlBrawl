@@ -26,7 +26,7 @@
             <h5 class="prompt">Self Portrait</h5>
           </div>
         </div>
-        <drawingboard [drawingPrompt]="drawingSettings" formControlName='SelfPortrait'></drawingboard>
+        <drawingboard [drawingType]="'PROFILE'" formControlName='SelfPortrait'></drawingboard>
       </div>
     </div>
     <div class="Error" *ngIf="error">

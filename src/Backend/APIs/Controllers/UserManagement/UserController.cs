@@ -2,7 +2,7 @@
 using Backend.GameInfrastructure;
 using Common.Code.Validation;
 using Backend.GameInfrastructure.DataModels.Users;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace Backend.APIs.Controllers.UserManagement
 {
@@ -28,7 +28,7 @@ namespace Backend.APIs.Controllers.UserManagement
 
             User user = GameManager.MapIdentifierToUser(id, out bool newUser);
 
-            return Content(JsonSerializer.Serialize(user));
+            return Content(JsonConvert.SerializeObject(new User.Response(user)));
         }
 
         [HttpGet]

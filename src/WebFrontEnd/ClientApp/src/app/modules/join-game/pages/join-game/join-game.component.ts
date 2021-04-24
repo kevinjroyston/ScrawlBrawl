@@ -15,15 +15,7 @@ export class JoinGameComponent {
     DisplayName: new FormControl(''),
     LobbyID: new FormControl(''),
     SelfPortrait: new FormControl(''),
-  })
-  drawingSettings: GameplayPrompts.DrawingPromptMetadata = {
-    colorList: null,
-    premadeDrawing: null,
-    canvasBackground: null,
-    heightInPx : 360,
-    widthInPx : 360,
-    localStorageId: "SBPortrait"
-  };
+  });
   error : any;
   user: User;
 
