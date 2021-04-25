@@ -4,6 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { API } from '@core/http/api';
 import GameplayPrompts from '@core/models/gameplay'
 import User from '@core/models/user'
+import { UserManager } from '@core/http/userManager';
 
 @Component({
   selector: 'app-join-game',
@@ -19,31 +20,8 @@ export class JoinGameComponent {
   error : any;
   user: User;
 
-  constructor(@Inject(API) private api: API, private router : Router) {
-    this.getUser();
-  }
-
-  getUser = async () => {
-    let userRequest = await this.api.request({ 
-      type: "User", 
-      path: "Get"
-    })
-
-    userRequest.subscribe({
-      next: async (data : User) => {
-        this.checkUserLobby(data);
-        this.user = data;
-      },
-      error: async (error) => {
-        console.log(error);
-      }
-    })
-  }
-
-  checkUserLobby = (user: User) => {
-    if (user.LobbyId !== null){
-      this.router.navigate(['/play']) 
-    }
+  constructor(@Inject(API) private api: API, private router : Router, @Inject(UserManager) userManager) {
+    userManager.getUserDataAndRedirect();
   }
 
   onSubmit = async () => {

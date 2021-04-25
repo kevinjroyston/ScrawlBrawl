@@ -12,6 +12,7 @@ import Galleries from '@core/models/gallerytypes';
 import { UnityViewer } from '@core/http/viewerInjectable';
 import * as drawingUtils from "app/utils/drawingutils";
 import { HttpHeaders } from '@angular/common/http';
+import { UserManager } from '@core/http/userManager';
 
 @Pipe({ name: 'safe' })
 export class Safe {
@@ -60,11 +61,13 @@ export class FetchDataComponent implements OnDestroy
 
     constructor(
         formBuilder: FormBuilder,
-        router: Router,
+        private router: Router,
         private _colorPicker: MatBottomSheet,
         @Inject(API) private api: API,
-        @Inject(UnityViewer) private unityViewer:UnityViewer)
+        @Inject(UnityViewer) private unityViewer:UnityViewer,
+        @Inject(UserManager) userManager)
     {
+      userManager.getUserDataAndRedirect();
       this.formBuilder = formBuilder;
       this.fetchUserPrompt();
       router.events.subscribe((val) => {
@@ -107,6 +110,10 @@ export class FetchDataComponent implements OnDestroy
         await this.api.request({ type: "Game", path: "CurrentContent"}).subscribe({
             next: async data => {
                 var prompt = data as GameplayPrompts.UserPrompt;
+                if (data == null) // If no prompt object we have not joined lobby. Redirect accordingly.
+                {
+                    console.error("Joined lobby but not seeing a prompt.");
+                }
                 if (prompt.submitButton) {
                     document.body.classList.add('makeRoomForToolbar');
                 } else {

@@ -18,7 +18,8 @@ namespace Backend.GameInfrastructure.DataModels.Users
         /// </summary>
         public class Response
         {
-            public string DisplayName => User.DisplayName;
+            public string DisplayName => User?.DisplayName;
+            public string LobbyId => User?.LobbyId;
 
             private User User { get; set; }
 

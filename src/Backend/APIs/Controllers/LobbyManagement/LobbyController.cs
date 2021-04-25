@@ -115,12 +115,12 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 return new BadRequestResult();
             }
 
-            if (Sanitize.SanitizeString(request.DisplayName, out string _))
+            if (!Sanitize.SanitizeString(request.DisplayName, out string _))
             {
                 return new BadRequestResult();
             }
 
-            if (Sanitize.SanitizeString(request.LobbyId, out string _))
+            if (!Sanitize.SanitizeString(request.LobbyId, out string _))
             {
                 return new BadRequestResult();
             }
@@ -129,7 +129,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
             lock (user.LockObject)
             {
                 // If the user is currently in a different lobby, unregister the user and create a new one.
-                // If the user is already in this lobby calling register user should no-op.
+                // If the user is already in this lobby calling register user should no-op / re-confirm they are in the lobby.
                 if (user.Lobby != null && !user.LobbyId.Equals(request.LobbyId))
                 {
                     GameManager.UnregisterUser(user);
@@ -147,12 +147,12 @@ namespace Backend.APIs.Controllers.LobbyManagement
                     }
 
                     (bool, string) result = GameManager.RegisterUser(user, request);
-                    if (!result.Item1)
+                    if (!result.Item1) // Check success.
                     {
-                        return StatusCode(400, result.Item2);
+                        return StatusCode(400, result.Item2); // Return error message.
                     }
 
-                    if (user?.Lobby == null)
+                    if (user?.Lobby == null) // Confirm user is now in a lobby.
                     {
                         return StatusCode(400, "Unknown error occurred while joining Lobby.");
                     }

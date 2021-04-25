@@ -50,18 +50,18 @@ namespace Backend.APIs.Controllers
 
             try
             {
+                if (user?.UserState == null)
+                {
+                    /*Debug.Assert(false, "User not in a state!");
+                    Logger.LogWarning(message: $"User (name:'{user?.DisplayName}', id:'{id}') is not in a state");
+                    return BadRequest("Error finding/creating user object.");*/
+
+                    // TODO: test / figure out use case here.
+                    return new JsonResult(null);
+                }
+
                 lock (user.LockObject)
                 {
-                    if (user?.UserState == null)
-                    {
-                        /*Debug.Assert(false, "User not in a state!");
-                        Logger.LogWarning(message: $"User (name:'{user?.DisplayName}', id:'{id}') is not in a state");
-                        return BadRequest("Error finding/creating user object.");*/
-
-                        // TODO: test / figure out use case here.
-                        return new JsonResult(null);
-                    }
-
                     return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
                 }
             }
