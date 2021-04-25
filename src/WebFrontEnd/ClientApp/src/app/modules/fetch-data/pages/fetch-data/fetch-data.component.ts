@@ -1,6 +1,7 @@
 import { Component, Inject, ViewEncapsulation, Pipe, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup} from '@angular/forms';
 import { DomSanitizer, SafeHtml, SafeStyle, SafeScript, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
+import GameplayPrompts from '@core/models/gameplay' 
 import { API } from '@core/http/api';
 import { isNullOrUndefined } from 'util';
 import { Router } from '@angular/router';
@@ -10,6 +11,8 @@ import {DrawingPromptMetadata} from '@shared/components/drawingdirective.compone
 import Galleries from '@core/models/gallerytypes';
 import { UnityViewer } from '@core/http/viewerInjectable';
 import * as drawingUtils from "app/utils/drawingutils";
+import { HttpHeaders } from '@angular/common/http';
+import { UserManager } from '@core/http/userManager';
 
 @Pipe({ name: 'safe' })
 export class Safe {
@@ -42,7 +45,7 @@ export class Safe {
 
 export class FetchDataComponent implements OnDestroy
 {
-    public userPrompt: UserPrompt;
+    public userPrompt: GameplayPrompts.UserPrompt;
     public userForm;
     private formBuilder: FormBuilder;
     private userPromptTimerId;
@@ -58,11 +61,13 @@ export class FetchDataComponent implements OnDestroy
 
     constructor(
         formBuilder: FormBuilder,
-        router: Router,
+        private router: Router,
         private _colorPicker: MatBottomSheet,
         @Inject(API) private api: API,
-        @Inject(UnityViewer) private unityViewer:UnityViewer)
+        @Inject(UnityViewer) private unityViewer:UnityViewer,
+        @Inject(UserManager) userManager)
     {
+      userManager.getUserDataAndRedirect();
       this.formBuilder = formBuilder;
       this.fetchUserPrompt();
       router.events.subscribe((val) => {
@@ -104,7 +109,11 @@ export class FetchDataComponent implements OnDestroy
         // fetch the current content from the server
         await this.api.request({ type: "Game", path: "CurrentContent"}).subscribe({
             next: async data => {
-                var prompt = data as UserPrompt;
+                var prompt = data as GameplayPrompts.UserPrompt;
+                if (data == null) // If no prompt object we have not joined lobby. Redirect accordingly.
+                {
+                    console.error("Joined lobby but not seeing a prompt.");
+                }
                 if (prompt.submitButton) {
                     document.body.classList.add('makeRoomForToolbar');
                 } else {
@@ -168,9 +177,11 @@ export class FetchDataComponent implements OnDestroy
             }
         });
     }
+
     refreshUserPromptTimer(ms: number): void {
         this.userPromptTimerId = setTimeout(() => this.fetchUserPrompt(), ms);
     }
+
     autoSubmitUserPromptTimer(ms: number): void {
         if (ms <= 0) {
             this.onSubmit(this.userForm?.value, true)
@@ -273,53 +284,4 @@ export class FetchDataComponent implements OnDestroy
         }
         return arr;
     }
-  }
-interface UserPrompt {
-    id: string;
-    gameIdString: string;
-    lobbyId: string;
-    refreshTimeInMs: number;
-    currentServerTime: Date;
-    autoSubmitAtTime: Date;
-    submitButton: boolean;
-    submitButtonText: string;
-    title: string;
-    description: string;
-    subPrompts: SubPrompt[];
-    error: string;
-}
-interface SubPrompt {
-    id: string;
-    prompt: string;
-    color: string;
-    stringList: string[];
-    dropdown: string[];    
-    answers: string[];
-    colorPicker: boolean;
-    shortAnswer: boolean;
-    drawing: DrawingPromptMetadata;
-    slider: SliderPromptMetadata;
-    selector: SelectorPromptMetadata;
-}
-interface RangeHighlightsType
-{
-    start: number;
-    end: number;
-    class: string; 
-}
-
-interface SliderPromptMetadata {
-  min: number;
-  max: number;
-  value: string;
-  ticks: number[];
-  range: boolean;
-  enabled: boolean;
-  ticksLabels: string[];
-  rangeHighlights: RangeHighlightsType[];
-}
-interface SelectorPromptMetadata {
-  widthInPx: number;
-  heightInPx: number;
-  imageList: string[];
 }

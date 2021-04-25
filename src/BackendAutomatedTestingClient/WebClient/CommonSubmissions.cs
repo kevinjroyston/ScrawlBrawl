@@ -74,31 +74,23 @@ namespace BackendAutomatedTestingClient.WebClient
             name ??= "TestUser";
             drawing ??= Constants.Drawings.GrayDot;
 
-            await WebClient.GetPromptAndSubmitUserForm(
-                handler: (UserPrompt prompt) =>
-                {
-                    if (prompt == null || !prompt.SubmitButton)
-                        return null;
-                    return new UserFormSubmission
-                    {
-                        SubForms = new List<UserSubForm>()
-                        {
-                            new UserSubForm()
-                            {
-                                ShortAnswer = name,
-                            },
-                            new UserSubForm()
-                            {
-                                ShortAnswer = lobbyId,
-                            },
-                            new UserSubForm()
-                            {
-                                Drawing = drawing,
-                            }
-                        }
-                    };
-                },
-                userId: userId);
+            var joinLobbyRequest = new JoinLobbyRequest
+            {
+                DisplayName = name,
+                LobbyID = lobbyId,
+                SelfPortrait = drawing
+            };
+
+            var httpResponseMessage = await WebClient.MakeWebRequest(
+                path: Constants.Path.LobbyJoin,
+                userId: userId,
+                method: HttpMethod.Post,
+                content: new StringContent(
+                    JsonConvert.SerializeObject(joinLobbyRequest),
+                    Encoding.UTF8,
+                    Constants.MediaType.ApplicationJson));
+
+            await httpResponseMessage.ThrowIfNonSuccessResponse(userId);
         }
 
         public static UserFormSubmission SubmitSingleDrawing(string userId, string drawing = null)

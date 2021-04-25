@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Backend.GameInfrastructure;
 using Common.Code.Validation;
+using Backend.GameInfrastructure.DataModels.Users;
+using Newtonsoft.Json;
 
 namespace Backend.APIs.Controllers.UserManagement
 {
@@ -14,6 +16,20 @@ namespace Backend.APIs.Controllers.UserManagement
         }
 
         private GameManager GameManager { get; set; }
+
+        [HttpGet]
+        [Route("Get")]
+        public IActionResult GetUser(string id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return new BadRequestResult();
+            }
+
+            User user = GameManager.MapIdentifierToUser(id, out bool newUser);
+
+            return Content(JsonConvert.SerializeObject(new User.Response(user)));
+        }
 
         [HttpGet]
         [Route("Delete")]

@@ -55,7 +55,11 @@ namespace BackendAutomatedTestingClient.Games.FriendQuiz
                     },
                     new UserSubForm()
                     {
-                        RadioAnswer = 0
+                        ShortAnswer = "0",
+                    },
+                    new UserSubForm()
+                    {
+                        ShortAnswer = "100",
                     },
                 }
             };

@@ -13,6 +13,22 @@ namespace Backend.GameInfrastructure.DataModels.Users
     /// </summary>
     public class User : IAccessorHashable, IMember
     {
+        /// <summary>
+        /// Class that can be safely serialized and returned as a response.
+        /// </summary>
+        public class Response
+        {
+            public string DisplayName => User?.DisplayName;
+            public string LobbyId => User?.LobbyId;
+
+            private User User { get; set; }
+
+            public Response(User user)
+            {
+                this.User = user;
+            }
+        }
+
         public Guid Id { get; } = Guid.NewGuid();
 
         public IReadOnlyList<Guid> Tags { get; }

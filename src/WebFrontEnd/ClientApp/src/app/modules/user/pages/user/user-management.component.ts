@@ -26,7 +26,7 @@ export class UserManagementComponent {
         await this.api.request({ type: "User", path: "Delete" }).subscribe({
             next: async data => {
                 console.log("Left lobby");
-                this.router.navigate(['/play'])
+                this.router.navigate(['/join'])
             },
             error: async (error) => {
                 console.error(error);

@@ -26,6 +26,11 @@ simplebutton {
     }
 }
 
+.Error{
+  margin-bottom: 1rem;
+  color: var(--red-secondary);
+}
+
 .title {
     margin: 1rem 0;
     text-align: center;
@@ -46,6 +51,7 @@ simplebutton {
     display: flex;
     justify-content: center;
     margin-bottom: 0.2rem;
+    color: var(--black-primary);
 }
 
 .subprompts {

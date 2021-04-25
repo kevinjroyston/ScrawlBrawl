@@ -1,0 +1,39 @@
+<div class="fetch-data">
+  <form class="form" [formGroup]="form">
+    <h2 class="title">
+      Join A Game
+    </h2>
+    <div class="subprompts">
+      <div class="subprompt">
+        <div class="subprompt-inner">
+          <div class="prompt-wrapper">
+            <h5 class="prompt">Nickname</h5>
+          </div>
+        </div>
+        <input type="text" class="text-input" formControlName="DisplayName">
+      </div>
+      <div class="subprompt">
+        <div class="subprompt-inner">
+          <div class="prompt-wrapper">
+            <h5 class="prompt">Lobby Code</h5>
+          </div>
+        </div>
+        <input type="text" class="text-input" formControlName="LobbyID">
+      </div>
+      <div class="subprompt">
+        <div class="subprompt-inner">
+          <div class="prompt-wrapper">
+            <h5 class="prompt">Self Portrait</h5>
+          </div>
+        </div>
+        <drawingboard [drawingType]="'PROFILE'" formControlName='SelfPortrait'></drawingboard>
+      </div>
+    </div>
+    <div class="Error" *ngIf="error">
+      {{ error }}
+    </div>
+    <scrawlbutton color="green" (click)="onSubmit()">
+      Submit
+    </scrawlbutton>
+  </form>  
+</div>

@@ -8,6 +8,9 @@ using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Backend.GameInfrastructure.DataModels;
+using Backend.GameInfrastructure.DataModels.Users;
+using Backend.GameInfrastructure.DataModels.States.UserStates;
+using Common.Code.Validation;
 #if !DEBUG
 //using Microsoft.AspNetCore.Authorization;
 #endif
@@ -30,7 +33,6 @@ namespace Backend.APIs.Controllers.LobbyManagement
         private ILogger<LobbyController> Logger { get; set; }
         private IServiceProvider ServiceProvider { get; set; }
         private InMemoryConfiguration InMemoryConfiguration { get; set; }
-
 
         [HttpGet]
         [Route("Get")]
@@ -101,7 +103,63 @@ namespace Backend.APIs.Controllers.LobbyManagement
             }
 
             user.OwnedLobby = newLobby;
-            return new OkResult();
+            return Ok(lobbyId);
+        }
+
+        [HttpPost]
+        [Route("Join")]
+        public IActionResult JoinLobby([FromBody] JoinLobbyRequest request, [FromQuery(Name = "Id")] string id)
+        {
+            if (!ModelState.IsValid || request == null)
+            {
+                return new BadRequestResult();
+            }
+
+            if (!Sanitize.SanitizeString(request.DisplayName, out string _))
+            {
+                return new BadRequestResult();
+            }
+
+            if (!Sanitize.SanitizeString(request.LobbyId, out string _))
+            {
+                return new BadRequestResult();
+            }
+
+            User user = GameManager.MapIdentifierToUser(id, out bool newUser);
+            lock (user.LockObject)
+            {
+                // If the user is currently in a different lobby, unregister the user and create a new one.
+                // If the user is already in this lobby calling register user should no-op / re-confirm they are in the lobby.
+                if (user.Lobby != null && !user.LobbyId.Equals(request.LobbyId))
+                {
+                    GameManager.UnregisterUser(user);
+                    user = GameManager.MapIdentifierToUser(id, out bool _);
+                }
+
+                // Separate lock as the first user object may have been unregistered. Nested lock because of race conditions fetching current user state.
+                // Locks are re-entrant so locking the same object twice from one thread poses no risks.
+                lock (user.LockObject)
+                {
+                    // Race condition.
+                    if (user.Lobby != null && !user.LobbyId.Equals(request.LobbyId))
+                    {
+                        return StatusCode(400, "Try Again.");
+                    }
+
+                    (bool, string) result = GameManager.RegisterUser(user, request);
+                    if (!result.Item1) // Check success.
+                    {
+                        return StatusCode(400, result.Item2); // Return error message.
+                    }
+
+                    if (user?.Lobby == null) // Confirm user is now in a lobby.
+                    {
+                        return StatusCode(400, "Unknown error occurred while joining Lobby.");
+                    }
+
+                    return new OkResult();
+                }
+            }
         }
 
         [HttpGet]

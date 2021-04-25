@@ -202,6 +202,8 @@ namespace Backend.GameInfrastructure
             user.SetLobbyJoinTime();
             user.LobbyId = LobbyId;
 
+            Inlet(user, UserStateResult.Success, null);
+
             return true;
         }
         public void Inlet(User user, UserStateResult result, UserFormSubmission formSubmission)
