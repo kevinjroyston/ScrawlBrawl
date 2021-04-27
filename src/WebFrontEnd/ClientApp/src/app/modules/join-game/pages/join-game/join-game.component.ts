@@ -5,6 +5,7 @@ import { API } from '@core/http/api';
 import GameplayPrompts from '@core/models/gameplay'
 import User from '@core/models/user'
 import { UserManager } from '@core/http/userManager';
+import * as localStorage from "app/utils/localstorage";
 
 @Component({
   selector: 'app-join-game',
@@ -13,19 +14,24 @@ import { UserManager } from '@core/http/userManager';
 })
 export class JoinGameComponent {
   form = new FormGroup({
-    DisplayName: new FormControl(''),
-    LobbyID: new FormControl(''),
+    DisplayName: new FormControl(this.fetchDisplayName()),
+    LobbyID: new FormControl(this.fetchLobbyID()),
     SelfPortrait: new FormControl(''),
   });
   error : any;
   user: User;
+
+  fetchDisplayName():string {return localStorage.fetchLocalStorage("Join","DisplayName")}
+
+  fetchLobbyID():string {return localStorage.fetchURLParam("lobby")}
 
   constructor(@Inject(API) private api: API, private router : Router, @Inject(UserManager) userManager) {
     userManager.getUserDataAndRedirect();
   }
 
   onSubmit = async () => {
-    let requestBody = this.form.value
+    let requestBody = this.form.value;
+    localStorage.storeLocalStorage("Join","DisplayName",this.form.controls.DisplayName.value);
     let lobbyJoinRequest = await this.api.request({ 
       type: "Lobby", 
       path: "Join", 
