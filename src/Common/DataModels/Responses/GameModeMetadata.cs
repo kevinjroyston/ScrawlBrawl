@@ -1,4 +1,5 @@
 ﻿using Common.DataModels.Enums;
+using Common.DataModels.Requests.LobbyManagement;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,8 @@ namespace Common.DataModels.Responses
         public string Title { get; set; }
         public string GameIdString { get { return this.GameId.ToString(); } }
 
-        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public GameModeId GameId { get; set; }
         public string Description { get; set; }
         public string Identifier { get; set; } // should be unique across games, used to lookup html info pages and store offline data related to game
@@ -22,6 +24,22 @@ namespace Common.DataModels.Responses
         public GameModeAttributes Attributes { get; set; }
 
         public List<GameModeOptionResponse> Options { get; set; }
+
+        /// <summary>
+        /// Function that returns a list of html classes which should be hidden from the tutorial page based on current selected options.
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public Func<List<string>> GetTutorialHiddenClasses { get; set; }
+
+
+        /// <summary>
+        /// This function will be called once prior to instantiation.
+        /// Optimizations can be made here down the road if needed as the call can be memoized.
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public Func<int, List<ConfigureLobbyRequest.GameModeOptionRequest>, IReadOnlyDictionary<GameDuration, TimeSpan>> GetGameDurationEstimates {get; set;}
 
 
         /// <summary>

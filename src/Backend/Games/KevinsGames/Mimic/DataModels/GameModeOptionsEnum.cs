@@ -2,11 +2,7 @@
 {
     public enum GameModeOptions 
     {
-        NumStartingDrawingsPerUser,
         MaxDrawingsBeforeVote,
-        NumSets,
-        MaxVoteDrawings,
-        GameLength
     };
     
 }

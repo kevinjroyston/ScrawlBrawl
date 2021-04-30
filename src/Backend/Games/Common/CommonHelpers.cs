@@ -17,7 +17,7 @@ namespace Backend.Games.Common
             return Invariant($"<img width=\"{width}\" height=\"{height}\" src=\"{image}\"/>");
         }
 
-        public static TimeSpan GetTimerFromLength(double length, double minTimerLength, double aveTimerLength, double maxTimerLength, double minLength = 0, double aveLength = 5, double maxLength = 10)
+       /* public static TimeSpan GetTimerFromLength(double length, double minTimerLength, double aveTimerLength, double maxTimerLength, double minLength = 0, double aveLength = 5, double maxLength = 10)
         {
             return TimeSpan.FromSeconds(MathHelpers.ThreePointLerp(
                 minX: minLength,
@@ -32,7 +32,7 @@ namespace Backend.Games.Common
         public static int GetMaxInputsFromExpected(int numExpected, float multiplier = 1.3f, int minExtra = 2)
         {
             return Math.Max((int)Math.Ceiling(numExpected * multiplier), numExpected + minExtra);
-        }
+        }*/
         public static int PointsForSpeed(int maxPoints, int minPoints, double startTime, double endTime, double secondsTaken)
         {
             Debug.Assert(maxPoints >= minPoints);

@@ -6,6 +6,6 @@
         NumAnswerQuestions,
         //MinQuestions,
         //OutlierExtraRound,
-        GameLength,
+        //GameLength,
     }
 }

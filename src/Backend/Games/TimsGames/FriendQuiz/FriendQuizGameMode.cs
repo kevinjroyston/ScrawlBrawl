@@ -42,80 +42,61 @@ namespace Backend.Games.TimsGames.FriendQuiz
                 {
                     new GameModeOptionResponse
                     {
-                        Description = "Number of questions created by each user",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 2,
-                        MinValue = 1,
-                        MaxValue = 5,
-                    },
-                    new GameModeOptionResponse
-                    {
                         Description = "Number of questions answered by each user",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 5,
                         MinValue = 1,
                         MaxValue = 10,
                     },
-
-                    /*new GameModeOptionResponse
-                    {
-                        Description = "Min number of questions to show for voting",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 3,
-                        MinValue = 1,
-                        MaxValue = 30,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Outlier Extra Round",
-                        ResponseType = ResponseType.Boolean,
-                        DefaultValue = true,
-                    },*/
-                    new GameModeOptionResponse
-                    {
-                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 5,
-                        MinValue = 0,
-                        MaxValue = 10,
-                    }
-                }
+                },
+            GetGameDurationEstimates= GetGameDurationEstimates,
         };
-        public FriendQuizGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
+        private static IReadOnlyDictionary<GameDuration, TimeSpan> GetGameDurationEstimates(int numPlayers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            int numQuestionSetup = (int)gameModeOptions[(int)GameModeOptionsEnum.NumSubmitQuestions].ValueParsed;
+            double questionPoolMultiplier = 2.5; // Question pool is X times bigger than number of questions per person.
+
+            Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
+            foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
+            {
+                int numQuestionsToAnswer = (int)gameModeOptions[(int)GameModeOptionsEnum.NumAnswerQuestions].ValueParsed;
+                int effectiveNumPlayers = Math.Min(numPlayers, FriendQuizConstants.MaxUserRounds[duration]);
+                int numQuestionSetup = (int)(numQuestionsToAnswer * questionPoolMultiplier / effectiveNumPlayers) + 1; // How many questions each user should contribute.
+
+                TimeSpan estimate = TimeSpan.Zero;
+                TimeSpan setupTimer = FriendQuizConstants.SetupTimer[duration];
+                TimeSpan answeringTimer = FriendQuizConstants.AnsweringTimer[duration];
+                TimeSpan votingTimer = FriendQuizConstants.VotingTimer[duration];
+
+                estimate += setupTimer.Multiply(numQuestionSetup);
+                estimate += answeringTimer.Multiply(numQuestionsToAnswer);
+                estimate += votingTimer.Multiply(numQuestionsToAnswer).Multiply(effectiveNumPlayers);
+
+                estimates[duration] = estimate;
+            }
+
+            return estimates;
+        }
+        public FriendQuizGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, bool timersEnabled, GameDuration gameDuration)
+        {
+            double questionPoolMultiplier = 2.5; // Question pool is X times bigger than number of questions per person.
+
             int numQuestionsToAnswer = (int)gameModeOptions[(int)GameModeOptionsEnum.NumAnswerQuestions].ValueParsed;
-            //int minQuestions = (int)gameModeOptions[(int)GameModeOptionsEnum.MinQuestions].ValueParsed;
-            //bool outlierExtraRound = (bool)gameModeOptions[(int)GameModeOptionsEnum.OutlierExtraRound].ValueParsed;
-            int gameLength = (int)gameModeOptions[(int)GameModeOptionsEnum.GameLength].ValueParsed;
+            int numRounds = Math.Min(lobby.GetAllUsers().Count(), FriendQuizConstants.MaxUserRounds[gameDuration]);
+            int numQuestionSetup = (int)(numQuestionsToAnswer * questionPoolMultiplier / numRounds) + 1; // How many questions each user should contribute.
 
             TimeSpan? setupTimer = null;
             TimeSpan? answeringTimer = null;
             TimeSpan? votingTimer = null;
 
-            if (gameLength > 0)
+            if (timersEnabled)
             {
-                setupTimer = CommonHelpers.GetTimerFromLength(
-                    length: (double)gameLength,
-                    minTimerLength: FriendQuizConstants.SetupTimerMin,
-                    aveTimerLength: FriendQuizConstants.SetupTimerAve,
-                    maxTimerLength: FriendQuizConstants.SetupTimerMax);
-                answeringTimer = CommonHelpers.GetTimerFromLength(
-                    length: (double)gameLength,
-                    minTimerLength: FriendQuizConstants.AnsweringTimerMin,
-                    aveTimerLength: FriendQuizConstants.AnsweringTimerAve,
-                    maxTimerLength: FriendQuizConstants.AnsweringTimerMax);
-                votingTimer = CommonHelpers.GetTimerFromLength(
-                    length: (double)gameLength,
-                    minTimerLength: FriendQuizConstants.VotingTimerMin,
-                    aveTimerLength: FriendQuizConstants.VotingTimerAve,
-                    maxTimerLength: FriendQuizConstants.VotingTimerMax);
-                
+                setupTimer = FriendQuizConstants.SetupTimer[gameDuration];
+                answeringTimer = FriendQuizConstants.AnsweringTimer[gameDuration];
+                votingTimer = FriendQuizConstants.VotingTimer[gameDuration];
             }
 
-            //numQuestionsToAnswer = Math.Clamp(numQuestionsToAnswer, 1, lobby.GetAllUsers().Count * numQuestionSetup);
             Dictionary<User, List<Question>> usersToAssignedQuestions = new Dictionary<User, List<Question>>();
-            int maxNumAssigned = 1;
+            int maxNumAssigned = 1; // Variable for tracking user with most questions.
 
             StateChain gameStateChain = new StateChain(stateGenerator: (int counter) =>
             {
@@ -157,7 +138,11 @@ namespace Backend.Games.TimsGames.FriendQuiz
                 {
                     votingTimer = votingTimer?.Multiply(maxNumAssigned);
 
-                    List<User> randomizedUsers = usersToAssignedQuestions.Keys.OrderBy(_ => Rand.Next()).ToList();
+                    List<User> randomizedUsers = usersToAssignedQuestions.Keys
+                    .OrderBy(_ => Rand.Next())
+                    .ToList() // Probably not needed, but just in case.
+                    .Take(numRounds) // Number of rounds is limited based on game duration.
+                    .ToList();
 
                     return GetUserQueryStateChain(randomizedUsers);
                 }

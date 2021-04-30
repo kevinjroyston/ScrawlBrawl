@@ -39,12 +39,15 @@ namespace Backend.GameInfrastructure
         /// </summary>
         public DateTime CreationTime { get; } = DateTime.Now;
         public List<ConfigureLobbyRequest.GameModeOptionRequest> GameModeOptions { get; private set; }
+        public StandardGameOptions StandardGameModeOptions { get; private set; }
+
         public GameModeMetadataHolder SelectedGameMode { get; private set; }
         public ConfigurationMetadata ConfigMetaData { get; } = new ConfigurationMetadata();
 
         #region GameStates
         private GameState CurrentGameState { get; set; }
         private GameState EndOfGameRestart { get; set; }
+        private TutorialExplanationGameState TutorialGameState { get; set; }
         private WaitForLobbyCloseGameState WaitForLobbyStart { get; set; }
         #endregion
 
@@ -157,6 +160,7 @@ namespace Backend.GameInfrastructure
         private void InitializeAllGameStates()
         {
             this.WaitForLobbyStart = new WaitForLobbyCloseGameState(this);
+            this.TutorialGameState = new TutorialExplanationGameState(this);
             this.EndOfGameRestart = new EndOfGameState(this, PrepareToRestartGame);
             TransitionCurrentGameState(this.WaitForLobbyStart);
         }
@@ -302,7 +306,7 @@ namespace Backend.GameInfrastructure
         /// Starts the game, throws if something is wrong with the configuration values.
         /// </summary>
         /// <param name="specialTransitionFrom">Where the current users are sitting (if somewhere other than WaitForLobbyStart)</param>
-        public bool StartGame(out string errorMsg, GameState specialTransitionFrom = null)
+        public bool StartGame(out string errorMsg)
         {
             errorMsg = string.Empty;
             if (this.SelectedGameMode == null)
@@ -317,9 +321,6 @@ namespace Backend.GameInfrastructure
                 return false;
             }
 
-            // Slightly hacky default because it can't be passed in.
-            GameState transitionFrom = specialTransitionFrom ?? this.WaitForLobbyStart;
-
             GameModeMetadataHolder gameModeMetadata = this.SelectedGameMode;
             IGameMode game;
             try
@@ -333,9 +334,24 @@ namespace Backend.GameInfrastructure
             }
 
             this.Game = game;
+            
+            if (this.TutorialEnabled)
+            {
+                // Transition from waiting => tutorial => game.
+                this.WaitForLobbyStart.Transition(this.TutorialGameState);
+                this.TutorialGameState.Transition(game);
+            }
+            else
+            {
+                // No tutorial, transition straight from waiting to game.
+                this.WaitForLobbyStart.Transition(game);
+            }
 
-            transitionFrom.Transition(game);
+            // Set up game to transition smoothly to end of game restart.
+            // TODO: transition to a scoreboard first instead?
             game.Transition(this.EndOfGameRestart);
+
+            // Send users to game or tutorial.
             this.WaitForLobbyStart.LobbyHasClosed();
 
             return true;
