@@ -72,11 +72,6 @@ namespace Backend.GameInfrastructure.DataModels
             },
             new GameModeMetadataHolder()
             {
-                GameModeMetadata = BodyBuilderGameMode.GameModeMetadata,
-                GameModeInstantiator = (lobby, options) => new BodyBuilderGameMode(lobby, options)
-            },
-            new GameModeMetadataHolder()
-            {
                 GameModeMetadata = BattleReadyGameMode.GameModeMetadata,
                 GameModeInstantiator = (lobby, options) => new BattleReadyGameMode(lobby, options)
             },
@@ -92,56 +87,10 @@ namespace Backend.GameInfrastructure.DataModels
             },
             
             #region StoryTime (Removed)
-            /*new GameModeMetadata
+            /*new GameModeMetadataHolder()
             {
-                Title = "StoryTime",
-                Description = "Work together to make the best story that fits set of rapidly changing genres",
-                MinPlayers = 3,
-                MaxPlayers = null,
-                GameModeInstantiator = (lobby, options) => new StoryTimeGameMode(lobby, options),
-                Options = new List<GameModeOptionResponse>
-                {
-                    new GameModeOptionResponse
-                    {
-                        Description = "Number of players asked to write each round",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 2,
-                        MinValue = 2,
-                        MaxValue = 30,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Number of rounds",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 10,
-                        MinValue = 2,
-                        MaxValue = 60,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "length of timer for writing",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 45,
-                        MinValue = 10,
-                        MaxValue = 120,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "length of timer for voting",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 30,
-                        MinValue = 5,
-                        MaxValue = 60,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "character limit for sentences",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 100,
-                        MinValue = 50,
-                        MaxValue = 200,
-                    },
-                }
+                GameModeMetadata = BodyBuilderGameMode.GameModeMetadata,
+                GameModeInstantiator = (lobby, options) => new BodyBuilderGameMode(lobby, options)
             },*/
             #endregion
         }.AsReadOnly();

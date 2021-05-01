@@ -21,6 +21,7 @@ using Common.DataModels.Responses;
 using Common.DataModels.Enums;
 using Backend.Games.Common.DataModels.UserCreatedObjects.UserCreatedUnityObjects;
 using Backend.APIs.DataModels.UnityObjects;
+using Common.Code.Extensions;
 
 namespace Backend.Games.BriansGames.TwoToneDrawing
 {
@@ -49,74 +50,81 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             {
                 new GameModeOptionResponse
                 {
-                    Description = "One Color Per Person",
+                    Description = "Limit each team member to one color",
                     ResponseType = ResponseType.Boolean,
                     DefaultValue = true,
                 },
                 new GameModeOptionResponse
                 {
-                    Description = "Max number of colors/layers per team",
+                    Description = "Team Size",
                     ResponseType = ResponseType.Integer,
                     DefaultValue = 2,
-                    MinValue = 2,
-                    MaxValue = 10,
+                    MinValue = 1,
+                    MaxValue = 4,
                 },
-                new GameModeOptionResponse
-                {
-                    Description = "Max number of teams per prompt",
-                    ResponseType = ResponseType.Integer,
-                    DefaultValue = 4,
-                    MinValue = 2,
-                    MaxValue = 20,
-                },
-                /*
-                new GameModeOptionResponse
-                {
-                    Description = "Show everyone the colors/layer descriptions",
-                    DefaultValue = true,
-                    ResponseType = ResponseType.Boolean
-                },*/
-                new GameModeOptionResponse
-                {
-                    Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
-                    ResponseType = ResponseType.Integer,
-                    DefaultValue = 5,
-                    MinValue = 0,
-                    MaxValue = 10,
-                }
-            }
+            },
+            GetGameDurationEstimates = GetGameDurationEstimates,
         };
-
-        public TwoToneDrawingGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
+        private static IReadOnlyDictionary<GameDuration, TimeSpan> GetGameDurationEstimates(int numPlayers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            ValidateOptions(lobby, gameModeOptions);
-            this.Lobby = lobby;
-
+            int maxPossibleTeamCount = 8; // Can go higher than this in extreme circumstances.
             bool useSingleColor = (bool)gameModeOptions[(int)GameModeOptionsEnum.useSingleColor].ValueParsed;
             int numLayers = (int)gameModeOptions[(int)GameModeOptionsEnum.numLayers].ValueParsed;
-            int numTeams = (int)gameModeOptions[(int)GameModeOptionsEnum.numTeams].ValueParsed;
-            bool showOtherColors = true; // (bool)gameModeOptions[(int)GameModeOptionsEnum.showOtherColors].ValueParsed;
-            int gameLength = (int)gameModeOptions[(int)GameModeOptionsEnum.GameLength].ValueParsed;
-            TimeSpan? setupTimer = null;
+            if (numLayers * 2 > numPlayers)
+            {
+                numLayers = numPlayers / 2;
+            }
+
+            Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
+            foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
+            {
+                int numRounds = Math.Min(TwoToneDrawingConstants.MaxNumRounds[duration], numPlayers);
+                int numDrawingsPerPlayer = Math.Min(TwoToneDrawingConstants.DrawingsPerPlayer[duration], numRounds);
+
+                TimeSpan estimate = TimeSpan.Zero;
+                TimeSpan setupTimer = TwoToneDrawingConstants.SetupTimer[duration];
+                TimeSpan drawingTimer = TwoToneDrawingConstants.PerDrawingTimer[duration].MultipliedBy(numDrawingsPerPlayer);
+                TimeSpan votingTimer = TwoToneDrawingConstants.VotingTimer[duration];
+
+                estimate += votingTimer.MultipliedBy(numRounds);
+                estimate += setupTimer;
+                estimate += drawingTimer;
+
+                estimates[duration] = estimate;
+            }
+
+            return estimates;
+        }
+
+        public TwoToneDrawingGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, GameDuration duration, bool timerEnabled)
+        {
+            this.Lobby = lobby;
+
+            int maxPossibleTeamCount = 8; // Can go higher than this in extreme circumstances.
+            bool useSingleColor = (bool)gameModeOptions[(int)GameModeOptionsEnum.useSingleColor].ValueParsed;
+            int numLayers = (int)gameModeOptions[(int)GameModeOptionsEnum.numLayers].ValueParsed;
+            int numPlayers = lobby.GetAllUsers().Count();
+            if (numLayers * 2 > numPlayers)
+            {
+                numLayers = numPlayers / 2;
+            }
+            int numRounds = Math.Min(TwoToneDrawingConstants.MaxNumRounds[duration], numPlayers);
+            int numDrawingsPerPlayer = Math.Min(TwoToneDrawingConstants.DrawingsPerPlayer[duration], numRounds);
+            int numTeamsLowerBound = Math.Max(2, 1 * numPlayers / (numRounds * numLayers)); // Lower bound.
+            int numTeamsUpperBound = Math.Min(maxPossibleTeamCount, numDrawingsPerPlayer * numPlayers / (numRounds * numLayers)); // Upper bound.
+            int numTeams = Math.Max(numTeamsLowerBound, numTeamsUpperBound); // Possible for lower bound to be higher than upper bound. that is okay.
+
+
+            //int drawingsPerPlayer = numRounds * numLayers * numTeams / numPlayers;
+
+            TimeSpan ? setupTimer = null;
             TimeSpan? drawingTimer = null;
             TimeSpan? votingTimer = null;
-            if (gameLength > 0)
+            if (timerEnabled)
             {
-                setupTimer = CommonHelpers.GetTimerFromLength(
-                    length: (double)gameLength,
-                    minTimerLength: TwoToneDrawingConstants.SetupTimerMin,
-                    aveTimerLength: TwoToneDrawingConstants.SetupTimerAve,
-                    maxTimerLength: TwoToneDrawingConstants.SetupTimerMax);
-                drawingTimer = CommonHelpers.GetTimerFromLength(
-                    length: (double)gameLength,
-                    minTimerLength: TwoToneDrawingConstants.PerDrawingTimerMin,
-                    aveTimerLength: TwoToneDrawingConstants.PerDrawingTimerAve,
-                    maxTimerLength: TwoToneDrawingConstants.PerDrawingTimerMax);
-                votingTimer = CommonHelpers.GetTimerFromLength(
-                    length: (double)gameLength,
-                    minTimerLength: TwoToneDrawingConstants.VotingTimerMin,
-                    aveTimerLength: TwoToneDrawingConstants.VotingTimerAve,
-                    maxTimerLength: TwoToneDrawingConstants.VotingTimerMax);
+                setupTimer = TwoToneDrawingConstants.SetupTimer[duration];
+                drawingTimer = TwoToneDrawingConstants.PerDrawingTimer[duration].MultipliedBy(numDrawingsPerPlayer);
+                votingTimer = TwoToneDrawingConstants.VotingTimer[duration];
             }
 
             Setup = new Setup_GS(
@@ -125,7 +133,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                 useSingleColor: useSingleColor,
                 numLayersPerTeam: numLayers,
                 numTeamsPerPrompt: numTeams,
-                showColors: showOtherColors,
+                numRounds: numRounds,
                 setupTimer: setupTimer,
                 drawingTimer: drawingTimer);
 
@@ -229,10 +237,6 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                     });
                 challenge.TeamIdToUsersWhoVotedMapping.GetOrAdd(kvp.Value.TeamId, _ => new ConcurrentBag<User>());
             }
-        }
-        public void ValidateOptions(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
-        {
-            // None
         }
     }
 }

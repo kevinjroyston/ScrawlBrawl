@@ -4,8 +4,5 @@
     {
         useSingleColor,
         numLayers,
-        numTeams,
-//        showOtherColors,
-        GameLength,
     }
 }
