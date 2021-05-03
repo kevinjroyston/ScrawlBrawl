@@ -12,17 +12,17 @@
             <unity [viewerSize]="'largeViewer'" style="height:100%"></unity>
         </div>
 
-        <div class="lobby-header-sections">
+        <div class="lobby-header">
             <div class="icon-row">
-                <div style="width:200px">
-                    <scrawlbutton (click)="unityViewer.showFullScreen()">Show Full Screen</scrawlbutton>
-                </div>
-                <div style="width:240px">
-                    <scrawlbutton (click)="launchViewer()">Show Viewer in New Tab</scrawlbutton>
-                </div>
-                <div style="width:240px">
-                    <scrawlbutton (click)="putViewerLinkOnClipboard()">Viewer Link to Clipboard</scrawlbutton>
-                </div>
+                <scrawlbrawl-iconbutton (click)="launchViewer()" matTooltip="Show Viewer in New Tab" [mdTooltipClass]="{'tooltip': true}">
+                    <ion-icon [style.color]="'var(--red-secondary)'" name="trending-up-outline"></ion-icon>
+                </scrawlbrawl-iconbutton>
+                <scrawlbrawl-iconbutton (click)="unityViewer.showFullScreen()" matTooltip="Show Viewer Full Screen" [mdTooltipClass]="{'tooltip': true}">
+                    <ion-icon [style.color]="'var(--red-secondary)'" name="tv-outline"></ion-icon>
+                </scrawlbrawl-iconbutton>
+                <scrawlbrawl-iconbutton (click)="putViewerLinkOnClipboard()" matTooltip="Put Link to Viewer on Clipboard" [mdTooltipClass]="{'tooltip': true}">
+                    <ion-icon [style.color]="'var(--red-secondary)'" name="clipboard-outline"></ion-icon>
+                </scrawlbrawl-iconbutton>
             </div>
         </div>
     </div>
@@ -30,9 +30,9 @@
         <div class="lobby-top">
             <h3 class="lobby-id">Lobby</h3>
             <div class='icon-row'>
-                <div style="width:240px">
-                    <scrawlbutton (click)="putGameLinkOnClipboard()">Game Link to Clipboard</scrawlbutton>
-                </div>
+                <scrawlbrawl-iconbutton (click)="putGameLinkOnClipboard()" matTooltip="Put Game Link on Clipboard" [mdTooltipClass]="{'tooltip': true}">
+                    <ion-icon [style.color]="'var(--red-secondary)'" name="clipboard-outline"></ion-icon>
+                </scrawlbrawl-iconbutton>
                 <scrawlbrawl-iconbutton (click)="onDeleteLobby()" matTooltip="Delete Lobby" [mdTooltipClass]="{'tooltip': true}">
                     <ion-icon [style.color]="'var(--red-secondary)'" name="trash-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
@@ -42,6 +42,9 @@
         <div class="lobby-header-sections">
             <div>
                 <b>ID</b> {{ lobby.lobbyId.toUpperCase() }}
+                <div style="width:240px">
+                    <scrawlbutton (click)="launchJoinLobbyPage()">Join This Game</scrawlbutton>
+                </div>
             </div>
         </div>
     </div>
