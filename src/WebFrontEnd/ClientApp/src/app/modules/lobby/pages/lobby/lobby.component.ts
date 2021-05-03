@@ -7,6 +7,7 @@ import {GamemodeDialogComponent} from '../../components/gamemode-dialog/gamemode
 import {GameInfoDialogComponent} from '../../components/gameinfo-dialog/gameinfo-dialog.component';
 import {LobbyInstructionsDialogComponent} from '../../components/lobbyinstructions-dialog/lobbyinstructions-dialog.component';
 import {ErrorService} from '../../services/error.service'
+import { Router, ActivatedRoute } from '@angular/router'; 
 import Lobby from '@core/models/lobby'
 import GameModes from '@core/models/gamemodes'
 import { GameModeList } from '@core/http/gamemodelist';
@@ -25,7 +26,7 @@ export class LobbyManagementComponent {
     @ViewChild(GameAssetDirective) gameAssetDirective;
 
     constructor(@Inject(UnityViewer) private unityViewer:UnityViewer, @Inject(GameModeList) public gameModeList: GameModeList, @Inject(API) private api: API, 
-             @Inject('BASE_FRONTEND_URL') private baseFrontEndUrl: string,private matDialog: MatDialog, public errorService: ErrorService)
+    @Inject('BASE_FRONTEND_URL') private baseFrontEndUrl: string,private matDialog: MatDialog, public errorService: ErrorService, private router: Router)
     {
 /*        this.getGames().then(() => this.onGetLobby()) */
         this.onGetLobby()
@@ -35,7 +36,9 @@ export class LobbyManagementComponent {
         this.api.request({ type: "Lobby", path: "Get" }).subscribe({
             next: async (result) => {
                 this.lobby = result as Lobby.LobbyMetadata;
-                this.unityViewer.UpdateLobbyId(this.lobby.lobbyId);
+                if (this.lobby != null) {
+                    this.unityViewer.UpdateLobbyId(this.lobby.lobbyId);
+                }
                 
                 if (this.lobby != null && this.lobby.selectedGameMode != null && this.lobby.gameModeSettings != null) {
                     this.lobby.gameModeSettings.options.forEach((value: GameModes.GameModeOptionResponse, index: number, array: GameModes.GameModeOptionResponse[]) => {
@@ -55,6 +58,10 @@ export class LobbyManagementComponent {
             .catch(e => console.error(e));
     }
 
+    launchJoinLobbyPage() {
+        this.router.navigate(['/join'],{queryParams: { lobby:this.lobby.lobbyId}})
+    }
+    
     putGameLinkOnClipboard(){
         navigator.clipboard.writeText(this.baseFrontEndUrl+"play?lobby="+this.lobby.lobbyId)
             .then(()=>{alert("The link is on the clipboard.")})
