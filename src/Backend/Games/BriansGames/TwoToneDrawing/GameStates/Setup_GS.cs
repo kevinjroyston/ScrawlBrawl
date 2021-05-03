@@ -87,6 +87,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                         UserPromptId = UserPromptId.ChaoticCooperation_Setup,
                         Title = "Game setup",
                         Description = "In the boxes below, enter a drawing title and "+(UseSingleColor?"the colors": "a description of each layer") + " that will be given to different players.",
+                        Suggestion = new SuggestionMetadata { SuggestionKey = (this.UseSingleColor) ? "ChaoticColors-"+ LayersPerTeam : "ChaoticLayers-"+ LayersPerTeam },
                         SubPrompts = subPrompts.ToArray(),
                         SubmitButton = true
                     };

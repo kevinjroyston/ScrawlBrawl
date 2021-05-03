@@ -12,7 +12,14 @@
                 </div>
             </div>
             <div class="sticky-nav">
-                <div style="width:100px;padding-top: 4px;">
+                <div style="width:80px;padding-top: 4px;">
+                    <scrawlbutton *ngIf="userPrompt.suggestion" color="blue" (click)="suggestValues()">
+                        Suggest
+                    </scrawlbutton>
+                </div>
+            </div>
+            <div class="sticky-nav">
+                <div style="width:110px;padding-top: 4px;">
                     <scrawlbutton [ngStyle]="'max-width:40px'" *ngIf="userPrompt.submitButton" color="green" (click)="onSubmit(userForm.value)">
                         {{userPrompt.submitButtonText}}
                     </scrawlbutton>

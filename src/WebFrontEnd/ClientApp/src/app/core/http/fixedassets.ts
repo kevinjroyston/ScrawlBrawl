@@ -57,5 +57,10 @@ export class FixedAsset {
     determineGalleryURI(drawingType):string{
         return '/assets/GameAssets/gallery-samples/samples-'+drawingType+'.json'
     }
+
+    determineSuggestionURI(suggestionKey):string{
+        return '/assets/GameAssets/suggestions/'+suggestionKey+'.json'
+    }
+
 }
 

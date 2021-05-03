@@ -49,6 +49,8 @@ namespace Common.DataModels.Responses
         /// </summary>
         public string SubmitButtonText { get; set; } = "Submit";
 
+        public SuggestionMetadata Suggestion { get; set; }
+
         /// <summary>
         /// The title/text to display
         /// </summary>
