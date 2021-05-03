@@ -26,9 +26,9 @@ simplebutton {
     }
 }
 
-.Error{
-  margin-bottom: 1rem;
-  color: var(--red-secondary);
+.Error {
+    margin-bottom: 1rem;
+    color: var(--red-secondary);
 }
 
 .title {
@@ -51,7 +51,7 @@ simplebutton {
     display: flex;
     justify-content: center;
     margin-bottom: 0.2rem;
-    color: var(--black-primary);
+    color: var(--text-color);
 }
 
 .subprompts {
@@ -196,8 +196,11 @@ input[type="text"] {
 }
 
 .sticky-nav {
+    display: flex;
+    flex-direction: column;
     flex: 1;
-    padding-left: 20%;
+    align-items: right;
+    padding-left: 10%;
     height: 56px;
     float: right;
     background: #eee;

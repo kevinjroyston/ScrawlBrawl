@@ -41,6 +41,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                 UserPromptId = UserPromptId.BattleReady_BattlePrompts,
                 Title = Invariant($"Now lets make some prompts! Prompt {counter + 1} of {NumExpectedPerUser} expected"),
                 Description = "Examples: Who would win in a fight, Who would make the best actor, Etc.",
+                Suggestion = new SuggestionMetadata { SuggestionKey = "BodyBuilder" },
                 SubPrompts = new SubPrompt[]
                 {
                     new SubPrompt

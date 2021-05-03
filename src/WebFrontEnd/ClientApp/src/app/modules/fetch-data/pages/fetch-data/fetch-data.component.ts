@@ -9,6 +9,7 @@ import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-she
 import { ColorPickerComponent } from '@shared/components/colorpicker/colorpicker.component';
 import {DrawingPromptMetadata} from '@shared/components/drawingdirective.component';
 import Galleries from '@core/models/gallerytypes';
+import { Suggestions } from '@core/http/suggestions';
 import { UnityViewer } from '@core/http/viewerInjectable';
 import * as drawingUtils from "app/utils/drawingutils";
 import { HttpHeaders } from '@angular/common/http';
@@ -65,7 +66,8 @@ export class FetchDataComponent implements OnDestroy
         private _colorPicker: MatBottomSheet,
         @Inject(API) private api: API,
         @Inject(UnityViewer) private unityViewer:UnityViewer,
-        @Inject(UserManager) userManager)
+        @Inject(UserManager) userManager,
+        @Inject(Suggestions) private suggestions: Suggestions)
     {
       userManager.getUserDataAndRedirect();
       this.formBuilder = formBuilder;
@@ -180,6 +182,39 @@ export class FetchDataComponent implements OnDestroy
 
     refreshUserPromptTimer(ms: number): void {
         this.userPromptTimerId = setTimeout(() => this.fetchUserPrompt(), ms);
+    }
+
+    assignSuggestions(userSubmitData,data): void{
+        var suggestion = JSON.parse(data);
+        if (!suggestion) {
+            alert("Sorry, you're on your own this round.");
+            return;
+        }
+        for (let i = 0; i < Math.min(userSubmitData.subForms.length,suggestion.values.length); i++) {
+            if (suggestion.values[i] != "") {
+                if (this.userPrompt.subPrompts[i].shortAnswer) {
+                    this.userForm.controls.subForms.controls[i].patchValue({shortAnswer:suggestion.values[i]});
+                }
+                if (this.userPrompt.subPrompts[i].colorPicker) {
+                    this.userForm.controls.subForms.controls[i].patchValue({colorPicker:suggestion.values[i]});
+                }
+//                if (this.userPrompt.subPrompts[i].selector) { this.userPrompt.subPrompts[i].selector = suggestion.value[i]) }
+//                if (this.userPrompt.subPrompts[i].slider) { this.userPrompt.subPrompts[i].slider.value=suggestion.value[i]; }
+            }
+        }
+    }
+
+    suggestValues(): void {
+        this.suggestions.fetchSuggestion(this.userPrompt.suggestion.suggestionKey).subscribe({
+            next: (data) => {
+                if (data) {
+                    this.assignSuggestions(this.userForm?.value,data)
+                }
+            },
+            error: (err) => {
+                alert("Sorry, you're on your own this round.");
+            },
+        });
     }
 
     autoSubmitUserPromptTimer(ms: number): void {

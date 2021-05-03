@@ -8,6 +8,7 @@ namespace GameplayPrompts {
       autoSubmitAtTime: Date;
       submitButton: boolean;
       submitButtonText: string;
+      suggestion: SuggestionMetadata;
       title: string;
       description: string;
       subPrompts: SubPrompt[];
@@ -55,6 +56,9 @@ namespace GameplayPrompts {
         end: number;
         class: string; 
     }    
+    export interface SuggestionMetadata {
+      suggestionKey: string;
+    }
 }
 
 export default GameplayPrompts
