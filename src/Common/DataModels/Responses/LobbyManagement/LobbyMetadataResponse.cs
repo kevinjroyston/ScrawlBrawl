@@ -1,4 +1,6 @@
-﻿namespace Common.DataModels.Responses
+﻿
+
+namespace Common.DataModels.Responses
 {
     public class LobbyMetadataResponse
     {
@@ -10,6 +12,7 @@
         //public GameModeMetadata GameModeSettings { get; set; }
 
         public int? SelectedGameMode { get; set; }
+
 
         public LobbyMetadataResponse()
         {

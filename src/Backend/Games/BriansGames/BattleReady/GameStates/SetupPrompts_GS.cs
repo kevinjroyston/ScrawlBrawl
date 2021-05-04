@@ -22,13 +22,13 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
             Lobby lobby,
             ConcurrentBag<Prompt> prompts,
             int numExpectedPerUser,
-            TimeSpan? setupDurration = null)
+            TimeSpan? setupDuration = null)
             : base(
                 lobby: lobby,
                 numExpectedPerUser: numExpectedPerUser,
                 unityTitle: "",
                 unityInstructions: "Complete as many prompts as possible before the time runs out",
-                setupDurration: setupDurration)
+                setupDuration: setupDuration)
         {
             this.NumExpectedPerUser = numExpectedPerUser;
             this.Prompts = prompts;

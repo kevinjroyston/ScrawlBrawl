@@ -10,6 +10,7 @@ using Backend.Games.Common;
 using Backend.Games.Common.DataModels;
 using Backend.Games.Common.GameStates;
 using Backend.Games.Common.GameStates.VoteAndReveal;
+using Common.Code.Extensions;
 using Common.DataModels.Enums;
 using Common.DataModels.Requests.LobbyManagement;
 using Common.DataModels.Responses;
@@ -33,87 +34,65 @@ namespace Backend.Games.BriansGames.ImposterDrawing
                 MaxPlayers = null,
                 Attributes = new GameModeAttributes
                 {
-                       ProductionReady = true,
+                   ProductionReady = true,
                 },
                 Options = new List<GameModeOptionResponse>
                 {
-                    new GameModeOptionResponse
-                    {
-                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 5,
-                        MinValue = 0,
-                        MaxValue = 10,
-                    }
                 },
+                GetGameDurationEstimates = GetGameDurationEstimates,
             };
+        private static IReadOnlyDictionary<GameDuration, TimeSpan> GetGameDurationEstimates(int numPlayers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
+        {
+            Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
+            foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
+            {
+                int numRounds = Math.Min(ImposterDrawingConstants.MaxNumRounds[duration], numPlayers);
+                int numDrawingsPerUser = ImposterDrawingConstants.MaxDrawingsPerPlayer[duration];
+
+                TimeSpan estimate = TimeSpan.Zero;
+                TimeSpan writingTimer = ImposterDrawingConstants.WritingTimer[duration];
+                TimeSpan drawingTimer = ImposterDrawingConstants.DrawingTimer[duration];
+                TimeSpan votingTimer = ImposterDrawingConstants.VotingTimer[duration];
+
+                estimate += writingTimer;
+                estimate += drawingTimer.MultipliedBy(numDrawingsPerUser);
+                estimate += votingTimer.MultipliedBy(numRounds);
+                estimates[duration] = estimate;
+            }
+
+            return estimates;
+        }
         private Setup_GS Setup { get; set; }
         private Random Rand { get; } = new Random();
         private Lobby Lobby { get; set; }
-        public ImposterDrawingGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
+        public ImposterDrawingGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, StandardGameModeOptions standardOptions)
         {
             this.Lobby = lobby;
-            ValidateOptions(lobby, gameModeOptions);
-            int gameLength = (int)gameModeOptions[(int)GameModeOptionsEnum.GameLength].ValueParsed;
-            TimeSpan? setupTimer = null;
-            TimeSpan? answeringTimer = null;
+            TimeSpan? writingTimer = null;
+            TimeSpan? drawingTimer = null;
             TimeSpan? votingTimer = null;
-            if (gameLength > 0)
+            GameDuration duration = standardOptions.GameDuration;
+            if (standardOptions.TimerEnabled)
             {
-                setupTimer = CommonHelpers.GetTimerFromLength(
-                    length: (double)gameLength,
-                    minTimerLength: ImposterDrawingConstants.SetupTimerMin,
-                    aveTimerLength: ImposterDrawingConstants.SetupTimerAve,
-                    maxTimerLength: ImposterDrawingConstants.SetupTimerMax);
-                answeringTimer = CommonHelpers.GetTimerFromLength(
-                    length: (double)gameLength,
-                    minTimerLength: ImposterDrawingConstants.AnsweringTimerMin,
-                    aveTimerLength: ImposterDrawingConstants.AnsweringTimerAve,
-                    maxTimerLength: ImposterDrawingConstants.AnsweringTimerMax);
-                votingTimer = CommonHelpers.GetTimerFromLength(
-                    length: (double)gameLength,
-                    minTimerLength: ImposterDrawingConstants.VotingTimerMin,
-                    aveTimerLength: ImposterDrawingConstants.VotingTimerAve,
-                    maxTimerLength: ImposterDrawingConstants.VotingTimerMax);
+                writingTimer = ImposterDrawingConstants.WritingTimer[duration];
+                drawingTimer = ImposterDrawingConstants.DrawingTimer[duration];
+                votingTimer = ImposterDrawingConstants.VotingTimer[duration];
             }
-            int numWritingsPerPrompt = lobby.GetAllUsers().Count - 1;
             List<Prompt> prompts = new List<Prompt>();
             Setup = new Setup_GS(
                 lobby: lobby,
                 promptsToPopulate: prompts,
-                setupTimeDuration: setupTimer);
-
-            Dictionary<Prompt, List<User>> promptsToPromptedUsers = new Dictionary<Prompt, List<User>>();
-            Setup.AddExitListener(() =>
-            {
-                /*promptsToPromptedUsers = CommonHelpers.EvenlyDistribute(
-                    groups: prompts,
-                    toDistribute: lobby.GetAllUsers().ToList(),
-                    maxGroupSize: numWritingsPerPrompt,
-                    validDistributeCheck: (Prompt prompt, User user) => user != prompt.Owner);
-                foreach (Prompt prompt in promptsToPromptedUsers.Keys)
-                {
-                    prompt.Imposter = promptsToPromptedUsers[prompt][Rand.Next(0, promptsToPromptedUsers[prompt].Count)];
-                }*/
-                foreach (Prompt prompt in prompts) //todo fix EvenlyDistribute and return to that solution
-                {
-                    promptsToPromptedUsers.Add(prompt, lobby.GetAllUsers().Where(user => user != prompt.Owner).ToList());
-                    prompt.Imposter = promptsToPromptedUsers[prompt][Rand.Next(0, promptsToPromptedUsers[prompt].Count)];
-                }
-            });
+                writingTimeDuration: writingTimer,
+                drawingTimeDuration: drawingTimer,
+                numDrawingsPerUser:ImposterDrawingConstants.MaxDrawingsPerPlayer[duration],
+                numRounds:Math.Min(ImposterDrawingConstants.MaxNumRounds[duration], lobby.GetAllUsers().Count),
+                maxPlayersPerPrompt:ImposterDrawingConstants.MaxNumPlayersPerRound);
             StateChain CreateGamePlayLoop()
             {
                 List<State> stateList = new List<State>();
                 foreach (Prompt prompt in prompts)
                 {
-                    if (prompt == prompts.Last())
-                    {
-                        stateList.Add(GetImposterLoop(prompt, true));
-                    }
-                    else
-                    {
-                        stateList.Add(GetImposterLoop(prompt));
-                    }          
+                    stateList.Add(GetImposterLoop(prompt, prompt == prompts.Last()));
                 }
                 StateChain gamePlayChain = new StateChain(states: stateList);
                 gamePlayChain.Transition(this.Exit);
@@ -124,23 +103,14 @@ namespace Backend.Games.BriansGames.ImposterDrawing
 
             StateChain GetImposterLoop(Prompt prompt, bool lastRound = false)
             {
-                List<User> randomizedUsers = promptsToPromptedUsers[prompt].OrderBy(_ => Rand.Next()).ToList();
                 return new StateChain(
                     stateGenerator: (int counter) =>
                     {
                         if (counter == 0)
                         {
-                            return new MakeDrawings_GS(
-                                lobby: lobby,
-                                promptToDraw: prompt,
-                                usersToPrompt: randomizedUsers,
-                                writingTimeDuration: answeringTimer);
+                            return GetVotingAndRevealState(prompt, (prompt.UsersToDrawings.Values.Any(val=>val==null)), votingTimer);   
                         }
                         if (counter == 1)
-                        {
-                            return GetVotingAndRevealState(prompt, (prompt.UsersToDrawings.Count < randomizedUsers.Count), votingTimer);   
-                        }
-                        if (counter == 2)
                         {
                             if (lastRound)
                             {
@@ -159,32 +129,12 @@ namespace Backend.Games.BriansGames.ImposterDrawing
             }
         }
 
-        
-       /*public Dictionary<Prompt, List<User>> AssignPrompts(List<Prompt> prompts, List<User> users, int maxTextsPerPrompt)
-        {
-            return CommonHelpers.EvenlyDistribute(
-                groups: prompts,
-                toDistribute: users, 
-                maxGroupSize: maxTextsPerPrompt,
-                validDistributeCheck: (Prompt prompt, User user) => user != prompt.Owner);
-        }*/
-        public void ValidateOptions(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
-        {
-            // Empty
-        }
-
         private State GetVotingAndRevealState(Prompt prompt, bool possibleNone, TimeSpan? votingTime)
         {
             int indexOfImposter = 0;
             List<User> randomizedUsersToShow = prompt.UsersToDrawings.Keys.OrderBy(_=>Rand.Next()).ToList();
             List<UserDrawing> drawings = randomizedUsersToShow.Select(user => prompt.UsersToDrawings[user]).ToList();
-            /*foreach (UserDrawing drawing in drawings)
-            {
-                drawing.UnityImageRevealOverrides = new UnityObjectOverrides()
-                {
-                    Title = drawing.Owner.Equals(prompt.Imposter) ?  prompt.FakePrompt : prompt.RealPrompt 
-                };
-            }*/
+
             List<string> userNames = randomizedUsersToShow.Select(user => user.DisplayName).ToList();
             bool noneIsCorrect = possibleNone && !randomizedUsersToShow.Contains(prompt.Imposter);
             if (!noneIsCorrect)

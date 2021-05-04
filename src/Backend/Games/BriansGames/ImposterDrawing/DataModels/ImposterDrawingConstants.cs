@@ -1,4 +1,8 @@
-﻿namespace Backend.Games.BriansGames.ImposterDrawing.DataModels
+﻿using Common.DataModels.Enums;
+using System;
+using System.Collections.Generic;
+
+namespace Backend.Games.BriansGames.ImposterDrawing.DataModels
 {
     public static class ImposterDrawingConstants
     {
@@ -9,16 +13,40 @@
         public const int PointsForCorrectAnswer = 500;
         public const int BonusPointsForGoodImposter = 300;
 
-        public const double SetupTimerMin = 45;
-        public const double SetupTimerAve = 120;
-        public const double SetupTimerMax = 240;
+        public static IReadOnlyDictionary<GameDuration, TimeSpan> WritingTimer = new Dictionary<GameDuration, TimeSpan>()
+        {
+            { GameDuration.Short, TimeSpan.FromSeconds(45)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(120)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(240)},
+        };
+        public static IReadOnlyDictionary<GameDuration, TimeSpan> DrawingTimer = new Dictionary<GameDuration, TimeSpan>()
+        {
+            { GameDuration.Short, TimeSpan.FromSeconds(45)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(120)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(180)},
+        };
+        public static IReadOnlyDictionary<GameDuration, TimeSpan> VotingTimer = new Dictionary<GameDuration, TimeSpan>()
+        {
+            { GameDuration.Short, TimeSpan.FromSeconds(30)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(60)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(120)},
+        };
 
-        public const double AnsweringTimerMin = 45;
-        public const double AnsweringTimerAve = 120;
-        public const double AnsweringTimerMax = 240;
+        // Number of rounds (round = create contestants & vote)
+        public static IReadOnlyDictionary<GameDuration, int> MaxNumRounds = new Dictionary<GameDuration, int>()
+        {
+            { GameDuration.Short, 6},
+            { GameDuration.Normal, 8},
+            { GameDuration.Extended, 12},
+        };
 
-        public const double VotingTimerMin = 30;
-        public const double VotingTimerAve = 60;
-        public const double VotingTimerMax = 120;
+        public const int MaxNumPlayersPerRound = 10;
+        // Number of rounds (round = create contestants & vote)
+        public static IReadOnlyDictionary<GameDuration, int> MaxDrawingsPerPlayer = new Dictionary<GameDuration, int>()
+        {
+            { GameDuration.Short, 3},
+            { GameDuration.Normal, 4},
+            { GameDuration.Extended, 6},
+        };
     }
 }

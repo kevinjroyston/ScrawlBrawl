@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Backend.Games.BriansGames.BattleReady;
-using Backend.Games.BriansGames.BodyBuilder;
 using Backend.Games.BriansGames.TwoToneDrawing;
 using System.Collections.Generic;
 using Backend.Games.KevinsGames.Mimic;
@@ -18,75 +17,33 @@ namespace Backend.GameInfrastructure.DataModels
 
         private IReadOnlyList<GameModeMetadataHolder> InternalGameModes { get; } = new List<GameModeMetadataHolder>
         {
-            #region Imposter Syndrome (OLD Removed)
-            /*
-            new GameModeMetadata
-            {
-                Title = "Imposter Syndrome",
-                Description = "Come up with a difference only you'll be able to spot!",
-                MinPlayers = 4,
-                MaxPlayers = null,
-                GameModeInstantiator = (lobby, options) => new OneOfTheseThingsIsNotLikeTheOtherOneGameMode(lobby, options),
-                Options = new List<GameModeOptionResponse>
-                {
-                    new GameModeOptionResponse
-                    {
-                        Description = "Max total drawings per player.",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 6,
-                        MinValue = 3
-                    },
-                }
-            },*/
-            #endregion
-            #region Imposter Syndrome Text (Removed)
-            /*new GameModeMetadata
-            {
-                Title = "Imposter Syndrome (Text)",
-                Description = "Come up with a difference only you'll be able to spot!",
-                MinPlayers = 4,
-                MaxPlayers = null,
-                GameModeInstantiator = (lobby, options) => new ImposterTextGameMode(lobby, options),
-                Options = new List<GameModeOptionResponse>
-                {
-                    new GameModeOptionResponse
-                    {
-                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 5,
-                        MinValue = 0,
-                        MaxValue = 10,
-                    }
-                }
-            },*/
-            #endregion
             new GameModeMetadataHolder()
             {
                 GameModeMetadata = ImposterDrawingGameMode.GameModeMetadata,
-                GameModeInstantiator = (lobby, options) => new ImposterDrawingGameMode(lobby, options)
+                GameModeInstantiator = (lobby, options, standardOptions) => new ImposterDrawingGameMode(lobby, options, standardOptions)
             },
             new GameModeMetadataHolder()
             {
                 GameModeMetadata = TwoToneDrawingGameMode.GameModeMetadata,
-                GameModeInstantiator = (lobby, options) => new TwoToneDrawingGameMode(lobby, options)
+                GameModeInstantiator = (lobby, options, standardOptions) => new TwoToneDrawingGameMode(lobby, options, standardOptions)
             },
             new GameModeMetadataHolder()
             {
                 GameModeMetadata = BattleReadyGameMode.GameModeMetadata,
-                GameModeInstantiator = (lobby, options) => new BattleReadyGameMode(lobby, options)
+                GameModeInstantiator = (lobby, options, standardOptions) => new BattleReadyGameMode(lobby, options, standardOptions)
             },
             new GameModeMetadataHolder()
             {
                 GameModeMetadata = MimicGameMode.GameModeMetadata,
-                GameModeInstantiator = (lobby, options) => new MimicGameMode(lobby, options)
+                GameModeInstantiator = (lobby, options, standardOptions) => new MimicGameMode(lobby, options, standardOptions)
             },
             new GameModeMetadataHolder()
             {
                 GameModeMetadata = FriendQuizGameMode.GameModeMetadata,
-                GameModeInstantiator = (lobby, options) => new FriendQuizGameMode(lobby, options)
+                GameModeInstantiator = (lobby, options, standardOptions) => new FriendQuizGameMode(lobby, options, standardOptions)
             },
             
-            #region StoryTime (Removed)
+            #region BodyBuilder (Removed)
             /*new GameModeMetadataHolder()
             {
                 GameModeMetadata = BodyBuilderGameMode.GameModeMetadata,

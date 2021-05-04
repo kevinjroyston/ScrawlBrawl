@@ -11,6 +11,7 @@ using Backend.GameInfrastructure.DataModels;
 using Backend.GameInfrastructure.DataModels.Users;
 using Backend.GameInfrastructure.DataModels.States.UserStates;
 using Common.Code.Validation;
+using Common.DataModels.Responses.LobbyManagement;
 #if !DEBUG
 //using Microsoft.AspNetCore.Authorization;
 #endif
@@ -211,12 +212,12 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 return StatusCode(404, "Lobby doesn't exist.");
             }
 
-            if (!user.OwnedLobby.ConfigureLobby(request, out string error))
+            if (!user.OwnedLobby.ConfigureLobby(request, out string error, out ConfigureLobbyResponse response))
             {
                 return StatusCode(400, error);
             }
 
-            return new AcceptedResult();
+            return new OkObjectResult(response);
         }
 
         [HttpGet]

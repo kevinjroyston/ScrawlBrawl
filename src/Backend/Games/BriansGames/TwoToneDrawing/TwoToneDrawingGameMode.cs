@@ -67,14 +67,6 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
         };
         private static IReadOnlyDictionary<GameDuration, TimeSpan> GetGameDurationEstimates(int numPlayers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            int maxPossibleTeamCount = 8; // Can go higher than this in extreme circumstances.
-            bool useSingleColor = (bool)gameModeOptions[(int)GameModeOptionsEnum.useSingleColor].ValueParsed;
-            int numLayers = (int)gameModeOptions[(int)GameModeOptionsEnum.numLayers].ValueParsed;
-            if (numLayers * 2 > numPlayers)
-            {
-                numLayers = numPlayers / 2;
-            }
-
             Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
             foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
             {
@@ -96,9 +88,10 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             return estimates;
         }
 
-        public TwoToneDrawingGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, GameDuration duration, bool timerEnabled)
+        public TwoToneDrawingGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, StandardGameModeOptions standardOptions)
         {
             this.Lobby = lobby;
+            GameDuration duration = standardOptions.GameDuration;
 
             int maxPossibleTeamCount = 8; // Can go higher than this in extreme circumstances.
             bool useSingleColor = (bool)gameModeOptions[(int)GameModeOptionsEnum.useSingleColor].ValueParsed;
@@ -120,7 +113,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             TimeSpan ? setupTimer = null;
             TimeSpan? drawingTimer = null;
             TimeSpan? votingTimer = null;
-            if (timerEnabled)
+            if (standardOptions.TimerEnabled)
             {
                 setupTimer = TwoToneDrawingConstants.SetupTimer[duration];
                 drawingTimer = TwoToneDrawingConstants.PerDrawingTimer[duration].MultipliedBy(numDrawingsPerPlayer);

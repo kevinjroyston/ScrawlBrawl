@@ -74,14 +74,15 @@ namespace Backend.Games.KevinsGames.Mimic
 
             return estimates;
         }
-        public MimicGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, GameDuration duration, bool timersEnabled, GameDuration gameDuration)
+        public MimicGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, StandardGameModeOptions standardOptions)
         {
+            GameDuration duration = standardOptions.GameDuration;
             int numStartingDrawingsPerUser = 1;
             int maxDrawingsBeforeVoteInput = (int)gameModeOptions[(int)GameModeOptions.MaxDrawingsBeforeVote].ValueParsed;
             int maxVoteDrawings = 12; // Everybody's drawing should show up, but it gets a little prohibitive past 12 so limit it here.
             TimeSpan? drawingTimer = null;
             TimeSpan? votingTimer = null;
-            if (timersEnabled)
+            if (standardOptions.TimerEnabled)
             {
                 drawingTimer = MimicConstants.DrawingTimer[duration];
                 votingTimer = MimicConstants.VotingTimer[duration];

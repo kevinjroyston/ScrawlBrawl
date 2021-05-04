@@ -32,7 +32,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                 numExpectedPerUser: numExpectedPerUser,
                 unityTitle: "",
                 unityInstructions: "Complete as many drawings as possible before the time runs out",
-                setupDurration: setupDurration)
+                setupDuration: setupDurration)
         {
             this.NumExpectedPerUser = numExpectedPerUser;
             this.Drawings = drawings;

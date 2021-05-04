@@ -32,7 +32,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                 numExpectedPerUser: numExpectedPerUser,
                 unityTitle: "Time To Write",
                 unityInstructions: "Write your questions",
-                setupDurration: setupDuration)
+                setupDuration: setupDuration)
         {
             this.RoundTracker = roundTracker;
         }

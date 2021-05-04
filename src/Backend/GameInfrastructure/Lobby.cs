@@ -22,6 +22,7 @@ using Backend.GameInfrastructure.ControlFlows;
 using Backend.Games.Common;
 using System.Threading.Tasks;
 using System.Threading;
+using Common.DataModels.Responses.LobbyManagement;
 
 namespace Backend.GameInfrastructure
 {
@@ -39,7 +40,7 @@ namespace Backend.GameInfrastructure
         /// </summary>
         public DateTime CreationTime { get; } = DateTime.Now;
         public List<ConfigureLobbyRequest.GameModeOptionRequest> GameModeOptions { get; private set; }
-        public StandardGameOptions StandardGameModeOptions { get; private set; }
+        public StandardGameModeOptions StandardGameModeOptions { get; private set; }
 
         public GameModeMetadataHolder SelectedGameMode { get; private set; }
         public ConfigurationMetadata ConfigMetaData { get; } = new ConfigurationMetadata();
@@ -108,9 +109,10 @@ namespace Backend.GameInfrastructure
         }
         private IReadOnlyList<GameModeMetadataHolder> GameModes => this.InMemoryConfiguration.GameModes;
 
-        public bool ConfigureLobby(ConfigureLobbyRequest request, out string errorMsg)
+        public bool ConfigureLobby(ConfigureLobbyRequest request, out string errorMsg, out ConfigureLobbyResponse response)
         {
             errorMsg = string.Empty;
+            response = null;
             if (IsGameInProgress())
             {
                 // TODO: this might need updating for replay logic.
@@ -146,10 +148,18 @@ namespace Backend.GameInfrastructure
                 }
             }
 
+            int numUsers = this.GetAllUsers().Count;
+            response = new ConfigureLobbyResponse()
+            {
+                LobbyId = LobbyId,
+                PlayerCount = numUsers,
+                GameDurationEstimates = SelectedGameMode.GameModeMetadata.GetGameDurationEstimates(numUsers, request.Options),
+            };
+
             this.SelectedGameMode = GameModes[request.GameMode.Value];
             this.GameModeOptions = request.Options;
+            this.StandardGameModeOptions = request.StandardOptions;
             this.ConfigMetaData.GameMode = this.SelectedGameMode?.GameModeMetadata?.GameId;
-
             return true;
         }
 
@@ -325,7 +335,7 @@ namespace Backend.GameInfrastructure
             IGameMode game;
             try
             {
-                game = gameModeMetadata.GameModeInstantiator(this, this.GameModeOptions);
+                game = gameModeMetadata.GameModeInstantiator(this, this.GameModeOptions, this.StandardGameModeOptions);
             }
             catch (GameModeInstantiationException err)
             {
@@ -335,7 +345,7 @@ namespace Backend.GameInfrastructure
 
             this.Game = game;
             
-            if (this.TutorialEnabled)
+            if (this.StandardGameModeOptions?.ShowTutorial ?? true)
             {
                 // Transition from waiting => tutorial => game.
                 this.WaitForLobbyStart.Transition(this.TutorialGameState);
