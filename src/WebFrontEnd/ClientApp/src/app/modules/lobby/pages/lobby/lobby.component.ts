@@ -72,8 +72,9 @@ export class LobbyManagementComponent {
         window.open('/viewer/index.html?lobby='+this.lobby.lobbyId,'_blank');
     }
     
-    onCreateLobby = async () => {
-        await this.api.request({ type: "Lobby", path: "Create" }).subscribe({
+    onCreateLobby = async (joinLobbyRequest) => {
+        var bodyString = JSON.stringify(joinLobbyRequest);
+        await this.api.request({ type: "Lobby", path: "Create", body: bodyString}).subscribe({
             next: async (result) => {
                 this.lobby = result as Lobby.LobbyMetadata;
                 await this.onGetLobby()

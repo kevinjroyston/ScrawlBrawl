@@ -1,6 +1,6 @@
 <!--Create Lobby button shows on load-->
 <div class="no-lobby" *ngIf="lobby === null">
-    <scrawlbutton (click)="onCreateLobby()">Create Lobby</scrawlbutton>
+    <app-create-lobby (onCreateLobby)="onCreateLobby($event)"></app-create-lobby>
 </div>
 
 <div class="lobby-wrapper" *ngIf="lobby">
