@@ -148,18 +148,17 @@ namespace Backend.GameInfrastructure
                 }
             }
 
+            this.SelectedGameMode = GameModes[request.GameMode.Value];
             int numUsers = this.GetAllUsers().Count;
             response = new ConfigureLobbyResponse()
             {
                 LobbyId = LobbyId,
                 PlayerCount = numUsers,
-                GameDurationEstimates = SelectedGameMode.GameModeMetadata.GetGameDurationEstimates(numUsers, request.Options),
+                GameDurationEstimatesInMinutes = SelectedGameMode.GameModeMetadata.GetGameDurationEstimates(numUsers, request.Options).ToDictionary(kvp=>kvp.Key,kvp=>(int)kvp.Value.TotalMinutes),
             };
 
-            this.SelectedGameMode = GameModes[request.GameMode.Value];
             this.GameModeOptions = request.Options;
-            this.StandardGameModeOptions = request.StandardOptions;
-            this.ConfigMetaData.GameMode = this.SelectedGameMode?.GameModeMetadata?.GameId;
+            this.ConfigMetaData.GameMode = this.SelectedGameMode.GameModeMetadata.GameId;
             return true;
         }
 
@@ -316,7 +315,7 @@ namespace Backend.GameInfrastructure
         /// Starts the game, throws if something is wrong with the configuration values.
         /// </summary>
         /// <param name="specialTransitionFrom">Where the current users are sitting (if somewhere other than WaitForLobbyStart)</param>
-        public bool StartGame(out string errorMsg)
+        public bool StartGame(StandardGameModeOptions standardOptions, out string errorMsg)
         {
             errorMsg = string.Empty;
             if (this.SelectedGameMode == null)
@@ -331,6 +330,7 @@ namespace Backend.GameInfrastructure
                 return false;
             }
 
+            this.StandardGameModeOptions = standardOptions;
             GameModeMetadataHolder gameModeMetadata = this.SelectedGameMode;
             IGameMode game;
             try

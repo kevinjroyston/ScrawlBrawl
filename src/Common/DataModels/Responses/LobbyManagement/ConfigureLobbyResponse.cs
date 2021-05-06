@@ -9,6 +9,6 @@ namespace Common.DataModels.Responses.LobbyManagement
         public string LobbyId { get; set; }
 
         public int PlayerCount { get; set; }
-        public IReadOnlyDictionary<GameDuration, TimeSpan> GameDurationEstimates { get; set; }
+        public IReadOnlyDictionary<GameDuration, int> GameDurationEstimatesInMinutes { get; set; }
     }
 }

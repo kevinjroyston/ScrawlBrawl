@@ -9,6 +9,8 @@ namespace Common.DataModels.Enums
     /// </summary>
     public enum GameDuration
     {
+        // A second copy of this enum exists on the frontend!!
+
         // All durations will try to "complete" all rounds. If there are too many users, rounds will be cut to fit under time limit.
         // As such, Normal w/ 4 players might not cut anything at all and finish in 12 minutes.
         Short, // 10 minute upper bound (ideal)

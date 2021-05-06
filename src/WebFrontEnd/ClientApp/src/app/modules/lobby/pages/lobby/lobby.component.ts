@@ -13,6 +13,7 @@ import GameModes from '@core/models/gamemodes'
 import { GameModeList } from '@core/http/gamemodelist';
 import { UnityComponent } from '@shared/components/unity/unity.component';
 import { UnityViewer } from '@core/http/viewerInjectable';
+import { CommonoptionsDialogComponent } from '@modules/lobby/components/commonoptions-dialog/commonoptions-dialog.component';
 
 @Component({
     selector: 'app-lobby-management',
@@ -122,9 +123,19 @@ export class LobbyManagementComponent {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.data = {
             lobby: this.lobby,
-            onGetLobby: () => this.onGetLobby()
+            onGetLobby: () => this.onGetLobby(),
+            onNext: (data: Map<Lobby.GameDuration, number>) => this.openGameStartDialog(data)
         }
         this.matDialog.open(GamemodeDialogComponent, dialogConfig);
+    }
+    openGameStartDialog = (gameDurationEstimatesInMinutes: Map<Lobby.GameDuration, number>) => {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.data = {
+            lobby: this.lobby,
+            onGetLobby: () => this.onGetLobby(),
+            durationEstimates: gameDurationEstimatesInMinutes,
+        }
+        this.matDialog.open(CommonoptionsDialogComponent, dialogConfig);
     }
 
     showInstructions = () => {

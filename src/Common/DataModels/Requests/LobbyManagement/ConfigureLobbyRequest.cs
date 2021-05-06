@@ -72,9 +72,6 @@ namespace Common.DataModels.Requests.LobbyManagement
         public List<GameModeOptionRequest> Options { get; set; }
 
         [Required]
-        public StandardGameModeOptions StandardOptions { get; set; }
-
-        [Required]
         public int? GameMode { get; set; }
 
         [JsonExtensionData]

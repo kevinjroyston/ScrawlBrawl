@@ -7,6 +7,7 @@ import {GameInfoDialogComponent} from './components/gameinfo-dialog/gameinfo-dia
 import { ErrorService } from '@modules/lobby/services/error.service';
 import { LobbyInstructionsDialogComponent } from './components/lobbyinstructions-dialog/lobbyinstructions-dialog.component';
 import { CreateLobbyComponent } from './pages/lobby/create-lobby/create-lobby.component';
+import { CommonoptionsDialogComponent } from './components/commonoptions-dialog/commonoptions-dialog.component';
 
 @NgModule({
   imports: [
@@ -16,6 +17,7 @@ import { CreateLobbyComponent } from './pages/lobby/create-lobby/create-lobby.co
   declarations: [
     LobbyComponent,
     GamemodeDialogComponent,
+    CommonoptionsDialogComponent,
     GameInfoDialogComponent,
     CreateLobbyComponent,
     LobbyInstructionsDialogComponent

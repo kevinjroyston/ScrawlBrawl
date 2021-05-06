@@ -247,12 +247,12 @@ namespace Backend.APIs.Controllers.LobbyManagement
             return new OkObjectResult(response);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("Start")]
 #if !DEBUG
  //   [Authorize(Policy = "LobbyManagement")]
 #endif
-        public IActionResult StartLobby([FromQuery(Name = "Id")]string testHookId)
+        public IActionResult StartLobby([FromQuery(Name = "Id")]string testHookId, [FromBody] StandardGameModeOptions standardOptions)
         {
             if (!ModelState.IsValid)
             {
@@ -269,7 +269,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 return StatusCode(404, "Lobby doesn't exist.");
             }
 
-            if (!user.OwnedLobby.StartGame(out string error))
+            if (!user.OwnedLobby.StartGame(standardOptions, out string error))
             {
                 return StatusCode(400, error);
             }

@@ -10,31 +10,34 @@ import { GameModeList } from '@core/http/gamemodelist';
 interface GameModeDialogData {
   lobby: Lobby.LobbyMetadata
   error: string
-  onGetLobby: () => void
-  onNext: (data: Map<Lobby.GameDuration, number>) => void
+  onGetLobby: () => void,
+  durationEstimates: Map<Lobby.GameDuration,number>,
 }
 
 @Component({
-  selector: 'gamemode-dialog',
-  templateUrl: './gamemode-dialog.component.html',
-  styleUrls: ['./gamemode-dialog.component.scss']
+  selector: 'app-commonoptions-dialog',
+  templateUrl: './commonoptions-dialog.component.html',
+  styleUrls: ['./commonoptions-dialog.component.scss']
 })
-export class GamemodeDialogComponent implements OnInit {
+export class CommonoptionsDialogComponent implements OnInit {
   lobby: Lobby.LobbyMetadata
   error: string
   onGetLobby: () => void
-  onNext: (data: Map<Lobby.GameDuration, number>) =>void
   errorSubscription: Subscription
+  showTutorial: boolean = true;
+  timerEnabled: boolean = true;
+  gameDuration: Lobby.GameDuration = Lobby.GameDuration.Normal;
+  durationEstimates: Map<Lobby.GameDuration, number>;
 
   constructor(
-    private dialogRef: MatDialogRef<GamemodeDialogComponent>,
+    private dialogRef: MatDialogRef<CommonoptionsDialogComponent>,
     public errorService: ErrorService,
     @Inject(GameModeList) public gameModeList: GameModeList,
     @Inject(MAT_DIALOG_DATA) public data: GameModeDialogData,
     @Inject(API) private api: API) {
     this.lobby = data.lobby;
     this.onGetLobby = data.onGetLobby;
-    this.onNext = data.onNext;
+    this.durationEstimates = data.durationEstimates;
   }
 
   ngOnInit() {
@@ -47,19 +50,18 @@ export class GamemodeDialogComponent implements OnInit {
     this.errorSubscription.unsubscribe();
   }
 
-  onGameModeNext() : void {
-    var body = new Lobby.ConfigureLobbyRequest();
-    body.gameMode = this.lobby.selectedGameMode;
-    body.options = JSON.parse(JSON.stringify(this.gameModeList.gameModes[this.lobby.selectedGameMode].options, ['value']));
+  onStart() : void {
+    var body = new Lobby.StartLobbyRequest();
+    body.gameDuration = this.gameDuration;
+    body.showTutorial = this.showTutorial;
+    body.timerEnabled = this.timerEnabled;
     var bodyString = JSON.stringify(body);
+    let startLobbyRequest = this.api.request({ type: "Lobby", path: "Start", body: bodyString });
 
-    let configureRequest = this.api.request({ type: "Lobby", path: "Configure", body: bodyString });
-
-    configureRequest.subscribe({
-        next: (data) => {
-          let response = data as Lobby.ConfigureLobbyResponse;
-          this.closeDialog(); // needed?
-          this.onNext(response.gameDurationEstimatesInMinutes);
+    startLobbyRequest.subscribe({
+        next: () => {
+          // TODO: open gameplay tab & viewer tab?
+          this.closeDialog();
         },
         error: (error) => { 
             this.error = error.error; 
