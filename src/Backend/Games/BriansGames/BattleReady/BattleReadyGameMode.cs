@@ -62,7 +62,7 @@ namespace Backend.Games.BriansGames.BattleReady
         };
         private static IReadOnlyDictionary<GameDuration, TimeSpan> GetGameDurationEstimates(int numPlayers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            int numOfEachPartInHand = (int)GameModeOptionsEnum.NumEachPartInHand;
+            int numOfEachPartInHand = (int)gameModeOptions[(int)GameModeOptionsEnum.NumEachPartInHand].ValueParsed;
 
             Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
             foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
@@ -104,7 +104,7 @@ namespace Backend.Games.BriansGames.BattleReady
             TimeSpan? creationTimer = null;
             TimeSpan? votingTimer = null;
 
-            int numOfEachPartInHand = (int)GameModeOptionsEnum.NumEachPartInHand;
+            int numOfEachPartInHand = (int)gameModeOptions[(int)GameModeOptionsEnum.NumEachPartInHand].ValueParsed;
 
             int numPromptsPerRound = Math.Min(numPlayers, BattleReadyConstants.MaxNumSubRounds[duration]);
             int minDrawingsRequired = numOfEachPartInHand * 3; // the amount to make one playerHand to give everyone

@@ -17,19 +17,19 @@ namespace Backend.Games.BriansGames.ImposterDrawing.DataModels
         {
             { GameDuration.Short, TimeSpan.FromSeconds(45)},
             { GameDuration.Normal, TimeSpan.FromSeconds(120)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(240)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(180)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> DrawingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
             { GameDuration.Short, TimeSpan.FromSeconds(45)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(120)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(180)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(90)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(120)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> VotingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
             { GameDuration.Short, TimeSpan.FromSeconds(30)},
             { GameDuration.Normal, TimeSpan.FromSeconds(60)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(120)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(90)},
         };
 
         // Number of rounds (round = create contestants & vote)

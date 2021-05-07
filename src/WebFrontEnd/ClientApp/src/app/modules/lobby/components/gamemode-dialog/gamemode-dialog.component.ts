@@ -35,6 +35,9 @@ export class GamemodeDialogComponent implements OnInit {
     this.lobby = data.lobby;
     this.onGetLobby = data.onGetLobby;
     this.onNext = data.onNext;
+    if (gameModeList.gameModes[this.lobby.selectedGameMode].options.length == 0){
+      this.onGameModeNext();
+    }
   }
 
   ngOnInit() {
@@ -68,7 +71,6 @@ export class GamemodeDialogComponent implements OnInit {
         }
     })
   }
-
   closeDialog() {
     this.dialogRef.close();
   }

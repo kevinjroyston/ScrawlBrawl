@@ -6,6 +6,7 @@ import Lobby from '@core/models/lobby';
 import GameModes from '@core/models/gamemodes';
 import { ErrorService } from '@modules/lobby/services/error.service';
 import { GameModeList } from '@core/http/gamemodelist';
+import { SliderPromptMetadata } from '@shared/components/slider/slider.component';
 
 interface GameModeDialogData {
   lobby: Lobby.LobbyMetadata
@@ -28,6 +29,17 @@ export class CommonoptionsDialogComponent implements OnInit {
   timerEnabled: boolean = true;
   gameDuration: Lobby.GameDuration = Lobby.GameDuration.Normal;
   durationEstimates: Map<Lobby.GameDuration, number>;
+  estimatedDurationSliderParameters: SliderPromptMetadata =  {
+    min: 0,
+    max: 2,
+    value: [1],
+    ticks: [0,1,2],
+    range: false,
+    enabled: true,
+    showTooltip: "hide",
+    ticksLabels: ["Short", "Normal", "Extended"],
+    rangeHighlights: null
+  }
 
   constructor(
     private dialogRef: MatDialogRef<CommonoptionsDialogComponent>,
@@ -38,12 +50,17 @@ export class CommonoptionsDialogComponent implements OnInit {
     this.lobby = data.lobby;
     this.onGetLobby = data.onGetLobby;
     this.durationEstimates = data.durationEstimates;
+    this.estimatedDurationSliderParameters.ticksLabels=[
+      "~" + this.durationEstimates["Short"] + "m",
+      "~" + this.durationEstimates["Normal"] + "m",
+      "~" + this.durationEstimates["Extended"] + "m"];
   }
 
   ngOnInit() {
     this.errorSubscription = this.errorService.errorObservable.subscribe((error) => {
       this.error = error;
     })
+    this.updateEstimatedDuration(this.gameDuration);
   }
 
   ngOnDestroy() {
@@ -69,6 +86,10 @@ export class CommonoptionsDialogComponent implements OnInit {
             this.onGetLobby(); 
         }
     })
+  }
+
+  updateEstimatedDuration(duration:number){
+    this.gameDuration = duration;
   }
 
   closeDialog() {

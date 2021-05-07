@@ -64,7 +64,7 @@ export class LobbyManagementComponent {
     }
     
     putGameLinkOnClipboard(){
-        navigator.clipboard.writeText(this.baseFrontEndUrl+"play?lobby="+this.lobby.lobbyId)
+        navigator.clipboard.writeText(this.baseFrontEndUrl+"join?lobby="+this.lobby.lobbyId)
             .then(()=>{alert("The link is on the clipboard.")})
             .catch(e => console.error(e));
     }

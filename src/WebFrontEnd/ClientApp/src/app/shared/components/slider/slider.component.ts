@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, ElementRef, AfterViewInit, Input, Output, forwardRef } from '@angular/core';
+import { Component, ViewEncapsulation, ElementRef, AfterViewInit, Input, Output, forwardRef, EventEmitter } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 /* https://www.npmjs.com/package/ngx-bootstrap-slider   */
@@ -55,7 +55,8 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     encapsulation: ViewEncapsulation.None,
 })
 export class Slider implements ControlValueAccessor {
-  @Input() sliderParameters: SliderPromptMetadata;
+  @Input() sliderParameters: SliderPromptMetadata; 
+  @Output() onValueChange = new EventEmitter(); 
 
   el: ElementRef;
 
@@ -108,6 +109,7 @@ export class Slider implements ControlValueAccessor {
         } else {
             this.onChange([val]);
         }
+        this.onValueChange.emit(val);
     }
 
   ngOnInit() {
@@ -131,14 +133,14 @@ export class Slider implements ControlValueAccessor {
 
 }
 
-interface RangeHighlightsType
+export interface RangeHighlightsType
 {
     start: number;
     end: number;
     class: string; 
 }
 
-interface SliderPromptMetadata {
+export interface SliderPromptMetadata {
   min: number;
   max: number;
   value: number[];

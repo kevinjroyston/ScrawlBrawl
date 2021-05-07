@@ -2,7 +2,6 @@
 {
     public enum GameModeOptionsEnum
     {
-        NumSubmitQuestions,
         NumAnswerQuestions,
         //MinQuestions,
         //OutlierExtraRound,

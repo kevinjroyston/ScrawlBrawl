@@ -12,9 +12,8 @@
     <ui-switch [(ngModel)]="timerEnabled" size="small"></ui-switch>
   </div>
   <div class="gamemode-option">
-    <span>Game Length</span>
-    <!--input [(ngModel)]="gameDuration" size="small"-->
-    <span>Estimated Duration: {{durationEstimates[gameDuration]}}</span>
+    <span>Length</span>
+    <slider class="SliderHolder" [sliderParameters]="estimatedDurationSliderParameters" (onValueChanged)= "updateEstimatedDuration($event)"></slider>
   </div>
   <div class="error" *ngIf="error">
       {{ error }}

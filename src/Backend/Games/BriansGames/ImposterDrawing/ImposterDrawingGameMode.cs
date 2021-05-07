@@ -47,7 +47,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing
             foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
             {
                 int numRounds = Math.Min(ImposterDrawingConstants.MaxNumRounds[duration], numPlayers);
-                int numDrawingsPerUser = ImposterDrawingConstants.MaxDrawingsPerPlayer[duration];
+                int numDrawingsPerUser = Math.Min(ImposterDrawingConstants.MaxDrawingsPerPlayer[duration], numRounds-1);
 
                 TimeSpan estimate = TimeSpan.Zero;
                 TimeSpan writingTimer = ImposterDrawingConstants.WritingTimer[duration];
@@ -79,13 +79,15 @@ namespace Backend.Games.BriansGames.ImposterDrawing
                 votingTimer = ImposterDrawingConstants.VotingTimer[duration];
             }
             List<Prompt> prompts = new List<Prompt>();
+            int numRounds = Math.Min(ImposterDrawingConstants.MaxNumRounds[duration], this.Lobby.GetAllUsers().Count);
+            int numDrawingsPerUser = Math.Min(ImposterDrawingConstants.MaxDrawingsPerPlayer[duration], numRounds - 1);
             Setup = new Setup_GS(
                 lobby: lobby,
                 promptsToPopulate: prompts,
                 writingTimeDuration: writingTimer,
                 drawingTimeDuration: drawingTimer,
-                numDrawingsPerUser:ImposterDrawingConstants.MaxDrawingsPerPlayer[duration],
-                numRounds:Math.Min(ImposterDrawingConstants.MaxNumRounds[duration], lobby.GetAllUsers().Count),
+                numDrawingsPerUser:numDrawingsPerUser,
+                numRounds:numRounds,
                 maxPlayersPerPrompt:ImposterDrawingConstants.MaxNumPlayersPerRound);
             StateChain CreateGamePlayLoop()
             {
