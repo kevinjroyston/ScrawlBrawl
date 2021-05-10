@@ -41,6 +41,7 @@ import { GalleryTool } from './components/gallery/gallerytool/gallerytool.compon
 import { GalleryPanel } from './components/gallery/gallerypanel/gallerypanel.component';
 import { GalleryPicture } from './components/gallery/gallerypicture/gallerypicture.component';
 import { ResizableModule } from 'angular-resizable-element';
+import { TutorialComponent } from './components/tutorial/tutorial.component';
 
 @NgModule({
   imports: [
@@ -58,6 +59,7 @@ import { ResizableModule } from 'angular-resizable-element';
   declarations: [
     DrawingBoard,
     Slider,
+    TutorialComponent,
     UnityComponent,
     ColorPickerComponent,
     ScrawlButtonComponent,
@@ -100,6 +102,7 @@ import { ResizableModule } from 'angular-resizable-element';
     SimpleButtonComponent,
     SimpleLinkComponent,
     Slider,
+    TutorialComponent,
     UnityComponent,
     FormsModule,
     ReactiveFormsModule,

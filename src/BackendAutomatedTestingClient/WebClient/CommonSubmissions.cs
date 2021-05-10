@@ -20,10 +20,21 @@ namespace BackendAutomatedTestingClient.WebClient
         
         public static async Task<string> MakeLobby(string userId)
         {
+            var joinLobbyRequest = new JoinLobbyRequest
+            {
+                DisplayName = "TestUser",
+                LobbyId = "dummmmyyyy",
+                SelfPortrait = Constants.Drawings.GrayDot
+            };
+
             await WebClient.MakeWebRequest(
                 path: Constants.Path.LobbyCreate,
                 userId: userId,
-                method: HttpMethod.Post);
+                method: HttpMethod.Post,
+                content: new StringContent(
+                    JsonConvert.SerializeObject(joinLobbyRequest),
+                    Encoding.UTF8,
+                    Constants.MediaType.ApplicationJson));
 
             Thread.Sleep(100);
             HttpResponseMessage getLobbyResponse = await WebClient.MakeWebRequest(
@@ -44,7 +55,7 @@ namespace BackendAutomatedTestingClient.WebClient
 
             return JsonConvert.DeserializeObject<IReadOnlyList<GameModeMetadata>>(await getGamesResponse.Content.ReadAsStringAsync()).ToList();
         }
-        public static async Task ConfigureLobby(ConfigureLobbyRequest request, string userId)
+        public static async Task ConfigureLobby(ConfigureLobbyRequest request, StandardGameModeOptions standardOptions, string userId)
         {
             await WebClient.MakeWebRequest(
                 path: Constants.Path.LobbyConfigure,
@@ -58,7 +69,11 @@ namespace BackendAutomatedTestingClient.WebClient
             await WebClient.MakeWebRequest(
                 path: Constants.Path.LobbyStart,
                 userId: userId,
-                method: HttpMethod.Get);
+                method: HttpMethod.Post,
+                content: new StringContent(
+                    JsonConvert.SerializeObject(standardOptions),
+                    Encoding.UTF8,
+                    Constants.MediaType.ApplicationJson));
         }
         public static async Task DeleteLobby(string userId)
         {
@@ -77,7 +92,7 @@ namespace BackendAutomatedTestingClient.WebClient
             var joinLobbyRequest = new JoinLobbyRequest
             {
                 DisplayName = name,
-                LobbyID = lobbyId,
+                LobbyId = lobbyId,
                 SelfPortrait = drawing
             };
 

@@ -4,6 +4,8 @@ using BackendAutomatedTestingClient.TestFramework;
 using System.Collections.Generic;
 using static Common.DataModels.Requests.LobbyManagement.ConfigureLobbyRequest;
 using GameStep = System.Collections.Generic.IReadOnlyDictionary<Common.DataModels.Enums.UserPromptId, int>;
+using Common.DataModels.Requests.LobbyManagement;
+using System;
 
 namespace BackendAutomatedTestingClient.Games
 {
@@ -16,30 +18,42 @@ namespace BackendAutomatedTestingClient.Games
                 NumPlayers = NumPlayers,
                 GameModeOptions = new List<GameModeOptionRequest>()
                 {
-                    new GameModeOptionRequest(){ Value = ""+5 } // game speed
                 },
+                StandardGameModeOptions = new StandardGameModeOptions
+                {
+                    GameDuration = GameDuration.Normal,
+                    ShowTutorial = false,
+                    TimerEnabled = false
+                }
             };
         public IReadOnlyList<GameStep> UserPromptIdValidations
         {
             get
             {
+                int numRounds = Math.Min(8, this.NumPlayers);
+                int numDrawingsPerUser = Math.Min(4, numRounds - 1);
+
                 var toReturn = new List<GameStep>()
                 {
                     TestCaseHelpers.AllPlayers(UserPromptId.ImposterSyndrome_CreatePrompt, NumPlayers),
                 };
+                toReturn.AppendRepetitiveGameSteps(
+                    copyFrom: new List<GameStep>
+                    {
+                        TestCaseHelpers.AllPlayers(
+                            numPlayers: NumPlayers,
+                            prompt: UserPromptId.ImposterSyndrome_Draw)
+                    },
+                    repeatCounter:numDrawingsPerUser);
 
                 toReturn.AppendRepetitiveGameSteps(
                     copyFrom: new List<GameStep>
                     {
-                        TestCaseHelpers.OneVsAll(
-                            numPlayers:NumPlayers,
-                            onePrompt:UserPromptId.SitTight,
-                            allPrompt: UserPromptId.ImposterSyndrome_Draw),
                         TestCaseHelpers.AllPlayers(UserPromptId.Voting, NumPlayers),
                         TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipReveal, NumPlayers, UserPromptId.RevealScoreBreakdowns),
                         TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipScoreboard, NumPlayers, UserPromptId.RevealScoreBreakdowns)
                     },
-                    repeatCounter: NumPlayers);
+                    repeatCounter: numRounds);
 
                 return toReturn;
             }

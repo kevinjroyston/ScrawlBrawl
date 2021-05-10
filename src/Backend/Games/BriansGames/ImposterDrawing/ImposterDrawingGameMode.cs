@@ -88,7 +88,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing
                 drawingTimeDuration: drawingTimer,
                 numDrawingsPerUser:numDrawingsPerUser,
                 numRounds:numRounds,
-                maxPlayersPerPrompt:ImposterDrawingConstants.MaxNumPlayersPerRound);
+                maxPlayersPerPrompt:Math.Min(ImposterDrawingConstants.MaxNumPlayersPerRound,this.Lobby.GetAllUsers().Count-1));
             StateChain CreateGamePlayLoop()
             {
                 List<State> stateList = new List<State>();

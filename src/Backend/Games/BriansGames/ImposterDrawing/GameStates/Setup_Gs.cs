@@ -61,6 +61,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                         FakePrompt = input.SubForms[1].ShortAnswer,
                         MaxMemberCount = this.MaxPlayersPerPrompt,
                         BannedMemberIds = new List<Guid>{ user.Id }.ToImmutableHashSet(),
+                        AllowDuplicateIds = false,
                     });
                     return (true, string.Empty);
                 },

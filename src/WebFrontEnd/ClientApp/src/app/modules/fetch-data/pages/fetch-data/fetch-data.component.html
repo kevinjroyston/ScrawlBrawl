@@ -71,6 +71,9 @@
                 </div>
             </div>
         </div>
+         
+        <app-tutorial *ngIf="userPrompt.tutorial" class="TutorialHolder" [tutorialMetadata]="userPrompt.tutorial" [gameModeIdString]="userPrompt.gameIdString"></app-tutorial>
+
         <div class="Error" *ngIf="userPrompt.error">
             {{ userPrompt.error }}
         </div>

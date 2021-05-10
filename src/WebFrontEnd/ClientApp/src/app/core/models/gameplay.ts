@@ -13,6 +13,7 @@ namespace GameplayPrompts {
       description: string;
       subPrompts: SubPrompt[];
       error: string;
+      tutorial: TutorialMetadata;
     }
     export interface SubPrompt {
       id: string;
@@ -58,6 +59,10 @@ namespace GameplayPrompts {
     }    
     export interface SuggestionMetadata {
       suggestionKey: string;
+    }
+
+    export interface TutorialMetadata {
+      hideClasses: string[];
     }
 }
 

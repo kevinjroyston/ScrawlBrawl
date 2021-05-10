@@ -20,12 +20,14 @@ namespace BackendAutomatedTestingClient.DataModels
         {
             this.Owner = new LobbyOwner();
             this.InternalPlayers = new List<LobbyPlayer>();
+            this.InternalPlayers.Add(this.Owner); // Lobby owner will be added on lobby creation.
         }
         public Lobby(string lobbyId)
         {
             this.Id = lobbyId;
             this.Owner = new LobbyOwner();
             this.InternalPlayers = new List<LobbyPlayer>();
+            this.InternalPlayers.Add(this.Owner); // Lobby owner will be added on lobby creation.
         }
 
         public async Task Create()
@@ -41,7 +43,7 @@ namespace BackendAutomatedTestingClient.DataModels
 
         public async Task Populate(int numPlayers)
         {
-            for (int i = 0; i < numPlayers; i++)
+            for (int i = 0; i < numPlayers-1; i++)
             {
                 LobbyPlayer newPlayer = new LobbyPlayer();
                 this.InternalPlayers.Add(newPlayer);
@@ -54,14 +56,14 @@ namespace BackendAutomatedTestingClient.DataModels
             }
         }
 
-        public async Task Configure(IEnumerable<GameModeOptionRequest> options, int GameMode)
+        public async Task Configure(IEnumerable<GameModeOptionRequest> options, StandardGameModeOptions standardOptions, int GameMode)
         {
             ConfigureLobbyRequest configLobby = new ConfigureLobbyRequest()
             {
                 GameMode = GameMode,
                 Options = options.ToList()
             };
-            await CommonSubmissions.ConfigureLobby(configLobby, Owner.UserId);
+            await CommonSubmissions.ConfigureLobby(configLobby, standardOptions, Owner.UserId);
         }
     }
 
