@@ -81,22 +81,20 @@ export class API {
             case "Lobby":
                 switch (r.path) {
                     case "Get":
-                    case "Start":
                     case "Delete":
                     case "Games": obs = this.Get(r);
                         break;
+                    case "Create":
                     case "Configure":
+                    case "Start":
                     case "Join": obs = this.Post(r);
-                        break;
-                    case "Create": obs = this.Post(r);
                         break;
                     default: return;
                 }
                 break;
             case "User":
                 switch (r.path) {
-                    case "Get": obs = this.Get(r);
-                        break;
+                    case "Get":
                     case "Delete": obs = this.Get(r);
                         break;
                     default: return;

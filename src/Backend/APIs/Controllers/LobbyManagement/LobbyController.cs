@@ -11,6 +11,7 @@ using Backend.GameInfrastructure.DataModels;
 using Backend.GameInfrastructure.DataModels.Users;
 using Backend.GameInfrastructure.DataModels.States.UserStates;
 using Common.Code.Validation;
+using Common.DataModels.Responses.LobbyManagement;
 #if !DEBUG
 //using Microsoft.AspNetCore.Authorization;
 #endif
@@ -65,13 +66,14 @@ namespace Backend.APIs.Controllers.LobbyManagement
 #if !DEBUG
  //   [Authorize(Policy = "LobbyManagement")]
 #endif
-        public IActionResult CreateLobby([FromQuery(Name = "Id")]string testHookId)
+        public IActionResult CreateLobby([FromBody] JoinLobbyRequest request, [FromQuery(Name = "Id")]string id)
         {
+            request.LobbyId = "temp"; // This should hopefully make LobbyId optional to the modelstate.
             if (!ModelState.IsValid)
             {
                 return new BadRequestResult();
             }
-            AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId(testHookId));
+            AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId(id));
 
             if (user == null)
             {
@@ -102,6 +104,22 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 return StatusCode(500, "Failed to create lobby, try again");
             }
 
+            request.LobbyId = lobbyId;
+            (bool,string) joinLobbyResponse;
+            try
+            {
+                joinLobbyResponse = InternalJoinLobby(request, id);
+            }
+            catch
+            {
+                joinLobbyResponse = (false, "Internal Error");
+            }
+            if (!joinLobbyResponse.Item1)
+            {
+                GameManager.DeleteLobby(lobbyId);
+                return StatusCode(400, joinLobbyResponse.Item2);
+            }
+
             user.OwnedLobby = newLobby;
             return Ok(lobbyId);
         }
@@ -115,14 +133,24 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 return new BadRequestResult();
             }
 
+            (bool success, string error) = InternalJoinLobby(request, id);
+            if (!success)
+            {
+                return StatusCode(400, error);
+            }
+            return new OkResult();
+        }
+
+        private (bool, string) InternalJoinLobby(JoinLobbyRequest request, string id)
+        {
             if (!Sanitize.SanitizeString(request.DisplayName, out string _))
             {
-                return new BadRequestResult();
+                return (false, "DisplayName invalid.");
             }
 
             if (!Sanitize.SanitizeString(request.LobbyId, out string _))
             {
-                return new BadRequestResult();
+                return (false, "LobbyId invalid.");
             }
 
             User user = GameManager.MapIdentifierToUser(id, out bool newUser);
@@ -143,21 +171,21 @@ namespace Backend.APIs.Controllers.LobbyManagement
                     // Race condition.
                     if (user.Lobby != null && !user.LobbyId.Equals(request.LobbyId))
                     {
-                        return StatusCode(400, "Try Again.");
+                        return (false, "Try Again.");
                     }
 
                     (bool, string) result = GameManager.RegisterUser(user, request);
                     if (!result.Item1) // Check success.
                     {
-                        return StatusCode(400, result.Item2); // Return error message.
+                        return (false, result.Item2); // Return error message.
                     }
 
                     if (user?.Lobby == null) // Confirm user is now in a lobby.
                     {
-                        return StatusCode(400, "Unknown error occurred while joining Lobby.");
+                        return (false, "Unknown error occurred while joining Lobby.");
                     }
 
-                    return new OkResult();
+                    return (true, string.Empty);
                 }
             }
         }
@@ -211,20 +239,20 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 return StatusCode(404, "Lobby doesn't exist.");
             }
 
-            if (!user.OwnedLobby.ConfigureLobby(request, out string error))
+            if (!user.OwnedLobby.ConfigureLobby(request, out string error, out ConfigureLobbyResponse response))
             {
                 return StatusCode(400, error);
             }
 
-            return new AcceptedResult();
+            return new OkObjectResult(response);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("Start")]
 #if !DEBUG
  //   [Authorize(Policy = "LobbyManagement")]
 #endif
-        public IActionResult StartLobby([FromQuery(Name = "Id")]string testHookId)
+        public IActionResult StartLobby([FromQuery(Name = "Id")]string testHookId, [FromBody] StandardGameModeOptions standardOptions)
         {
             if (!ModelState.IsValid)
             {
@@ -241,7 +269,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 return StatusCode(404, "Lobby doesn't exist.");
             }
 
-            if (!user.OwnedLobby.StartGame(out string error))
+            if (!user.OwnedLobby.StartGame(standardOptions, out string error))
             {
                 return StatusCode(400, error);
             }

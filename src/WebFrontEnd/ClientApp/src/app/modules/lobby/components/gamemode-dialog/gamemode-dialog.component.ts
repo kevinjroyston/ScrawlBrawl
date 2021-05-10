@@ -11,6 +11,7 @@ interface GameModeDialogData {
   lobby: Lobby.LobbyMetadata
   error: string
   onGetLobby: () => void
+  onNext: (data: Map<Lobby.GameDuration, number>) => void
 }
 
 @Component({
@@ -22,6 +23,7 @@ export class GamemodeDialogComponent implements OnInit {
   lobby: Lobby.LobbyMetadata
   error: string
   onGetLobby: () => void
+  onNext: (data: Map<Lobby.GameDuration, number>) =>void
   errorSubscription: Subscription
 
   constructor(
@@ -32,6 +34,10 @@ export class GamemodeDialogComponent implements OnInit {
     @Inject(API) private api: API) {
     this.lobby = data.lobby;
     this.onGetLobby = data.onGetLobby;
+    this.onNext = data.onNext;
+    if (gameModeList.gameModes[this.lobby.selectedGameMode].options.length == 0){
+      this.onGameModeNext();
+    }
   }
 
   ngOnInit() {
@@ -44,36 +50,27 @@ export class GamemodeDialogComponent implements OnInit {
     this.errorSubscription.unsubscribe();
   }
 
-  onStartLobby() : void {
+  onGameModeNext() : void {
     var body = new Lobby.ConfigureLobbyRequest();
     body.gameMode = this.lobby.selectedGameMode;
     body.options = JSON.parse(JSON.stringify(this.gameModeList.gameModes[this.lobby.selectedGameMode].options, ['value']));
     var bodyString = JSON.stringify(body);
 
     let configureRequest = this.api.request({ type: "Lobby", path: "Configure", body: bodyString });
-    let lobbyRequest = this.api.request({ type: "Lobby", path: "Start" });
 
     configureRequest.subscribe({
-        next: () => {
-            lobbyRequest.subscribe({
-                next: () => { 
-                    this.onGetLobby()
-                    this.closeDialog();
-                },
-                error: (error) => { 
-                    this.error = error.error; 
-                    this.errorService.announceError(error.error); 
-                    this.onGetLobby() 
-                }
-            })
+        next: (data) => {
+          let response = data as Lobby.ConfigureLobbyResponse;
+          this.closeDialog(); // needed?
+          this.onNext(response.gameDurationEstimatesInMinutes);
         },
         error: (error) => { 
             this.error = error.error; 
+            this.errorService.announceError(error.error); 
             this.onGetLobby(); 
         }
     })
   }
-
   closeDialog() {
     this.dialogRef.close();
   }

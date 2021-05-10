@@ -13,6 +13,7 @@ import GameModes from '@core/models/gamemodes'
 import { GameModeList } from '@core/http/gamemodelist';
 import { UnityComponent } from '@shared/components/unity/unity.component';
 import { UnityViewer } from '@core/http/viewerInjectable';
+import { CommonoptionsDialogComponent } from '@modules/lobby/components/commonoptions-dialog/commonoptions-dialog.component';
 
 @Component({
     selector: 'app-lobby-management',
@@ -63,7 +64,7 @@ export class LobbyManagementComponent {
     }
     
     putGameLinkOnClipboard(){
-        navigator.clipboard.writeText(this.baseFrontEndUrl+"play?lobby="+this.lobby.lobbyId)
+        navigator.clipboard.writeText(this.baseFrontEndUrl+"join?lobby="+this.lobby.lobbyId)
             .then(()=>{alert("The link is on the clipboard.")})
             .catch(e => console.error(e));
     }
@@ -72,8 +73,9 @@ export class LobbyManagementComponent {
         window.open('/viewer/index.html?lobby='+this.lobby.lobbyId,'_blank');
     }
     
-    onCreateLobby = async () => {
-        await this.api.request({ type: "Lobby", path: "Create" }).subscribe({
+    onCreateLobby = async (joinLobbyRequest) => {
+        var bodyString = JSON.stringify(joinLobbyRequest);
+        await this.api.request({ type: "Lobby", path: "Create", body: bodyString}).subscribe({
             next: async (result) => {
                 this.lobby = result as Lobby.LobbyMetadata;
                 await this.onGetLobby()
@@ -121,9 +123,19 @@ export class LobbyManagementComponent {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.data = {
             lobby: this.lobby,
-            onGetLobby: () => this.onGetLobby()
+            onGetLobby: () => this.onGetLobby(),
+            onNext: (data: Map<Lobby.GameDuration, number>) => this.openGameStartDialog(data)
         }
         this.matDialog.open(GamemodeDialogComponent, dialogConfig);
+    }
+    openGameStartDialog = (gameDurationEstimatesInMinutes: Map<Lobby.GameDuration, number>) => {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.data = {
+            lobby: this.lobby,
+            onGetLobby: () => this.onGetLobby(),
+            durationEstimates: gameDurationEstimatesInMinutes,
+        }
+        this.matDialog.open(CommonoptionsDialogComponent, dialogConfig);
     }
 
     showInstructions = () => {

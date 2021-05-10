@@ -5,13 +5,13 @@ using System;
 using System.Collections.Generic;
 using static Common.DataModels.Requests.LobbyManagement.ConfigureLobbyRequest;
 using GameStep = System.Collections.Generic.IReadOnlyDictionary<Common.DataModels.Enums.UserPromptId, int>;
+using Common.DataModels.Requests.LobbyManagement;
 
 namespace BackendAutomatedTestingClient.Games.FriendQuiz
 {
     public abstract class StructuredFriendQuizTests : FriendQuizTest, IStructuredTest
     {
         protected abstract int NumPlayers { get; }
-        protected abstract int NumQuestionsSetup { get; }
         protected abstract int NumQuestionsToAnswer { get; }
         public TestOptions TestOptions =>
             new TestOptions
@@ -19,10 +19,14 @@ namespace BackendAutomatedTestingClient.Games.FriendQuiz
                 NumPlayers = NumPlayers,
                 GameModeOptions = new List<GameModeOptionRequest>()
                 {
-                    new GameModeOptionRequest(){ Value = NumQuestionsSetup + "" }, // num rounds
                     new GameModeOptionRequest(){ Value = NumQuestionsToAnswer + "" }, //num prompts per user per round
-                    new GameModeOptionRequest(){ Value = "5" } // game speed
                 },
+                StandardGameModeOptions = new StandardGameModeOptions
+                {
+                    GameDuration = GameDuration.Normal,
+                    ShowTutorial = false,
+                    TimerEnabled = false
+                }
             };
 
         public IReadOnlyList<GameStep> UserPromptIdValidations
@@ -31,6 +35,10 @@ namespace BackendAutomatedTestingClient.Games.FriendQuiz
             {
                 var toReturn = new List<GameStep>();
 
+                int numQuestionsToAnswer = this.NumQuestionsToAnswer;
+                int effectiveNumPlayers = Math.Min(this.NumPlayers, 12);
+                int numQuestionSetup = (int)(numQuestionsToAnswer * 2.5f / effectiveNumPlayers) + 1; // How many questions each user should contribute.
+
                 toReturn.AppendRepetitiveGameSteps(
                     copyFrom: new List<GameStep>
                     {
@@ -38,7 +46,7 @@ namespace BackendAutomatedTestingClient.Games.FriendQuiz
                             numPlayers:NumPlayers,
                             prompt: UserPromptId.FriendQuiz_CreateQuestion),
                     },
-                    repeatCounter: NumQuestionsSetup);
+                    repeatCounter: numQuestionSetup);
 
                 toReturn.AppendRepetitiveGameSteps(
                     copyFrom: new List<GameStep>
@@ -47,7 +55,7 @@ namespace BackendAutomatedTestingClient.Games.FriendQuiz
                             numPlayers:NumPlayers,
                             prompt: UserPromptId.FriendQuiz_AnswerQuestion),
                     },
-                    repeatCounter: Math.Min(NumQuestionsToAnswer, NumPlayers * NumQuestionsSetup));
+                    repeatCounter: Math.Min(NumQuestionsToAnswer, numQuestionsToAnswer));
 
                 toReturn.AppendRepetitiveGameSteps(
                     copyFrom: new List<GameStep>
@@ -68,7 +76,6 @@ namespace BackendAutomatedTestingClient.Games.FriendQuiz
     public class Struct_FQ_Test1 : StructuredFriendQuizTests
     {
         protected override int NumPlayers => 5;
-        protected override int NumQuestionsSetup => 2;
         protected override int NumQuestionsToAnswer => 10;
     }
 
@@ -76,7 +83,6 @@ namespace BackendAutomatedTestingClient.Games.FriendQuiz
     public class Struct_FQ_Test2 : StructuredFriendQuizTests
     {
         protected override int NumPlayers => 3;
-        protected override int NumQuestionsSetup => 1;
         protected override int NumQuestionsToAnswer => 5;
     }
 
@@ -84,7 +90,6 @@ namespace BackendAutomatedTestingClient.Games.FriendQuiz
     public class Struct_FQ_Test3 : StructuredFriendQuizTests
     {
         protected override int NumPlayers => 10;
-        protected override int NumQuestionsSetup => 5;
         protected override int NumQuestionsToAnswer => 8;
     }
 }

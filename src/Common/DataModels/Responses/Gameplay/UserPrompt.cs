@@ -1,4 +1,5 @@
 ﻿using Common.DataModels.Enums;
+using Common.DataModels.Responses.Gameplay;
 using System;
 
 namespace Common.DataModels.Responses
@@ -35,7 +36,7 @@ namespace Common.DataModels.Responses
         public DateTime CurrentServerTime { get { return DateTime.UtcNow; } }
 
         /// <summary>
-        /// The current server time.
+        /// The time to submit at.
         /// </summary>
         public DateTime? AutoSubmitAtTime { get; set; } = null;
 
@@ -60,6 +61,12 @@ namespace Common.DataModels.Responses
         /// The top-level question/text to display
         /// </summary>
         public string Description { get; set; }
+
+        /// <summary>
+        /// Presence of this object indicates a tutorial component should be rendered.
+        /// GameIdString will be used to determine the targetted game.
+        /// </summary>
+        public TutorialMetadata Tutorial { get; set; }
 
         /// <summary>
         /// A list of sub-prompts.

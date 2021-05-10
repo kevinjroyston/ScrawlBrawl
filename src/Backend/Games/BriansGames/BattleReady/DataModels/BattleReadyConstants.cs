@@ -1,24 +1,60 @@
-﻿namespace Backend.Games.BriansGames.BattleReady.DataModels
+﻿using Common.DataModels.Enums;
+using System;
+using System.Collections.Generic;
+
+namespace Backend.Games.BriansGames.BattleReady.DataModels
 {
     public static class BattleReadyConstants
     {
         public const int PointsForVote = 100;
         public const int PointsForPartUsed = 50;
 
-        public const double SetupPerDrawingTimerMin = 45;
-        public const double SetupPerDrawingTimerAve = 90;
-        public const double SetupPerDrawingTimerMax = 120;
+        public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerDrawingTimer = new Dictionary<GameDuration, TimeSpan>()
+        {
+            { GameDuration.Short, TimeSpan.FromSeconds(45)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(60)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(90)},
+        };
+        public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerPromptTimer = new Dictionary<GameDuration, TimeSpan>()
+        {
+            { GameDuration.Short, TimeSpan.FromSeconds(45)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(60)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(90)},
+        };
+        public static IReadOnlyDictionary<GameDuration, TimeSpan> PerCreationTimer = new Dictionary<GameDuration, TimeSpan>()
+        {
+            { GameDuration.Short, TimeSpan.FromSeconds(45)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(60)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(90)},
+        };
+        public static IReadOnlyDictionary<GameDuration, TimeSpan> VotingTimer = new Dictionary<GameDuration, TimeSpan>()
+        {
+            { GameDuration.Short, TimeSpan.FromSeconds(30)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(60)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(90)},
+        };
 
-        public const double SetupPerPromptTimerMin = 45;
-        public const double SetupPerPromptTimerAve = 90;
-        public const double SetupPerPromptTimerMax = 120;
+        // Number of rounds (round = create contestants & vote)
+        public static IReadOnlyDictionary<GameDuration, int> NumRounds = new Dictionary<GameDuration, int>()
+        {
+            { GameDuration.Short, 1},
+            { GameDuration.Normal, 2},
+            { GameDuration.Extended, 2},
+        };
 
-        public const double PerCreationTimerMin = 45;
-        public const double PerCreationTimerAve = 90;
-        public const double PerCreationTimerMax = 120;
+        // SubRound = 1 prompt. By default 1 per player.
+        public static IReadOnlyDictionary<GameDuration, int> MaxNumSubRounds = new Dictionary<GameDuration, int>()
+        {
+            { GameDuration.Short, 4},
+            { GameDuration.Normal, 5},
+            { GameDuration.Extended, 7},
+        };
 
-        public const double VotingTimerMin = 30;
-        public const double VotingTimerAve = 60;
-        public const double VotingTimerMax = 120;
+        public static IReadOnlyDictionary<GameDuration, int> NumDrawingsPerPlayer = new Dictionary<GameDuration, int>()
+        {
+            { GameDuration.Short, 2},
+            { GameDuration.Normal, 3},
+            { GameDuration.Extended, 4},
+        };
     }
 }

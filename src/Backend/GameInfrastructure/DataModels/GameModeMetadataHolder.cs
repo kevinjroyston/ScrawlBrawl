@@ -10,6 +10,6 @@ namespace Backend.GameInfrastructure.DataModels
     public class GameModeMetadataHolder
     {
         public GameModeMetadata GameModeMetadata { get; set; }
-        public Func<Lobby, List<ConfigureLobbyRequest.GameModeOptionRequest>, IGameMode> GameModeInstantiator { get; set; }
+        public Func<Lobby, List<ConfigureLobbyRequest.GameModeOptionRequest>, StandardGameModeOptions, IGameMode> GameModeInstantiator { get; set; }
     }
 }

@@ -14,6 +14,23 @@ namespace Lobby {
         // Response object when serialized only contains the value.
         options: GameModes.GameModeOptionResponse[];
     }
+    export class ConfigureLobbyResponse {
+        lobbyId: string;
+        playerCount: number;
+        gameDurationEstimatesInMinutes: Map<GameDuration, number>;
+    }
+
+    export enum GameDuration{        
+        Short,
+        Normal,
+        Extended,
+    }
+
+    export class StartLobbyRequest {
+        showTutorial: boolean;
+        gameDuration: GameDuration;
+        timerEnabled: boolean;
+    }
 }
 
 export default Lobby

@@ -1,20 +1,45 @@
-﻿namespace Backend.Games.BriansGames.TwoToneDrawing.DataModels
+﻿using Common.DataModels.Enums;
+using System;
+using System.Collections.Generic;
+
+namespace Backend.Games.BriansGames.TwoToneDrawing.DataModels
 {
     public static class TwoToneDrawingConstants
     {
         public const int PointsPerVote = 100;
         public const int PointsForVotingForWinningDrawing = 100;
 
-        public const double SetupTimerMin = 45;
-        public const double SetupTimerAve = 120;
-        public const double SetupTimerMax = 180;
+        public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupTimer = new Dictionary<GameDuration, TimeSpan>()
+        {
+            { GameDuration.Short, TimeSpan.FromSeconds(60)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(120)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(180)},
+        };
+        public static IReadOnlyDictionary<GameDuration, TimeSpan> PerDrawingTimer = new Dictionary<GameDuration, TimeSpan>()
+        {
+            { GameDuration.Short, TimeSpan.FromSeconds(45)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(60)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(120)},
+        };
+        public static IReadOnlyDictionary<GameDuration, TimeSpan> VotingTimer = new Dictionary<GameDuration, TimeSpan>()
+        {
+            { GameDuration.Short, TimeSpan.FromSeconds(30)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(45)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(90)},
+        };
 
-        public const double PerDrawingTimerMin = 45;
-        public const double PerDrawingTimerAve = 60;
-        public const double PerDrawingTimerMax = 120;
+        public static IReadOnlyDictionary<GameDuration, int> MaxNumRounds = new Dictionary<GameDuration, int>()
+        {
+            { GameDuration.Short, 3},
+            { GameDuration.Normal, 6},
+            { GameDuration.Extended, 9},
+        };
 
-        public const double VotingTimerMin = 30;
-        public const double VotingTimerAve = 45;
-        public const double VotingTimerMax = 90;
+        public static IReadOnlyDictionary<GameDuration, int> DrawingsPerPlayer = new Dictionary<GameDuration, int>()
+        {
+            { GameDuration.Short, 2},
+            { GameDuration.Normal, 4},
+            { GameDuration.Extended, 6},
+        };
     }
 }

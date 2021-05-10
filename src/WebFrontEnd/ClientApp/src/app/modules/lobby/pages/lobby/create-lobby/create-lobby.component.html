@@ -1,0 +1,28 @@
+<div class="fetch-data">
+  <form class="form" [formGroup]="form">
+      <h2 class="title">
+          Create A Game
+      </h2>
+      <div class="subprompts">
+          <div class="subprompt">
+              <div class="subprompt-inner">
+                  <div class="prompt-wrapper">
+                      <h5 class="prompt">Your Nickname</h5>
+                  </div>
+              </div>
+              <input type="text" class="text-input" formControlName="DisplayName">
+          </div>
+          <div class="subprompt">
+              <div class="subprompt-inner">
+                  <div class="prompt-wrapper">
+                      <h5 class="prompt">Self Portrait</h5>
+                  </div>
+              </div>
+              <drawingboard [drawingType]="'PROFILE'" formControlName='SelfPortrait'></drawingboard>
+          </div>
+      </div>
+      <scrawlbutton color="green" (click)="onSubmit()">
+          Create Lobby
+      </scrawlbutton>
+  </form>
+</div>

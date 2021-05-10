@@ -24,6 +24,7 @@ using Common.Code.Helpers;
 using Common.DataModels.Interfaces;
 using Backend.APIs.DataModels.UnityObjects;
 using static Backend.Games.BriansGames.BattleReady.DataModels.Prompt;
+using Common.Code.Extensions;
 
 namespace Backend.Games.BriansGames.BattleReady
 {
@@ -47,178 +48,114 @@ namespace Backend.Games.BriansGames.BattleReady
                 ProductionReady = true,
             },
             Options = new List<GameModeOptionResponse>
+            {
+                new GameModeOptionResponse
                 {
-                    new GameModeOptionResponse
-                    {
-                        Description = "Number of rounds, a round contains numerous battles",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 2,
-                        MinValue = 1,
-                        MaxValue = 10,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Number of contestants each user creates each round",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 2,
-                        MinValue = 1,
-                        MaxValue = 30,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Number of drawings per user during setup",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 4,
-                        MinValue = 2,
-                        MaxValue = 10,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Number of players per battle",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 3,
-                        MinValue = 2,
-                        MaxValue = 20,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 5,
-                        MinValue = 0,
-                        MaxValue = 10,
-                    }
-                }
+                    Description = "# of bodies to choose from",
+                    ResponseType = ResponseType.Integer,
+                    DefaultValue = 3,
+                    MinValue = 1,
+                    MaxValue = 5,
+                },
+            },
+            GetGameDurationEstimates = GetGameDurationEstimates,
         };
-        public BattleReadyGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
+        private static IReadOnlyDictionary<GameDuration, TimeSpan> GetGameDurationEstimates(int numPlayers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            ValidateOptions(gameModeOptions);
+            int numOfEachPartInHand = (int)gameModeOptions[(int)GameModeOptionsEnum.NumEachPartInHand].ValueParsed;
+
+            Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
+            foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
+            {
+                int numRounds = BattleReadyConstants.NumRounds[duration];
+                int numPromptsPerRound = Math.Min(numPlayers, BattleReadyConstants.MaxNumSubRounds[duration]);
+                int minDrawingsRequired = numOfEachPartInHand * 3; // the amount to make one playerHand to give everyone
+
+                int expectedPromptsPerUser = (int)Math.Ceiling(1.0 * numPromptsPerRound * numRounds / numPlayers);
+                int expectedDrawingsPerUser = Math.Max((minDrawingsRequired / numPlayers + 1) * 2, BattleReadyConstants.NumDrawingsPerPlayer[duration]);
+                
+                int numPromptsPerUserPerRound = Math.Max(1, numPromptsPerRound / 2);
+
+                TimeSpan estimate = TimeSpan.Zero;
+                TimeSpan setupDrawingTimer = BattleReadyConstants.SetupPerDrawingTimer[duration];
+                TimeSpan setupPromptTimer = BattleReadyConstants.SetupPerPromptTimer[duration];
+                TimeSpan creationTimer = BattleReadyConstants.PerCreationTimer[duration];
+                TimeSpan votingTimer = BattleReadyConstants.VotingTimer[duration];
+
+                estimate += setupDrawingTimer.MultipliedBy(expectedDrawingsPerUser);
+                estimate += setupPromptTimer.MultipliedBy(expectedPromptsPerUser);
+                estimate += creationTimer.MultipliedBy(numPromptsPerUserPerRound * numRounds);
+                estimate += votingTimer.MultipliedBy(numPromptsPerRound * numRounds);
+                estimates[duration] = estimate;
+            }
+
+            return estimates;
+        }
+        public BattleReadyGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, StandardGameModeOptions standardOptions)
+        {
+            GameDuration duration = standardOptions.GameDuration;
 
             this.Lobby = lobby;
-            int numRounds = (int)gameModeOptions[(int)GameModeOptionsEnum.numRounds].ValueParsed;
-            int numPromptsPerUserPerRound = (int)gameModeOptions[(int)GameModeOptionsEnum.numPromptsPerUserPerRound].ValueParsed;
-            int expectedDrawingsPerUser = (int)gameModeOptions[(int)GameModeOptionsEnum.numToDraw].ValueParsed;
-            int numUsersPerPrompt = (int)gameModeOptions[(int)GameModeOptionsEnum.numPlayersPerPrompt].ValueParsed;
-            int gameLength = (int)gameModeOptions[(int)GameModeOptionsEnum.GameLength].ValueParsed;
+            int numRounds = BattleReadyConstants.NumRounds[duration];
+            int numPlayers = lobby.GetAllUsers().Count();
+
             TimeSpan? setupDrawingTimer = null;
             TimeSpan? setupPromptTimer = null;
             TimeSpan? creationTimer = null;
             TimeSpan? votingTimer = null;
-            
-            int numOfEachPartInHand = 3;
 
-            int numPromptsPerRound = (int)Math.Ceiling((double)numPromptsPerUserPerRound * lobby.GetAllUsers().Count / numUsersPerPrompt);
+            int numOfEachPartInHand = (int)gameModeOptions[(int)GameModeOptionsEnum.NumEachPartInHand].ValueParsed;
 
+            int numPromptsPerRound = Math.Min(numPlayers, BattleReadyConstants.MaxNumSubRounds[duration]);
             int minDrawingsRequired = numOfEachPartInHand * 3; // the amount to make one playerHand to give everyone
 
             int expectedPromptsPerUser = (int) Math.Ceiling(1.0*numPromptsPerRound * numRounds / lobby.GetAllUsers().Count);
+            int expectedDrawingsPerUser = Math.Max((minDrawingsRequired / numPlayers + 1) * 2, BattleReadyConstants.NumDrawingsPerPlayer[duration]);
 
-            if (gameLength > 0)
+            if (standardOptions.TimerEnabled)
             {
-                setupDrawingTimer = CommonHelpers.GetTimerFromLength(
-                    length: (double)gameLength,
-                    minTimerLength: BattleReadyConstants.SetupPerDrawingTimerMin * expectedDrawingsPerUser,
-                    aveTimerLength: BattleReadyConstants.SetupPerDrawingTimerAve * expectedDrawingsPerUser,
-                    maxTimerLength: BattleReadyConstants.SetupPerDrawingTimerMax * expectedDrawingsPerUser);
-                setupPromptTimer = CommonHelpers.GetTimerFromLength(
-                    length: (double)gameLength,
-                    minTimerLength: BattleReadyConstants.SetupPerPromptTimerMin * expectedPromptsPerUser,
-                    aveTimerLength: BattleReadyConstants.SetupPerPromptTimerAve * expectedPromptsPerUser,
-                    maxTimerLength: BattleReadyConstants.SetupPerPromptTimerMax * expectedPromptsPerUser);
-                creationTimer = CommonHelpers.GetTimerFromLength(
-                    length: (double)gameLength,
-                    minTimerLength: BattleReadyConstants.PerCreationTimerMin * numPromptsPerUserPerRound,
-                    aveTimerLength: BattleReadyConstants.PerCreationTimerAve * numPromptsPerUserPerRound,
-                    maxTimerLength: BattleReadyConstants.PerCreationTimerMax * numPromptsPerUserPerRound);
-                votingTimer = CommonHelpers.GetTimerFromLength(
-                    length: (double)gameLength,
-                    minTimerLength: BattleReadyConstants.VotingTimerMin,
-                    aveTimerLength: BattleReadyConstants.VotingTimerAve,
-                    maxTimerLength: BattleReadyConstants.VotingTimerMax);
+                setupDrawingTimer = BattleReadyConstants.SetupPerDrawingTimer[duration];
+                setupPromptTimer = BattleReadyConstants.SetupPerPromptTimer[duration];
+                creationTimer = BattleReadyConstants.PerCreationTimer[duration];
+                votingTimer = BattleReadyConstants.VotingTimer[duration];
             }
 
-            StateChain setupDrawing = new StateChain(
-                stateGenerator: (int counter) =>
-                {
-                    if (counter == 0)
-                    {
-                        return new SetupDrawings_GS(
-                            lobby: lobby,
-                            drawings: this.Drawings,
-                            numExpectedPerUser: expectedDrawingsPerUser,
-                            setupDurration: setupDrawingTimer);
-                    }
-                    if (counter == 1)
-                    {
-                        int numHeadsNeeded = Math.Max(0, minDrawingsRequired / 3 - this.Drawings.Where(drawing => drawing.Type == BodyPartType.Head).ToList().Count);
-                        int numBodiesNeeded = Math.Max(0, minDrawingsRequired / 3 - this.Drawings.Where(drawing => drawing.Type == BodyPartType.Body).ToList().Count);
-                        int numLegsNeeded = Math.Max(0, minDrawingsRequired / 3 - this.Drawings.Where(drawing => drawing.Type == BodyPartType.Legs).ToList().Count);
+            SetupDrawings_GS setupDrawing = new SetupDrawings_GS(
+                lobby: lobby,
+                drawings: this.Drawings,
+                numExpectedPerUser: expectedDrawingsPerUser,
+                setupDurration: setupDrawingTimer);
 
-                        if (numHeadsNeeded + numBodiesNeeded + numLegsNeeded > 0)
-                        {
-                            throw new Exception("Not enough drawings submitted");
-                            //todo re add when single user skip is available
-                            /*return new ExtraSetupDrawing_GS( 
-                                lobby: lobby,
-                                drawings: this.Drawings,
-                                numHeadsNeeded: numHeadsNeeded,
-                                numBodiesNeeded: numBodiesNeeded,
-                                numLegsNeeded: numLegsNeeded);*/
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                });
+            SetupPrompts_GS setupPrompt = new SetupPrompts_GS(
+                lobby: lobby,
+                prompts: Prompts,
+                numExpectedPerUser: expectedPromptsPerUser,
+                setupDuration: setupPromptTimer);
 
-            StateChain setupPrompt = new StateChain(
-                stateGenerator: (int counter) =>
-                {
-                    if (counter == 0)
-                    {
-                        return new SetupPrompts_GS(
-                            lobby: lobby,
-                            prompts: Prompts,
-                            numExpectedPerUser: expectedPromptsPerUser,
-                            setupDurration: setupPromptTimer);
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                });
             List<Prompt> battlePrompts = new List<Prompt>();
             IReadOnlyList<PeopleUserDrawing> headDrawings = new List<PeopleUserDrawing>();
             IReadOnlyList<PeopleUserDrawing> bodyDrawings = new List<PeopleUserDrawing>();
             IReadOnlyList<PeopleUserDrawing> legsDrawings = new List<PeopleUserDrawing>();
             setupDrawing.AddExitListener(() =>
             {
-                List<PeopleUserDrawing> orderedDrawings = Drawings.OrderBy(drawing => drawing.CreationTime).ToList();
                 // Trim extra prompts/drawings.
-                headDrawings = MemberHelpers<PeopleUserDrawing>.Select_Ordered(
-                    orderedDrawings.FindAll((drawing) => drawing.Type == BodyPartType.Head),
-                    expectedDrawingsPerUser * lobby.GetAllUsers().Count / 3);
-
-                bodyDrawings = MemberHelpers<PeopleUserDrawing>.Select_Ordered(
-                    orderedDrawings.FindAll((drawing) => drawing.Type == BodyPartType.Body),
-                    expectedDrawingsPerUser * lobby.GetAllUsers().Count / 3);
-
-                legsDrawings = MemberHelpers<PeopleUserDrawing>.Select_Ordered(
-                    orderedDrawings.FindAll((drawing) => drawing.Type == BodyPartType.Legs),
-                    expectedDrawingsPerUser * lobby.GetAllUsers().Count / 3);
-
+                headDrawings = Drawings.ToList().FindAll((drawing) => drawing.Type == BodyPartType.Head);
+                bodyDrawings = Drawings.ToList().FindAll((drawing) => drawing.Type == BodyPartType.Body);
+                legsDrawings = Drawings.ToList().FindAll((drawing) => drawing.Type == BodyPartType.Legs);
             });
+            int numPromptsPerUserPerRound = 0; // Set during below exit listener.
             setupPrompt.AddExitListener(() =>
             {
                 battlePrompts = MemberHelpers<Prompt>.Select_Ordered(Prompts.OrderBy(prompt=>prompt.CreationTime).ToList(), numPromptsPerRound * numRounds);
-                foreach(Prompt prompt in battlePrompts)
+                numRounds = (battlePrompts.Count - 1) / numPromptsPerRound + 1;
+                numPromptsPerRound = (int)Math.Ceiling(1.0 * battlePrompts.Count / numRounds);
+
+                numPromptsPerUserPerRound = Math.Max(1,numPromptsPerRound / 2);
+                int maxNumUsersPerPrompt = Math.Min(12,(int)Math.Ceiling(1.0*numPlayers * numPromptsPerUserPerRound / numPromptsPerRound));
+
+                foreach (Prompt prompt in battlePrompts)
                 {
-                    prompt.MaxMemberCount = numUsersPerPrompt;
+                    prompt.MaxMemberCount = maxNumUsersPerPrompt;
                 }
             });
 
@@ -333,11 +270,6 @@ namespace Backend.Games.BriansGames.BattleReady
             setupDrawing.Transition(setupPrompt);
             setupPrompt.Transition(CreateContestantCreationGamestate);
            
-        }
-    
-        public void ValidateOptions(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
-        {
-            //empty
         }
         private State GetVotingAndRevealState(Prompt prompt, TimeSpan? votingTime)
         {

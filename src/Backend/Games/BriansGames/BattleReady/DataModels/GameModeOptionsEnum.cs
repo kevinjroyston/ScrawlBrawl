@@ -2,10 +2,6 @@
 {
     public enum GameModeOptionsEnum
     {
-        numRounds,
-        numPromptsPerUserPerRound,
-        numToDraw,
-        numPlayersPerPrompt,
-        GameLength
+        NumEachPartInHand
     }
 }

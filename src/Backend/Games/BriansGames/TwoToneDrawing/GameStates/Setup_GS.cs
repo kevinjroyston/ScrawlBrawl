@@ -31,6 +31,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
         private int LayersPerTeam { get; set; }
         private int TeamsPerPrompt { get; set; }
         private bool ShowColors { get; set; }
+        private int NumRounds { get; set; }
         private TimeSpan? PromptTimer { get; set; }
         private TimeSpan? DrawingTimer { get; set; }
 
@@ -203,7 +204,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
             return stateChain;
         }
 
-        public Setup_GS(Lobby lobby, ConcurrentDictionary<ChallengeTracker, object> challengeTrackers, bool useSingleColor, int numLayersPerTeam, int numTeamsPerPrompt, bool showColors, TimeSpan? setupTimer = null, TimeSpan? drawingTimer = null) : base(lobby)
+        public Setup_GS(Lobby lobby, ConcurrentDictionary<ChallengeTracker, object> challengeTrackers, bool useSingleColor, int numLayersPerTeam, int numTeamsPerPrompt, int numRounds, TimeSpan? setupTimer = null, TimeSpan? drawingTimer = null) : base(lobby)
         {
             this.SubChallenges = challengeTrackers;
             this.UseSingleColor = useSingleColor;
@@ -211,12 +212,11 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
             this.TeamsPerPrompt = numTeamsPerPrompt;
             this.PromptTimer = setupTimer;
             this.DrawingTimer = drawingTimer;
+            this.NumRounds = numRounds;
 
             // Cap the values at 2 teams using maximal colors (attempts to use all players).
             this.LayersPerTeam = Math.Min(this.LayersPerTeam, this.Lobby.GetAllUsers().Count() / 2);
             this.TeamsPerPrompt = Math.Min(this.TeamsPerPrompt, this.Lobby.GetAllUsers().Count() / this.LayersPerTeam);
-
-            this.ShowColors = showColors;
 
             State getChallenges = GetChallengesUserState();
 
@@ -224,7 +224,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
             getChallenges.AddExitListener(() => this.AssignPrompts());
             getChallenges.Transition(() =>
             {
-                var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby), stateDuration: drawingTimer.MultipliedBy(challengeTrackers.Count));
+                var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby), stateDuration: drawingTimer);
                 getDrawings.Transition(this.Exit);
                 return getDrawings;
             });
@@ -241,6 +241,13 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
             Stopwatch stopwatch = Stopwatch.StartNew();
             IReadOnlyList<User> users = this.Lobby.GetAllUsers();
             List<ChallengeTracker> randomizedOrderChallenges = this.SubChallenges.Keys.OrderBy(_ => Rand.Next()).ToList();
+            List<ChallengeTracker> excessChallenges = randomizedOrderChallenges.Skip(this.NumRounds).ToList();
+            randomizedOrderChallenges = randomizedOrderChallenges.Take(this.NumRounds).ToList();
+
+            foreach(ChallengeTracker extra in excessChallenges)
+            {
+                this.SubChallenges.Remove(extra, out object _);
+            }
 
             if (randomizedOrderChallenges.Count == 0)
             {
@@ -248,11 +255,11 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
             }
 
             List<IGroup<User>> groups = MemberHelpers<User>.Assign(
-                this.SubChallenges.Keys.Cast<IConstraints<User>>().ToList(),
+                randomizedOrderChallenges.Cast<IConstraints<User>>().ToList(),
                 users,
                 this.LayersPerTeam * this.TeamsPerPrompt);
 
-            var assignments = groups.Zip(this.SubChallenges.Keys);
+            var assignments = groups.Zip(randomizedOrderChallenges);
 
             foreach ((IGroup<User> groupedUsers, ChallengeTracker tracker) in assignments)
             {

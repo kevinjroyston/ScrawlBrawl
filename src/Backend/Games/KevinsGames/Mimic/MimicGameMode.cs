@@ -43,70 +43,53 @@ namespace Backend.Games.KevinsGames.Mimic
                 {
                     new GameModeOptionResponse
                     {
-                        Description = "Number of starting drawings from each person",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 1,
-                        MinValue = 1,
-                        MaxValue = 30,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Number of drawings before players are asked to vote",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 5,
-                        MinValue = 1,
-                        MaxValue = 30,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Number of sets of drawings per game",
+                        Description = "Memorization difficulty",
                         ResponseType = ResponseType.Integer,
                         DefaultValue = 3,
                         MinValue = 1,
-                        MaxValue = 50,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Max number of drawings to display for voting",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 10,
-                        MinValue = 2,
-                        MaxValue = 36,
-                    },
-                    new GameModeOptionResponse
-                    {
-                        Description = "Length of the game (10 for longest 1 for shortest 0 for no timer)",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 5,
-                        MinValue = 0,
                         MaxValue = 10,
                     },
-                }
+                },
+            GetGameDurationEstimates = GetGameDurationEstimates,
         };
-        public MimicGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
+        private static IReadOnlyDictionary<GameDuration, TimeSpan> GetGameDurationEstimates(int numPlayers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            ValidateOptions(gameModeOptions);
-            int numStartingDrawingsPerUser = (int)gameModeOptions[(int)GameModeOptions.NumStartingDrawingsPerUser].ValueParsed;
+            int numStartingDrawingsPerUser = 1;
+
+            Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
+            foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
+            {
+                int numRounds = Math.Min(MimicConstants.MaxRounds[duration], numPlayers);
+
+                TimeSpan estimate = TimeSpan.Zero;
+                TimeSpan votingTimer = MimicConstants.VotingTimer[duration];
+                TimeSpan drawingTimer = MimicConstants.DrawingTimer[duration];
+                TimeSpan extendedDrawingTimer = drawingTimer.MultipliedBy(MimicConstants.MimicTimerMultiplier);
+
+                estimate += (MimicConstants.MemorizeTimerLength.Add(extendedDrawingTimer).Add(votingTimer)).MultipliedBy(numRounds);
+                estimate += drawingTimer.MultipliedBy(numStartingDrawingsPerUser);
+
+                estimates[duration] = estimate;
+            }
+
+            return estimates;
+        }
+        public MimicGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, StandardGameModeOptions standardOptions)
+        {
+            GameDuration duration = standardOptions.GameDuration;
+            int numStartingDrawingsPerUser = 1;
             int maxDrawingsBeforeVoteInput = (int)gameModeOptions[(int)GameModeOptions.MaxDrawingsBeforeVote].ValueParsed;
-            int numSets = (int)gameModeOptions[(int)GameModeOptions.NumSets].ValueParsed;
-            int maxVoteDrawings = (int)gameModeOptions[(int)GameModeOptions.MaxVoteDrawings].ValueParsed;
-            int gameLength = (int)gameModeOptions[(int)GameModeOptions.GameLength].ValueParsed;
+            int maxVoteDrawings = 12; // Everybody's drawing should show up, but it gets a little prohibitive past 12 so limit it here.
             TimeSpan? drawingTimer = null;
             TimeSpan? votingTimer = null;
-            if (gameLength > 0)
+            if (standardOptions.TimerEnabled)
             {
-                drawingTimer = CommonHelpers.GetTimerFromLength(
-                    length: (double)gameLength,
-                    minTimerLength: MimicConstants.DrawingTimerMin,
-                    aveTimerLength: MimicConstants.DrawingTimerAve,
-                    maxTimerLength: MimicConstants.DrawingTimerMax);
-                votingTimer = CommonHelpers.GetTimerFromLength(
-                    length: (double)gameLength,
-                    minTimerLength: MimicConstants.VotingTimerMin,
-                    aveTimerLength: MimicConstants.VotingTimerAve,
-                    maxTimerLength: MimicConstants.VotingTimerMax);
+                drawingTimer = MimicConstants.DrawingTimer[duration];
+                votingTimer = MimicConstants.VotingTimer[duration];
             }
             TimeSpan? extendedDrawingTimer = drawingTimer.MultipliedBy(MimicConstants.MimicTimerMultiplier);
+            int numPlayers = lobby.GetAllUsers().Count();
+            int numRounds = Math.Min(MimicConstants.MaxRounds[duration], numPlayers);
 
             this.Lobby = lobby;
 
@@ -118,14 +101,18 @@ namespace Backend.Games.KevinsGames.Mimic
             List<UserDrawing> randomizedDrawings = new List<UserDrawing>();
             Setup.AddExitListener(() =>
             {
-                randomizedDrawings = this.Drawings.OrderBy(_ => Rand.Next()).ToList();
+                randomizedDrawings = this.Drawings
+                .OrderBy(_ => Rand.Next())
+                .ToList()
+                .Take(numRounds) // Limit number of rounds based on game duration.
+                .ToList();
             });     
             StateChain CreateGamePlayLoop()
             {
                 bool timeToShowScores = true;
                 StateChain gamePlayLoop = new StateChain(stateGenerator: (int counter) =>
                 {
-                    if(counter<numSets && randomizedDrawings.Count>0)
+                    if(randomizedDrawings.Count>0)
                     {
                         StateChain CreateMultiRoundLoop()
                         {
@@ -149,7 +136,7 @@ namespace Backend.Games.KevinsGames.Mimic
 
                                     DisplayOriginal_GS displayGS = new DisplayOriginal_GS(
                                         lobby: lobby,
-                                        displayTimeDuration: TimeSpan.FromSeconds(MimicConstants.MemorizeTimerLength),
+                                        displayTimeDuration: MimicConstants.MemorizeTimerLength,
                                         displayDrawing: originalDrawing);
                                     CreateMimics_GS mimicsGS = new CreateMimics_GS(
                                         lobby: lobby,
@@ -253,10 +240,6 @@ namespace Backend.Games.KevinsGames.Mimic
                     }
                 }
             };
-        }
-        public void ValidateOptions(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
-        {
-            //Empty
         }
     } 
 }

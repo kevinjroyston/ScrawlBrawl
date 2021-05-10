@@ -13,6 +13,7 @@ using Common.DataModels.Requests;
 using GameStep = System.Collections.Generic.IReadOnlyDictionary<Common.DataModels.Enums.UserPromptId, int>;
 using Common.DataModels.Enums;
 using BackendAutomatedTestingClient.Extensions;
+using Common.DataModels.Requests.LobbyManagement;
 
 namespace BackendAutomatedTestingClient.Games
 {
@@ -59,7 +60,7 @@ namespace BackendAutomatedTestingClient.Games
             if (isStructured())
             {
                 await Lobby.Populate(((IStructuredTest)this).TestOptions.NumPlayers);
-                await Lobby.Configure(((IStructuredTest)this).TestOptions.GameModeOptions, this.GameModeIndex);
+                await Lobby.Configure(((IStructuredTest)this).TestOptions.GameModeOptions, ((IStructuredTest)this).TestOptions.StandardGameModeOptions, this.GameModeIndex);
             }
             else
             {
@@ -69,9 +70,15 @@ namespace BackendAutomatedTestingClient.Games
                 }
 
                 List<GameModeOptionRequest> optionRequests = SetUpGameTestOptions(runner.UseDefaults);
+                StandardGameModeOptions defaultStandardOptions = new StandardGameModeOptions
+                {
+                    GameDuration = GameDuration.Normal,
+                    ShowTutorial = false,
+                    TimerEnabled = false
+                };
                 ValidateNumUsers(runner.NumUsers);
                 await Lobby.Populate(runner.NumUsers);
-                await Lobby.Configure(optionRequests, this.GameModeIndex);
+                await Lobby.Configure(optionRequests, defaultStandardOptions, this.GameModeIndex);
             }
 
             if (runner.OpenBrowsers)

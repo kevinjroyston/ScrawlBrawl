@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using static Common.DataModels.Requests.LobbyManagement.ConfigureLobbyRequest;
 using GameStep = System.Collections.Generic.IReadOnlyDictionary<Common.DataModels.Enums.UserPromptId, int>;
-
+using Common.DataModels.Requests.LobbyManagement;
 
 namespace BackendAutomatedTestingClient.Games
 {
@@ -13,22 +13,21 @@ namespace BackendAutomatedTestingClient.Games
     {
         // Test might not work with some param combos.
         protected abstract int NumPlayers { get; }
-        protected abstract int NumDrawings { get; }
-        protected abstract int NumPlayersPerPrompt { get; }
-        protected abstract int NumPromptsPerUserPerRound { get; }
-        protected abstract int NumRounds { get; }
+        protected abstract int NumBodiesToChooseFrom { get; }
         public TestOptions TestOptions =>
             new TestOptions
             {
                 NumPlayers = NumPlayers,
                 GameModeOptions = new List<GameModeOptionRequest>()
                 {
-                    new GameModeOptionRequest(){ Value = NumRounds + "" }, // num rounds
-                    new GameModeOptionRequest(){ Value = NumPromptsPerUserPerRound + "" }, //num prompts per user per round
-                    new GameModeOptionRequest(){ Value = NumDrawings + ""}, // num drawings expected
-                    new GameModeOptionRequest(){ Value = NumPlayersPerPrompt + ""}, // num players per prompt
-                    new GameModeOptionRequest(){ Value = "5" } // game speed
+                    new GameModeOptionRequest(){ Value = NumBodiesToChooseFrom + ""},
                 },
+                StandardGameModeOptions = new StandardGameModeOptions
+                {
+                    GameDuration = GameDuration.Normal,
+                    ShowTutorial = false,
+                    TimerEnabled = false
+                }
             };
 
         public IReadOnlyList<GameStep> UserPromptIdValidations
@@ -37,6 +36,16 @@ namespace BackendAutomatedTestingClient.Games
             {
                 var toReturn = new List<GameStep>();
 
+                int numRounds = 2;
+                int numPromptsPerRound = Math.Min(this.NumPlayers, 5);
+                int minDrawingsRequired = this.NumBodiesToChooseFrom * 3; // the amount to make one playerHand to give everyone
+
+                int expectedPromptsPerUser = (int)Math.Ceiling(1.0 * numPromptsPerRound * numRounds / this.NumPlayers);
+                int expectedDrawingsPerUser = Math.Max((minDrawingsRequired / this.NumPlayers + 1) * 2, 3);
+
+                int numPromptsPerUserPerRound = Math.Max(1, numPromptsPerRound / 2);
+
+
                 toReturn.AppendRepetitiveGameSteps(
                     copyFrom: new List<GameStep>
                     {
@@ -44,7 +53,7 @@ namespace BackendAutomatedTestingClient.Games
                             numPlayers:NumPlayers,
                             prompt: UserPromptId.BattleReady_BodyPartDrawing),
                     },
-                    repeatCounter: NumDrawings);
+                    repeatCounter: expectedDrawingsPerUser);
 
                 toReturn.AppendRepetitiveGameSteps(
                     copyFrom: new List<GameStep>
@@ -53,7 +62,7 @@ namespace BackendAutomatedTestingClient.Games
                             numPlayers:NumPlayers,
                             prompt: UserPromptId.BattleReady_BattlePrompts),
                     },
-                    repeatCounter: NumRounds * (int)Math.Ceiling(1.0*NumPromptsPerUserPerRound / NumPlayersPerPrompt));
+                    repeatCounter: expectedPromptsPerUser);
 
                 var round = new List<GameStep>();
                 round.AppendRepetitiveGameSteps(
@@ -63,7 +72,7 @@ namespace BackendAutomatedTestingClient.Games
                             numPlayers:NumPlayers,
                             prompt: UserPromptId.BattleReady_ContestantCreation),
                     },
-                    repeatCounter: NumPromptsPerUserPerRound);
+                    repeatCounter: numPromptsPerUserPerRound);
 
                 round.AppendRepetitiveGameSteps(
                     copyFrom: new List<GameStep>
@@ -75,7 +84,7 @@ namespace BackendAutomatedTestingClient.Games
                 round.Add(TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipReveal, NumPlayers, UserPromptId.Waiting));
                 round.Add(TestCaseHelpers.OneVsAll(UserPromptId.PartyLeader_SkipScoreboard, NumPlayers, UserPromptId.RevealScoreBreakdowns));
 
-                toReturn.AppendRepetitiveGameSteps(round, NumRounds);
+                toReturn.AppendRepetitiveGameSteps(round, numRounds);
 
                 return toReturn;
             }
@@ -86,29 +95,13 @@ namespace BackendAutomatedTestingClient.Games
     public class Struct_BB_Test1 : StructuredBodyBuilderTest
     {
         protected override int NumPlayers => 5;
-        protected override int NumDrawings => 4;
-        protected override int NumPlayersPerPrompt => 2;
-        protected override int NumPromptsPerUserPerRound => 2;
-        protected override int NumRounds => 3;
+        protected override int NumBodiesToChooseFrom => 4;
     }
 
     [EndToEndGameTest("BodyBuilder_Struct2")]
     public class Struct_BB_Test2 : StructuredBodyBuilderTest
     {
-        protected override int NumPlayers => 3;
-        protected override int NumDrawings => 3;
-        protected override int NumPlayersPerPrompt => 2;
-        protected override int NumPromptsPerUserPerRound => 2;
-        protected override int NumRounds => 1;
-    }
-
-    [EndToEndGameTest("BodyBuilder_Struct3")]
-    public class Struct_BB_Test3 : StructuredBodyBuilderTest
-    {
-        protected override int NumPlayers => 4;
-        protected override int NumDrawings => 10;
-        protected override int NumPlayersPerPrompt => 3;
-        protected override int NumPromptsPerUserPerRound => 3;
-        protected override int NumRounds => 2;
+        protected override int NumPlayers => 5;
+        protected override int NumBodiesToChooseFrom => 2;
     }
 }
