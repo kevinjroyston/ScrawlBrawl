@@ -4,3 +4,7 @@
     align-items: center;
     margin-bottom: 1rem;
 }
+
+.mat-radio-button~.mat-radio-button {
+    margin-left: 35px;
+}

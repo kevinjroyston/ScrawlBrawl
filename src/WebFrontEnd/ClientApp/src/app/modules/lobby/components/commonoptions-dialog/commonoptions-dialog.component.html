@@ -1,30 +1,35 @@
 <h2>
-  {{gameModeList.gameModes[lobby.selectedGameMode].title}}
+    {{gameModeList.gameModes[lobby.selectedGameMode].title}}
 </h2>
 
-<mat-dialog-content>  
-  <div class="gamemode-option">
-    <span>Show Tutorial</span>
-    <ui-switch [(ngModel)]="showTutorial" size="small"></ui-switch>
-  </div>
-  <div class="gamemode-option">
-    <span>Timer</span>
-    <ui-switch [(ngModel)]="timerEnabled" size="small"></ui-switch>
-  </div>
-  <div class="gamemode-option">
-    <span>Length</span>
-    <slider class="SliderHolder" [sliderParameters]="estimatedDurationSliderParameters" (onValueChanged)= "updateEstimatedDuration($event)"></slider>
-  </div>
-  <div class="error" *ngIf="error">
-      {{ error }}
-  </div>
+<mat-dialog-content>
+    <div class="gamemode-option">
+        <span>Show Tutorial</span>
+        <ui-switch [(ngModel)]="showTutorial" size="small"></ui-switch>
+    </div>
+    <div class="gamemode-option">
+        <span>Timer</span>
+        <ui-switch [(ngModel)]="timerEnabled" size="small"></ui-switch>
+    </div>
+    <div class="gamemode-option">
+        <span>Length</span>
+        <mat-radio-group aria-label="Game Length" [(ngModel)]="gameDuration">
+            <mat-radio-button [value]="0">{{durationEstimates["Short"]}}m</mat-radio-button>
+            <mat-radio-button [value]="1">{{durationEstimates["Normal"]}}m</mat-radio-button>
+            <mat-radio-button [value]="2">{{durationEstimates["Extended"]}}m</mat-radio-button>
+        </mat-radio-group>
+    </div>
+
+    <div class="error" *ngIf="error">
+        {{ error }}
+    </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <scrawlbutton [ngStyle]="{'margin-right': '.75rem'}" color='red' (click)="closeDialog()">
-      Close
-  </scrawlbutton>
-  <scrawlbutton color='green' (click)="onStart()">
-      Start
-  </scrawlbutton>
+    <scrawlbutton [ngStyle]="{'margin-right': '.75rem'}" color='red' (click)="closeDialog()">
+        Close
+    </scrawlbutton>
+    <scrawlbutton color='green' (click)="onStart()">
+        Start
+    </scrawlbutton>
 </mat-dialog-actions>
