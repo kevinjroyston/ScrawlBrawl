@@ -51,9 +51,9 @@ export class CommonoptionsDialogComponent implements OnInit {
     this.onGetLobby = data.onGetLobby;
     this.durationEstimates = data.durationEstimates;
     this.estimatedDurationSliderParameters.ticksLabels=[
-      "~" + this.durationEstimates["Short"] + "m",
-      "~" + this.durationEstimates["Normal"] + "m",
-      "~" + this.durationEstimates["Extended"] + "m"];
+      this.durationEstimates["Short"] + "m",
+      this.durationEstimates["Normal"] + "m",
+      this.durationEstimates["Extended"] + "m"];
   }
 
   ngOnInit() {
