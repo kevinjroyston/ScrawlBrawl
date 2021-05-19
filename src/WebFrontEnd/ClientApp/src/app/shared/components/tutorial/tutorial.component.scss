@@ -1,0 +1,30 @@
+.tutorial {
+    background: var(--background);
+    padding: 10px;
+}
+
+.tut-imposter-main {
+    border-left: 2.25pt solid black;
+    border-right: 2.25pt solid black;
+    border-top: 2.25pt solid black;
+    border-bottom: 2.25pt solid black;
+    background-color: #DDE6E6;
+}
+
+.tut-imposter-top {
+    padding: 2px;
+    width: 210px;
+    color: black;
+    border-style: none;
+    background-color: rgb(110, 248, 202);
+}
+
+.tut-imposter-even {
+    padding: 2px;
+    width: 210px;
+    color: black;
+    border-left-style: none;
+    border-right-style: none;
+    border-top-style: none;
+    border-bottom: .75pt solid silver;
+}
