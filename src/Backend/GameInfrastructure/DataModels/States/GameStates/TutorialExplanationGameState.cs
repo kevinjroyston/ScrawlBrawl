@@ -46,7 +46,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
                 {
                     Tutorial = new TutorialMetadata
                     {
-                        HideClasses = lobby?.SelectedGameMode?.GameModeMetadata?.GetTutorialHiddenClasses?.Invoke()
+                        HideClasses = lobby?.SelectedGameMode?.GameModeMetadata?.GetTutorialHiddenClasses?.Invoke(lobby.GameModeOptions)
                     }
                 };
                 return prompt;

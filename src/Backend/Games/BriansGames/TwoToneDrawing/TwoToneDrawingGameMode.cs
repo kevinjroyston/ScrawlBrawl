@@ -50,7 +50,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             {
                 new GameModeOptionResponse
                 {
-                    Description = "Limit each team member to one color",
+                    Description = "Limit each artist to one color",
                     ResponseType = ResponseType.Boolean,
                     DefaultValue = true,
                 },
@@ -64,7 +64,18 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                 },
             },
             GetGameDurationEstimates = GetGameDurationEstimates,
+            GetTutorialHiddenClasses = GetTutorialHiddenClasses,
         };
+        private static List<string>  GetTutorialHiddenClasses(List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
+        {
+            bool useSingleColor = (bool)gameModeOptions[(int)GameModeOptionsEnum.useSingleColor].ValueParsed;
+            int numLayers = (int)gameModeOptions[(int)GameModeOptionsEnum.numLayers].ValueParsed;
+
+            List<string> toReturn = new List<string>();
+            toReturn.Add(useSingleColor ? "Tut-Chaotic-Layers": "Tut-Chaotic-Colors");
+            toReturn.Add(numLayers == 2 ? "Tut-Chaotic-MultiPlayer" : "Tut-Chaotic-TwoPlayer");
+            return toReturn;
+        }
         private static IReadOnlyDictionary<GameDuration, TimeSpan> GetGameDurationEstimates(int numPlayers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();

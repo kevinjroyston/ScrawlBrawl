@@ -30,7 +30,7 @@ namespace Common.DataModels.Responses
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public Func<List<string>> GetTutorialHiddenClasses { get; set; }
+        public Func<List<ConfigureLobbyRequest.GameModeOptionRequest>,List<string>> GetTutorialHiddenClasses { get; set; }
 
 
         /// <summary>
