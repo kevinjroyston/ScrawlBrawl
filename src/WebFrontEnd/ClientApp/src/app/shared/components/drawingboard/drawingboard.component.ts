@@ -6,6 +6,7 @@ import {DrawingDirective,DrawingPromptMetadata,DrawingModes} from '@shared/compo
 import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-sheet';
 import Galleries from '@core/models/gallerytypes';
 import { EventManager } from '@angular/platform-browser';
+import { GalleryService } from '@core/services/gallery.service';
 
 
 @Component({
@@ -25,6 +26,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     drawingModes = DrawingModes; /* so html can see it */
 
     private _drawingType:string;
+    public galleryRecentDrawing:string; // if this is set, drawing canvas will use this as default.
     @Input() showColorSelector: boolean = true;
     @Input() showEraser: boolean = true;
     @Input() showBrushSizeSelector: boolean = true;
@@ -35,7 +37,6 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     @Input() galleryEditor: boolean;
 
     @ViewChild(DrawingDirective) drawingDirective;
-    @ViewChild('galleryTool') galleryTool: GalleryTool;
 
     drawingMode : DrawingModes = DrawingModes.Draw;
 
@@ -48,7 +49,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     lastImageChange: string = "";
     showGallery: boolean = true;
 
-    constructor(private _colorPicker: MatBottomSheet, private _gallery: MatBottomSheet) {
+    constructor(private _colorPicker: MatBottomSheet, private _gallery: MatBottomSheet, private galleryService: GalleryService) {
     }
 
     private updateDrawingOptionsForDrawingType(typ){
@@ -60,15 +61,19 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
                 premadeDrawing: "",
                 canvasBackground: "",
                 galleryOptions:{    
-                    galleryAutoLoadMostRecent: false,
+                    galleryAutoLoadMostRecent: true,
                 }
             }
         }
+        this.galleryRecentDrawing = this.drawingOptions?.galleryOptions?.galleryAutoLoadMostRecent ? this.galleryService.GetMostRecentDrawing(typ) : null;
         this.drawingWidth = gallery.imageWidth;
         this.drawingHeight = gallery.imageHeight;
         if (this.galleryEditor || !this.drawingOptions.canvasBackground) {  // use the gallery background, unless the drawing prompt gave us one
             this.drawingOptions.canvasBackground = gallery.canvasBackground;
         }
+
+        // Any time drawing type is swapped, try and store a recent drawing.
+        this.storeMostRecentDrawing();
     }
 
     private setDrawingType(typ){
@@ -77,23 +82,13 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
         this._drawingType = typ; 
         this.updateDrawingOptionsForDrawingType(typ);
         if (this.drawingDirective) this.drawingDirective.handleClearUndo();
-
-        if (this.galleryTool) {
-            this.galleryTool.drawingType=typ;
-        }
     }
 
     protected saveToFavorites () {
-        this.galleryTool.onCurrentBtnClick();
+        this.galleryService.AddImageToGallery(false, this.drawingType,Galleries.GalleryPanelType.FAVORITES,this.lastDrawingChange);
     }
 
     ngOnInit() {
-    }
-
-    ngOnDestroy() {
-    }
-
-    ngAfterViewInit(){
         // If this is a prompt from the backend drawingOptions will be defined here.
         // If it is a gallery editor created on the front end, then drawingOptions is created above when the drawingType input is set
         if (this.drawingOptions) {
@@ -110,13 +105,26 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
         if (!this.drawingOptions || !this.drawingOptions.colorList || this.drawingOptions.colorList.includes(tempColor)) {
             this.selectedColor = tempColor;
         }
+    }
+
+    ngOnDestroy() {
+        this.storeMostRecentDrawing(true);
+    }
+
+    ngAfterViewInit(){
+        
 
     }
 
-    onDrawingChange(event){
-        if (this.galleryTool) {
-            this.galleryTool.onDrawingChange(event);
+    private lastDrawingChange:string;
+    storeMostRecentDrawing(onDestroy = false){
+        if (this.lastDrawingChange != "" && this.lastDrawingChange != null) {
+            this.galleryService.AddImageToGallery(onDestroy, this.drawingType,Galleries.GalleryPanelType.RECENT,this.lastDrawingChange);
+            this.lastDrawingChange = "";
         }
+    }
+    onDrawingChange(event){
+        this.lastDrawingChange = event;
         if (this.onChange) {
             this.onChange(event)
         }

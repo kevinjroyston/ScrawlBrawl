@@ -35,7 +35,7 @@
         <!-- Drawing Canvas -->
         <div class="drawb-canvas">
             <canvas appDrawing class="draw-canvas" [width]="drawingWidth" [height]="drawingHeight" [ngStyle]="{'background-image': 'url(' + drawingOptions.canvasBackground + ')'}" [premadeDrawing]="drawingOptions.premadeDrawing" [lineColor]="selectedColor" [lineWidth]="selectedBrushSize"
-                [drawingMode]="drawingMode" (drawingEmitter)="onDrawingChange($event)">
+                [drawingMode]="drawingMode" (drawingEmitter)="onDrawingChange($event)" [galleryRecentDrawing]="this.galleryRecentDrawing">
             </canvas>
         </div>
     </div>
@@ -65,7 +65,7 @@
                 <scrawlbrawl-iconbutton matTooltip="Gallery" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" *ngIf="drawingOptions.galleryOptions" (click)="openGallery($event)">
                     <ion-icon name="images-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
-                <scrawlbrawl-iconbutton matTooltip="Favorite" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" *ngIf="drawingOptions.galleryOptions" (click)="saveToFavorites()">
+                <scrawlbrawl-iconbutton matTooltip="Favorite" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" *ngIf="drawingOptions.galleryOptions" (click)="this.saveToFavorites()">
                     <ion-icon name="star-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
             </div>

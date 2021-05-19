@@ -20,14 +20,11 @@ export class GalleryTool implements AfterViewInit {
     @ViewChild("galleryFavorites") galleryFavorites: GalleryPanel;
     @ViewChild("galleryRecent") galleryRecent: GalleryPanel;
     @ViewChild("gallerySamples") gallerySamples: GalleryPanel;
-    @ViewChild("currentImage") galleryImageCurrent: ElementRef;
 
     private _drawingType : string;
     set drawingType(value: string){ this.setDrawingType(value) } 
     get drawingType(): string {return this._drawingType}
 
-    onChange;
-    lastDrawingChange: string = "";
     galleryOptions = environment.galleryOptions;
     currentTab: GalleryPanel;
     galleryPanelTypes = Galleries.GalleryPanelType;
@@ -46,17 +43,9 @@ export class GalleryTool implements AfterViewInit {
         this._bottomSheetRef.dismiss();
     }
 
-    storeMostRecentDrawing(onDestroy = false){
-        if (this.lastDrawingChange != "") {
-            this.galleryRecent.storeImageInGallery(this.lastDrawingChange, onDestroy);
-            this.lastDrawingChange = "";
-        }
-    }
     
     private setDrawingType(typ){
         if (typ == this._drawingType) { return }
-
-        this.storeMostRecentDrawing(); /* we navigated to a different gallery, save what they were working on in last gallery */
 
         if (this.drawingDirective && this.drawingDirective.ctx){ /* clear the drawing */
             this.drawingDirective.ctx.clearRect(0, 0, this.drawingDirective.ctx.canvas.width, this.drawingDirective.ctx.canvas.height);
@@ -83,26 +72,9 @@ export class GalleryTool implements AfterViewInit {
     }
 
     ngOnDestroy() {
-        this.storeMostRecentDrawing(true);
     }
 
     ngAfterViewInit(){
-    }
-
-    onDrawingChange(event){
-        this.lastDrawingChange = event;
-      
-        if (this.galleryImageCurrent) {
-            this.galleryImageCurrent.nativeElement.src = event;
-        }
-    }
-
-    onCurrentBtnClick(){
-        this.galleryFavorites.storeImageInGallery(this.lastDrawingChange)
-    }
-  
-    registerOnChange(fn: any): void {
-        this.onChange = fn;
     }
 
     registerOnTouched(fn: any): void {

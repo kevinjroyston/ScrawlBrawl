@@ -20,8 +20,7 @@ export class DrawingDirective {
   @Input() lineWidth: number;
   @Input() premadeDrawing: string;
   @Input() drawingMode: DrawingModes;
-  @Input() galleryAutoLoadMostRecent: boolean;
-  @Input() galleryEditor: boolean = false;
+  @Input() galleryRecentDrawing: string;
   @Output() drawingEmitter = new EventEmitter();
   defaultLineColor: string;
   element;
@@ -58,8 +57,8 @@ export class DrawingDirective {
   }
 
   ngAfterViewInit() {
-    if (this.galleryAutoLoadMostRecent) {
-      /* will be handled by gallerytool */
+    if (this.galleryRecentDrawing) {
+      this.loadImageString(this.galleryRecentDrawing)
     } else if (this.premadeDrawing) {
       this.loadImageString(this.premadeDrawing);
     } else {

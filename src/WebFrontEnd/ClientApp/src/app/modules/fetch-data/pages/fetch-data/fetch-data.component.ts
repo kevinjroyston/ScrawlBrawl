@@ -14,6 +14,7 @@ import { UnityViewer } from '@core/http/viewerInjectable';
 import * as drawingUtils from "app/utils/drawingutils";
 import { HttpHeaders } from '@angular/common/http';
 import { UserManager } from '@core/http/userManager';
+import { NotificationService } from '@core/services/notification.service';
 
 @Pipe({ name: 'safe' })
 export class Safe {
@@ -64,6 +65,7 @@ export class FetchDataComponent implements OnDestroy
         formBuilder: FormBuilder,
         private router: Router,
         private _colorPicker: MatBottomSheet,
+        @Inject(NotificationService) private notificationService: NotificationService,
         @Inject(API) private api: API,
         @Inject(UnityViewer) private unityViewer:UnityViewer,
         @Inject(UserManager) userManager,
@@ -187,7 +189,7 @@ export class FetchDataComponent implements OnDestroy
     assignSuggestions(userSubmitData,data): void{
         var suggestion = JSON.parse(data);
         if (!suggestion) {
-            alert("Sorry, you're on your own this round.");
+            this.notificationService.addMessage(`Sorry, you're on your own this round.`, null, {panelClass: ['error-snackbar']});
             return;
         }
         for (let i = 0; i < Math.min(userSubmitData.subForms.length,suggestion.values.length); i++) {
@@ -212,7 +214,7 @@ export class FetchDataComponent implements OnDestroy
                 }
             },
             error: (err) => {
-                alert("Sorry, you're on your own this round.");
+                this.notificationService.addMessage(`Sorry, you're on your own this round.`, null, {panelClass: ['error-snackbar']});
             },
         });
     }

@@ -53,12 +53,15 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 return StatusCode(500, "Something went wrong finding that user, try again");
             }
 
-            if (user.OwnedLobby != null)
+            lock (user.Lock)
             {
-                return new OkObjectResult(user.OwnedLobby.GenerateLobbyMetadataResponseObject());
-            }
+                if (user.OwnedLobby != null)
+                {
+                    return new OkObjectResult(user.OwnedLobby.GenerateLobbyMetadataResponseObject());
+                }
 
-            return StatusCode(404, "Lobby doesn't exist.");
+                return StatusCode(404, "Lobby doesn't exist.");
+            }
         }
 
         [HttpPost]
@@ -85,43 +88,51 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 return new OkResult();
             }
 
-            string lobbyId;
-            int safety = 0;
-            do
+            lock (user.Lock)
             {
-                // Keep making lobbyIds until a new one is found
-                lobbyId = Guid.NewGuid().ToString().Substring(0, 5);
-                if (safety++ > 20)
+                if (user.OwnedLobby != null)
                 {
-                    throw new Exception("Yikes");
+                    return new OkResult();
                 }
-            } while (GameManager.GetLobby(lobbyId) != null);
 
-            Lobby newLobby = ActivatorUtilities.CreateInstance<Lobby>(this.ServiceProvider, lobbyId, user);
+                string lobbyId;
+                int safety = 0;
+                do
+                {
+                    // Keep making lobbyIds until a new one is found
+                    lobbyId = Guid.NewGuid().ToString().Substring(0, 5);
+                    if (safety++ > 20)
+                    {
+                        throw new Exception("Yikes");
+                    }
+                } while (GameManager.GetLobby(lobbyId) != null);
 
-            if (!GameManager.RegisterLobby(newLobby))
-            {
-                return StatusCode(500, "Failed to create lobby, try again");
-            }
+                Lobby newLobby = ActivatorUtilities.CreateInstance<Lobby>(this.ServiceProvider, lobbyId, user);
 
-            request.LobbyId = lobbyId;
-            (bool,string) joinLobbyResponse;
-            try
-            {
-                joinLobbyResponse = InternalJoinLobby(request, id);
-            }
-            catch
-            {
-                joinLobbyResponse = (false, "Internal Error");
-            }
-            if (!joinLobbyResponse.Item1)
-            {
-                GameManager.DeleteLobby(lobbyId);
-                return StatusCode(400, joinLobbyResponse.Item2);
-            }
+                if (!GameManager.RegisterLobby(newLobby))
+                {
+                    return StatusCode(500, "Failed to create lobby, try again");
+                }
 
-            user.OwnedLobby = newLobby;
-            return Ok(lobbyId);
+                request.LobbyId = lobbyId;
+                (bool, string) joinLobbyResponse;
+                try
+                {
+                    joinLobbyResponse = InternalJoinLobby(request, id);
+                }
+                catch
+                {
+                    joinLobbyResponse = (false, "Internal Error");
+                }
+                if (!joinLobbyResponse.Item1)
+                {
+                    GameManager.DeleteLobby(lobbyId);
+                    return StatusCode(400, joinLobbyResponse.Item2);
+                }
+
+                user.OwnedLobby = newLobby;
+                return Ok(lobbyId);
+            }
         }
 
         [HttpPost]
@@ -154,39 +165,35 @@ namespace Backend.APIs.Controllers.LobbyManagement
             }
 
             User user = GameManager.MapIdentifierToUser(id, out bool newUser);
+
             lock (user.LockObject)
             {
-                // If the user is currently in a different lobby, unregister the user and create a new one.
-                // If the user is already in this lobby calling register user should no-op / re-confirm they are in the lobby.
-                if (user.Lobby != null && !user.LobbyId.Equals(request.LobbyId))
+                if (user.Lobby != null & user.LobbyId == request.LobbyId)
                 {
+                    // Another thread beat us to it. Return generic error.
+                    return (false, "Try Again.");
+                }
+
+                if (user.Lobby != null)
+                {
+                    // Either another thread beat us to it (with multiple lobbies). Or we got the user stuck in a bad state.
+                    // Unregister the user and return failure.
                     GameManager.UnregisterUser(user);
-                    user = GameManager.MapIdentifierToUser(id, out bool _);
+                    return (false, "Try Again.");
                 }
 
-                // Separate lock as the first user object may have been unregistered. Nested lock because of race conditions fetching current user state.
-                // Locks are re-entrant so locking the same object twice from one thread poses no risks.
-                lock (user.LockObject)
+                (bool, string) result = GameManager.RegisterUser(user, request);
+                if (!result.Item1) // Check success.
                 {
-                    // Race condition.
-                    if (user.Lobby != null && !user.LobbyId.Equals(request.LobbyId))
-                    {
-                        return (false, "Try Again.");
-                    }
-
-                    (bool, string) result = GameManager.RegisterUser(user, request);
-                    if (!result.Item1) // Check success.
-                    {
-                        return (false, result.Item2); // Return error message.
-                    }
-
-                    if (user?.Lobby == null) // Confirm user is now in a lobby.
-                    {
-                        return (false, "Unknown error occurred while joining Lobby.");
-                    }
-
-                    return (true, string.Empty);
+                    return (false, result.Item2); // Return error message.
                 }
+
+                if (user?.Lobby == null) // Confirm user is now in a lobby.
+                {
+                    return (false, "Unknown error occurred while joining Lobby.");
+                }
+
+                return (true, string.Empty);
             }
         }
 
@@ -212,9 +219,17 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 return new AcceptedResult();
             }
 
-            GameManager.DeleteLobby(user.OwnedLobby);
-            user.OwnedLobby = null;
-            return new AcceptedResult();
+            lock (user.Lock)
+            {
+                if (user.OwnedLobby == null)
+                {
+                    return new AcceptedResult();
+                }
+
+                GameManager.DeleteLobby(user.OwnedLobby);
+                user.OwnedLobby = null;
+                return new AcceptedResult();
+            }
         }
 
         [HttpPost]
@@ -239,12 +254,20 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 return StatusCode(404, "Lobby doesn't exist.");
             }
 
-            if (!user.OwnedLobby.ConfigureLobby(request, out string error, out ConfigureLobbyResponse response))
+            lock (user.Lock)
             {
-                return StatusCode(400, error);
-            }
+                if (user.OwnedLobby == null)
+                {
+                    return StatusCode(404, "Lobby doesn't exist.");
+                }
 
-            return new OkObjectResult(response);
+                if (!user.OwnedLobby.ConfigureLobby(request, out string error, out ConfigureLobbyResponse response))
+                {
+                    return StatusCode(400, error);
+                }
+
+                return new OkObjectResult(response);
+            }
         }
 
         [HttpPost]
@@ -269,12 +292,20 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 return StatusCode(404, "Lobby doesn't exist.");
             }
 
-            if (!user.OwnedLobby.StartGame(standardOptions, out string error))
+            lock (user.Lock)
             {
-                return StatusCode(400, error);
-            }
+                if (user.OwnedLobby == null)
+                {
+                    return StatusCode(404, "Lobby doesn't exist.");
+                }
 
-            return new AcceptedResult();
+                if (!user.OwnedLobby.StartGame(standardOptions, out string error))
+                {
+                    return StatusCode(400, error);
+                }
+
+                return new AcceptedResult();
+            }
         }
 
         [HttpGet]

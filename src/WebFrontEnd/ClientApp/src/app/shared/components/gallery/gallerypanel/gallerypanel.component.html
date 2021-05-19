@@ -4,7 +4,7 @@
             *ngFor="let drawing of gallery" 
             [galleryPanelType]="galleryPanelType" 
             [drawing]="drawing"
-            (deleteDrawing)="removeImageFromGallery(drawing.image)"
+            (deleteDrawing)="deleteDrawing(drawing.image)"
         >
         </gallerypicture>
     </div>
