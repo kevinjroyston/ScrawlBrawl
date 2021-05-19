@@ -14,6 +14,7 @@ import { GameModeList } from '@core/http/gamemodelist';
 import { UnityComponent } from '@shared/components/unity/unity.component';
 import { UnityViewer } from '@core/http/viewerInjectable';
 import { CommonoptionsDialogComponent } from '@modules/lobby/components/commonoptions-dialog/commonoptions-dialog.component';
+import { NotificationService } from '@core/services/notification.service';
 
 @Component({
     selector: 'app-lobby-management',
@@ -27,7 +28,8 @@ export class LobbyManagementComponent {
     @ViewChild(GameAssetDirective) gameAssetDirective;
 
     constructor(@Inject(UnityViewer) private unityViewer:UnityViewer, @Inject(GameModeList) public gameModeList: GameModeList, @Inject(API) private api: API, 
-    @Inject('BASE_FRONTEND_URL') private baseFrontEndUrl: string,private matDialog: MatDialog, public errorService: ErrorService, private router: Router)
+    @Inject('BASE_FRONTEND_URL') private baseFrontEndUrl: string,private matDialog: MatDialog, public errorService: ErrorService, private router: Router,
+    @Inject(NotificationService) private notificationService: NotificationService)
     {
 /*        this.getGames().then(() => this.onGetLobby()) */
         this.onGetLobby()
@@ -55,7 +57,9 @@ export class LobbyManagementComponent {
 
     putViewerLinkOnClipboard(){
         navigator.clipboard.writeText(this.baseFrontEndUrl+"viewer/index.html?lobby="+this.lobby.lobbyId)
-            .then(()=>{alert("The link is on the clipboard.")})
+            .then(()=>{
+                this.notificationService.addMessage("The link is on the clipboard.", null, {panelClass: ['success-snackbar']});
+            })
             .catch(e => console.error(e));
     }
 
@@ -65,7 +69,9 @@ export class LobbyManagementComponent {
     
     putGameLinkOnClipboard(){
         navigator.clipboard.writeText(this.baseFrontEndUrl+"join?lobby="+this.lobby.lobbyId)
-            .then(()=>{alert("The link is on the clipboard.")})
+        .then(()=>{
+            this.notificationService.addMessage("The link is on the clipboard.", null, {panelClass: ['success-snackbar']});
+        })
             .catch(e => console.error(e));
     }
 

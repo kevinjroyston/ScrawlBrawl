@@ -7,6 +7,7 @@ namespace Backend.APIs.DataModels
     /// </summary>
     public class AuthenticatedUser
     {
+        public object Lock { get; set; } = new object();
         public string UserId { get; set; }
         public Lobby OwnedLobby { get; set; }
     }

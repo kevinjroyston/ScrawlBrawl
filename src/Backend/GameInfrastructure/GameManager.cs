@@ -37,59 +37,6 @@ namespace Backend.GameInfrastructure
         public ConcurrentBag<string> AbandonedLobbyIds { get; } = new ConcurrentBag<string>();
         #endregion
 
-        #region States
-        /// <summary>
-        /// States track all of the users that enter it. In order to aid in garbage collection, create a new state instance for each user.
-        /// </summary>
-        /// <returns>A new user registration user state.</returns>
-        public UserState CreateUserRegistrationUserState()
-        {
-            UserState toReturn = new SimplePromptUserState(
-                promptGenerator: UserNamePrompt,
-                // Outlet won't be called until the below returns true
-                formSubmitHandler: (User user, UserFormSubmission userInput) =>
-                {
-                    return RegisterUser(userInput.SubForms[1].ShortAnswer, user, userInput.SubForms[0].ShortAnswer, userInput.SubForms[2].Drawing);
-                },
-                userTimeoutHandler: (User user, UserFormSubmission userInput) => throw new Exception("Can't timeout on this prompt"));
-
-            toReturn.Transition((User user)=> GetLobby(user.LobbyId));
-            return toReturn;
-        }
-        public static UserPrompt UserNamePrompt(User user) => new UserPrompt()
-        {
-            UserPromptId = UserPromptId.JoinLobby,
-            Title = "Join a game",
-            RefreshTimeInMs = 5000,
-            SubPrompts = new SubPrompt[]
-            {
-                new SubPrompt()
-                {
-                    Prompt = "Nickname",
-                    ShortAnswer = true
-                },
-                new SubPrompt()
-                {
-                    Prompt = "Lobby Code",
-                    ShortAnswer = true
-                },
-                new SubPrompt()
-                {
-                    Prompt = "Self Portrait",
-                    Drawing = new DrawingPromptMetadata{
-                        DrawingType = DrawingType.Profile,
-                        GalleryOptions = new GalleryOptionsMetadata {
-                            GalleryAutoLoadMostRecent = true 
-                        },
-                    }
-
-                }
-            },
-            SubmitButtonText ="Join",
-            SubmitButton = true,
-        };
-        #endregion
-
         public GameManager(ILogger<GameManager> logger)
         {
             if (Singleton != null)
@@ -266,9 +213,9 @@ namespace Backend.GameInfrastructure
             {
                 return (false, "Invalid Lobby Code.");
             }
-            if (user.LobbyId != null && !user.LobbyId.Equals(lobbyId, StringComparison.OrdinalIgnoreCase))
+            if (user.LobbyId != null)
             {
-                return (false, "User already in a different lobby.");
+                return (false, "User already in a lobby.");
             }
 
             user.DisplayName = displayName;
