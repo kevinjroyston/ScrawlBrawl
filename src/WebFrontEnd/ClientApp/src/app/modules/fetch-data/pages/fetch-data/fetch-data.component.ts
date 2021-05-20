@@ -198,6 +198,7 @@ export class FetchDataComponent implements OnDestroy
                     this.userForm.controls.subForms.controls[i].patchValue({shortAnswer:suggestion.values[i]});
                 }
                 if (this.userPrompt.subPrompts[i].colorPicker) {
+                    this.userPrompt.subPrompts[i].color = suggestion.values[i];
                     this.userForm.controls.subForms.controls[i].patchValue({colorPicker:suggestion.values[i]});
                 }
 //                if (this.userPrompt.subPrompts[i].selector) { this.userPrompt.subPrompts[i].selector = suggestion.value[i]) }
