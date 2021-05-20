@@ -1,5 +1,7 @@
 [{ "values": ["A White Water Rafting Adventure", "The raft and rafters", "The river and scenery"] },
     { "values": ["Opening Day of Baseball", "The batter", "The crowd and field"] },
     { "values": ["A Broadway Play", "The actors", "The stage and scenery"] },
+    { "values": ["The Olympic Rings", "Top 3 rings", "Bottom 2 rings"] },
+    { "values": ["Cabin in the woods", "The cabin", "The woods"] },
     { "values": ["Quiddich", "The players", "The pitch (field)"] }
 ]

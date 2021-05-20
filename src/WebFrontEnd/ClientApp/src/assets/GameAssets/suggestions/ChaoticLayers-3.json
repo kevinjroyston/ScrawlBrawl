@@ -1,3 +1,6 @@
-[{ "values": ["A Christmas Tree in Town Square", "Oraments and presents", "The Christmas tree","The townsquare (background)"] },
-    { "values": ["A Broadway Play", "The actors", "The scenery", "The stage and curtains"] }
+[{ "values": ["A Christmas Tree in Town Square", "Oraments and presents", "The Christmas tree", "The townsquare (background)"] },
+    { "values": ["A Broadway Play", "The actors", "The scenery", "The stage and curtains"] },
+    { "values": ["Cabin in the woods", "Snow", "Cabin", "Woods"] },
+    { "values": ["Bowling", "Bowling Ball", "Pins", "Bowling Lane"] },
+    { "values": ["Whitewater Rafting", "The people in the raft", "The raft", "The river and scenery"] }
 ]
