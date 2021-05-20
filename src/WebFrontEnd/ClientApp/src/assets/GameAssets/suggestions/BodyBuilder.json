@@ -1,7 +1,9 @@
 [{ "values": ["Most Likley To Win The Lottery"] },
- { "values": ["Next Poet Laurete"] },
- { "values": ["Class Clown"] },
- { "values": ["Most Likely to Succeed"] },
- { "values": ["Monsters Univerisity Valedictorian"] },
- { "values": ["World's Best Dog Walker"] }
+    { "values": ["Next Poet Laurete"] },
+    { "values": ["Class Clown"] },
+    { "values": ["Best Superhero"] },
+    { "values": ["Worst Superhero"] },
+    { "values": ["Most Likely to Succeed"] },
+    { "values": ["Monsters Univerisity Valedictorian"] },
+    { "values": ["World's Best Dog Walker"] }
 ]
