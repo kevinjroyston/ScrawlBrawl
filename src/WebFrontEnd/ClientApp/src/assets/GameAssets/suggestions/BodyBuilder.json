@@ -4,6 +4,14 @@
     { "values": ["Best Superhero"] },
     { "values": ["Worst Superhero"] },
     { "values": ["Most Likely to Succeed"] },
-    { "values": ["Monsters Univerisity Valedictorian"] },
+    { "values": ["Monsters University Valedictorian"] },
+    { "values": ["Most likely to win The Great British Baking Show"] },
+    { "values": ["Most likely to do The Amazing Race"] },
+    { "values": ["World record holder for the largest collection of garden gnomes"] },
+    { "values": ["Best candidate to bring home to your parents"] },
+    { "values": ["Fear Factor finalist"] },
+    { "values": ["Last one standing in a zombie invasion"] },
     { "values": ["World's Best Dog Walker"] }
+
+
 ]
