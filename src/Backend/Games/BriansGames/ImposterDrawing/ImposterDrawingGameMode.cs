@@ -47,7 +47,9 @@ namespace Backend.Games.BriansGames.ImposterDrawing
             foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
             {
                 int numRounds = Math.Min(ImposterDrawingConstants.MaxNumRounds[duration], numPlayers);
-                int numDrawingsPerUser = Math.Min(ImposterDrawingConstants.MaxDrawingsPerPlayer[duration], numRounds-1);
+                int numDrawingsPerUser = Math.Min(ImposterDrawingConstants.MaxDrawingsPerPlayer[duration], numRounds - 1);
+
+                numRounds = Math.Min(numRounds, numPlayers* numDrawingsPerUser / ImposterDrawingConstants.MinNumPlayersPerRound);
 
                 TimeSpan estimate = TimeSpan.Zero;
                 TimeSpan writingTimer = ImposterDrawingConstants.WritingTimer[duration];
@@ -81,14 +83,18 @@ namespace Backend.Games.BriansGames.ImposterDrawing
             List<Prompt> prompts = new List<Prompt>();
             int numRounds = Math.Min(ImposterDrawingConstants.MaxNumRounds[duration], this.Lobby.GetAllUsers().Count);
             int numDrawingsPerUser = Math.Min(ImposterDrawingConstants.MaxDrawingsPerPlayer[duration], numRounds - 1);
+
+            numRounds = Math.Min(numRounds, (this.Lobby.GetAllUsers().Count-1) * numDrawingsPerUser / ImposterDrawingConstants.MinNumPlayersPerRound);
+            int playersPerPrompt = Math.Min(ImposterDrawingConstants.MaxNumPlayersPerRound, this.Lobby.GetAllUsers().Count - 1);
+            playersPerPrompt = Math.Min(playersPerPrompt, this.Lobby.GetAllUsers().Count * numDrawingsPerUser / numRounds + 1);
             Setup = new Setup_GS(
                 lobby: lobby,
                 promptsToPopulate: prompts,
                 writingTimeDuration: writingTimer,
                 drawingTimeDuration: drawingTimer,
-                numDrawingsPerUser:numDrawingsPerUser,
-                numRounds:numRounds,
-                maxPlayersPerPrompt:Math.Min(ImposterDrawingConstants.MaxNumPlayersPerRound,this.Lobby.GetAllUsers().Count-1));
+                numDrawingsPerUser: numDrawingsPerUser,
+                numRounds: numRounds,
+                maxPlayersPerPrompt: playersPerPrompt);
             StateChain CreateGamePlayLoop()
             {
                 List<State> stateList = new List<State>();

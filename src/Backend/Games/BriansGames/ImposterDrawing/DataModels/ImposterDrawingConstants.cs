@@ -15,19 +15,19 @@ namespace Backend.Games.BriansGames.ImposterDrawing.DataModels
 
         public static IReadOnlyDictionary<GameDuration, TimeSpan> WritingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(45)},
+            { GameDuration.Short, TimeSpan.FromSeconds(90)},
             { GameDuration.Normal, TimeSpan.FromSeconds(120)},
             { GameDuration.Extended, TimeSpan.FromSeconds(180)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> DrawingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(45)},
+            { GameDuration.Short, TimeSpan.FromSeconds(60)},
             { GameDuration.Normal, TimeSpan.FromSeconds(90)},
             { GameDuration.Extended, TimeSpan.FromSeconds(120)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> VotingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(30)},
+            { GameDuration.Short, TimeSpan.FromSeconds(45)},
             { GameDuration.Normal, TimeSpan.FromSeconds(60)},
             { GameDuration.Extended, TimeSpan.FromSeconds(90)},
         };
@@ -35,17 +35,18 @@ namespace Backend.Games.BriansGames.ImposterDrawing.DataModels
         // Number of rounds (round = create contestants & vote)
         public static IReadOnlyDictionary<GameDuration, int> MaxNumRounds = new Dictionary<GameDuration, int>()
         {
-            { GameDuration.Short, 6},
-            { GameDuration.Normal, 8},
-            { GameDuration.Extended, 12},
+            { GameDuration.Short, 5},
+            { GameDuration.Normal, 7},
+            { GameDuration.Extended, 9},
         };
 
         public const int MaxNumPlayersPerRound = 10;
+        public const int MinNumPlayersPerRound = 4;
         // Number of rounds (round = create contestants & vote)
         public static IReadOnlyDictionary<GameDuration, int> MaxDrawingsPerPlayer = new Dictionary<GameDuration, int>()
         {
-            { GameDuration.Short, 3},
-            { GameDuration.Normal, 4},
+            { GameDuration.Short, 4},
+            { GameDuration.Normal, 5},
             { GameDuration.Extended, 6},
         };
     }

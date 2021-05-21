@@ -124,7 +124,7 @@ namespace Backend.Games.BriansGames.BattleReady
                 lobby: lobby,
                 drawings: this.Drawings,
                 numExpectedPerUser: expectedDrawingsPerUser,
-                setupDurration: setupDrawingTimer);
+                setupDurration: setupDrawingTimer * expectedDrawingsPerUser);
 
             SetupPrompts_GS setupPrompt = new SetupPrompts_GS(
                 lobby: lobby,

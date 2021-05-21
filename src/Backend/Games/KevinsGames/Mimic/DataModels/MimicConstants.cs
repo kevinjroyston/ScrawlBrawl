@@ -20,13 +20,13 @@ namespace Backend.Games.KevinsGames.Mimic.DataModels
 
         public static IReadOnlyDictionary<GameDuration, TimeSpan> DrawingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(30)},
+            { GameDuration.Short, TimeSpan.FromSeconds(35)},
             { GameDuration.Normal, TimeSpan.FromSeconds(45)},
             { GameDuration.Extended, TimeSpan.FromSeconds(60)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> VotingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(30)},
+            { GameDuration.Short, TimeSpan.FromSeconds(45)},
             { GameDuration.Normal, TimeSpan.FromSeconds(60)},
             { GameDuration.Extended, TimeSpan.FromSeconds(90)},
         };
@@ -34,9 +34,9 @@ namespace Backend.Games.KevinsGames.Mimic.DataModels
         // If you have more than this many players on this mode you WILL see impact.
         public static IReadOnlyDictionary<GameDuration, int> MaxRounds = new Dictionary<GameDuration, int>()
         {
-            { GameDuration.Short, 6},
-            { GameDuration.Normal, 12},
-            { GameDuration.Extended, 20},
+            { GameDuration.Short, 5},
+            { GameDuration.Normal, 7},
+            { GameDuration.Extended, 9},
         };
     }
 }
