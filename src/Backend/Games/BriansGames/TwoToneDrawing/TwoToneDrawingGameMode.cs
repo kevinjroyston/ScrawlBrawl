@@ -59,7 +59,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                     Description = "Team Size",
                     ResponseType = ResponseType.Integer,
                     DefaultValue = 2,
-                    MinValue = 1,
+                    MinValue = 2,
                     MaxValue = 4,
                 },
             },

@@ -11,25 +11,25 @@ namespace Backend.Games.BriansGames.BattleReady.DataModels
 
         public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerDrawingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(45)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(60)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(90)},
+            { GameDuration.Short, TimeSpan.FromSeconds(60)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(90)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(120)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerPromptTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(45)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(60)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(90)},
+            { GameDuration.Short, TimeSpan.FromSeconds(60)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(90)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(120)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> PerCreationTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(45)},
+            { GameDuration.Short, TimeSpan.FromSeconds(50)},
             { GameDuration.Normal, TimeSpan.FromSeconds(60)},
             { GameDuration.Extended, TimeSpan.FromSeconds(90)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> VotingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(30)},
+            { GameDuration.Short, TimeSpan.FromSeconds(45)},
             { GameDuration.Normal, TimeSpan.FromSeconds(60)},
             { GameDuration.Extended, TimeSpan.FromSeconds(90)},
         };
@@ -46,8 +46,8 @@ namespace Backend.Games.BriansGames.BattleReady.DataModels
         public static IReadOnlyDictionary<GameDuration, int> MaxNumSubRounds = new Dictionary<GameDuration, int>()
         {
             { GameDuration.Short, 4},
-            { GameDuration.Normal, 5},
-            { GameDuration.Extended, 7},
+            { GameDuration.Normal, 4},
+            { GameDuration.Extended, 5},
         };
 
         public static IReadOnlyDictionary<GameDuration, int> NumDrawingsPerPlayer = new Dictionary<GameDuration, int>()
