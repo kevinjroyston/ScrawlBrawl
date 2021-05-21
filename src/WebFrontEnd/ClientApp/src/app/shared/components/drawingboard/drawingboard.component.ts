@@ -118,13 +118,15 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
 
     private lastDrawingChange:string;
     storeMostRecentDrawing(onDestroy = false){
-        if (this.lastDrawingChange != "" && this.lastDrawingChange != null) {
+        if (this.drawingOptions.galleryOptions && this.lastDrawingChange != "" && this.lastDrawingChange != null) {
             this.galleryService.AddImageToGallery(onDestroy, this.drawingType,Galleries.GalleryPanelType.RECENT,this.lastDrawingChange);
             this.lastDrawingChange = "";
         }
     }
     onDrawingChange(event){
-        this.lastDrawingChange = event;
+        if (event != this.galleryRecentDrawing) {
+            this.lastDrawingChange = event;
+        }
         if (this.onChange) {
             this.onChange(event)
         }
