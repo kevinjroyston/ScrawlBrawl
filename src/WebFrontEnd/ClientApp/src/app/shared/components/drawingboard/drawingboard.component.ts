@@ -100,11 +100,6 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
             this.selectedColor = this.drawingOptions.colorList[0];
         }
 
-        // If there is no required color list or if the defaultLineColor is in the color list, default to that.
-        let tempColor = this.drawingDirective.defaultLineColor;
-        if (!this.drawingOptions || !this.drawingOptions.colorList || this.drawingOptions.colorList.includes(tempColor)) {
-            this.selectedColor = tempColor;
-        }
     }
 
     ngOnDestroy() {
@@ -112,6 +107,11 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     }
 
     ngAfterViewInit(){
+        // If there is no required color list or if the defaultLineColor is in the color list, default to that.
+        let tempColor = this.drawingDirective.defaultLineColor;
+        if (!this.drawingOptions || !this.drawingOptions.colorList || this.drawingOptions.colorList.includes(tempColor)) {
+            this.selectedColor = tempColor;
+        }
         
 
     }
