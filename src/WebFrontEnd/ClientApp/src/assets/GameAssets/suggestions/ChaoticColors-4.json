@@ -1,1 +1,4 @@
-[{ "values": ["Potato Head", "#000000", "#f04646", "#ffa6d8", "#a38310"] }]
+[{
+    "values": ["Potato Head", "#000000", "#f04646", "#ffa6d8", "#a38310"],
+    "values": ["Traffic Signal", "#ff4000", "#e6de00", "#16a600", "#000000"]
+}]
