@@ -2,5 +2,10 @@
     { "values": ["Nintendo Switch", "#ff4d4d", "#4d9dff", "#0f0f0f"] },
     { "values": ["Baseball Diamond", "#ebebeb", "#d99357", "#2b8c22"] },
     { "values": ["A lighthouse on the ocean", "#fff785", "#000000", "#070099"] },
+    { "values": ["Watermelon Slice", "#000000", "#ff0000", "#048014"] },
+    { "values": ["Globe", "#036300", "#005eff", "#000000"] },
+    { "values": ["Apple Tree", "#ff0000", "#339609", "#6b5012"] },
+    { "values": ["Sunny day at the beach", "#e01802", "#f7ca00", "#008cf7"] },
+    { "values": ["Pancakes with Syrup and Butter", "#f0ec00", "#5c492b", "#c29500"] },
     { "values": ["Popcorn bucket", "#f01111", "#ffe6e6", "#fffb7d"] }
 ]
