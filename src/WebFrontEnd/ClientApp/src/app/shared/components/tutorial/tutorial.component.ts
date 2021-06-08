@@ -15,9 +15,13 @@ export class TutorialComponent implements OnInit,AfterViewInit {
 
  
   ngAfterViewInit(){
-    this.tutorialMetadata.hideClasses.forEach(function (hideClass){
+    console.log('hiding tutorial classes');
+    if (this.tutorialMetadata && this.tutorialMetadata.hideClasses) {
+      this.tutorialMetadata.hideClasses.forEach(function (hideClass){
+        console.log('hiding: '+hideClass);
         cssTweaks.setCSSDisplayForSelector("."+hideClass,"none"); }
-    )
+      )
+    }
   }  
   ngOnInit() {
   }

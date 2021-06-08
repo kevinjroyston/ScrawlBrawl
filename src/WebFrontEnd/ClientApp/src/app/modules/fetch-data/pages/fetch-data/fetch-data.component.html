@@ -20,7 +20,7 @@
             </div>
             <div class="sticky-nav">
                 <div style="width:110px;padding-top: 4px;">
-                    <scrawlbutton [ngStyle]="'max-width:40px'" *ngIf="userPrompt.submitButton" color="green" (click)="onSubmit(userForm.value)">
+                    <scrawlbutton *ngIf="userPrompt.submitButton" color="green" (click)="onSubmit(userForm.value)">
                         {{userPrompt.submitButtonText}}
                     </scrawlbutton>
                 </div>
@@ -71,7 +71,7 @@
                 </div>
             </div>
         </div>
-         
+
         <app-tutorial *ngIf="userPrompt.tutorial" class="TutorialHolder" [tutorialMetadata]="userPrompt.tutorial" [gameModeIdString]="userPrompt.gameIdString"></app-tutorial>
 
         <div class="Error" *ngIf="userPrompt.error">
