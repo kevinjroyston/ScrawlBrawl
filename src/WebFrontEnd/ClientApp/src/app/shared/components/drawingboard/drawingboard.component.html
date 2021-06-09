@@ -28,9 +28,6 @@
                     </div>
                 </mat-radio-group>
             </div>
-            <div #galleryPanel [hidden]="true" class="drawb-setting" *ngIf="drawingOptions.galleryOptions">
-                <gallerytool #galleryTool [drawingOptions]="drawingOptions" [galleryEditor]="galleryEditor" [drawingDirective]="drawingDirective"></gallerytool>
-            </div>
         </div>
         <!-- Drawing Canvas -->
         <div class="drawb-canvas">

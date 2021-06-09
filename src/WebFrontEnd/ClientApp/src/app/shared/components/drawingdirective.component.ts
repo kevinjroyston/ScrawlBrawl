@@ -22,7 +22,7 @@ export class DrawingDirective {
   @Input() drawingMode: DrawingModes;
   @Input() galleryRecentDrawing: string;
   @Output() drawingEmitter = new EventEmitter();
-  defaultLineColor: string;
+  private defaultLineColor: string;
   element;
   private undoArray: string[] = [];
   private userIsDrawing: boolean;
