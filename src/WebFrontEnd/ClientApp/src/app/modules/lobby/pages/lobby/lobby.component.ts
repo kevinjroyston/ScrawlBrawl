@@ -140,6 +140,7 @@ export class LobbyManagementComponent {
             lobby: this.lobby,
             onGetLobby: () => this.onGetLobby(),
             durationEstimates: gameDurationEstimatesInMinutes,
+            launchURL: this.baseFrontEndUrl+"play",
         }
         this.matDialog.open(CommonoptionsDialogComponent, dialogConfig);
     }

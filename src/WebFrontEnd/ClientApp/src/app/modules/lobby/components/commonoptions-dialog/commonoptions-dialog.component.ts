@@ -13,6 +13,7 @@ interface GameModeDialogData {
   error: string
   onGetLobby: () => void,
   durationEstimates: Map<Lobby.GameDuration,number>,
+  launchURL: string
 }
 
 @Component({
@@ -23,6 +24,7 @@ interface GameModeDialogData {
 export class CommonoptionsDialogComponent implements OnInit {
   lobby: Lobby.LobbyMetadata
   error: string
+  launchURL: string
   onGetLobby: () => void
   errorSubscription: Subscription
   showTutorial: boolean = true;
@@ -48,6 +50,7 @@ export class CommonoptionsDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: GameModeDialogData,
     @Inject(API) private api: API) {
     this.lobby = data.lobby;
+    this.launchURL = data.launchURL;
     this.onGetLobby = data.onGetLobby;
     this.durationEstimates = data.durationEstimates;
     this.estimatedDurationSliderParameters.ticksLabels=[
@@ -79,6 +82,10 @@ export class CommonoptionsDialogComponent implements OnInit {
         next: () => {
           // TODO: open gameplay tab & viewer tab?
           this.closeDialog();
+          window.scrollTo(0,0);
+          if (this.launchURL && (this.launchURL!='')) {
+            window.open(this.launchURL,'SBLaunch')  
+          }
         },
         error: (error) => { 
             this.error = error.error; 
