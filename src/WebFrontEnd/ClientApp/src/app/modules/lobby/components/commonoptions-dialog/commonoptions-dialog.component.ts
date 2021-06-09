@@ -82,8 +82,8 @@ export class CommonoptionsDialogComponent implements OnInit {
         next: () => {
           // TODO: open gameplay tab & viewer tab?
           this.closeDialog();
+          window.scrollTo(0,0);
           if (this.launchURL && (this.launchURL!='')) {
-            window.scrollTo(0,0);
             window.open(this.launchURL,'SBLaunch')  
           }
         },
