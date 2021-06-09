@@ -14,9 +14,9 @@ import Galleries from '@core/models/gallerytypes';
     encapsulation: ViewEncapsulation.Emulated
 })
 export class GalleryTool implements AfterViewInit {
-    @Input() drawingOptions: DrawingPromptMetadata;
-    @Input() drawingDirective: DrawingDirective;
-    @Input() galleryEditor: boolean = false;
+    drawingOptions: DrawingPromptMetadata;
+    drawingDirective: DrawingDirective;
+    galleryEditor: boolean = false;
     @ViewChild("galleryFavorites") galleryFavorites: GalleryPanel;
     @ViewChild("galleryRecent") galleryRecent: GalleryPanel;
     @ViewChild("gallerySamples") gallerySamples: GalleryPanel;

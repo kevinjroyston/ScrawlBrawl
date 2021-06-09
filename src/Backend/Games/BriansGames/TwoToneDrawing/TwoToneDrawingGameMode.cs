@@ -78,6 +78,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
         }
         private static IReadOnlyDictionary<GameDuration, TimeSpan> GetGameDurationEstimates(int numPlayers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
+            bool useSingleColor = (bool)gameModeOptions[(int)GameModeOptionsEnum.useSingleColor].ValueParsed;
             Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
             foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
             {
@@ -90,7 +91,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                 TimeSpan votingTimer = TwoToneDrawingConstants.VotingTimer[duration];
 
                 estimate += votingTimer.MultipliedBy(numRounds);
-                estimate += setupTimer;
+                estimate += setupTimer.MultipliedBy(useSingleColor ? 1 : 2);
                 estimate += drawingTimer;
 
                 estimates[duration] = estimate;
@@ -126,7 +127,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             TimeSpan? votingTimer = null;
             if (standardOptions.TimerEnabled)
             {
-                setupTimer = TwoToneDrawingConstants.SetupTimer[duration];
+                setupTimer = TwoToneDrawingConstants.SetupTimer[duration].MultipliedBy(useSingleColor ? 1 : 2);
                 drawingTimer = TwoToneDrawingConstants.PerDrawingTimer[duration].MultipliedBy(numDrawingsPerPlayer);
                 votingTimer = TwoToneDrawingConstants.VotingTimer[duration];
             }

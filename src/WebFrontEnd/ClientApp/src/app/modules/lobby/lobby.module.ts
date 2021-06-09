@@ -8,6 +8,7 @@ import { ErrorService } from '@modules/lobby/services/error.service';
 import { LobbyInstructionsDialogComponent } from './components/lobbyinstructions-dialog/lobbyinstructions-dialog.component';
 import { CreateLobbyComponent } from './pages/lobby/create-lobby/create-lobby.component';
 import { CommonoptionsDialogComponent } from './components/commonoptions-dialog/commonoptions-dialog.component';
+import { MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 
 @NgModule({
   imports: [
@@ -23,7 +24,9 @@ import { CommonoptionsDialogComponent } from './components/commonoptions-dialog/
     LobbyInstructionsDialogComponent
   ],
   providers: [
-    ErrorService
+    ErrorService,
+    { provide: MatBottomSheetRef, useValue: {} },
+    { provide: MAT_BOTTOM_SHEET_DATA, useValue: {} }
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

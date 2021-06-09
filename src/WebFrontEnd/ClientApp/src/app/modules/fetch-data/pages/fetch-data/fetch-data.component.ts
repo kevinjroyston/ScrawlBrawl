@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup} from '@angular/forms';
 import { DomSanitizer, SafeHtml, SafeStyle, SafeScript, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
 import GameplayPrompts from '@core/models/gameplay' 
 import { API } from '@core/http/api';
-import { isNullOrUndefined } from 'util';
 import { Router } from '@angular/router';
 import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-sheet';
 import { ColorPickerComponent } from '@shared/components/colorpicker/colorpicker.component';
@@ -127,8 +126,8 @@ export class FetchDataComponent implements OnDestroy
                 this.unityViewer.UpdateLobbyId(prompt.lobbyId);
                 
                 // Too lazy to figure out how to properly deserialize things.
-                prompt.autoSubmitAtTime = isNullOrUndefined(prompt.autoSubmitAtTime) ? null : new Date(prompt.autoSubmitAtTime);
-                prompt.currentServerTime = isNullOrUndefined(prompt.currentServerTime) ? null : new Date(prompt.currentServerTime);
+                prompt.autoSubmitAtTime = !prompt.autoSubmitAtTime ? null : new Date(prompt.autoSubmitAtTime);
+                prompt.currentServerTime = !prompt.currentServerTime ? null : new Date(prompt.currentServerTime);
                 console.log('Fetched Prompt', prompt);
 
                 // if the current content has the same as id as the current, return
@@ -146,7 +145,7 @@ export class FetchDataComponent implements OnDestroy
 
 
                 // Start a new autosubmit timer
-                if (prompt && !isNullOrUndefined(prompt.autoSubmitAtTime)) {
+                if (prompt && prompt.autoSubmitAtTime) {
                     this.timerRemaining = prompt.autoSubmitAtTime.getTime() - prompt.currentServerTime.getTime();
                     this.autoSubmitUserPromptTimer(prompt.autoSubmitAtTime.getTime() - prompt.currentServerTime.getTime());
                 }
