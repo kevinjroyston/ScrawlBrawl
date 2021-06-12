@@ -44,7 +44,7 @@ export class NavMenuComponent {
   }
 
   checkRoute = (url: string) : void => {
-    url === '/' ? this.isHomePage = true : this.isHomePage = false
+    ((url === '/') || (url.toLowerCase() == '/home')) ? this.isHomePage = true : this.isHomePage = false
   }
 
   toggle = () => {

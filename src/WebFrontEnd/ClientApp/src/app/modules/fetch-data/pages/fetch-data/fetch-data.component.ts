@@ -70,7 +70,7 @@ export class FetchDataComponent implements OnDestroy
         @Inject(UserManager) userManager,
         @Inject(Suggestions) private suggestions: Suggestions)
     {
-      userManager.getUserDataAndRedirect();
+      userManager.getUserDataAndRedirectToPlayOrJoin();
       this.formBuilder = formBuilder;
       this.fetchUserPrompt();
       router.events.subscribe((val) => {
@@ -116,6 +116,8 @@ export class FetchDataComponent implements OnDestroy
                 if (data == null) // If no prompt object we have not joined lobby. Redirect accordingly.
                 {
                     console.error("Joined lobby but not seeing a prompt.");
+                    this.router.navigate(['/join']); // an error occurred, go to the join page
+                    return;
                 }
                 if (prompt.submitButton) {
                     document.body.classList.add('makeRoomForToolbar');

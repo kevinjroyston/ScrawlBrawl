@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FooterService } from '@layout/footer/footer.service';
+import { UserManager } from '@core/http/userManager';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'home',
@@ -7,8 +9,10 @@ import { FooterService } from '@layout/footer/footer.service';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  constructor(public footerService: FooterService) {
-
+  constructor(public footerService: FooterService, @Inject(UserManager) userManager, private router : Router) {
+    if (this.router.url.toLowerCase() !== '/home'){
+            userManager.rejoinGameIfAlreadyPlaying();
+    }
   }
 
   ngOnInit () {

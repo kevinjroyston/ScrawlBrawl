@@ -9,7 +9,11 @@ import { API } from "./api";
 export class UserManager{
   constructor(@Inject(API) private api: API, private router : Router) {
   }
-  public async getUserDataAndRedirect(){
+  public async rejoinGameIfAlreadyPlaying(){
+    this.getUserDataAndRedirectToPlayOrJoin(true);
+  }
+
+    public async getUserDataAndRedirectToPlayOrJoin(RedirectOnlyIfPlaying){
       let userRequest = await this.api.request({ 
         type: "User", 
         path: "Get"
@@ -21,7 +25,7 @@ export class UserManager{
               if (this.router.url !== '/play'){
                 this.router.navigate(['/play']); // navigate to play page if not on play page.
               }
-          }else{
+          }else if (!RedirectOnlyIfPlaying) {
             if (this.router.url !== '/join'){
               this.router.navigate(['/join']) // navigate to join page if not already on join page.
             }
