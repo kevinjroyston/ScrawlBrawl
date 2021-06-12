@@ -1,29 +1,28 @@
 <nav [@simpleFadeAnimation] [@.disabled]="!isHomePage" class="navbar" [ngClass]="{'navbar-homepage': isHomePage, 'navbar-standard': isPastHero, 'navbar-open': isExpanded}">
-  <div class="navbar-left">
-    <a (click)="redirectLink('')">
-      <div class="navbar-logo">
-        <scrawlbrawl-logo-horizontal></scrawlbrawl-logo-horizontal>
-      </div>
-    </a>
-    <div id='hamburger' [ngClass]="{open: isExpanded}" (click)="toggle()">
-      <span></span>
-      <span></span>
-      <span></span>
+    <div class="navbar-left">
+        <a (click)="redirectLink('home')">
+            <div class="navbar-logo">
+                <scrawlbrawl-logo-horizontal></scrawlbrawl-logo-horizontal>
+            </div>
+        </a>
+        <div id='hamburger' [ngClass]="{open: isExpanded}" (click)="toggle()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
     </div>
-  </div>
-  <div class="navbar-right" [ngClass]="{'active': isExpanded}">
-    <scrawlbrawl-iconbutton (click)="toggleTheme()" class="darkmode" matTooltip="Dark Mode" [mdTooltipClass]="{'tooltip': true}">
-      <ion-icon [style.fill]="'var(--text-color)'" name="contrast-outline" ></ion-icon>
-    </scrawlbrawl-iconbutton>
-    <div class="nav-item" [routerLinkActive]="['link-active']">
-      <a class="trans-link" (click)="redirectLink('join')">Play</a>
+    <div class="navbar-right" [ngClass]="{'active': isExpanded}">
+        <scrawlbrawl-iconbutton (click)="toggleTheme()" class="darkmode" matTooltip="Dark Mode" [mdTooltipClass]="{'tooltip': true}">
+            <ion-icon [style.fill]="'var(--text-color)'" name="contrast-outline"></ion-icon>
+        </scrawlbrawl-iconbutton>
+        <div class="nav-item" [routerLinkActive]="['link-active']">
+            <a class="trans-link" (click)="redirectLink('join')">Play</a>
+        </div>
+        <div class="nav-item" [routerLinkActive]="['link-active']">
+            <a class="trans-link" (click)="redirectLink('lobby')">Lobby</a>
+        </div>
+        <div class="nav-item" [routerLinkActive]="['link-active']">
+            <a class="trans-link" (click)="redirectLink('user')">User</a>
+        </div>
     </div>
-    <div class="nav-item" [routerLinkActive]="['link-active']">
-      <a class="trans-link" (click)="redirectLink('lobby')">Lobby</a>
-    </div>
-    <div class="nav-item" [routerLinkActive]="['link-active']">
-      <a class="trans-link" (click)="redirectLink('user')">User</a>
-    </div>
-  </div>
 </nav>
-

@@ -26,7 +26,7 @@ export class JoinGameComponent {
   fetchLobbyID():string {return localStorage.fetchURLParam("lobby")}
 
   constructor(@Inject(API) private api: API, private router : Router, @Inject(UserManager) userManager) {
-    userManager.getUserDataAndRedirect();
+    userManager.getUserDataAndRedirectToPlayOrJoin();
   }
 
   onSubmit = async () => {
