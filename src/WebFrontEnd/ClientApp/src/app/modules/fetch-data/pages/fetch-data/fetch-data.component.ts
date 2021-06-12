@@ -117,6 +117,7 @@ export class FetchDataComponent implements OnDestroy
                 {
                     console.error("Joined lobby but not seeing a prompt.");
                     this.router.navigate(['/join']); // an error occurred, go to the join page
+                    return;
                 }
                 if (prompt.submitButton) {
                     document.body.classList.add('makeRoomForToolbar');
