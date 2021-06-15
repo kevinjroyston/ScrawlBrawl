@@ -3,7 +3,7 @@ import GameModes from './gamemodes'
 namespace Lobby {
     export class LobbyMetadata {
         lobbyId: string;
-        isGameInProgress: boolean;
+        gameInProgress: boolean;
         playerCount: number;
         gameModeSettings: GameModes.GameModeMetadata;
         selectedGameMode: number;

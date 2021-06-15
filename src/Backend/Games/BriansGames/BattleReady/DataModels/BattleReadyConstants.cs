@@ -8,6 +8,7 @@ namespace Backend.Games.BriansGames.BattleReady.DataModels
     {
         public const int PointsForVote = 100;
         public const int PointsForPartUsed = 50;
+        public const int NumDrawingsInHand = 3;
 
         public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerDrawingTimer = new Dictionary<GameDuration, TimeSpan>()
         {

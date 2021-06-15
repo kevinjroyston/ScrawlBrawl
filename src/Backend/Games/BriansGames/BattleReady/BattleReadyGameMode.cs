@@ -49,27 +49,17 @@ namespace Backend.Games.BriansGames.BattleReady
             },
             Options = new List<GameModeOptionResponse>
             {
-                new GameModeOptionResponse
-                {
-                    Description = "# of bodies to choose from",
-                    ResponseType = ResponseType.Integer,
-                    DefaultValue = 3,
-                    MinValue = 1,
-                    MaxValue = 5,
-                },
             },
             GetGameDurationEstimates = GetGameDurationEstimates,
         };
         private static IReadOnlyDictionary<GameDuration, TimeSpan> GetGameDurationEstimates(int numPlayers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
-            int numOfEachPartInHand = (int)gameModeOptions[(int)GameModeOptionsEnum.NumEachPartInHand].ValueParsed;
-
             Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
             foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
             {
                 int numRounds = BattleReadyConstants.NumRounds[duration];
                 int numPromptsPerRound = Math.Min(numPlayers, BattleReadyConstants.MaxNumSubRounds[duration]);
-                int minDrawingsRequired = numOfEachPartInHand * 3; // the amount to make one playerHand to give everyone
+                int minDrawingsRequired = BattleReadyConstants.NumDrawingsInHand * 3; // the amount to make one playerHand to give everyone
 
                 int expectedPromptsPerUser = (int)Math.Ceiling(1.0 * numPromptsPerRound * numRounds / numPlayers);
                 int expectedDrawingsPerUser = Math.Max((minDrawingsRequired / numPlayers + 1) * 2, BattleReadyConstants.NumDrawingsPerPlayer[duration]);
@@ -104,10 +94,8 @@ namespace Backend.Games.BriansGames.BattleReady
             TimeSpan? creationTimer = null;
             TimeSpan? votingTimer = null;
 
-            int numOfEachPartInHand = (int)gameModeOptions[(int)GameModeOptionsEnum.NumEachPartInHand].ValueParsed;
-
             int numPromptsPerRound = Math.Min(numPlayers, BattleReadyConstants.MaxNumSubRounds[duration]);
-            int minDrawingsRequired = numOfEachPartInHand * 3; // the amount to make one playerHand to give everyone
+            int minDrawingsRequired = BattleReadyConstants.NumDrawingsInHand * 3; // the amount to make one playerHand to give everyone
 
             int expectedPromptsPerUser = (int) Math.Ceiling(1.0*numPromptsPerRound * numRounds / lobby.GetAllUsers().Count);
             int expectedDrawingsPerUser = Math.Max((minDrawingsRequired / numPlayers + 1) * 2, BattleReadyConstants.NumDrawingsPerPlayer[duration]);
@@ -187,9 +175,9 @@ namespace Backend.Games.BriansGames.BattleReady
                         prompt.UsersToUserHands.TryAdd(user, new Prompt.UserHand
                         {
                             // Users have even probabilities regardless of how many drawings they submitted.
-                            HeadChoices = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(headDrawings, numOfEachPartInHand),
-                            BodyChoices = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(bodyDrawings, numOfEachPartInHand),
-                            LegChoices = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(legsDrawings, numOfEachPartInHand),
+                            HeadChoices = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(headDrawings, BattleReadyConstants.NumDrawingsInHand),
+                            BodyChoices = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(bodyDrawings, BattleReadyConstants.NumDrawingsInHand),
+                            LegChoices = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(legsDrawings, BattleReadyConstants.NumDrawingsInHand),
                             Owner = user
                         });
 

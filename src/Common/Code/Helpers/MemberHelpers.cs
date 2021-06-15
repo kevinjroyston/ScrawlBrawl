@@ -180,10 +180,15 @@ namespace Common.Code.Helpers
                 duplicatedMembers.AddRange(originalMembers);
             }
 
-            // If all constraints have a max limit, trim the inputs such that source objects are roughly even in duplicate quantity.
+            // If all constraints have a max limit, trim the inputs such that source objects must be assigned roughly evenly.
             if (constraints.All(constraint => constraint.MaxMemberCount.HasValue))
             {
-                duplicatedMembers = Select_Ordered(duplicatedMembers, constraints.Sum(constraints => constraints.MaxMemberCount.Value));
+                // Round up number of users as it helps substantially with alleviating constraints.
+                // Don't go beyond round up or distribution can bias towards a source.
+                int numDestinations = constraints.Sum(constraints => constraints.MaxMemberCount.Value);
+
+                // Integer division
+                duplicatedMembers = Select_Ordered(duplicatedMembers, (numDestinations/originalMembers.Count + 1)* originalMembers.Count);
             }
             bool optimal = false;
 
