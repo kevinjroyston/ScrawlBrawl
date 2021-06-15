@@ -86,6 +86,7 @@ export class CommonoptionsDialogComponent implements OnInit {
           if (this.launchURL && (this.launchURL!='')) {
             window.open(this.launchURL,'SBLaunch')  
           }
+          this.onGetLobby();
         },
         error: (error) => { 
             this.error = error.error; 

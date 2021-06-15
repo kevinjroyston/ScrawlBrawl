@@ -11,16 +11,14 @@ namespace BackendAutomatedTestingClient.Games
 {
     public abstract class StructuredBodyBuilderTest : BodyBuilderTest, IStructuredTest
     {
-        // Test might not work with some param combos.
         protected abstract int NumPlayers { get; }
-        protected abstract int NumBodiesToChooseFrom { get; }
+        protected const int NumBodiesToChooseFrom = 3;
         public TestOptions TestOptions =>
             new TestOptions
             {
                 NumPlayers = NumPlayers,
                 GameModeOptions = new List<GameModeOptionRequest>()
                 {
-                    new GameModeOptionRequest(){ Value = NumBodiesToChooseFrom + ""},
                 },
                 StandardGameModeOptions = new StandardGameModeOptions
                 {
@@ -38,7 +36,7 @@ namespace BackendAutomatedTestingClient.Games
 
                 int numRounds = 2;
                 int numPromptsPerRound = Math.Min(this.NumPlayers, 5);
-                int minDrawingsRequired = this.NumBodiesToChooseFrom * 3; // the amount to make one playerHand to give everyone
+                int minDrawingsRequired = NumBodiesToChooseFrom * 3; // the amount to make one playerHand to give everyone
 
                 int expectedPromptsPerUser = (int)Math.Ceiling(1.0 * numPromptsPerRound * numRounds / this.NumPlayers);
                 int expectedDrawingsPerUser = Math.Max((minDrawingsRequired / this.NumPlayers + 1) * 2, 3);
@@ -95,13 +93,11 @@ namespace BackendAutomatedTestingClient.Games
     public class Struct_BB_Test1 : StructuredBodyBuilderTest
     {
         protected override int NumPlayers => 5;
-        protected override int NumBodiesToChooseFrom => 4;
     }
 
     [EndToEndGameTest("BodyBuilder_Struct2")]
     public class Struct_BB_Test2 : StructuredBodyBuilderTest
     {
-        protected override int NumPlayers => 5;
-        protected override int NumBodiesToChooseFrom => 2;
+        protected override int NumPlayers => 7;
     }
 }
