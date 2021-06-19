@@ -75,10 +75,6 @@ export class LobbyManagementComponent {
             .catch(e => console.error(e));
     }
 
-    launchViewer(){
-        window.open('/viewer/index.html?lobby='+this.lobby.lobbyId,'_blank');
-    }
-    
     onCreateLobby = async (joinLobbyRequest) => {
         var bodyString = JSON.stringify(joinLobbyRequest);
         await this.api.request({ type: "Lobby", path: "Create", body: bodyString}).subscribe({
