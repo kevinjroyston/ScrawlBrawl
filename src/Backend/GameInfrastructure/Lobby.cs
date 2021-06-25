@@ -217,6 +217,9 @@ namespace Backend.GameInfrastructure
 
             Inlet(user, UserStateResult.Success, null);
 
+            // Have the gamestate refresh its' user list.
+            this.WaitForLobbyStart.Update();
+
             return true;
         }
         public void Inlet(User user, UserStateResult result, UserFormSubmission formSubmission)
@@ -235,20 +238,7 @@ namespace Backend.GameInfrastructure
         public UnityView GetActiveUnityView(bool returnNullIfNoChange)
         {
             UnityView currentView = this.CurrentGameState?.GetActiveUnityView();
-            Legacy_UnityView currentLegacyView = this.CurrentGameState?.GetActiveLegacyUnityView();
-            /*if (currentView != null && currentLegacyView != null)
-            {
-                throw new Exception("Gamestate did not properly setup views");
-            }*/
-
-            if (currentLegacyView != null)
-            {
-                if (!returnNullIfNoChange || currentLegacyView.Refresh())
-                {
-                    return new UnityView(currentLegacyView);
-                }
-            }
-            else if (currentView != null)
+            if (currentView != null)
             {
                 if (!returnNullIfNoChange)
                 {

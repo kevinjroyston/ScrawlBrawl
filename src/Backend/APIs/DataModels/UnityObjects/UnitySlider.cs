@@ -1,19 +1,16 @@
-﻿using PostSharp.Patterns.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Backend.APIs.DataModels.UnityObjects
 {
-    [NotifyPropertyChanged]
     public class SliderValueHolder
     {
         public float? SingleValue { get; set; }
         public (float, float)? ValueRange { get; set; }
         public Guid UserId { get; set; }
     }
-    [NotifyPropertyChanged]
     public class UnitySlider : UnityObject
     {
         public (float, float) SliderBounds { get; set; }

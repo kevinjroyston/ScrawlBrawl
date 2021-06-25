@@ -12,17 +12,18 @@ namespace Backend.Games.Common.DataModels.UserCreatedObjects.UserCreatedUnityObj
     {
         public List<T> UserDrawings { get; set; }
 
-        public override Legacy_UnityImage GetUnityImage(
+        public override UnityImage GetUnityImage(
             Color? backgroundColor = null,
             string imageIdentifier = null,
             Guid? imageOwnerId = null,
             string title = null,
             string header = null,
             int? voteCount = null,
-            Legacy_UnityImageVoteRevealOptions voteRevealOptions = null)
+            IReadOnlyList<Guid> usersWhoVotedFor = null,
+            bool revealThisObject = false)
         {
-            Legacy_UnityImage baseImage = base.GetUnityImage(backgroundColor, imageIdentifier, imageOwnerId, title, header, voteCount, voteRevealOptions);
-            baseImage.Base64Pngs = new StaticAccessor<IReadOnlyList<string>> { Value = UserDrawings.Select(drawing=>drawing.Drawing).ToList().AsReadOnly() };
+            UnityImage baseImage = base.GetUnityImage(backgroundColor, imageIdentifier, imageOwnerId, title, header, voteCount, usersWhoVotedFor, revealThisObject);
+            baseImage.Base64Pngs = UserDrawings.Select(drawing=>drawing.Drawing).ToList().AsReadOnly();
             return baseImage;
         }
     }

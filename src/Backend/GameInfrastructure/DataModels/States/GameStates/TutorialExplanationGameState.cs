@@ -30,10 +30,10 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             readyUp.Transition(this.Exit);
 
             // I have created a monstrosity.
-            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
+            this.UnityView = new UnityView(this.Lobby)
             {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
-                Instructions = new StaticAccessor<string> { Value = "Press 'READY!' once you have read the instructions!" },
+                ScreenId = TVScreenId.WaitForUserInputs,
+                Instructions = new UnityField<string> { Value = "Press 'READY!' once you have read the instructions!" },
             };
         }
 

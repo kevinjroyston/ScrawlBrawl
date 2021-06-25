@@ -44,10 +44,10 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
         {
             this.Entrance.Transition(this.Exit);
 
-            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
+            this.UnityView = new UnityView(this.Lobby)
             {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForPartyLeader },
-                Instructions = new StaticAccessor<string> { Value = "Waiting for party leader . . ." },
+                ScreenId = TVScreenId.WaitForPartyLeader,
+                Instructions = new UnityField<string> { Value = "Waiting for party leader . . ." },
             };
         }
     }

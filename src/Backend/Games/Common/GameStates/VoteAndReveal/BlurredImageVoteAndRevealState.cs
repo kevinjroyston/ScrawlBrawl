@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
+using Backend.APIs.DataModels.Enums;
 
 namespace Backend.Games.Common.GameStates.VoteAndReveal
 {
@@ -40,24 +41,15 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             this.BlurRevealDelay = blurRevealDelay;
             this.BlurRevealLength = blurRevealLength;
         }
-        public override Legacy_UnityView VotingUnityViewGenerator()
+        public override UnityView VotingUnityViewGenerator()
         {
-            Legacy_UnityView view = base.VotingUnityViewGenerator();
-            view.Options = new StaticAccessor<Legacy_UnityViewOptions>
+            UnityView view = base.VotingUnityViewGenerator();
+            view.Options[UnityViewOptions.BlurAnimate] = new UnityField<float?>
             {
-                Value = new Legacy_UnityViewOptions()
-                {
-                    BlurAnimate = new StaticAccessor<Legacy_UnityViewAnimationOptions<float?>>
-                    {
-                        Value = new Legacy_UnityViewAnimationOptions<float?>()
-                        {
-                            StartValue = new StaticAccessor<float?> { Value = 1.0f },
-                            EndValue = new StaticAccessor<float?> { Value = 0.0f },
-                            StartTime = new StaticAccessor<DateTime?> { Value = DateTime.UtcNow.AddSeconds(BlurRevealDelay) },
-                            EndTime = new StaticAccessor<DateTime?> { Value = DateTime.UtcNow.AddSeconds(BlurRevealDelay + BlurRevealLength) }
-                        }
-                    }
-                }
+                StartValue = 1.0f,
+                EndValue = 0.0f,
+                StartTime = DateTime.UtcNow.AddSeconds(BlurRevealDelay),
+                EndTime = DateTime.UtcNow.AddSeconds(BlurRevealDelay + BlurRevealLength),
             };
             return view;
         }

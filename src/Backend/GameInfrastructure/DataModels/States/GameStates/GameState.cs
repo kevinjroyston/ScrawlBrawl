@@ -34,7 +34,6 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
         }
 
         #region TVRendering
-        protected Legacy_UnityView Legacy_UnityView { get; set; }
         private UnityView InternalUnityView;
         protected UnityView UnityView
         {
@@ -44,21 +43,12 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             }
             set
             {
-                ((INotifyPropertyChanged)value).PropertyChanged += OnViewChanged;
                 InternalUnityView = value;
                 UnityViewDirty = true;
             }
         }
-        public bool UnityViewDirty { get; set; } = true;
+        public bool UnityViewDirty { get; set; }
 
-        private void OnViewChanged(object sender, EventArgs e)
-        {
-            UnityViewDirty = true;
-        }
-        public Legacy_UnityView GetActiveLegacyUnityView()
-        {
-            return Legacy_UnityView;
-        }
         public UnityView GetActiveUnityView()
         {
             return UnityView;
