@@ -220,6 +220,10 @@ namespace Backend.GameInfrastructure
             // Have the gamestate refresh its' user list.
             this.WaitForLobbyStart.Update();
 
+            // Add a listener so that every time a user's status changes, set the current game state's view to dirty.
+            // TODO: track this separately to avoid sending everything down the wire every time.
+            user.AddStatusListener(() => this.CurrentGameState.UnityViewDirty = true);
+
             return true;
         }
         public void Inlet(User user, UserStateResult result, UserFormSubmission formSubmission)

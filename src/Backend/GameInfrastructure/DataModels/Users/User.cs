@@ -35,6 +35,8 @@ namespace Backend.GameInfrastructure.DataModels.Users
 
         public Guid Source => Id;
 
+        private List<Action> UserStatusListeners { get; } = new List<Action>();
+
         /// <summary>
         /// The lobby id the user is a part of. Null indicates the user is unregistered.
         /// </summary>
@@ -66,6 +68,11 @@ namespace Backend.GameInfrastructure.DataModels.Users
         public void SetLobbyJoinTime()
         {
             LobbyJoinTime = DateTime.UtcNow;
+        }
+
+        public void AddStatusListener(Action listener)
+        {
+            this.UserStatusListeners.Add(listener);
         }
 
         /// <summary>
@@ -115,10 +122,32 @@ namespace Backend.GameInfrastructure.DataModels.Users
             }
         }
 
+        private UserStatus InternalStatus;
+
         /// <summary>
         /// Gets the current status of what the user is doing.
         /// </summary>
-        public UserStatus Status { get; set; }
+        public UserStatus Status {
+            get
+            {
+                return InternalStatus;
+            }
+            set
+            {
+                if (InternalStatus == value)
+                {
+                    return;
+                }
+                InternalStatus = value;
+
+                // Listeners probably just the lobby which is just setting a dirty bit.
+                // shouldn't be too costly.
+                foreach(var listener in UserStatusListeners)
+                {
+                    listener.Invoke(this);
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the earliest timer the user is under the influence of.
