@@ -28,7 +28,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             Func<User, List<T>, UserPrompt> votingUserPromptGenerator,
             List<T> votingObjects,
             Action<List<T>, IDictionary<User,VoteInfo>> votingExitListener,
-            Legacy_UnityView votingUnityView,
+            UnityView votingUnityView,
             List<User> votingUsers,
             TimeSpan? votingTime = null) : base(lobby)
         {
@@ -50,7 +50,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             votingUserState.Transition(this.Exit);
             votingUserState.AddExitListener(()=>votingExitListener(this.ObjectList, this.UserVotes));
 
-            this.Legacy_UnityView = votingUnityView;
+            this.UnityView = votingUnityView;
         }
 
         private UserPrompt InternalPromptGenerator(User user)

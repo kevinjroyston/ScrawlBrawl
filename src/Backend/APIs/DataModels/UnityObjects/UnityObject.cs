@@ -28,22 +28,6 @@ namespace Backend.APIs.DataModels.UnityObjects
         public Guid UnityObjectId { get; protected set; }
         public Dictionary<UnityObjectOptions, object> Options { get; set; }
 
-        protected UnityObject(Legacy_UnityImage legacy)
-        {
-            this.UsersWhoVotedFor = legacy._VoteRevealOptions?._RelevantUsers?.Select(user => user.Id).ToList().AsReadOnly();
-            this.Title = new UnityField<string> { Value = legacy._Title };
-            this.Header = new UnityField<string> { Value = legacy._Header };
-            this.Footer = new UnityField<string> { Value = legacy._Footer };
-            this.ImageIdentifier = new UnityField<string> { Value = legacy._ImageIdentifier };
-            this.OwnerUserId = legacy._ImageOwnerId;
-            this.VoteCount = new UnityField<int?> { Value = legacy._VoteCount };
-            this.BackgroundColor = new UnityField<IReadOnlyList<int>> { Value = legacy._BackgroundColor };
-            this.UnityObjectId = legacy._UnityImageId;
-            this.Options = new Dictionary<UnityObjectOptions, object>
-            {
-                 {UnityObjectOptions.RevealThisImage, legacy._VoteRevealOptions?._RevealThisImage }
-            };
-        }
         protected UnityObject(Guid UnityObjectId)
         {
             this.UnityObjectId = UnityObjectId;

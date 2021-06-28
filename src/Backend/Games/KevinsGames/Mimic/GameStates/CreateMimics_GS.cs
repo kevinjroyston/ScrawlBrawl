@@ -60,10 +60,10 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
             this.Entrance.Transition(createMimics);
             createMimics.Transition(this.Exit);
 
-            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
+            this.UnityView = new UnityView(this.Lobby)
             {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
-                Instructions = new StaticAccessor<string> { Value = "Recreate that drawing to the best of your abilities" },
+                ScreenId = TVScreenId.WaitForUserInputs,
+                Instructions = new UnityField<string> { Value = "Recreate that drawing to the best of your abilities" },
             };
         }
     }

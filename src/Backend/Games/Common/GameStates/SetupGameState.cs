@@ -79,11 +79,11 @@ namespace Backend.Games.Common.GameStates
 
             this.Entrance.Transition(setupChain);
             setupChain.Transition(this.Exit);
-            this.Legacy_UnityView = new Legacy_UnityView(lobby)
+            this.UnityView = new UnityView(lobby)
             {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
-                Title = new StaticAccessor<string> { Value = unityTitle },
-                Instructions = new StaticAccessor<string> { Value = unityInstructions },
+                ScreenId = TVScreenId.WaitForUserInputs,
+                Title = new UnityField<string> { Value = unityTitle },
+                Instructions = new UnityField<string> { Value = unityInstructions },
             };
         }
     }

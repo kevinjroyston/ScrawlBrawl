@@ -1,4 +1,5 @@
-﻿using Backend.APIs.DataModels.UnityObjects;
+﻿using Backend.APIs.DataModels.Enums;
+using Backend.APIs.DataModels.UnityObjects;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -8,14 +9,15 @@ namespace Backend.Games.Common.DataModels
     public class UserText : UserCreatedUnityObject
     {
         public string Text { get; set; }
-        public override Legacy_UnityImage GetUnityImage(
+        public override UnityImage GetUnityImage(
             Color? backgroundColor = null,
             string imageIdentifier = null,
             Guid? imageOwnerId = null,
             string title = null,
             string header = null,
             int? voteCount = null,
-            Legacy_UnityImageVoteRevealOptions voteRevealOptions = null)
+            IReadOnlyList<Guid> usersWhoVotedFor = null,
+            bool revealThisObject = false)
         {
             List<int> backgroundColorList = new List<int>
             {
@@ -24,19 +26,22 @@ namespace Backend.Games.Common.DataModels
                 Convert.ToInt32(backgroundColor.Value.B)
             };
 
-            return new Legacy_UnityImage
+            return new UnityImage
             {
-                BackgroundColor = new StaticAccessor<IReadOnlyList<int>> { Value = backgroundColorList },
-                SpriteGridWidth = new StaticAccessor<int?> { Value = 1 },
-                SpriteGridHeight = new StaticAccessor<int?> { Value = 1 },
-                ImageIdentifier = new StaticAccessor<string> { Value = imageIdentifier },
-                ImageOwnerId = new StaticAccessor<Guid?> { Value = imageOwnerId },
-                Title = new StaticAccessor<string> { Value = title },
-                Header = new StaticAccessor<string> { Value = header },
-                VoteCount = new StaticAccessor<int?> { Value = voteCount },
-                VoteRevealOptions = new StaticAccessor<Legacy_UnityImageVoteRevealOptions> { Value = voteRevealOptions },
+                BackgroundColor = new UnityField<IReadOnlyList<int>> { Value = backgroundColorList },
+                SpriteGridWidth = 1,
+                SpriteGridHeight = 1,
+                ImageIdentifier = new UnityField<string> { Value = imageIdentifier },
+                OwnerUserId = imageOwnerId,
+                Title = new UnityField<string> { Value = title },
+                Header = new UnityField<string> { Value = header },
+                VoteCount = new UnityField<int?> { Value = voteCount },
+                UsersWhoVotedFor = usersWhoVotedFor,
+                Options = new Dictionary<UnityObjectOptions, object>
+                {
+                     {UnityObjectOptions.RevealThisImage, revealThisObject }
+                }
             };
-
         }
     }
 }

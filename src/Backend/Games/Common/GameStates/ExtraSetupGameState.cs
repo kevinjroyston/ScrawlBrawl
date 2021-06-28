@@ -78,11 +78,11 @@ namespace Backend.Games.Common.GameStates
                 extraChain.Transition(this.Exit);
             }
 
-            this.Legacy_UnityView = new Legacy_UnityView(lobby)
+            this.UnityView = new UnityView(lobby)
             {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
-                Title = new StaticAccessor<string> { Value = "Oh! It seems like we didn't get enough to move on. Keep em comming!" },
-                Instructions = new StaticAccessor<string> { Value = Invariant($"{numExtraObjectsNeeded} more required") },
+                ScreenId = TVScreenId.WaitForUserInputs,
+                Title = new UnityField<string> { Value = "Oh! It seems like we didn't get enough to move on. Keep em comming!" },
+                Instructions = new UnityField<string> { Value = Invariant($"{numExtraObjectsNeeded} more required") },
             };
         }
     }

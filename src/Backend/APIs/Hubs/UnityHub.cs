@@ -74,10 +74,6 @@ namespace Backend.APIs.Hubs
                 ConnectToLobby(webParams[0], webParams[1]);
             }
         }
-        public void JoinRoom(string versionLobbyString)
-        {
-            Clients.Caller.SendAsync("UpdateState", CommonUnityViews.GenerateInvalidVersionLegacyView());   
-        }
         private bool TryTruncateVersionString(string version, out double result)
         {
             int lastDot = version.LastIndexOf('.');

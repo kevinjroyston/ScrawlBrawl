@@ -35,24 +35,36 @@ namespace Backend.Games.Common.GameStates
                         )))
         {
             this.Entrance.Transition(this.Exit);
-            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
+
+            this.UnityView = new UnityView(this.Lobby)
             {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.Scoreboard },
-                Title = new StaticAccessor<string> { Value = title },
-                UnityImages = new DynamicAccessor<IReadOnlyList<Legacy_UnityImage>>
-                {
-                    DynamicBacker = () => this.Lobby.GetAllUsers().OrderByDescending(usr => usr.Score).Select(usr =>
-                        new Legacy_UnityImage
-                        {
-                            Title = new StaticAccessor<string> { Value = usr.DisplayName },
-                            Base64Pngs = new StaticAccessor<IReadOnlyList<string>>
-                            {
-                                Value = new List<string> { usr.SelfPortrait }
-                            },
-                            VoteCount = new StaticAccessor<int?> { Value = usr.Score },
-                        }).ToList()
-                }
+                ScreenId = TVScreenId.Scoreboard,
+                Title = new UnityField<string> { Value = title },
+                // Calculate score objects on state entrance.
+                UnityObjects = null
             };
+
+            this.Entrance.AddExitListener(() =>
+            {
+                this.UnityView.UnityObjects = this.CalculateScoreObjects();
+            });
+        }
+
+        private UnityField<IReadOnlyList<UnityObject>> CalculateScoreObjects()
+        {
+            return new UnityField<IReadOnlyList<UnityObject>>
+            {
+                Value = this.Lobby.GetAllUsers().OrderByDescending(usr => usr.Score).Select(usr =>
+                    new UnityImage
+                    {
+                        Title = new UnityField<string> { Value = usr.DisplayName },
+                        Base64Pngs = new List<string>
+                        {
+                            usr.SelfPortrait
+                        },
+                        VoteCount = new UnityField<int?> { Value = usr.Score },
+                    }).ToList()
+            };               
         }
     }
 }

@@ -18,13 +18,13 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                   stateTimeoutDuration: displayTimeDuration,
                   exit: new WaitForStateTimeoutDuration_StateExit(waitingPromptGenerator:Prompts.DisplayText(Prompts.Text.LookAtTheScreen)))
         {
-            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
+            this.UnityView = new UnityView(this.Lobby)
             {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
-                Title = new StaticAccessor<string> { Value = "Memorize this drawing" },
-                UnityImages = new StaticAccessor<IReadOnlyList<Legacy_UnityImage>>
+                ScreenId = TVScreenId.ShowDrawings,
+                Title = new UnityField<string> { Value = "Memorize this drawing" },
+                UnityObjects = new UnityField<IReadOnlyList<UnityObject>>
                 {
-                    Value = new List<Legacy_UnityImage>()
+                    Value = new List<UnityObject>()
                     {
                         displayDrawing.GetUnityImage()
                     } 

@@ -25,23 +25,5 @@ namespace Backend.Games.Common
                 },
             };
         }
-        public static Legacy_UnityView GenerateInvalidVersionLegacyView()
-        {
-            return new Legacy_UnityView(lobby: null)
-            {
-                ScreenId = new StaticAccessor<TVScreenId>()
-                {
-                    Value = TVScreenId.ShowDrawings
-                },
-                Title = new StaticAccessor<string>()
-                {
-                    Value = "Your Unity Client Needs To Be Updated"
-                },
-                Instructions = new StaticAccessor<string>()
-                {
-                    Value = "Go to scrawlbrawl.tv/lobby to update it"
-                },
-            };
-        }
     }
 }

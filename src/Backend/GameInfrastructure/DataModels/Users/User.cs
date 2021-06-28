@@ -11,7 +11,7 @@ namespace Backend.GameInfrastructure.DataModels.Users
     /// <summary>
     /// Class representing a user instance.
     /// </summary>
-    public class User : IAccessorHashable, IMember
+    public class User: IMember
     {
         /// <summary>
         /// Class that can be safely serialized and returned as a response.
@@ -34,6 +34,8 @@ namespace Backend.GameInfrastructure.DataModels.Users
         public IReadOnlyList<Guid> Tags { get; }
 
         public Guid Source => Id;
+
+        private List<Action> UserStatusListeners { get; } = new List<Action>();
 
         /// <summary>
         /// The lobby id the user is a part of. Null indicates the user is unregistered.
@@ -66,6 +68,11 @@ namespace Backend.GameInfrastructure.DataModels.Users
         public void SetLobbyJoinTime()
         {
             LobbyJoinTime = DateTime.UtcNow;
+        }
+
+        public void AddStatusListener(Action listener)
+        {
+            this.UserStatusListeners.Add(listener);
         }
 
         /// <summary>
@@ -115,10 +122,32 @@ namespace Backend.GameInfrastructure.DataModels.Users
             }
         }
 
+        private UserStatus InternalStatus;
+
         /// <summary>
         /// Gets the current status of what the user is doing.
         /// </summary>
-        public UserStatus Status { get; set; }
+        public UserStatus Status {
+            get
+            {
+                return InternalStatus;
+            }
+            set
+            {
+                if (InternalStatus == value)
+                {
+                    return;
+                }
+                InternalStatus = value;
+
+                // Listeners probably just the lobby which is just setting a dirty bit.
+                // shouldn't be too costly.
+                foreach(var listener in UserStatusListeners)
+                {
+                    listener.Invoke();
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the earliest timer the user is under the influence of.
@@ -185,21 +214,6 @@ namespace Backend.GameInfrastructure.DataModels.Users
         public void RefreshStateTimeoutTracker()
         {
             this.EarliestStateTimeout = this.StateStack.Select(state => state.ApproximateStateEndTime).Min();
-        }
-
-        public int GetIAccessorHashCode()
-        {
-            var hash = new HashCode();
-            hash.Add(Id);
-            hash.Add(LobbyId);
-            hash.Add(AuthenticatedUserPrincipalName);
-            hash.Add(IsPartyLeader);
-            hash.Add(DisplayName);
-            hash.Add(SelfPortrait);
-            hash.Add(ScoreHolder.GetIAccessorHashCode()); 
-            hash.Add(Status);
-            hash.Add(Identifier);
-            return hash.ToHashCode();
         }
     }
 }

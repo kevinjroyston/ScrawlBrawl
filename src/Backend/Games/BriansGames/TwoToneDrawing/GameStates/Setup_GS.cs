@@ -226,10 +226,10 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                 return getDrawings;
             });
 
-            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
+            this.UnityView = new UnityView(this.Lobby)
             {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
-                Instructions = new StaticAccessor<string> { Value = "Complete all the prompts on your devices." },
+                ScreenId = TVScreenId.WaitForUserInputs,
+                Instructions = new UnityField<string> { Value = "Complete all the prompts on your devices." },
             };
         }
 

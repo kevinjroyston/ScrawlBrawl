@@ -66,25 +66,25 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             this.Entrance.Transition(VoteAndRevealChainGenerator);
         }
 
-        public virtual Legacy_UnityView VotingUnityViewGenerator()
+        public virtual UnityView VotingUnityViewGenerator()
         {
             RevealViewOverrides ??= VotingViewOverrides;
-            List<Legacy_UnityImage> unityObjects = new List<Legacy_UnityImage>();
+            List<UnityImage> unityObjects = new List<UnityImage>();
             for (int i = 0; i < this.Objects.Count(); i++)
             {
                 unityObjects.Add(this.Objects[i].VotingUnityObjectGenerator(i + 1));
             }
-            return new Legacy_UnityView(this.Lobby)
+            return new UnityView(this.Lobby)
             {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.ShowDrawings },
-                Title = new StaticAccessor<string> { Value = this.VotingViewOverrides?.Title },
-                Instructions = new StaticAccessor<string> { Value = this.VotingViewOverrides?.Instructions },
-                UnityImages = new StaticAccessor<IReadOnlyList<Legacy_UnityImage>> { Value = unityObjects }
+                ScreenId = TVScreenId.ShowDrawings,
+                Title = new UnityField<string> { Value = this.VotingViewOverrides?.Title },
+                Instructions = new UnityField<string> { Value = this.VotingViewOverrides?.Instructions },
+                UnityObjects = new UnityField<IReadOnlyList<UnityObject>> { Value = unityObjects }
             };
         }
-        public virtual Legacy_UnityView RevealUnityViewGenerator()
+        public virtual UnityView RevealUnityViewGenerator()
         {
-            List<Legacy_UnityImage> unityObjects = new List<Legacy_UnityImage>();
+            List<UnityImage> unityObjects = new List<UnityImage>();
             for (int i = 0; i < this.Objects.Count(); i++)
             {
                 unityObjects.Add(this.Objects[i].RevealUnityObjectGenerator(i + 1));
@@ -94,14 +94,13 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             {
                 usersToScoreDelta.Add(user.Id.ToString(), user.ScoreHolder.ScoreAggregates[Score.Scope.Reveal]);
             }
-            return new Legacy_UnityView(this.Lobby)
+            return new UnityView(this.Lobby)
             {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.VoteRevealImageView },
-                Title = new StaticAccessor<string> { Value = this.RevealViewOverrides?.Title },
-                Instructions = new StaticAccessor<string> { Value = this.RevealViewOverrides?.Instructions },
-                UnityImages = new StaticAccessor<IReadOnlyList<Legacy_UnityImage>> { Value = unityObjects },
-                VoteRevealUsers = new StaticAccessor<IReadOnlyList<User>> { Value = Lobby.GetAllUsers() },//UsersToAnswersVotedFor.Keys.Select(user => user.UserId).ToList() },
-                UserIdToDeltaScores = new StaticAccessor<IDictionary<string, int>> { Value = usersToScoreDelta }
+                ScreenId = TVScreenId.VoteRevealImageView,
+                Title = new UnityField<string> { Value = this.RevealViewOverrides?.Title },
+                Instructions = new UnityField<string> { Value = this.RevealViewOverrides?.Instructions },
+                UnityObjects = new UnityField<IReadOnlyList<UnityObject>> { Value = unityObjects },
+                IsRevealing= true,
             };
         }
     }

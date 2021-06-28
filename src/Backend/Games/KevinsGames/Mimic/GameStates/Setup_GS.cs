@@ -81,10 +81,10 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                 drawingTimeDuration: drawingTimeDuration));
             this.Entrance.Transition(stateChain);
             stateChain.Transition(this.Exit);
-            this.Legacy_UnityView = new Legacy_UnityView(this.Lobby)
+            this.UnityView = new UnityView(this.Lobby)
             {
-                ScreenId = new StaticAccessor<TVScreenId> { Value = TVScreenId.WaitForUserInputs },
-                Instructions = new StaticAccessor<string> { Value = "Complete all the drawings on your devices." },
+                ScreenId = TVScreenId.WaitForUserInputs,
+                Instructions = new UnityField<string> { Value = "Complete all the drawings on your devices." },
             };
         }
 
