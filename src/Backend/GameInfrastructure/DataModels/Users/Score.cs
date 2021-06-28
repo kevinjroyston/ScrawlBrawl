@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Backend.GameInfrastructure.DataModels.Users
 {
-    public class Score : IAccessorHashable
+    public class Score
     {
         public IReadOnlyDictionary<Scope, int> ScoreAggregates => _ScoreAggregates;
         public IReadOnlyDictionary<Scope, IReadOnlyDictionary<Reason, int>> ScoreBreakdowns => _ScoreBreakdowns.ToDictionary((kvp)=>kvp.Key, (kvp)=>(IReadOnlyDictionary<Reason,int>)kvp.Value);
@@ -92,16 +92,6 @@ namespace Backend.GameInfrastructure.DataModels.Users
                 _ScoreAggregates.AddOrIncrease(scp, amount, amount);
                 _ScoreBreakdowns.GetOrAdd(scp, new ConcurrentDictionary<Reason, int>()).AddOrIncrease(reason, amount, amount);
             }
-        }
-
-        public int GetIAccessorHashCode()
-        {
-            var hash = new HashCode();
-            foreach (Scope scp in Enum.GetValues(typeof(Scope)))
-            {
-                hash.Add(_ScoreAggregates.GetOrAdd(scp, 0));
-            }
-            return hash.ToHashCode();
         }
     }
 }

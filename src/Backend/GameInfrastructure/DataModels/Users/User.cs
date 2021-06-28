@@ -11,7 +11,7 @@ namespace Backend.GameInfrastructure.DataModels.Users
     /// <summary>
     /// Class representing a user instance.
     /// </summary>
-    public class User : IAccessorHashable, IMember
+    public class User: IMember
     {
         /// <summary>
         /// Class that can be safely serialized and returned as a response.
@@ -144,7 +144,7 @@ namespace Backend.GameInfrastructure.DataModels.Users
                 // shouldn't be too costly.
                 foreach(var listener in UserStatusListeners)
                 {
-                    listener.Invoke(this);
+                    listener.Invoke();
                 }
             }
         }
@@ -214,21 +214,6 @@ namespace Backend.GameInfrastructure.DataModels.Users
         public void RefreshStateTimeoutTracker()
         {
             this.EarliestStateTimeout = this.StateStack.Select(state => state.ApproximateStateEndTime).Min();
-        }
-
-        public int GetIAccessorHashCode()
-        {
-            var hash = new HashCode();
-            hash.Add(Id);
-            hash.Add(LobbyId);
-            hash.Add(AuthenticatedUserPrincipalName);
-            hash.Add(IsPartyLeader);
-            hash.Add(DisplayName);
-            hash.Add(SelfPortrait);
-            hash.Add(ScoreHolder.GetIAccessorHashCode()); 
-            hash.Add(Status);
-            hash.Add(Identifier);
-            return hash.ToHashCode();
         }
     }
 }
