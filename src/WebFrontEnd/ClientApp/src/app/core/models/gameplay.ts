@@ -34,6 +34,7 @@ namespace GameplayPrompts {
       heightInPx: number;
       premadeDrawing: string;
       canvasBackground: string;
+      saveWithBackground: boolean;
       localStorageId: string;
     }
     export interface SliderPromptMetadata {

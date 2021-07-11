@@ -83,6 +83,7 @@ namespace Backend.APIs.Controllers
                 RefreshTimeInMs = 10000,
                 SubPrompts = new SubPrompt[]
                     {
+/*
                     new SubPrompt
                     {
                         Prompt = "this is a simple slider",
@@ -199,6 +200,7 @@ namespace Backend.APIs.Controllers
                         Prompt = "This is a sub prompt that asks for radio button answers",
                         Answers = new string[] {"This is an answer", "another answer", "the best answer", "all of the above"}
                     },
+*/
                     new SubPrompt
                     {
                         Prompt = "This is a sub prompt with a background and local storage",
@@ -207,7 +209,8 @@ namespace Backend.APIs.Controllers
                             CanvasBackground="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
                             DrawingType=Common.DataModels.Enums.DrawingType.Generic,
                         }
-                    },
+                    } /*,
+
                     new SubPrompt
                     {
                         Prompt = "This is a sub prompt with a premade drawing",
@@ -230,7 +233,7 @@ namespace Backend.APIs.Controllers
                         Prompt = "This is a sub prompt with a dropdown",
                         Dropdown = new string[]{ "A", "B", "C" }
                     }
-
+*/
                     },
                 SubmitButton = true
             });

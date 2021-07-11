@@ -2,6 +2,7 @@ import { Directive, ElementRef, HostListener, AfterViewInit, ViewChild, Input, O
 import { throttle } from "app/utils/throttle";
 import PastColorsService from "./colorpicker/pastColors";
 import * as drawingUtils from "app/utils/drawingutils";
+import { typeSourceSpan } from "@angular/compiler";
 
 const MaxUndoCount = 20;
 
@@ -18,9 +19,9 @@ export class DrawingDirective {
   ctx: any;
   @Input() lineColor: string;
   @Input() lineWidth: number;
-  @Input() premadeDrawing: string;
   @Input() drawingMode: DrawingModes;
   @Input() galleryRecentDrawing: string;
+  @Input() drawingOptions:DrawingPromptMetadata;
   @Output() drawingEmitter = new EventEmitter();
   private defaultLineColor: string;
   element;
@@ -28,6 +29,7 @@ export class DrawingDirective {
   private userIsDrawing: boolean;
   private lastX: number;
   private lastY: number;
+  private bkImg = new Image();
 
   constructor(element: ElementRef) {
     console.log("Instantiating canvas");
@@ -59,10 +61,13 @@ export class DrawingDirective {
   ngAfterViewInit() {
     if (this.galleryRecentDrawing) {
       this.loadImageString(this.galleryRecentDrawing)
-    } else if (this.premadeDrawing) {
-      this.loadImageString(this.premadeDrawing);
+    } else if (this.drawingOptions.premadeDrawing) {
+      this.loadImageString(this.drawingOptions.premadeDrawing);
     } else {
       this.onImageChange(null, false); /* so undo will work */
+    }
+    if (this.drawingOptions.saveWithBackground && (this.drawingOptions.canvasBackground.length > 0)) {
+      this.bkImg.src = this.drawingOptions.canvasBackground;
     }
   }
 
@@ -76,11 +81,31 @@ export class DrawingDirective {
     this.onImageChange(null);
   }
 
+  fetchImageOnBackground(){
+    var imgStr="";
+    var mem=document.createElement('canvas');
+    var mctx=mem.getContext('2d');
+    mem.width=this.ctx.canvas.width;
+    mem.height=this.ctx.canvas.height;
+    
+    // draw the bk to the mem canvas
+    mctx.drawImage(this.bkImg,0,0);
+    
+    // draw the main canvas to the mem canvas
+    mctx.drawImage(this.ctx.canvas,0,0);   
+    imgStr = mem.toDataURL(); 
+    return imgStr;
+  }
+
   onImageChange(imgStr: string, emitChange = true) {
     if (this.ctx.canvas.width == 0) return;
 
     if (!imgStr) {
-      imgStr = this.element.toDataURL();
+      if (this.drawingOptions.saveWithBackground) {
+        imgStr = this.fetchImageOnBackground()
+      } else {
+        imgStr = this.element.toDataURL();
+      }
     }
     if (emitChange) {
       this.emitImageChange(imgStr);
@@ -234,9 +259,32 @@ export class DrawingDirective {
     return this.defaultLineColor;
   }
 
-  drawCircle(x, y): void {
+  drawStar(x, y, r, n, inset) {
+    this.ctx.save();
+    this.ctx.strokeStyle = this.getColor();
+    this.ctx.fillStyle = this.getColor();
+    this.ctx.beginPath();
+    this.ctx.translate(x, y);
+    this.ctx.moveTo(0,0-r);
+    for (var i = 0; i < n; i++) {
+      this.ctx.rotate(Math.PI / n);
+      this.ctx.lineTo(0, 0 - (r*inset));
+      this.ctx.rotate(Math.PI / n);
+      this.ctx.lineTo(0, 0 - r);
+    }
+    this.ctx.closePath();
+    this.ctx.fill();
+    this.ctx.restore();
+}
+ 
+drawCircle(x, y): void {
     if (this.drawingMode == DrawingModes.Erase)
       this.ctx.globalCompositeOperation = "destination-out";
+
+//    this.drawStar(x,y,this.lineWidth / 2,5,0.4)
+    //return;
+
+
     this.ctx.beginPath();
     var radius = this.lineWidth / 2.1; // Arc radius
     var startAngle = 0; // Starting point on circle
@@ -287,5 +335,6 @@ export interface DrawingPromptMetadata {
   colorList: string[];
   premadeDrawing: string;
   canvasBackground: string;
+  saveWithBackground: boolean;
   galleryOptions: GalleryOptionsMetadata;
 }

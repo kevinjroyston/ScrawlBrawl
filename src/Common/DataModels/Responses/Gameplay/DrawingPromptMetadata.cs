@@ -40,5 +40,7 @@ namespace Common.DataModels.Responses
         /// If provided, will be rendered behind the canvas.
         /// </summary>
         public string CanvasBackground { get; set; }
+
+        public bool SaveWithBackground { get; set; } = false;
     }
 }

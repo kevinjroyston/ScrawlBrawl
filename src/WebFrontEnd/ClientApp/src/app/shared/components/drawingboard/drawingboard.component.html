@@ -31,7 +31,7 @@
         </div>
         <!-- Drawing Canvas -->
         <div class="drawb-canvas">
-            <canvas appDrawing class="draw-canvas" [width]="drawingWidth" [height]="drawingHeight" [ngStyle]="{'background-image': 'url(' + drawingOptions.canvasBackground + ')'}" [premadeDrawing]="drawingOptions.premadeDrawing" [lineColor]="selectedColor" [lineWidth]="selectedBrushSize"
+            <canvas appDrawing class="draw-canvas" [width]="drawingWidth" [height]="drawingHeight" [ngStyle]="{'background-image': 'url(' + drawingOptions.canvasBackground + ')'}" [drawingOptions]="drawingOptions" [lineColor]="selectedColor" [lineWidth]="selectedBrushSize"
                 [drawingMode]="drawingMode" (drawingEmitter)="onDrawingChange($event)" [galleryRecentDrawing]="this.galleryRecentDrawing">
             </canvas>
         </div>
