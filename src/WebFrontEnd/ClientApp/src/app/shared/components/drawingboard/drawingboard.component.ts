@@ -61,6 +61,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
                 colorList: null,
                 premadeDrawing: "",
                 canvasBackground: "",
+                saveWithBackground: false,
                 galleryOptions:{    
                     galleryAutoLoadMostRecent: true,
                 }
@@ -75,7 +76,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
 
         // Any time drawing type is swapped, try and store a recent drawing.
         this.storeMostRecentDrawing();
-    }
+    } 
 
     private setDrawingType(typ){
         if (this._drawingType == typ) { return }
