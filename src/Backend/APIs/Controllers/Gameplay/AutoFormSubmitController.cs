@@ -3,6 +3,7 @@ using Backend.GameInfrastructure;
 using Backend.GameInfrastructure.DataModels.Users;
 using Backend.APIs.DataModels.Enums;
 using Common.DataModels.Requests;
+using Common.DataModels;
 using System;
 using Backend.GameInfrastructure.DataModels.States.UserStates;
 using Common.Code.Validation;
@@ -25,7 +26,7 @@ namespace Backend.APIs.Controllers
             [FromBody] UserFormSubmission formData,
             string id)
         {
-            if (!Sanitize.SanitizeString(id, out string error, Constants.RegexStrings.UserId,50,50))
+            if (!Sanitize.SanitizeString(id, out string error, Common.DataModels.Constants.RegexStrings.UserId,50,50))
             {
                 return BadRequest(error);
             }

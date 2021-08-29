@@ -154,12 +154,12 @@ namespace Backend.APIs.Controllers.LobbyManagement
 
         private (bool, string) InternalJoinLobby(JoinLobbyRequest request, string id)
         {
-            if (!Sanitize.SanitizeString(request.DisplayName, out string _))
+            if (!Sanitize.SanitizeString(request.DisplayName, minLength:1, maxLength:30, error: out string _))
             {
                 return (false, "DisplayName invalid.");
             }
 
-            if (!Sanitize.SanitizeString(request.LobbyId, out string _))
+            if (!Sanitize.SanitizeString(request.LobbyId, minLength: 1, maxLength: 10, error: out string _))
             {
                 return (false, "LobbyId invalid.");
             }

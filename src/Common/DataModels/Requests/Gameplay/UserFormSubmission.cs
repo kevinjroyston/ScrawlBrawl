@@ -9,7 +9,8 @@ namespace Common.DataModels.Requests
 {
     public class UserFormSubmission
     {
-        [RegexSanitizer("^([0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12})$")]
+        // TODO: do we need this if the type is Guid??
+        [RegexSanitizer(Constants.RegexStrings.Guid)]
         public Guid Id { get; set; }
 
         public List<UserSubForm> SubForms { get; set; }

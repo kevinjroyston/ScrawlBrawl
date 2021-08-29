@@ -224,7 +224,7 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             if (this.DontRefreshLaterThan.HasValue)
             {
                 userPrompt.Prompt.RefreshTimeInMs = Math.Min(userPrompt.RefreshTimeInMs, (int)this.DontRefreshLaterThan.Value.Subtract(DateTime.Now).TotalMilliseconds);
-                userPrompt.Prompt.RefreshTimeInMs = Math.Max(userPrompt.Prompt.RefreshTimeInMs, 100);
+                userPrompt.Prompt.RefreshTimeInMs = Math.Max(userPrompt.Prompt.RefreshTimeInMs, (int)Constants.MinimumRefreshTime.TotalMilliseconds);
             }
             else
             {

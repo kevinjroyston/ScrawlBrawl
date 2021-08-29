@@ -40,7 +40,7 @@ namespace Backend.APIs.Controllers.UserManagement
                 return new BadRequestResult();
             }
 
-            if (!Sanitize.SanitizeString(id, out string error, Constants.RegexStrings.UserId))
+            if (!Sanitize.SanitizeString(id, out string error, Common.DataModels.Constants.RegexStrings.UserId))
             {
                 return BadRequest(error);
             }

@@ -37,7 +37,7 @@ namespace Backend.APIs.Controllers
                 return DebugResponse();
             }
 
-            if (!Sanitize.SanitizeString(id, out string error, Constants.RegexStrings.UserId, 50, 50))
+            if (!Sanitize.SanitizeString(id, out string error, Common.DataModels.Constants.RegexStrings.UserId, 50, 50))
             {
                 return BadRequest(error);
             }
