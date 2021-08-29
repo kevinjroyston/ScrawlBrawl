@@ -12,11 +12,11 @@ using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
 using Backend.GameInfrastructure.DataModels.States.UserStates;
 
-namespace Backend.Games.BriansGames.Common.GameStates
+namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
 {
-    public class DisplayPeople_GS : GameState
+    public class DisplayContestants_GS : GameState
     {
-        public DisplayPeople_GS(
+        public DisplayContestants_GS(
             Lobby lobby,
             string title,
             IReadOnlyList<Person> peopleList,     

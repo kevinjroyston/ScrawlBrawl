@@ -6,13 +6,14 @@ namespace Common.DataModels.Enums
 {
     public enum GameModeId
     {
-        BodyBuilder,
-        Imposter,
-        Mimic,
-        ChaoticCoop,
-        BodySwap,
-        FriendQuiz,
-        ImposterText,
-        StoryTime,
+        BodyBuilder=0,
+        Imposter=1,
+        Mimic=2,
+        ChaoticCoop=3,
+        //BodySwap=4,
+        FriendQuiz=5,
+        //ImposterText=6,
+        //StoryTime=7,
+        TextBodyBuilder=8,
     }
 }

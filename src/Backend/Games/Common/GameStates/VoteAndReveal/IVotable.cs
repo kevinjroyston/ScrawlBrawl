@@ -16,8 +16,8 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
         [Newtonsoft.Json.JsonIgnore]
         public List<VoteInfo> VotesCastForThisObject { get; }
         
-        public abstract UnityImage VotingUnityObjectGenerator(int numericId);
-        public abstract UnityImage RevealUnityObjectGenerator(int numericId);
+        public abstract UnityObject VotingUnityObjectGenerator(int numericId);
+        public abstract UnityObject RevealUnityObjectGenerator(int numericId);
         public bool ShouldHighlightReveal { get; }
     }
 }

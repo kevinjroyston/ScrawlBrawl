@@ -22,7 +22,7 @@ namespace Backend.Games.Common.DataModels
         public UnityObjectOverrides UnityImageRevealOverrides { get; set; }
         public UnityObjectOverrides UnityImageVotingOverrides { get; set; }
 
-        public virtual UnityImage GetUnityImage(
+        public virtual UnityObject GetUnityObject(
             Color? backgroundColor = null,
             string imageIdentifier = null,
             Guid? imageOwnerId = null,
@@ -41,6 +41,8 @@ namespace Backend.Games.Common.DataModels
                 Convert.ToInt32(backgroundColor.Value.B)
             };
 
+            // This pattern is pretty bad. Should be returning some kind of generic UnityObject which children can turn into whatever type is needed (and add more fields).
+            // instead using a questionable copy constructor pattern.
             return new UnityImage
             {
                 BackgroundColor = new UnityField<IReadOnlyList<int>> { Value = backgroundColorList },
@@ -58,16 +60,16 @@ namespace Backend.Games.Common.DataModels
             };
 
         }
-        public UnityImage VotingUnityObjectGenerator(int numericId)
+        public UnityObject VotingUnityObjectGenerator(int numericId)
         {
-            return GetUnityImage(
+            return GetUnityObject(
                 imageIdentifier: numericId.ToString(),
                 title: this.UnityImageVotingOverrides.Title,
                 header: this.UnityImageVotingOverrides.Header);
         }
-        public UnityImage RevealUnityObjectGenerator(int numericId)
+        public UnityObject RevealUnityObjectGenerator(int numericId)
         {
-            return GetUnityImage(
+            return GetUnityObject(
                 imageIdentifier: numericId.ToString(),
                 title: this.UnityImageRevealOverrides.Title,
                 header: this.UnityImageRevealOverrides.Header,

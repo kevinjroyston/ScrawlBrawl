@@ -12,7 +12,7 @@ namespace Backend.Games.Common.DataModels.UserCreatedObjects.UserCreatedUnityObj
     {
         public List<T> UserDrawings { get; set; }
 
-        public override UnityImage GetUnityImage(
+        public override UnityObject GetUnityObject(
             Color? backgroundColor = null,
             string imageIdentifier = null,
             Guid? imageOwnerId = null,
@@ -22,7 +22,7 @@ namespace Backend.Games.Common.DataModels.UserCreatedObjects.UserCreatedUnityObj
             IReadOnlyList<Guid> usersWhoVotedFor = null,
             bool revealThisObject = false)
         {
-            UnityImage baseImage = base.GetUnityImage(backgroundColor, imageIdentifier, imageOwnerId, title, header, voteCount, usersWhoVotedFor, revealThisObject);
+            UnityImage baseImage = new UnityImage(base.GetUnityObject(backgroundColor, imageIdentifier, imageOwnerId, title, header, voteCount, usersWhoVotedFor, revealThisObject));
             baseImage.Base64Pngs = UserDrawings.Select(drawing=>drawing.Drawing).ToList().AsReadOnly();
             return baseImage;
         }

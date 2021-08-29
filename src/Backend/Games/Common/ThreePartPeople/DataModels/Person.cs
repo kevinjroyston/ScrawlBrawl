@@ -64,7 +64,7 @@ namespace Backend.Games.Common.ThreePartPeople.DataModels
         {
             return new List<string> { BodyPartDrawings[BodyPartType.Head].Drawing, BodyPartDrawings[BodyPartType.Body].Drawing, BodyPartDrawings[BodyPartType.Legs].Drawing }.AsReadOnly();
         }
-        public override UnityImage GetUnityImage(
+        public override UnityObject GetUnityObject(
             Color? backgroundColor = null,
             string imageIdentifier = null,
             Guid? imageOwnerId = null,
@@ -74,7 +74,7 @@ namespace Backend.Games.Common.ThreePartPeople.DataModels
             IReadOnlyList<Guid> usersWhoVotedFor = null,
             bool revealThisObject = false)
         {
-            UnityImage baseImage = base.GetUnityImage(backgroundColor, imageIdentifier, imageOwnerId, title, header, voteCount, usersWhoVotedFor, revealThisObject);
+            UnityImage baseImage = new UnityImage(base.GetUnityObject(backgroundColor, imageIdentifier, imageOwnerId, title, header, voteCount, usersWhoVotedFor, revealThisObject));
             baseImage.Base64Pngs = GetOrderedDrawings();
             baseImage.SpriteGridWidth = 1;
             baseImage.SpriteGridHeight = 3;
