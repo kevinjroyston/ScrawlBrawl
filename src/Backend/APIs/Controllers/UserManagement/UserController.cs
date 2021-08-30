@@ -44,6 +44,16 @@ namespace Backend.APIs.Controllers.UserManagement
             {
                 return BadRequest(error);
             }
+
+            // If in a lobby and it has not started, leave it gracefully
+            User user = GameManager.MapIdentifierToUser(id, out bool newUser);
+            if (!newUser && user?.Lobby != null)
+            {
+                // Lets the lobby know we are trying to leave. It may keep the
+                // object around if the game has already started.
+                user.Lobby.TryLeaveLobbyGracefully(user);
+            }
+            // Leave the user object alone as it may be important to the lobby that it is untouched.
             GameManager.UnregisterUser(id);
             return new OkResult();
         }

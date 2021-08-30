@@ -209,6 +209,8 @@ namespace Backend.GameInfrastructure
             // Should be a quick check in most scenarios
             if (!this.UsersInLobby.Values.Any((user)=>user.IsPartyLeader))
             {
+                // Technically there is a race condition where you can have multiple leaders
+                // but nothing breaks so whatever.
                 user.IsPartyLeader = true;
             }
 
@@ -226,6 +228,34 @@ namespace Backend.GameInfrastructure
 
             return true;
         }
+
+        /// <summary>
+        /// Leaves the lobby if it is convenient to do so (i.e. game has not started).
+        /// </summary>
+        /// <remarks>Does not actually modify the user's fields which track the lobby.</remarks>
+        public void TryLeaveLobbyGracefully(User user)
+        {
+            if (!this.IsGameInProgress())
+            {
+                if (this.UsersInLobby.TryRemove(user.Id, out User _))
+                {
+                    if (user.IsPartyLeader)
+                    {
+                        FindNewPartyLeader();
+                    }
+                    this.WaitForLobbyStart.UnityViewDirty = true;
+                }
+            }
+        }
+        private void FindNewPartyLeader()
+        {
+            var firstUser = this.UsersInLobby.Values.FirstOrDefault();
+            if (firstUser != null)
+            {
+                firstUser.IsPartyLeader = true;
+            }
+        }
+
         public void Inlet(User user, UserStateResult result, UserFormSubmission formSubmission)
         {
             if (!this.UsersInLobby.ContainsKey(user.Id))
