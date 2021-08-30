@@ -19,6 +19,7 @@ using Backend.GameInfrastructure.ControlFlows.Exit;
 using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
 using Common.Code.Extensions;
+using Backend.GameInfrastructure.DataModels.Enums;
 
 namespace Backend.Games.BriansGames.BattleReady.GameStates
 {

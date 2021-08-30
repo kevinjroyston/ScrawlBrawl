@@ -52,7 +52,10 @@ namespace Backend.GameInfrastructure
             // Log error to console (TODO redirect to file on release builds).
             Debug.WriteLine(Invariant($"ERROR ERROR ERROR ERROR ERROR ~~~~~~~~~~~~~~~~~~~~~~~~~ {error}"));
             Debug.Assert(false, error.ToString());
-            Logger.LogError(error, $"LobbyId:{lobbyId},ErrorType:{type},User:[{user?.DisplayName}|{user?.Id}|{user?.AuthenticatedUserPrincipalName}]");
+            Lobby lobby = GetLobby(lobbyId);
+
+            // Todo improve format of below to json or something.
+            Logger.LogError(error, $"LobbyId:{lobbyId},ErrorType:{type},Game:{lobby?.SelectedGameMode},NumUsers:{lobby?.GetAllUsers()?.Count},User:[{user?.DisplayName}|{user?.Id}|{user?.AuthenticatedUserPrincipalName}]");
 
             if (!string.IsNullOrWhiteSpace(lobbyId))
             {

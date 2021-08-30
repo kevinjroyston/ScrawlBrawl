@@ -60,14 +60,6 @@ namespace Backend.Games.Common.GameStates
                                 return CountingUserTimeoutHandler(user, input, usersToNumSubmitted[user]);
                             });
 
-                        setupUserState.AddPerUserExitListener((User user) =>
-                        {
-                            if (usersToNumSubmitted.All(kvp => kvp.Value >= numExpectedPerUser)) // if after this users submission everyone has finished the expected amount it rushes everyone through
-                            {
-                                this.HurryUsers();
-                            }
-                        });
-
                         return setupUserState;
                     }
                     else
