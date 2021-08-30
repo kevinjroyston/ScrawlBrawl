@@ -122,7 +122,10 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                             });
                         return (true, string.Empty);
                     },
-                    userTimeoutHandler: (User user, UserFormSubmission input)=> { return UserTimeoutAction.None; }));
+                    userTimeoutHandler: (User user, UserFormSubmission input)=>
+                    {
+                        return UserTimeoutAction.None;
+                    }));
                 index++;
             }
 

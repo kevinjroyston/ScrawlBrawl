@@ -132,7 +132,7 @@ namespace Backend.Games.KevinsGames.Mimic
                                     RoundTracker drawingsRoundTracker = new RoundTracker();
                                     roundTrackers.Add(drawingsRoundTracker);
                                     drawingsRoundTracker.originalDrawer = originalDrawing.Owner;
-                                    drawingsRoundTracker.UsersToUserDrawings.AddOrUpdate(originalDrawing.Owner, originalDrawing, (User user, UserDrawing drawing) => originalDrawing);
+                                    drawingsRoundTracker.UsersToUserDrawings[originalDrawing.Owner] = originalDrawing;
 
                                     DisplayOriginal_GS displayGS = new DisplayOriginal_GS(
                                         lobby: lobby,

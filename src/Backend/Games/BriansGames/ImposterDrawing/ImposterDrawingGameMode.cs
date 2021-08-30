@@ -116,7 +116,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing
                     {
                         if (counter == 0)
                         {
-                            return GetVotingAndRevealState(prompt, (prompt.UsersToDrawings.Values.Any(val=>val==null)), votingTimer);   
+                            return GetVotingAndRevealState(prompt, votingTimer);
                         }
                         if (counter == 1)
                         {
@@ -137,39 +137,48 @@ namespace Backend.Games.BriansGames.ImposterDrawing
             }
         }
 
-        private State GetVotingAndRevealState(Prompt prompt, bool possibleNone, TimeSpan? votingTime)
+        private State GetVotingAndRevealState(Prompt prompt, TimeSpan? votingTime)
         {
             int indexOfImposter = 0;
-            List<User> randomizedUsersToShow = prompt.UsersToDrawings.Keys.OrderBy(_=>Rand.Next()).ToList();
-            List<UserDrawing> drawings = randomizedUsersToShow.Select(user => prompt.UsersToDrawings[user]).ToList();
 
-            List<string> userNames = randomizedUsersToShow.Select(user => user.DisplayName).ToList();
+            // Filter out entries which didnt provide a drawing!
+            var randomizedSubset = prompt.UsersToDrawings.Where(kvp => kvp.Value != null).ToList().OrderBy(_ => Rand.Next()).ToList();
+            List<User> randomizedUsersToShow = randomizedSubset.Select(kvp => kvp.Key).ToList();
+            List<UserDrawing> drawings = randomizedSubset.Select(kvp => kvp.Value).ToList();
+
+            // If we have less drawings than we should, none is an option.
+            bool possibleNone = drawings.Count != prompt.UsersToDrawings.Count;
+            // If the correct drawing is not present, then none is CORRECT.
             bool noneIsCorrect = possibleNone && !randomizedUsersToShow.Contains(prompt.Imposter);
             if (!noneIsCorrect)
             {
-                indexOfImposter = drawings.IndexOf(prompt.UsersToDrawings[prompt.Imposter]);
+                indexOfImposter = randomizedUsersToShow.IndexOf(prompt.Imposter);
             }
             if (possibleNone)
             {
+                User owner;
                 if (noneIsCorrect)
                 {
                     indexOfImposter = drawings.Count;
-                    drawings.Add(new UserDrawing()
-                    {
-                        Owner = prompt.Imposter,
-                        Drawing = Constants.Drawings.NoneUnityImage,
-                    });
-                    randomizedUsersToShow.Add(prompt.Imposter);
+                    owner = prompt.Imposter;
                 }
                 else
                 {
-                    drawings.Add(new UserDrawing()
-                    {
-                        Owner = prompt.Owner,
-                        Drawing = Constants.Drawings.NoneUnityImage,
-                    });
-                    randomizedUsersToShow.Add(prompt.Owner);
+                    // Treat owner as the None because it is ez.
+                    owner = prompt.Owner;
                 }
+
+                drawings.Add(new UserDrawing()
+                {
+                    Owner = owner,
+                    ShouldHighlightReveal = noneIsCorrect,
+                    Drawing = Constants.Drawings.NoneUnityImage,
+                    UnityImageRevealOverrides = new UnityObjectOverrides
+                    {
+                        Title = "None of them",
+                    },
+                });
+                randomizedUsersToShow.Add(owner);
             }
 
             return new DrawingVoteAndRevealState(

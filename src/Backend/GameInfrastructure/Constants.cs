@@ -9,11 +9,15 @@ namespace Backend.GameInfrastructure
         /// </summary>
         public static TimeSpan DefaultBufferTime { get; } = TimeSpan.FromMilliseconds(25.0);
 
+        // TODO: pull from settings instead of using debug regions.
         /// <summary>
         /// The amount of time to wait (after fetch current content) before considering a user "Inactive"
         /// </summary>
+#if !DEBUG
         public static TimeSpan UserInactivityTimer { get; } = TimeSpan.FromSeconds(11.0);
-
+#else
+        public static TimeSpan UserInactivityTimer { get; } = TimeSpan.FromDays(2.0);
+#endif
         /// <summary>
         /// The amount of time to wait (after last submit) before deleting the user.
         /// </summary>
