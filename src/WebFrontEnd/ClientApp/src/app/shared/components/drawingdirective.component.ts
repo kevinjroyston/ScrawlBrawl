@@ -229,7 +229,6 @@ export class DrawingDirective {
   @HostListener("window:scroll", ["$event"])
   @throttle(200)
   onScrollEvent($event) {
-    console.log("scrolling");
     if (this.userIsDrawing) {
       this.stopDrawing();
     }

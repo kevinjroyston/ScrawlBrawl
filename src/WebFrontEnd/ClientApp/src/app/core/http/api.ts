@@ -27,6 +27,7 @@ type LobbyRequest = {
 
 type GameRequest = {
     type: "Game",
+    db: "0" | "1",
     path: "CurrentContent" | "FormSubmit" | "AutoFormSubmit",
     body?: {}
 }
