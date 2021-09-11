@@ -1,6 +1,20 @@
 <!--Create Lobby button shows on load-->
 <div class="no-lobby" *ngIf="lobby === null">
-    <app-create-lobby (onCreateLobby)="onCreateLobby($event)"></app-create-lobby>
+    <div class="already-in-lobby" *ngIf="inAGame">
+        <h2 class="title">
+            You are currently in a lobby.
+        </h2>
+
+        If you want to be the leader of your own game,<br> you must leave this lobby first.<br>
+        <div class="in-lobby-button">
+            <scrawlbutton (click)="onDeleteUser()">
+                Leave Lobby
+            </scrawlbutton>
+        </div>
+    </div>
+    <div class="no-lobby" *ngIf="!inAGame">
+        <app-create-lobby (onCreateLobby)="onCreateLobby($event)"></app-create-lobby>
+    </div>
 </div>
 
 <div class="lobby-wrapper" *ngIf="lobby">

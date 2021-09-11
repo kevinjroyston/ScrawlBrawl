@@ -16,6 +16,8 @@ namespace Common.DataModels.Responses
         /// </summary>
         public UserPromptId UserPromptId { get; set; } = UserPromptId.Unknown;
 
+        public PromptHeaderMetadata PromptHeader { get; set; } = new PromptHeaderMetadata();
+
         public string GameIdString { get { return this.GameId?.ToString()??String.Empty; } }
 
         public string LobbyId { get; set; } = String.Empty;

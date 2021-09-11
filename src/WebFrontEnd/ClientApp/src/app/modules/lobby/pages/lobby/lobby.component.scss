@@ -14,9 +14,20 @@ h3 {
 
 .no-lobby {
     display: flex;
-    align-items: center;
+    align-items: flex-start; //center;
     justify-content: center;
     height: 100%;
+}
+
+.already-in-lobby {
+    text-align: center;
+    align-items: flex-start;
+}
+
+.in-lobby-button {
+    padding-top: 20px;
+    align-items: center;
+    justify-content: center;
 }
 
 .lobby-top {

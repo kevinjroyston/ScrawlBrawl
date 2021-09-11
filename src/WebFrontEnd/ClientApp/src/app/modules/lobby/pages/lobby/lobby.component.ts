@@ -24,7 +24,10 @@ import { NotificationService } from '@core/services/notification.service';
 
 export class LobbyManagementComponent {
     public lobby!: Lobby.LobbyMetadata;
+    public userLobby!: Lobby.LobbyMetadata; /* user has joined this lobby, but user is NOT lobby owner */
     public error: string;
+    public inAGame: boolean = false;
+
     @ViewChild(GameAssetDirective) gameAssetDirective;
 
     constructor(@Inject(UnityViewer) private unityViewer:UnityViewer, @Inject(GameModeList) public gameModeList: GameModeList, @Inject(API) private api: API, 
@@ -51,7 +54,20 @@ export class LobbyManagementComponent {
                     });
                 }
             },
-            error: () => { this.lobby = null;}
+            error: () => { 
+                this.lobby = null;
+                this.onGetUserLobby()
+            }
+        });
+    }
+
+    async onGetUserLobby() {
+        this.api.request({ type: "User", path: "GetLobby" }).subscribe({
+            next: async (result) => {
+                this.userLobby = result as Lobby.LobbyMetadata;
+                this.inAGame = (this.userLobby != null);
+            },
+            error: () => { this.inAGame = false }
         });
     }
 
@@ -83,6 +99,19 @@ export class LobbyManagementComponent {
                 await this.onGetLobby()
             },
             error: async (error) => { this.error = error.error; await this.onGetLobby(); }
+        });
+    }
+
+    async onDeleteUser() {
+        await this.api.request({ type: "User", path: "Delete" }).subscribe({
+            next: async data => {
+                console.log("Left lobby");
+                this.userLobby = null;
+                this.inAGame = false;
+            },
+            error: async (error) => {
+                console.error(error);
+            }
         });
     }
 

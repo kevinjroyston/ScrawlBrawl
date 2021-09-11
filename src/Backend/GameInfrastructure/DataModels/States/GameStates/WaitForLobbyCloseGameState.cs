@@ -25,10 +25,30 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             this.UnityViewDirty = true;
         }
 
+        public static UserPrompt LobbyWaitingPromptGenerator(User user) => new UserPrompt()
+        {
+            UserPromptId = UserPromptId.Waiting,
+            Description = Prompts.Text.WaitingForGameToStart,
+            SubPrompts = new SubPrompt[]
+                    {
+                        new SubPrompt
+                            {
+                            DisplayUsers = new UserListPromptMetadata {
+                                UserCount=12,
+                                Description="Players in lobby "+user.LobbyId,
+                                UserRecords= new UserRecordType[] { new UserRecordType {PlayerName="test 1" },
+                                             new UserRecordType {PlayerName="test 2" },} }, // generate list of all users in the lobby
+                            },
+                        new SubPrompt
+                            {
+                            WaitingForGameStart = new WaitingForGameStartMetadata { },
+                            },
+                    }
+        };
         public WaitForLobbyCloseGameState(Lobby lobby)
             : base(
                   lobby: lobby,
-                  exit: new WaitForTrigger_StateExit(Prompts.DisplayText(Prompts.Text.WaitingForGameToStart))
+                  exit: new WaitForTrigger_StateExit( LobbyWaitingPromptGenerator )
                   )
         {
             Arg.NotNull(lobby, nameof(lobby));
