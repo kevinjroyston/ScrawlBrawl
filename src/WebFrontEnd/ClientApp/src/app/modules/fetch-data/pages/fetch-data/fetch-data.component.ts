@@ -271,6 +271,8 @@ export class FetchDataComponent implements OnDestroy
         }
         if (autoSubmit && !this.anythingEverTouched) return false; // if nothing has been touched, do not autosubmit
 
+        this.anythingEverTouched = false; // reset so future form submits work
+
         // Populate IDs.
         userSubmitData.id = this.userPrompt.id;
         for (let i = 0; i < userSubmitData.subForms.length; i++) {
@@ -293,7 +295,7 @@ export class FetchDataComponent implements OnDestroy
         console.warn('Submitting response', body);
         var response;
 
-        await this.api.request({ type: "Game", db: (this.anythingEverTouched ? "1" : "0"), path: autoSubmit ? "AutoFormSubmit" : "FormSubmit", body: body }).subscribe({
+        await this.api.request({ type: "Game", path: autoSubmit ? "AutoFormSubmit" : "FormSubmit", body: body }).subscribe({
             next: async (data) => {
                 console.log("POST Request is successful ", data);
                 this.fetchUserPrompt();
