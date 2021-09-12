@@ -1,6 +1,7 @@
 namespace GameplayPrompts {
     export interface UserPrompt {
       id: string;
+      promptHeader: PromptHeaderMetadata;
       gameIdString: string;
       lobbyId: string;
       refreshTimeInMs: number;
@@ -27,6 +28,8 @@ namespace GameplayPrompts {
       drawing: DrawingPromptMetadata;
       slider: SliderPromptMetadata;
       selector: SelectorPromptMetadata;
+      displayUsers: UserListPromptMetadata;
+      waitingForGameStart: WaitingForGameStartMetadata;
     }
     export interface DrawingPromptMetadata {
       colorList: string[];
@@ -61,10 +64,28 @@ namespace GameplayPrompts {
     export interface SuggestionMetadata {
       suggestionKey: string;
     }
-
     export interface TutorialMetadata {
       hideClasses: string[];
     }
+    export interface PromptHeaderMetadata {
+      maxProgress: number;
+      currentProgress: number;
+      promptLabel:string;
+    }
+    export interface UserRecordType
+    {
+      playerName: string;
+    }
+    export interface UserListPromptMetadata
+    {
+      userCount: number;
+      description: string;
+      userRecords: UserRecordType[];
+    }
+    export interface WaitingForGameStartMetadata
+    {
+    }
+
 }
 
 export default GameplayPrompts

@@ -15,7 +15,7 @@ type APIRequest = LobbyRequest | UserRequest | GameRequest;
 
 type UserRequest = {
     type: "User",
-    path: "Delete" | "Get",
+    path: "Delete" | "Get" | "GetLobby",
     body?: {}
 }
 
@@ -27,6 +27,7 @@ type LobbyRequest = {
 
 type GameRequest = {
     type: "Game",
+    db: "0" | "1",
     path: "CurrentContent" | "FormSubmit" | "AutoFormSubmit",
     body?: {}
 }
@@ -95,6 +96,7 @@ export class API {
             case "User":
                 switch (r.path) {
                     case "Get":
+                    case "GetLobby":
                     case "Delete": obs = this.Get(r);
                         break;
                     default: return;

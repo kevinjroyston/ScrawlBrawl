@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from './material.module';
 import { DrawingBoard } from './components/drawingboard/drawingboard.component'
 import { Slider } from './components/slider/slider.component';
+import { DisplayUsers } from './components/displayusers/displayusers.component';
+import { WaitingForGameStart } from './components/waitingforgamestart/waitingforgamestart.component';
 import { UnityComponent } from './components/unity/unity.component';
 import { NgxBootstrapSliderModule } from 'ngx-bootstrap-slider';
 import { ColorPickerModule } from 'ngx-color-picker';
@@ -59,6 +61,8 @@ import { TutorialComponent } from './components/tutorial/tutorial.component';
   declarations: [
     DrawingBoard,
     Slider,
+    DisplayUsers,
+    WaitingForGameStart,
     TutorialComponent,
     UnityComponent,
     ColorPickerComponent,
@@ -102,6 +106,8 @@ import { TutorialComponent } from './components/tutorial/tutorial.component';
     SimpleButtonComponent,
     SimpleLinkComponent,
     Slider,
+    DisplayUsers,
+    WaitingForGameStart,
     TutorialComponent,
     UnityComponent,
     FormsModule,

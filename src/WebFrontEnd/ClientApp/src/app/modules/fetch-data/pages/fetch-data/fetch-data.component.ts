@@ -1,4 +1,4 @@
-import { Component, Inject, ViewEncapsulation, Pipe, OnDestroy } from '@angular/core';
+import { Component, HostListener, Inject, ViewEncapsulation, Pipe, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup} from '@angular/forms';
 import { DomSanitizer, SafeHtml, SafeStyle, SafeScript, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
 import GameplayPrompts from '@core/models/gameplay' 
@@ -48,6 +48,8 @@ export class FetchDataComponent implements OnDestroy
 {
     public userPrompt: GameplayPrompts.UserPrompt;
     public userForm;
+    public anythingEverTouched = false;
+    public anythingTouchedSinceFetch = false;
     private formBuilder: FormBuilder;
     private userPromptTimerId;
     private autoSubmitTimerId;
@@ -110,7 +112,10 @@ export class FetchDataComponent implements OnDestroy
         }
 
         // fetch the current content from the server
-        await this.api.request({ type: "Game", path: "CurrentContent"}).subscribe({
+        var dirtyBit = this.anythingTouchedSinceFetch;
+        this.anythingTouchedSinceFetch = false;
+
+        await this.api.request({ type: "Game", db: (dirtyBit ? "1" : "0"), path: "CurrentContent"}).subscribe({
             next: async data => {
                 var prompt = data as GameplayPrompts.UserPrompt;
                 if (data == null) // If no prompt object we have not joined lobby. Redirect accordingly.
@@ -264,7 +269,9 @@ export class FetchDataComponent implements OnDestroy
         if (this.autoSubmitTimerId) {
             this.clearAutoSubmitTimers();
         }
+        if (autoSubmit && !this.anythingEverTouched) return false; // if nothing has been touched, do not autosubmit
 
+        this.anythingEverTouched = false; // reset so future form submits work
 
         // Populate IDs.
         userSubmitData.id = this.userPrompt.id;
@@ -302,6 +309,19 @@ export class FetchDataComponent implements OnDestroy
             }
         });
     }
+
+    @HostListener("document:gesturestart")
+    @HostListener("document:mouseup")
+    @HostListener("mouseup")// are both of these mouseup calls needed?
+    @HostListener("mousedown")
+    @HostListener("keydown")
+    @HostListener("touchstart")
+    @HostListener("window:scroll")
+    onListener() {
+        this.anythingEverTouched = true;
+        this.anythingTouchedSinceFetch = true;
+    }
+  
 
     createSubForm(): FormGroup {
         return this.formBuilder.group({

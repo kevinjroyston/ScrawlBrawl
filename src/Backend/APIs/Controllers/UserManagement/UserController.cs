@@ -57,5 +57,33 @@ namespace Backend.APIs.Controllers.UserManagement
             GameManager.UnregisterUser(id);
             return new OkResult();
         }
+        [HttpGet]
+        [Route("GetLobby")]
+        public IActionResult GetLobby(string id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return new BadRequestResult();
+            }
+            if (!Sanitize.SanitizeString(id, out string error, Common.DataModels.Constants.RegexStrings.UserId))
+            {
+                return BadRequest(error);
+            }
+
+            User user = GameManager.MapIdentifierToUser(id, out bool newUser);
+
+            if (user == null)
+            {
+                return StatusCode(500, "Something went wrong finding that user, try again");
+            }
+
+            if (user.Lobby != null)
+            {
+                return new OkObjectResult(user.Lobby.GenerateLobbyMetadataResponseObject());
+            }
+
+             return StatusCode(404, "Lobby doesn't exist.");
+        }
+
     }
 }

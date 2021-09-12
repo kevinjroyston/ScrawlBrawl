@@ -6,7 +6,11 @@
     <form ng-app="myApp" class="form" *ngIf="userPrompt" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)">
         <div *ngIf="userPrompt.submitButton" class="sticky-nav-wrapper">
             <div class="sticky-nav">
-                <div *ngIf="timerDisplay!=''" class="timerPanel" [ngStyle]="{'background-color': timerColor}">{{timerDisplay}}</div>
+                <div *ngIf="timerDisplay!=''" class="timerPanel" [ngStyle]="{'background-color': timerColor}">{{timerDisplay}}
+                    <div *ngIf="userPrompt.promptHeader.MaxProgress > 0">
+                        {{userPrompt.promptHeader.promptLabel}} {{userPrompt.promptHeader.currentProgress}} of {{userPrompt.promptHeader.MaxProgress}}
+                    </div>
+                </div>
                 <div class="Error" *ngIf="userPrompt.error">
                     {{ userPrompt.error }}
                 </div>
@@ -57,9 +61,11 @@
                         </div>
                     </div>
 
-                    <div *ngIf="subPrompt.selector" appSelector class="SelectorHolder" [selectorParameters]="subPrompt.selector" formControlName="selector">
+                    <div *ngIf="subPrompt.selector" appSelector class="SelectorHolder" [selectorParameters]="subPrompt.selector" formControlName="selector"></div>
 
-                    </div>
+                    <displayusers *ngIf="subPrompt.displayUsers" class="DisplayUsersHolder" [displayUsersParameters]="subPrompt.displayUsers"></displayusers>
+
+                    <waitingforgamestart *ngIf="subPrompt.waitingForGameStart" class="WaitForGameStartHolder" [waitingForGameStartParameters]="subPrompt.waitingForGameStart"></waitingforgamestart>
 
                     <slider *ngIf="subPrompt.slider" class="SliderHolder" [sliderParameters]="subPrompt.slider" formControlName="slider"></slider>
                     <input type="color" *ngIf="subPrompt.colorPicker" formControlName="color" class="color-input" (click)='openColorPicker($event, j)' [value]="subPrompt.color" [ngStyle]="{'background-color': subPrompt.color}">
@@ -81,25 +87,6 @@
             {{userPrompt.submitButtonText}}
         </scrawlbutton>
         <div *ngIf="userPrompt.submitButton" gameAsset [gameAssetClass]="'game-css'" [gameAssetType]="'prompts-css'" [gameAssetID]="userPrompt.gameIdString">
-        </div>
-        <div *ngIf="!userPrompt.submitButton">
-            <br><br>
-            <!--unity [viewerSize]="'largeViewer'"></unity-->
-            <scrawlbutton (click)="galleryEditorVisible=!galleryEditorVisible">Gallery Editor</scrawlbutton>
-            <br><br>
-            <div [hidden]="!galleryEditorVisible">
-                <select #galleryDD class="Dropdown" (change)="currentDrawingType=galleryDD.value">
-                    <option *ngFor="let gallery of galleryTypes; let i = index" [selected]="(currentDrawingType==gallery.drawingType)" value="{{gallery.drawingType}}">
-                        {{gallery.galleryDesc}}
-                    </option>
-                </select>
-                <div>
-                    <drawingboard [galleryEditor]="true" [drawingType]="currentDrawingType"></drawingboard>
-                </div>
-                <br>
-            </div>
-            <div [hidden]="galleryEditorVisible" gameAsset [gameAssetClass]="'game-css'" [gameAssetType]="'waiting-css'" [gameAssetID]="userPrompt.gameIdString">
-            </div>
         </div>
     </form>
 </div>

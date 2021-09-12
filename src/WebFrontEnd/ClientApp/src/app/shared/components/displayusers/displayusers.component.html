@@ -1,0 +1,9 @@
+<div class="userDisplayDescription" *ngIf="displayUsersParameters.description.length > 0">
+    {{displayUsersParameters.description}}
+</div>
+<div class="userDisplay" *ngFor="let userRecord of displayUsersParameters.userRecords; let j = index">
+    {{userRecord.playerName}}
+</div>
+<div class="userDisplay" *ngIf="displayUsersParameters.userCount > displayUsersParameters.userRecords.length">
+    + {{displayUsersParameters.userCount - displayUsersParameters.userRecords.length}} more
+</div>
