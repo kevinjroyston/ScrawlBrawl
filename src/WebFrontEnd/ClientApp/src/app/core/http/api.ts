@@ -1,5 +1,5 @@
 
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, Subject, Subscriber } from 'rxjs';
 import { AuthError, InteractionRequiredAuthError } from 'msal';
 import { MsalService, MsalBroadcastService } from '@azure/msal-angular';
@@ -15,19 +15,21 @@ type APIRequest = LobbyRequest | UserRequest | GameRequest;
 
 type UserRequest = {
     type: "User",
+    params?: {},
     path: "Delete" | "Get" | "GetLobby",
     body?: {}
 }
 
 type LobbyRequest = {
     type: "Lobby",
+    params?: {},
     path: "Get" | "Create" | "Configure" | "Start" | "Games" | "Delete" | "Join",
     body?: {}
 }
 
 type GameRequest = {
     type: "Game",
-    db: "0" | "1",
+    params?: {},
     path: "CurrentContent" | "FormSubmit" | "AutoFormSubmit",
     body?: {}
 }
@@ -37,19 +39,7 @@ type GameRequest = {
 })
 export class API {
 
-    private getHttpOptions = {
-        params: {
-            id: "--Set by constructor--"
-        }, 
-    };
-    private postHttpOptions = {
-        headers: new HttpHeaders({
-            'Content-Type': 'application/json',
-        }),
-        params: {
-            id: "--Set by constructor--"
-        }
-    };
+    private userId: string;
 
     // TODO: instantiate api via dependency injection / make it injectable.
     constructor(
@@ -58,8 +48,7 @@ export class API {
         @Inject(MsalService) private authService: MsalService,
         @Inject('BASE_API_URL') private baseUrl: string)
     {
-        this.postHttpOptions.params.id = userId;
-        this.getHttpOptions.params.id = userId;
+        this.userId = userId;
     }
 
 
@@ -119,11 +108,13 @@ export class API {
 
     Get(r: APIRequest): Observable<Object> {
         var url = this.getAPIPath(r);
+        var options = {params:r.params ? r.params : {}}
+        options.params["id"]=this.userId;
 
         // I do not like this sam I am.
         var observable = new Observable(subscriber =>
         {
-            this.http.get(url, this.getHttpOptions).subscribe(
+            this.http.get(url, options).subscribe(
             {
                 next: (x) => {
                     subscriber.next(x);
@@ -136,7 +127,7 @@ export class API {
                             this.getScopesForEndpoint(url)
                         ).subscribe({
                             next: () => {
-                                this.http.get(url, this.getHttpOptions).subscribe({
+                                this.http.get(url, options).subscribe({
                                     next: (x) => subscriber.next(x),
                                     error: (err) => subscriber.error(err),
                                     complete: () => subscriber.complete()
@@ -151,7 +142,7 @@ export class API {
                             this.getScopesForEndpoint(url)
                         ).subscribe({
                             next: () => {
-                                this.http.get(url, this.getHttpOptions).subscribe({
+                                this.http.get(url, options).subscribe({
                                     next: (x) => subscriber.next(x),
                                     error: (err) => subscriber.error(err),
                                     complete: () => subscriber.complete()
@@ -175,10 +166,17 @@ export class API {
 
     Post(r: APIRequest): Observable<Object> {
         var url = this.getAPIPath(r);
+        var options = {
+            params: r.params ? r.params : {},
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+            }),
+        };
+        options.params["id"]=this.userId;
 
         // I do not like this sam I am.
         var observable = new Observable(subscriber => {
-            this.http.post(url, r.body, this.postHttpOptions).subscribe(
+            this.http.post(url, r.body, options).subscribe(
                 {
                     next: (x) => {
                         subscriber.next(x);
@@ -191,7 +189,7 @@ export class API {
                                 this.getScopesForEndpoint(url)
                             ).subscribe({
                                 next: () => {
-                                    this.http.get(url, this.getHttpOptions).subscribe({
+                                    this.http.get(url, options).subscribe({
                                         next: (x) => subscriber.next(x),
                                         error: (err) => subscriber.error(err),
                                         complete: () => subscriber.complete()

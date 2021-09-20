@@ -11,7 +11,7 @@ import Galleries from '@core/models/gallerytypes';
 import { Suggestions } from '@core/http/suggestions';
 import { UnityViewer } from '@core/http/viewerInjectable';
 import * as drawingUtils from "app/utils/drawingutils";
-import { HttpHeaders } from '@angular/common/http';
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { UserManager } from '@core/http/userManager';
 import { NotificationService } from '@core/services/notification.service';
 
@@ -50,10 +50,12 @@ export class FetchDataComponent implements OnDestroy
     public userForm;
     public anythingEverTouched = false;
     public anythingTouchedSinceFetch = false;
+    public displayUsersMetadata: GameplayPrompts.UserListMetadata;
     private formBuilder: FormBuilder;
     private userPromptTimerId;
     private autoSubmitTimerId;
     private timerDisplayIntervalId;
+
 
     timerDisplay = '';
     timerRemaining = 0;
@@ -114,16 +116,28 @@ export class FetchDataComponent implements OnDestroy
         // fetch the current content from the server
         var dirtyBit = this.anythingTouchedSinceFetch;
         this.anythingTouchedSinceFetch = false;
+        var thisId = this.userPrompt? this.userPrompt.id : "";
 
-        await this.api.request({ type: "Game", db: (dirtyBit ? "1" : "0"), path: "CurrentContent"}).subscribe({
+        await this.api.request({ type: "Game", params: {promptId: thisId, db: (dirtyBit ? "1" : "0")}, path: "CurrentContent"}).subscribe({
             next: async data => {
-                var prompt = data as GameplayPrompts.UserPrompt;
-                if (data == null) // If no prompt object we have not joined lobby. Redirect accordingly.
+                var currentContent = data as GameplayPrompts.CurrentContent;
+                if (currentContent == null) // If no prompt object we have not joined lobby. Redirect accordingly.
                 {
                     console.error("Joined lobby but not seeing a prompt.");
                     this.router.navigate(['/join']); // an error occurred, go to the join page
                     return;
                 }
+                                
+                this.displayUsersMetadata = currentContent.userListMetadata;
+
+                // if the current content has the same as id as the current, return
+                if (this.userPrompt && this.userPrompt.id == currentContent.promptId) {
+                    this.refreshUserPromptTimer(currentContent.refreshTimeInMs);
+                    return;
+                }
+
+                var prompt = currentContent.userPrompt;
+
                 if (prompt.submitButton) {
                     document.body.classList.add('makeRoomForToolbar');
                 } else {
@@ -131,17 +145,12 @@ export class FetchDataComponent implements OnDestroy
                 }
       
                 this.unityViewer.UpdateLobbyId(prompt.lobbyId);
-                
+
                 // Too lazy to figure out how to properly deserialize things.
                 prompt.autoSubmitAtTime = !prompt.autoSubmitAtTime ? null : new Date(prompt.autoSubmitAtTime);
                 prompt.currentServerTime = !prompt.currentServerTime ? null : new Date(prompt.currentServerTime);
-                console.log('Fetched Prompt', prompt);
 
-                // if the current content has the same as id as the current, return
-                if (this.userPrompt && this.userPrompt.id == prompt.id) {
-                    this.refreshUserPromptTimer(prompt.refreshTimeInMs);
-                    return;
-                }
+                console.log('Fetched Prompt', prompt);
 
                 // If you have reached this far it means we have switched to a new prompt, time to cleanup!
 

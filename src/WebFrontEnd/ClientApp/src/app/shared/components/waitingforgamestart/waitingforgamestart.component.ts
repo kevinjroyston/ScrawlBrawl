@@ -9,13 +9,17 @@ import GameplayPrompts from '@core/models/gameplay'
   styleUrls: ['./waitingforgamestart.component.css'],
 })
 export class WaitingForGameStart {
-  @Input() displayUsersParameters:GameplayPrompts.UserListPromptMetadata;
+  @Input() displayUsersParameters:GameplayPrompts.UserListMetadata;
+  @Input() lobbyId:string;
   element;
 
   constructor(element: ElementRef, @Inject(API) private api: API) {
     this.element = element.nativeElement;
   }
 
+  launchViewer(){
+    window.open('/viewer/index.html?lobby='+this.lobbyId,'_blank');
+}  
   async onDeleteUser() {
     if (!confirm("Are you sure you want to leave this lobby?")) return false;
     await this.api.request({ type: "User", path: "Delete" }).subscribe({

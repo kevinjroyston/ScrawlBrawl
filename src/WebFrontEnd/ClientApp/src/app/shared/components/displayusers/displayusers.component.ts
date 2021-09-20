@@ -8,7 +8,8 @@ import GameplayPrompts from '@core/models/gameplay'
   styleUrls: ['./displayusers.component.css'],
 })
 export class DisplayUsers {
-  @Input() displayUsersParameters:GameplayPrompts.UserListPromptMetadata;
+  @Input() displayUsersParameters:GameplayPrompts.UserListMetadata;
+  @Input() displayUsersMode:string;
   element;
 
   constructor(element: ElementRef) {

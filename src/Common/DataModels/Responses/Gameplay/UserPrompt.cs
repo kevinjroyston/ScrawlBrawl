@@ -70,6 +70,12 @@ namespace Common.DataModels.Responses
         /// </summary>
         public TutorialMetadata Tutorial { get; set; }
 
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public UserListMetadataMode? DisplayUsers { get; set; }
+
+        public string DisplayUsersString { get { return this.DisplayUsers?.ToString() ?? String.Empty; } }
+
         /// <summary>
         /// A list of sub-prompts.
         /// </summary>

@@ -158,7 +158,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                     lobby: this.Lobby,
                     waitingPromptGenerator: (User user) =>
                     {
-                        return Prompts.DisplayText("Waiting for others to draw.")(user);
+                        return Prompts.DisplayWaitingText("Waiting for others to draw.")(user);
                     });
                 var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: waitForDrawings, stateDuration: DrawingTimeDuration);
                 getDrawings.Transition(this.Exit);

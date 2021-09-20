@@ -53,7 +53,7 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                 },
                 exit: new WaitForUsers_StateExit(
                     lobby: this.Lobby,
-                    waitingPromptGenerator: (User user) => (user == roundTracker.originalDrawer)?Prompts.DisplayText("Others are recreating your masterpiece.  Enjoy the turmoil.")(user):Prompts.DisplayText("Waiting for others to finish mimicking.")(user)
+                    waitingPromptGenerator: (User user) => (user == roundTracker.originalDrawer)?Prompts.DisplayWaitingText("Others are recreating your masterpiece.  Enjoy the turmoil.")(user):Prompts.DisplayWaitingText("Waiting for others to finish mimicking.")(user)
                     ),
                 maxPromptDuration: drawingTimeDuration);
 

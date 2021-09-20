@@ -10,3 +10,14 @@
 .lobby-wait-header {
     text-align: center;
 }
+
+.desktopContent {
+    width: 100%;
+    display: none;
+}
+
+@media all and (max-width: 959px) {
+    .desktopContent {
+        display: block;
+    }
+}

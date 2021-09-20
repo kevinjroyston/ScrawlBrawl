@@ -16,6 +16,14 @@ namespace GameplayPrompts {
       error: string;
       tutorial: TutorialMetadata;
     }
+    
+    export interface CurrentContent{
+      promptId: string;
+      refreshTimeInMs: number;
+      userPrompt: UserPrompt;
+      userListMetadata: UserListMetadata;
+    }
+
     export interface SubPrompt {
       id: string;
       prompt: string;
@@ -28,7 +36,7 @@ namespace GameplayPrompts {
       drawing: DrawingPromptMetadata;
       slider: SliderPromptMetadata;
       selector: SelectorPromptMetadata;
-      displayUsers: UserListPromptMetadata;
+      displayUsersString: string;
       waitingForGameStart: WaitingForGameStartMetadata;
     }
     export interface DrawingPromptMetadata {
@@ -76,10 +84,9 @@ namespace GameplayPrompts {
     {
       playerName: string;
     }
-    export interface UserListPromptMetadata
+    export interface UserListMetadata
     {
       userCount: number;
-      description: string;
       userRecords: UserRecordType[];
     }
     export interface WaitingForGameStartMetadata
