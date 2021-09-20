@@ -27,7 +27,7 @@ namespace Backend.APIs.Controllers
         private GameManager GameManager { get; set; }
 
         [HttpGet]
-        public IActionResult Get(string id)
+        public IActionResult Get(string id, string promptId)
         {
             if (!ModelState.IsValid)
             {
@@ -70,7 +70,7 @@ namespace Backend.APIs.Controllers
                     var currentContent = new CurrentContent
                     {
                         PromptId = prompt.Id,
-                        UserPrompt = prompt,
+                        UserPrompt = (promptId == prompt.Id.ToString()) ? null : prompt,
                         RefreshTimeInMs = prompt.RefreshTimeInMs,
                         UserListMetadata = GetUserListMetadata(prompt,user)
                     };

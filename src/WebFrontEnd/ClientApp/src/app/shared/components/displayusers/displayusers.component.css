@@ -1,7 +1,4 @@
-.userDisplayDescription {
-    color: var(--blue-secondary);
-}
-
 .userDisplay {
-    color: var(--black-primary);
+    color: var(--blue-primary);
+    padding-left: 15px;
 }
