@@ -36,6 +36,8 @@
         <div class="Description" *ngIf="userPrompt.description">
             {{ userPrompt.description }}
         </div>
+        <displayusers *ngIf="userPrompt.displayUsersString" class="DisplayUsersHolder" [displayUsersParameters]="displayUsersMetadata" [displayUsersMode]="userPrompt.DisplayUsersString"></displayusers>
+
         <div class="subprompts" *ngIf="userPrompt.subPrompts">
             <div class="subprompt" *ngFor="let subPrompt of userPrompt.subPrompts; let j = index" formArrayName="subForms">
                 <div class="subprompt-inner" [formGroupName]="j">
@@ -63,7 +65,6 @@
 
                     <div *ngIf="subPrompt.selector" appSelector class="SelectorHolder" [selectorParameters]="subPrompt.selector" formControlName="selector"></div>
 
-                    <displayusers *ngIf="subPrompt.displayUsers" class="DisplayUsersHolder" [displayUsersParameters]="subPrompt.displayUsers"></displayusers>
 
                     <waitingforgamestart *ngIf="subPrompt.waitingForGameStart" class="WaitForGameStartHolder" [waitingForGameStartParameters]="subPrompt.waitingForGameStart"></waitingforgamestart>
 

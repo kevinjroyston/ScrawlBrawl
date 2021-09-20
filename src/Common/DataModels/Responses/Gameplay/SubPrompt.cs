@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.DataModels.Responses.Gameplay;
+using System;
 
 namespace Common.DataModels.Responses
 {
@@ -50,8 +51,6 @@ namespace Common.DataModels.Responses
         /// If this is not null a drawing will be prompted with the specified metadata.
         /// </summary>
         public DrawingPromptMetadata Drawing { get; set; }
-
-        public UserListPromptMetadata DisplayUsers { get; set; }
 
         public WaitingForGameStartMetadata WaitingForGameStart { get; set; }
 

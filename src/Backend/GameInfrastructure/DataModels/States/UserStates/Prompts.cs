@@ -2,6 +2,7 @@
 using Backend.GameInfrastructure.Extensions;
 using Common.DataModels.Enums;
 using Common.DataModels.Responses;
+using Common.DataModels.Responses.Gameplay;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,13 +24,25 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             };
         }
 
-        public static Func<User, UserPrompt> DisplayText(string description = null, UserPromptId? promptId=null) {
+        public static Func<User, UserPrompt> DisplayText(string description = null, UserPromptId? promptId = null)
+        {
             description ??= Text.Waiting;
             promptId ??= UserPromptId.Waiting;
             return (User user) => new UserPrompt()
             {
                 UserPromptId = promptId.Value,
                 Description = description,
+            };
+        }
+        public static Func<User, UserPrompt> DisplayWaitingText(string description = null, UserPromptId? promptId = null)
+        {
+            description ??= Text.Waiting;
+            promptId ??= UserPromptId.Waiting;
+            return (User user) => new UserPrompt()
+            {
+                UserPromptId = promptId.Value,
+                Description = description,
+                DisplayUsers = UserListMetadataMode.WaitingForPlayers,
             };
         }
         public static class Text

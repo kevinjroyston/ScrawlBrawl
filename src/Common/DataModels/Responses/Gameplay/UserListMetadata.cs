@@ -8,11 +8,9 @@ namespace Common.DataModels.Responses
     {
         public string PlayerName { get; set; }
     }
-    public class UserListPromptMetadata
+    public class UserListMetadata
     {
             public int UserCount { get; set; } = 0;
-
-            public string Description { get; set; } = "";
 
             public UserRecordType[] UserRecords { get; set; }
 

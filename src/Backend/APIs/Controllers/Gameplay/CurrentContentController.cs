@@ -7,6 +7,9 @@ using Common.DataModels.Responses;
 using System;
 using System.Diagnostics;
 using Common.Code.Validation;
+using Common.DataModels.Responses.Gameplay;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Backend.APIs.Controllers
 {
@@ -62,7 +65,16 @@ namespace Backend.APIs.Controllers
 
                 lock (user.LockObject)
                 {
-                    return new JsonResult(user.UserState.UserRequestingCurrentPrompt(user));
+                    var prompt = user.UserState.UserRequestingCurrentPrompt(user);
+
+                    var currentContent = new CurrentContent
+                    {
+                        PromptId = prompt.Id,
+                        UserPrompt = prompt,
+                        RefreshTimeInMs = prompt.RefreshTimeInMs,
+                        UserListMetadata = GetUserListMetadata(prompt,user)
+                    };
+                    return new JsonResult(currentContent);
                 }
             }
             catch (Exception e)
@@ -73,6 +85,28 @@ namespace Backend.APIs.Controllers
             }
         }
 
+        private UserListMetadata GetUserListMetadata (UserPrompt prompt, User user) 
+        {
+            if (prompt.DisplayUsers == null) return null;
+
+            IReadOnlyList<User> relevantUsers = new List<User>();
+            switch (prompt.DisplayUsers)
+            {
+                case UserListMetadataMode.AllUsers: relevantUsers = user.Lobby.GetAllUsers(); break;
+                case UserListMetadataMode.WaitingForPlayers: relevantUsers = user.Lobby.GetAllUsers().Where(user => user.Status == UserStatus.AnsweringPrompts).ToList(); break;
+                default: throw new Exception("Unknown value for DisplayUsers");
+            }
+            return new UserListMetadata
+            {
+                UserCount = relevantUsers.Count,
+                UserRecords = relevantUsers.Take(10).Select(user =>
+                      new UserRecordType
+                      {
+                          PlayerName = user.DisplayName
+                      }).ToArray()
+            };
+
+        }
         private IActionResult DebugResponse()
         {
             return new JsonResult(new UserPrompt

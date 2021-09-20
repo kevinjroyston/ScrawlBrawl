@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 using static System.FormattableString;
+using Backend.GameInfrastructure.DataModels.States.UserStates;
 
 namespace Backend.GameInfrastructure.ControlFlows.Exit
 {
@@ -32,8 +33,18 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
         /// <param name="waitingPromptGenerator">The waiting state to use while waiting for the trigger. The outlet of this state will be overwritten</param>
         public WaitForUsers_StateExit(
             Lobby lobby,
-            WaitForUsersType usersToWaitFor = WaitForUsersType.Active,
-            Func<User, UserPrompt> waitingPromptGenerator = null)
+            WaitForUsersType usersToWaitFor = WaitForUsersType.Active)
+               : base(Prompts.DisplayWaitingText())
+        {
+            this.Lobby = lobby;
+            this.UsersToWaitForType = usersToWaitFor;
+        }
+
+        public WaitForUsers_StateExit(
+            Lobby lobby,
+            Func<User, UserPrompt> waitingPromptGenerator,
+            WaitForUsersType usersToWaitFor = WaitForUsersType.Active
+            )
             : base(waitingPromptGenerator)
         {
             this.Lobby = lobby;
