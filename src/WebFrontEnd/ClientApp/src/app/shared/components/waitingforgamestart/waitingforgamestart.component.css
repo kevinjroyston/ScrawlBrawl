@@ -13,11 +13,18 @@
 
 .desktopContent {
     width: 100%;
-    display: none;
+    padding-top: 10px;
+    text-align: center;
+    display: block;
 }
 
-@media all and (max-width: 959px) {
+.textLink {
+    color: var(--blue-primary);
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 959px) {
     .desktopContent {
-        display: block;
+        display: none;
     }
 }

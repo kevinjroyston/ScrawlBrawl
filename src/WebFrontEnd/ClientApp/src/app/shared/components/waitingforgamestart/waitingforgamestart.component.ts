@@ -18,8 +18,9 @@ export class WaitingForGameStart {
   }
 
   launchViewer(){
-    window.open('/viewer/index.html?lobby='+this.lobbyId,'_blank');
-}  
+    window.open('/viewer/index.html?lobby='+this.lobbyId,'SBViewer');
+  }  
+  
   async onDeleteUser() {
     if (!confirm("Are you sure you want to leave this lobby?")) return false;
     await this.api.request({ type: "User", path: "Delete" }).subscribe({
