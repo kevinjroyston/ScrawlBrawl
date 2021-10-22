@@ -18,7 +18,7 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
         Active,
     }
 
-    public class WaitForUsers_StateExit : WaitForTrigger_StateExit
+    public class WaitForUsers_StateExit : WaitForTrigger_StateExit, IDisposable
     {
         private Lobby Lobby { get; }
         private bool Hurried { get; set; } = false;
@@ -144,6 +144,11 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
                 default:
                     throw new Exception(Invariant($"Something went wrong. Unknown WaitForUsersType '{type}'"));
             }
+        }
+
+        public void Dispose()
+        {
+            _timer?.Dispose();
         }
     }
 }

@@ -428,13 +428,5 @@ namespace Backend.GameInfrastructure
         {
             throw new NotImplementedException();
         }
-
-        public void Nudge()
-        {
-            if (IsGameInProgress())
-            {
-
-            }
-        }
     }
 }
