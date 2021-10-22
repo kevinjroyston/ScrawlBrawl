@@ -14,7 +14,7 @@ using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
 using Common.Code.Extensions;
 using CommonConstants=Common.DataModels.Constants;
-
+using Common.DataModels.Responses.Gameplay;
 
 namespace Backend.Games.KevinsGames.Mimic.GameStates
 {
@@ -29,6 +29,11 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                     UserPromptId = UserPromptId.Mimic_RecreateDrawing,
                     Title = Constants.UIStrings.DrawingPromptTitle,
                     Description = "Recreate the drawing you just saw to the best of your abilities",
+                    PromptHeader = new PromptHeaderMetadata
+                    {
+                        CurrentProgress = 1,
+                        MaxProgress = 1,
+                    },
                     SubPrompts = new SubPrompt[]
                     {
                         new SubPrompt

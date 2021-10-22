@@ -23,6 +23,8 @@ namespace Backend.Games.Common.GameStates
         public abstract UserPrompt CountingPromptGenerator(User user, int counter);
         public abstract (bool, string) CountingFormSubmitHandler(User user, UserFormSubmission input, int counter);
         public abstract UserTimeoutAction CountingUserTimeoutHandler(User user, UserFormSubmission input, int counter);
+
+        protected int NumExpectedPerUser { get; }
         public SetupGameState(
             Lobby lobby,
             int numExpectedPerUser,
@@ -31,6 +33,7 @@ namespace Backend.Games.Common.GameStates
             TimeSpan? setupDuration = null) 
             : base(lobby: lobby, exit: new WaitForUsers_StateExit(lobby))
         {
+            NumExpectedPerUser = numExpectedPerUser;
             ConcurrentDictionary<User, int> usersToNumSubmitted = new ConcurrentDictionary<User, int>();
             foreach (User user in lobby.GetAllUsers())
             {

@@ -5,6 +5,7 @@ using Backend.Games.TimsGames.FriendQuiz.DataModels;
 using Common.DataModels.Enums;
 using Common.DataModels.Requests;
 using Common.DataModels.Responses;
+using Common.DataModels.Responses.Gameplay;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,6 +51,11 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
             {
                 UserPromptId = UserPromptId.FriendQuiz_Query,
                 Title = this.QueryPromptTitle,
+                PromptHeader = new PromptHeaderMetadata
+                {
+                    CurrentProgress = 1,
+                    MaxProgress = 1,
+                },
                 Description = this.QueryPromptDescription,
                 SubPrompts = questions.Select(question => new SubPrompt()
                 {

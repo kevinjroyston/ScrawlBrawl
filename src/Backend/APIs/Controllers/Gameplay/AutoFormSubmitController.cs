@@ -36,6 +36,7 @@ namespace Backend.APIs.Controllers
             if (user != null)
             {
                 user.LastSubmitTime = DateTime.UtcNow;
+                user.LastSubmitType = SubmitType.Auto;
             }
 
             if (user?.UserState == null || newUser)

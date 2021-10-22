@@ -13,6 +13,7 @@ using Backend.GameInfrastructure.DataModels.Enums;
 using Backend.Games.Common.GameStates;
 using Backend.GameInfrastructure;
 using Backend.Games.Common.ThreePartPeople.Extensions;
+using Common.DataModels.Responses.Gameplay;
 
 namespace Backend.Games.BriansGames.BattleReady.GameStates
 {
@@ -20,7 +21,6 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
     {
         private Random Rand { get; } = new Random();
         private Dictionary<User, List<BodyPartType>> UsersToRandomizedBodyPartTypes { get; set; } = new Dictionary<User, List<BodyPartType>>();
-        private int NumExpectedPerUser { get; set; }
         private ConcurrentBag<PeopleUserDrawing> Drawings { get; set; }
         public SetupDrawings_GS(
             Lobby lobby,
@@ -34,7 +34,6 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                 unityInstructions: "Complete as many drawings as possible before the time runs out",
                 setupDuration: setupDurration)
         {
-            this.NumExpectedPerUser = numExpectedPerUser;
             this.Drawings = drawings;
             
             foreach(User user in lobby.GetAllUsers())
@@ -53,7 +52,12 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
             return new UserPrompt()
             {
                 UserPromptId = UserPromptId.BattleReady_BodyPartDrawing,
-                Title = Invariant($"Time to draw! Drawing {counter + 1} of {NumExpectedPerUser} expected"),
+                Title = Invariant($"Time to draw!"),
+                PromptHeader = new PromptHeaderMetadata
+                {
+                    CurrentProgress = counter + 1,    
+                    MaxProgress = NumExpectedPerUser,
+                },
                 Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",
                 SubPrompts = new SubPrompt[]
                 {

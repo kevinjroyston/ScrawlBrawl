@@ -9,15 +9,17 @@ namespace Backend.GameInfrastructure
         /// </summary>
         public static TimeSpan DefaultBufferTime { get; } = TimeSpan.FromMilliseconds(25.0);
 
-        // TODO: pull from settings instead of using debug regions.
         /// <summary>
-        /// The amount of time to wait (after fetch current content) before considering a user "Inactive"
+        /// The amount of time to wait (after fetch current content) before considering a user "Disconnected"
         /// </summary>
-#if !DEBUG
-        public static TimeSpan UserInactivityTimer { get; } = TimeSpan.FromSeconds(11.0);
-#else
-        public static TimeSpan UserInactivityTimer { get; } = TimeSpan.FromDays(2.0);
-#endif
+        public static TimeSpan UserDisconnectTimer { get; } = TimeSpan.FromSeconds(11.0);
+
+        /// <summary>
+        /// The amount of time to wait after not seeing any user input but still getting pinged to consider them "Inactive", they must also miss the previous submit..
+        /// This should be aggressively high.
+        /// </summary>
+        public static TimeSpan UserInactivityTimer { get; } = TimeSpan.FromSeconds(31.0);
+
         /// <summary>
         /// The amount of time to wait (after last submit) before deleting the user.
         /// </summary>

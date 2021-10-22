@@ -67,7 +67,7 @@ namespace Backend.GameInfrastructure
 
         public void DisconnectInactiveUsers()
         {
-            List<User> inactive = GetAllUsers().Where(user => user.Activity == UserActivity.Inactive).ToList();
+            List<User> inactive = GetAllUsers().Where(user => user.Activity != UserActivity.Active).ToList();
             if (inactive.Count == 0)
             {
                 return;
@@ -75,13 +75,8 @@ namespace Backend.GameInfrastructure
 
             foreach(User user in inactive)
             {
-                // For simplicity, tell the server to forget about the user. Could potentially lead to memory issues.
-                this.GameManager.UnregisterUser(user);
-
-                // TODO: check if user was party leader, find new party leader.
-
-                // Best effort remove the user.
-                this.UsersInLobby.Remove(user.Id, out User _);
+                TryLeaveLobbyGracefully(user);
+                GameManager.UnregisterUser(user);
             }
         }
 
@@ -403,6 +398,7 @@ namespace Backend.GameInfrastructure
                 case EndOfGameRestartType.BackToLobby:
                     InitializeAllGameStates();
                     previousEndOfGameRestart.Transition(this.WaitForLobbyStart);
+                    DisconnectInactiveUsers();
 
                     this.ResetScores();
                     break;
@@ -433,6 +429,12 @@ namespace Backend.GameInfrastructure
             throw new NotImplementedException();
         }
 
-        // TODO: unregister individual users manually as well as automatically. Handle it gracefully in the gamemode (don't wait for them on timeouts, also don't index OOB anywhere).
+        public void Nudge()
+        {
+            if (IsGameInProgress())
+            {
+
+            }
+        }
     }
 }

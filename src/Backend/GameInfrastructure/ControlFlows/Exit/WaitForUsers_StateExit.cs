@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 using static System.FormattableString;
 using Backend.GameInfrastructure.DataModels.States.UserStates;
+using System.Threading;
 
 namespace Backend.GameInfrastructure.ControlFlows.Exit
 {
@@ -25,6 +26,8 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
         private object TriggeredLock { get; } = new object();
         private ConcurrentBag<User> UsersWaiting { get; } = new ConcurrentBag<User>();
         private WaitForUsersType UsersToWaitForType { get; }
+
+        private Timer _timer { get; set; }
 
         /// <summary>
         /// Initializes a new <see cref="WaitForTrigger"/>.
@@ -62,26 +65,23 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
             base.Inlet(user, stateResult, formSubmission);
             this.UsersWaiting.Add(user);
 
-            // TODO: locks in this flow almost certainly have race conditions.
-
-            // Will recalculate active users on each submission. Slight "bug" if last user becomes inactive we still wait out the timer.
-
-            // Hurry users once all active have submitted. IFF that is the selected mode
-            if (this.UsersToWaitForType == WaitForUsersType.Active
-                && !this.Hurried
-                && this.GetUsers(WaitForUsersType.Active).IsSubsetOf(this.UsersWaiting))
+            // Start a timer after first user enters. This will check user activity status every 11 seconds.
+            if (_timer == null)
             {
                 lock (this.TriggeredLock)
                 {
-                    // UsersToWaitForType cannot change.
-                    if (!this.Hurried
-                        && this.GetUsers(WaitForUsersType.Active).IsSubsetOf(this.UsersWaiting))
+                    if (_timer == null)
                     {
-                        this.Hurried = true;
-                        this.ParentState.HurryUsers();
+                        _timer = new Timer(Nudge, null, TimeSpan.Zero,
+                            TimeSpan.FromSeconds(11));
                     }
                 }
             }
+
+            // TODO: locks in this flow almost certainly have race conditions.
+
+            // Will recalculate active users on each submission.
+            Nudge(null);
 
             // Proceed to next state once we have all users.
             if (!this.Triggered && this.GetUsers(WaitForUsersType.All).IsSubsetOf(this.UsersWaiting))
@@ -100,7 +100,33 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
                 // waiting mode :)
                 if (triggeringThread)
                 {
+                    // Clean up the timer before leaving the state.
+                    _timer?.Change(Timeout.Infinite, 0);
+                    _timer?.Dispose();
                     this.Trigger();
+                }
+            }
+        }
+
+        /// <summary>
+        /// A nudge gets called every 10 seconds if it is considered active
+        /// </summary>
+        private void Nudge(object _)
+        {
+            // Hurry users once all active have submitted. IFF that is the selected mode
+            if (this.UsersToWaitForType == WaitForUsersType.Active
+                && !this.Hurried
+                && this.GetUsers(WaitForUsersType.Active).IsSubsetOf(this.UsersWaiting))
+            {
+                lock (this.TriggeredLock)
+                {
+                    // UsersToWaitForType cannot change.
+                    if (!this.Hurried
+                        && this.GetUsers(WaitForUsersType.Active).IsSubsetOf(this.UsersWaiting))
+                    {
+                        this.Hurried = true;
+                        this.ParentState.HurryUsers();
+                    }
                 }
             }
         }

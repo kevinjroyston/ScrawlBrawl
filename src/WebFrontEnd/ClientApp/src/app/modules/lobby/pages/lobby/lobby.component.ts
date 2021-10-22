@@ -135,6 +135,10 @@ export class LobbyManagementComponent {
         this.error = null;
     }
 
+    onRerouteToPlay(){
+        this.router.navigate(['/join'])
+    }
+
     openGameInfoDialog = (event, game: number) => {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.data = {

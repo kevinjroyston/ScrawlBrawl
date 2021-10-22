@@ -27,7 +27,7 @@ namespace Backend.APIs.Controllers
         private GameManager GameManager { get; set; }
 
         [HttpGet]
-        public IActionResult Get(string id, string promptId)
+        public IActionResult Get(string id, string promptId, bool db)
         {
             if (!ModelState.IsValid)
             {
@@ -49,6 +49,12 @@ namespace Backend.APIs.Controllers
             if (user != null)
             {
                 user.LastPingTime = DateTime.UtcNow;
+
+                // Only update activity time if the dirty bit is set / they touched their device.
+                if (db)
+                {
+                    user.LastActivityTime = DateTime.UtcNow;
+                }
             }
 
             try

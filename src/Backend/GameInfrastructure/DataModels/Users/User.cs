@@ -118,7 +118,18 @@ namespace Backend.GameInfrastructure.DataModels.Users
         {
             get
             {
-                return (DateTime.UtcNow.Subtract(this.LastPingTime) < Constants.UserInactivityTimer) ? UserActivity.Active : UserActivity.Inactive;
+                if ( DateTime.UtcNow.Subtract(this.LastPingTime) >= Constants.UserDisconnectTimer)
+                {
+                    return UserActivity.Disconnected;
+                } 
+                else if ((this.LastSubmitType != SubmitType.Manual || !this.Lobby.StandardGameModeOptions.TimerEnabled) && DateTime.UtcNow.Subtract(this.LastActivityTime) >= Constants.UserInactivityTimer)
+                {
+                    // Only consider inactive if they missed the last submission. Or there aren't timers.
+                    // Note this means you can go inactive on the very first prompt (this is by design).
+                    return UserActivity.Inactive;
+                }
+
+                return UserActivity.Active;
             }
         }
 
@@ -190,12 +201,25 @@ namespace Backend.GameInfrastructure.DataModels.Users
         public DateTime LastPingTime { get; set; } = DateTime.UtcNow;
 
         /// <summary>
-        /// The last time we saw a user submission.
+        /// The last time the dirty bit was set to true on content fetch (i.e. frontend detected input).
         /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public DateTime LastActivityTime { get; set; } = DateTime.UtcNow;
+
+        /// <summary>
+        /// The last time we saw a user submission.
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public DateTime LastSubmitTime { get; set; } = DateTime.UtcNow;
+
+        /// <summary>
+        /// The type of the previous submit (Manual, Auto, None)
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public SubmitType LastSubmitType { get; set; } = SubmitType.None;
 
         public User (string userId)
         {

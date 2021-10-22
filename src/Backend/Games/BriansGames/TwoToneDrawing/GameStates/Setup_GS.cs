@@ -22,6 +22,7 @@ using Common.DataModels.Enums;
 using Common.Code.Extensions;
 using Common.Code.Helpers;
 using Common.DataModels.Interfaces;
+using Common.DataModels.Responses.Gameplay;
 
 namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
 {
@@ -86,6 +87,11 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                     {
                         UserPromptId = UserPromptId.ChaoticCooperation_Setup,
                         Title = "Game setup",
+                        PromptHeader = new PromptHeaderMetadata
+                        {
+                            CurrentProgress = 1,
+                            MaxProgress = 1,
+                        },
                         Description = "In the boxes below, enter a drawing title and "+(UseSingleColor?"the colors": "a description of each layer") + " that will be given to different players.",
                         Suggestion = new SuggestionMetadata { SuggestionKey = (this.UseSingleColor) ? "ChaoticColors-"+ LayersPerTeam : "ChaoticLayers-"+ LayersPerTeam },
                         SubPrompts = subPrompts.ToArray(),
@@ -168,8 +174,13 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                     promptGenerator: (User user) => new UserPrompt()
                     {
                         UserPromptId = UserPromptId.ChaoticCooperation_Draw,
-                        Title = Invariant($"Drawing { lambdaSafeIndex + 1} of {stateChain.Count()}"),
-                        Description = "Draw the prompt below. Keep in mind you are only drawing part of the picture!",
+                        Title = Invariant($"Draw the prompt below."),
+                        PromptHeader = new PromptHeaderMetadata
+                        {
+                            CurrentProgress = lambdaSafeIndex + 1,
+                            MaxProgress = stateChain.Count(),
+                        },
+                        Description = "Keep in mind you are only drawing part of the picture!",
                         SubPrompts = new SubPrompt[]
                         {
                             new SubPrompt
