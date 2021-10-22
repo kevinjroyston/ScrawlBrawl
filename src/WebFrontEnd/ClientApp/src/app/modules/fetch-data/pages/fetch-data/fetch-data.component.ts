@@ -118,7 +118,7 @@ export class FetchDataComponent implements OnDestroy
         this.anythingTouchedSinceFetch = false;
         var thisId = this.userPrompt? this.userPrompt.id : "";
 
-        await this.api.request({ type: "Game", params: {promptId: thisId, db: (dirtyBit ? "1" : "0")}, path: "CurrentContent"}).subscribe({
+        await this.api.request({ type: "Game", params: {promptId: thisId, db: (dirtyBit ? "True" : "False")}, path: "CurrentContent"}).subscribe({
             next: async data => {
                 var currentContent = data as GameplayPrompts.CurrentContent;
                 if (currentContent == null) // If no prompt object we have not joined lobby. Redirect accordingly.

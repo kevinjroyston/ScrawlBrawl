@@ -6,8 +6,13 @@
         </h2>
 
         If you want to be the leader of your own game,<br> you must leave this lobby first.<br>
-        <div class="in-lobby-button">
-            <scrawlbutton (click)="onDeleteUser()">
+        <div class="lobby-button">
+            <scrawlbutton (click)="onRerouteToPlay()" color="green">
+                Back to play page
+            </scrawlbutton>
+        </div>
+        <div class="lobby-button">
+            <scrawlbutton (click)="onDeleteUser()" color="red">
                 Leave Lobby
             </scrawlbutton>
         </div>

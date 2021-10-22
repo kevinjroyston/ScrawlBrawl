@@ -20,6 +20,7 @@ using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
 using Common.Code.Extensions;
 using Backend.GameInfrastructure.DataModels.Enums;
+using Common.DataModels.Responses.Gameplay;
 
 namespace Backend.Games.BriansGames.BattleReady.GameStates
 {
@@ -54,9 +55,11 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
             {
                 return stateChain;
             }
+            int index = 0;
             foreach(Prompt promptIter in RoundTracker.UsersToAssignedPrompts[user])
             {
                 Prompt prompt = promptIter;
+                int lambdaSafeIndex = index;
                 stateChain.Add(new SimplePromptUserState(
                     promptGenerator: (User user) =>
                     {       
@@ -64,6 +67,11 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                         {
                             UserPromptId = UserPromptId.BattleReady_ContestantCreation,
                             Title = Invariant($"Make the best character for this prompt: \"{prompt.Text}\""),
+                            PromptHeader = new PromptHeaderMetadata
+                            {
+                                CurrentProgress = lambdaSafeIndex + 1,
+                                MaxProgress = RoundTracker.UsersToAssignedPrompts[user].Count,
+                            },
                             SubPrompts = new SubPrompt[]
                             {
                             new SubPrompt
@@ -114,6 +122,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                         return (true, String.Empty);
                     }
                     ));
+                index++;
             }
             return stateChain;
         }

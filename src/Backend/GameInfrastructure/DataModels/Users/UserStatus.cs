@@ -3,11 +3,18 @@
     public enum UserActivity
     {
         Active,
-        Inactive
+        Inactive,
+        Disconnected
     }
     public enum UserStatus
     {
         AnsweringPrompts,
         Waiting,
+    }
+    public enum SubmitType
+    {
+        None,
+        Manual,
+        Auto
     }
 }

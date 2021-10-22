@@ -23,6 +23,7 @@ using Backend.Games.Common.DataModels;
 using Backend.GameInfrastructure.DataModels.Enums;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
+using Common.DataModels.Responses.Gameplay;
 
 namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
 {
@@ -35,6 +36,11 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                 {
                     UserPromptId = UserPromptId.ImposterSyndrome_CreatePrompt,
                     Title = "Game setup",
+                    PromptHeader = new PromptHeaderMetadata
+                    {
+                        CurrentProgress = 1,
+                        MaxProgress = 1,
+                    },
                     Description = "In the boxes below, enter two drawing prompts such that only you will be able to tell the drawings apart.",
                     SubPrompts = new SubPrompt[]
                     {
@@ -79,20 +85,21 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
         {
             List<State> stateChain = new List<State>();
             List<Prompt> challenges = this.PromptsToPopulate.OrderBy(_ => Rand.Next()).ToList();
+            challenges = challenges.Where(challenge => challenge.UsersToDrawings.ContainsKey(user)).ToList();
             int index = 0;
             foreach (Prompt promptToDraw in challenges)
             {
-                if (!promptToDraw.UsersToDrawings.ContainsKey(user))
-                {
-                    continue;
-                }
-
                 var lambdaSafeIndex = index;
                 stateChain.Add(new SimplePromptUserState(
                     promptGenerator: (User user) => new UserPrompt()
                     {
                         UserPromptId = UserPromptId.ImposterSyndrome_Draw,
                         Title = "Draw the prompt below",
+                        PromptHeader = new PromptHeaderMetadata
+                        {
+                            CurrentProgress = lambdaSafeIndex + 1,
+                            MaxProgress = challenges.Count,
+                        },
                         Description = "Careful, if you aren't the odd one out and people think you are, you will lose points for being a terrible artist.",
                         SubPrompts = new SubPrompt[]
                          {

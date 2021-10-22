@@ -17,6 +17,7 @@ using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
 using CommonConstants = Common.DataModels.Constants;
 using System.Linq;
+using Common.DataModels.Responses.Gameplay;
 
 namespace Backend.Games.KevinsGames.Mimic.GameStates
 {
@@ -39,7 +40,12 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                 stateChain.Add(new SimplePromptUserState((User user) => new UserPrompt()
                 {
                     UserPromptId = UserPromptId.Mimic_DrawAnything,
-                    Title = Invariant($"Time to draw! Drawing \"{drawingNumber}\" of \"{numDrawingsPerUser}\""),
+                    Title = Invariant($"Time to draw!"),
+                    PromptHeader = new PromptHeaderMetadata
+                    {
+                        CurrentProgress = drawingNumber,
+                        MaxProgress = numDrawingsPerUser,
+                    },
                     Description = "Draw anything you want",
                     SubPrompts = new SubPrompt[]
                     {

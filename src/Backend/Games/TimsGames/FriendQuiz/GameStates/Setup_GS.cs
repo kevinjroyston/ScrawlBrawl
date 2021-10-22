@@ -14,6 +14,7 @@ using Backend.GameInfrastructure;
 using Common.DataModels.Enums;
 using Backend.Games.Common.GameStates;
 using Backend.GameInfrastructure.DataModels.Enums;
+using Common.DataModels.Responses.Gameplay;
 
 namespace Backend.Games.TimsGames.FriendQuiz.GameStates
 {
@@ -43,6 +44,11 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
             {
                 UserPromptId = UserPromptId.FriendQuiz_CreateQuestion,
                 Title = "Let's Make Some Questions",
+                PromptHeader = new PromptHeaderMetadata
+                {
+                    CurrentProgress = counter + 1,
+                    MaxProgress = this.NumExpectedPerUser,
+                },
                 Description = "Write a question and choose an answer type for it",
                 SubPrompts = new SubPrompt[]
                 {

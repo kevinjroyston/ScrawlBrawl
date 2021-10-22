@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using Backend.GameInfrastructure;
 using Common.DataModels.Enums;
+using Common.DataModels.Responses.Gameplay;
 
 namespace Backend.Games.TimsGames.FriendQuiz.GameStates
 {
@@ -23,13 +24,21 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
             List<State> GetAnswerUserStateChain(User user)
             {
                 List<State> stateChain = new List<State>();
-                foreach (Question question in usersToAssignedQuestions.GetValueOrDefault(user, new List<Question>()))
+                int index = 0;
+                List<Question> questions = usersToAssignedQuestions.GetValueOrDefault(user, new List<Question>());
+                foreach (Question question in questions)
                 {
+                    int lambdaSafeIndex = index;
                     stateChain.Add(new SimplePromptUserState(
                         promptGenerator: (User user) => new UserPrompt()
                         {
                             UserPromptId = UserPromptId.FriendQuiz_AnswerQuestion,
                             Title = "Answer this question as best you can",
+                            PromptHeader = new PromptHeaderMetadata
+                            {
+                                CurrentProgress = lambdaSafeIndex + 1,
+                                MaxProgress = questions.Count,
+                            },
                             Description = question.Text,
                             SubPrompts = new SubPrompt[]
                             {
@@ -66,6 +75,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                             }
                             return (true, string.Empty);
                         }));
+                    index++;
                 }
                 return stateChain;
             }

@@ -77,6 +77,8 @@ namespace Backend
             });
 
             services.AddControllers().AddNewtonsoftJson();
+
+            // Responsible for detecting deltas and broadcasting them to unity viewers.
             services.AddHostedService<GameNotifier>();
         }
 

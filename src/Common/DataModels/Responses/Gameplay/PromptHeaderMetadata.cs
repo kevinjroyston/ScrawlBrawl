@@ -9,6 +9,5 @@ namespace Common.DataModels.Responses.Gameplay
         public int MaxProgress { get; set; } = 0;
         public int CurrentProgress { get; set; } = 0;
         public string PromptLabel { get; set; } = "";
-        public DateTime TimerEndTime { get; set; }
     }
 }

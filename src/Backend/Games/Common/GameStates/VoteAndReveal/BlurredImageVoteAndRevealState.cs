@@ -9,6 +9,7 @@ using System.Linq;
 using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
 using Backend.APIs.DataModels.Enums;
+using Common.DataModels.Responses.Gameplay;
 
 namespace Backend.Games.Common.GameStates.VoteAndReveal
 {
@@ -20,6 +21,11 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
         {
             UserPromptId = UserPromptId.Voting,
             Title = "Find the original!", // TODO, abstract this.
+            PromptHeader = new PromptHeaderMetadata
+            {
+                CurrentProgress = 1,
+                MaxProgress = 1,
+            },
             SubPrompts = new SubPrompt[]
             {
                 new SubPrompt()
