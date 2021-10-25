@@ -161,7 +161,7 @@ namespace Backend.GameInfrastructure.DataModels
             PerUserEntranceListeners.Add(listener);
         }
 
-        private object HurryLock { get; } = new object();
+        protected object HurryLock { get; } = new object();
 
         /// <summary>
         /// Put all users currently (and in the future) in this state into "hurried" mode. Which means they will automatically call

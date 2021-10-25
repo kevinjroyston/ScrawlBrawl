@@ -11,5 +11,9 @@ namespace Backend.APIs.DataModels.UnityObjects
         {
             this.Type = UnityObjectType.Text;
         }
+        public UnityText(UnityObject other): base(other)
+        {
+            this.Type = UnityObjectType.Text;
+        }
     }
 }

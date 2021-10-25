@@ -19,5 +19,9 @@ namespace Backend.APIs.DataModels.UnityObjects
         {
             this.Type = UnityObjectType.Image;
         }
+        public UnityImage(UnityObject other) : base(other)
+        {
+            this.Type = UnityObjectType.Image;
+        }
     }
 }

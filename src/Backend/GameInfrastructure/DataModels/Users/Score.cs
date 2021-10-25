@@ -34,6 +34,7 @@ namespace Backend.GameInfrastructure.DataModels.Users
             VotedWithCrowd,
             Imposter_GoodNormal,
             Imposter_GoodImposter,
+            DescriptorUsed,
         }
 
         public Score()
@@ -49,7 +50,7 @@ namespace Backend.GameInfrastructure.DataModels.Users
             { Reason.CorrectAnswer, "Correct Answer" },
             { Reason.ReceivedVotes, "Received Votes" },
             { Reason.CorrectAnswerSpeed, "Correct Answer (Speed)" },
-            { Reason.DrawingUsed, "Drawing Used" },
+            { Reason.DescriptorUsed, "Descriptor Used" },
             { Reason.Finished, "Finished (Speed)" },
             { Reason.VotedWithCrowd, "In agreement with other voters" },
             { Reason.Imposter_GoodNormal, "Blended in when not imposter" },

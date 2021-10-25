@@ -7,6 +7,7 @@ using Backend.Games.TimsGames.FriendQuiz;
 using Backend.Games.BriansGames.ImposterDrawing;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
+using Backend.Games.KevinsGames.TextBodyBuilder.Game;
 
 namespace Backend.GameInfrastructure.DataModels
 {
@@ -41,6 +42,11 @@ namespace Backend.GameInfrastructure.DataModels
             {
                 GameModeMetadata = FriendQuizGameMode.GameModeMetadata,
                 GameModeInstantiator = (lobby, options, standardOptions) => new FriendQuizGameMode(lobby, options, standardOptions)
+            },
+            new GameModeMetadataHolder()
+            {
+                GameModeMetadata = TextBodyBuilderGameMode.GameModeMetadata,
+                GameModeInstantiator = (lobby, options, standardOptions) => new TextBodyBuilderGameMode(lobby, options, standardOptions)
             },
             
             #region BodyBuilder (Removed)

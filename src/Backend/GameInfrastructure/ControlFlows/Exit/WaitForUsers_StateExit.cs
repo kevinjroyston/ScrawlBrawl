@@ -121,7 +121,8 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
                 lock (this.TriggeredLock)
                 {
                     // UsersToWaitForType cannot change.
-                    if (!this.Hurried
+                    if (this.UsersToWaitForType == WaitForUsersType.Active
+                        && !this.Hurried
                         && this.GetUsers(WaitForUsersType.Active).IsSubsetOf(this.UsersWaiting))
                     {
                         this.Hurried = true;

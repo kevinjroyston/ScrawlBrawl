@@ -28,6 +28,20 @@ namespace Backend.APIs.DataModels.UnityObjects
         public Guid UnityObjectId { get; protected set; }
         public Dictionary<UnityObjectOptions, object> Options { get; set; }
 
+        protected UnityObject(UnityObject other)
+        {
+            this.UsersWhoVotedFor = other.UsersWhoVotedFor;
+            this.Type = other.Type;
+            this.Title = other.Title;
+            this.Header = other.Header;
+            this.Footer = other.Footer;
+            this.ImageIdentifier = other.ImageIdentifier;
+            this.OwnerUserId = other.OwnerUserId;
+            this.VoteCount = other.VoteCount;
+            this.BackgroundColor = other.BackgroundColor;
+            this.UnityObjectId = other.UnityObjectId;
+            this.Options = other.Options;
+        }
         protected UnityObject(Guid UnityObjectId)
         {
             this.UnityObjectId = UnityObjectId;

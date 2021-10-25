@@ -69,7 +69,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
         public virtual UnityView VotingUnityViewGenerator()
         {
             RevealViewOverrides ??= VotingViewOverrides;
-            List<UnityImage> unityObjects = new List<UnityImage>();
+            List<UnityObject> unityObjects = new List<UnityObject>();
             for (int i = 0; i < this.Objects.Count(); i++)
             {
                 unityObjects.Add(this.Objects[i].VotingUnityObjectGenerator(i + 1));
@@ -84,7 +84,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
         }
         public virtual UnityView RevealUnityViewGenerator()
         {
-            List<UnityImage> unityObjects = new List<UnityImage>();
+            List<UnityObject> unityObjects = new List<UnityObject>();
             for (int i = 0; i < this.Objects.Count(); i++)
             {
                 unityObjects.Add(this.Objects[i].RevealUnityObjectGenerator(i + 1));

@@ -26,7 +26,7 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                 {
                     Value = new List<UnityObject>()
                     {
-                        displayDrawing.GetUnityImage()
+                        displayDrawing.GetUnityObject()
                     } 
                 }
             };

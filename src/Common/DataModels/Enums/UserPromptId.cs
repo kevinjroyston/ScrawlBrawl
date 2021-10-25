@@ -20,13 +20,13 @@ namespace Common.DataModels.Enums
         BattleReady_ContestantCreation = 20,
         BattleReady_BodyPartDrawing = 21,
         BattleReady_BattlePrompts = 22,
-        BattleReady_ExtraBodyPartDrawing = 23,
-        BattleReady_ExtraBattlePrompts = 24,
+        //BattleReady_ExtraBodyPartDrawing = 23,
+        //BattleReady_ExtraBattlePrompts = 24,
 
-        BodyBuilder_TradeBodyPart = 30,
-        BodyBuilder_FinishedPerson = 31,
-        BodyBuilder_CreatePrompts = 32,
-        BodyBuilder_DrawBodyPart = 33,
+        //BodyBuilder_TradeBodyPart = 30,
+        //BodyBuilder_FinishedPerson = 31,
+        //BodyBuilder_CreatePrompts = 32,
+        //BodyBuilder_DrawBodyPart = 33,
 
         ImposterSyndrome_Draw = 40,
         ImposterSyndrome_AnswerPrompt = 41,
@@ -44,5 +44,9 @@ namespace Common.DataModels.Enums
         FriendQuiz_CreateQuestion = 80,
         FriendQuiz_AnswerQuestion = 81,
         FriendQuiz_Query = 82,
+
+        TextBodyBuilder_ContestantCreation = 83,
+        TextBodyBuilder_CreateCAM = 84,
+        TextBodyBuilder_CreatePrompts = 85,
     }
 }

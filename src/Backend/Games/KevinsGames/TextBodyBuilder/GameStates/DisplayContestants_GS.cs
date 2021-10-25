@@ -11,19 +11,20 @@ using Backend.GameInfrastructure.Extensions;
 using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
 using Backend.GameInfrastructure.DataModels.States.UserStates;
+using Backend.Games.Common.DataModels;
 
-namespace Backend.Games.BriansGames.Common.GameStates
+namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
 {
-    public class DisplayPeople_GS : GameState
+    public class DisplayContestants_GS<ContestantType> : GameState where ContestantType : UserCreatedUnityObject
     {
-        public DisplayPeople_GS(
+        public DisplayContestants_GS(
             Lobby lobby,
             string title,
-            IReadOnlyList<Person> peopleList,     
-            Func<Person, Color?> backgroundColor = null,
-            Func<Person, string> imageIdentifier = null,
-            Func<Person, string> imageTitle = null,
-            Func<Person, string> imageHeader = null)
+            IReadOnlyList<ContestantType> peopleList,     
+            Func<ContestantType, Color?> backgroundColor = null,
+            Func<ContestantType, string> imageIdentifier = null,
+            Func<ContestantType, string> imageTitle = null,
+            Func<ContestantType, string> imageHeader = null)
             : base(
                   lobby: lobby,
                   exit: new WaitForPartyLeader_StateExit(
@@ -45,7 +46,7 @@ namespace Backend.Games.BriansGames.Common.GameStates
             imageTitle ??= (person) => null;
             imageHeader ??= (person) => null;
             var unityObjects = new List<UnityObject>();
-            foreach(Person person in peopleList)
+            foreach(ContestantType person in peopleList)
             {
                 unityObjects.Add(person.GetUnityObject(
                     backgroundColor: backgroundColor(person),
@@ -57,7 +58,7 @@ namespace Backend.Games.BriansGames.Common.GameStates
         
             this.UnityView = new UnityView(this.Lobby)
             {
-                ScreenId = TVScreenId.ShowDrawings,
+                ScreenId = TVScreenId.ObjectView,
                 UnityObjects = new UnityField<IReadOnlyList<UnityObject>> { Value = unityObjects },
                 Title = new UnityField<string> { Value = title },
             };
