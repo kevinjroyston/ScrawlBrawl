@@ -7,8 +7,8 @@
         <div *ngIf="userPrompt.submitButton" class="sticky-nav-wrapper">
             <div class="sticky-nav">
                 <div *ngIf="timerDisplay!=''" class="timerPanel" [ngStyle]="{'background-color': timerColor}">{{timerDisplay}}
-                    <div *ngIf="userPrompt.promptHeader.MaxProgress > 0">
-                        {{userPrompt.promptHeader.promptLabel}} {{userPrompt.promptHeader.currentProgress}} of {{userPrompt.promptHeader.MaxProgress}}
+                    <div *ngIf="userPrompt.promptHeader.maxProgress > 0" class="progressPanel">
+                        {{userPrompt.promptHeader.promptLabel}} {{userPrompt.promptHeader.currentProgress}} of {{userPrompt.promptHeader.maxProgress}}
                     </div>
                 </div>
                 <div class="Error" *ngIf="userPrompt.error">
@@ -58,8 +58,9 @@
                     </select>
                     <div *ngIf="subPrompt.answers">
                         <div class="RadioAnswer" *ngFor="let answer of subPrompt.answers; let i = index">
-                            <input type="radio" formControlName="radioAnswer" value="{{i}}" id="ra{{i}}b" />
-                            <label for="ra{{i}}b" [innerHTML]="answer | safe: 'html'"></label>
+                            <label for="ra{{j}}-{{i}}b">
+                            <input type="radio" formControlName="radioAnswer" value="{{i}}" id="ra{{j}}-{{i}}b" />
+                             <span [innerHTML]="answer | safe: 'html'"></span></label>
                         </div>
                     </div>
 

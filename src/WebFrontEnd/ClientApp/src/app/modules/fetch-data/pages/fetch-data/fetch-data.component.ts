@@ -82,9 +82,7 @@ export class FetchDataComponent implements OnDestroy
             clearTimeout(this.userPromptTimerId);
             this.userPromptTimerId = null;
           }
-        if (this.autoSubmitTimerId) {
-            this.clearAutoSubmitTimers();
-          }
+        this.clearAutoSubmitTimers(true);
         });
     }
     ngOnDestroy(): void {
@@ -154,16 +152,12 @@ export class FetchDataComponent implements OnDestroy
 
                 // If you have reached this far it means we have switched to a new prompt, time to cleanup!
 
-                // Clear the autosubmit timer
-                if (this.autoSubmitTimerId) {
-                    this.clearAutoSubmitTimers();
-                }
-
-
                 // Start a new autosubmit timer
                 if (prompt && prompt.autoSubmitAtTime) {
                     this.timerRemaining = prompt.autoSubmitAtTime.getTime() - prompt.currentServerTime.getTime();
                     this.autoSubmitUserPromptTimer(prompt.autoSubmitAtTime.getTime() - prompt.currentServerTime.getTime());
+                } else {
+                    this.clearAutoSubmitTimers(true);
                 }
 
                 // Clear whatever was in the old form.
@@ -236,6 +230,9 @@ export class FetchDataComponent implements OnDestroy
     }
 
     autoSubmitUserPromptTimer(ms: number): void {
+        // Clear the autosubmit timer
+        this.clearAutoSubmitTimers(true);
+
         if (ms <= 0) {
             this.onSubmit(this.userForm?.value, true)
             return;
@@ -249,12 +246,17 @@ export class FetchDataComponent implements OnDestroy
              }, 1000);
     }
 
-    private clearAutoSubmitTimers(){
+    private clearAutoSubmitTimers(ForceIt){
+        if (!this.autoSubmitTimerId) return;
+
         clearTimeout(this.autoSubmitTimerId);
         this.autoSubmitTimerId = null;
-        clearInterval(this.timerDisplayIntervalId);
-        this.timerDisplayIntervalId = null;
-        this.timerDisplay = '';
+        if (ForceIt || (!((this.userPrompt.promptHeader.maxProgress > 0) && (this.userPrompt.promptHeader.currentProgress < this.userPrompt.promptHeader.maxProgress))))
+        { // if there are more steps (1 of 3 etc.) then do not clear the timer display, to avoid it blinking off and on
+            clearInterval(this.timerDisplayIntervalId);
+            this.timerDisplayIntervalId = null;
+            this.timerDisplay = '';
+        }
     }
   shortTermSanitize(ans){
         /* see this line in backend  sanitize.cs
@@ -275,9 +277,9 @@ export class FetchDataComponent implements OnDestroy
           clearTimeout(this.userPromptTimerId);
           this.userPromptTimerId = null;
         }
-        if (this.autoSubmitTimerId) {
-            this.clearAutoSubmitTimers();
-        }
+
+        this.clearAutoSubmitTimers(false);
+
         if (autoSubmit && !this.anythingEverTouched) return false; // if nothing has been touched, do not autosubmit
 
         this.anythingEverTouched = false; // reset so future form submits work
