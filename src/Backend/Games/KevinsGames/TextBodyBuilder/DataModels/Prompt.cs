@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Drawing;
 using static Backend.Games.Common.ThreePartPeople.DataModels.Person;
+using static Backend.Games.KevinsGames.TextBodyBuilder.DataModels.TextPerson;
 
 namespace Backend.Games.KevinsGames.TextBodyBuilder.DataModels
 {
@@ -16,11 +17,11 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.DataModels
     {
         public string Text { get; set; }
         public User Winner { get; set; }
-        public class UserHand : Person
+        public class UserHand : TextPerson
         {
-            public List<PeopleUserDrawing> HeadChoices { get; set; } = new List<PeopleUserDrawing>();
-            public List<PeopleUserDrawing> BodyChoices { get; set; } = new List<PeopleUserDrawing>();
-            public List<PeopleUserDrawing> LegChoices { get; set; } = new List<PeopleUserDrawing>();
+            public List<CAMUserText> CharacterChoices { get; set; } = new List<CAMUserText>();
+            public List<CAMUserText> ActionChoices { get; set; } = new List<CAMUserText>();
+            public List<CAMUserText> ModifierChoices { get; set; } = new List<CAMUserText>();
         }
         public ConcurrentDictionary<User, UserHand> UsersToUserHands { get; set; } = new ConcurrentDictionary<User, UserHand>();
 

@@ -1,0 +1,325 @@
+﻿using Backend.GameInfrastructure.DataModels.States.GameStates;
+using Backend.GameInfrastructure.Extensions;
+using Backend.Games.KevinsGames.TextBodyBuilder.DataModels;
+using Backend.Games.KevinsGames.TextBodyBuilder.GameStates;
+using Common.DataModels.Requests.LobbyManagement;
+using System.Collections.Generic;
+using Backend.Games.Common.GameStates;
+using Backend.GameInfrastructure.DataModels.Users;
+using System;
+using System.Linq;
+using Backend.GameInfrastructure.DataModels.States.StateGroups;
+using System.Collections.Concurrent;
+using Backend.Games.Common.GameStates.VoteAndReveal;
+using Backend.GameInfrastructure.DataModels;
+using Common.DataModels.Responses;
+using Microsoft.CodeAnalysis;
+using Backend.GameInfrastructure;
+using Common.DataModels.Enums;
+using Common.Code.Helpers;
+using Common.DataModels.Interfaces;
+using Backend.APIs.DataModels.UnityObjects;
+using static Backend.Games.KevinsGames.TextBodyBuilder.DataModels.Prompt;
+using Common.Code.Extensions;
+using static Backend.Games.KevinsGames.TextBodyBuilder.DataModels.TextPerson;
+
+namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
+{
+    public class TextBodyBuilderGameMode : IGameMode
+    {
+        private ConcurrentBag<CAMUserText> CAMs { get; set; } = new ConcurrentBag<CAMUserText>();
+        private Lobby Lobby { get; set; }
+        private ConcurrentBag<Prompt> Prompts { get; set; } = new ConcurrentBag<Prompt>();
+        private RoundTracker RoundTracker { get; } = new RoundTracker();
+        private Random Rand { get; } = new Random();
+
+        public static GameModeMetadata GameModeMetadata { get; } = new GameModeMetadata
+        {
+            Title = "Text Body Builder", 
+            GameId = GameModeId.TextBodyBuilder,
+            Description = "Combine snippits of text to bring to life the best constestant for each challenge.",
+            MinPlayers = 3,
+            MaxPlayers = null,
+            Attributes = new GameModeAttributes
+            {
+                ProductionReady = false,
+            },
+            Options = new List<GameModeOptionResponse>
+            {
+            },
+            GetGameDurationEstimates = GetGameDurationEstimates,
+
+        };
+        private static IReadOnlyDictionary<GameDuration, TimeSpan> GetGameDurationEstimates(int numPlayers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
+        {
+            Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
+            foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
+            {
+                int numRounds = TextBodyBuilderConstants.NumRounds[duration];
+                int numPromptsPerRound = Math.Min(numPlayers, TextBodyBuilderConstants.MaxNumSubRounds[duration]);
+                int minDrawingsRequired = TextBodyBuilderConstants.NumCAMsInHand * 3; // the amount to make one playerHand to give everyone
+
+                int expectedPromptsPerUser = (int)Math.Ceiling(1.0 * numPromptsPerRound * numRounds / numPlayers);
+                int expectedDrawingsPerUser = Math.Max((minDrawingsRequired / numPlayers + 1) * 2, TextBodyBuilderConstants.NumCAMsPerPlayer[duration]);
+                
+                int numPromptsPerUserPerRound = Math.Max(1, numPromptsPerRound / 2);
+
+                TimeSpan estimate = TimeSpan.Zero;
+                TimeSpan setupDrawingTimer = TextBodyBuilderConstants.SetupPerCAMTimer[duration];
+                TimeSpan setupPromptTimer = TextBodyBuilderConstants.SetupPerPromptTimer[duration];
+                TimeSpan creationTimer = TextBodyBuilderConstants.PerCreationTimer[duration];
+                TimeSpan votingTimer = TextBodyBuilderConstants.VotingTimer[duration];
+
+                estimate += setupDrawingTimer.MultipliedBy(expectedDrawingsPerUser);
+                estimate += setupPromptTimer.MultipliedBy(expectedPromptsPerUser);
+                estimate += creationTimer.MultipliedBy(numPromptsPerUserPerRound * numRounds);
+                estimate += votingTimer.MultipliedBy(numPromptsPerRound * numRounds);
+                estimates[duration] = estimate;
+            }
+
+            return estimates;
+        }
+        public TextBodyBuilderGameMode(Lobby lobby, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions, StandardGameModeOptions standardOptions)
+        {
+            GameDuration duration = standardOptions.GameDuration;
+
+            this.Lobby = lobby;
+            int numRounds = TextBodyBuilderConstants.NumRounds[duration];
+            int numPlayers = lobby.GetAllUsers().Count();
+
+            TimeSpan? setupDrawingTimer = null;
+            TimeSpan? setupPromptTimer = null;
+            TimeSpan? creationTimer = null;
+            TimeSpan? votingTimer = null;
+
+            int numPromptsPerRound = Math.Min(numPlayers, TextBodyBuilderConstants.MaxNumSubRounds[duration]);
+            int minDrawingsRequired = TextBodyBuilderConstants.NumCAMsInHand * 3; // the amount to make one playerHand to give everyone
+
+            int expectedPromptsPerUser = (int) Math.Ceiling(1.0*numPromptsPerRound * numRounds / lobby.GetAllUsers().Count);
+            int expectedDrawingsPerUser = Math.Max((minDrawingsRequired / numPlayers + 1) * 2, TextBodyBuilderConstants.NumCAMsPerPlayer[duration]);
+
+            if (standardOptions.TimerEnabled)
+            {
+                setupDrawingTimer = TextBodyBuilderConstants.SetupPerCAMTimer[duration];
+                setupPromptTimer = TextBodyBuilderConstants.SetupPerPromptTimer[duration];
+                creationTimer = TextBodyBuilderConstants.PerCreationTimer[duration];
+                votingTimer = TextBodyBuilderConstants.VotingTimer[duration];
+            }
+
+            SetupCAMs_GS setupDrawing = new SetupCAMs_GS(
+                lobby: lobby,
+                cams: this.CAMs,
+                numExpectedPerUser: expectedDrawingsPerUser,
+                setupDurration: setupDrawingTimer * expectedDrawingsPerUser);
+
+            SetupPrompts_GS setupPrompt = new SetupPrompts_GS(
+                lobby: lobby,
+                prompts: Prompts,
+                numExpectedPerUser: expectedPromptsPerUser,
+                setupDuration: setupPromptTimer);
+
+            List<Prompt> battlePrompts = new List<Prompt>();
+            IReadOnlyList<CAMUserText> characters = new List<CAMUserText>();
+            IReadOnlyList<CAMUserText> actions = new List<CAMUserText>();
+            IReadOnlyList<CAMUserText> modifiers = new List<CAMUserText>();
+            setupDrawing.AddExitListener(() =>
+            {
+                // Trim extra prompts/drawings.
+                characters = CAMs.ToList().FindAll((cam) => cam.Type == CAMType.Character);
+                actions = CAMs.ToList().FindAll((cam) => cam.Type == CAMType.Action);
+                modifiers = CAMs.ToList().FindAll((cam) => cam.Type == CAMType.Modifier);
+            });
+            int numPromptsPerUserPerRound = 0; // Set during below exit listener.
+            setupPrompt.AddExitListener(() =>
+            {
+                battlePrompts = MemberHelpers<Prompt>.Select_Ordered(Prompts.OrderBy(prompt=>prompt.CreationTime).ToList(), numPromptsPerRound * numRounds);
+                numRounds = (battlePrompts.Count - 1) / numPromptsPerRound + 1;
+                numPromptsPerRound = (int)Math.Ceiling(1.0 * battlePrompts.Count / numRounds);
+
+                numPromptsPerUserPerRound = Math.Max(1,numPromptsPerRound / 2);
+                int maxNumUsersPerPrompt = Math.Min(12,(int)Math.Ceiling(1.0*numPlayers * numPromptsPerUserPerRound / numPromptsPerRound));
+
+                foreach (Prompt prompt in battlePrompts)
+                {
+                    prompt.MaxMemberCount = maxNumUsersPerPrompt;
+                }
+            });
+
+            List<GameState> creationGameStates = new List<GameState>();
+            List<GameState> votingGameStates = new List<GameState>();
+            List<GameState> voteRevealedGameStates = new List<GameState>();
+            List<GameState> scoreboardGameStates = new List<GameState>();
+
+            int countRounds = 0;
+
+            #region GameState Generators
+            GameState CreateContestantCreationGamestate()
+            {
+                RoundTracker.ResetRoundVariables();
+                List<Prompt> prompts = battlePrompts.Take(numPromptsPerRound).ToList();
+                battlePrompts.RemoveRange(0, prompts.Count);
+
+                List<IGroup<User>> assignments = MemberHelpers<User>.Assign(
+                    prompts.Cast<IConstraints<User>>().ToList(),
+                    lobby.GetAllUsers().ToList(),
+                    duplicateMembers: (int)Math.Ceiling((1.0 * prompts.Count / numPromptsPerRound) * numPromptsPerUserPerRound));
+
+                var pairings = prompts.Zip(assignments);
+
+                foreach ((Prompt prompt, IGroup<User> users) in pairings)
+                {
+                    foreach (User user in users.Members)
+                    {
+                        prompt.UsersToUserHands.TryAdd(user, new Prompt.UserHand
+                        {
+                            // Users have even probabilities regardless of how many drawings they submitted.
+                            CharacterChoices = MemberHelpers<CAMUserText>.Select_DynamicWeightedRandom(characters, TextBodyBuilderConstants.NumCAMsInHand),
+                            ActionChoices = MemberHelpers<CAMUserText>.Select_DynamicWeightedRandom(actions, TextBodyBuilderConstants.NumCAMsInHand),
+                            ModifierChoices = MemberHelpers<CAMUserText>.Select_DynamicWeightedRandom(modifiers, TextBodyBuilderConstants.NumCAMsInHand),
+                            Owner = user
+                        });
+
+                        if (!RoundTracker.UsersToAssignedPrompts.ContainsKey(user))
+                        {
+                            RoundTracker.UsersToAssignedPrompts.Add(user, new List<Prompt>());
+                        }
+                        RoundTracker.UsersToAssignedPrompts[user].Add(prompt);
+                    }
+                }
+
+                GameState toReturn = new ContestantCreation_GS(
+                        lobby: lobby,
+                        roundTracker: RoundTracker,
+                        creationDuration: creationTimer);
+                toReturn.Transition(CreateVotingGameStates(prompts));
+                return toReturn;
+            }
+            Func<StateChain> CreateVotingGameStates(List<Prompt> roundPrompts)
+            {
+                return () =>
+                {
+                    StateChain voting = new StateChain(
+                        stateGenerator: (int counter) =>
+                        {
+                            if (counter < roundPrompts.Count)
+                            {
+                                Prompt roundPrompt = roundPrompts[counter];
+
+                                return GetVotingAndRevealState(roundPrompt, votingTimer);         
+                            }
+                            else
+                            {
+                                // Stops the chain.
+                                return null;
+                            }
+                        });
+                    voting.Transition(CreateScoreGameState(roundPrompts));
+                    return voting;
+                };
+            }
+            Func<GameState> CreateScoreGameState(List<Prompt> roundPrompts)
+            {
+                return () =>
+                {
+                    List<TextPerson> winnersPeople = roundPrompts.Select((prompt) => (TextPerson)prompt.UsersToUserHands[prompt.Winner]).ToList();
+                    
+                    countRounds++;
+                    GameState displayPeople = new DisplayContestants_GS<TextPerson>(
+                        lobby: lobby,
+                        title: "Here are your winners",
+                        peopleList: winnersPeople,
+                        imageTitle: (person) => roundPrompts[winnersPeople.IndexOf(person)].Text,
+                        imageHeader: (person) => person.ToString()
+                        );
+
+                    if (battlePrompts.Count <= 0)
+                    {
+                        GameState finalScoreBoard = new ScoreBoardGameState(
+                        lobby: lobby,
+                        title: "Final Scores");
+                        displayPeople.Transition(finalScoreBoard);
+                        finalScoreBoard.Transition(this.Exit);
+                    }
+                    else
+                    {
+                        GameState scoreBoard = new ScoreBoardGameState(
+                            lobby: lobby);
+                        displayPeople.Transition(scoreBoard);
+                        scoreBoard.Transition(CreateContestantCreationGamestate);
+                    }
+                    return displayPeople;
+                };
+            }
+            #endregion
+
+            this.Entrance.Transition(setupDrawing);
+            setupDrawing.Transition(setupPrompt);
+            setupPrompt.Transition(CreateContestantCreationGamestate);
+           
+        }
+        private State GetVotingAndRevealState(Prompt prompt, TimeSpan? votingTime)
+        {
+            List<User> randomizedUsersToDisplay = prompt.UsersToUserHands.Keys.OrderBy(_ => Rand.Next()).ToList();
+            List<TextPerson> peopleToVoteOn = randomizedUsersToDisplay.Select(user => (TextPerson)prompt.UsersToUserHands[user]).ToList();
+            foreach (TextPerson person in peopleToVoteOn)
+            {
+                person.UnityImageVotingOverrides = new UnityObjectOverrides()
+                {
+                    Title = person.Descriptors[CAMType.Character].Text,
+                    Header = $"{person.Descriptors[CAMType.Action].Text} {person.Descriptors[CAMType.Modifier]}",
+                };
+                person.UnityImageRevealOverrides = new UnityObjectOverrides()
+                {
+                    Title = person.ToString(),
+                    Header = person.Owner.DisplayName,
+                };
+            }
+
+            var voteAndReveal = new ContestantVoteAndRevealState<TextPerson>(
+                lobby: this.Lobby,
+                contestantName: (person)=>person.ToString(),
+                people: peopleToVoteOn,
+                votingTime: votingTime)
+            {
+                VotingViewOverrides = new UnityViewOverrides
+                {
+                    Title = prompt.Text,
+                },
+                RevealViewOverrides = new UnityViewOverrides
+                {
+                    Title = prompt.Text,
+                },
+                VoteCountManager = CountVotes
+            };
+            voteAndReveal.AddExitListener(()=>
+            {
+                // Determine winner.
+                foreach ((User user, UserHand userHand) in prompt.UsersToUserHands)
+                {
+                    if (prompt.Winner == null || userHand.VotesCastForThisObject.Count > prompt.UsersToUserHands[prompt.Winner].VotesCastForThisObject.Count)
+                    {
+                        prompt.Winner = user;
+                    }
+                }
+            });
+            return voteAndReveal;
+        }
+        private void CountVotes(List<TextPerson> choices, IDictionary<User, VoteInfo> votes)
+        {
+            // Points for using drawings.
+            foreach (TextPerson person in choices)
+            {
+                if (person.Descriptors[CAMType.Character].Owner != person.Owner) person.Descriptors[CAMType.Character].Owner.ScoreHolder.AddScore(TextBodyBuilderConstants.PointsForPartUsed, Score.Reason.DescriptorUsed);
+                if (person.Descriptors[CAMType.Action].Owner != person.Owner) person.Descriptors[CAMType.Action].Owner.ScoreHolder.AddScore(TextBodyBuilderConstants.PointsForPartUsed, Score.Reason.DescriptorUsed);
+                if (person.Descriptors[CAMType.Modifier].Owner != person.Owner) person.Descriptors[CAMType.Modifier].Owner.ScoreHolder.AddScore(TextBodyBuilderConstants.PointsForPartUsed, Score.Reason.DescriptorUsed);
+            }
+
+            // Points for vote.
+            foreach ((User user, VoteInfo voteInfo) in votes)
+            {
+                User userVotedFor = ((UserHand)voteInfo.ObjectsVotedFor[0]).Owner;
+                if (userVotedFor != user) userVotedFor.ScoreHolder.AddScore(TextBodyBuilderConstants.PointsForVote, Score.Reason.ReceivedVotes);
+            }
+        }
+    }
+}

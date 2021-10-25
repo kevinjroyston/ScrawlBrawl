@@ -19,6 +19,8 @@ using Backend.GameInfrastructure.ControlFlows.Exit;
 using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
 using Common.Code.Extensions;
+using static Backend.Games.KevinsGames.TextBodyBuilder.DataModels.TextPerson;
+using Common.DataModels.Responses.Gameplay;
 
 namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
 {
@@ -53,9 +55,11 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
             {
                 return stateChain;
             }
+            int index = 0;
             foreach(Prompt promptIter in RoundTracker.UsersToAssignedPrompts[user])
             {
                 Prompt prompt = promptIter;
+                var lambdaSafeIndex = index;
                 stateChain.Add(new SimplePromptUserState(
                     promptGenerator: (User user) =>
                     {       
@@ -63,56 +67,45 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                         {
                             UserPromptId = UserPromptId.TextBodyBuilder_ContestantCreation,
                             Title = Invariant($"Make the best character for this prompt: \"{prompt.Text}\""),
+                            PromptHeader = new PromptHeaderMetadata
+                            {
+                                MaxProgress = RoundTracker.UsersToAssignedPrompts[user].Count,
+                                CurrentProgress = lambdaSafeIndex + 1,
+                            },
+                            Description = "Format is '<Character> <Action> <Modifier>'",
                             SubPrompts = new SubPrompt[]
                             {
-                            new SubPrompt
-                            {
-                                Selector = new SelectorPromptMetadata()
+                                new SubPrompt
                                 {
-                                    HeightInPx = ThreePartPeopleConstants.Heights[BodyPartType.Head],
-                                    WidthInPx = ThreePartPeopleConstants.Widths[BodyPartType.Head],
-                                    ImageList = prompt.UsersToUserHands[user].HeadChoices.Select(userDrawing => userDrawing.Drawing).ToArray()
-                                }
-                            },
-                            new SubPrompt
-                            {
-                                Selector = new SelectorPromptMetadata()
+                                    Prompt = "Character:",
+                                    Answers = prompt.UsersToUserHands[user].CharacterChoices.Select(userText => userText.Text).ToArray(),
+                                },
+                                new SubPrompt
                                 {
-                                    HeightInPx = ThreePartPeopleConstants.Heights[BodyPartType.Body],
-                                    WidthInPx = ThreePartPeopleConstants.Widths[BodyPartType.Body],
-                                    ImageList = prompt.UsersToUserHands[user].BodyChoices.Select(userDrawing => userDrawing.Drawing).ToArray()
-                                }
-                            },
-                            new SubPrompt
-                            {
-                                Selector = new SelectorPromptMetadata()
+                                    Prompt = "Action:",
+                                    Answers = prompt.UsersToUserHands[user].ActionChoices.Select(userText => userText.Text).ToArray(),
+                                },
+                                new SubPrompt
                                 {
-                                    HeightInPx = ThreePartPeopleConstants.Heights[BodyPartType.Legs],
-                                    WidthInPx = ThreePartPeopleConstants.Widths[BodyPartType.Legs],
-                                    ImageList = prompt.UsersToUserHands[user].LegChoices.Select(userDrawing => userDrawing.Drawing).ToArray()
-                                }
-                            },
-                            new SubPrompt
-                            {
-                                Prompt = "Now give your character a name",
-                                ShortAnswer = true
-                            },
+                                    Prompt = "Modifier:",
+                                    Answers = prompt.UsersToUserHands[user].ModifierChoices.Select(userText => userText.Text).ToArray(),
+                                },
                             },
                             SubmitButton = true,
                         };
                     },
                     formSubmitHandler: (User user, UserFormSubmission input) =>
                     {
-                        prompt.UsersToUserHands[user].BodyPartDrawings = new Dictionary<BodyPartType, PeopleUserDrawing>{
-                                {BodyPartType.Head, prompt.UsersToUserHands[user].HeadChoices[(int)input.SubForms[0].Selector] },
-                                {BodyPartType.Body, prompt.UsersToUserHands[user].BodyChoices[(int)input.SubForms[1].Selector] },
-                                {BodyPartType.Legs, prompt.UsersToUserHands[user].LegChoices[(int)input.SubForms[2].Selector] }
+                        prompt.UsersToUserHands[user].Descriptors = new Dictionary<CAMType, CAMUserText>{
+                                {CAMType.Character, prompt.UsersToUserHands[user].CharacterChoices[(int)input.SubForms[0].RadioAnswer] },
+                                {CAMType.Action, prompt.UsersToUserHands[user].ActionChoices[(int)input.SubForms[1].RadioAnswer] },
+                                {CAMType.Modifier, prompt.UsersToUserHands[user].ModifierChoices[(int)input.SubForms[2].RadioAnswer] }
                             };
-                        prompt.UsersToUserHands[user].Name = input.SubForms[3].ShortAnswer;
                         prompt.UsersToUserHands[user].Owner = user;
                         return (true, String.Empty);
                     }
                     ));
+                index++;
             }
             return stateChain;
         }

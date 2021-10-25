@@ -11,15 +11,57 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.DataModels
 {
     public class TextPerson : UserCreatedUnityObject
     {
-        public string Character { get; set; } = "N/A";
-        public string Action { get; set; } = "N/A";
-        public string Modifier { get; set; } = "N/A";
+        /// <summary>
+        /// Initialize to defaults
+        /// </summary>
+        public Dictionary<CAMType, CAMUserText> Descriptors { get; set; } = new Dictionary<CAMType, CAMUserText>()
+        {
+            {
+                CAMType.Character, new CAMUserText()
+                {
+                    Owner = new User("dummy"),
+                    Type =CAMType.Character,
+                    Text = "N/A",
+                }
+            },
+            {
+                CAMType.Action, new CAMUserText()
+                {
+                    Owner = new User("dummy"),
+                    Type =CAMType.Action,
+                    Text = "N/A",
+                }
+            },
+            {
+                CAMType.Modifier, new CAMUserText()
+                {
+                    Owner = new User("dummy"),
+                    Type =CAMType.Modifier,
+                    Text = "N/A",
+                }
+            }
+        };
 
         public TextPerson()
         {
             // TODO: not the most ideal way to make dummy users. Should use an interface and a new DummyUser class
             this.Owner = new User("dummy");
         }
+        /// <summary>
+        /// This wont directly be turned into a unity object as it only contains info for one CAM
+        /// </summary>
+        public class CAMUserText : UserText
+        {
+            public CAMType Type { get; set; }
+        }
+        public enum CAMType
+        {
+            None,
+            Character,
+            Action,
+            Modifier
+        }
+
         public override UnityObject GetUnityObject(
             Color? backgroundColor = null,
             string imageIdentifier = null,
@@ -31,9 +73,14 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.DataModels
             bool revealThisObject = false)
         {
             UnityText text = new UnityText(base.GetUnityObject(backgroundColor, imageIdentifier, imageOwnerId, title, header, voteCount, usersWhoVotedFor, revealThisObject));
-            text.Title ??= new UnityField<string> { Value = Character };
-            text.Header ??= new UnityField<string> { Value = $"{Action} {Modifier}" };
+            text.Title ??= new UnityField<string> { Value = Descriptors[CAMType.Character].Text };
+            text.Header ??= new UnityField<string> { Value = $"{Descriptors[CAMType.Action].Text} {Descriptors[CAMType.Modifier].Text}" };
             return text;
+        }
+
+        public override string ToString()
+        {
+            return $"{Descriptors[CAMType.Character].Text} {Descriptors[CAMType.Action].Text} {Descriptors[CAMType.Modifier].Text}";
         }
     }
 }

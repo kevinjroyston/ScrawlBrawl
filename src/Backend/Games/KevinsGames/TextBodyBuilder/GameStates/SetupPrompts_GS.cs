@@ -10,13 +10,13 @@ using System.Linq;
 using static System.FormattableString;
 using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
+using Common.DataModels.Responses.Gameplay;
 
 namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
 {
     public class SetupPrompts_GS : SetupGameState
     {
         private Random Rand { get; } = new Random();
-        private int NumExpectedPerUser { get; set; }
         private ConcurrentBag<Prompt> Prompts { get; set; }
         public SetupPrompts_GS(
             Lobby lobby,
@@ -30,7 +30,6 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                 unityInstructions: "Complete as many prompts as possible before the time runs out",
                 setupDuration: setupDuration)
         {
-            this.NumExpectedPerUser = numExpectedPerUser;
             this.Prompts = prompts;
         }
 
@@ -38,10 +37,15 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
         {
             return new UserPrompt()
             {
-                UserPromptId = UserPromptId.TextBodyBuilder_BattlePrompts,
-                Title = Invariant($"Now lets make some prompts! Prompt {counter + 1} of {NumExpectedPerUser} expected"),
-                Description = "Examples: Who would win in a fight, Who would make the best actor, Etc.",
-                Suggestion = new SuggestionMetadata { SuggestionKey = "BodyBuilder" },
+                UserPromptId = UserPromptId.TextBodyBuilder_CreatePrompts,
+                Title = Invariant($"Now lets make some prompts/scenarios!"),
+                PromptHeader = new PromptHeaderMetadata
+                {
+                    MaxProgress = NumExpectedPerUser,
+                    CurrentProgress = counter + 1,
+                },
+                Description = "Examples: 'Who would win in a fight?', 'A true problem solver', 'Jack of all trades', Etc.",
+                Suggestion = new SuggestionMetadata { SuggestionKey = "TextBodyBuilder-Prompt" },
                 SubPrompts = new SubPrompt[]
                 {
                     new SubPrompt

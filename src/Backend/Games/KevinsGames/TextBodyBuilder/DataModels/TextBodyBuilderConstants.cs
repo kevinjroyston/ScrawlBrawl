@@ -8,21 +8,9 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.DataModels
     {
         public const int PointsForVote = 100;
         public const int PointsForPartUsed = 50;
-        public const int NumDrawingsInHand = 3;
+        public const int NumCAMsInHand = 3;
 
-        public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerCharacterTimer = new Dictionary<GameDuration, TimeSpan>()
-        {
-            { GameDuration.Short, TimeSpan.FromSeconds(50)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(60)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(90)},
-        };
-        public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerActionTimer = new Dictionary<GameDuration, TimeSpan>()
-        {
-            { GameDuration.Short, TimeSpan.FromSeconds(50)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(60)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(90)},
-        };
-        public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerModifierTimer = new Dictionary<GameDuration, TimeSpan>()
+        public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerCAMTimer = new Dictionary<GameDuration, TimeSpan>()
         {
             { GameDuration.Short, TimeSpan.FromSeconds(50)},
             { GameDuration.Normal, TimeSpan.FromSeconds(60)},

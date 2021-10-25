@@ -114,18 +114,28 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
         /// <param name="specialCallback">The callback to apply.</param>
         private void ApplySpecialCallbackToAllUsersInState(Action<User> specialCallback)
         {
-            // TODO: add support for multiple special callbacks.
-            Debug.Assert(this.SpecialCallbackAppliedToAllUsersInState == null, "Shouldn't be applying more than 1 special callback.");
-            this.SpecialCallbackAppliedToAllUsersInState = specialCallback;
-
-            foreach (User user in this.UsersEnteredAndExitedState.Keys.ToList())
+            if ( this.SpecialCallbackAppliedToAllUsersInState == null)
             {
-                lock (user.LockObject)
+                // To avoid deadlock, make sure users arent being hurried while we do this.
+                lock (this.HurryLock)
                 {
-                    (bool entered, bool exited) = this.UsersEnteredAndExitedState[user];
-                    if (entered && !exited)
+                    if (this.SpecialCallbackAppliedToAllUsersInState == null)
                     {
-                        specialCallback(user);
+                        // TODO: add support for multiple special callbacks.
+                        Debug.Assert(this.SpecialCallbackAppliedToAllUsersInState == null, "Shouldn't be applying more than 1 special callback.");
+                        this.SpecialCallbackAppliedToAllUsersInState = specialCallback;
+
+                        foreach (User user in this.UsersEnteredAndExitedState.Keys.ToList())
+                        {
+                            lock (user.LockObject)
+                            {
+                                (bool entered, bool exited) = this.UsersEnteredAndExitedState[user];
+                                if (entered && !exited)
+                                {
+                                    specialCallback(user);
+                                }
+                            }
+                        }
                     }
                 }
             }

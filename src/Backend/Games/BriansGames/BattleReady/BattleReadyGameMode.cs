@@ -278,8 +278,9 @@ namespace Backend.Games.BriansGames.BattleReady
             List<string> imageTitles = randomizedUsersToDisplay.Select(user => prompt.UsersToUserHands[user].Name).ToList();
             List<string> imageHeaders = randomizedUsersToDisplay.Select(user => user.DisplayName).ToList();
 
-            var voteAndReveal = new ThreePartPersonVoteAndRevealState<Person>(
+            var voteAndReveal = new ContestantVoteAndRevealState<Person>(
                 lobby: this.Lobby,
+                contestantName: (person) => person.Name,
                 people: peopleToVoteOn,
                 votingTime: votingTime)
             {

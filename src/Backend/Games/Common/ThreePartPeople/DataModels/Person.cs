@@ -14,6 +14,7 @@ namespace Backend.Games.Common.ThreePartPeople.DataModels
 
         public string Name { get; set; } = "N/A";
 
+        // TODO: Create DrawingPerson and have both Text and Drawing inherit from this base.
         public Person()
         {
             // TODO: not the most ideal way to make dummy users. Should use an interface and a new DummyUser class
