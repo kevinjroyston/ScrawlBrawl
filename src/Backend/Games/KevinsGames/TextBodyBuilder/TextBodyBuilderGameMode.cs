@@ -35,9 +35,9 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
 
         public static GameModeMetadata GameModeMetadata { get; } = new GameModeMetadata
         {
-            Title = "Text Body Builder", 
+            Title = "Character Builder", 
             GameId = GameModeId.TextBodyBuilder,
-            Description = "Combine snippits of text to bring to life the best constestant for each challenge.",
+            Description = "Combine snippets of text to bring to life the best constestant for each challenge.",
             MinPlayers = 3,
             MaxPlayers = null,
             Attributes = new GameModeAttributes
