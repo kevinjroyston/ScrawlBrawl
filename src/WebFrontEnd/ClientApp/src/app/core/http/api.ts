@@ -23,7 +23,7 @@ type UserRequest = {
 type LobbyRequest = {
     type: "Lobby",
     params?: {},
-    path: "Get" | "Create" | "Configure" | "Start" | "Games" | "Delete" | "Join",
+    path: "Get" | "Create" | "CreateAndJoin" | "Configure" | "Start" | "Games" | "Delete" | "Join",
     body?: {}
 }
 
@@ -75,6 +75,7 @@ export class API {
                     case "Games": obs = this.Get(r);
                         break;
                     case "Create":
+                    case "CreateAndJoin":
                     case "Configure":
                     case "Start":
                     case "Join": obs = this.Post(r);

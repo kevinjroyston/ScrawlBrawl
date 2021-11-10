@@ -18,7 +18,7 @@
         </div>
     </div>
     <div class="no-lobby" *ngIf="!inAGame">
-        <app-create-lobby (onCreateLobby)="onCreateLobby($event)"></app-create-lobby>
+        <app-create-lobby (onCreateLobby)="onCreateLobby($event)" (onCreateAndJoinLobby)="onCreateAndJoinLobby($event)"></app-create-lobby>
     </div>
 </div>
 

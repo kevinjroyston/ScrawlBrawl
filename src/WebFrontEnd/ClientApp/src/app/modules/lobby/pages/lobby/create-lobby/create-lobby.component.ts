@@ -15,6 +15,8 @@ import * as localStorage from "app/utils/localstorage";
 })
 export class CreateLobbyComponent implements OnInit {
   @Output() onCreateLobby = new EventEmitter();
+  @Output() onCreateAndJoinLobby = new EventEmitter();
+  public showPrompts = false;
   constructor(@Inject(API) private api: API) {
   }
   ngOnInit() {
@@ -29,10 +31,15 @@ export class CreateLobbyComponent implements OnInit {
 
   fetchDisplayName():string {return localStorage.fetchLocalStorage("Join","DisplayName")}
 
-  onSubmit = async () => {
+  onCreateAndJoinLobbySubmit = async () => {
+    if (!this.showPrompts) { this.showPrompts = true; return false}
     let requestBody = this.form.value;
-    requestBody.LobbyId = "temp";
+    requestBody.LobbyId = "temp";    
     localStorage.storeLocalStorage("Join","DisplayName",this.form.controls.DisplayName.value);    
-    this.onCreateLobby.emit(requestBody);
+    this.onCreateAndJoinLobby.emit(requestBody);
+  }
+  onCreateLobbySubmit = async () => {
+    if (this.showPrompts) { this.showPrompts = false; return false}
+    this.onCreateLobby.emit();
   }
 }

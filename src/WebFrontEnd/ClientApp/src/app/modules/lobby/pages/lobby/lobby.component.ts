@@ -91,9 +91,19 @@ export class LobbyManagementComponent {
             .catch(e => console.error(e));
     }
 
-    onCreateLobby = async (joinLobbyRequest) => {
+    onCreateLobby = async () => {
+        await this.api.request({ type: "Lobby", path: "Create"}).subscribe({
+            next: async (result) => {
+                this.lobby = result as Lobby.LobbyMetadata;
+                await this.onGetLobby()
+            },
+            error: async (error) => { this.error = error.error; await this.onGetLobby(); }
+        });
+    }
+
+    onCreateAndJoinLobby = async (joinLobbyRequest) => {
         var bodyString = JSON.stringify(joinLobbyRequest);
-        await this.api.request({ type: "Lobby", path: "Create", body: bodyString}).subscribe({
+        await this.api.request({ type: "Lobby", path: "CreateAndJoin", body: bodyString}).subscribe({
             next: async (result) => {
                 this.lobby = result as Lobby.LobbyMetadata;
                 await this.onGetLobby()
