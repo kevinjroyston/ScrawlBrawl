@@ -71,18 +71,49 @@ namespace Backend.APIs.Controllers.LobbyManagement
 #endif
         public IActionResult CreateAndJoinLobby([FromBody] JoinLobbyRequest request, [FromQuery(Name = "Id")] string id)
         {
-            request.LobbyId = "temp"; // make LobbyId optional to the modelstate.
+//            request.LobbyId = "temp"; // make LobbyId optional to the modelstate.
             if (!ModelState.IsValid)
             {
                 return new BadRequestResult();
             }
-            (bool success, string result) = internalCreateLobby(id);
-            if (!success)
+
+            AuthenticatedUser authUser = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId(id));
+            User user = GameManager.MapIdentifierToUser(id, out bool newUser);
+            if ((user == null) || (authUser==null))
             {
-                return StatusCode(500, result);
+                return new BadRequestResult();
             }
-            request.LobbyId = result;
-            return JoinLobby(request, id);
+
+
+            lock (authUser.Lock){
+                lock (user.LockObject) { 
+                    (bool createSuccess, string createResult) = internalCreateLobby(id, authUser);
+                    if (!createSuccess)
+                    {
+                        return StatusCode(500, createResult);
+                    }
+                    request.LobbyId = createResult;
+
+                    (bool, string) joinLobbyResponse;
+                    try {
+                        joinLobbyResponse = InternalJoinLobby(request, id, user);
+                    }
+                    catch
+                    {
+                        joinLobbyResponse = (false,"Internal Error");
+                    }
+
+
+                    if (!joinLobbyResponse.Item1)
+                    {  // we created a lobby, but it wouldn't let us join, so kill the lobby... it clearly deserves it
+                        GameManager.DeleteLobby(request.LobbyId); 
+                        authUser.OwnedLobby = null;
+                        return StatusCode(400, joinLobbyResponse.Item2);
+                    }
+                    return new OkResult();
+                } 
+            }
+
         }
 
         [HttpPost]
@@ -92,12 +123,22 @@ namespace Backend.APIs.Controllers.LobbyManagement
 #endif
         public IActionResult CreateLobby([FromQuery(Name = "Id")] string id)
         {
-            (bool success, string result) = internalCreateLobby(id);
-            if (!success)
+            if (!ModelState.IsValid)
             {
-                return StatusCode(500, result);
+                return new BadRequestResult();
             }
-            return Ok(result);
+
+            AuthenticatedUser authUser = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId(id));
+
+            lock (authUser.Lock)
+            {
+                (bool success, string result) = internalCreateLobby(id, authUser);
+                if (!success)
+                {
+                    return StatusCode(500, result);
+                }
+                return Ok(result);
+            }
         }
 
         [HttpPost]
@@ -109,15 +150,20 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 return new BadRequestResult();
             }
 
-            (bool success, string error) = InternalJoinLobby(request, id);
-            if (!success)
+            User user = GameManager.MapIdentifierToUser(id, out bool newUser);
+
+            lock (user.LockObject)
             {
-                return StatusCode(400, error);
+                (bool success, string error) = InternalJoinLobby(request, id, user);
+                if (!success)
+                {
+                    return StatusCode(400, error);
+                }
+                return new OkResult();
             }
-            return new OkResult();
         }
 
-        private (bool, string) InternalJoinLobby(JoinLobbyRequest request, string id)
+        private (bool, string) InternalJoinLobby(JoinLobbyRequest request, string id, User user)
         {
             if (!Sanitize.SanitizeString(request.DisplayName, minLength:1, maxLength:30, error: out string _))
             {
@@ -128,8 +174,6 @@ namespace Backend.APIs.Controllers.LobbyManagement
             {
                 return (false, "LobbyId invalid.");
             }
-
-            User user = GameManager.MapIdentifierToUser(id, out bool newUser);
 
             lock (user.LockObject)
             {
@@ -162,15 +206,8 @@ namespace Backend.APIs.Controllers.LobbyManagement
             }
         }
 
-        private (bool, string) internalCreateLobby(string id)
+        private (bool, string) internalCreateLobby(string id, AuthenticatedUser user)
         {
-            AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId(id));
-
-            if (user == null)
-            {
-                return (false, "Something went wrong finding that user, try again");
-            }
-
             if (user.OwnedLobby != null)
             {
                 return (true, user.OwnedLobby.LobbyId);
