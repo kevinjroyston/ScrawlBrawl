@@ -84,9 +84,17 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 return new BadRequestResult();
             }
 
-
+            if (authUser.OwnedLobby!=null)
+            {
+                return new OkResult();
+            }
             lock (authUser.Lock){
-                lock (user.LockObject) { 
+                lock (user.LockObject) {
+                    if (authUser.OwnedLobby != null)
+                    {
+                        return new OkResult();
+                    }
+
                     (bool createSuccess, string createResult) = internalCreateLobby(id, authUser);
                     if (!createSuccess)
                     {
