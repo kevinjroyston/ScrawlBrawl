@@ -155,7 +155,7 @@ export class FetchDataComponent implements OnDestroy
                 // Start a new autosubmit timer
                 if (prompt && prompt.autoSubmitAtTime) {
                     this.timerRemaining = prompt.autoSubmitAtTime.getTime() - prompt.currentServerTime.getTime();
-                    this.autoSubmitUserPromptTimer(prompt.autoSubmitAtTime.getTime() - prompt.currentServerTime.getTime());
+                    this.autoSubmitUserPromptTimer(this.timerRemaining);
                 } else {
                     this.clearAutoSubmitTimers(true);
                 }
@@ -247,14 +247,16 @@ export class FetchDataComponent implements OnDestroy
     }
 
     private clearAutoSubmitTimers(ForceIt){
-        if (!this.autoSubmitTimerId) return;
-
-        clearTimeout(this.autoSubmitTimerId);
-        this.autoSubmitTimerId = null;
+        if (this.autoSubmitTimerId) {
+            clearTimeout(this.autoSubmitTimerId);
+            this.autoSubmitTimerId = null;
+        }
         if (ForceIt || (!((this.userPrompt.promptHeader.maxProgress > 0) && (this.userPrompt.promptHeader.currentProgress < this.userPrompt.promptHeader.maxProgress))))
         { // if there are more steps (1 of 3 etc.) then do not clear the timer display, to avoid it blinking off and on
-            clearInterval(this.timerDisplayIntervalId);
-            this.timerDisplayIntervalId = null;
+            if (this.timerDisplayIntervalId) {
+                clearInterval(this.timerDisplayIntervalId);
+                this.timerDisplayIntervalId = null;
+            }
             this.timerDisplay = '';
         }
     }

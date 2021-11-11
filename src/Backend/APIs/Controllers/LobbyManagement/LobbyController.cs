@@ -65,73 +65,87 @@ namespace Backend.APIs.Controllers.LobbyManagement
         }
 
         [HttpPost]
-        [Route("Create")]
+        [Route("CreateAndJoin")]
 #if !DEBUG
  //   [Authorize(Policy = "LobbyManagement")]
 #endif
-        public IActionResult CreateLobby([FromBody] JoinLobbyRequest request, [FromQuery(Name = "Id")]string id)
+        public IActionResult CreateAndJoinLobby([FromBody] JoinLobbyRequest request, [FromQuery(Name = "Id")] string id)
         {
-            request.LobbyId = "temp"; // This should hopefully make LobbyId optional to the modelstate.
+//            request.LobbyId = "temp"; // make LobbyId optional to the modelstate.
             if (!ModelState.IsValid)
             {
                 return new BadRequestResult();
             }
-            AuthenticatedUser user = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId(id));
 
-            if (user == null)
+            AuthenticatedUser authUser = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId(id));
+            User user = GameManager.MapIdentifierToUser(id, out bool newUser);
+            if ((user == null) || (authUser==null))
             {
-                return StatusCode(500, "Something went wrong finding that user, try again");
+                return new BadRequestResult();
             }
 
-            if (user.OwnedLobby != null)
+            if (authUser.OwnedLobby!=null)
             {
                 return new OkResult();
             }
-
-            lock (user.Lock)
-            {
-                if (user.OwnedLobby != null)
-                {
-                    return new OkResult();
-                }
-
-                string lobbyId;
-                int safety = 0;
-                do
-                {
-                    // Keep making lobbyIds until a new one is found
-                    lobbyId = Guid.NewGuid().ToString().Substring(0, 5);
-                    if (safety++ > 20)
+            lock (authUser.Lock){
+                lock (user.LockObject) {
+                    if (authUser.OwnedLobby != null)
                     {
-                        throw new Exception("Yikes");
+                        return new OkResult();
                     }
-                } while (GameManager.GetLobby(lobbyId) != null);
 
-                Lobby newLobby = ActivatorUtilities.CreateInstance<Lobby>(this.ServiceProvider, lobbyId, user);
+                    (bool createSuccess, string createResult) = internalCreateLobby(id, authUser);
+                    if (!createSuccess)
+                    {
+                        return StatusCode(500, createResult);
+                    }
+                    request.LobbyId = createResult;
 
-                if (!GameManager.RegisterLobby(newLobby))
-                {
-                    return StatusCode(500, "Failed to create lobby, try again");
-                }
+                    (bool, string) joinLobbyResponse;
+                    try {
+                        joinLobbyResponse = InternalJoinLobby(request, id, user);
+                    }
+                    catch
+                    {
+                        joinLobbyResponse = (false,"Internal Error");
+                    }
 
-                request.LobbyId = lobbyId;
-                (bool, string) joinLobbyResponse;
-                try
-                {
-                    joinLobbyResponse = InternalJoinLobby(request, id);
-                }
-                catch
-                {
-                    joinLobbyResponse = (false, "Internal Error");
-                }
-                if (!joinLobbyResponse.Item1)
-                {
-                    GameManager.DeleteLobby(lobbyId);
-                    return StatusCode(400, joinLobbyResponse.Item2);
-                }
 
-                user.OwnedLobby = newLobby;
-                return Ok(lobbyId);
+                    if (!joinLobbyResponse.Item1)
+                    {  // we created a lobby, but it wouldn't let us join, so kill the lobby... it clearly deserves it
+                        GameManager.DeleteLobby(request.LobbyId); 
+                        authUser.OwnedLobby = null;
+                        return StatusCode(400, joinLobbyResponse.Item2);
+                    }
+                    return new OkResult();
+                } 
+            }
+
+        }
+
+        [HttpPost]
+        [Route("Create")]
+#if !DEBUG
+ //   [Authorize(Policy = "LobbyManagement")]
+#endif
+        public IActionResult CreateLobby([FromQuery(Name = "Id")] string id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return new BadRequestResult();
+            }
+
+            AuthenticatedUser authUser = GameManager.GetAuthenticatedUser(this.HttpContext.User.GetUserId(id));
+
+            lock (authUser.Lock)
+            {
+                (bool success, string result) = internalCreateLobby(id, authUser);
+                if (!success)
+                {
+                    return StatusCode(500, result);
+                }
+                return Ok(result);
             }
         }
 
@@ -144,15 +158,20 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 return new BadRequestResult();
             }
 
-            (bool success, string error) = InternalJoinLobby(request, id);
-            if (!success)
+            User user = GameManager.MapIdentifierToUser(id, out bool newUser);
+
+            lock (user.LockObject)
             {
-                return StatusCode(400, error);
+                (bool success, string error) = InternalJoinLobby(request, id, user);
+                if (!success)
+                {
+                    return StatusCode(400, error);
+                }
+                return new OkResult();
             }
-            return new OkResult();
         }
 
-        private (bool, string) InternalJoinLobby(JoinLobbyRequest request, string id)
+        private (bool, string) InternalJoinLobby(JoinLobbyRequest request, string id, User user)
         {
             if (!Sanitize.SanitizeString(request.DisplayName, minLength:1, maxLength:30, error: out string _))
             {
@@ -163,8 +182,6 @@ namespace Backend.APIs.Controllers.LobbyManagement
             {
                 return (false, "LobbyId invalid.");
             }
-
-            User user = GameManager.MapIdentifierToUser(id, out bool newUser);
 
             lock (user.LockObject)
             {
@@ -194,6 +211,44 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 }
 
                 return (true, string.Empty);
+            }
+        }
+
+        private (bool, string) internalCreateLobby(string id, AuthenticatedUser user)
+        {
+            if (user.OwnedLobby != null)
+            {
+                return (true, user.OwnedLobby.LobbyId);
+            }
+
+            lock (user.Lock)
+            {
+                if (user.OwnedLobby != null)
+                {
+                    return (true, user.OwnedLobby.LobbyId);
+                }
+
+                string lobbyId;
+                int safety = 0;
+                do
+                {
+                    // Keep making lobbyIds until a new one is found
+                    lobbyId = Guid.NewGuid().ToString().Substring(0, 5);
+                    if (safety++ > 20)
+                    {
+                        throw new Exception("Yikes");
+                    }
+                } while (GameManager.GetLobby(lobbyId) != null);
+
+                Lobby newLobby = ActivatorUtilities.CreateInstance<Lobby>(this.ServiceProvider, lobbyId, user);
+
+                if (!GameManager.RegisterLobby(newLobby))
+                {
+                    return (false, "Failed to create lobby, try again");
+                }
+
+                user.OwnedLobby = newLobby;
+                return (true,lobbyId);
             }
         }
 

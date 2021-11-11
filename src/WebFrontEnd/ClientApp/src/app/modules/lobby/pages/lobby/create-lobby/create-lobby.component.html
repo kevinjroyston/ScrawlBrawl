@@ -4,10 +4,12 @@
             Create A Game
         </h2>
         <div class="Description">
-            You are welcome to start a new game and invite friends.<br> If you are looking to join an existing game, click JOIN above.
+            You are welcome to start a free game and invite friends.<br><br> There is a separate game viewer needed to play ScrawlBrawl. (Don't worry, it's all free.) It works best of someone shares the web viewer tab so that all players can see it.<br><br>
         </div>
-        <div class="subprompts">
-
+        <div class="ButtonDescription" *ngIf="!showPrompts">
+            If you want to play on this device and be the lobby leader, click<br>
+        </div>
+        <div class="subprompts" *ngIf="showPrompts">
             <div class="subprompt">
                 <div class="subprompt-inner">
                     <div class="prompt-wrapper">
@@ -25,8 +27,15 @@
                 <drawingboard [drawingType]="'PROFILE'" formControlName='SelfPortrait'></drawingboard>
             </div>
         </div>
-        <scrawlbutton color="green" (click)="onSubmit()">
-            Create Lobby
+        <scrawlbutton color="green" (click)="onCreateAndJoinLobbySubmit()">
+            Create & Join Lobby
+        </scrawlbutton>
+
+        <div class="ButtonDescription">
+            <br>If you will not be using this device to play the game, click
+        </div>
+        <scrawlbutton color="blue" (click)="onCreateLobbySubmit()">
+            {{showPrompts?"Cancel":"Create Lobby"}}
         </scrawlbutton>
     </form>
 </div>
