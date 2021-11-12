@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace Backend.GameInfrastructure.ControlFlows.Exit
 {
+
+    // 11/11/2021 - I have no recollection as to why this nuance was needed. Lets avoid using this unless we understand it. It seems like a bad idea.
+
+    /*
     public class WaitForTimer_StateExit: WaitForTrigger_StateExit
     {
         private bool firstUser = true;
@@ -59,5 +63,5 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
             }
             this.Trigger();
         }
-    }
+    }*/
 }

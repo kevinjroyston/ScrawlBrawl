@@ -18,7 +18,7 @@ namespace Backend.GameInfrastructure
         /// The amount of time to wait after not seeing any user input but still getting pinged to consider them "Inactive", they must also miss the previous submit..
         /// This should be aggressively high.
         /// </summary>
-        public static TimeSpan UserInactivityTimer { get; } = TimeSpan.FromSeconds(31.0);
+        public static TimeSpan UserInactivityTimer { get; } = TimeSpan.FromSeconds(61.0);
 
         /// <summary>
         /// The amount of time to wait (after last submit) before deleting the user.

@@ -78,9 +78,7 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
                 }
             }
 
-            // TODO: locks in this flow almost certainly have race conditions.
-
-            // Will recalculate active users on each submission.
+            // Will recalculate active users on each submission. Hurrying them if needed.
             Nudge(null);
 
             // Proceed to next state once we have all users.
@@ -118,6 +116,7 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
                 && !this.Hurried
                 && this.GetUsers(WaitForUsersType.Active).IsSubsetOf(this.UsersWaiting))
             {
+                bool triggeringThread = false;
                 lock (this.TriggeredLock)
                 {
                     // UsersToWaitForType cannot change.
@@ -126,8 +125,17 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
                         && this.GetUsers(WaitForUsersType.Active).IsSubsetOf(this.UsersWaiting))
                     {
                         this.Hurried = true;
-                        this.ParentState.HurryUsers();
+                        triggeringThread = true;
                     }
+                }
+
+                // We CANNOT perform any user locks from within ANY other locks.
+                // Other web requests must be able to complete so that they can give up their user locks!!!
+                if (triggeringThread)
+                {
+                    // We don't need this to happen within a lock. Either the user gets hurried or
+                    // their form submit makes it in in time, the user lock will prevent any damage in weird scenarios here.
+                    this.ParentState.HurryUsers();
                 }
             }
         }

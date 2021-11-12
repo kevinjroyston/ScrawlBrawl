@@ -193,6 +193,7 @@ namespace Backend.GameInfrastructure.DataModels
                 // Locks are re-entrant meaning the same thread can lock the same object twice without deadlock.
                 lock (user.LockObject)
                 {
+                    // Another thread moved this user before we got to them.
                     if (!this.UsersEnteredAndExitedState.ContainsKey(user))
                     {
                         return;

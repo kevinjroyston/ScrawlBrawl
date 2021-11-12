@@ -65,15 +65,15 @@ namespace Backend.GameInfrastructure
             InitializeAllGameStates();
         }
 
-        public void DisconnectInactiveUsers()
+        public void DropDisconnectedUsers()
         {
-            List<User> inactive = GetAllUsers().Where(user => user.Activity != UserActivity.Active).ToList();
-            if (inactive.Count == 0)
+            List<User> disconnected = GetAllUsers().Where(user => user.Activity == UserActivity.Disconnected).ToList();
+            if (disconnected.Count == 0)
             {
                 return;
             }
 
-            foreach(User user in inactive)
+            foreach(User user in disconnected)
             {
                 TryLeaveLobbyGracefully(user);
                 GameManager.UnregisterUser(user);
@@ -398,7 +398,7 @@ namespace Backend.GameInfrastructure
                 case EndOfGameRestartType.BackToLobby:
                     InitializeAllGameStates();
                     previousEndOfGameRestart.Transition(this.WaitForLobbyStart);
-                    DisconnectInactiveUsers();
+                    DropDisconnectedUsers();
 
                     this.ResetScores();
                     break;
