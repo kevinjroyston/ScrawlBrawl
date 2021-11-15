@@ -21,12 +21,13 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
         {
             // Before sending users on their way. Reset their activity timer so that they wont get hurried for at least a minute.
             // Users often aren't looking at their phone for minutes prior to starting. We just want them to have enough time after the game starts to get a manual response in.
-            foreach(User user in this.Lobby.GetAllUsers())
+            foreach (User user in this.Lobby.GetAllUsers())
             {
                 user.LastActivityTime = DateTime.UtcNow;
             }
             ((WaitForTrigger_StateExit)this.Exit)?.Trigger();
         }
+
         public void Update()
         {
             this.UnityView.UnityObjects = GetUserPortraitUnityImages();

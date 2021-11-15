@@ -27,7 +27,13 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
         public QueryAndRevealState(Lobby lobby, List<Q> objectsToQuery, List<User> usersToQuery = null, TimeSpan? queryTime = null)
         {
             this.Lobby = lobby;
-            this.Objects = objectsToQuery;
+            this.Objects = objectsToQuery?.Where(obj => obj != null).ToList() ?? new List<Q>();
+
+            if (this.Objects.Count == 0)
+            {
+                this.Entrance.Transition(this.Exit);
+                return;
+            }
 
             StateChain VoteAndRevealChainGenerator()
             {

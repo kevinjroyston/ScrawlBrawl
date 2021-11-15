@@ -238,7 +238,11 @@ namespace Backend.GameInfrastructure
                     {
                         FindNewPartyLeader();
                     }
-                    this.WaitForLobbyStart.UnityViewDirty = true;
+                    // States will drop deleted users rather than keep hurrying them along.
+                    user.Deleted = true;
+
+                    // Have the gamestate refresh its' user list.
+                    this.WaitForLobbyStart.Update();
                 }
             }
         }

@@ -65,6 +65,12 @@ namespace Backend.GameInfrastructure.DataModels
                 {
                     throw new Exception("This UserState has already been entered once. Please use a new state instance.");
                 }
+                if (user.Deleted)
+                {
+                    // Ignore the user if they were deleted.
+                    // Hacky fix.
+                    return;
+                }
                 this.UsersEnteredAndExitedState[user] = (true, false);
 
                 user.StateStack.Push(this);

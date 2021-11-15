@@ -132,7 +132,11 @@ namespace Backend.GameInfrastructure.DataModels.Users
                 return UserActivity.Active;
             }
         }
-
+        /// <summary>
+        /// Should add better access control around this but idc at this point.
+        /// Also this is super hacky in general. Don't set Deleted except for in gracefully leaving lobby.
+        /// </summary>
+        public bool Deleted { get; set; } = false;
         private UserStatus InternalStatus;
 
         /// <summary>
