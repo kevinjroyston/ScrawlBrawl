@@ -180,6 +180,11 @@ namespace Common.Code.Helpers
                 duplicatedMembers.AddRange(originalMembers);
             }
 
+            if (originalMembers.Count == 0)
+            {
+                throw new ArgumentException("No members present to assign.");
+            }
+
             // If all constraints have a max limit, trim the inputs such that source objects must be assigned roughly evenly.
             if (constraints.All(constraint => constraint.MaxMemberCount.HasValue))
             {

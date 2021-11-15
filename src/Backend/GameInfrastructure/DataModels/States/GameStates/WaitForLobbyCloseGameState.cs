@@ -11,6 +11,7 @@ using Common.Code.Validation;
 using Common.DataModels.Responses;
 using Backend.GameInfrastructure.DataModels.States.UserStates;
 using Common.DataModels.Responses.Gameplay;
+using System;
 
 namespace Backend.GameInfrastructure.DataModels.States.GameStates
 {
@@ -18,8 +19,15 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
     {
         public void LobbyHasClosed()
         {
+            // Before sending users on their way. Reset their activity timer so that they wont get hurried for at least a minute.
+            // Users often aren't looking at their phone for minutes prior to starting. We just want them to have enough time after the game starts to get a manual response in.
+            foreach (User user in this.Lobby.GetAllUsers())
+            {
+                user.LastActivityTime = DateTime.UtcNow;
+            }
             ((WaitForTrigger_StateExit)this.Exit)?.Trigger();
         }
+
         public void Update()
         {
             this.UnityView.UnityObjects = GetUserPortraitUnityImages();

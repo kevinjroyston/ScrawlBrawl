@@ -65,6 +65,12 @@ namespace Backend.GameInfrastructure.DataModels
                 {
                     throw new Exception("This UserState has already been entered once. Please use a new state instance.");
                 }
+                if (user.Deleted)
+                {
+                    // Ignore the user if they were deleted.
+                    // Hacky fix.
+                    return;
+                }
                 this.UsersEnteredAndExitedState[user] = (true, false);
 
                 user.StateStack.Push(this);
@@ -193,6 +199,7 @@ namespace Backend.GameInfrastructure.DataModels
                 // Locks are re-entrant meaning the same thread can lock the same object twice without deadlock.
                 lock (user.LockObject)
                 {
+                    // Another thread moved this user before we got to them.
                     if (!this.UsersEnteredAndExitedState.ContainsKey(user))
                     {
                         return;

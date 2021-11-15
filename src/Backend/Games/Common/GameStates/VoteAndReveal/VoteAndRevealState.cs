@@ -26,7 +26,13 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
         public VoteAndRevealState(Lobby lobby, List<T> objectsToVoteOn, List<User> votingUsers = null, TimeSpan? votingTime = null) 
         {
             this.Lobby = lobby;
-            this.Objects = objectsToVoteOn;
+            this.Objects = objectsToVoteOn?.Where(obj=> obj != null).ToList() ?? new List<T>();
+
+            if (this.Objects.Count == 0)
+            {
+                this.Entrance.Transition(this.Exit);
+                return;
+            }
 
             StateChain VoteAndRevealChainGenerator()
             {
