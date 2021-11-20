@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using static System.FormattableString;
 using Backend.GameInfrastructure.DataModels.States.UserStates;
 using System.Threading;
+using System.Linq;
 
 namespace Backend.GameInfrastructure.ControlFlows.Exit
 {
@@ -149,7 +150,7 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
                 case WaitForUsersType.All:
                     return new HashSet<User>(this.Lobby.GetAllUsers());
                 case WaitForUsersType.Active:
-                    return new HashSet<User>(this.Lobby.GetUsers(UserActivity.Active));
+                    return new HashSet<User>(this.Lobby.GetAllUsers().Where(user=>user.Activity!=UserActivity.Disconnected));
                 default:
                     throw new Exception(Invariant($"Something went wrong. Unknown WaitForUsersType '{type}'"));
             }
