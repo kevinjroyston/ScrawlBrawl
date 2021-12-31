@@ -20,7 +20,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
         public TutorialExplanationGameState(Lobby lobby)
             : base(
                   lobby: lobby,
-                  exit: new WaitForUsers_StateExit(lobby: lobby, usersToWaitFor: WaitForUsersType.Active, waitingPromptGenerator: WaitingPromptGenerator(lobby))
+                  exit: new WaitForUsers_StateExit(lobby: lobby, usersToWaitFor: WaitForUsersType.NotDisconnected, waitingPromptGenerator: WaitingPromptGenerator(lobby))
                   )
         {
             Arg.NotNull(lobby, nameof(lobby));
