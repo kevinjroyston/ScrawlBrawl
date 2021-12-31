@@ -16,7 +16,7 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
     public enum WaitForUsersType
     {
         All,
-        Active,
+        NotDisconnected,
     }
 
     public class WaitForUsers_StateExit : WaitForTrigger_StateExit, IDisposable
@@ -37,7 +37,7 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
         /// <param name="waitingPromptGenerator">The waiting state to use while waiting for the trigger. The outlet of this state will be overwritten</param>
         public WaitForUsers_StateExit(
             Lobby lobby,
-            WaitForUsersType usersToWaitFor = WaitForUsersType.Active)
+            WaitForUsersType usersToWaitFor = WaitForUsersType.NotDisconnected)
                : base(Prompts.DisplayWaitingText())
         {
             this.Lobby = lobby;
@@ -47,7 +47,7 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
         public WaitForUsers_StateExit(
             Lobby lobby,
             Func<User, UserPrompt> waitingPromptGenerator,
-            WaitForUsersType usersToWaitFor = WaitForUsersType.Active
+            WaitForUsersType usersToWaitFor = WaitForUsersType.NotDisconnected
             )
             : base(waitingPromptGenerator)
         {
@@ -113,17 +113,17 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
         private void Nudge(object _)
         {
             // Hurry users once all active have submitted. IFF that is the selected mode
-            if (this.UsersToWaitForType == WaitForUsersType.Active
+            if (this.UsersToWaitForType == WaitForUsersType.NotDisconnected
                 && !this.Hurried
-                && this.GetUsers(WaitForUsersType.Active).IsSubsetOf(this.UsersWaiting))
+                && this.GetUsers(WaitForUsersType.NotDisconnected).IsSubsetOf(this.UsersWaiting))
             {
                 bool triggeringThread = false;
                 lock (this.TriggeredLock)
                 {
                     // UsersToWaitForType cannot change.
-                    if (this.UsersToWaitForType == WaitForUsersType.Active
+                    if (this.UsersToWaitForType == WaitForUsersType.NotDisconnected
                         && !this.Hurried
-                        && this.GetUsers(WaitForUsersType.Active).IsSubsetOf(this.UsersWaiting))
+                        && this.GetUsers(WaitForUsersType.NotDisconnected).IsSubsetOf(this.UsersWaiting))
                     {
                         this.Hurried = true;
                         triggeringThread = true;
@@ -149,7 +149,7 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
                 // TODO: no need to call this multiple times if not looking at active users.
                 case WaitForUsersType.All:
                     return new HashSet<User>(this.Lobby.GetAllUsers());
-                case WaitForUsersType.Active:
+                case WaitForUsersType.NotDisconnected:
                     return new HashSet<User>(this.Lobby.GetAllUsers().Where(user=>user.Activity!=UserActivity.Disconnected));
                 default:
                     throw new Exception(Invariant($"Something went wrong. Unknown WaitForUsersType '{type}'"));
