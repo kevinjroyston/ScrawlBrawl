@@ -22,6 +22,7 @@ using Backend.APIs.DataModels.UnityObjects;
 using static Backend.Games.KevinsGames.TextBodyBuilder.DataModels.Prompt;
 using Common.Code.Extensions;
 using static Backend.Games.KevinsGames.TextBodyBuilder.DataModels.TextPerson;
+using static System.FormattableString;
 
 namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
 {
@@ -281,6 +282,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                 people: peopleToVoteOn,
                 votingTime: votingTime)
             {
+                VotingPromptTitle = Invariant($"Pick the best submission for<div class='votePrompt'>{prompt.Text}</div>"),
                 VotingViewOverrides = new UnityViewOverrides
                 {
                     Title = prompt.Text,

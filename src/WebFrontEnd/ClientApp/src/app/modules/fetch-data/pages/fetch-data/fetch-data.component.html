@@ -30,11 +30,9 @@
                 </div>
             </div>
         </div>
-        <h2 class="title" *ngIf="userPrompt.title">
-            {{ userPrompt.title }}
+        <h2 class="title" *ngIf="userPrompt.title" [innerHTML]="userPrompt.title | safe: 'html'">
         </h2>
-        <div class="Description" *ngIf="userPrompt.description">
-            {{ userPrompt.description }}
+        <div class="Description" *ngIf="userPrompt.description" [innerHTML]="userPrompt.description | safe: 'html'">
         </div>
         <displayusers *ngIf="userPrompt.displayUsersString" class="DisplayUsersHolder" [displayUsersParameters]="displayUsersMetadata" [displayUsersMode]="userPrompt.DisplayUsersString"></displayusers>
 

@@ -66,28 +66,28 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                         return new UserPrompt
                         {
                             UserPromptId = UserPromptId.TextBodyBuilder_ContestantCreation,
-                            Title = Invariant($"Make the best character for this prompt: \"{prompt.Text}\""),
+                            Title = Invariant($"Make the best character for the prompt<div class='createPrompt'>{prompt.Text}</div>"),
                             PromptHeader = new PromptHeaderMetadata
                             {
                                 MaxProgress = RoundTracker.UsersToAssignedPrompts[user].Count,
                                 CurrentProgress = lambdaSafeIndex + 1,
                             },
-                            Description = "Format is '<Character> <Action> <Modifier>'",
+                            Description = "Format is <span class='characterClass'>Character</span> <span class='actionClass'>Action</span> <span class='modifierClass'>Modifier</span>",
                             SubPrompts = new SubPrompt[]
                             {
                                 new SubPrompt
                                 {
-                                    Prompt = "Character:",
+                                    Prompt = "<span class='characterClass'>Character:</span>",
                                     Answers = prompt.UsersToUserHands[user].CharacterChoices.Select(userText => userText.Text).ToArray(),
                                 },
                                 new SubPrompt
                                 {
-                                    Prompt = "Action:",
+                                    Prompt = "<span class='actionClass'>Action:</span>",
                                     Answers = prompt.UsersToUserHands[user].ActionChoices.Select(userText => userText.Text).ToArray(),
                                 },
                                 new SubPrompt
                                 {
-                                    Prompt = "Modifier:",
+                                    Prompt = "<span class='modifierClass'>Modifier:</span>",
                                     Answers = prompt.UsersToUserHands[user].ModifierChoices.Select(userText => userText.Text).ToArray(),
                                 },
                             },
