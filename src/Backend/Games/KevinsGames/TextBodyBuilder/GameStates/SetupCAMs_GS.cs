@@ -104,6 +104,10 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
         }
         public override (bool, string) CountingFormSubmitHandler(User user, UserFormSubmission input, int counter)
         {
+            if (this.CAMs.Select((prompt) => prompt.Text).Contains(input.SubForms[0].ShortAnswer))
+            {
+                return (false, "Someone has already entered that prompt");
+            }
             this.CAMs.Add(new CAMUserText
             {
                 Text = correctCase(input.SubForms[0].ShortAnswer, UsersToRandomizedCAMTypes[user][counter % 3]),
