@@ -240,7 +240,10 @@ export class FetchDataComponent implements OnDestroy
         this.autoSubmitTimerId = setTimeout(() => this.onSubmit(this.userForm?.value, true), ms);
         this.timerColor = 'var(--green-secondary)';
         this.timerDisplayIntervalId = setInterval(() => 
-             {this.timerRemaining-=1000; this.timerDisplay = new Date(this.timerRemaining).toISOString().substr(14, 5);
+             {this.timerRemaining-=1000;
+                if (this.timerRemaining <= 0) this.timerDisplay = 'Time\'s Up!'
+                else this.timerDisplay = new Date(this.timerRemaining).toISOString().substr(14, 5);
+
                 if (this.timerRemaining < 10000) this.timerColor = 'var(--red-secondary)'
                 else if (this.timerRemaining < 30000) this.timerColor = 'var(--yellow-secondary)';
              }, 1000);
