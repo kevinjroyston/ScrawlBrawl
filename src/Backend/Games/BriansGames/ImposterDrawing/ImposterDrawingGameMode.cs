@@ -24,13 +24,14 @@ namespace Backend.Games.BriansGames.ImposterDrawing
 {
     public class ImposterDrawingGameMode : IGameMode
     {
+        private const int MinPlayers = 4;
         public static GameModeMetadata GameModeMetadata { get; } =
             new GameModeMetadata
             {
                 Title = "Imposter Syndrome",
                 GameId = GameModeId.Imposter,
                 Description = "Come up with a difference only you'll be able to spot!",
-                MinPlayers = 4,
+                MinPlayers = MinPlayers,
                 MaxPlayers = null,
                 Attributes = new GameModeAttributes
                 {
@@ -44,6 +45,8 @@ namespace Backend.Games.BriansGames.ImposterDrawing
         private static IReadOnlyDictionary<GameDuration, TimeSpan> GetGameDurationEstimates(int numPlayers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
+
+            numPlayers = Math.Min(numPlayers, MinPlayers);
             foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
             {
                 int numRounds = Math.Min(ImposterDrawingConstants.MaxNumRounds[duration], numPlayers);

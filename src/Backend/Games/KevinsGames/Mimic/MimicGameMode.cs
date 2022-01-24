@@ -28,12 +28,13 @@ namespace Backend.Games.KevinsGames.Mimic
         private GameState Setup { get; set; }
         private Lobby Lobby { get; set; }
         private Random Rand { get; } = new Random();
+        private const int MinPlayers = 3;
         public static GameModeMetadata GameModeMetadata { get; } = new GameModeMetadata
         {
             Title = "Mimic",
             GameId = GameModeId.Mimic,
             Description = "Test your drawing and memory skills",
-            MinPlayers = 3,
+            MinPlayers = MinPlayers,
             MaxPlayers = null,
             Attributes = new GameModeAttributes
                 {
@@ -55,6 +56,8 @@ namespace Backend.Games.KevinsGames.Mimic
         private static IReadOnlyDictionary<GameDuration, TimeSpan> GetGameDurationEstimates(int numPlayers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             int numStartingDrawingsPerUser = 1;
+
+            numPlayers = Math.Min(numPlayers, MinPlayers);
 
             Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
             foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))

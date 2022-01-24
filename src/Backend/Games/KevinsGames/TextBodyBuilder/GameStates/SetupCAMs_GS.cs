@@ -24,7 +24,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
     {
         private Random Rand { get; } = new Random();
         private Dictionary<User, List<CAMType>> UsersToRandomizedCAMTypes { get; set; } = new Dictionary<User, List<CAMType>>();
-        private IReadOnlyList<CAMType> CamTypes { get; } = new List<CAMType>() { CAMType.Character, CAMType.Action, CAMType.Modifier };
+        public static IReadOnlyList<CAMType> UserGeneratedCamTypes { get; } = new List<CAMType>() { CAMType.Character, CAMType.Action };
         private ConcurrentBag<CAMUserText> CAMs { get; set; }
 
 
@@ -44,17 +44,17 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
             
             foreach(User user in lobby.GetAllUsers())
             {
-                UsersToRandomizedCAMTypes.Add(user, CamTypes.OrderBy(_ => Rand.Next()).ToList());
+                UsersToRandomizedCAMTypes.Add(user, UserGeneratedCamTypes.OrderBy(_ => Rand.Next()).ToList());
             }
         }
 
         public override UserPrompt CountingPromptGenerator(User user, int counter)
         {
-            if (counter % 3 == 0)
+            if (counter % UserGeneratedCamTypes.Count == 0)
             {
-                UsersToRandomizedCAMTypes[user] = CamTypes.OrderBy(_ => Rand.Next()).ToList();
+                UsersToRandomizedCAMTypes[user] = UserGeneratedCamTypes.OrderBy(_ => Rand.Next()).ToList();
             }
-            CAMType camType = UsersToRandomizedCAMTypes[user][counter % 3];
+            CAMType camType = UsersToRandomizedCAMTypes[user][counter % UserGeneratedCamTypes.Count];
             string Description="";
             switch (camType)
             {
@@ -110,21 +110,22 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
             }
             this.CAMs.Add(new CAMUserText
             {
-                Text = correctCase(input.SubForms[0].ShortAnswer, UsersToRandomizedCAMTypes[user][counter % 3]),
+                Text = correctCase(input.SubForms[0].ShortAnswer, UsersToRandomizedCAMTypes[user][counter % UserGeneratedCamTypes.Count]),
                 Owner = user,
-                Type = UsersToRandomizedCAMTypes[user][counter % 3]
+                Type = UsersToRandomizedCAMTypes[user][counter % UserGeneratedCamTypes.Count]
             });
             return (true, string.Empty);
         }
         public override UserTimeoutAction CountingUserTimeoutHandler(User user, UserFormSubmission input, int counter)
         {
-            if (!string.IsNullOrWhiteSpace(input?.SubForms?[0]?.ShortAnswer))
+            if (!string.IsNullOrWhiteSpace(input?.SubForms?[0]?.ShortAnswer)
+                && !this.CAMs.Select((prompt) => prompt.Text).Contains(input.SubForms[0].ShortAnswer))
             {
                 this.CAMs.Add(new CAMUserText
                 {
-                    Text = correctCase(input.SubForms[0].ShortAnswer, UsersToRandomizedCAMTypes[user][counter % 3]),
+                    Text = correctCase(input.SubForms[0].ShortAnswer, UsersToRandomizedCAMTypes[user][counter % UserGeneratedCamTypes.Count]),
                     Owner = user,
-                    Type = UsersToRandomizedCAMTypes[user][counter % 3]
+                    Type = UsersToRandomizedCAMTypes[user][counter % UserGeneratedCamTypes.Count]
                 });
             }
             return UserTimeoutAction.None;

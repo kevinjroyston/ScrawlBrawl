@@ -34,13 +34,13 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
         private List<GameState> Scoreboards { get; set; } = new List<GameState>();
         private List<GameState> VoteReveals { get; set; } = new List<GameState>();
         private Random Rand { get; } = new Random();
-
+        private const int MinPlayers = 4;
         public static GameModeMetadata GameModeMetadata { get; } = new GameModeMetadata
         {
             Title = "Chaotic Collaboration",
             GameId = GameModeId.ChaoticCoop,
             Description = "Blindly collaborate on a drawing with unknown teammates.",
-            MinPlayers = 4,
+            MinPlayers = MinPlayers,
             MaxPlayers = null,
             Attributes = new GameModeAttributes
                 {
@@ -80,6 +80,8 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
         {
             bool useSingleColor = (bool)gameModeOptions[(int)GameModeOptionsEnum.useSingleColor].ValueParsed;
             Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
+
+            numPlayers = Math.Min(numPlayers, MinPlayers);
             foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
             {
                 int numRounds = Math.Min(TwoToneDrawingConstants.MaxNumRounds[duration], numPlayers);
