@@ -34,12 +34,13 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
         private RoundTracker RoundTracker { get; } = new RoundTracker();
         private Random Rand { get; } = new Random();
 
+        private const int MinPlayers = 3;
         public static GameModeMetadata GameModeMetadata { get; } = new GameModeMetadata
         {
             Title = "Character Builder", 
             GameId = GameModeId.TextBodyBuilder,
             Description = "Combine snippets of text to bring to life the best constestant for each challenge.",
-            MinPlayers = 3,
+            MinPlayers = MinPlayers,
             MaxPlayers = null,
             Attributes = new GameModeAttributes
             {
@@ -53,6 +54,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
         };
         private static IReadOnlyDictionary<GameDuration, TimeSpan> GetGameDurationEstimates(int numPlayers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
+            numPlayers = Math.Min(numPlayers, MinPlayers);
             Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
             foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
             {
@@ -94,7 +96,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
             TimeSpan? votingTimer = null;
 
             int numPromptsPerRound = Math.Min(numPlayers, TextBodyBuilderConstants.MaxNumSubRounds[duration]);
-            int minDrawingsRequired = TextBodyBuilderConstants.NumCAMsInHand * 3; // the amount to make one playerHand to give everyone
+            int minDrawingsRequired = TextBodyBuilderConstants.NumCAMsInHand * SetupCAMs_GS.UserGeneratedCamTypes.Count; // the amount to make one playerHand to give everyone
 
             int expectedPromptsPerUser = (int) Math.Ceiling(1.0*numPromptsPerRound * numRounds / lobby.GetAllUsers().Count);
             int expectedDrawingsPerUser = Math.Max((minDrawingsRequired / numPlayers + 1) * 2, TextBodyBuilderConstants.NumCAMsPerPlayer[duration]);
@@ -138,7 +140,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                 numPromptsPerRound = (int)Math.Ceiling(1.0 * battlePrompts.Count / numRounds);
 
                 numPromptsPerUserPerRound = Math.Max(1,numPromptsPerRound / 2);
-                int maxNumUsersPerPrompt = Math.Min(12,(int)Math.Ceiling(1.0*numPlayers * numPromptsPerUserPerRound / numPromptsPerRound));
+                int maxNumUsersPerPrompt = Math.Min(10,(int)Math.Ceiling(1.0*numPlayers * numPromptsPerUserPerRound / numPromptsPerRound));
 
                 foreach (Prompt prompt in battlePrompts)
                 {

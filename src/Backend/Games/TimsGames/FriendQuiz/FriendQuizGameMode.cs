@@ -27,12 +27,13 @@ namespace Backend.Games.TimsGames.FriendQuiz
         private Random Rand { get; } = new Random();
         private GameState Setup { get; set; }
         private RoundTracker RoundTracker { get; set; } = new RoundTracker();
+        private const int MinPlayers = 3;
         public static GameModeMetadata GameModeMetadata { get; } = new GameModeMetadata
         {
             Title = "Friend Quiz",
             GameId = GameModeId.FriendQuiz,
             Description = "See how well you know your fellow players",
-            MinPlayers = 3,
+            MinPlayers = MinPlayers,
             MaxPlayers = null,
             Attributes = new GameModeAttributes
             {
@@ -55,6 +56,7 @@ namespace Backend.Games.TimsGames.FriendQuiz
         {
             double questionPoolMultiplier = 2.5; // Question pool is X times bigger than number of questions per person.
 
+            numPlayers = Math.Min(numPlayers, MinPlayers);
             Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
             foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
             {

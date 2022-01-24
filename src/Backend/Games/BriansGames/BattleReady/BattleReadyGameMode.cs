@@ -36,12 +36,14 @@ namespace Backend.Games.BriansGames.BattleReady
         private RoundTracker RoundTracker { get; } = new RoundTracker();
         private Random Rand { get; } = new Random();
 
+        private const int MinPlayers = 3;
+
         public static GameModeMetadata GameModeMetadata { get; } = new GameModeMetadata
         {
             Title = "Body Builder", // in code refered to as Battle Ready
             GameId = GameModeId.BodyBuilder,
             Description = "Go head to head body to body and legs to legs with other players to try to make the best constestant for each challenge.",
-            MinPlayers = 3,
+            MinPlayers = MinPlayers,
             MaxPlayers = null,
             Attributes = new GameModeAttributes
             {
@@ -55,6 +57,7 @@ namespace Backend.Games.BriansGames.BattleReady
         private static IReadOnlyDictionary<GameDuration, TimeSpan> GetGameDurationEstimates(int numPlayers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
+            numPlayers = Math.Min(numPlayers, MinPlayers);
             foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
             {
                 int numRounds = BattleReadyConstants.NumRounds[duration];

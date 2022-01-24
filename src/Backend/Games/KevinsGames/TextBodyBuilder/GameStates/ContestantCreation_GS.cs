@@ -88,7 +88,8 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                                 new SubPrompt
                                 {
                                     Prompt = "<span class='modifierClass'>Modifier:</span>",
-                                    Answers = prompt.UsersToUserHands[user].ModifierChoices.Select(userText => userText.Text).ToArray(),
+                                    ShortAnswer = true,
+                                    //Answers = prompt.UsersToUserHands[user].ModifierChoices.Select(userText => userText.Text).ToArray(),
                                 },
                             },
                             SubmitButton = true,
@@ -99,7 +100,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                         prompt.UsersToUserHands[user].Descriptors = new Dictionary<CAMType, CAMUserText>{
                                 {CAMType.Character, prompt.UsersToUserHands[user].CharacterChoices[(int)input.SubForms[0].RadioAnswer] },
                                 {CAMType.Action, prompt.UsersToUserHands[user].ActionChoices[(int)input.SubForms[1].RadioAnswer] },
-                                {CAMType.Modifier, prompt.UsersToUserHands[user].ModifierChoices[(int)input.SubForms[2].RadioAnswer] }
+                                {CAMType.Modifier, new CAMUserText(){ Text = input.SubForms[2].ShortAnswer, Type = CAMType.Modifier, Owner = user} }
                             };
                         prompt.UsersToUserHands[user].Owner = user;
                         return (true, String.Empty);
