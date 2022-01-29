@@ -27,8 +27,10 @@ namespace Assets.Scripts.Views
         /// </summary>
         private List<Action<float, float>> AspectRatioListeners = new List<Action<float, float>>();
 
-        public void HandleUnityObject(UnityObject unityObject)
+private UnityViewHandler InheritedHandlers;
+        public void HandleUnityObject(UnityObject unityObject, UnityViewHandler inheritedHandlers)
         {
+            InheritedHandlers = inheritedHandlers;
             UnityObject = unityObject;
             UpdateHandlers();
             CallHandlers();
@@ -94,6 +96,11 @@ namespace Assets.Scripts.Views
                             values.Add(UnityObject.Options);
                             break;
                         default:
+                            var viewValue = InheritedHandlers.FindViewValue(handlerId);
+                            if(viewValue!= null){
+                                values.Add(viewValue);
+                                break;
+                            }
                             switch (UnityObject.Type)
                             {
                                 case UnityObjectType.Image:

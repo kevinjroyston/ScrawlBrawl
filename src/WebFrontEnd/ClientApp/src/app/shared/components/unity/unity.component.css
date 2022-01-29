@@ -1,10 +1,10 @@
-.largeViewer {
+.tempDisabledlargeViewer {
     height: 500px;
     max-width: 700px;
     align-content: center;
 }
 
-.smallViewer {
+.tempDisabledsmallViewer {
     height: 150px;
 }
 

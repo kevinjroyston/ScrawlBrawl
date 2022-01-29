@@ -142,7 +142,7 @@ export class FetchDataComponent implements OnDestroy
                     document.body.classList.remove('makeRoomForToolbar');
                 }
       
-                this.unityViewer.UpdateLobbyId(prompt.lobbyId);
+                //this.unityViewer.UpdateLobbyId(prompt.lobbyId);
 
                 // Too lazy to figure out how to properly deserialize things.
                 prompt.autoSubmitAtTime = !prompt.autoSubmitAtTime ? null : new Date(prompt.autoSubmitAtTime);

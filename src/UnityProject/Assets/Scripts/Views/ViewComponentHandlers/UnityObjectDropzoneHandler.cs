@@ -18,7 +18,11 @@ public class UnityObjectDropzoneHandler : MonoBehaviour, HandlerInterface
 {
     List<UnityObject> UnityObjects { get; set; } = new List<UnityObject>();
 
-    public List<HandlerId> HandlerIds => HandlerType.UnityObjectList.ToHandlerIdList();
+    public List<HandlerId> HandlerIds => new List<HandlerId>()
+    {
+        HandlerType.UnityObjectList.ToHandlerId(),
+        HandlerType.UnityViewHandler.ToHandlerId()
+    };
     public HandlerScope Scope => HandlerScope.View;
 
     public GameObject DropZone;
@@ -28,10 +32,10 @@ public class UnityObjectDropzoneHandler : MonoBehaviour, HandlerInterface
         EventSystem.Singleton.RegisterListener(DestroyAllObjects, new GameEvent() { eventType = EventEnum.ExitingState }, persistant: true);
     }
 
-    public void UpdateValue(UnityField<List<object>> list)
+    public void UpdateValue(UnityField<List<object>> list, UnityViewHandler unityViewHandler)
     {
         UnityObjects = list?.Value?.Cast<UnityObject>().ToList() ?? new List<UnityObject>();
-        LoadAllObjects(UnityObjects);
+        LoadAllObjects(UnityObjects, unityViewHandler);
     }
 
     public void DestroyAllObjects(GameEvent gameEvent)
@@ -42,7 +46,7 @@ public class UnityObjectDropzoneHandler : MonoBehaviour, HandlerInterface
         }
     }
 
-    private void LoadAllObjects(List<UnityObject> objects)
+    private void LoadAllObjects(List<UnityObject> objects, UnityViewHandler unityViewHandler)
     {
         objects = objects ?? new List<UnityObject>();
         List<UnityObjectHandler> childrenObjectHandlers = DropZone.transform.GetComponentsInChildren<UnityObjectHandler>().ToList();
@@ -85,7 +89,7 @@ public class UnityObjectDropzoneHandler : MonoBehaviour, HandlerInterface
         // Set the image object sprites accordingly.
         for (int i = 0; i < objects.Count; i++)
         {
-            DropZone.transform.GetChild(i).GetComponent<UnityObjectHandler>().HandleUnityObject(objects[i]);
+            DropZone.transform.GetChild(i).GetComponent<UnityObjectHandler>().HandleUnityObject(objects[i], unityViewHandler);
         }
 
         
@@ -107,6 +111,6 @@ public class UnityObjectDropzoneHandler : MonoBehaviour, HandlerInterface
 
     public void UpdateValue(List<object> objects)
     {
-        this.UpdateValue((UnityField<List<object>>) objects[0]);
+        this.UpdateValue((UnityField<List<object>>)objects[0], (UnityViewHandler)objects[1]);
     }
 }

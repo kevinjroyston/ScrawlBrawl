@@ -73,14 +73,21 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.DataModels
             bool revealThisObject = false)
         {
             UnityText text = new UnityText(base.GetUnityObject(backgroundColor, imageIdentifier, imageOwnerId, title, header, voteCount, usersWhoVotedFor, revealThisObject));
-            text.Title ??= new UnityField<string> { Value = Descriptors[CAMType.Character].Text };
-            text.Header ??= new UnityField<string> { Value = $"{Descriptors[CAMType.Action].Text} {Descriptors[CAMType.Modifier].Text}" };
+            text.Title ??= new UnityField<string> { Value = ToUnityRichTextString() };
             return text;
         }
 
         public override string ToString()
         {
             return $"{Descriptors[CAMType.Character].Text} {Descriptors[CAMType.Action].Text} {Descriptors[CAMType.Modifier].Text}";
+        }
+        public string ToHtmlColoredString()
+        {
+            return $"<span class='characterClass'>{Descriptors[CAMType.Character].Text}</span> <span class='actionClass'>{Descriptors[CAMType.Action].Text}</span> <span class='modifierClass'>{Descriptors[CAMType.Modifier].Text}</span>";
+        }
+        public string ToUnityRichTextString()
+        {
+            return $"<color=#2e53d2ff>{Descriptors[CAMType.Character].Text}</color> <color=#2aac89ff>{Descriptors[CAMType.Action].Text}</color> <color=#d292c8ff>{Descriptors[CAMType.Modifier].Text}</color>";
         }
     }
 }

@@ -74,6 +74,7 @@ namespace Backend.Games.Common.DataModels
                 title: this.UnityImageRevealOverrides.Title,
                 header: this.UnityImageRevealOverrides.Header,
                 imageOwnerId: this.Owner?.Id,
+                voteCount: this.VotesCastForThisObject.Count,
                 usersWhoVotedFor: this.VotesCastForThisObject.Select((vote) => vote.UserWhoVoted.Id).ToList(),
                 revealThisObject: this.ShouldHighlightReveal);
         }

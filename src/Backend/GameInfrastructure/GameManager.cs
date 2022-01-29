@@ -72,7 +72,7 @@ namespace Backend.GameInfrastructure
         public User MapIdentifierToUser(string identifier, out bool newUser)
         {
             newUser = false;
-            if (identifier.Length < 30)
+            if (identifier.Length != 50)
             {
                 return null;
             }

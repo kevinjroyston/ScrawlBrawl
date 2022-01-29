@@ -23,6 +23,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
         public Action<List<T>, IDictionary<User, VoteInfo>> VoteCountManager { get; set; }
         public UnityViewOverrides? VotingViewOverrides { get; set; } = new UnityViewOverrides { Title = Constants.UIStrings.VotingUnityTitle };
         public UnityViewOverrides? RevealViewOverrides { get; set; }
+
         public VoteAndRevealState(Lobby lobby, List<T> objectsToVoteOn, List<User> votingUsers = null, TimeSpan? votingTime = null) 
         {
             this.Lobby = lobby;
@@ -85,7 +86,8 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
                 ScreenId = TVScreenId.ShowDrawings,
                 Title = new UnityField<string> { Value = this.VotingViewOverrides?.Title },
                 Instructions = new UnityField<string> { Value = this.VotingViewOverrides?.Instructions },
-                UnityObjects = new UnityField<IReadOnlyList<UnityObject>> { Value = unityObjects }
+                UnityObjects = new UnityField<IReadOnlyList<UnityObject>> { Value = unityObjects },
+                Options = VotingViewOverrides.Options
             };
         }
         public virtual UnityView RevealUnityViewGenerator()
@@ -107,6 +109,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
                 Instructions = new UnityField<string> { Value = this.RevealViewOverrides?.Instructions },
                 UnityObjects = new UnityField<IReadOnlyList<UnityObject>> { Value = unityObjects },
                 IsRevealing= true,
+                Options = RevealViewOverrides.Options
             };
         }
     }

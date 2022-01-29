@@ -57,45 +57,14 @@ namespace Assets.Scripts.Views
                 List<object> values = new List<object>();
                 foreach(HandlerId handlerId in handlerInterface.HandlerIds)
                 {
-                    switch (handlerId.HandlerType)
+                    var foundValue = FindViewValue(handlerId);
+                    if (foundValue==null)
                     {
-                        case HandlerType.ViewOptions:
-                            values.Add(UnityView.Options);
-                            break;
-                        case HandlerType.UnityObjectList:
-                            values.Add(UnityView.UnityObjects);
-                            break;
-                        case HandlerType.Strings:
-                            switch (handlerId.SubType)
-                            {
-                                case StringType.View_Title:
-                                    values.Add(UnityView.Title);
-                                    break;
-                                case StringType.View_Instructions:
-                                    values.Add(UnityView.Instructions);
-                                    break;
-                                default:
-                                    throw new ArgumentException($"Unknown subtype id: '{HandlerType.Strings}-{handlerId.SubType}'");
-                            }
-                            break;
-                        case HandlerType.Timer:
-                            values.Add(
-                                new TimerHolder()
-                                {
-                                    ServerTime = UnityView.ServerTime,
-                                    StateEndTime = UnityView.StateEndTime,
-                                });
-                            break;
-                        case HandlerType.UsersList:
-                            values.Add(
-                                new UsersListHolder
-                                {
-                                    Users = UnityView.Users,
-                                    IsRevealing = UnityView.IsRevealing
-                                });
-                            break;
-                        default:
-                            throw new ArgumentException($"Unknown handler id: '{handlerId.HandlerType}'");
+                        throw new ArgumentException($"Unknown handler id: '{handlerId.HandlerType}'");
+                    }
+                    else
+                    {
+                        values.Add(foundValue);
                     }
                 }
                 if (values.Count > 0)
@@ -110,6 +79,43 @@ namespace Assets.Scripts.Views
                 {
                     loadedListener.OnCompleteLoad();
                 }
+            }
+        }
+
+        public object FindViewValue(HandlerId handlerId)
+        {            
+            switch (handlerId.HandlerType)
+            {
+                case HandlerType.ViewOptions:
+                    return UnityView.Options;
+                case HandlerType.UnityObjectList:
+                    return UnityView.UnityObjects;
+                case HandlerType.Strings:
+                    switch (handlerId.SubType)
+                    {
+                        case StringType.View_Title:
+                            return UnityView.Title;
+                        case StringType.View_Instructions:
+                            return UnityView.Instructions;
+                        default:
+                            throw new ArgumentException($"Unknown subtype id: '{HandlerType.Strings}-{handlerId.SubType}'");
+                    }
+                case HandlerType.Timer:
+                   return new TimerHolder()
+                        {
+                            ServerTime = UnityView.ServerTime,
+                            StateEndTime = UnityView.StateEndTime,
+                        };
+                case HandlerType.UsersList:
+                    return new UsersListHolder
+                        {
+                            Users = UnityView.Users,
+                            IsRevealing = UnityView.IsRevealing
+                        };
+                case HandlerType.UnityViewHandler:
+                    return this; // dont ask -_-. Lets dropzone handler grab us so that it can propogate us to object scoped handlers as inherited fields.
+                default:
+                    return null;
             }
         }
 
