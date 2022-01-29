@@ -4,9 +4,22 @@
     </div>
     <hr />
 </ng-container>
+<!--div class="rectangle" mwlResizable-->
+    
+    <div id="unity-container" class="unity-desktop">
+        <canvas id="unity-canvas" width=100px height=100px></canvas>
+        <div id="unity-loading-bar">
+          <div id="unity-logo"></div>
+          <div id="unity-progress-bar-empty">
+            <div id="unity-progress-bar-full"></div>
+          </div>
+        </div>
+        <div id="unity-warning"> </div>
+        <div id="unity-footer">
+          <div id="unity-webgl-logo"></div>
+          <div id="unity-fullscreen-button"></div>
+          <div id="unity-build-title">ScrawlBrawl</div>
+        </div>
+      </div>
 
-<div class="rectangle" [ngStyle]="style" mwlResizable [validateResize]="validate" [enableGhostResize]="false" (resizeEnd)="onResizeEnd($event)">
-    <div #unityEl id="gameContainer" [ngStyle]="style"></div>
-
-    <div class="resize-handle-bottom" mwlResizeHandle [resizeEdges]="{ bottom: true }"></div>
-</div>
+    <!--div class="resize-handle-bottom" mwlResizeHandle [resizeEdges]="{ bottom: true }"></div-->

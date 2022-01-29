@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.UI.GridLayoutGroup;
 
 public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
 {
@@ -22,8 +21,6 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
     private int bottom = 20;
     private int top = 20;
 
-
-
     protected override void Start()
     {
         base.Start();
@@ -31,8 +28,6 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
         rect = GetComponentInParent<RectTransform>();
 
         gridLayoutGroup.cellSize = new Vector2(rect.rect.height, aspectRatio * rect.rect.height);
-        gridLayoutGroup.startAxis = Axis.Horizontal;
-        gridLayoutGroup.constraint = Constraint.FixedColumnCount;
 
 
         OnRectTransformDimensionsChange();
@@ -108,7 +103,7 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
         }
 
         int numCols = columnCount;
-        gridLayoutGroup.constraintCount = numCols;
+        //gridLayoutGroup.constraintCount = numCols;
         int numRows = RowsPerColumnCount(numCols);
         numRows = (numRows == 0 ? 1 : numRows);
         numCols = Mathf.Min(numCols, cellCount);

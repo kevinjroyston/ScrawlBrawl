@@ -21,7 +21,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.DataModels
         {
             public List<CAMUserText> CharacterChoices { get; set; } = new List<CAMUserText>();
             public List<CAMUserText> ActionChoices { get; set; } = new List<CAMUserText>();
-            public List<CAMUserText> ModifierChoices { get; set; } = new List<CAMUserText>();
+            //public List<CAMUserText> ModifierChoices { get; set; } = new List<CAMUserText>();
         }
         public ConcurrentDictionary<User, UserHand> UsersToUserHands { get; set; } = new ConcurrentDictionary<User, UserHand>();
 

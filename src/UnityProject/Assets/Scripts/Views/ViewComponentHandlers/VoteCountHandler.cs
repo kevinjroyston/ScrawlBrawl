@@ -8,19 +8,33 @@ using UnityEngine;
 using UnityEngine.UI;
 using static TypeEnums;
 
+
+
+using static UnityEngine.UI.GridLayoutGroup;
+using Assets.Scripts.Networking.DataModels.Enums;
 public class VoteCountHandler : MonoBehaviour, HandlerInterface
 {
     public HandlerScope Scope => HandlerScope.UnityObject;
     public RectTransform VoteCountHolder;
     public Text TextComponent; 
+    
+    // Some vote count objects only appear with specific axis enabled
+    public Axis ShowIfAxis = Axis.Vertical;
     public List<HandlerId> HandlerIds => new List<HandlerId>
     {
         HandlerType.Ints.ToHandlerId(IntType.Object_VoteCount),
-        HandlerType.IdList.ToHandlerId(IdType.Object_UsersWhoVotedFor)
+        HandlerType.IdList.ToHandlerId(IdType.Object_UsersWhoVotedFor),
+        HandlerType.ViewOptions.ToHandlerId(),
     };
 
-    public void UpdateValue(UnityField<int?> voteCount, List<Guid> usersWhoVotedFor)
-    {
+    public void UpdateValue(UnityField<int?> voteCount, List<Guid> usersWhoVotedFor,Dictionary<UnityViewOptions, object> options)
+    {        
+        if (options.ContainsKey(UnityViewOptions.PrimaryAxis))
+        {
+            var axis = (Axis)(long)options[UnityViewOptions.PrimaryAxis];
+            gameObject.SetActive(axis == ShowIfAxis);
+        }
+
         int voteCountInt = voteCount?.Value ?? 0;
 
         if (usersWhoVotedFor != null)
@@ -46,7 +60,7 @@ public class VoteCountHandler : MonoBehaviour, HandlerInterface
 
     public void UpdateValue(List<object> objects)
     {
-        UpdateValue((UnityField<int?>)objects[0], (List<Guid>)objects[1]);
+        UpdateValue((UnityField<int?>)objects[0], (List<Guid>)objects[1],(Dictionary<UnityViewOptions, object>)objects[2]);
     }
 
     public void IncreaseScore()

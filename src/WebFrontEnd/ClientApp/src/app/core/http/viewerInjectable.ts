@@ -4,6 +4,10 @@ import { OnInit } from '@angular/core';
 
 //Used to create a single instance of the unity viewer
 
+//#region Methods defined in JS file. This is so stupid
+declare function createUnityInstance(canvas, config, onProgress): any;
+//#endregion
+
 @Injectable({
     providedIn: 'root'
 })
@@ -23,7 +27,7 @@ export class UnityViewer{
         this.renderer = rendererFactory.createRenderer(null, null);
     }
 
-    FixBlurriness(){
+   /* FixBlurriness(){
         var canvas = this.gameInstance.Module.canvas;
         var container = this.gameInstance.container;
 
@@ -40,7 +44,7 @@ export class UnityViewer{
           container.style.width = el.clientWidth+'px';
           container.style.height = Math.round((el.clientWidth)*54/96)+'px';
         }
-    }
+    }*/
 
     showFullScreen(){
         if (this.gameInstance) {
@@ -50,6 +54,8 @@ export class UnityViewer{
     UpdateLobbyId(lobbyId) {
         this.lobbyId = lobbyId;
         if (lobbyId == this.currentLobbyId) return;
+    }
+    /*
 
         if (this.gameInstance) {
             this.currentLobbyId = this.lobbyId;
@@ -73,28 +79,28 @@ export class UnityViewer{
             container.style.width = w + "px";
             container.style.height = h + "px";            
 */            
-        }
+      /*  }
     }
 
-    createDIV() {
+    createDIV(containerId) {
         // Use Renderer2 to create the div element
         this.viewerDiv = this.renderer.createElement('div');
         // Set the id of the div
-        this.renderer.setProperty(this.viewerDiv, 'id', 'viewerContainer');
+        this.renderer.setProperty(this.viewerDiv, 'id', containerId);
 
         this.renderer.appendChild(document.body, this.viewerDiv);
 
     }
 
-    InitializeViewer(containerId): void {
+   /* InitializeViewer(containerId): void {
         this.containerId = containerId;
         if (!this.viewerDiv) {  // first call create a div and initialize the viewer
             this.createDIV();  
-            const loader = (window as any).UnityLoader;
+            const loader = (window as any).WebGlLoader;
   
             this.gameInstance = loader.instantiate(
                 'viewerContainer', 
-                '/viewer/Build/ScrawlBrawlWebViewer.json', {
+                '/viewer/Build/WebGl.Loader.js', {
             onProgress: (gameInstance: any, progress: number) => {
                   this.progress = progress;
                     if (progress === 1) {
@@ -106,8 +112,42 @@ export class UnityViewer{
                 }
             });
         }   
+    }*/
+
+   /* InitializeViewer(containerId):void{
+        this.createDIV(containerId);
+     
+      var buildUrl = "viewer/Build";
+      var loaderUrl = buildUrl + "/WebGl.loader.js";
+      var config = {
+        dataUrl: buildUrl + "/WebGl.data",
+        frameworkUrl: buildUrl + "/WebGl.framework.js",
+        codeUrl: buildUrl + "/WebGl.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "KevinRoyston",
+        productName: "ScrawlBrawl",
+        productVersion: "1.0",
+      };
+      
+/*
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(this.viewerDiv.canvas, config, (progress) => {
+        }).then((unityInstance) => {
+            this.gameInstance = unityInstance;
+          
+          const urlParams = new URLSearchParams(window.location.search);
+          unityInstance.SendMessage("JavascriptConnector", "ConnectToLobby", urlParams.get('lobby'));
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      
+      document.body.appendChild(script);
         // Append the div to the body element
-        this.renderer.appendChild(document.getElementById(containerId), this.viewerDiv);
-    }
+        this.renderer.appendChild(document.getElementById(containerId), this.viewerDiv);*/
+   // }*/
+
      
 }

@@ -117,7 +117,8 @@ public class TestClient : MonoBehaviour
                     }
                     catch (Exception err)
                     {
-                        Debug.Log(err.Message);
+                        Debug.Log(err.ToString());
+                        Debug.Log(e.Payload);
                     }
                     Dirty = true;
                     break;
@@ -145,11 +146,18 @@ public class TestClient : MonoBehaviour
             {
                 switch (key)
                 {
-                    case UnityViewOptions.BlurAnimate:
-                        view.Options[key] = ((JObject)view.Options[key]).ToObject<UnityField<float?>>();
-                        break;
-                    default:
-                        break;
+                        case UnityViewOptions.BlurAnimate:
+                            view.Options[key] = ((JObject)view.Options[key]).ToObject<UnityField<float?>>();
+                            break;
+                        case UnityViewOptions.PrimaryAxis:
+                            Debug.Log(view.Options[key].GetType());
+                            view.Options[key] = (long)view.Options[key];
+                            break;
+                        case UnityViewOptions.PrimaryAxisMaxCount:
+                            view.Options[key] = (long?)view.Options[key];
+                            break;
+                        default:
+                            throw new NotImplementedException("Not implemented");
                 }
             }
 

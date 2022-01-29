@@ -11,14 +11,27 @@ namespace Backend.GameInfrastructure
 
         /// <summary>
         /// The amount of time to wait (after fetch current content) before considering a user "Disconnected"
+        /// 
+        /// Given browsers seem to stop pinging when the user switches tabs, keeping this value relatively high
         /// </summary>
-        public static TimeSpan UserDisconnectTimer { get; } = TimeSpan.FromSeconds(11.0);
+#if !DEBUG
+        public static TimeSpan UserDisconnectTimer { get; } = TimeSpan.FromSeconds(31.0);
+#else
+        // TODO move this to use app settings
+        public static TimeSpan UserDisconnectTimer { get; } = TimeSpan.FromSeconds(301.0);
+#endif
 
         /// <summary>
         /// The amount of time to wait after not seeing any user input but still getting pinged to consider them "Inactive", they must also miss the previous submit..
         /// This should be aggressively high.
         /// </summary>
+#if !DEBUG
         public static TimeSpan UserInactivityTimer { get; } = TimeSpan.FromSeconds(61.0);
+#else
+        // TODO move this to use app settings
+        // Longer timeouts for debug builds
+        public static TimeSpan UserInactivityTimer { get; } = TimeSpan.FromSeconds(601.0);
+#endif
 
         /// <summary>
         /// The amount of time to wait (after last submit) before deleting the user.

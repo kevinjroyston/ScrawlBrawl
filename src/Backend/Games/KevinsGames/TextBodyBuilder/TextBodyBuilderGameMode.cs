@@ -23,6 +23,7 @@ using static Backend.Games.KevinsGames.TextBodyBuilder.DataModels.Prompt;
 using Common.Code.Extensions;
 using static Backend.Games.KevinsGames.TextBodyBuilder.DataModels.TextPerson;
 using static System.FormattableString;
+using Backend.APIs.DataModels.Enums;
 
 namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
 {
@@ -171,6 +172,10 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
 
                 foreach ((Prompt prompt, IGroup<User> users) in pairings)
                 {
+                    if (users == null)
+                    {
+                        continue;
+                    }
                     foreach (User user in users.Members)
                     {
                         prompt.UsersToUserHands.TryAdd(user, new Prompt.UserHand
@@ -178,7 +183,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                             // Users have even probabilities regardless of how many drawings they submitted.
                             CharacterChoices = MemberHelpers<CAMUserText>.Select_DynamicWeightedRandom(characters, TextBodyBuilderConstants.NumCAMsInHand),
                             ActionChoices = MemberHelpers<CAMUserText>.Select_DynamicWeightedRandom(actions, TextBodyBuilderConstants.NumCAMsInHand),
-                            ModifierChoices = MemberHelpers<CAMUserText>.Select_DynamicWeightedRandom(modifiers, TextBodyBuilderConstants.NumCAMsInHand),
+                            //ModifierChoices = MemberHelpers<CAMUserText>.Select_DynamicWeightedRandom(modifiers, TextBodyBuilderConstants.NumCAMsInHand),
                             Owner = user
                         });
 
@@ -232,7 +237,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                         title: "Here are your winners",
                         peopleList: winnersPeople,
                         imageTitle: (person) => roundPrompts[winnersPeople.IndexOf(person)].Text,
-                        imageHeader: (person) => person.ToString()
+                        imageHeader: (person) => person.ToUnityRichTextString()
                         );
 
                     if (battlePrompts.Count <= 0)
@@ -268,19 +273,18 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
             {
                 person.UnityImageVotingOverrides = new UnityObjectOverrides()
                 {
-                    Title = person.Descriptors[CAMType.Character].Text,
-                    Header = $"{person.Descriptors[CAMType.Action].Text} {person.Descriptors[CAMType.Modifier]}",
+                    Title = person.ToUnityRichTextString(),
                 };
                 person.UnityImageRevealOverrides = new UnityObjectOverrides()
                 {
-                    Title = person.ToString(),
+                    Title = person.ToUnityRichTextString(),
                     Header = person.Owner.DisplayName,
                 };
             }
 
             var voteAndReveal = new ContestantVoteAndRevealState<TextPerson>(
                 lobby: this.Lobby,
-                contestantName: (person)=>person.ToString(),
+                contestantName: (person)=>person.ToHtmlColoredString(),
                 people: peopleToVoteOn,
                 votingTime: votingTime)
             {
@@ -288,10 +292,20 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                 VotingViewOverrides = new UnityViewOverrides
                 {
                     Title = prompt.Text,
+                    Options = new Dictionary<UnityViewOptions, object>
+                    {
+                        { UnityViewOptions.PrimaryAxis, Axis.Vertical },
+                        { UnityViewOptions.PrimaryAxisMaxCount, 7 },
+                    }
                 },
                 RevealViewOverrides = new UnityViewOverrides
                 {
                     Title = prompt.Text,
+                    Options = new Dictionary<UnityViewOptions, object>
+                    {
+                        { UnityViewOptions.PrimaryAxis, Axis.Vertical },
+                        { UnityViewOptions.PrimaryAxisMaxCount, 7 },
+                    }
                 },
                 VoteCountManager = CountVotes
             };
