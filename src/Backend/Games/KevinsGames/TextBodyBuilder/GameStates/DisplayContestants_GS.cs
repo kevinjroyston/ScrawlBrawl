@@ -12,6 +12,7 @@ using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
 using Backend.GameInfrastructure.DataModels.States.UserStates;
 using Backend.Games.Common.DataModels;
+using Backend.APIs.DataModels.Enums;
 
 namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
 {
@@ -30,7 +31,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                   exit: new WaitForPartyLeader_StateExit(
                       lobby: lobby,
                       partyLeaderPromptGenerator: Prompts.PartyLeaderSkipRevealButton(),
-                      waitingPromptGenerator: Prompts.DisplayText()
+                      waitingPromptGenerator: Prompts.DisplayText("Waiting for party leader")
                       )
                   )
         {
@@ -61,6 +62,11 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                 ScreenId = TVScreenId.ObjectView,
                 UnityObjects = new UnityField<IReadOnlyList<UnityObject>> { Value = unityObjects },
                 Title = new UnityField<string> { Value = title },
+                Options = new Dictionary<UnityViewOptions, object>
+                {
+                    { UnityViewOptions.PrimaryAxis, Axis.Vertical },
+                    { UnityViewOptions.PrimaryAxisMaxCount, 7 },
+                }
             };
         }
     }

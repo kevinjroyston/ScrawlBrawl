@@ -58,14 +58,7 @@ namespace Assets.Scripts.Views
                 foreach(HandlerId handlerId in handlerInterface.HandlerIds)
                 {
                     var foundValue = FindViewValue(handlerId);
-                    if (foundValue==null)
-                    {
-                        throw new ArgumentException($"Unknown handler id: '{handlerId.HandlerType}'");
-                    }
-                    else
-                    {
-                        values.Add(foundValue);
-                    }
+                    values.Add(foundValue);
                 }
                 if (values.Count > 0)
                 {
@@ -87,7 +80,7 @@ namespace Assets.Scripts.Views
             switch (handlerId.HandlerType)
             {
                 case HandlerType.ViewOptions:
-                    return UnityView.Options;
+                    return UnityView.Options ?? new Dictionary<UnityViewOptions, object>();
                 case HandlerType.UnityObjectList:
                     return UnityView.UnityObjects;
                 case HandlerType.Strings:
@@ -115,7 +108,7 @@ namespace Assets.Scripts.Views
                 case HandlerType.UnityViewHandler:
                     return this; // dont ask -_-. Lets dropzone handler grab us so that it can propogate us to object scoped handlers as inherited fields.
                 default:
-                    return null;
+                    throw new ArgumentException($"Unknown handler id: '{handlerId.HandlerType}'");
             }
         }
 

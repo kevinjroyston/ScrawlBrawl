@@ -29,6 +29,13 @@ public class VoteCountHandler : MonoBehaviour, HandlerInterface
 
     public void UpdateValue(UnityField<int?> voteCount, List<Guid> usersWhoVotedFor,Dictionary<UnityViewOptions, object> options)
     {        
+        // If we shouldn't be visible, deactivate and return (axis stuff complicates things)
+        if ((usersWhoVotedFor == null && voteCount?.Value==null))
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
         if (options.ContainsKey(UnityViewOptions.PrimaryAxis))
         {
             var axis = (Axis)(long)options[UnityViewOptions.PrimaryAxis];

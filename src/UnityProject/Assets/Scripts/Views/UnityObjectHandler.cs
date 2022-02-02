@@ -96,24 +96,34 @@ private UnityViewHandler InheritedHandlers;
                             values.Add(UnityObject.Options);
                             break;
                         default:
-                            var viewValue = InheritedHandlers.FindViewValue(handlerId);
-                            if(viewValue!= null){
+                            object viewValue = null;
+                            try
+                            {
+                                viewValue = InheritedHandlers.FindViewValue(handlerId);
+                                
+                                // Add the value, null or otherwise. Thrown if handler not found.
                                 values.Add(viewValue);
+
+                                // If view handler fetch didn't throw it means it found the appropriate handler, so either
+                                // we set it above, or it was found but no value provided in which case we shouldn't keep looking
                                 break;
                             }
-                            switch (UnityObject.Type)
-                            {
-                                case UnityObjectType.Image:
-                                    values.Add(UnityImageSubHandler(handlerId));
-                                    break;
-                                case UnityObjectType.Text:
-                                    // No extra data in Text for it to be listening for, dont know what they were looking for
-                                    throw new ArgumentException($"Unknown handler id: '{handlerId.SubType}'");
-                                case UnityObjectType.Slider:
-                                    values.Add(UnitySliderSubHandler(handlerId));
-                                    break;
-                                default:
-                                    throw new ArgumentException($"Unknown Object Type: : '{UnityObject.Type}'");
+                            catch{
+                                // hacky logic but if not found in the view handlers, it throws and we check object handlers (meaning view handlers cannot be overridden)
+                                switch (UnityObject.Type)
+                                {
+                                    case UnityObjectType.Image:
+                                        values.Add(UnityImageSubHandler(handlerId));
+                                        break;
+                                    case UnityObjectType.Text:
+                                        // No extra data in Text for it to be listening for, dont know what they were looking for
+                                        throw new ArgumentException($"Unknown handler id: '{handlerId.HandlerType}:{handlerId.SubType}'");
+                                    case UnityObjectType.Slider:
+                                        values.Add(UnitySliderSubHandler(handlerId));
+                                        break;
+                                    default:
+                                        throw new ArgumentException($"Unknown Object Type: : '{UnityObject.Type}'");
+                                }
                             }
                             break;
                     }
@@ -150,7 +160,7 @@ private UnityViewHandler InheritedHandlers;
                         BackgroundColor = castedImage.BackgroundColor
                     };
                 default:
-                    throw new ArgumentException($"Unknown handler id: '{handlerId.SubType}'");
+                    throw new ArgumentException($"Unknown handler id: '{handlerId.HandlerType}:{handlerId.SubType}'");
             }
         }
 
@@ -168,7 +178,7 @@ private UnityViewHandler InheritedHandlers;
                         GuessSliderHolders = castedSlider.GuessSliderValues,
                     };
                 default:
-                    throw new ArgumentException($"Unknown handler id: '{handlerId.HandlerType}'");
+                    throw new ArgumentException($"Unknown handler id: '{handlerId.HandlerType}:{handlerId.HandlerType}'");
 
             }
         }
