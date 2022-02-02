@@ -24,6 +24,7 @@ namespace Backend.Games.Common.GameStates
                         lobby: lobby,
                         promptTitle: "Scoreboard",
                         userScoreScope: Score.Scope.Total,
+                        userScoreBreakdownScope: Score.Scope.Total,
                         leaderboardScope : Score.Scope.Total,
                         userPromptId: UserPromptId.PartyLeader_SkipScoreboard,
                         showPartyLeaderSkipButton: true),
@@ -31,6 +32,7 @@ namespace Backend.Games.Common.GameStates
                         lobby: lobby,
                         promptTitle: "Scoreboard",
                         userScoreScope: Score.Scope.Total,
+                        userScoreBreakdownScope: Score.Scope.Total,
                         leaderboardScope: Score.Scope.Total
                         )))
         {

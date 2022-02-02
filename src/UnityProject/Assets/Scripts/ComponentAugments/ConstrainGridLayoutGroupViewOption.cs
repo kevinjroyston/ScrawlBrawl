@@ -32,11 +32,19 @@ public class ConstrainGridLayoutGroupViewOption : MonoBehaviour, HandlerInterfac
         if (options.ContainsKey(UnityViewOptions.PrimaryAxis))
         {
             gridLayoutGroup.startAxis = (Axis)(long)options[UnityViewOptions.PrimaryAxis];
+            Debug.Log($"Specified axis: {gridLayoutGroup.startAxis}");
             gridLayoutGroup.constraint = gridLayoutGroup.startAxis == Axis.Horizontal ? Constraint.FixedColumnCount : Constraint.FixedRowCount;
+        }else{
+            // Defaults
+            gridLayoutGroup.startAxis = Axis.Horizontal;
+            Debug.Log($"Defaulted to axis: {gridLayoutGroup.startAxis}");
+            gridLayoutGroup.constraint = Constraint.FixedColumnCount;
         }
         if (options.ContainsKey(UnityViewOptions.PrimaryAxisMaxCount) && options[UnityViewOptions.PrimaryAxisMaxCount] != null)
         {
             gridLayoutGroup.constraintCount = (int)((long)options[UnityViewOptions.PrimaryAxisMaxCount]);
+        }else{
+            gridLayoutGroup.constraintCount = 40;
         }
     }
     public void UpdateValue(List<object> objects)
