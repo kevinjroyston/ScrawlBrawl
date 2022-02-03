@@ -10,7 +10,7 @@ import GameplayPrompts from '@core/models/gameplay'
 })
 export class WaitingForGameStart {
   @Input() displayUsersParameters:GameplayPrompts.UserListMetadata;
-  @Input() lobbyId:string;
+  @Input() lobbyId:string; 
   element;
 
   constructor(element: ElementRef, @Inject(API) private api: API) {

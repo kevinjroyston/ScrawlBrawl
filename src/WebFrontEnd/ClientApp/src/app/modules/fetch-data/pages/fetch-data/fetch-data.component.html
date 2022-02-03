@@ -65,7 +65,7 @@
                     <div *ngIf="subPrompt.selector" appSelector class="SelectorHolder" [selectorParameters]="subPrompt.selector" formControlName="selector"></div>
 
 
-                    <waitingforgamestart *ngIf="subPrompt.waitingForGameStart" class="WaitForGameStartHolder" [waitingForGameStartParameters]="subPrompt.waitingForGameStart"></waitingforgamestart>
+                    <waitingforgamestart *ngIf="subPrompt.waitingForGameStart" class="WaitForGameStartHolder" [lobbyId]="userPrompt.lobbyId" [waitingForGameStartParameters]="subPrompt.waitingForGameStart"></waitingforgamestart>
 
                     <slider *ngIf="subPrompt.slider" class="SliderHolder" [sliderParameters]="subPrompt.slider" formControlName="slider"></slider>
                     <input type="color" *ngIf="subPrompt.colorPicker" formControlName="color" class="color-input" (click)='openColorPicker($event, j)' [value]="subPrompt.color" [ngStyle]="{'background-color': subPrompt.color}">
