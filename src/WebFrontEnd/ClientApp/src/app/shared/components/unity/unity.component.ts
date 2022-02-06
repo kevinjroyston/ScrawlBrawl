@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, Input, DebugElement } from '@angular/core';
 import { UnityViewer } from '@core/http/viewerInjectable';
-import { Inject } from '@angular/core';
+import { Inject,Renderer2 } from '@angular/core';
 import { ResizableModule , ResizeEvent } from 'angular-resizable-element';
 
 
@@ -18,15 +18,26 @@ declare function createUnityInstance(canvas, config, onProgress): any;
 })
 export class UnityComponent implements OnInit {
 
-  gameInstance: any;
+  @Input() lobbyId: string;
+
+  private _gameInstance: any;
+  set gameInstance(val){ this._gameInstance = val; this.invokeLobby();}
+  get gameInstance(): any { return this._gameInstance}
+
   unityViewer: UnityViewer;
   progress = 0;
   isReady = true;
   element;
+  renderer: Renderer2;
 
-  constructor(@Inject(UnityViewer) private theViewer: UnityViewer,  element: ElementRef) {
+  constructor(@Inject(UnityViewer) private theViewer: UnityViewer,  element: ElementRef, private theRenderer: Renderer2) {
     this.unityViewer = theViewer;
     this.element = element.nativeElement;
+    this.renderer = theRenderer;
+  }
+
+  invokeLobby() {
+
   }
 
   ngOnInit(): void {
@@ -74,12 +85,19 @@ export class UnityComponent implements OnInit {
     var progressBarFull = document.querySelector("#unity-progress-bar-full");
     var fullscreenButton = document.querySelector("#unity-fullscreen-button");
     var warningBanner = document.querySelector("#unity-warning");
+
+    this.renderer.setStyle(canvas,'width','480px');
+    this.renderer.setStyle(canvas,'height','270px');
+
     createUnityInstance(canvas, config, (progress) => {
       //progressBarFull.style.width = 100 * progress + "%";
     }).then((unityInstance) => {
       //loadingBar.style.display = "none";
       
       this.gameInstance = unityInstance;
+
+      
+      unityInstance.SendMessage("JavascriptConnector", "ConnectToLobby", this.lobbyId);
       
       //const urlParams = new URLSearchParams(window.location.search);
       //unityInstance.SendMessage("JavascriptConnector", "ConnectToLobby", urlParams.get('lobby'));
@@ -90,6 +108,7 @@ export class UnityComponent implements OnInit {
       alert(message);
     });
     
+
     //loadingBar.style.display = "block";
 
     /*var script = document.createElement("script");
