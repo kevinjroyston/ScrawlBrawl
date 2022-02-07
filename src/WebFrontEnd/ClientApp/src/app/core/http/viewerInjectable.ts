@@ -55,8 +55,6 @@ export class UnityViewer{
         this.lobbyId = lobbyId;
         if (lobbyId == this.currentLobbyId) return;
     
-    /*}*/
-
         if (this.gameInstance) {
             this.currentLobbyId = this.lobbyId;
             console.log('Sending lobby id to viewer');
@@ -64,25 +62,10 @@ export class UnityViewer{
         //   setTimeout(() => {
         //       this.FixBlurriness(); 
         //    }, 6000);
-/**/
           }
-        }
-/*            
-            var w = window.innerWidth - 20;
-            var h = window.innerHeight - 40;
-            var r = 1080 / 1920;
-            if (w * r > h) {
-                w = Math.min(w,
-                    Math.ceil(h / r));
-            }
-            h = Math.floor(w * r);
-
-            container.style.width = w + "px";
-            container.style.height = h + "px";            
-*/            
-      /*  }
     }
 
+    
     createDIV(containerId) {
         // Use Renderer2 to create the div element
         this.viewerDiv = this.renderer.createElement('div');
@@ -176,7 +159,7 @@ var container = document.querySelector("#unity-container");
       document.body.appendChild(script);
         // Append the div to the body element
         this.renderer.appendChild(document.getElementById(containerId), this.viewerDiv);*/
-   // }*/
+    }
 
      
 }
