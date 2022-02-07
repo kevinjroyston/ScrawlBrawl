@@ -54,34 +54,18 @@ export class UnityViewer{
     UpdateLobbyId(lobbyId) {
         this.lobbyId = lobbyId;
         if (lobbyId == this.currentLobbyId) return;
-    }
-    /*
-
+    
         if (this.gameInstance) {
             this.currentLobbyId = this.lobbyId;
             console.log('Sending lobby id to viewer');
             this.gameInstance.SendMessage("JavascriptConnector","ConnectToLobby",this.lobbyId);
-            setTimeout(() => {
-               this.FixBlurriness(); 
-            }, 6000);
-/**/
-
-/*            
-            var w = window.innerWidth - 20;
-            var h = window.innerHeight - 40;
-            var r = 1080 / 1920;
-            if (w * r > h) {
-                w = Math.min(w,
-                    Math.ceil(h / r));
-            }
-            h = Math.floor(w * r);
-
-            container.style.width = w + "px";
-            container.style.height = h + "px";            
-*/            
-      /*  }
+        //   setTimeout(() => {
+        //       this.FixBlurriness(); 
+        //    }, 6000);
+          }
     }
 
+    
     createDIV(containerId) {
         // Use Renderer2 to create the div element
         this.viewerDiv = this.renderer.createElement('div');
@@ -114,7 +98,7 @@ export class UnityViewer{
         }   
     }*/
 
-   /* InitializeViewer(containerId):void{
+    InitializeViewer(containerId):void{
         this.createDIV(containerId);
      
       var buildUrl = "viewer/Build";
@@ -128,7 +112,35 @@ export class UnityViewer{
         productName: "ScrawlBrawl",
         productVersion: "1.0",
       };
+var container = document.querySelector("#unity-container");
+    var canvas = document.querySelector("#unity-canvas");
+    var loadingBar = document.querySelector("#unity-loading-bar");
+    var progressBarFull = document.querySelector("#unity-progress-bar-full");
+    var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+    var warningBanner = document.querySelector("#unity-warning");
+
+    this.renderer.setStyle(canvas,'width','480px');
+    this.renderer.setStyle(canvas,'height','270px');
+
+    createUnityInstance(canvas, config, (progress) => {
+      //progressBarFull.style.width = 100 * progress + "%";
+    }).then((unityInstance) => {
+      //loadingBar.style.display = "none";
       
+      this.gameInstance = unityInstance;
+
+      
+      unityInstance.SendMessage("JavascriptConnector", "ConnectToLobby", this.lobbyId);
+      
+      //const urlParams = new URLSearchParams(window.location.search);
+      //unityInstance.SendMessage("JavascriptConnector", "ConnectToLobby", urlParams.get('lobby'));
+      /*fullscreenButton.onclick = () => {
+        unityInstance.SetFullscreen(1);
+      };*/
+    }).catch((message) => {
+      alert(message);
+    });
+          
 /*
       var script = document.createElement("script");
       script.src = loaderUrl;
@@ -147,7 +159,7 @@ export class UnityViewer{
       document.body.appendChild(script);
         // Append the div to the body element
         this.renderer.appendChild(document.getElementById(containerId), this.viewerDiv);*/
-   // }*/
+    }
 
      
 }

@@ -6,11 +6,6 @@ import { ResizableModule , ResizeEvent } from 'angular-resizable-element';
 
 //Used to create a single instance of the unity viewer
 
-//#region Methods defined in JS file. This is so stupid
-declare function createUnityInstance(canvas, config, onProgress): any;
-//#endregion
-
-
 @Component({
   selector: 'unity',
   templateUrl: './unity.component.html',
@@ -19,6 +14,7 @@ declare function createUnityInstance(canvas, config, onProgress): any;
 export class UnityComponent implements OnInit {
 
   gameInstance: any;
+  
   unityViewer: UnityViewer;
   progress = 0;
   isReady = true;
@@ -29,6 +25,7 @@ export class UnityComponent implements OnInit {
     this.element = element.nativeElement;
   }
 
+
   ngOnInit(): void {
 
  /*   this.style = {
@@ -38,7 +35,7 @@ export class UnityComponent implements OnInit {
             width: '100%',
             height: '540px'
     };  */
-    this.InitializeViewer();
+    this.unityViewer.InitializeViewer('gameContainer');
 /*    
     const loader = (window as any).UnityLoader;
 
@@ -55,64 +52,6 @@ export class UnityComponent implements OnInit {
 */    
   }
   
-  InitializeViewer():void{ 
-    var buildUrl = "viewer/Build";
-    var loaderUrl = buildUrl + "/WebGl.loader.js";
-    var config = {
-      dataUrl: buildUrl + "/WebGl.data",
-      frameworkUrl: buildUrl + "/WebGl.framework.js",
-      codeUrl: buildUrl + "/WebGl.wasm",
-      streamingAssetsUrl: "StreamingAssets",
-      companyName: "KevinRoyston",
-      productName: "ScrawlBrawl",
-      productVersion: "1.0",
-    };
-
-    var container = document.querySelector("#unity-container");
-    var canvas = document.querySelector("#unity-canvas");
-    var loadingBar = document.querySelector("#unity-loading-bar");
-    var progressBarFull = document.querySelector("#unity-progress-bar-full");
-    var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-    var warningBanner = document.querySelector("#unity-warning");
-    createUnityInstance(canvas, config, (progress) => {
-      //progressBarFull.style.width = 100 * progress + "%";
-    }).then((unityInstance) => {
-      //loadingBar.style.display = "none";
-      
-      this.gameInstance = unityInstance;
-      
-      //const urlParams = new URLSearchParams(window.location.search);
-      //unityInstance.SendMessage("JavascriptConnector", "ConnectToLobby", urlParams.get('lobby'));
-      /*fullscreenButton.onclick = () => {
-        unityInstance.SetFullscreen(1);
-      };*/
-    }).catch((message) => {
-      alert(message);
-    });
-    
-    //loadingBar.style.display = "block";
-
-    /*var script = document.createElement("script");
-    script.src = loaderUrl;
-    script.onload = () => {
-      createUnityInstance(canvas, config, (progress) => {
-        //progressBarFull.style.width = 100 * progress + "%";
-      }).then((unityInstance) => {
-        //loadingBar.style.display = "none";
-        
-        this.gameInstance = unityInstance;
-        
-        //const urlParams = new URLSearchParams(window.location.search);
-        //unityInstance.SendMessage("JavascriptConnector", "ConnectToLobby", urlParams.get('lobby'));
-        /*fullscreenButton.onclick = () => {
-          unityInstance.SetFullscreen(1);
-        };
-      }).catch((message) => {
-        alert(message);
-      });
-    };*/
-    //document.body.appendChild(script);
-}
 
 /*
   public style: object = {};
