@@ -28,6 +28,8 @@ export class LobbyManagementComponent {
     public error: string;
     public inAGame: boolean = false;
 
+    private ownerIsPlayingGame = false;
+
     @ViewChild(GameAssetDirective) gameAssetDirective;
 
     constructor(@Inject(UnityViewer) private unityViewer:UnityViewer, @Inject(GameModeList) public gameModeList: GameModeList, @Inject(API) private api: API, 
@@ -94,6 +96,7 @@ export class LobbyManagementComponent {
     onCreateLobby = async () => {
         await this.api.request({ type: "Lobby", path: "Create"}).subscribe({
             next: async (result) => {
+                this.ownerIsPlayingGame = false;
                 this.lobby = result as Lobby.LobbyMetadata;
                 await this.onGetLobby()
             },
@@ -105,6 +108,7 @@ export class LobbyManagementComponent {
         var bodyString = JSON.stringify(joinLobbyRequest);
         await this.api.request({ type: "Lobby", path: "CreateAndJoin", body: bodyString}).subscribe({
             next: async (result) => {
+                this.ownerIsPlayingGame = true;
                 this.lobby = result as Lobby.LobbyMetadata;
                 await this.onGetLobby()
             },
@@ -179,7 +183,7 @@ export class LobbyManagementComponent {
             lobby: this.lobby,
             onGetLobby: () => this.onGetLobby(),
             durationEstimates: gameDurationEstimatesInMinutes,
-            launchURL: this.baseFrontEndUrl+"play",
+            launchURL: this.ownerIsPlayingGame?this.baseFrontEndUrl+"play":"",
         }
         this.matDialog.open(CommonoptionsDialogComponent, dialogConfig);
     }
