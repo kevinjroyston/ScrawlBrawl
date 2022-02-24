@@ -25,6 +25,7 @@ using Common.DataModels.Interfaces;
 using Backend.APIs.DataModels.UnityObjects;
 using static Backend.Games.BriansGames.BattleReady.DataModels.Prompt;
 using Common.Code.Extensions;
+using MiscUtil;
 
 namespace Backend.Games.BriansGames.BattleReady
 {
@@ -177,10 +178,10 @@ namespace Backend.Games.BriansGames.BattleReady
                     {
                         prompt.UsersToUserHands.TryAdd(user, new Prompt.UserHand
                         {
-                            // Users have even probabilities regardless of how many drawings they submitted.
-                            HeadChoices = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(headDrawings, BattleReadyConstants.NumDrawingsInHand),
-                            BodyChoices = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(bodyDrawings, BattleReadyConstants.NumDrawingsInHand),
-                            LegChoices = MemberHelpers<PeopleUserDrawing>.Select_DynamicWeightedRandom(legsDrawings, BattleReadyConstants.NumDrawingsInHand),
+                            // Users who submit more drawings technically have higher chances of being seen. (Used to use Select_DynamicWeightedRandom which kept author counts fair, but could skew some drawings to being seen more as a result)
+                            HeadChoices = headDrawings.OrderBy((val) => StaticRandom.Next()).Take(BattleReadyConstants.NumDrawingsInHand).ToList(),
+                            BodyChoices = bodyDrawings.OrderBy((val) => StaticRandom.Next()).Take(BattleReadyConstants.NumDrawingsInHand).ToList(),
+                            LegChoices = legsDrawings.OrderBy((val) => StaticRandom.Next()).Take(BattleReadyConstants.NumDrawingsInHand).ToList(),
                             Owner = user
                         });
 
