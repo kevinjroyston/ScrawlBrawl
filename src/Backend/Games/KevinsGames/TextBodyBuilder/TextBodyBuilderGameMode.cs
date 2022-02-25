@@ -24,6 +24,7 @@ using Common.Code.Extensions;
 using static Backend.Games.KevinsGames.TextBodyBuilder.DataModels.TextPerson;
 using static System.FormattableString;
 using Backend.APIs.DataModels.Enums;
+using MiscUtil;
 
 namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
 {
@@ -61,12 +62,12 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
             {
                 int numRounds = TextBodyBuilderConstants.NumRounds[duration];
                 int numPromptsPerRound = Math.Min(numPlayers, TextBodyBuilderConstants.MaxNumSubRounds[duration]);
-                int minDrawingsRequired = TextBodyBuilderConstants.NumCAMsInHand * 3; // the amount to make one playerHand to give everyone
+                int minCAMsRequired = TextBodyBuilderConstants.NumCAMsInHand * SetupCAMs_GS.UserGeneratedCamTypes.Count; // the amount to make one playerHand to give everyone
 
                 int expectedPromptsPerUser = (int)Math.Ceiling(1.0 * numPromptsPerRound * numRounds / numPlayers);
-                int expectedDrawingsPerUser = Math.Max((minDrawingsRequired / numPlayers + 1) * 2, TextBodyBuilderConstants.NumCAMsPerPlayer[duration]);
-                
-                int numPromptsPerUserPerRound = Math.Max(1, numPromptsPerRound / 2);
+                int expectedCAMsPerUser = Math.Max((minCAMsRequired / numPlayers + 1) * 2, TextBodyBuilderConstants.NumCAMsPerPlayer[duration]);
+
+                int numPromptsPerUserPerRound = Math.Max(1, (int)Math.Ceiling(numPromptsPerRound * 2.0 / numPlayers));
 
                 TimeSpan estimate = TimeSpan.Zero;
                 TimeSpan setupDrawingTimer = TextBodyBuilderConstants.SetupPerCAMTimer[duration];
@@ -74,7 +75,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                 TimeSpan creationTimer = TextBodyBuilderConstants.PerCreationTimer[duration];
                 TimeSpan votingTimer = TextBodyBuilderConstants.VotingTimer[duration];
 
-                estimate += setupDrawingTimer.MultipliedBy(expectedDrawingsPerUser);
+                estimate += setupDrawingTimer.MultipliedBy(expectedCAMsPerUser);
                 estimate += setupPromptTimer.MultipliedBy(expectedPromptsPerUser);
                 estimate += creationTimer.MultipliedBy(numPromptsPerUserPerRound * numRounds);
                 estimate += votingTimer.MultipliedBy(numPromptsPerRound * numRounds);
@@ -97,10 +98,10 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
             TimeSpan? votingTimer = null;
 
             int numPromptsPerRound = Math.Min(numPlayers, TextBodyBuilderConstants.MaxNumSubRounds[duration]);
-            int minDrawingsRequired = TextBodyBuilderConstants.NumCAMsInHand * SetupCAMs_GS.UserGeneratedCamTypes.Count; // the amount to make one playerHand to give everyone
+            int minCAMsRequired = TextBodyBuilderConstants.NumCAMsInHand * SetupCAMs_GS.UserGeneratedCamTypes.Count; // the amount to make one playerHand to give everyone
 
-            int expectedPromptsPerUser = (int) Math.Ceiling(1.0*numPromptsPerRound * numRounds / lobby.GetAllUsers().Count);
-            int expectedDrawingsPerUser = Math.Max((minDrawingsRequired / numPlayers + 1) * 2, TextBodyBuilderConstants.NumCAMsPerPlayer[duration]);
+            int expectedPromptsPerUser = (int) Math.Ceiling(1.0*numPromptsPerRound * numRounds / numPlayers);
+            int expectedCAMsPerUser = Math.Max((minCAMsRequired / numPlayers + 1) * 2, TextBodyBuilderConstants.NumCAMsPerPlayer[duration]);
 
             if (standardOptions.TimerEnabled)
             {
@@ -113,8 +114,8 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
             SetupCAMs_GS setupDrawing = new SetupCAMs_GS(
                 lobby: lobby,
                 cams: this.CAMs,
-                numExpectedPerUser: expectedDrawingsPerUser,
-                setupDurration: setupDrawingTimer * expectedDrawingsPerUser);
+                numExpectedPerUser: expectedCAMsPerUser,
+                setupDurration: setupDrawingTimer * expectedCAMsPerUser);
 
             SetupPrompts_GS setupPrompt = new SetupPrompts_GS(
                 lobby: lobby,
@@ -140,8 +141,8 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                 numRounds = (battlePrompts.Count - 1) / numPromptsPerRound + 1;
                 numPromptsPerRound = (int)Math.Ceiling(1.0 * battlePrompts.Count / numRounds);
 
-                numPromptsPerUserPerRound = Math.Max(1,numPromptsPerRound / 2);
-                int maxNumUsersPerPrompt = Math.Min(10,(int)Math.Ceiling(1.0*numPlayers * numPromptsPerUserPerRound / numPromptsPerRound));
+                numPromptsPerUserPerRound = Math.Max(1, (int)Math.Ceiling(numPromptsPerRound * 1.5 / numPlayers));
+                int maxNumUsersPerPrompt = Math.Max(2,Math.Min(4,(int)Math.Ceiling(1.0*numPlayers * numPromptsPerUserPerRound / numPromptsPerRound)));
 
                 foreach (Prompt prompt in battlePrompts)
                 {
@@ -180,9 +181,9 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                     {
                         prompt.UsersToUserHands.TryAdd(user, new Prompt.UserHand
                         {
-                            // Users have even probabilities regardless of how many drawings they submitted.
-                            CharacterChoices = MemberHelpers<CAMUserText>.Select_DynamicWeightedRandom(characters, TextBodyBuilderConstants.NumCAMsInHand),
-                            ActionChoices = MemberHelpers<CAMUserText>.Select_DynamicWeightedRandom(actions, TextBodyBuilderConstants.NumCAMsInHand),
+                            // Users who submit more CAMs technically have higher chances of being seen. (Used to use Select_DynamicWeightedRandom which kept author counts fair, but could skew some CAMs to being seen more as a result)
+                            CharacterChoices = characters.OrderBy((val) => StaticRandom.Next()).Take(TextBodyBuilderConstants.NumCAMsInHand).ToList(),
+                            ActionChoices = actions.OrderBy((val) => StaticRandom.Next()).Take(TextBodyBuilderConstants.NumCAMsInHand).ToList(),
                             //ModifierChoices = MemberHelpers<CAMUserText>.Select_DynamicWeightedRandom(modifiers, TextBodyBuilderConstants.NumCAMsInHand),
                             Owner = user
                         });

@@ -57,6 +57,7 @@ namespace Common.Code.Helpers
         /// <summary>
         /// Selects items from an input list using a dynamic weighted random strategy. The weights are per SOURCE (IMember.Source).
         /// If an item from a given source has not been selected recently, that source gets a higher weight.
+        /// NOTE: This means if one source has less items, that particular entry will be shown more commonly.
         /// </summary>
         /// <param name="members">A list of members to be selected from.</param>
         /// <param name="count">The total number to select.</param>
@@ -84,7 +85,7 @@ namespace Common.Code.Helpers
                 .GroupBy((member) => member.Source)
                 .ToDictionary(
                     group => group.Key,
-                    group => new Queue<M>(group.OrderBy((M val) => StaticRandom.Next())));
+                    group => new Queue<M>(group.OrderBy((M val) => StaticRandom.Next()).ToList()));
 
             // Instantiate all source weights to 1.0.
             Dictionary<Guid, double> sourceToDynamicWeight = sourceToMemberMap.ToDictionary(kvp => kvp.Key, kvp => 1.0);

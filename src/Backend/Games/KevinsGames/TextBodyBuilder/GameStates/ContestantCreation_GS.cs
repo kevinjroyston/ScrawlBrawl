@@ -97,10 +97,15 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                     },
                     formSubmitHandler: (User user, UserFormSubmission input) =>
                     {
+                        string modifier = input.SubForms[2].ShortAnswer;
+                        // fix casing of modifier.
+                        if (Char.IsUpper(modifier[0]) && !Char.IsUpper(modifier[1]))
+                        { modifier = Char.ToLower(modifier[0]).ToString() + modifier.Substring(1); }
+
                         prompt.UsersToUserHands[user].Descriptors = new Dictionary<CAMType, CAMUserText>{
                                 {CAMType.Character, prompt.UsersToUserHands[user].CharacterChoices[(int)input.SubForms[0].RadioAnswer] },
                                 {CAMType.Action, prompt.UsersToUserHands[user].ActionChoices[(int)input.SubForms[1].RadioAnswer] },
-                                {CAMType.Modifier, new CAMUserText(){ Text = input.SubForms[2].ShortAnswer, Type = CAMType.Modifier, Owner = user} }
+                                {CAMType.Modifier, new CAMUserText(){ Text = modifier, Type = CAMType.Modifier, Owner = user} }
                             };
                         prompt.UsersToUserHands[user].Owner = user;
                         return (true, String.Empty);

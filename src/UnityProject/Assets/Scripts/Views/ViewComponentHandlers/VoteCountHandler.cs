@@ -17,6 +17,8 @@ public class VoteCountHandler : MonoBehaviour, HandlerInterface
     public HandlerScope Scope => HandlerScope.UnityObject;
     public RectTransform VoteCountHolder;
     public Text TextComponent; 
+
+    public bool Dummy=false;
     
     // Some vote count objects only appear with specific axis enabled
     public Axis ShowIfAxis = Axis.Vertical;
@@ -40,6 +42,9 @@ public class VoteCountHandler : MonoBehaviour, HandlerInterface
         {
             var axis = (Axis)(long)options[UnityViewOptions.PrimaryAxis];
             gameObject.SetActive(axis == ShowIfAxis);
+        }
+        if(Dummy){
+            return;
         }
 
         int voteCountInt = voteCount?.Value ?? 0;
