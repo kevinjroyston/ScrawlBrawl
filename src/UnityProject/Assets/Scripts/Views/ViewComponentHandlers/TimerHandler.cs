@@ -23,7 +23,12 @@ public class TimerHandler : MonoBehaviour, HandlerInterface
         DateTime? endTime = timerHolder.StateEndTime;
         if (currentTime != null && endTime != null)
         {
-            timeRemainingInSeconds = ((DateTime) endTime).Subtract((DateTime) currentTime).TotalSeconds;
+            var timeRemaining =((DateTime) endTime).Subtract((DateTime) currentTime).TotalSeconds;
+            if(timeRemaining>0)
+            {
+                gameObject.SetActive(true);
+                timeRemainingInSeconds = ((DateTime) endTime).Subtract((DateTime) currentTime).TotalSeconds;
+            }
         }
     }
 
@@ -48,6 +53,7 @@ public class TimerHandler : MonoBehaviour, HandlerInterface
         else
         {
             TextComponent.text = string.Empty;
+            gameObject.SetActive(false);
         }
 
     }

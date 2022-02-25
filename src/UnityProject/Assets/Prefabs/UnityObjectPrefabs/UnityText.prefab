@@ -835,10 +835,10 @@ RectTransform:
   m_Father: {fileID: 5608207108434353629}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: -0.15, y: 0.78}
-  m_AnchorMax: {x: 0.15, y: 1.22}
-  m_AnchoredPosition: {x: 4.5, y: 0}
-  m_SizeDelta: {x: -9, y: 0.000005722046}
+  m_AnchorMin: {x: -0.15, y: 0.45}
+  m_AnchorMax: {x: 0.15, y: 1.3}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1335590903999453602
 CanvasRenderer:
@@ -1133,8 +1133,8 @@ RectTransform:
   m_Father: {fileID: 5608207108434353629}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.84, y: 0.1}
-  m_AnchorMax: {x: 1.14, y: 0.9}
+  m_AnchorMin: {x: 0.84, y: -0.05}
+  m_AnchorMax: {x: 1.14, y: 1.05}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1180,6 +1180,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   VoteCountHolder: {fileID: 4800848554855142186}
   TextComponent: {fileID: 1753972902076843536}
+  Dummy: 0
   ShowIfAxis: 1
 --- !u!1 &5878494561059324834
 GameObject:
@@ -1368,8 +1369,8 @@ GameObject:
   - component: {fileID: 4058204736000177762}
   - component: {fileID: 3743064139461528825}
   - component: {fileID: 8100986951709953734}
-  - component: {fileID: 3933390872924538633}
   - component: {fileID: 4460964122417532404}
+  - component: {fileID: 3083424921559671608}
   m_Layer: 0
   m_Name: DummyScore
   m_TagString: Untagged
@@ -1424,21 +1425,6 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: 0.1
   m_LayoutPriority: 1
---- !u!114 &3933390872924538633
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6324512909692666740}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b81f1bc9341dc544b23af8dad1f0d99, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TextComponent: {fileID: 4460964122417532404}
-  integerType: 0
-  showPlus: 0
 --- !u!114 &4460964122417532404
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1473,6 +1459,22 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Disabled Text to get arround Unity being dumb. Please leave disabled
+--- !u!114 &3083424921559671608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6324512909692666740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5689ed2ec9f649b4594b5a977f918d0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  VoteCountHolder: {fileID: 4058204736000177762}
+  TextComponent: {fileID: 4460964122417532404}
+  Dummy: 1
+  ShowIfAxis: 0
 --- !u!1 &6772082889344875766
 GameObject:
   m_ObjectHideFlags: 0
@@ -2182,6 +2184,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   VoteCountHolder: {fileID: 4951358238167345522}
   TextComponent: {fileID: 3654449415599826411}
+  Dummy: 0
   ShowIfAxis: 0
 --- !u!1 &7836976485342617930
 GameObject:

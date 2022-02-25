@@ -141,8 +141,8 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                 numRounds = (battlePrompts.Count - 1) / numPromptsPerRound + 1;
                 numPromptsPerRound = (int)Math.Ceiling(1.0 * battlePrompts.Count / numRounds);
 
-                numPromptsPerUserPerRound = Math.Max(1, (int)Math.Ceiling(numPromptsPerRound * 2.0 / numPlayers));
-                int maxNumUsersPerPrompt = Math.Max(2,Math.Min(5,(int)Math.Ceiling(1.0*numPlayers * numPromptsPerUserPerRound / numPromptsPerRound)));
+                numPromptsPerUserPerRound = Math.Max(1, (int)Math.Ceiling(numPromptsPerRound * 1.5 / numPlayers));
+                int maxNumUsersPerPrompt = Math.Max(2,Math.Min(4,(int)Math.Ceiling(1.0*numPlayers * numPromptsPerUserPerRound / numPromptsPerRound)));
 
                 foreach (Prompt prompt in battlePrompts)
                 {
