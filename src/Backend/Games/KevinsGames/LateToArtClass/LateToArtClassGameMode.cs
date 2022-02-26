@@ -190,11 +190,11 @@ namespace Backend.Games.KevinsGames.LateToArtClass
                 drawings: drawings,
                 votingTime: votingTime)
             {
-                VotingPromptTitle = (user)=> "Assignment: '{artClass.ArtAssignment}'",
+                VotingPromptTitle = (user)=> $"Assignment: '{artClass.ArtAssignment}'",
                 VotingPromptDescription = (User user)=>$"Who was late to class? {(artClass.LateStudent == user ? "Hint: it was you, your vote does not count towards score here." : string.Empty)}",
                 VotingViewOverrides = new UnityViewOverrides
                 {
-                    Title = "Who was late to class? Assignment: '{artClass.ArtAssignment}'",
+                    Title = $"Who was late to class? Assignment: '{artClass.ArtAssignment}'",
                     Instructions = possibleNone ? "Someone didn't finish so there may not be a late student in this group" : "",
                 },
                 RevealViewOverrides = new UnityViewOverrides
