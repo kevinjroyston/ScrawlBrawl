@@ -15,5 +15,6 @@ namespace Common.DataModels.Enums
         //ImposterText=6,
         //StoryTime=7,
         TextBodyBuilder=8,
+        LateToArtClass=9,
     }
 }

@@ -8,6 +8,7 @@ using Backend.Games.BriansGames.ImposterDrawing;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Backend.Games.KevinsGames.TextBodyBuilder.Game;
+using Backend.Games.KevinsGames.LateToArtClass;
 
 namespace Backend.GameInfrastructure.DataModels
 {
@@ -20,7 +21,7 @@ namespace Backend.GameInfrastructure.DataModels
         {
             new GameModeMetadataHolder()
             {
-                GameModeMetadata = ImposterDrawingGameMode.GameModeMetadata,
+                GameModeMetadata = LateToArtClassGameMode.GameModeMetadata,
                 GameModeInstantiator = (lobby, options, standardOptions) => new ImposterDrawingGameMode(lobby, options, standardOptions)
             },
             new GameModeMetadataHolder()
@@ -47,6 +48,11 @@ namespace Backend.GameInfrastructure.DataModels
             {
                 GameModeMetadata = TextBodyBuilderGameMode.GameModeMetadata,
                 GameModeInstantiator = (lobby, options, standardOptions) => new TextBodyBuilderGameMode(lobby, options, standardOptions)
+            },
+            new GameModeMetadataHolder()
+            {
+                GameModeMetadata = LateToArtClassGameMode.GameModeMetadata,
+                GameModeInstantiator = (lobby, options, standardOptions) => new LateToArtClassGameMode(lobby, options, standardOptions)
             },
             
             #region BodyBuilder (Removed)

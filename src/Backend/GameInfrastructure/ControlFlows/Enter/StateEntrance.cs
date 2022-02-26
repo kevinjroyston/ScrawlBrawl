@@ -12,6 +12,7 @@ namespace Backend.GameInfrastructure.ControlFlows.Enter
         // Due to design constraints StateEntrance no longer supports providing a custom StateExit.
         // This feature was never used and will be tricky to support going forward.
         //
+        // Lol its me again a year later, I want this feature now :( rip. Created "PromptlessUserState" instead as a workaround.
         public StateEntrance(): base(new StateExit())
         {
             // Empty.

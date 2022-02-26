@@ -57,7 +57,7 @@ namespace Backend.Games.KevinsGames.Mimic
         {
             int numStartingDrawingsPerUser = 1;
 
-            numPlayers = Math.Min(numPlayers, MinPlayers);
+            numPlayers = Math.Max(numPlayers, MinPlayers);
 
             Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
             foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))

@@ -96,8 +96,10 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
                 error = !string.IsNullOrWhiteSpace(error) ? error : (successTuple?.Item2 ?? string.Empty);
                 success &= successTuple?.Item1 ?? true;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.Error.WriteLine(ex);
+                
                 error = "Something went wrong.";
                 success = false;
             }

@@ -56,7 +56,7 @@ namespace Backend.Games.TimsGames.FriendQuiz
         {
             double questionPoolMultiplier = 2.5; // Question pool is X times bigger than number of questions per person.
 
-            numPlayers = Math.Min(numPlayers, MinPlayers);
+            numPlayers = Math.Max(numPlayers, MinPlayers);
             Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
             foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
             {

@@ -58,7 +58,7 @@ namespace Backend.Games.BriansGames.BattleReady
         private static IReadOnlyDictionary<GameDuration, TimeSpan> GetGameDurationEstimates(int numPlayers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
         {
             Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
-            numPlayers = Math.Min(numPlayers, MinPlayers);
+            numPlayers = Math.Max(numPlayers, MinPlayers);
             foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
             {
                 int numRounds = BattleReadyConstants.NumRounds[duration];

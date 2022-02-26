@@ -46,7 +46,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing
         {
             Dictionary<GameDuration, TimeSpan> estimates = new Dictionary<GameDuration, TimeSpan>();
 
-            numPlayers = Math.Min(numPlayers, MinPlayers);
+            numPlayers = Math.Max(numPlayers, MinPlayers);
             foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
             {
                 int numRounds = Math.Min(ImposterDrawingConstants.MaxNumRounds[duration], numPlayers);

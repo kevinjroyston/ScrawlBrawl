@@ -35,6 +35,9 @@ namespace Backend.GameInfrastructure.DataModels.Users
             Imposter_GoodNormal,
             Imposter_GoodImposter,
             DescriptorUsed,
+            LateToArtClass_PartialCorrectAnswer,
+            LateToArtClass_GoodNormal,
+            LateToArtClass_GoodLateStudent,
         }
 
         public Score()
@@ -55,6 +58,9 @@ namespace Backend.GameInfrastructure.DataModels.Users
             { Reason.VotedWithCrowd, "In agreement with other voters" },
             { Reason.Imposter_GoodNormal, "Blended in when not imposter" },
             { Reason.Imposter_GoodImposter, "Standing out as imposter" },
+            { Reason.LateToArtClass_PartialCorrectAnswer, "Almost a correct answer" },
+            { Reason.LateToArtClass_GoodNormal, "Blended in when not late" },
+            { Reason.LateToArtClass_GoodLateStudent, "Blended in when late" },
         };
         public void ResetScore(Scope? scope = null)
         {
