@@ -21,7 +21,7 @@ namespace Backend.GameInfrastructure.DataModels
         {
             new GameModeMetadataHolder()
             {
-                GameModeMetadata = LateToArtClassGameMode.GameModeMetadata,
+                GameModeMetadata = ImposterDrawingGameMode.GameModeMetadata,
                 GameModeInstantiator = (lobby, options, standardOptions) => new ImposterDrawingGameMode(lobby, options, standardOptions)
             },
             new GameModeMetadataHolder()
