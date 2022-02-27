@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static System.FormattableString;
 using Constants = Common.DataModels.Constants;
+using System.Collections.Concurrent;
 
 namespace Backend.Games.KevinsGames.LateToArtClass
 {
@@ -101,9 +102,10 @@ namespace Backend.Games.KevinsGames.LateToArtClass
             StateChain CreateGamePlayLoop()
             {
                 List<State> stateList = new List<State>();
-                foreach (ArtClass artClass in artClasses)
+                List<ArtClass> artClassesList = artClasses.ToList();
+                foreach (ArtClass artClass in artClassesList)
                 {
-                    stateList.Add(GetImposterLoop(artClass, artClass == artClasses.Last()));
+                    stateList.Add(GetImposterLoop(artClass, artClass == artClassesList.Last()));
                 }
                 StateChain gamePlayChain = new StateChain(states: stateList);
                 gamePlayChain.Transition(this.Exit);

@@ -1,7 +1,7 @@
 ﻿using Backend.GameInfrastructure.DataModels.Enums;
 using Backend.GameInfrastructure.DataModels.Users;
 using Backend.Games.KevinsGames.TextBodyBuilder.DataModels;
-using Backend.Games.Common.GameStates;
+using Backend.Games.Common.GameStates.Setup;
 using Common.DataModels.Requests;
 using Common.DataModels.Responses;
 using System;
@@ -14,7 +14,7 @@ using Common.DataModels.Responses.Gameplay;
 
 namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
 {
-    public class SetupPrompts_GS : SetupGameState
+    public class SetupPrompts_GS : FixedCountSetupGameState
     {
         private Random Rand { get; } = new Random();
         private ConcurrentBag<Prompt> Prompts { get; set; }

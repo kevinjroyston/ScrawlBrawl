@@ -25,6 +25,8 @@ namespace Backend.Games.KevinsGames.LateToArtClass.DataModels
         /// </summary>
         public User CopiedFrom { get; set; }
 
+        public override bool? AllowDuplicateIds { get; set; } = false;
+
 
         #region stupid locking shenanigans
         /// <summary>

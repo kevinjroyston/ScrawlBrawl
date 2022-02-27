@@ -10,7 +10,7 @@ using static Backend.Games.Common.ThreePartPeople.DataModels.Person;
 using Backend.Games.Common.ThreePartPeople;
 using Common.DataModels.Enums;
 using Backend.GameInfrastructure.DataModels.Enums;
-using Backend.Games.Common.GameStates;
+using Backend.Games.Common.GameStates.Setup;
 using Backend.GameInfrastructure;
 using Backend.Games.Common.ThreePartPeople.Extensions;
 using Common.DataModels.Responses.Gameplay;
@@ -20,7 +20,7 @@ using static Backend.Games.KevinsGames.TextBodyBuilder.DataModels.TextPerson;
 
 namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
 {
-    public class SetupCAMs_GS : SetupGameState
+    public class SetupCAMs_GS : FixedCountSetupGameState
     {
         private Random Rand { get; } = new Random();
         private Dictionary<User, List<CAMType>> UsersToRandomizedCAMTypes { get; set; } = new Dictionary<User, List<CAMType>>();

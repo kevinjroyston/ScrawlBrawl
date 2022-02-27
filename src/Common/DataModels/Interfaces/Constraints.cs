@@ -15,7 +15,7 @@ namespace Common.DataModels.Interfaces
 
         public virtual ImmutableHashSet<Guid> AllowedMemberTags { get; set; } = null;
 
-        public virtual bool? AllowDuplicateIds { get; set; } = null;
+        public virtual bool? AllowDuplicateIds { get; set; } = false;
 
         public virtual bool? AllowDuplicateTags { get; set; } = null;
 
