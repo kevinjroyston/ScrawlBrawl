@@ -12,13 +12,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Backend.GameInfrastructure;
 using Common.DataModels.Enums;
-using Backend.Games.Common.GameStates;
+using Backend.Games.Common.GameStates.Setup;
 using Backend.GameInfrastructure.DataModels.Enums;
 using Common.DataModels.Responses.Gameplay;
 
 namespace Backend.Games.TimsGames.FriendQuiz.GameStates
 {
-    public class Setup_GS: SetupGameState
+    public class Setup_GS: FixedCountSetupGameState
     {
         private Random Rand { get; } = new Random();
         private RoundTracker RoundTracker { get; set; }

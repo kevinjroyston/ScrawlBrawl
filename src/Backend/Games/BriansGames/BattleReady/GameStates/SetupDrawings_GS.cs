@@ -10,14 +10,14 @@ using static Backend.Games.Common.ThreePartPeople.DataModels.Person;
 using Backend.Games.Common.ThreePartPeople;
 using Common.DataModels.Enums;
 using Backend.GameInfrastructure.DataModels.Enums;
-using Backend.Games.Common.GameStates;
+using Backend.Games.Common.GameStates.Setup;
 using Backend.GameInfrastructure;
 using Backend.Games.Common.ThreePartPeople.Extensions;
 using Common.DataModels.Responses.Gameplay;
 
 namespace Backend.Games.BriansGames.BattleReady.GameStates
 {
-    public class SetupDrawings_GS : SetupGameState
+    public class SetupDrawings_GS : FixedCountSetupGameState
     {
         private Random Rand { get; } = new Random();
         private Dictionary<User, List<BodyPartType>> UsersToRandomizedBodyPartTypes { get; set; } = new Dictionary<User, List<BodyPartType>>();

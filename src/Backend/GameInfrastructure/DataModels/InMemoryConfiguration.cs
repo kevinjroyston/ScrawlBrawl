@@ -9,6 +9,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Backend.Games.KevinsGames.TextBodyBuilder.Game;
 using Backend.Games.KevinsGames.LateToArtClass;
+using Backend.Games.KevinsGames.IMadeThis;
 
 namespace Backend.GameInfrastructure.DataModels
 {
@@ -53,6 +54,11 @@ namespace Backend.GameInfrastructure.DataModels
             {
                 GameModeMetadata = LateToArtClassGameMode.GameModeMetadata,
                 GameModeInstantiator = (lobby, options, standardOptions) => new LateToArtClassGameMode(lobby, options, standardOptions)
+            },
+            new GameModeMetadataHolder()
+            {
+                GameModeMetadata = IMadeThisGameMode.GameModeMetadata,
+                GameModeInstantiator = (lobby, options, standardOptions) => new IMadeThisGameMode(lobby, options, standardOptions)
             },
             
             #region BodyBuilder (Removed)

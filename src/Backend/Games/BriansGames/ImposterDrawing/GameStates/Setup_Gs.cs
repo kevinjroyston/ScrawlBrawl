@@ -29,6 +29,49 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
 {
     public class Setup_GS : GameState
     {
+        private Random Rand { get; set; } = new Random();
+
+        private object PromptListLock = new object();
+        private List<Prompt> PromptsToPopulate { get; }
+        private TimeSpan? WritingTimeDuration { get; }
+        private TimeSpan? DrawingTimeDuration { get; }
+        private int NumRounds { get; }
+        private int MaxPlayersPerPrompt { get; }
+        private int NumDrawingsPerUser { get; }
+        public Setup_GS(Lobby lobby, List<Prompt> promptsToPopulate, TimeSpan? writingTimeDuration, TimeSpan? drawingTimeDuration, int numRounds, int maxPlayersPerPrompt, int numDrawingsPerUser)
+        : base(
+            lobby: lobby,
+            exit: new WaitForUsers_StateExit(lobby))
+        {
+            this.PromptsToPopulate = promptsToPopulate;
+            this.WritingTimeDuration = writingTimeDuration;
+            this.DrawingTimeDuration = drawingTimeDuration.MultipliedBy(numDrawingsPerUser); // TODO, this is incorrect in edge case where we have too many users and maxPlayersPerPrompt is exceeded.
+            this.NumRounds = numRounds;
+            this.MaxPlayersPerPrompt = maxPlayersPerPrompt;
+            this.NumDrawingsPerUser = numDrawingsPerUser;
+            State getChallenges = GetChallengesUserState();
+
+            this.Entrance.Transition(getChallenges);
+            getChallenges.AddExitListener(() => this.AssignPrompts());
+            getChallenges.Transition(() =>
+            {
+                StateExit waitForDrawings = new WaitForUsers_StateExit(
+                    lobby: this.Lobby,
+                    waitingPromptGenerator: (User user) =>
+                    {
+                        return Prompts.DisplayWaitingText("Waiting for others to draw.")(user);
+                    });
+                var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: waitForDrawings, stateDuration: DrawingTimeDuration);
+                getDrawings.Transition(this.Exit);
+                return getDrawings;
+            });
+
+            this.UnityView = new UnityView(this.Lobby)
+            {
+                ScreenId = TVScreenId.WaitForUserInputs,
+                Instructions = new UnityField<string> { Value = "Complete all the prompts on your devices." },
+            };
+        }
         private UserState GetChallengesUserState()
         {
             return new SimplePromptUserState(
@@ -60,21 +103,23 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                 },
                 formSubmitHandler: (User user, UserFormSubmission input) =>
                 {
-                    PromptsToPopulate.Add(new Prompt
+                    lock (PromptListLock)
                     {
-                        Owner = user,
-                        RealPrompt = input.SubForms[0].ShortAnswer,
-                        FakePrompt = input.SubForms[1].ShortAnswer,
-                        MaxMemberCount = this.MaxPlayersPerPrompt,
-                        BannedMemberIds = new List<Guid>{ user.Id }.ToImmutableHashSet(),
-                        AllowDuplicateIds = false,
-                    });
+                        PromptsToPopulate.Add(new Prompt
+                        {
+                            Owner = user,
+                            RealPrompt = input.SubForms[0].ShortAnswer,
+                            FakePrompt = input.SubForms[1].ShortAnswer,
+                            MaxMemberCount = this.MaxPlayersPerPrompt,
+                            BannedMemberIds = new List<Guid> { user.Id }.ToImmutableHashSet(),
+                            AllowDuplicateIds = false,
+                        });
+                    }
                     return (true, string.Empty);
                 },
                 exit: new WaitForUsers_StateExit(lobby: this.Lobby),
                 maxPromptDuration: WritingTimeDuration);
         }
-        private Random Rand { get; set; } = new Random();
 
         /// <summary>
         /// Returns a chain of user states which will prompt for the proper drawings, assumes this.SubChallenges is fully set up.
@@ -138,47 +183,6 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
 
             return stateChain;
         }
-        private List<Prompt> PromptsToPopulate { get; }
-        private TimeSpan? WritingTimeDuration { get; }
-        private TimeSpan? DrawingTimeDuration { get; }
-        private int NumRounds { get; }
-        private int MaxPlayersPerPrompt { get; }
-        private int NumDrawingsPerUser { get; }
-        public Setup_GS(Lobby lobby, List<Prompt> promptsToPopulate, TimeSpan? writingTimeDuration, TimeSpan? drawingTimeDuration, int numRounds, int maxPlayersPerPrompt, int numDrawingsPerUser)
-        : base(
-            lobby: lobby,
-            exit: new WaitForUsers_StateExit(lobby))
-        {
-            this.PromptsToPopulate = promptsToPopulate;
-            this.WritingTimeDuration = writingTimeDuration;
-            this.DrawingTimeDuration = drawingTimeDuration.MultipliedBy(numDrawingsPerUser); // TODO, this is incorrect in edge case where we have too many users and maxPlayersPerPrompt is exceeded.
-            this.NumRounds = numRounds;
-            this.MaxPlayersPerPrompt = maxPlayersPerPrompt;
-            this.NumDrawingsPerUser = numDrawingsPerUser;
-            State getChallenges = GetChallengesUserState();
-
-            this.Entrance.Transition(getChallenges);
-            getChallenges.AddExitListener(() => this.AssignPrompts());
-            getChallenges.Transition(() =>
-            {
-                StateExit waitForDrawings = new WaitForUsers_StateExit(
-                    lobby: this.Lobby,
-                    waitingPromptGenerator: (User user) =>
-                    {
-                        return Prompts.DisplayWaitingText("Waiting for others to draw.")(user);
-                    });
-                var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: waitForDrawings, stateDuration: DrawingTimeDuration);
-                getDrawings.Transition(this.Exit);
-                return getDrawings;
-            });
-
-            this.UnityView = new UnityView(this.Lobby)
-            {
-                ScreenId = TVScreenId.WaitForUserInputs,
-                Instructions = new UnityField<string> { Value = "Complete all the prompts on your devices." },
-            };
-        }
-
 
         private void AssignPrompts()
         {

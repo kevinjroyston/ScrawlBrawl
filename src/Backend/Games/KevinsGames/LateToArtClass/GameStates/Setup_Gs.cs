@@ -31,12 +31,12 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
 {
     public class Setup_GS : GameState
     {
+        private object ChallengeListLock = new object();
         private UserState GetChallengesUserState()
         {
             return new SimplePromptUserState(
                 promptGenerator: (User user) => new UserPrompt()
                 {
-                    UserPromptId = UserPromptId.ImposterSyndrome_CreatePrompt,
                     Title = "Game setup",
                     PromptHeader = new PromptHeaderMetadata
                     {
@@ -57,14 +57,17 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                 },
                 formSubmitHandler: (User user, UserFormSubmission input) =>
                 {
-                    ArtClassesToPopulate.Add(new ArtClass
+                    lock (ChallengeListLock)
                     {
-                        Teacher = user,
-                        ArtAssignment = input.SubForms[0].ShortAnswer,
-                        MaxMemberCount = this.MaxPlayersPerPrompt,
-                        BannedMemberIds = new List<Guid>{ user.Id }.ToImmutableHashSet(),
-                        AllowDuplicateIds = false,
-                    });
+                        ArtClassesToPopulate.Add(new ArtClass
+                        {
+                            Teacher = user,
+                            ArtAssignment = input.SubForms[0].ShortAnswer,
+                            MaxMemberCount = this.MaxPlayersPerPrompt,
+                            BannedMemberIds = new List<Guid> { user.Id }.ToImmutableHashSet(),
+                            AllowDuplicateIds = false,
+                        });
+                    }
                     return (true, string.Empty);
                 },
                 exit: new WaitForUsers_StateExit(lobby: this.Lobby),
@@ -92,7 +95,6 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                 stateChain.Add(new SimplePromptUserState(
                     promptGenerator: (User user) => new UserPrompt()
                     {
-                        UserPromptId = UserPromptId.ImposterSyndrome_Draw,
                         Title = "Draw the art assignment below",
                         PromptHeader = new PromptHeaderMetadata
                         {
@@ -164,7 +166,6 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                 var waitingForCopyStateExit = new WaitForTrigger_StateExit(
                     (User user) => new UserPrompt()
                     {
-                        UserPromptId = UserPromptId.ImposterSyndrome_Draw,
                         Title = "You were late to class, but there is nobody to copy off of yet! Please hold, sorry!",
                         PromptHeader = new PromptHeaderMetadata
                         {
@@ -185,7 +186,6 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                 stateChain.Add(new SimplePromptUserState(
                     promptGenerator: (User user) => new UserPrompt()
                     {
-                        UserPromptId = UserPromptId.ImposterSyndrome_Draw,
                         Title = "You were late to art class!",
                         PromptHeader = new PromptHeaderMetadata
                         {

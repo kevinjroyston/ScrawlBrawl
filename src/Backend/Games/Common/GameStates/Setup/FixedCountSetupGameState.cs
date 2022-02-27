@@ -16,16 +16,20 @@ using Common.Code.Extensions;
 using Common.DataModels.Enums;
 using System.Collections.Generic;
 
-namespace Backend.Games.Common.GameStates
+namespace Backend.Games.Common.GameStates.Setup
 {
-    public abstract class SetupGameState : GameState
+    /// <summary>
+    /// Calls a prompt generator a fixed number of times, inheritor is responsible for storing the data via form submit handlers
+    /// </summary>
+    public abstract class FixedCountSetupGameState : GameState
     {
         public abstract UserPrompt CountingPromptGenerator(User user, int counter);
         public abstract (bool, string) CountingFormSubmitHandler(User user, UserFormSubmission input, int counter);
         public abstract UserTimeoutAction CountingUserTimeoutHandler(User user, UserFormSubmission input, int counter);
 
         protected int NumExpectedPerUser { get; }
-        public SetupGameState(
+
+        public FixedCountSetupGameState(
             Lobby lobby,
             int numExpectedPerUser,
             string unityTitle = "Setup Time!",
