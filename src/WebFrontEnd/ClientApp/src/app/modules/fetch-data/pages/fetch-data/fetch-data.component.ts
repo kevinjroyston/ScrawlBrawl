@@ -201,17 +201,18 @@ export class FetchDataComponent implements OnDestroy
             this.notificationService.addMessage(`Sorry, you're on your own this round.`, null, {panelClass: ['error-snackbar']});
             return;
         }
-        for (let i = 0; i < Math.min(userSubmitData.subForms.length,suggestion.values.length); i++) {
-            if (suggestion.values[i] != "") {
-                if (this.userPrompt.subPrompts[i].shortAnswer) {
-                    this.userForm.controls.subForms.controls[i].patchValue({shortAnswer:suggestion.values[i]});
+        for (let i = 0, s = 0; (i < userSubmitData.subForms.length) && (s < suggestion.values.length); i++) {
+            if (this.userPrompt.subPrompts[i].shortAnswer) {
+                if (suggestion.values[s] != "") 
+                    this.userForm.controls.subForms.controls[i].patchValue({shortAnswer:suggestion.values[s]});
+                s++;
                 }
-                if (this.userPrompt.subPrompts[i].colorPicker) {
-                    this.userPrompt.subPrompts[i].color = suggestion.values[i];
-                    this.userForm.controls.subForms.controls[i].patchValue({colorPicker:suggestion.values[i]});
+            if (this.userPrompt.subPrompts[i].colorPicker) {
+                if (suggestion.values[s] != "") {
+                    this.userPrompt.subPrompts[i].color = suggestion.values[s];
+                    this.userForm.controls.subForms.controls[i].patchValue({colorPicker:suggestion.values[s]});
                 }
-//                if (this.userPrompt.subPrompts[i].selector) { this.userPrompt.subPrompts[i].selector = suggestion.value[i]) }
-//                if (this.userPrompt.subPrompts[i].slider) { this.userPrompt.subPrompts[i].slider.value=suggestion.value[i]; }
+                s++;
             }
         }
     }

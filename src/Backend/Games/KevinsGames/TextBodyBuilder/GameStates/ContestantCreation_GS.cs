@@ -73,6 +73,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                                 CurrentProgress = lambdaSafeIndex + 1,
                             },
                             Description = "Format is <span class='characterClass'>Character</span> <span class='actionClass'>Action</span> <span class='modifierClass'>Modifier</span>",
+                            Suggestion = new SuggestionMetadata { SuggestionKey = $"TextBodyBuilder-Modifier" },
                             SubPrompts = new SubPrompt[]
                             {
                                 new SubPrompt
