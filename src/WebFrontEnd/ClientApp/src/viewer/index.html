@@ -5,7 +5,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@microsoft/signalr@3.1.19/dist/browser/signalr.min.js"></script>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | ScrawlBrawl</title>
+    <title>Unity WebGl Player | ScrawlBrawl</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
   </head>
@@ -84,11 +84,11 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/WebGL.loader.js";
+      var loaderUrl = buildUrl + "/WebGl.loader.js";
       var config = {
-        dataUrl: buildUrl + "/WebGL.data",
-        frameworkUrl: buildUrl + "/WebGL.framework.js",
-        codeUrl: buildUrl + "/WebGL.wasm",
+        dataUrl: buildUrl + "/WebGl.data",
+        frameworkUrl: buildUrl + "/WebGl.framework.js",
+        codeUrl: buildUrl + "/WebGl.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "KevinRoyston",
         productName: "ScrawlBrawl",
@@ -96,11 +96,11 @@
         showBanner: unityShowBanner,
       };
 
-      // By default Unity keeps WebGL canvas render target size matched with
+      // By default Unity keeps WebGl canvas render target size matched with
       // the DOM size of the canvas element (scaled by window.devicePixelRatio)
       // Set this to false if you want to decouple this synchronization from
       // happening inside the engine, and you would instead like to size up
-      // the canvas DOM size and WebGL render target sizes yourself.
+      // the canvas DOM size and WebGl render target sizes yourself.
       // config.matchWebGLToCanvasSize = false;
 
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
