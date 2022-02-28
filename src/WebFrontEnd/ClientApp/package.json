@@ -38,7 +38,6 @@
         "jquery": "^3.5.1",
         "lodash.throttle": "^4.1.1",
         "msal": "^1.4.4",
-        "ngx-bootstrap-slider": "^1.9.0",
         "ngx-color-picker": "11.0.0",
         "ngx-ui-switch": "^10.0.2",
         "npm": "^7.10.0",
