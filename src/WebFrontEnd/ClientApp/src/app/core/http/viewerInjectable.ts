@@ -84,7 +84,7 @@ export class UnityViewer{
   
             this.gameInstance = loader.instantiate(
                 'viewerContainer', 
-                '/viewer/Build/WebGL.Loader.js', {
+                '/viewer/Build/WebGl.Loader.js', {
             onProgress: (gameInstance: any, progress: number) => {
                   this.progress = progress;
                     if (progress === 1) {
@@ -102,11 +102,11 @@ export class UnityViewer{
         this.createDIV(containerId);
      
       var buildUrl = "viewer/Build";
-      var loaderUrl = buildUrl + "/WebGL.loader.js";
+      var loaderUrl = buildUrl + "/WebGl.loader.js";
       var config = {
-        dataUrl: buildUrl + "/WebGL.data",
-        frameworkUrl: buildUrl + "/WebGL.framework.js",
-        codeUrl: buildUrl + "/WebGL.wasm",
+        dataUrl: buildUrl + "/WebGl.data",
+        frameworkUrl: buildUrl + "/WebGl.framework.js",
+        codeUrl: buildUrl + "/WebGl.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "KevinRoyston",
         productName: "ScrawlBrawl",

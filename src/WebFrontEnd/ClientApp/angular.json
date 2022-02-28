@@ -39,7 +39,7 @@
                         },
                         "scripts": [
                             "./node_modules/hammerjs/hammer.min.js",
-                            "./src/viewer/Build/WebGL.loader.js",
+                            "./src/viewer/Build/WebGl.loader.js",
                             "./node_modules/bootstrap-slider/dist/bootstrap-slider.min.js"
                         ]
                     },
