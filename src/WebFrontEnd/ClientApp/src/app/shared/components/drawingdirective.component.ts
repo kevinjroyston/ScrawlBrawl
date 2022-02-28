@@ -2,7 +2,6 @@ import { Directive, ElementRef, HostListener, AfterViewInit, ViewChild, Input, O
 import { throttle } from "app/utils/throttle";
 import PastColorsService from "./colorpicker/pastColors";
 import * as drawingUtils from "app/utils/drawingutils";
-import { typeSourceSpan } from "@angular/compiler";
 
 const MaxUndoCount = 20;
 

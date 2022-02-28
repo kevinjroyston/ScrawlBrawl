@@ -7,7 +7,7 @@ import { Slider } from './components/slider/slider.component';
 import { DisplayUsers } from './components/displayusers/displayusers.component';
 import { WaitingForGameStart } from './components/waitingforgamestart/waitingforgamestart.component';
 import { UnityComponent } from './components/unity/unity.component';
-import { NgxBootstrapSliderModule } from 'ngx-bootstrap-slider';
+//import { NgxBootstrapSliderModule } from 'ngx-bootstrap-slider';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { DrawingDirective } from './components/drawingdirective.component';
@@ -49,7 +49,7 @@ import { TutorialComponent } from './components/tutorial/tutorial.component';
   imports: [
     CommonModule,
     MaterialModule,
-    NgxBootstrapSliderModule,
+    //NgxBootstrapSliderModule,
     NgbModule,
     ColorPickerModule,
     UiSwitchModule,
@@ -99,7 +99,7 @@ import { TutorialComponent } from './components/tutorial/tutorial.component';
     CommonModule,
     MaterialModule,
     DrawingBoard,
-    NgxBootstrapSliderModule,
+    //NgxBootstrapSliderModule,
     NgbModule,
     ColorPickerModule,
     UiSwitchModule,
