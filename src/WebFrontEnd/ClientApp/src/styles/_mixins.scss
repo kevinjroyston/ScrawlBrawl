@@ -1,4 +1,6 @@
+@use "sass:math";
+
 @mixin responsive($number){
-    flex: 0 0 percentage(1/$number);
-    width: percentage(1/$number);
+    flex: 0 0 percentage(math.div(1, $number));
+    width: percentage(math.div(1, $number));
 }

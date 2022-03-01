@@ -142,10 +142,8 @@ export class LobbyManagementComponent {
     }
 
     onSelectGameMode(game: number) {
-        this.lobby.selectedGameMode === game ? this.lobby.selectedGameMode = null : this.lobby.selectedGameMode = game
-        if (this.lobby.selectedGameMode !== null) {
-            this.openGameSettingsDialog()
-        }
+        this.lobby.selectedGameMode = game;        
+        this.openGameSettingsDialog();
         this.error = null;
     }
 

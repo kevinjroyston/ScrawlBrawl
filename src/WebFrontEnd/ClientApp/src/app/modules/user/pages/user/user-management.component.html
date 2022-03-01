@@ -1,5 +1,12 @@
+
 <div class="user-wrapper">
     <div class="user-wrapper-inner">
+        
+        <div class="instructions">
+            This page allows you to practice your drawing skills! Fun fact, you can SAVE your drawings by clicking the Star icon. And you can use these drawings in game by clicking the gallery button.
+
+            You can also leave the game you are in from here.
+        </div>
         <div class="actions">
             <select #galleryDD class="Dropdown" (change)="currentDrawingType=galleryDD.value">
                 <option *ngFor="let gallery of galleryTypes; let i = index" [selected]="(currentDrawingType==gallery.drawingType)" value="{{gallery.drawingType}}">

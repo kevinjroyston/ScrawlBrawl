@@ -13,7 +13,6 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "aot": true,
                         "progress": true,
                         "outputPath": "dist",
                         "index": "src/index.html",
@@ -28,7 +27,6 @@
                         ],
                         "styles": [
                             "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-                            "./node_modules/bootstrap-slider/dist/css/bootstrap-slider.min.css",
                             "src/styles.scss"
                         ],
                         "stylePreprocessorOptions": {
@@ -38,10 +36,14 @@
                             ]
                         },
                         "scripts": [
-                            "./node_modules/hammerjs/hammer.min.js",
-                            "./src/viewer/Build/WebGl.loader.js",
-                            "./node_modules/bootstrap-slider/dist/bootstrap-slider.min.js"
-                        ]
+                            "./src/viewer/Build/WebGl.loader.js"
+                        ],
+                        "vendorChunk": true,
+                        "extractLicenses": false,
+                        "buildOptimizer": false,
+                        "sourceMap": true,
+                        "optimization": false,
+                        "namedChunks": true
                     },
                     "configurations": {
                         "production": {
@@ -57,7 +59,6 @@
                             "outputHashing": "all",
                             "sourceMap": false,
                             "namedChunks": false,
-                            "aot": true,
                             "extractLicenses": true,
                             "vendorChunk": false,
                             "buildOptimizer": true
@@ -75,7 +76,6 @@
                             "outputHashing": "all",
                             "sourceMap": false,
                             "namedChunks": false,
-                            "aot": true,
                             "extractLicenses": true,
                             "vendorChunk": false,
                             "buildOptimizer": true
@@ -93,12 +93,12 @@
                             "outputHashing": "all",
                             "sourceMap": false,
                             "namedChunks": false,
-                            "aot": true,
                             "extractLicenses": true,
                             "vendorChunk": false,
                             "buildOptimizer": true
                         }
-                    }
+                    },
+                    "defaultConfiguration": ""
                 },
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
@@ -153,23 +153,22 @@
                     }
                 },
                 "lint": {
-                    "builder": "@angular-devkit/build-angular:tslint",
-                    "options": {
-                        "tsConfig": [
-                            "src/tsconfig.app.json",
-                            "src/tsconfig.spec.json"
-                        ],
-                        "exclude": [
-                            "**/node_modules/**"
-                        ]
-                    }
+                  "builder": "@angular-eslint/builder:lint",
+                  "options": {
+                    "lintFilePatterns": [
+                      "src/**/*.ts",
+                      "src/**/*.html"
+                    ]
+                  }
                 },
                 "server": {
                     "builder": "@angular-devkit/build-angular:server",
                     "options": {
                         "outputPath": "dist-server",
                         "main": "src/main.ts",
-                        "tsConfig": "src/tsconfig.server.json"
+                        "tsConfig": "src/tsconfig.server.json",
+                        "sourceMap": true,
+                        "optimization": false
                     },
                     "configurations": {
                         "dev": {
@@ -186,13 +185,15 @@
                             "namedChunks": false,
                             "extractLicenses": true
                         }
-                    }
+                    },
+                    "defaultConfiguration": ""
                 }
             }
         }
     },
     "defaultProject": "RoystonGame",
     "cli": {
-        "analytics": false
+        "analytics": false,
+        "defaultCollection": "@angular-eslint/schematics"
     }
 }

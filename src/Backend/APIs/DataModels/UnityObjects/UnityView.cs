@@ -41,6 +41,8 @@ namespace Backend.APIs.DataModels.UnityObjects
         public UnityView(Lobby lobby)
         {
             this.Lobby = lobby;
+
+            // For most states, this user list will not be changing. (Activity status of users may change but not the list)
             if (lobby != null)
             {
                 this.Users = Lobby.GetAllUsers().Select(user => new UnityUser(user)).ToList().AsReadOnly();

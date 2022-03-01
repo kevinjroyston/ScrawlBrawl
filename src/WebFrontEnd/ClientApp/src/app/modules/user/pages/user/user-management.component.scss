@@ -4,6 +4,12 @@
     width: 100%;
 }
 
+.instructions {
+    margin-bottom: 1rem;
+    min-width: 700px;
+    max-width: 200px;
+}
+
 .user-wrapper {
     display: flex;
     height: 100%;
@@ -24,9 +30,8 @@
 }
 
 .user-actions {
-    max-width: 200px;
+    min-width: 150px;
 }
-
 .user-wrapper-inner {
     display: flex;
     flex-direction: column;
@@ -44,5 +49,10 @@
     .drawingboard {
         width: 100%;
         height: auto;
+    }
+    
+    .instructions {
+        width: 100%;
+        padding: .5rem;
     }
 }

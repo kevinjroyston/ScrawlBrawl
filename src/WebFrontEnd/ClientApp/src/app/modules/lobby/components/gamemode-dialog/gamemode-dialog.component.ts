@@ -61,8 +61,16 @@ export class GamemodeDialogComponent implements OnInit {
     configureRequest.subscribe({
         next: (data) => {
           let response = data as Lobby.ConfigureLobbyResponse;
-          this.closeDialog(); // needed?
-          this.onNext(response.gameDurationEstimatesInMinutes);
+
+          // Set up a listener to call the next callback once the window finishes closing
+          this.dialogRef.afterClosed().subscribe({
+            next: (data) =>{
+               this.onNext(response.gameDurationEstimatesInMinutes);
+            }
+          })
+          
+          //close
+          this.closeDialog();
         },
         error: (error) => { 
             this.error = error.error; 

@@ -197,7 +197,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                          {
                             new SubPrompt
                             {
-                                Prompt = Invariant($"Your neighbors assignment:\"{CommonHelpers.HtmlImageWrapper(artClass.UsersToDrawings[artClass.CopiedFrom].Drawing)}\""),
+                                Prompt = Invariant($"Your neighbors assignment:{CommonHelpers.HtmlImageWrapper(artClass.UsersToDrawings[artClass.CopiedFrom].Drawing)}"),
                                 Drawing = new DrawingPromptMetadata(){
                                     GalleryOptions = null
                                 },

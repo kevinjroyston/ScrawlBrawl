@@ -1,24 +1,11 @@
-<ng-container *ngIf="!unityViewer.isReady">
-    <div class="progress">
-        <div class="progress-bar" role="progressbar" [style.width.%]="unityViewer.progress*100" [attr.aria-valuenow]="unityViewer.progress*100" aria-valuemin="0" aria-valuemax="100"></div>
-    </div>
-    <hr />
-</ng-container>
 <!--div class="rectangle" mwlResizable-->
     
     <div id="unity-container" class="unity-desktop">
-        <canvas id="unity-canvas" width=100px height=100px></canvas>
-        <div id="unity-loading-bar">
-          <div id="unity-logo"></div>
-          <div id="unity-progress-bar-empty">
-            <div id="unity-progress-bar-full"></div>
-          </div>
-        </div>
+        <canvas id="unity-canvas"></canvas>
         <div id="unity-warning"> </div>
         <div id="unity-footer">
           <div id="unity-webgl-logo"></div>
           <div id="unity-fullscreen-button"></div>
-          <div id="unity-build-title">ScrawlBrawl</div>
         </div>
       </div>
 

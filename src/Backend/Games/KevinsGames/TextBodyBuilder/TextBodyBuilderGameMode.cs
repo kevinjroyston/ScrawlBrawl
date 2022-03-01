@@ -296,7 +296,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                     Options = new Dictionary<UnityViewOptions, object>
                     {
                         { UnityViewOptions.PrimaryAxis, Axis.Vertical },
-                        { UnityViewOptions.PrimaryAxisMaxCount, 7 },
+                        //{ UnityViewOptions.PrimaryAxisMaxCount, 7 },
                     }
                 },
                 RevealViewOverrides = new UnityViewOverrides
@@ -305,7 +305,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                     Options = new Dictionary<UnityViewOptions, object>
                     {
                         { UnityViewOptions.PrimaryAxis, Axis.Vertical },
-                        { UnityViewOptions.PrimaryAxisMaxCount, 7 },
+                        //{ UnityViewOptions.PrimaryAxisMaxCount, 7 },
                     }
                 },
                 VoteCountManager = CountVotes

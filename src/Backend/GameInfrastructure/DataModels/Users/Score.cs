@@ -54,6 +54,7 @@ namespace Backend.GameInfrastructure.DataModels.Users
             { Reason.ReceivedVotes, "Received Votes" },
             { Reason.CorrectAnswerSpeed, "Correct Answer (Speed)" },
             { Reason.DescriptorUsed, "Descriptor Used" },
+            { Reason.DrawingUsed, "Drawing Used" },
             { Reason.Finished, "Finished (Speed)" },
             { Reason.VotedWithCrowd, "In agreement with other voters" },
             { Reason.Imposter_GoodNormal, "Blended in when not imposter" },
