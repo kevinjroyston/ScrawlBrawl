@@ -65,7 +65,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                 Options = new Dictionary<UnityViewOptions, object>
                 {
                     { UnityViewOptions.PrimaryAxis, Axis.Vertical },
-                    { UnityViewOptions.PrimaryAxisMaxCount, 7 },
+                    //{ UnityViewOptions.PrimaryAxisMaxCount, 7 },
                 }
             };
         }

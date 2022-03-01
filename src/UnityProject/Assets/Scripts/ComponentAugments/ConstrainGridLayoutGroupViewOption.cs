@@ -42,9 +42,10 @@ public class ConstrainGridLayoutGroupViewOption : MonoBehaviour, HandlerInterfac
         }
         if (options.ContainsKey(UnityViewOptions.PrimaryAxisMaxCount) && options[UnityViewOptions.PrimaryAxisMaxCount] != null)
         {
+            // I dont think this even works lol, don't use this. Race condition with other code setting this value.
             gridLayoutGroup.constraintCount = (int)((long)options[UnityViewOptions.PrimaryAxisMaxCount]);
         }else{
-            gridLayoutGroup.constraintCount = 40;
+            //gridLayoutGroup.constraintCount = 40;
         }
     }
     public void UpdateValue(List<object> objects)

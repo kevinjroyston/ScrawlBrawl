@@ -12,6 +12,7 @@ using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
 using Common.Code.Extensions;
 using Backend.GameInfrastructure.DataModels.States.UserStates;
+using Backend.APIs.DataModels.Enums;
 
 namespace Backend.Games.Common.GameStates.VoteAndReveal
 {
@@ -87,7 +88,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
                 Title = new UnityField<string> { Value = this.VotingViewOverrides?.Title },
                 Instructions = new UnityField<string> { Value = this.VotingViewOverrides?.Instructions },
                 UnityObjects = new UnityField<IReadOnlyList<UnityObject>> { Value = unityObjects },
-                Options = VotingViewOverrides.Options
+                Options = VotingViewOverrides.Options ?? new Dictionary<UnityViewOptions, object>()
             };
         }
         public virtual UnityView RevealUnityViewGenerator()
@@ -109,7 +110,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
                 Instructions = new UnityField<string> { Value = this.RevealViewOverrides?.Instructions },
                 UnityObjects = new UnityField<IReadOnlyList<UnityObject>> { Value = unityObjects },
                 IsRevealing= true,
-                Options = RevealViewOverrides.Options
+                Options = RevealViewOverrides.Options ?? new Dictionary<UnityViewOptions, object>()
             };
         }
     }

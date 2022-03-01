@@ -163,6 +163,7 @@ namespace Backend.GameInfrastructure
         /// </summary>
         private void InitializeAllGameStates()
         {
+            // Note any states initialized here will not have an accurate user list, recommend adding an entrance listener on each.
             this.WaitForLobbyStart = new WaitForLobbyCloseGameState(this);
             this.TutorialGameState = new TutorialExplanationGameState(this);
             this.EndOfGameRestart = new EndOfGameState(this, PrepareToRestartGame);

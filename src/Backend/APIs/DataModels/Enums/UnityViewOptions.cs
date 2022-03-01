@@ -7,7 +7,8 @@ namespace Backend.APIs.DataModels.Enums
 {
     public enum UnityViewOptions
     {
-        PrimaryAxisMaxCount = 0,
+        // I dont think this works on unity side, dont use it
+        //PrimaryAxisMaxCount = 0,
         PrimaryAxis = 1,
         BlurAnimate = 2,
     }

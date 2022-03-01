@@ -27,7 +27,6 @@
                         ],
                         "styles": [
                             "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-                            "./node_modules/bootstrap-slider/dist/css/bootstrap-slider.min.css",
                             "src/styles.scss"
                         ],
                         "stylePreprocessorOptions": {
@@ -37,9 +36,7 @@
                             ]
                         },
                         "scripts": [
-                            "./node_modules/hammerjs/hammer.min.js",
-                            "./src/viewer/Build/WebGl.loader.js",
-                            "./node_modules/bootstrap-slider/dist/bootstrap-slider.min.js"
+                            "./src/viewer/Build/WebGl.loader.js"
                         ],
                         "vendorChunk": true,
                         "extractLicenses": false,
@@ -155,6 +152,15 @@
                         ]
                     }
                 },
+                "lint": {
+                  "builder": "@angular-eslint/builder:lint",
+                  "options": {
+                    "lintFilePatterns": [
+                      "src/**/*.ts",
+                      "src/**/*.html"
+                    ]
+                  }
+                },
                 "server": {
                     "builder": "@angular-devkit/build-angular:server",
                     "options": {
@@ -187,6 +193,7 @@
     },
     "defaultProject": "RoystonGame",
     "cli": {
-        "analytics": false
+        "analytics": false,
+        "defaultCollection": "@angular-eslint/schematics"
     }
 }

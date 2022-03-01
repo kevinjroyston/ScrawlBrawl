@@ -112,15 +112,17 @@ export class UnityViewer{
         productName: "ScrawlBrawl",
         productVersion: "1.0",
       };
-var container = document.querySelector("#unity-container");
+    var container = document.querySelector("#unity-container");
     var canvas = document.querySelector("#unity-canvas");
     var loadingBar = document.querySelector("#unity-loading-bar");
     var progressBarFull = document.querySelector("#unity-progress-bar-full");
     var fullscreenButton = document.querySelector("#unity-fullscreen-button");
     var warningBanner = document.querySelector("#unity-warning");
 
-    this.renderer.setStyle(canvas,'width','480px');
-    this.renderer.setStyle(canvas,'height','270px');
+
+    var el = container;
+    this.renderer.setStyle(canvas,'width',el.clientWidth+'px');
+    this.renderer.setStyle(canvas,'height',Math.round((el.clientWidth)*54/96)+'px');
 
     createUnityInstance(canvas, config, (progress) => {
       //progressBarFull.style.width = 100 * progress + "%";

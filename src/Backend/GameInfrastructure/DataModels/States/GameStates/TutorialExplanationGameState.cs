@@ -27,6 +27,11 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
 
             UserState readyUp = new SimplePromptUserState(promptGenerator: this.ReadyUpPrompt);
             this.Entrance.Transition(readyUp);
+            this.AddEntranceListener(() =>
+            {
+                // Because this view may be instantiated before the game actually starts, users list may be outdated
+                this.UnityView.Users = Lobby.GetAllUsers().Select(user => new UnityUser(user)).ToList().AsReadOnly();
+            });
             readyUp.Transition(this.Exit);
 
             // I have created a monstrosity.
