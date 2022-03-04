@@ -136,19 +136,21 @@ export class FetchDataComponent implements OnDestroy
 
                 var prompt = currentContent.userPrompt;
 
-                if (prompt.submitButton) {
+                if (prompt && prompt.submitButton) {
                     document.body.classList.add('makeRoomForToolbar');
                 } else {
                     document.body.classList.remove('makeRoomForToolbar');
                 }
-      
-                this.unityViewer.UpdateLobbyId(prompt.lobbyId);
+                if (prompt) {
+                    this.unityViewer.UpdateLobbyId(prompt.lobbyId);
 
-                // Too lazy to figure out how to properly deserialize things.
-                prompt.autoSubmitAtTime = !prompt.autoSubmitAtTime ? null : new Date(prompt.autoSubmitAtTime);
-                prompt.currentServerTime = !prompt.currentServerTime ? null : new Date(prompt.currentServerTime);
-
-                console.log('Fetched Prompt', prompt);
+                    // Too lazy to figure out how to properly deserialize things.
+                    prompt.autoSubmitAtTime = !prompt.autoSubmitAtTime ? null : new Date(prompt.autoSubmitAtTime);
+                    prompt.currentServerTime = !prompt.currentServerTime ? null : new Date(prompt.currentServerTime);
+    
+                    console.log('Fetched Prompt', prompt);
+    
+                }
 
                 // If you have reached this far it means we have switched to a new prompt, time to cleanup!
 
@@ -178,7 +180,9 @@ export class FetchDataComponent implements OnDestroy
                     subForms: this.formBuilder.array(this.makeSubForms(subFormCount))
                 });
                 // reset the timer to call again
-                this.refreshUserPromptTimer(this.userPrompt.refreshTimeInMs);
+                if (this.userPrompt) {
+                    this.refreshUserPromptTimer(this.userPrompt.refreshTimeInMs);
+                }
 
                 // Reset the form again because you are a bad coder
                 if (this.userForm) {
@@ -261,7 +265,7 @@ export class FetchDataComponent implements OnDestroy
                 clearInterval(this.timerDisplayIntervalId);
                 this.timerDisplayIntervalId = null;
             }
-            this.timerDisplay = '';
+            this.timerDisplay = ' ';  // non blank so block will display if there is progress
         }
     }
   shortTermSanitize(ans){
