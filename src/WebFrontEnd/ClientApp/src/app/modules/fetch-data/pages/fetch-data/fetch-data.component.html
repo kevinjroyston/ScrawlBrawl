@@ -56,8 +56,8 @@
                     </select>
                     <div *ngIf="subPrompt.answers">
                         <div class="RadioAnswer" *ngFor="let answer of subPrompt.answers; let i = index">
-                            <label for="ra{{j}}-{{i}}b">
                             <input type="radio" formControlName="radioAnswer" value="{{i}}" id="ra{{j}}-{{i}}b" />
+                            <label for="ra{{j}}-{{i}}b">
                              <span [innerHTML]="answer | safe: 'html'"></span></label>
                         </div>
                     </div>
