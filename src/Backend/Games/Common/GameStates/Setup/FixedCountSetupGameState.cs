@@ -38,11 +38,6 @@ namespace Backend.Games.Common.GameStates.Setup
             : base(lobby: lobby, exit: new WaitForUsers_StateExit(lobby))
         {
             NumExpectedPerUser = numExpectedPerUser;
-            ConcurrentDictionary<User, int> usersToNumSubmitted = new ConcurrentDictionary<User, int>();
-            foreach (User user in lobby.GetAllUsers())
-            {
-                usersToNumSubmitted.AddOrReplace(user, 0);
-            }
             StateChain setupChain = new StateChain(
                 stateGenerator: (int counter) =>
                 {
@@ -51,20 +46,16 @@ namespace Backend.Games.Common.GameStates.Setup
                         SimplePromptUserState setupUserState = new SimplePromptUserState(
                             promptGenerator: (User user) =>
                             {
-                                return CountingPromptGenerator(user, usersToNumSubmitted[user]);
+                                return CountingPromptGenerator(user, counter);
                             },
                             formSubmitHandler: (User user, UserFormSubmission input) =>
                             {
-                                (bool, string) handlerResponse = CountingFormSubmitHandler(user, input, usersToNumSubmitted[user]);
-                                if (handlerResponse.Item1)
-                                {
-                                    usersToNumSubmitted[user]++;
-                                }                                  
+                                (bool, string) handlerResponse = CountingFormSubmitHandler(user, input, counter);                 
                                 return handlerResponse;
                             },
                             userTimeoutHandler: (User user, UserFormSubmission input) =>
                             {
-                                return CountingUserTimeoutHandler(user, input, usersToNumSubmitted[user]);
+                                return CountingUserTimeoutHandler(user, input, counter);
                             });
 
                         return setupUserState;

@@ -13,8 +13,8 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.DataModels
         public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerCAMTimer = new Dictionary<GameDuration, TimeSpan>()
         {
             { GameDuration.Short, TimeSpan.FromSeconds(60)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(80)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(100)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(70)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(80)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerPromptTimer = new Dictionary<GameDuration, TimeSpan>()
         {
@@ -32,7 +32,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.DataModels
         {
             { GameDuration.Short, TimeSpan.FromSeconds(45)},
             { GameDuration.Normal, TimeSpan.FromSeconds(60)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(90)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(80)},
         };
 
         // Number of rounds (round = create contestants & vote)
@@ -54,8 +54,8 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.DataModels
         public static IReadOnlyDictionary<GameDuration, int> NumCAMsPerPlayer = new Dictionary<GameDuration, int>()
         {
             { GameDuration.Short, 4},
-            { GameDuration.Normal, 6},
-            { GameDuration.Extended, 8},
+            { GameDuration.Normal, 5},
+            { GameDuration.Extended, 6},
         };
     }
 }

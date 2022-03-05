@@ -113,7 +113,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
 
 
                     if (!joinLobbyResponse.Item1)
-                    {  // we created a lobby, but it wouldn't let us join, so kill the lobby... it clearly deserves it
+                    {  // we created a lobby, but it wouldn't let us join, so delete the lobby
                         GameManager.DeleteLobby(request.LobbyId); 
                         authUser.OwnedLobby = null;
                         return StatusCode(400, joinLobbyResponse.Item2);
@@ -354,9 +354,37 @@ namespace Backend.APIs.Controllers.LobbyManagement
                     return StatusCode(404, "Lobby doesn't exist.");
                 }
 
-                if (!user.OwnedLobby.StartGame(standardOptions, out string error))
+                if (user.OwnedLobby.IsGameInProgress())
                 {
-                    return StatusCode(400, error);
+                    return new AcceptedResult();
+                }
+                lock (user.OwnedLobby.UserJoinLock)
+                {
+                    if (user.OwnedLobby == null) {
+
+                        return StatusCode(404, "Lobby no longer exists.");
+                    }
+
+                    if (user.OwnedLobby.IsGameInProgress())
+                    {
+                        return new AcceptedResult();
+                    }
+
+                    try
+                    {
+                        if (!user.OwnedLobby.StartGame(standardOptions, out string error))
+                        {
+                            return StatusCode(400, error);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.WriteLine(ex);
+                        // Something went wrong, delete lobby and throw.
+                        GameManager.DeleteLobby(user.OwnedLobby);
+                        user.OwnedLobby = null;
+                        throw;
+                    }
                 }
 
                 return new AcceptedResult();

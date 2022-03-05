@@ -87,7 +87,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing
             int numRounds = Math.Min(ImposterDrawingConstants.MaxNumRounds[duration], this.Lobby.GetAllUsers().Count);
             int numDrawingsPerUser = Math.Min(ImposterDrawingConstants.MaxDrawingsPerPlayer[duration], numRounds - 1);
 
-            numRounds = Math.Min(numRounds, (this.Lobby.GetAllUsers().Count-1) * numDrawingsPerUser / ImposterDrawingConstants.MinNumPlayersPerRound);
+            numRounds = Math.Min(numRounds, this.Lobby.GetAllUsers().Count * numDrawingsPerUser / ImposterDrawingConstants.MinNumPlayersPerRound);
             int playersPerPrompt = Math.Min(ImposterDrawingConstants.MaxNumPlayersPerRound, this.Lobby.GetAllUsers().Count - 1);
             playersPerPrompt = Math.Min(playersPerPrompt, this.Lobby.GetAllUsers().Count * numDrawingsPerUser / numRounds + 1);
             Setup = new Setup_GS(
@@ -103,41 +103,15 @@ namespace Backend.Games.BriansGames.ImposterDrawing
                 List<State> stateList = new List<State>();
                 foreach (Prompt prompt in prompts)
                 {
-                    stateList.Add(GetImposterLoop(prompt, prompt == prompts.Last()));
+                    stateList.Add(GetVotingAndRevealState(prompt, votingTimer));
                 }
+                stateList.Add(new ScoreBoardGameState(lobby, "Final Scores"));
                 StateChain gamePlayChain = new StateChain(states: stateList);
                 gamePlayChain.Transition(this.Exit);
                 return gamePlayChain;
             }
             this.Entrance.Transition(Setup);
             Setup.Transition(CreateGamePlayLoop);
-
-            StateChain GetImposterLoop(Prompt prompt, bool lastRound = false)
-            {
-                return new StateChain(
-                    stateGenerator: (int counter) =>
-                    {
-                        if (counter == 0)
-                        {
-                            return GetVotingAndRevealState(prompt, votingTimer);
-                        }
-                        if (counter == 1)
-                        {
-                            if (lastRound)
-                            {
-                                return new ScoreBoardGameState(lobby, "Final Scores");
-                            }
-                            else
-                            {
-                                return new ScoreBoardGameState(lobby);
-                            }        
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    });
-            }
         }
 
         private State GetVotingAndRevealState(Prompt prompt, TimeSpan? votingTime)

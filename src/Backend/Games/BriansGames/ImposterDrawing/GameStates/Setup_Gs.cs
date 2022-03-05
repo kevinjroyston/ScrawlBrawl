@@ -90,7 +90,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                         new SubPrompt
                         {
                             //Prompt = Invariant($"The drawing prompt to show all users. Suggestions: '{string.Join("', '",RandomLineFromFile.GetRandomLines(FileNames.Nouns, 5))}'"),
-                            Prompt = Invariant($"The drawing prompt to show all users. Suggestions: '{string.Join("', '",RandomLineFromFile.GetRandomLines(FileNames.Nouns, 5))}'"),
+                            Prompt = Invariant($"The drawing prompt to show all users."),
                             ShortAnswer = true,
                         },
                         new SubPrompt

@@ -41,7 +41,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.DataModels
         };
 
         public const int MaxNumPlayersPerRound = 10;
-        public const int MinNumPlayersPerRound = 4;
+        public const int MinNumPlayersPerRound = 3;
         // Number of rounds (round = create contestants & vote)
         public static IReadOnlyDictionary<GameDuration, int> MaxDrawingsPerPlayer = new Dictionary<GameDuration, int>()
         {

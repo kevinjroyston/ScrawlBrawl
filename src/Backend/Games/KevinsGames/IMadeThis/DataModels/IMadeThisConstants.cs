@@ -12,14 +12,14 @@ namespace Backend.Games.KevinsGames.IMadeThis.DataModels
         public static IReadOnlyDictionary<GameDuration, TimeSpan> WritingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
             { GameDuration.Short, TimeSpan.FromSeconds(90)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(120)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(180)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(110)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(160)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> DrawingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(80)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(100)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(130)},
+            { GameDuration.Short, TimeSpan.FromSeconds(100)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(130)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(180)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> VotingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
@@ -36,14 +36,14 @@ namespace Backend.Games.KevinsGames.IMadeThis.DataModels
             { GameDuration.Extended, 9},
         };
 
-        public const int MaxNumPlayersPerRound = 8;
+        public const int MaxNumPlayersPerRound = 5;
         public const int MinNumPlayersPerRound = 2;
 
         public static IReadOnlyDictionary<GameDuration, int> MaxDrawingsPerPlayer = new Dictionary<GameDuration, int>()
         {
-            { GameDuration.Short, 4},
-            { GameDuration.Normal, 5},
-            { GameDuration.Extended, 6},
+            { GameDuration.Short, 3},
+            { GameDuration.Normal, 4},
+            { GameDuration.Extended, 5},
         };
     }
 }
