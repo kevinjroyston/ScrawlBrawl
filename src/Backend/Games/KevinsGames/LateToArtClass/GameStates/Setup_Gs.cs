@@ -295,14 +295,29 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                 this.NumDrawingsPerUser);
 
             var assignments = groups.Zip(randomizedOrderChallenges);
-
+            Dictionary<User, int> userToLateCount = new Dictionary<User, int>();
             foreach ((IGroup<User> groupedUsers, ArtClass tracker) in assignments)
             {
-                tracker.UsersToDrawings = new ConcurrentDictionary<User,UserDrawing>(
-                    groupedUsers.Members.ToDictionary<User,User,UserDrawing>(
-                        keySelector:(user) => user,
-                        elementSelector:(user) => null));
-                tracker.LateStudent = tracker.UsersToDrawings.Keys.ElementAt(Rand.Next(tracker.UsersToDrawings.Keys.Count));
+                tracker.UsersToDrawings = new ConcurrentDictionary<User, UserDrawing>(
+                    groupedUsers.Members.ToDictionary<User, User, UserDrawing>(
+                        keySelector: (user) => user,
+                        elementSelector: (user) => null));
+
+                foreach (User lateStudent in tracker.UsersToDrawings.Keys.OrderBy(_ => Rand.Next()).ToList())
+                {
+                    // Make a slight effort to avoid people being late more than once.
+                    if (!userToLateCount.ContainsKey(lateStudent))
+                    {
+                        userToLateCount[lateStudent] = 1;
+                        tracker.LateStudent = lateStudent;
+                        break;
+                    }
+                }
+                if(tracker.LateStudent == null)
+                {
+                    // If we hit here it means every student has already been late once, oh well, pick any.
+                    tracker.LateStudent = tracker.UsersToDrawings.Keys.ElementAt(Rand.Next(tracker.UsersToDrawings.Keys.Count));
+                }                
             }
         }
     }

@@ -56,6 +56,10 @@ namespace Backend.GameInfrastructure
         private GameManager GameManager { get; set; }
         private InMemoryConfiguration InMemoryConfiguration { get; set; }
 
+        /// <summary>
+        /// Prevents the game from starting while a user is joining and vice versa
+        /// </summary>
+        public object UserJoinLock { get; } = new object();
         public Lobby(string friendlyName, AuthenticatedUser owner, GameManager gameManager, InMemoryConfiguration inMemoryConfiguration)
         {
             this.LobbyId = friendlyName;
@@ -197,32 +201,41 @@ namespace Backend.GameInfrastructure
                 return false;
             }
 
-            if (!this.UsersInLobby.TryAdd(user.Id, user))
+            lock (this.UserJoinLock)
             {
-                return false;
+                if (!IsLobbyOpen())
+                {
+                    errorMsg = "Lobby is closed.";
+                    return false;
+                }
+
+                if (!this.UsersInLobby.TryAdd(user.Id, user))
+                {
+                    return false;
+                }
+
+                // Should be a quick check in most scenarios
+                if (!this.UsersInLobby.Values.Any((user) => user.IsPartyLeader))
+                {
+                    // Technically there is a race condition where you can have multiple leaders
+                    // but nothing breaks so whatever.
+                    user.IsPartyLeader = true;
+                }
+
+                user.SetLobbyJoinTime();
+                user.LobbyId = LobbyId;
+
+                Inlet(user, UserStateResult.Success, null);
+
+                // Have the gamestate refresh its' user list.
+                this.WaitForLobbyStart.Update();
+
+                // Add a listener so that every time a user's status changes, set the current game state's view to dirty.
+                // TODO: track this separately to avoid sending everything down the wire every time.
+                user.AddStatusListener(() => this.CurrentGameState.UnityViewDirty = true);
+
+                return true;
             }
-
-            // Should be a quick check in most scenarios
-            if (!this.UsersInLobby.Values.Any((user)=>user.IsPartyLeader))
-            {
-                // Technically there is a race condition where you can have multiple leaders
-                // but nothing breaks so whatever.
-                user.IsPartyLeader = true;
-            }
-
-            user.SetLobbyJoinTime();
-            user.LobbyId = LobbyId;
-
-            Inlet(user, UserStateResult.Success, null);
-
-            // Have the gamestate refresh its' user list.
-            this.WaitForLobbyStart.Update();
-
-            // Add a listener so that every time a user's status changes, set the current game state's view to dirty.
-            // TODO: track this separately to avoid sending everything down the wire every time.
-            user.AddStatusListener(() => this.CurrentGameState.UnityViewDirty = true);
-
-            return true;
         }
 
         /// <summary>
@@ -233,17 +246,23 @@ namespace Backend.GameInfrastructure
         {
             if (!this.IsGameInProgress())
             {
-                if (this.UsersInLobby.TryRemove(user.Id, out User _))
+                lock (this.UserJoinLock)
                 {
-                    if (user.IsPartyLeader)
+                    if (!this.IsGameInProgress())
                     {
-                        FindNewPartyLeader();
-                    }
-                    // States will drop deleted users rather than keep hurrying them along.
-                    user.Deleted = true;
+                        if (this.UsersInLobby.TryRemove(user.Id, out User _))
+                        {
+                            if (user.IsPartyLeader)
+                            {
+                                FindNewPartyLeader();
+                            }
+                            // States will drop deleted users rather than keep hurrying them along.
+                            user.Deleted = true;
 
-                    // Have the gamestate refresh its' user list.
-                    this.WaitForLobbyStart.Update();
+                            // Have the gamestate refresh its' user list.
+                            this.WaitForLobbyStart.Update();
+                        }
+                    }
                 }
             }
         }

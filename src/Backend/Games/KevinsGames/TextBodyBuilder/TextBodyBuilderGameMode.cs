@@ -67,7 +67,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                 int expectedPromptsPerUser = (int)Math.Ceiling(1.0 * numPromptsPerRound * numRounds / numPlayers);
                 int expectedCAMsPerUser = Math.Max((minCAMsRequired / numPlayers + 1) * 2, TextBodyBuilderConstants.NumCAMsPerPlayer[duration]);
 
-                int numPromptsPerUserPerRound = Math.Max(1, (int)Math.Ceiling(numPromptsPerRound * 2.0 / numPlayers));
+                int numPromptsPerUserPerRound = Math.Max(1, (int)Math.Ceiling(numPromptsPerRound * 1.5 / numPlayers));
 
                 TimeSpan estimate = TimeSpan.Zero;
                 TimeSpan setupDrawingTimer = TextBodyBuilderConstants.SetupPerCAMTimer[duration];

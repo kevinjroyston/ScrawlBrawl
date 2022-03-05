@@ -145,7 +145,7 @@ namespace Backend.Games.KevinsGames.IMadeThis
                 var state = new SetupImproveInitialDrawing_Gs(
                     lobby,
                     AssignSecondaryDrawings(challengeTrackers, playersPerPrompt:playersPerPrompt, numDrawingsPerPlayer: numDrawingsPerUser, secondaryPrompts: prompts),
-                    drawingTimer);
+                    drawingTimer.MultipliedBy(numDrawingsPerUser));
 
                 state.Transition(CreateGamePlayLoop);
                 return state;
@@ -157,16 +157,8 @@ namespace Backend.Games.KevinsGames.IMadeThis
                 foreach (ChallengeTracker challengeTracker in challengeTrackers)
                 {
                     stateList.Add(new IMadeThisVoteAndReveal_Gs(Lobby, challengeTracker, votingTimer));
-
-                    if(challengeTracker == challengeTrackers.Last())
-                    {
-                        stateList.Add(new ScoreBoardGameState(lobby, "Final Scores"));
-                    }
-                    else
-                    {
-                        stateList.Add(new ScoreBoardGameState(lobby));
-                    }
                 }
+                stateList.Add(new ScoreBoardGameState(lobby, "Final Scores"));
                 StateChain gamePlayChain = new StateChain(states: stateList);
                 gamePlayChain.Transition(this.Exit);
                 return gamePlayChain;

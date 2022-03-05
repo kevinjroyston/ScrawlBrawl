@@ -43,6 +43,10 @@ export class JoinGameComponent {
           this.router.navigate(['/play']);
         },
         error: async (error) => {
+          if (typeof(error.error) === 'string'){
+            this.error = error.error;
+            return;
+          }
           const firstError = Object.keys(error.error.errors)[0];
           const firstErrorMessage = error.error.errors[firstError][0]
           this.error = firstErrorMessage;

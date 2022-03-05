@@ -66,7 +66,7 @@ namespace Backend.Games.BriansGames.BattleReady
                 int minDrawingsRequired = BattleReadyConstants.NumDrawingsInHand * 3; // the amount to make one playerHand to give everyone
 
                 int expectedPromptsPerUser = (int)Math.Ceiling(1.0 * numPromptsPerRound * numRounds / numPlayers);
-                int expectedDrawingsPerUser = Math.Max((minDrawingsRequired / numPlayers + 1) * 2, BattleReadyConstants.NumDrawingsPerPlayer[duration]);
+                int expectedDrawingsPerUser = Math.Max((minDrawingsRequired / numPlayers) * 2, BattleReadyConstants.NumDrawingsPerPlayer[duration]);
                 
                 int numPromptsPerUserPerRound = Math.Max(1, numPromptsPerRound / 2);
 
@@ -102,7 +102,7 @@ namespace Backend.Games.BriansGames.BattleReady
             int minDrawingsRequired = BattleReadyConstants.NumDrawingsInHand * 3; // the amount to make one playerHand to give everyone
 
             int expectedPromptsPerUser = (int) Math.Ceiling(1.0*numPromptsPerRound * numRounds / lobby.GetAllUsers().Count);
-            int expectedDrawingsPerUser = Math.Max((minDrawingsRequired / numPlayers + 1) * 2, BattleReadyConstants.NumDrawingsPerPlayer[duration]);
+            int expectedDrawingsPerUser = Math.Max((minDrawingsRequired / numPlayers) * 2, BattleReadyConstants.NumDrawingsPerPlayer[duration]);
 
             if (standardOptions.TimerEnabled)
             {
