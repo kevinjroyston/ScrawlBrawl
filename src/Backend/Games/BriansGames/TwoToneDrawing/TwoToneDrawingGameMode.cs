@@ -147,26 +147,15 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             StateChain GamePlayLoopGenerator()
             {
                 List<ChallengeTracker> challenges = SubChallenges.Keys.OrderBy(_ => Rand.Next()).ToList();
-                StateChain chain = new StateChain(
-                stateGenerator: (int counter) =>
+                List<State> stateList = new List<State>();
+                foreach (ChallengeTracker challenge in challenges)
                 {
-                    if (counter < challenges.Count)
-                    {
-                        return new StateChain(stateGenerator: (int i) => {
-                            switch(i)
-                            {
-                                case 0: return GetVotingAndRevealState(challenges[counter], votingTimer);
-                                case 1: return ((counter == challenges.Count - 1) ? new ScoreBoardGameState(lobby, "Final Scores") : new ScoreBoardGameState(lobby));
-                                default: return null;
-                            }});
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                });
-                chain.Transition(this.Exit);
-                return chain;
+                    stateList.Add(GetVotingAndRevealState(challenge, votingTimer));
+                }
+                stateList.Add(new ScoreBoardGameState(lobby, "Final Scores"));
+                StateChain gamePlayChain = new StateChain(states: stateList);
+                gamePlayChain.Transition(this.Exit);
+                return gamePlayChain;
             }
 
             Setup.Transition(GamePlayLoopGenerator);

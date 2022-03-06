@@ -62,11 +62,12 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
                 Owner = user,
                 UnityImageVotingOverrides = new UnityObjectOverrides
                 {
-                    Title = "Original"
+                    Title = $"Original - {current.InitialPrompt}",
                 },
                 UnityImageRevealOverrides = new UnityObjectOverrides
                 {
-                    Title = $"Original - {user.DisplayName}",
+                    Title = $"Original - {current.InitialPrompt}",
+                    Header = $"{ user.DisplayName }",
                 }
             };
             return (true, string.Empty);

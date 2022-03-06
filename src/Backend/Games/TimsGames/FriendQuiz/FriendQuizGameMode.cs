@@ -167,47 +167,27 @@ namespace Backend.Games.TimsGames.FriendQuiz
                     List<Question> nonAbstainedQuestions = usersToAssignedQuestions[user].Where(question => !question.Abstained).ToList();
                     if (nonAbstainedQuestions.Count > 0)
                     {
-                        chain.Add(new StateChain(stateGenerator: (int counter) =>
-                        {
-                            if (counter == 0)
-                            {
-                                return new SliderQueryAndReveal(
+                        chain.Add(new SliderQueryAndReveal(
                                    lobby: lobby,
                                    objectsToQuery: nonAbstainedQuestions,
                                    usersToQuery: lobby.GetAllUsers().Where(lobbyUser => lobbyUser != user).ToList(),
                                    queryTime: votingTimer)
-                                {
-                                    QueryPromptTitle = $"How do you think {user.DisplayName} answered these questions?",
-                                    QueryPromptDescription = "The tighter the range of your guess, the more points if you're correct",
-                                    QueryViewOverrides = new UnityViewOverrides()
-                                    {
-                                        Title = $"How do you think {user.DisplayName} answered these questions?",
-                                    },
-                                    RevealViewOverrides = new UnityViewOverrides()
-                                    {
-                                        Title = $"This is how {user.DisplayName} answered those questions.",
-                                    },
-                                    QueryExitListener = CountQueries,
-                                };
-                            }
-                            else if (counter == 1)
+                        {
+                            QueryPromptTitle = $"How do you think {user.DisplayName} answered these questions?",
+                            QueryPromptDescription = "The tighter the range of your guess, the more points if you're correct",
+                            QueryViewOverrides = new UnityViewOverrides()
                             {
-                                if (user == users.Last())
-                                {
-                                    return new ScoreBoardGameState(lobby, "Final Scores");
-                                }
-                                else
-                                {
-                                    return new ScoreBoardGameState(lobby);
-                                }
-                            }
-                            else
+                                Title = $"How do you think {user.DisplayName} answered these questions?",
+                            },
+                            RevealViewOverrides = new UnityViewOverrides()
                             {
-                                return null;
-                            }
-                        }));
+                                Title = $"This is how {user.DisplayName} answered those questions.",
+                            },
+                            QueryExitListener = CountQueries,
+                        });
                     }
                 }
+                chain.Add(new ScoreBoardGameState(lobby, "Final Scores"));
                 return new StateChain(chain);
             }
         }

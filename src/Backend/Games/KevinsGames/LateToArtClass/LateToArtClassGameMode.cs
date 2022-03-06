@@ -105,41 +105,15 @@ namespace Backend.Games.KevinsGames.LateToArtClass
                 List<ArtClass> artClassesList = artClasses.ToList();
                 foreach (ArtClass artClass in artClassesList)
                 {
-                    stateList.Add(GetImposterLoop(artClass, artClass == artClassesList.Last()));
+                    stateList.Add(GetVotingAndRevealState(artClass, votingTimer));
                 }
+                stateList.Add(new ScoreBoardGameState(lobby, "Final Scores"));
                 StateChain gamePlayChain = new StateChain(states: stateList);
                 gamePlayChain.Transition(this.Exit);
                 return gamePlayChain;
             }
             this.Entrance.Transition(Setup);
             Setup.Transition(CreateGamePlayLoop);
-
-            StateChain GetImposterLoop(ArtClass artClass, bool lastRound = false)
-            {
-                return new StateChain(
-                    stateGenerator: (int counter) =>
-                    {
-                        if (counter == 0)
-                        {
-                            return GetVotingAndRevealState(artClass, votingTimer);
-                        }
-                        if (counter == 1)
-                        {
-                            if (lastRound)
-                            {
-                                return new ScoreBoardGameState(lobby, "Final Scores");
-                            }
-                            else
-                            {
-                                return new ScoreBoardGameState(lobby);
-                            }        
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    });
-            }
         }
 
         private State GetVotingAndRevealState(ArtClass artClass, TimeSpan? votingTime)
@@ -218,6 +192,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass
                     votes.Remove(artClass.LateStudent);
                 }
 
+                // Votes cast point calculations
                 foreach ((User user, VoteInfo vote) in votes)
                 {
                     if (((UserDrawing)vote.ObjectsVotedFor[0]).Owner == artClass.LateStudent)
@@ -231,10 +206,16 @@ namespace Backend.Games.KevinsGames.LateToArtClass
                     }
                 }
 
-                int votesCastForLateOrCopiedFrom = 0;
+                float votesCastForLateOrCopiedFrom = 0;
                 foreach (UserDrawing drawing in choices)
                 {
-                    if(drawing.Owner != artClass.LateStudent)
+                    // Drawing owner point calculation
+                    if (drawing.Owner == artClass.CopiedFrom)
+                    {
+                        // Just give them some freebies
+                        drawing.Owner.ScoreHolder.AddScore(LateToArtClassConstants.FreebiePointsForNormal, Score.Reason.LateToArtClass_GoodNormal);
+                    }
+                    else if (drawing.Owner != artClass.LateStudent)
                     {
                         // Calculates how good a job a non-imposter did.
                         int playersMisled = drawing.VotesCastForThisObject.Where(vote => vote.UserWhoVoted != artClass.LateStudent).Count();
@@ -243,9 +224,15 @@ namespace Backend.Games.KevinsGames.LateToArtClass
                         drawing.Owner.ScoreHolder.AddScore(netPoints, Score.Reason.LateToArtClass_GoodNormal);
                     }
 
-                    if (drawing.Owner == artClass.LateStudent || drawing.Owner == artClass.CopiedFrom)
+                    // Late student scoring is a bit complex, from here onwards
+                    if (drawing.Owner == artClass.LateStudent)
                     {
                         votesCastForLateOrCopiedFrom += drawing.VotesCastForThisObject.Where(vote => vote.UserWhoVoted != artClass.LateStudent).Count();
+                    }
+                    if (drawing.Owner == artClass.CopiedFrom)
+                    {
+                        // only a half penalty for votes for the copied from.
+                        votesCastForLateOrCopiedFrom += 0.5f * drawing.VotesCastForThisObject.Where(vote => vote.UserWhoVoted != artClass.LateStudent).Count();
                     }
                 }
 

@@ -151,11 +151,16 @@ namespace Backend.GameInfrastructure
         {
             Lobby lobby = GetLobby(lobbyId);
             LobbyIdToLobby.TryRemove(lobbyId, out Lobby _);
-
-            lobby?.UnregisterAllUsers();
-            if (lobby?.Owner?.OwnedLobby != null)
+            if (lobby != null)
             {
-                lobby.Owner.OwnedLobby = null;
+                lock (lobby.UserJoinLock)
+                {
+                    lobby?.UnregisterAllUsers();
+                    if (lobby?.Owner?.OwnedLobby != null)
+                    {
+                        lobby.Owner.OwnedLobby = null;
+                    }
+                }
             }
             AbandonedLobbyIds.Add(lobbyId);
         }
