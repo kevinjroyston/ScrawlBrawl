@@ -151,7 +151,7 @@ namespace Backend.GameInfrastructure
         {
             Lobby lobby = GetLobby(lobbyId);
             LobbyIdToLobby.TryRemove(lobbyId, out Lobby _);
-            if (lobby == null)
+            if (lobby != null)
             {
                 lock (lobby.UserJoinLock)
                 {
