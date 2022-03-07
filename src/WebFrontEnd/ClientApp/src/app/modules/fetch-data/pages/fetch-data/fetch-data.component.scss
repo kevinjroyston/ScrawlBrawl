@@ -253,6 +253,12 @@ input[type="text"] {
     margin-bottom: 20px;
 }
 
+.button-row {
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+}
+
 @media only screen and (max-width: 768px) {
     .fetch-data {
         padding: 0 1rem;
