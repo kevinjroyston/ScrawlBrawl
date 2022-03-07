@@ -99,7 +99,9 @@ namespace Backend.APIs.Controllers
             switch (prompt.DisplayUsers)
             {
                 case UserListMetadataMode.AllUsers: relevantUsers = user.Lobby.GetAllUsers(); break;
-                case UserListMetadataMode.WaitingForPlayers: relevantUsers = user.Lobby.GetAllUsers().Where(user => user.Status == UserStatus.AnsweringPrompts).ToList(); break;
+                case UserListMetadataMode.WaitingForPlayers: relevantUsers = user.Lobby.GetAllUsers()
+                        .Where(user => user.Status == UserStatus.AnsweringPrompts)
+                        .Where(user => user.Activity != UserActivity.Disconnected).ToList(); break;
                 default: throw new Exception("Unknown value for DisplayUsers");
             }
             return new UserListMetadata

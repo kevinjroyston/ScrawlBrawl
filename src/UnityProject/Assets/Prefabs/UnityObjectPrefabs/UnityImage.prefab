@@ -218,7 +218,7 @@ MonoBehaviour:
   m_PreferredWidth: -1
   m_PreferredHeight: 5
   m_FlexibleWidth: 1
-  m_FlexibleHeight: 0.3
+  m_FlexibleHeight: 0.15
   m_LayoutPriority: 1
 --- !u!114 &4109392440434526877
 MonoBehaviour:
@@ -1429,7 +1429,7 @@ MonoBehaviour:
   m_PreferredWidth: 0
   m_PreferredHeight: 5
   m_FlexibleWidth: 1
-  m_FlexibleHeight: 0.3
+  m_FlexibleHeight: 0.2
   m_LayoutPriority: 1
 --- !u!114 &4597154152944181548
 MonoBehaviour:
@@ -2130,6 +2130,7 @@ GameObject:
   - component: {fileID: 5643105449943060897}
   - component: {fileID: 837624184654058717}
   - component: {fileID: 4999512950276980288}
+  - component: {fileID: 8633091745509831945}
   m_Layer: 0
   m_Name: ImageIdentifier
   m_TagString: Untagged
@@ -2199,6 +2200,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TextComponent: {fileID: 9005909003244505805}
   textType: 5
+--- !u!114 &8633091745509831945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7139616067880138905}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a0775f7bba329f4b94dc68c4893d6df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxWidth: 100
+  MaxHeight: 100
 --- !u!1 &7267182754280516690
 GameObject:
   m_ObjectHideFlags: 0
@@ -2268,7 +2283,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2869935246231121813}
   - component: {fileID: 2108403437981619666}
-  - component: {fileID: 6632051394969700096}
+  - component: {fileID: 2690425444927342462}
   m_Layer: 0
   m_Name: VoteCountHolder
   m_TagString: Untagged
@@ -2311,12 +2326,12 @@ MonoBehaviour:
   m_IgnoreLayout: 0
   m_MinWidth: -1
   m_MinHeight: -1
-  m_PreferredWidth: 595.3847
-  m_PreferredHeight: 297.69235
+  m_PreferredWidth: 432.7778
+  m_PreferredHeight: 216.3889
   m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
---- !u!114 &6632051394969700096
+--- !u!114 &2690425444927342462
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2325,12 +2340,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 7382733499985497662}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d287382be1eb5b046b8d4d351e259aa2, type: 3}
+  m_Script: {fileID: 11500000, guid: 5895502f4f3772b4ca8e60e8bded4754, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  percentOfParentWidth: 0.45
   aspectRatio: 2
-  updateMin: 0
-  updatePreferred: 1
 --- !u!1 &7486317171801654656
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using Backend.GameInfrastructure;
 using Common.DataModels.Enums;
+using Backend.GameInfrastructure.DataModels.Users;
 
 namespace Backend.APIs.DataModels.UnityObjects
 {
@@ -19,7 +20,12 @@ namespace Backend.APIs.DataModels.UnityObjects
         public UnityField<IReadOnlyList<UnityObject>> UnityObjects { get; set; } = null;
         public TVScreenId? ScreenId { get; set; }
         public Guid Id { get; } = Guid.NewGuid();
-        public IReadOnlyList<UnityUser> Users { get; set; } = new List<UnityUser>().AsReadOnly();
+        private IReadOnlyList<UnityUser> ConnectedUsers { get; set; } = new List<UnityUser>().AsReadOnly();
+        public IReadOnlyList<UnityUser> Users 
+        {
+            get { return ConnectedUsers.Where(user=>user.Activity != UserActivity.Disconnected).ToList(); }
+            set { ConnectedUsers = value; }
+        }
         public UnityField<string> Title { get; set; }
         
         public UnityField<string> Instructions { get; set; }
@@ -30,7 +36,7 @@ namespace Backend.APIs.DataModels.UnityObjects
 
         public DateTime? StateEndTime
         {
-            get => OverrideStateEndTime ?? this.Lobby?.GetAllUsers().Select(user => user.EarliestStateTimeout).Append(this.Lobby.GetCurrentGameState().ApproximateStateEndTime).Min();
+            get => OverrideStateEndTime ?? this.Lobby?.GetAllUsers().Where(user => user.Activity != UserActivity.Disconnected).Select(user => user.EarliestStateTimeout).Append(this.Lobby.GetCurrentGameState().ApproximateStateEndTime).Min();
             set => OverrideStateEndTime = value;
         }
         

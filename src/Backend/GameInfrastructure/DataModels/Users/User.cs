@@ -124,6 +124,8 @@ namespace Backend.GameInfrastructure.DataModels.Users
                 } 
                 else if ((this.LastSubmitType != SubmitType.Manual || !this.Lobby.StandardGameModeOptions.TimerEnabled) && DateTime.UtcNow.Subtract(this.LastActivityTime) >= Constants.UserInactivityTimer)
                 {
+                    // I dont think there is any logic currently affecting Inactive users compared to Active.
+
                     // Only consider inactive if they missed the last submission. Or there aren't timers.
                     // Note this means you can go inactive on the very first prompt (this is by design).
                     return UserActivity.Inactive;

@@ -16,7 +16,13 @@ public class WatchComponentToAddPadding : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(TrackingObject.GetComponent<RectTransform>().rect.width);
-        MyLayoutGroup.padding.left = (int)(TrackingObject.GetComponent<RectTransform>().rect.width * .5f) + 5;
+        if (TrackingObject.activeInHierarchy)
+        {
+            MyLayoutGroup.padding.left = (int)(TrackingObject.GetComponent<RectTransform>().rect.width * .5f) + 5;
+        }
+        else
+        {            
+            MyLayoutGroup.padding.left = 0;
+        }
     }
 }

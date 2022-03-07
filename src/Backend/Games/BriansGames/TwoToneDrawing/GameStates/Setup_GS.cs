@@ -108,6 +108,11 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                         return (false, "Server doesn't handle identical "+ (UseSingleColor ? "colors" : "layer descriptions") + " well, change one slightly.");
                     }
 
+                    if (this.SubChallenges.Keys.Any(challenge => challenge.Prompt.Equals(input.SubForms[0].ShortAnswer, StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        return (false, "Somebody else already submitted that prompt!");
+                    }
+
                     bool success = this.SubChallenges.TryAdd(new ChallengeTracker
                     {
                         Owner = user,

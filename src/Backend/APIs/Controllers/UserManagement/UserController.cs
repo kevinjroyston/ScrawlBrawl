@@ -3,6 +3,7 @@ using Backend.GameInfrastructure;
 using Common.Code.Validation;
 using Backend.GameInfrastructure.DataModels.Users;
 using Newtonsoft.Json;
+using System;
 
 namespace Backend.APIs.Controllers.UserManagement
 {
@@ -61,6 +62,9 @@ namespace Backend.APIs.Controllers.UserManagement
                     // object around if the game has already started.
                     user.Lobby.TryLeaveLobbyGracefully(user);
                 }
+
+                // Set the last ping time to old enough that the user is considered disconnected.
+                user.LastPingTime = DateTime.UtcNow.Subtract(Constants.UserDisconnectTimer);
             }
 
             return new OkResult();
