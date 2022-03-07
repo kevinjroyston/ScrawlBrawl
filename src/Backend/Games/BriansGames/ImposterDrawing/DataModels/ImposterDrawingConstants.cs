@@ -17,13 +17,13 @@ namespace Backend.Games.BriansGames.ImposterDrawing.DataModels
         {
             { GameDuration.Short, TimeSpan.FromSeconds(90)},
             { GameDuration.Normal, TimeSpan.FromSeconds(120)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(180)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(160)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> DrawingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
             { GameDuration.Short, TimeSpan.FromSeconds(60)},
             { GameDuration.Normal, TimeSpan.FromSeconds(90)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(120)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(110)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> VotingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
