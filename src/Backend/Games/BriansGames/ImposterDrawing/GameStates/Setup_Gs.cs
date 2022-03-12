@@ -99,6 +99,10 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                             ShortAnswer = true,
                         }
                     },
+                    Suggestion = new SuggestionMetadata
+                    {
+                        SuggestionKey = "Imposter"
+                    },
                     SubmitButton = true
                 },
                 formSubmitHandler: (User user, UserFormSubmission input) =>
