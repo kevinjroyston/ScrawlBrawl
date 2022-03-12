@@ -7,7 +7,7 @@ namespace Common.DataModels
     {
         public static IReadOnlyList<string> DefaultColorPalette { get; } = new List<string>()
         {
-            Colors.DarkGray,
+            Colors.Black,
             Colors.LightBlue,
             Colors.LightGreen,
             Colors.Peach,
@@ -15,17 +15,11 @@ namespace Common.DataModels
             Colors.Yellow,
             Colors.Brown,
         };
-        public static IReadOnlyList<string> RestrictedColorPalette { get; } = new List<string>()
-        {
-            Colors.DarkGray,
-            Colors.Peach,
-            Colors.LightGreen,
-        };
 
         public static class Colors
         {
             public const string Brown = "rgb(117,86,41)";
-            public const string DarkGray = "rgb(66,66,66)";
+            public const string Black = "rgb(0,0,0)";
             public const string LightBlue = "rgb(78,193,219)";
             public const string LightGreen = "rgb(123,219,78)";
             public const string Peach = "rgb(255,101,101)";
