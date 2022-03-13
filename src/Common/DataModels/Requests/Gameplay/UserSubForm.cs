@@ -46,7 +46,7 @@ namespace Common.DataModels.Requests
                 Slider= (prompt.Slider != null) ? (partialSubmission?.Slider ?? (prompt.Slider.Range ? new List<int> { prompt.Slider.Min, prompt.Slider.Max } : new List<int> { prompt.Slider.Min }) ): null,
                 DropdownChoice = (prompt.Dropdown != null) ? (partialSubmission?.DropdownChoice ?? (int?)0): null,
                 RadioAnswer = (prompt.Answers != null) ? (partialSubmission?.RadioAnswer ?? (int?)0) : null,
-                Color = prompt.ColorPicker ? (partialSubmission?.Color ?? Constants.Colors.DarkGray) : null,
+                Color = prompt.ColorPicker ? (partialSubmission?.Color ?? Constants.Colors.Black) : null,
             };
 
         }
