@@ -3,7 +3,7 @@
 </div>
 <div class="fetch-data">
 
-    <form ng-app="myApp" class="form" *ngIf="userPrompt" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)" (window:beforeunload)="onBeforeUnload()">
+    <form ng-app="myApp" class="form" *ngIf="userPrompt" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)">
         <div *ngIf="userPrompt.submitButton" class="sticky-nav-wrapper">
             <div class="sticky-nav">
                 <div *ngIf="(timerDisplay!='') || (userPrompt.promptHeader.maxProgress > 0)" class="timerPanel" [ngStyle]="{'background-color': timerColor}">{{timerDisplay}}
@@ -83,18 +83,9 @@
         <div class="Error" *ngIf="userPrompt.error">
             {{ userPrompt.error }}
         </div>
-        <div class="button-row" *ngIf="userPrompt.submitButton">
-            <div style="width:80px;padding-top:22px; padding-right:130px" *ngIf="userPrompt.suggestion">
-                <scrawlbutton color="blue" (click)="suggestValues()">
-                    Suggest
-                </scrawlbutton>
-            </div>
-            <div style="width:180px; padding-top:22px">
-                <scrawlbutton class='submit-prompt' *ngIf="userPrompt.submitButton" color="green" (click)="onSubmit(userForm.value)">
-                    {{userPrompt.submitButtonText}}
-                </scrawlbutton>
-            </div>
-        </div>
+        <scrawlbutton class='submit-prompt' *ngIf="userPrompt.submitButton" color="green" (click)="onSubmit(userForm.value)">
+            {{userPrompt.submitButtonText}}
+        </scrawlbutton>
         <div *ngIf="userPrompt.submitButton" gameAsset [gameAssetClass]="'game-css'" [gameAssetType]="'prompts-css'" [gameAssetID]="userPrompt.gameIdString">
         </div>
     </form>

@@ -51,7 +51,7 @@ body {
 }
 
 .makeRoomForToolbar {
-    margin-top: 60px;
+    margin-top: 56px;
 }
 
 a {
@@ -288,6 +288,7 @@ ion-icon {
 .mainImg {
     border: 2px solid var(--blue-primary);
     max-width: 50%;
+    background-color: var(--card-background);
     height: auto;
     max-width: calc(50% * (var(--n) / 100));
 }

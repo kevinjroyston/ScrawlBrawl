@@ -142,9 +142,11 @@ export class LobbyManagementComponent {
     }
 
     onSelectGameMode(game: number) {
-        this.lobby.selectedGameMode = game;        
-        this.openGameSettingsDialog();
-        this.error = null;
+        if (!this.lobby.gameInProgress) {
+            this.lobby.selectedGameMode = game;        
+            this.openGameSettingsDialog();
+            this.error = null;
+        }
     }
 
     onRerouteToPlay(){
