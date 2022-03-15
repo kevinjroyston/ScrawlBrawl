@@ -24,6 +24,20 @@
 
 <div class="lobby-wrapper" *ngIf="lobby">
 
+    <div class="sticky-nav-wrapper">
+        <div class="sticky-nav" style="line-height: 56px;">
+            <span class="showLobbyId">Lobby Code: {{ lobby.lobbyId.toUpperCase() }}
+            </span>
+        </div>
+        <div class="sticky-nav" style="width:150px;padding-right:20px;">
+            <div style="width:120px;padding-top: 4px;">
+                <scrawlbutton color="red" (click)="onDeleteLobby()">
+                    Delete Lobby
+                </scrawlbutton>
+            </div>
+        </div>
+    </div>
+
 
     <div class="lobby-header-viewer">
         <h3 class="lobby-id">Game Viewer</h3>

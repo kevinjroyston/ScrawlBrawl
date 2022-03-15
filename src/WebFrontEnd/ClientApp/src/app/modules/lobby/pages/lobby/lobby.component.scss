@@ -138,6 +138,37 @@ h3 {
     font-size: .95rem;
 }
 
+.sticky-nav-wrapper {
+    position: fixed;
+    top: 0;
+    height: 56px;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+}
+
+.sticky-nav-wrapper div:last-child {
+    margin-left: auto;
+}
+
+.sticky-nav {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    align-items: right;
+    padding-left: 5%;
+    height: 56px;
+    float: right;
+    background: var(--navbar-background);
+    margin-bottom: 0px;
+}
+
+.showLobbyId {
+    font-weight: bold;
+    font-size: 16pt;
+    vertical-align: middle;
+}
+
 @media only screen and (max-width: 768px) {
     .lobby-header-sections {
         flex-direction: column;

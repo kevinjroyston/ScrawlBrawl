@@ -55,10 +55,18 @@ export class LobbyManagementComponent {
                         }
                     });
                 }
+                if (this.lobby) {
+                    document.body.classList.add('makeRoomForToolbar');
+                } else {
+                    document.body.classList.remove('makeRoomForToolbar');
+                }   
+                setTimeout(() => window.scrollTo(0, 0), 200);
             },
             error: () => { 
                 this.lobby = null;
                 this.onGetUserLobby()
+                document.body.classList.remove('makeRoomForToolbar');
+                setTimeout(() => window.scrollTo(0, 0), 200);
             }
         });
     }
