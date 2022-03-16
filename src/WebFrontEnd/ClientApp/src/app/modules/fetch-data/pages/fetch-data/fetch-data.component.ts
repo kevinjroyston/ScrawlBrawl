@@ -65,6 +65,8 @@ export class FetchDataComponent implements OnDestroy
     galleryTypes = [...Galleries.galleryTypes]; /* so html page can see the reference.  ... is SPREAD command: https://www.samanthaming.com/tidbits/35-es6-way-to-clone-an-array/ */
     currentDrawingType = this.galleryTypes[0].drawingType;
 
+    lastSuggestion = new Array();
+
     constructor(
         formBuilder: FormBuilder,
         private router: Router,
@@ -212,14 +214,35 @@ export class FetchDataComponent implements OnDestroy
             this.notificationService.addMessage(`Sorry, you're on your own this round.`, null, {panelClass: ['error-snackbar']});
             return;
         }
+        var unchanged = true;
+// first iterate and make sure current control values have not changed since last suggestion
+        for (let i = 0, s = 0; (i < userSubmitData.subForms.length) && (s < suggestion.values.length) && unchanged && (s < this.lastSuggestion.length); i++) {
+            if (this.userPrompt.subPrompts[i].shortAnswer) {
+                if (suggestion.values[s] != "") 
+                    unchanged = (this.userForm.controls.subForms.controls[i].value.shortAnswer == this.lastSuggestion[s]);
+                s++;
+                }
+            if (this.userPrompt.subPrompts[i].colorPicker) {
+                if (suggestion.values[s] != "") {
+                    unchanged = (this.userPrompt.subPrompts[i].color == this.lastSuggestion[s]);
+                }
+                s++;
+            }
+        }
+
+        if (!unchanged) {
+            if (!confirm("Do you want to replace your current entries with new suggestions?")) return;            
+        }
         for (let i = 0, s = 0; (i < userSubmitData.subForms.length) && (s < suggestion.values.length); i++) {
             if (this.userPrompt.subPrompts[i].shortAnswer) {
                 if (suggestion.values[s] != "") 
+                    this.lastSuggestion[s] = suggestion.values[s];
                     this.userForm.controls.subForms.controls[i].patchValue({shortAnswer:suggestion.values[s]});
                 s++;
                 }
             if (this.userPrompt.subPrompts[i].colorPicker) {
                 if (suggestion.values[s] != "") {
+                    this.lastSuggestion[s] = suggestion.values[s];
                     this.userPrompt.subPrompts[i].color = suggestion.values[s];
                     this.userForm.controls.subForms.controls[i].patchValue({colorPicker:suggestion.values[s]});
                 }
