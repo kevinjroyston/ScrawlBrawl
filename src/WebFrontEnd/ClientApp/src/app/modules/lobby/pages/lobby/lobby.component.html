@@ -22,12 +22,11 @@
     </div>
 </div>
 
-<div class="lobby-wrapper" *ngIf="lobby">
-
+<div class="sticky" *ngIf="lobby">
     <div class="sticky-nav-wrapper">
         <div class="sticky-nav" style="line-height: 56px;">
             <span class="showLobbyId">Lobby Code: {{ lobby.lobbyId.toUpperCase() }}
-            </span>
+        </span>
         </div>
         <div class="sticky-nav" style="width:150px;padding-right:20px;">
             <div style="width:120px;padding-top: 4px;">
@@ -37,6 +36,11 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="lobby-wrapper" *ngIf="lobby">
+
+
 
 
     <div class="lobby-header-viewer">

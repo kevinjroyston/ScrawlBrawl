@@ -138,9 +138,13 @@ h3 {
     font-size: .95rem;
 }
 
-.sticky-nav-wrapper {
-    position: fixed;
+.sticky {
+    position: sticky;
     top: 0;
+    align-self: flex-start;
+}
+
+.sticky-nav-wrapper {
     height: 56px;
     width: 100%;
     z-index: 1000;
