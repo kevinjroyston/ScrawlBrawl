@@ -4,8 +4,9 @@ class ColorPickerConstants {
     static HEX_MIN : number = 0;
     static HEX_MAX : number = 320; // This is a circle, so max should be lowered based on num colors per row  (360/(numColorsPerRow+1)) I lowered it extra to make yellows look better
     static LUMINOSITY_MIN : number = 14;
-    static LUMINOSITY_MAX : number = 90;
-    static SATURATION : number = 100;
+    static LUMINOSITY_MAX : number = 80;
+    static MAX_SATURATION : number = 100;
+    static MIN_SATURATION : number = 65;
     static numColorsPerRow : number = 12;
     static numShadeOfColor : number = 10;
 }
@@ -44,7 +45,8 @@ export default class ColorPickerService {
                 i += 1
             ) {
                 let luminosity = ColorPickerConstants.LUMINOSITY_MIN + i *((ColorPickerConstants.LUMINOSITY_MAX-ColorPickerConstants.LUMINOSITY_MIN)*1.0/(numShades-1));
-                colorRow.push(`hsl(${color}, ${ColorPickerConstants.SATURATION}%, ${luminosity}%)`)
+                let saturation = ColorPickerConstants.MIN_SATURATION + (numShades - 1 - i )*((ColorPickerConstants.MAX_SATURATION - ColorPickerConstants.MIN_SATURATION)*1.0/(numShades-1));
+                colorRow.push(`hsl(${color}, ${saturation}%, ${luminosity}%)`)
             }
             rainbowColors.push(colorRow);
         }
