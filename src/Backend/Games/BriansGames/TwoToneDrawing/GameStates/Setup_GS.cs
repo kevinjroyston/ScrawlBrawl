@@ -190,11 +190,12 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                             new SubPrompt
                             {
                                 Prompt = Invariant($"Your prompt:<br><span class=\"keyText\">{challenge.Prompt}</span>"),
-                                StringList = (this.UseSingleColor)
-                                               ? challenge.Colors.Select(val=> val == challenge.UserSubmittedDrawings[user].Color
-                                                    ? Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>This is your color.")
-                                                    : Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>")).Reverse().ToArray()
-                                               :  challenge.Colors.Select((val,index)=> LayerDescription(index,this.LayersPerTeam,val,(val == challenge.UserSubmittedDrawings[user].Color))).Reverse().ToArray(),
+                                StringList = (this.UseSingleColor) ?
+                                               challenge.Colors.Select((val,index)=> LayerDescription(index,this.LayersPerTeam,
+                                                    Invariant($"<div class=\"color-box\" style=\"background-color: {val};\"></div>"),
+                                                    (val == challenge.UserSubmittedDrawings[user].Color))).Reverse().ToArray()
+                                               :  challenge.Colors.Select((val,index)=> LayerDescription(index,this.LayersPerTeam,val,
+                                                    (val == challenge.UserSubmittedDrawings[user].Color))).Reverse().ToArray(),
                                 Drawing = new DrawingPromptMetadata
                                 {
                                     ColorList = (this.UseSingleColor)? new List<string> { challenge.UserSubmittedDrawings[user].Color }:null,

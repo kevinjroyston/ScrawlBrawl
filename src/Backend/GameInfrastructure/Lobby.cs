@@ -115,7 +115,7 @@ namespace Backend.GameInfrastructure
             if (IsGameInProgress())
             {
                 // TODO: this might need updating for replay logic.
-                errorMsg = "Cannot change configuration lobby while game is in progress!";
+                errorMsg = "Game is already in progress. Try deleting lobby if this is unexpected.";
                 return false;
             }
 

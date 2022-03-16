@@ -51,7 +51,7 @@ body {
 }
 
 .makeRoomForToolbar {
-    margin-top: 60px;
+    margin-top: 56px;
 }
 
 a {
@@ -288,17 +288,19 @@ ion-icon {
 .mainImg {
     border: 2px solid var(--blue-primary);
     max-width: 50%;
+    background-color: var(--card-background);
     height: auto;
     max-width: calc(50% * (var(--n) / 100));
 }
 
 .color-box {
-    width: 20px;
-    height: 20px;
+    width: 40px;
+    height: 40px;
     display: inline-block;
     background-color: #ccc;
+    border: 2px solid var(--card-background);
     position: relative;
-    top: 5px;
+    margin-left: 20px;
 }
 
 .RadioAnswer img {
@@ -306,4 +308,88 @@ ion-icon {
     height: 100px;
     width: auto;
     margin: 5px;
+    background-color: white;
+}
+
+.scroll-down {
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    display: block;
+    cursor: pointer;
+    text-align: center;
+    font-size: 20px;
+    z-index: 100;
+    text-decoration: none;
+    text-shadow: 0;
+    width: 13px;
+    height: 13px;
+    border-bottom: 2px solid var(--green-primary);
+    border-right: 2px solid var(--green-primary);
+    z-index: 9;
+    left: 50%;
+    -webkit-transform: translate(-50%, 0%) rotate(45deg);
+    -moz-transform: translate(-50%, 0%) rotate(45deg);
+    transform: translate(-50%, 0%) rotate(45deg);
+    -webkit-animation: fade_move_down 4s ease-in-out infinite;
+    -moz-animation: fade_move_down 4s ease-in-out infinite;
+    animation: fade_move_down 4s ease-in-out infinite;
+}
+
+
+/*animated scroll arrow animation*/
+
+@-webkit-keyframes fade_move_down {
+    0% {
+        -webkit-transform: translate(0, -10px) rotate(45deg);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        -webkit-transform: translate(0, 10px) rotate(45deg);
+        opacity: 0;
+    }
+}
+
+@-moz-keyframes fade_move_down {
+    0% {
+        -moz-transform: translate(0, -10px) rotate(45deg);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        -moz-transform: translate(0, 10px) rotate(45deg);
+        opacity: 0;
+    }
+}
+
+@keyframes fade_move_down {
+    0% {
+        transform: translate(0, -10px) rotate(45deg);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(0, 10px) rotate(45deg);
+        opacity: 0;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    #mobile-play {
+        display: block;
+    }
+}
+
+@media only screen and (max-width: 420px) {
+    .catchphrase {
+        flex-direction: column;
+        align-items: center;
+    }
 }

@@ -50,6 +50,7 @@ export class FetchDataComponent implements OnDestroy
     public userForm;
     public anythingEverTouched = false;
     public anythingTouchedSinceFetch = false;
+    public anyKeyPressOrClick = false;
     public displayUsersMetadata: GameplayPrompts.UserListMetadata;
     private formBuilder: FormBuilder;
     private userPromptTimerId;
@@ -89,6 +90,17 @@ export class FetchDataComponent implements OnDestroy
         document.body.classList.remove('makeRoomForToolbar');
     }
 
+/*    @HostListener('window:beforeunload', ['$event'])
+    unloadHandler(event: Event) {
+        if (this.anyKeyPressOrClick) {
+            event.preventDefault;
+            event.returnValue = true;
+        }
+        else
+        {event.returnValue = null; //delete event['returnValue'];
+        }
+    }
+*/    
     handleColorChange = (color: string, subPrompt: number) => {
         this.userPrompt.subPrompts[subPrompt].color = drawingUtils.convertColorToHexRGB(color);
     }
@@ -188,6 +200,7 @@ export class FetchDataComponent implements OnDestroy
                 if (this.userForm) {
                     this.userForm.reset();
                 }
+                setTimeout(() => window.scrollTo(0, 0), 500);
             },
             error: async (error) => {
                 console.error(error);
@@ -259,13 +272,13 @@ export class FetchDataComponent implements OnDestroy
             clearTimeout(this.autoSubmitTimerId);
             this.autoSubmitTimerId = null;
         }
-        if (ForceIt || (!((this.userPrompt.promptHeader.maxProgress > 0) && (this.userPrompt.promptHeader.currentProgress < this.userPrompt.promptHeader.maxProgress))))
+        if (ForceIt || (!((this.userPrompt?.promptHeader?.maxProgress > 0) && (this.userPrompt?.promptHeader?.currentProgress < this.userPrompt?.promptHeader?.maxProgress))))
         { // if there are more steps (1 of 3 etc.) then do not clear the timer display, to avoid it blinking off and on
             if (this.timerDisplayIntervalId) {
                 clearInterval(this.timerDisplayIntervalId);
                 this.timerDisplayIntervalId = null;
             }
-            this.timerDisplay = ' ';  // non blank so block will display if there is progress
+            this.timerDisplay = ''; 
         }
     }
   shortTermSanitize(ans){
@@ -334,15 +347,19 @@ export class FetchDataComponent implements OnDestroy
     @HostListener("document:gesturestart")
     @HostListener("document:mouseup")
     @HostListener("mouseup")// are both of these mouseup calls needed?
-    @HostListener("mousedown")
-    @HostListener("keydown")
-    @HostListener("touchstart")
     @HostListener("window:scroll")
     onListener() {
         this.anythingEverTouched = true;
         this.anythingTouchedSinceFetch = true;
     }
-  
+    @HostListener("mousedown")
+    @HostListener("keydown")
+    @HostListener("touchstart")
+    onActionListener() {
+        this.anythingEverTouched = true;
+        this.anythingTouchedSinceFetch = true;
+        this.anyKeyPressOrClick = true;
+    }
 
     createSubForm(): FormGroup {
         return this.formBuilder.group({

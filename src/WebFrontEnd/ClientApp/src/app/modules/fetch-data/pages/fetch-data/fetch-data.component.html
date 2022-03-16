@@ -6,7 +6,7 @@
     <form ng-app="myApp" class="form" *ngIf="userPrompt" [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)">
         <div *ngIf="userPrompt.submitButton" class="sticky-nav-wrapper">
             <div class="sticky-nav">
-                <div *ngIf="timerDisplay!=''" class="timerPanel" [ngStyle]="{'background-color': timerColor}">{{timerDisplay}}
+                <div *ngIf="(timerDisplay!='') || (userPrompt.promptHeader.maxProgress > 0)" class="timerPanel" [ngStyle]="{'background-color': timerColor}">{{timerDisplay}}
                     <div *ngIf="userPrompt.promptHeader.maxProgress > 0" class="progressPanel">
                         {{userPrompt.promptHeader.promptLabel}} {{userPrompt.promptHeader.currentProgress}} of {{userPrompt.promptHeader.maxProgress}}
                     </div>

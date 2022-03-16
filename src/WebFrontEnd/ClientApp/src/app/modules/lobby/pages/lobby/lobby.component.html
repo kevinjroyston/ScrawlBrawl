@@ -22,11 +22,29 @@
     </div>
 </div>
 
+<div class="sticky" *ngIf="lobby">
+    <div class="sticky-nav-wrapper">
+        <div class="sticky-nav" style="line-height: 56px;">
+            <span class="showLobbyId">Lobby Code: {{ lobby.lobbyId.toUpperCase() }}
+        </span>
+        </div>
+        <div class="sticky-nav" style="width:150px;padding-right:20px;">
+            <div style="width:120px;padding-top: 4px;">
+                <scrawlbutton color="red" (click)="onDeleteLobby()">
+                    Delete Lobby
+                </scrawlbutton>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="lobby-wrapper" *ngIf="lobby">
 
 
+
+
     <div class="lobby-header-viewer">
-        <h3 class="lobby-id">Viewer</h3>
+        <h3 class="lobby-id">Game Viewer</h3>
         <div class="unityViewer">
             <unity [lobbyId]="lobbyId"></unity>
         </div>
@@ -62,7 +80,7 @@
         </div>
     </div>
 
-    <div class="lobby-header" *ngIf="!lobby.gameInProgress">
+    <div class="lobby-header">
         <div class="lobby-top">
             <h3 *ngIf="gameModeList.gameModes && gameModeList.gameModes.length > 0">
                 Games
