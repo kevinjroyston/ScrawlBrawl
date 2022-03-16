@@ -35,6 +35,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
         private List<GameState> VoteReveals { get; set; } = new List<GameState>();
         private Random Rand { get; } = new Random();
         private const int MinPlayers = 4;
+        private bool UseSingleColor;
         public static GameModeMetadata GameModeMetadata { get; } = new GameModeMetadata
         {
             Title = "Chaotic Collaboration",
@@ -93,7 +94,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                 TimeSpan votingTimer = TwoToneDrawingConstants.VotingTimer[duration];
 
                 estimate += votingTimer.MultipliedBy(numRounds);
-                estimate += setupTimer.MultipliedBy(useSingleColor ? 1 : 2);
+                estimate += setupTimer.MultipliedBy(useSingleColor ? 1 : 1.5f);
                 estimate += drawingTimer;
 
                 estimates[duration] = estimate;
@@ -108,7 +109,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             GameDuration duration = standardOptions.GameDuration;
 
             int maxPossibleTeamCount = 8; // Can go higher than this in extreme circumstances.
-            bool useSingleColor = (bool)gameModeOptions[(int)GameModeOptionsEnum.useSingleColor].ValueParsed;
+            UseSingleColor = (bool)gameModeOptions[(int)GameModeOptionsEnum.useSingleColor].ValueParsed;
             int numLayers = (int)gameModeOptions[(int)GameModeOptionsEnum.numLayers].ValueParsed;
             int numPlayers = lobby.GetAllUsers().Count();
             if (numLayers * 2 > numPlayers)
@@ -129,7 +130,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             TimeSpan? votingTimer = null;
             if (standardOptions.TimerEnabled)
             {
-                setupTimer = TwoToneDrawingConstants.SetupTimer[duration].MultipliedBy(useSingleColor ? 1 : 2);
+                setupTimer = TwoToneDrawingConstants.SetupTimer[duration].MultipliedBy(UseSingleColor ? 1 : 1.5f);
                 drawingTimer = TwoToneDrawingConstants.PerDrawingTimer[duration].MultipliedBy(numDrawingsPerPlayer);
                 votingTimer = TwoToneDrawingConstants.VotingTimer[duration];
             }
@@ -137,7 +138,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             Setup = new Setup_GS(
                 lobby: lobby,
                 challengeTrackers: this.SubChallenges,
-                useSingleColor: useSingleColor,
+                useSingleColor: UseSingleColor,
                 numLayersPerTeam: numLayers,
                 numTeamsPerPrompt: numTeams,
                 numRounds: numRounds,
@@ -181,6 +182,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                     VotingViewOverrides = new UnityViewOverrides
                     {
                         Title = Invariant($"Which one is the best \"{challenge.Prompt}\"?"),
+                        Instructions =  UseSingleColor ? null : $"{string.Join(" | ", challenge.Colors)}",
                     },
                     PromptAnswerAddOnGenerator = (User user, int answer) =>
                     {

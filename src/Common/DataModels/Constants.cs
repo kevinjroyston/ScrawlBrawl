@@ -18,6 +18,7 @@ namespace Common.DataModels
 
         public static class Colors
         {
+            public const string DarkGray = "rgb(66,66,66)";
             public const string Brown = "rgb(117,86,41)";
             public const string DarkGray = "rgb(66,66,66)";
             public const string Black = "rgb(0,0,0)";
