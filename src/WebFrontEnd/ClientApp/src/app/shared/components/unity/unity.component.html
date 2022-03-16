@@ -1,12 +1,15 @@
 <!--div class="rectangle" mwlResizable-->
-    
-    <div id="unity-container" class="unity-desktop">
-        <canvas id="unity-canvas"></canvas>
-        <div id="unity-warning"> </div>
-        <div id="unity-footer">
-          <div id="unity-webgl-logo"></div>
-          <div id="unity-fullscreen-button"></div>
-        </div>
-      </div>
 
-    <!--div class="resize-handle-bottom" mwlResizeHandle [resizeEdges]="{ bottom: true }"></div-->
+<div id="unity-container" class="unity-desktop">
+    <div id="unity-loading-bar">
+        <label for="unity-load-viewer">Loading the game viewer...</label><br>
+        <progress id="unity-load-viewer" value="0" max="100"> </progress></div>
+    <canvas id="unity-canvas"></canvas>
+    <div id="unity-warning"> </div>
+    <div id="unity-footer">
+        <div id="unity-webgl-logo"></div>
+        <div id="unity-fullscreen-button"></div>
+    </div>
+</div>
+
+<!--div class="resize-handle-bottom" mwlResizeHandle [resizeEdges]="{ bottom: true }"></div-->
