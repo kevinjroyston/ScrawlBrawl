@@ -179,9 +179,9 @@ namespace Backend.Games.BriansGames.BattleReady
                         prompt.UsersToUserHands.TryAdd(user, new Prompt.UserHand
                         {
                             // Users who submit more drawings technically have higher chances of being seen. (Used to use Select_DynamicWeightedRandom which kept author counts fair, but could skew some drawings to being seen more as a result)
-                            HeadChoices = headDrawings.OrderBy((val) => StaticRandom.Next()).Take(BattleReadyConstants.NumDrawingsInHand).ToList(),
-                            BodyChoices = bodyDrawings.OrderBy((val) => StaticRandom.Next()).Take(BattleReadyConstants.NumDrawingsInHand).ToList(),
-                            LegChoices = legsDrawings.OrderBy((val) => StaticRandom.Next()).Take(BattleReadyConstants.NumDrawingsInHand).ToList(),
+                            HeadChoices = headDrawings.OrderBy((val) => StaticRandom.Next()).ToList().Take(BattleReadyConstants.NumDrawingsInHand).ToList(),
+                            BodyChoices = bodyDrawings.OrderBy((val) => StaticRandom.Next()).ToList().Take(BattleReadyConstants.NumDrawingsInHand).ToList(),
+                            LegChoices = legsDrawings.OrderBy((val) => StaticRandom.Next()).ToList().Take(BattleReadyConstants.NumDrawingsInHand).ToList(),
                             Owner = user
                         });
 

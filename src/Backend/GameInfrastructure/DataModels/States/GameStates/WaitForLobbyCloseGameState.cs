@@ -61,7 +61,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             {
                 ScreenId = TVScreenId.WaitForLobbyToStart,
                 Title = new UnityField<string> { Value = Invariant($"Lobby code: {lobby.LobbyId}") },
-                Instructions = new UnityField<string> { Value = "Players joined so far:" },
+                Instructions = new UnityField<string> { Value = "Go to 'scrawlbrawl.tv' on your device to join!" },
                 UnityObjects = GetUserPortraitUnityImages()
             };
         }

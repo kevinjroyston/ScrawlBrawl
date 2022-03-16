@@ -9,11 +9,13 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.DataModels
         public const int PointsPerVote = 100;
         public const int PointsForVotingForWinningDrawing = 100;
 
+
+        // These timers are multiplied by 1.5f if they have to write text.
         public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupTimer = new Dictionary<GameDuration, TimeSpan>()
         {
             { GameDuration.Short, TimeSpan.FromSeconds(90)},
             { GameDuration.Normal, TimeSpan.FromSeconds(120)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(180)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(160)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> PerDrawingTimer = new Dictionary<GameDuration, TimeSpan>()
         {

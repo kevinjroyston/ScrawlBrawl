@@ -1,13 +1,15 @@
 <div class="fetch-data">
     <form class="form" [formGroup]="form">
         <h2 class="title">
-            Create A Game
+            Create A Game (it's free!)
         </h2>
         <div class="Description">
-            You are welcome to start a free game and invite friends.<br><br> There is a separate game viewer needed to play ScrawlBrawl. (Don't worry, it's all free.) It works best if someone shares the web viewer tab so that all players can see it.<br><br>
+            These games all require a shared screen viewable by all players, as well as personal devices (such as mobile phones for each player).
+        <br>
+        <br>
         </div>
         <div class="ButtonDescription" *ngIf="!showPrompts">
-            If you want to play on this device and be the lobby leader, click<br>
+            To use this device for both personal AND shared views, click<br>
         </div>
         <div class="subprompts" *ngIf="showPrompts">
             <div class="subprompt">
@@ -32,7 +34,7 @@
         </scrawlbutton>
 
         <div class="ButtonDescription">
-            <br>If you will not be using this device to play the game, click
+            <br>To use this device only as a shared view, click
         </div>
         <scrawlbutton color="blue" (click)="onCreateLobbySubmit()">
             {{showPrompts?"Cancel":"Create Lobby"}}

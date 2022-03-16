@@ -12,13 +12,13 @@ namespace Backend.Games.BriansGames.BattleReady.DataModels
 
         public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerDrawingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(60)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(90)},
+            { GameDuration.Short, TimeSpan.FromSeconds(80)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(100)},
             { GameDuration.Extended, TimeSpan.FromSeconds(120)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerPromptTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(60)},
+            { GameDuration.Short, TimeSpan.FromSeconds(75)},
             { GameDuration.Normal, TimeSpan.FromSeconds(90)},
             { GameDuration.Extended, TimeSpan.FromSeconds(120)},
         };
@@ -48,14 +48,14 @@ namespace Backend.Games.BriansGames.BattleReady.DataModels
         {
             { GameDuration.Short, 4},
             { GameDuration.Normal, 4},
-            { GameDuration.Extended, 5},
+            { GameDuration.Extended, 6},
         };
 
         public static IReadOnlyDictionary<GameDuration, int> NumDrawingsPerPlayer = new Dictionary<GameDuration, int>()
         {
-            { GameDuration.Short, 2},
-            { GameDuration.Normal, 3},
-            { GameDuration.Extended, 4},
+            { GameDuration.Short, 3},
+            { GameDuration.Normal, 4},
+            { GameDuration.Extended, 5},
         };
     }
 }
