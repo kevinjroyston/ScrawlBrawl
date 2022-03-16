@@ -86,6 +86,9 @@ export function floodFill(ctx, startX, startY, newR, newG, newB):boolean{
 function pixelsMatch(c1,c2): boolean {
   return (Math.abs(parseInt(c1)-parseInt(c2)) < 25);
 }
+function transparenciesMatch(t1,t2): boolean {
+  return (Math.abs(parseInt(t1)-parseInt(t2)) < 128);
+}
 
 function matchTargetColor(pixelIndex, startR, startG, startB, startA, newR, newG, newB) {
 
@@ -97,7 +100,7 @@ function matchTargetColor(pixelIndex, startR, startG, startB, startA, newR, newG
   if (startA < 225) { // we clicked on a transparent color, any other transparent is a match
     return (a < 225);  // note we may need to do color smoothing here if color does not exactly match clicked color
   } else { 
-    if (pixelsMatch(r,startR) && pixelsMatch(g,startG) && pixelsMatch(b,startB)) { // current pixel matches the clicked color
+    if (pixelsMatch(r,startR) && pixelsMatch(g,startG) && pixelsMatch(b,startB) && transparenciesMatch(a,startA)) { // current pixel matches the clicked color
        return true;
     }
   
