@@ -77,7 +77,7 @@
             <div>
                 <b>Lobby Code:</b> {{ lobby.lobbyId.toUpperCase() }}
             </div>
-            
+
             Steps:
             <br>1) Share your screen or make sure all players can see the viewer and lobby code above
             <br>2) Tell players to navigate to scrawlbrawl.tv on their personal devices
@@ -100,7 +100,7 @@
                         <div class="game-option-title">
                             {{ gameMode.title }}
                             <scrawlbrawl-iconbutton matTooltip="Game Info" [mdTooltipClass]="{'tooltip': true}" (click)="openGameInfoDialog($event, i)">
-                                <ion-icon name="information-circle-outline"></ion-icon>
+                                <ion-icon name="information-circle-outline" [style.color]="'var(--text-color)'"></ion-icon>
                             </scrawlbrawl-iconbutton>
                         </div>
                     </div>

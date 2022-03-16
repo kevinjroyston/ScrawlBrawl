@@ -33,9 +33,9 @@ namespace Backend.Games.KevinsGames.IMadeThis
         public static GameModeMetadata GameModeMetadata { get; } =
             new GameModeMetadata
             {
-                Title = "... I made this",
-                GameId = GameModeId.IMadeThis,
-                Description = "Make the best adjustments to your peer's artwork.",
+                Title = "OverDrawn",
+                GameId = GameModeId.OverDrawn,
+                Description = "Turn your aprentice's artwork into a masterpiece.",
                 MinPlayers = MinPlayers,
                 MaxPlayers = null,
                 Attributes = new GameModeAttributes

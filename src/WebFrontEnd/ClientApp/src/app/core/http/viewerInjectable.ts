@@ -27,25 +27,6 @@ export class UnityViewer{
         this.renderer = rendererFactory.createRenderer(null, null);
     }
 
-   /* FixBlurriness(){
-        var canvas = this.gameInstance.Module.canvas;
-        var container = this.gameInstance.container;
-
-//        container.style.width = '960px';//canvas.style.width;
-//        container.style.height = '540px'; //canvas.style.height;            
-//        container.style.width = canvas.style.width;
-        var el = document.getElementById(this.containerId);
-        if (Math.round((el.clientHeight-1)*96/54) <= el.clientWidth) {
-          container.style.width = Math.round((el.clientHeight-1)*96/54)+'px';
-          container.style.height = el.clientHeight-1+'px';
-        }
-        else
-        {
-          container.style.width = el.clientWidth+'px';
-          container.style.height = Math.round((el.clientWidth)*54/96)+'px';
-        }
-    }*/
-
     showFullScreen(){
         if (this.gameInstance) {
             this.gameInstance.SetFullscreen(1);
@@ -59,9 +40,6 @@ export class UnityViewer{
             this.currentLobbyId = this.lobbyId;
             console.log('Sending lobby id to viewer');
             this.gameInstance.SendMessage("JavascriptConnector","ConnectToLobby",this.lobbyId);
-        //   setTimeout(() => {
-        //       this.FixBlurriness(); 
-        //    }, 6000);
           }
     }
 
@@ -71,33 +49,10 @@ export class UnityViewer{
         this.viewerDiv = this.renderer.createElement('div');
         // Set the id of the div
         this.renderer.setProperty(this.viewerDiv, 'id', containerId);
-
         this.renderer.appendChild(document.body, this.viewerDiv);
-
     }
 
-   /* InitializeViewer(containerId): void {
-        this.containerId = containerId;
-        if (!this.viewerDiv) {  // first call create a div and initialize the viewer
-            this.createDIV();  
-            const loader = (window as any).WebGlLoader;
-  
-            this.gameInstance = loader.instantiate(
-                'viewerContainer', 
-                '/viewer/Build/WebGl.Loader.js', {
-            onProgress: (gameInstance: any, progress: number) => {
-                  this.progress = progress;
-                    if (progress === 1) {
-                        this.isReady = true;
-                        if (this.lobbyId) {
-                            this.UpdateLobbyId(this.lobbyId);
-                        }
-                    }
-                }
-            });
-        }   
-    }*/
-
+   
     InitializeViewer(containerId):void{
         this.createDIV(containerId);
      
@@ -115,7 +70,7 @@ export class UnityViewer{
     var container = document.querySelector("#unity-container");
     var canvas = document.querySelector("#unity-canvas");
     var loadingBar = document.querySelector("#unity-loading-bar");
-    var progressBarFull = document.querySelector("#unity-progress-bar-full");
+    var progressBarFull = document.querySelector("#unity-load-viewer");
     var fullscreenButton = document.querySelector("#unity-fullscreen-button");
     var warningBanner = document.querySelector("#unity-warning");
 
@@ -125,9 +80,11 @@ export class UnityViewer{
     this.renderer.setStyle(canvas,'height',Math.round((el.clientWidth)*54/96)+'px');
 
     createUnityInstance(canvas, config, (progress) => {
-      //progressBarFull.style.width = 100 * progress + "%";
+      if (progressBarFull) {
+            this.renderer.setStyle(progressBarFull,'value',100 * progress);
+          }
     }).then((unityInstance) => {
-      //loadingBar.style.display = "none";
+      this.renderer.setStyle(loadingBar,'display','none');
       
       this.gameInstance = unityInstance;
 
@@ -143,24 +100,6 @@ export class UnityViewer{
       alert(message);
     });
           
-/*
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(this.viewerDiv.canvas, config, (progress) => {
-        }).then((unityInstance) => {
-            this.gameInstance = unityInstance;
-          
-          const urlParams = new URLSearchParams(window.location.search);
-          unityInstance.SendMessage("JavascriptConnector", "ConnectToLobby", urlParams.get('lobby'));
-        }).catch((message) => {
-          alert(message);
-        });
-      };
-      
-      document.body.appendChild(script);
-        // Append the div to the body element
-        this.renderer.appendChild(document.getElementById(containerId), this.viewerDiv);*/
     }
 
      

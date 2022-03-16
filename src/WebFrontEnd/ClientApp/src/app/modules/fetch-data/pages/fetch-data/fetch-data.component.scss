@@ -214,8 +214,9 @@ input[type="text"] {
 }
 
 .sticky-nav-wrapper {
-    position: fixed;
+    position: sticky;
     top: 0;
+    align-self: flex-start;
     height: 56px;
     width: 100%;
     z-index: 1000;
