@@ -87,7 +87,6 @@ export class FetchDataComponent implements OnDestroy
         });
     }
     ngOnDestroy(): void {
-        document.body.classList.remove('makeRoomForToolbar');
     }
 
 /*    @HostListener('window:beforeunload', ['$event'])
@@ -148,11 +147,6 @@ export class FetchDataComponent implements OnDestroy
 
                 var prompt = currentContent.userPrompt;
 
-                if (prompt && prompt.submitButton) {
-                    document.body.classList.add('makeRoomForToolbar');
-                } else {
-                    document.body.classList.remove('makeRoomForToolbar');
-                }
                 if (prompt) {
                     this.unityViewer.UpdateLobbyId(prompt.lobbyId);
 
