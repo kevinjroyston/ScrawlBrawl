@@ -183,7 +183,6 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                     {
                         Title = Invariant($"Which one is the best \"{challenge.Prompt}\"?"),
                         Instructions =  UseSingleColor ? null : $"{string.Join(" | ", ((IEnumerable<string>)challenge.Colors).Reverse().ToArray())}",
-
                     },
                     PromptAnswerAddOnGenerator = (User user, int answer) =>
                     {
