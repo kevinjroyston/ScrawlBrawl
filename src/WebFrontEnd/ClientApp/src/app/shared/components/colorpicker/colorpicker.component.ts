@@ -23,7 +23,7 @@ export class ColorPickerComponent implements ControlValueAccessor, OnInit
   @Input() isColorsSpecified : boolean = false
   pastColorsService: PastColorsService
   pastColors: string[]
-  grayScaleColors : string[]
+  grayScaleColors : string[][]
   rainbowColors: string[][]
   onChange = (color)=>{console.log('no change defined')};
 

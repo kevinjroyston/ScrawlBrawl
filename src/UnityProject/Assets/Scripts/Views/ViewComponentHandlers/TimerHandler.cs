@@ -27,8 +27,14 @@ public class TimerHandler : MonoBehaviour, HandlerInterface
             if(timeRemaining>0)
             {
                 gameObject.SetActive(true);
-                timeRemainingInSeconds = ((DateTime) endTime).Subtract((DateTime) currentTime).TotalSeconds;
+                timeRemainingInSeconds = timeRemaining;
+            }else{
+                timeRemainingInSeconds = -1;
+                gameObject.SetActive(false);
             }
+        }else{
+            timeRemainingInSeconds = -1;
+            gameObject.SetActive(false);
         }
     }
 
@@ -44,7 +50,7 @@ public class TimerHandler : MonoBehaviour, HandlerInterface
             startedTimerSound = true;
             EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.TenSecondsLeft });
         }
-        if (timeRemainingInSeconds >= 0)
+        if (timeRemainingInSeconds > 0)
         {
             TimeSpan timespan = TimeSpan.FromSeconds(timeRemainingInSeconds);
 

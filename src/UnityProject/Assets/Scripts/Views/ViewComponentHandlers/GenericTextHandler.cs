@@ -3,6 +3,7 @@ using Assets.Scripts.Views.DataModels;
 using Assets.Scripts.Views.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using static TypeEnums;
@@ -20,6 +21,12 @@ public class GenericTextHandler : MonoBehaviour, HandlerInterface
         if (TextComponent != null)
         {
             TextComponent.text = field?.Value ?? string.Empty;
+        }
+
+        // SUPER hacky, this should be an interface or listener or something
+        var maxSizeScript = gameObject.GetComponent<IdentifierMaxSize>();
+        if (maxSizeScript != null){
+            maxSizeScript.OnGUI();
         }
     }
 

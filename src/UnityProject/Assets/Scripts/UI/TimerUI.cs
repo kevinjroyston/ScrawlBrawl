@@ -27,7 +27,7 @@ public class TimerUI : MonoBehaviour
             startedTimerSound = true;
             EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.TenSecondsLeft });
         }
-        if(timeRemainingInSeconds >= 0)
+        if(timeRemainingInSeconds > 0)
         {
             TimeSpan timespan = TimeSpan.FromSeconds(timeRemainingInSeconds);
 
@@ -37,6 +37,5 @@ public class TimerUI : MonoBehaviour
         {
             TimeText.text = string.Empty;
         }
-
     }
 }
