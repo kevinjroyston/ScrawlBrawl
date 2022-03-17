@@ -216,7 +216,7 @@ export class FetchDataComponent implements OnDestroy
         }
         var unchanged = true;
 // first iterate and make sure current control values have not changed since last suggestion
-        for (let i = 0, s = 0; (i < userSubmitData.subForms.length) && (s < suggestion.values.length) && unchanged && (s < this.lastSuggestion.length); i++) {
+        for (let i = 0, s = 0; (i < userSubmitData.subForms.length) && (s < suggestion.values.length) && unchanged; i++) {
             if (this.userPrompt.subPrompts[i].shortAnswer) {
                 if (suggestion.values[s] != "") 
                     unchanged = (this.userForm.controls.subForms.controls[i].value.shortAnswer == this.lastSuggestion[s]);
