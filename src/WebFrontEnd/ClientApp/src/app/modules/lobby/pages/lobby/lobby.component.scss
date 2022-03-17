@@ -140,6 +140,7 @@ h3 {
 
 .sticky {
     position: sticky;
+    margin-top: -1px;
     top: 0;
     align-self: flex-start;
 }
