@@ -13,8 +13,7 @@ public class WatchComponentToAddPadding : MonoBehaviour
         MyLayoutGroup = gameObject.GetComponent<VerticalLayoutGroup>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnGUI()
     {
         if (TrackingObject.activeInHierarchy)
         {

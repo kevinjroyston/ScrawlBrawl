@@ -13,15 +13,28 @@ public class IdentifierMaxSize : MonoBehaviour
         myRect = gameObject.GetComponent<RectTransform>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnGUI()
     {
+        if (myRect == null){
+            
+            myRect = gameObject.GetComponent<RectTransform>();
+        }
+
+        bool changedEither = false;
         if (myRect.rect.height > MaxHeight){
            myRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, MaxHeight);
+           changedEither = true;
+ 
         }
 
         if (myRect.rect.width > MaxWidth){
            myRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, MaxWidth);
+           changedEither = true;
+        }
+
+        if(changedEither){
+           myRect.ForceUpdateRectTransforms();
+
         }
     }
 }
