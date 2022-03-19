@@ -1,4 +1,4 @@
-[{ "values": ["Most Likley To Win The Lottery"] },
+[
     { "values": ["With a straight face"] },
     { "values": ["With the proper tools"] },
     { "values": ["While sleeping"] },
@@ -66,7 +66,7 @@
     { "values": ["While eating fajitas"] },
     { "values": ["After building sand castles"] },
     { "values": ["While secretly watching football"] },
-    { "values": ["while casually throwing a football"] },
+    { "values": ["While casually throwing a football"] },
     { "values": ["After deleting their Twitter"] },
     { "values": ["While surfing the web"] },
     { "values": ["With a crooked grin"] },
