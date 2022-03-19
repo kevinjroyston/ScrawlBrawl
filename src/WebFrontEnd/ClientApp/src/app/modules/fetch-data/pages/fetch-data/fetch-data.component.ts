@@ -175,6 +175,9 @@ export class FetchDataComponent implements OnDestroy
                     this.userForm.reset();
                 }
 
+                // Clear suggestion tracker
+                this.lastSuggestion = new Array();
+
                 this.galleryEditorVisible = false;
 
                 // Store the new user prompt and populate the corresponding formControls
