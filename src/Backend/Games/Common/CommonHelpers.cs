@@ -14,11 +14,11 @@ namespace Backend.Games.Common
         private static Random Rand = new Random();
         public static string HtmlImageWrapper(string image, int width = 240, int height = 240)
         {
-            return Invariant($"<img width=\"{width}\" height=\"{height}\" src=\"{image}\"/>");
+            return Invariant($"<img class=\"sb-drawingIcon\" width=\"{width}\" height=\"{height}\" src=\"{image}\"/>");
         }
         public static string HtmlSizelessImageWrapper(string image)
         {
-            return Invariant($"<img src=\"{image}\"/>");
+            return Invariant($"<img class=\"sb-drawingIcon\" src=\"{image}\"/>");
         }
 
         /* public static TimeSpan GetTimerFromLength(double length, double minTimerLength, double aveTimerLength, double maxTimerLength, double minLength = 0, double aveLength = 5, double maxLength = 10)
