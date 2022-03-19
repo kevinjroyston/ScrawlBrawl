@@ -53,6 +53,10 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                             ShortAnswer = true,
                         }
                     },
+                    Suggestion = new SuggestionMetadata
+                    {
+                        SuggestionKey = "LateToArtClass"
+                    },
                     SubmitButton = true
                 },
                 formSubmitHandler: (User user, UserFormSubmission input) =>
