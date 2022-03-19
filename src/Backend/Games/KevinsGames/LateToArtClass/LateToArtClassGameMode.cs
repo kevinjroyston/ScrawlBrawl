@@ -36,7 +36,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass
                 MaxPlayers = null,
                 Attributes = new GameModeAttributes
                 {
-                   ProductionReady = false,
+                   ProductionReady = true,
                 },
                 Options = new List<GameModeOptionResponse>
                 {
