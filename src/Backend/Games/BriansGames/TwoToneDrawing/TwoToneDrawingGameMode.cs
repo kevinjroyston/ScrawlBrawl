@@ -57,7 +57,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                 },
                 new GameModeOptionResponse
                 {
-                    Description = "Team Size",
+                    Description = "Players per team",
                     ResponseType = ResponseType.Integer,
                     DefaultValue = 2,
                     MinValue = 2,
@@ -108,10 +108,11 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             this.Lobby = lobby;
             GameDuration duration = standardOptions.GameDuration;
 
+            int numPlayers = lobby.GetAllUsers().Count();
+
             int maxPossibleTeamCount = 8; // Can go higher than this in extreme circumstances.
             UseSingleColor = (bool)gameModeOptions[(int)GameModeOptionsEnum.useSingleColor].ValueParsed;
             int numLayers = (int)gameModeOptions[(int)GameModeOptionsEnum.numLayers].ValueParsed;
-            int numPlayers = lobby.GetAllUsers().Count();
             if (numLayers * 2 > numPlayers)
             {
                 numLayers = numPlayers / 2;

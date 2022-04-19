@@ -48,7 +48,7 @@ namespace Common.DataModels.Responses
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public Type OptionsEnum { get; set; }
-        public bool IsSupportedPlayerCount(int playerCount, bool ignoreMinimum = false)
+        public bool IsSupportedPlayerCount(List<ConfigureLobbyRequest.GameModeOptionRequest> options, int playerCount, bool ignoreMinimum = false)
         {
             if (!ignoreMinimum && (MinPlayers.HasValue && MinPlayers.Value > playerCount))
             {
@@ -60,7 +60,7 @@ namespace Common.DataModels.Responses
             }
             return true;
         }
-        public string RestrictionsToString()
+        public string RestrictionsToString(List<ConfigureLobbyRequest.GameModeOptionRequest> options)
         {
             List<string> restrictions = new List<string>();
 

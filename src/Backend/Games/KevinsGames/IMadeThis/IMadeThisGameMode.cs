@@ -33,14 +33,14 @@ namespace Backend.Games.KevinsGames.IMadeThis
         public static GameModeMetadata GameModeMetadata { get; } =
             new GameModeMetadata
             {
-                Title = "OverDrawn",
+                Title = "Over-Drawn",
                 GameId = GameModeId.OverDrawn,
                 Description = "Turn your aprentice's artwork into a masterpiece.",
                 MinPlayers = MinPlayers,
                 MaxPlayers = null,
                 Attributes = new GameModeAttributes
                 {
-                   ProductionReady = false,
+                   ProductionReady = true,
                 },
                 Options = new List<GameModeOptionResponse>
                 {

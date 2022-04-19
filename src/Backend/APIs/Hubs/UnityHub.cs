@@ -56,7 +56,7 @@ namespace Backend.APIs.Hubs
 
                     UnityView view = lobby.GetActiveUnityView(returnNullIfNoChange: false);
 
-                    // SignalR's serialization is abysmal and client has no insight into the issue. pull serialization out.
+                    // SignalR's serialization is abysmal and client has no insight into the issue. So we serialization before.
                     Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(view));
                     Clients.Caller.SendAsync("ConfigureMetadata", JsonConvert.SerializeObject(lobby.ConfigMetaData));
                 }
