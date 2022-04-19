@@ -47,7 +47,7 @@ namespace Backend.GameInfrastructure
 
         #region GameStates
         private GameState CurrentGameState { get; set; }
-        private GameState EndOfGameRestart { get; set; }
+        //private GameState EndOfGameRestart { get; set; }
         private TutorialExplanationGameState TutorialGameState { get; set; }
         private WaitForLobbyCloseGameState WaitForLobbyStart { get; set; }
         #endregion
@@ -170,7 +170,7 @@ namespace Backend.GameInfrastructure
             // Note any states initialized here will not have an accurate user list, recommend adding an entrance listener on each.
             this.WaitForLobbyStart = new WaitForLobbyCloseGameState(this);
             this.TutorialGameState = new TutorialExplanationGameState(this);
-            this.EndOfGameRestart = new EndOfGameState(this, PrepareToRestartGame);
+            //this.EndOfGameRestart = new EndOfGameState(this, PrepareToRestartGame);
             TransitionCurrentGameState(this.WaitForLobbyStart);
         }
 
@@ -402,33 +402,19 @@ namespace Backend.GameInfrastructure
 
             // Set up game to transition smoothly to end of game restart.
             // TODO: transition to a scoreboard first instead?
-            game.Transition(this.EndOfGameRestart);
+            game.Transition(() => {
+                this.Game = null;
+                InitializeAllGameStates();
+                DropDisconnectedUsers();
+
+                this.ResetScores();
+                return this.WaitForLobbyStart;
+            });
 
             // Send users to game or tutorial.
             this.WaitForLobbyStart.LobbyHasClosed();
 
             return true;
-        }
-
-        /// <summary>
-        /// Updates the FSM based on the type of restart.
-        /// </summary>
-        public void PrepareToRestartGame(EndOfGameRestartType restartType)
-        {
-            GameState previousEndOfGameRestart = this.EndOfGameRestart;
-            this.Game = null;
-            switch (restartType)
-            {
-                case EndOfGameRestartType.BackToLobby:
-                    InitializeAllGameStates();
-                    previousEndOfGameRestart.Transition(this.WaitForLobbyStart);
-                    DropDisconnectedUsers();
-
-                    this.ResetScores();
-                    break;
-                default:
-                    throw new Exception("Unknown restart game type");
-            }
         }
 
         /// <summary>

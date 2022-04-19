@@ -369,38 +369,12 @@ public class TestClient : MonoBehaviour
             // NOTE: the Connected in the line below only says we EVER connected, not that we are still connected
             if (!Restarting && (Connected || hubTask == null || hubTask.IsFaulted || hubTask.IsCanceled))
             {
-                StartCoroutine(DelayedConnectToHub());
+                //StartCoroutine(DelayedConnectToHub());
             }
         } 
 
-        /// <summary>
-        /// Restarts the connection after a 5 second delay.
-        /// </summary>
-        /// <returns>A coroutine representing the task.</returns>
-        IEnumerator DelayedConnectToHub()
-        {
-            Restarting = true;
-            yield return new WaitForSeconds(5);
-            ConnectToHub();
-            Restarting = false;
-        }
-
         public void OnApplicationQuit()
         {
-        }
-
-        private void ConnectToHub()
-        {
-            if(srLib == null)
-            {
-                return;
-            }
-
-            if(hubTask!=null && !(Connected || hubTask.IsFaulted || hubTask.IsCanceled))
-            {
-                Debug.Log("Hub restart requested but connection is active");
-                return;
-            }
         }
  
 }

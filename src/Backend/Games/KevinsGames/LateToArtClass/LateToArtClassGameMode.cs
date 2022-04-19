@@ -86,10 +86,10 @@ namespace Backend.Games.KevinsGames.LateToArtClass
             }
             List<ArtClass> artClasses = new List<ArtClass>();
             int numRounds = Math.Min(LateToArtClassConstants.MaxNumRounds[duration], this.Lobby.GetAllUsers().Count);
-            int numDrawingsPerUser = Math.Min(LateToArtClassConstants.MaxDrawingsPerPlayer[duration], numRounds - 1);
+            int numDrawingsPerUser = Math.Min(LateToArtClassConstants.MaxDrawingsPerPlayer[duration], numRounds);
 
-            numRounds = Math.Min(numRounds, (this.Lobby.GetAllUsers().Count-1) * numDrawingsPerUser / LateToArtClassConstants.MinNumPlayersPerRound);
-            int playersPerPrompt = Math.Min(LateToArtClassConstants.MaxNumPlayersPerRound, this.Lobby.GetAllUsers().Count - 1);
+            numRounds = Math.Min(numRounds, this.Lobby.GetAllUsers().Count * numDrawingsPerUser / LateToArtClassConstants.MinNumPlayersPerRound);
+            int playersPerPrompt = Math.Min(LateToArtClassConstants.MaxNumPlayersPerRound, this.Lobby.GetAllUsers().Count);
             playersPerPrompt = Math.Min(playersPerPrompt, this.Lobby.GetAllUsers().Count * numDrawingsPerUser / numRounds + 1);
             Setup = new Setup_GS(
                 lobby: lobby,

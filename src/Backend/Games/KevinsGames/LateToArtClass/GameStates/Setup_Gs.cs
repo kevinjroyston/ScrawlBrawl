@@ -310,7 +310,8 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                 foreach (User lateStudent in tracker.UsersToDrawings.Keys.OrderBy(_ => Rand.Next()).ToList())
                 {
                     // Make a slight effort to avoid people being late more than once.
-                    if (!userToLateCount.ContainsKey(lateStudent))
+                    if (!userToLateCount.ContainsKey(lateStudent)
+                        && lateStudent != tracker.Teacher)
                     {
                         userToLateCount[lateStudent] = 1;
                         tracker.LateStudent = lateStudent;
@@ -319,8 +320,13 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                 }
                 if(tracker.LateStudent == null)
                 {
-                    // If we hit here it means every student has already been late once, oh well, pick any.
-                    tracker.LateStudent = tracker.UsersToDrawings.Keys.ElementAt(Rand.Next(tracker.UsersToDrawings.Keys.Count));
+                    // If we hit here it means every student has already been late once, oh well, pick any except teacher.
+                    int breakout = 0;
+                    do
+                    {
+                        tracker.LateStudent = tracker.UsersToDrawings.Keys.ElementAt(Rand.Next(tracker.UsersToDrawings.Keys.Count));
+                    }
+                    while (tracker.LateStudent == tracker.Teacher && breakout++ < 50);
                 }                
             }
         }

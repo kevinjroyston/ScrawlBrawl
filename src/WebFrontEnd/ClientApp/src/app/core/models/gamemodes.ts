@@ -9,7 +9,6 @@ namespace GameModes {
     }
     
     export class GameModeMetadata {
-        minPlayers: number;
         maxPlayers: number;
         title: string;
         gameIdString: string;
