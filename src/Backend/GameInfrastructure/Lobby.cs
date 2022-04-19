@@ -91,7 +91,7 @@ namespace Backend.GameInfrastructure
         public bool IsLobbyOpen()
         {
             // Either a game mode hasn't been selected, or the selected gamemode is not at its' capacity.
-            return !IsGameInProgress() && (this.SelectedGameMode == null || this.SelectedGameMode.GameModeMetadata.IsSupportedPlayerCount(this.GameModeOptions, this.UsersInLobby.Count, ignoreMinimum: true));
+            return !IsGameInProgress() && (this.SelectedGameMode == null || this.SelectedGameMode.GameModeMetadata.IsSupportedPlayerCount(this.UsersInLobby.Count, ignoreMinimum: true));
         }
         public bool IsGameInProgress()
         {
@@ -126,9 +126,9 @@ namespace Backend.GameInfrastructure
             }
 
             // Don't check player minimum count when configuring, but do check on start.
-            if (!GameModes[request.GameMode.Value].GameModeMetadata.IsSupportedPlayerCount(this.GameModeOptions, GetAllUsers().Count, ignoreMinimum: true))
+            if (!GameModes[request.GameMode.Value].GameModeMetadata.IsSupportedPlayerCount(GetAllUsers().Count, ignoreMinimum: true))
             {
-                errorMsg = Invariant($"Selected game mode has following restrictions: {GameModes[request.GameMode.Value].GameModeMetadata.RestrictionsToString(this.GameModeOptions)}");
+                errorMsg = Invariant($"Selected game mode has following restrictions: {GameModes[request.GameMode.Value].GameModeMetadata.RestrictionsToString()}");
                 return false;
             }
 
@@ -367,9 +367,9 @@ namespace Backend.GameInfrastructure
                 return false;
             }
 
-            if (!this.SelectedGameMode.GameModeMetadata.IsSupportedPlayerCount(this.GameModeOptions, this.GetAllUsers().Count))
+            if (!this.SelectedGameMode.GameModeMetadata.IsSupportedPlayerCount(this.GetAllUsers().Count))
             {
-                errorMsg = Invariant($"Selected game mode has following restrictions: {this.SelectedGameMode.GameModeMetadata.RestrictionsToString(this.GameModeOptions)}");
+                errorMsg = Invariant($"Selected game mode has following restrictions: {this.SelectedGameMode.GameModeMetadata.RestrictionsToString()}");
                 return false;
             }
 
