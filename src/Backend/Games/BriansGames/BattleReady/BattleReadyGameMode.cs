@@ -45,7 +45,7 @@ namespace Backend.Games.BriansGames.BattleReady
             GameId = GameModeId.BodyBuilder,
             Description = "Go head to head body to body and legs to legs with other players to try to make the best constestant for each challenge.",
             MinPlayers = MinPlayers,
-            MaxPlayers = null,
+            MaxPlayers = CommonGameConstants.MAX_PLAYERS,
             Attributes = new GameModeAttributes
             {
                 ProductionReady = true,

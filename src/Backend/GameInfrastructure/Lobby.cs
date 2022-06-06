@@ -91,7 +91,7 @@ namespace Backend.GameInfrastructure
         public bool IsLobbyOpen()
         {
             // Either a game mode hasn't been selected, or the selected gamemode is not at its' capacity.
-            return !IsGameInProgress() && (this.SelectedGameMode == null || this.SelectedGameMode.GameModeMetadata.IsSupportedPlayerCount(this.UsersInLobby.Count, ignoreMinimum: true));
+            return !IsGameInProgress() && (this.SelectedGameMode == null || this.SelectedGameMode.GameModeMetadata.IsSupportedPlayerCount(this.UsersInLobby.Count + 1, ignoreMinimum: true));
         }
         public bool IsGameInProgress()
         {
@@ -197,7 +197,7 @@ namespace Backend.GameInfrastructure
 
             if (!IsLobbyOpen())
             {
-                errorMsg = "Lobby is closed.";
+                errorMsg = "Lobby is closed or full.";
                 return false;
             }
 
@@ -205,7 +205,7 @@ namespace Backend.GameInfrastructure
             {
                 if (!IsLobbyOpen())
                 {
-                    errorMsg = "Lobby is closed.";
+                    errorMsg = "Lobby is closed or full.";
                     return false;
                 }
 

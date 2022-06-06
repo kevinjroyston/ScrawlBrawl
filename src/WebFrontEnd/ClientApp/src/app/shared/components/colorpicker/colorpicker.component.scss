@@ -1,10 +1,11 @@
 .colorpicker {
-    width: 100vw;
+    width: 100%;
     max-width: 500px;
 }
 
 .color-row {
     display: flex;
+    flex-direction: row;
     width: 100%;
 }
 
@@ -16,24 +17,31 @@
     margin-left: .5rem; 
 }
 
-.color-grid {
-    display: flex;
-    width: 100%;
-
-    .color-row{
-        display: flex;
-        flex-direction: column;
-        margin: 0;
-    }
-}
-
 .color-square {
     flex: 1;
-    padding: 1rem;
+    height: 2rem;
     cursor: pointer;
     transition: all .2s ease;
     border: 2px solid transparent;
 }
+
+.color-grid {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+
+    .color-row{
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+    }
+
+    .color-square{
+        flex: unset;
+    }
+}
+
 
 .color-square:hover {
     border: 2px solid black;

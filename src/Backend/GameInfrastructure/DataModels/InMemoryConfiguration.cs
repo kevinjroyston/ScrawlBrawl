@@ -40,11 +40,11 @@ namespace Backend.GameInfrastructure.DataModels
                 GameModeMetadata = MimicGameMode.GameModeMetadata,
                 GameModeInstantiator = (lobby, options, standardOptions) => new MimicGameMode(lobby, options, standardOptions)
             },
-            new GameModeMetadataHolder()
+            /*new GameModeMetadataHolder()
             {
                 GameModeMetadata = FriendQuizGameMode.GameModeMetadata,
                 GameModeInstantiator = (lobby, options, standardOptions) => new FriendQuizGameMode(lobby, options, standardOptions)
-            },
+            },*/
             new GameModeMetadataHolder()
             {
                 GameModeMetadata = TextBodyBuilderGameMode.GameModeMetadata,

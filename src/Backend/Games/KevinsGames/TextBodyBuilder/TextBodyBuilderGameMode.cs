@@ -25,6 +25,7 @@ using static Backend.Games.KevinsGames.TextBodyBuilder.DataModels.TextPerson;
 using static System.FormattableString;
 using Backend.APIs.DataModels.Enums;
 using MiscUtil;
+using Backend.Games.Common;
 
 namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
 {
@@ -43,7 +44,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
             GameId = GameModeId.TextBodyBuilder,
             Description = "Combine snippets of text to bring to life the best constestant for each challenge.",
             MinPlayers = MinPlayers,
-            MaxPlayers = null,
+            MaxPlayers = CommonGameConstants.MAX_PLAYERS,
             Attributes = new GameModeAttributes
             {
                 ProductionReady = false,

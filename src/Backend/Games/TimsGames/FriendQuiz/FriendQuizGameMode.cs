@@ -34,7 +34,7 @@ namespace Backend.Games.TimsGames.FriendQuiz
             GameId = GameModeId.FriendQuiz,
             Description = "See how well you know your fellow players",
             MinPlayers = MinPlayers,
-            MaxPlayers = null,
+            MaxPlayers = CommonGameConstants.MAX_PLAYERS,
             Attributes = new GameModeAttributes
             {
                 ProductionReady = false,
