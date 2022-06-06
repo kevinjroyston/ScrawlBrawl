@@ -26,7 +26,7 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
                 lobby: lobby,
                 numExpectedPerUser: numExpectedPerUser,
                 unityTitle: "",
-                unityInstructions: "Create as many prompts as possible before the time runs out",
+                unityInstructions: "Create some prompts for others to draw",
                 setupDuration: setupDuration)
         {
             this.Prompts = prompts;

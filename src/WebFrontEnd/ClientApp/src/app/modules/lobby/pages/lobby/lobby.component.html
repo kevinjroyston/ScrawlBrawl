@@ -93,7 +93,7 @@
             <div class="game-option-wrapper" *ngFor="let gameMode of gameModeList.gameModes; index as i">
                 <div class="game-option" (click)="onSelectGameMode(i)" [ngClass]='{"active": isGameModeSelected(i)}'>
                     <div class="game-option-img">
-                        <img gameAsset [gameAssetID]="gameMode.gameIdString" style="max-height: 200px; max-width:100%">
+                        <img gameAsset [gameAssetID]="gameMode.gameIdString" style="max-height: 200px; max-width:500px">
                     </div>
                     <div class="game-option-info">
                         <div class="game-option-title">

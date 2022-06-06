@@ -32,7 +32,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing
                 GameId = GameModeId.Imposter,
                 Description = "Come up with a difference only you'll be able to spot!",
                 MinPlayers = MinPlayers,
-                MaxPlayers = null,
+                MaxPlayers = CommonGameConstants.MAX_PLAYERS,
                 Attributes = new GameModeAttributes
                 {
                    ProductionReady = true,

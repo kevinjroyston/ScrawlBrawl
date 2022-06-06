@@ -110,9 +110,10 @@ export class FetchDataComponent implements OnDestroy
         event.preventDefault();
         const bottomConfig = new MatBottomSheetConfig();
         bottomConfig.data = {
-            handleColorChange: (color: string) => this.handleColorChange(color, subPrompt),
-            panelClass: 'sb-colorpicker-dialog'
+            handleColorChange: (color: string) => this.handleColorChange(color, subPrompt)
         }
+        bottomConfig.panelClass ='sb-colorpicker-dialog';
+        
         this._colorPicker.open(ColorPickerComponent, bottomConfig)
     }
 

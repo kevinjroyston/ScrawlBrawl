@@ -7,6 +7,7 @@ import GameModes from '@core/models/gamemodes';
 import { ErrorService } from '@modules/lobby/services/error.service';
 import { GameModeList } from '@core/http/gamemodelist';
 import { SliderPromptMetadata } from '@shared/components/slider/slider.component';
+import { NotificationService } from '@core/services/notification.service';
 
 interface GameModeDialogData {
   lobby: Lobby.LobbyMetadata
@@ -48,7 +49,8 @@ export class CommonoptionsDialogComponent implements OnInit {
     public errorService: ErrorService,
     @Inject(GameModeList) public gameModeList: GameModeList,
     @Inject(MAT_DIALOG_DATA) public data: GameModeDialogData,
-    @Inject(API) private api: API) {
+    @Inject(API) private api: API,
+    @Inject(NotificationService) private notificationService: NotificationService) {
     this.lobby = data.lobby;
     this.launchURL = data.launchURL;
     this.onGetLobby = data.onGetLobby;
@@ -58,7 +60,7 @@ export class CommonoptionsDialogComponent implements OnInit {
       this.durationEstimates["Normal"] + "m",
       this.durationEstimates["Extended"] + "m"];
   }
-
+  
   ngOnInit() {
     this.errorSubscription = this.errorService.errorObservable.subscribe((error) => {
       this.error = error;
@@ -84,7 +86,16 @@ export class CommonoptionsDialogComponent implements OnInit {
           this.closeDialog();
           window.scrollTo(0,0);
           if (this.launchURL && (this.launchURL!='')) {
-            window.open(this.launchURL,'SBLaunch')  
+            window.open(this.launchURL,'_blank')  
+            if(!window || window.closed || !window.open() || typeof window.closed=='undefined') 
+            { 
+                //POPUP BLOCKED
+                this.notificationService.addMessage("ScrawlBrawl was blocked from opening a new window, please navigate to 'Join' in a second window to play.", null, {panelClass: ['error-snackbar'], duration: 60000});
+            }
+            else
+            {
+              this.notificationService.addMessage("Opened player instance in new tab.", null, {panelClass: ['success-snackbar'], duration: 5000});
+            }
           }
           this.onGetLobby();
         },

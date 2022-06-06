@@ -35,9 +35,9 @@ namespace Backend.Games.KevinsGames.IMadeThis
             {
                 Title = "Over-Drawn",
                 GameId = GameModeId.OverDrawn,
-                Description = "Turn your aprentice's artwork into a masterpiece.",
+                Description = "Turn your apprentice's artwork into a masterpiece.",
                 MinPlayers = MinPlayers,
-                MaxPlayers = null,
+                MaxPlayers = CommonGameConstants.MAX_PLAYERS,
                 Attributes = new GameModeAttributes
                 {
                    ProductionReady = true,

@@ -42,7 +42,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             GameId = GameModeId.ChaoticCoop,
             Description = "Blindly collaborate on a drawing with unknown teammates.",
             MinPlayers = MinPlayers,
-            MaxPlayers = null,
+            MaxPlayers = CommonGameConstants.MAX_PLAYERS,
             Attributes = new GameModeAttributes
                 {
                     ProductionReady = true,

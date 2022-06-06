@@ -33,7 +33,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass
                 GameId = GameModeId.LateToArtClass,
                 Description = "Try to get away with forging the art assignment by copying your peer's work.",
                 MinPlayers = MinPlayers,
-                MaxPlayers = null,
+                MaxPlayers = CommonGameConstants.MAX_PLAYERS,
                 Attributes = new GameModeAttributes
                 {
                    ProductionReady = true,
