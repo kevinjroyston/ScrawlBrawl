@@ -1,17 +1,17 @@
-<nav [@simpleFadeAnimation] [@.disabled]="!isHomePage" class="navbar" [ngClass]="{'navbar-homepage': isHomePage, 'navbar-standard': isPastHero, 'navbar-open': isExpanded}">
-    <div class="navbar-left">
+<nav [@simpleFadeAnimation] [@.disabled]="!isHomePage" class="navbar" [ngClass]="{'navbar-homepage': isHomePage, 'navbar-standard': isPastHero, 'navbar-open': isExpanded, 'lobby-nav': isLobbyPage}">
+    <div class="navbar-left" [ngClass]="{'lobby-nav': isLobbyPage}">
         <a (click)="redirectLink('home')">
             <div class="navbar-logo">
                 <scrawlbrawl-logo-horizontal></scrawlbrawl-logo-horizontal>
             </div>
         </a>
-        <div id='hamburger' [ngClass]="{open: isExpanded}" (click)="toggle()">
+        <div id='hamburger' [ngClass]="{open: isExpanded, 'lobby-nav': isLobbyPage}" (click)="toggle()">
             <span></span>
             <span></span>
             <span></span>
         </div>
     </div>
-    <div class="navbar-right" [ngClass]="{'active': isExpanded}">
+    <div class="navbar-right" [ngClass]="{'active': isExpanded, 'lobby-nav': isLobbyPage}">
         <scrawlbrawl-iconbutton (click)="toggleTheme()" class="darkmode" matTooltip="Dark Mode" [mdTooltipClass]="{'tooltip': true}">
             <ion-icon [style.fill]="'var(--text-color)'" name="contrast-outline"></ion-icon>
         </scrawlbrawl-iconbutton>

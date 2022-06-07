@@ -12,9 +12,9 @@ namespace Backend.Games.BriansGames.BattleReady.DataModels
 
         public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerDrawingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(80)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(100)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(120)},
+            { GameDuration.Short, TimeSpan.FromSeconds(100)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(130)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(180)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerPromptTimer = new Dictionary<GameDuration, TimeSpan>()
         {

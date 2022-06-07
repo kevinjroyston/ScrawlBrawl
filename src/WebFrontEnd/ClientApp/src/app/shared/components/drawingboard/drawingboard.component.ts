@@ -55,7 +55,8 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
 
     private updateDrawingOptionsForDrawingType(typ){
         let gallery = Galleries.galleryFromDrawingType(typ);
-        if (!this.drawingOptions) { /* if we are in a stand alone gallery editor, we do not have a drawing prompt, create one */
+
+        if (!this.drawingOptions || this.galleryEditor==true) { /* if we are in a stand alone gallery editor, we do not have a drawing prompt, create one */
             this.drawingOptions = {
                 drawingType: typ,
                 colorList: null,
@@ -73,14 +74,18 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
         if (this.galleryEditor || !this.drawingOptions.canvasBackground) {  // use the gallery background, unless the drawing prompt gave us one
             this.drawingOptions.canvasBackground = gallery.canvasBackground;
         }
-
-        // Any time drawing type is swapped, try and store a recent drawing.
-        this.storeMostRecentDrawing();
     } 
 
     private setDrawingType(typ){
         if (this._drawingType == typ) { return }
         
+        
+        // Any time drawing type is swapped, try and store a recent drawing.
+        // Do this BEFORE we update the drawing type.
+        if (this.drawingOptions && this.drawingOptions.galleryOptions){
+            this.storeMostRecentDrawing(true);
+        }
+
         this._drawingType = typ; 
         this.updateDrawingOptionsForDrawingType(typ);
         if (this.drawingDirective) this.drawingDirective.handleClearUndo();
@@ -127,9 +132,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
         }
     }
     onDrawingChange(event){
-        if (event != this.galleryRecentDrawing) {
-            this.lastDrawingChange = event;
-        }
+        this.lastDrawingChange = event;
         if (this.onChange) {
             this.onChange(event)
         }
@@ -150,12 +153,19 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
 
     handleColorChange = (color: string) => {
         this.selectedColor = color;
-        this.drawingMode = DrawingModes.Draw;
+        this.switchToDrawIfErase();
+    }
+
+    switchToDrawIfErase(){
+        if (this.drawingMode == DrawingModes.Erase)
+        {
+            this.drawingMode = DrawingModes.Draw;
+        }
     }
 
     openColorPicker = (event: MouseEvent): void => {
         event.preventDefault();
-        this.drawingMode = DrawingModes.Draw;
+        this.switchToDrawIfErase();
         const bottomConfig = new MatBottomSheetConfig();
         bottomConfig.data = {
             handleColorChange: (color: string) => this.handleColorChange(color),

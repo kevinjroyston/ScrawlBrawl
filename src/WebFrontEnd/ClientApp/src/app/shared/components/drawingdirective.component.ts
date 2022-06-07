@@ -133,6 +133,7 @@ export class DrawingDirective {
   handleClearUndo() {
     this.undoArray.length = 0;
     this.onImageChange(null, false); /* set base undo image */
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
   }
 
   onPerformUndo() {

@@ -86,8 +86,8 @@ export class CommonoptionsDialogComponent implements OnInit {
           this.closeDialog();
           window.scrollTo(0,0);
           if (this.launchURL && (this.launchURL!='')) {
-            window.open(this.launchURL,'_blank')  
-            if(!window || window.closed || !window.open() || typeof window.closed=='undefined') 
+            var failed = !window.open(this.launchURL,'_blank', '')  
+            if(!window || window.closed || failed || typeof window.closed=='undefined') 
             { 
                 //POPUP BLOCKED
                 this.notificationService.addMessage("ScrawlBrawl was blocked from opening a new window, please navigate to 'Join' in a second window to play.", null, {panelClass: ['error-snackbar'], duration: 60000});
