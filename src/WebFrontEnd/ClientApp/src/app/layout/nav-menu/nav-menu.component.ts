@@ -24,6 +24,7 @@ import { ThemeService } from '@core/services/theme.service'
 export class NavMenuComponent {
   isExpanded = false;
   isHomePage = true;
+  isLobbyPage = false;
   isPastHero = false;
 
   constructor(private router: Router, public activatedRoute: ActivatedRoute, public location: Location, public NavMenuService : NavMenuService, private ThemeService: ThemeService ){
@@ -44,7 +45,9 @@ export class NavMenuComponent {
   }
 
   checkRoute = (url: string) : void => {
-    ((url === '/') || (url.toLowerCase() == '/home')) ? this.isHomePage = true : this.isHomePage = false
+    ((url === '/') || (url.toLowerCase() == '/home')) ? this.isHomePage = true : this.isHomePage = false;
+    
+    ((url === '/lobby') || (url.toLowerCase() == '/lobby')) ? this.isLobbyPage = true : this.isLobbyPage = false;
   }
 
   toggle = () => {

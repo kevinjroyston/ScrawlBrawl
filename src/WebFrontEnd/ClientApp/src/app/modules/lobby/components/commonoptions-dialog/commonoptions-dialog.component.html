@@ -14,9 +14,9 @@
     <div class="gamemode-option">
         <span>Length</span>
         <mat-radio-group aria-label="Game Length" [(ngModel)]="gameDuration">
-            <mat-radio-button [value]="0">Short<br>({{durationEstimates["Short"]}}m)</mat-radio-button>
-            <mat-radio-button [value]="1">Medium<br>({{durationEstimates["Normal"]}}m)</mat-radio-button>
-            <mat-radio-button [value]="2">Long<br>({{durationEstimates["Extended"]}}m)</mat-radio-button>
+            <mat-radio-button [value]="0">Short<span *ngIf="timerEnabled"><br>(~{{durationEstimates["Short"]}}m)</span></mat-radio-button>
+            <mat-radio-button [value]="1">Medium<span *ngIf="timerEnabled"><br>(&lt;{{durationEstimates["Normal"]}}m)</span></mat-radio-button>
+            <mat-radio-button [value]="2">Long<span *ngIf="timerEnabled"><br>(&lt;{{durationEstimates["Extended"]}}m)</span></mat-radio-button>
         </mat-radio-group>
     </div>
 

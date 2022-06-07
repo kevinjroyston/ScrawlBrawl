@@ -24,9 +24,9 @@ namespace Backend.Games.KevinsGames.LateToArtClass.DataModels
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> DrawingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(90)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(120)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(150)},
+            { GameDuration.Short, TimeSpan.FromSeconds(100)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(130)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(180)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> VotingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
