@@ -73,7 +73,7 @@
 
                     <input type="text" class="text-input" formControlName="shortAnswer" *ngIf="subPrompt.shortAnswer">
 
-                    <drawingboard *ngIf="subPrompt.drawing" [drawingOptions]="subPrompt.drawing" formControlName="drawing"></drawingboard>
+                    <drawingboard *ngIf="subPrompt.drawing" [userPromptId]="userPrompt.id" [drawingOptions]="subPrompt.drawing" formControlName="drawing"></drawingboard>
                 </div>
             </div>
         </div>

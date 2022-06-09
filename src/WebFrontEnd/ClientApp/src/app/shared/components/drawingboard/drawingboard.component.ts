@@ -32,6 +32,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     @Input() showEraser: boolean = true;
     @Input() showBrushSizeSelector: boolean = true;
     @Input() drawingOptions:DrawingPromptMetadata;
+    @Input() userPromptId:string="";
     @Input() set drawingType(value: string) { this.setDrawingType(value) }
              get drawingType(): string { return this._drawingType}
 
@@ -69,6 +70,11 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
             }
         }
         this.galleryRecentDrawing = this.drawingOptions?.galleryOptions?.galleryAutoLoadMostRecent ? this.galleryService.GetMostRecentDrawing(typ) : null;
+        if (localStorage.getItem("WIP-ID") == this.userPromptId) {
+                this.galleryRecentDrawing = localStorage.getItem("WIP-Image");
+                localStorage.setItem("WIP-Image","");
+        }
+
         this.drawingWidth = gallery.imageWidth;
         this.drawingHeight = gallery.imageHeight;
         if (this.galleryEditor || !this.drawingOptions.canvasBackground) {  // use the gallery background, unless the drawing prompt gave us one
@@ -124,6 +130,17 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
 
     }
 
+    @HostListener('window:beforeunload', ['$event'])
+    unloadHandler(event: Event) {
+        this.storeWorkInProgress();
+    }
+    storeWorkInProgress(){
+        if (this.lastDrawingChange != "" && this.lastDrawingChange != null && this.userPromptId!="") {
+           localStorage.setItem("WIP-ID",this.userPromptId) 
+           localStorage.setItem("WIP-Image", this.lastDrawingChange);
+        }
+
+    }
     private lastDrawingChange:string;
     storeMostRecentDrawing(onDestroy = false){
         if (this.drawingOptions.galleryOptions && this.lastDrawingChange != "" && this.lastDrawingChange != null) {
