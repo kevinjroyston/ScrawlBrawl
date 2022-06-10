@@ -11,6 +11,7 @@ using static System.FormattableString;
 using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
 using Common.DataModels.Responses.Gameplay;
+using Common.Code.Extensions;
 
 namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
 {
@@ -18,6 +19,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
     {
         private Random Rand { get; } = new Random();
         private ConcurrentBag<Prompt> Prompts { get; set; }
+        private TimeSpan? SetupDuration;
         public SetupPrompts_GS(
             Lobby lobby,
             ConcurrentBag<Prompt> prompts,
@@ -30,6 +32,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                 unityInstructions: "Complete as many prompts as possible before the time runs out",
                 setupDuration: setupDuration)
         {
+            this.SetupDuration = setupDuration;
             this.Prompts = prompts;
         }
 
@@ -43,6 +46,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                 {
                     MaxProgress = NumExpectedPerUser,
                     CurrentProgress = counter + 1,
+                    ExpectedTimePerPrompt = this.SetupDuration.MultipliedBy(1.0f / NumExpectedPerUser)
                 },
                 Description = "Examples: 'Who would win in a fight?', 'A true problem solver', 'Jack of all trades', Etc.",
                 Suggestion = new SuggestionMetadata { SuggestionKey = "TextBodyBuilder-Prompt" },

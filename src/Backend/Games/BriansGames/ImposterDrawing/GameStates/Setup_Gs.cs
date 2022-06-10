@@ -83,6 +83,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                     {
                         CurrentProgress = 1,
                         MaxProgress = 1,
+                        ExpectedTimePerPrompt = this.WritingTimeDuration,
                     },
                     Description = "In the boxes below, enter two drawing prompts such that only you will be able to tell the drawings apart.",
                     SubPrompts = new SubPrompt[]
@@ -148,6 +149,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                         {
                             CurrentProgress = lambdaSafeIndex + 1,
                             MaxProgress = challenges.Count,
+                            ExpectedTimePerPrompt = this.DrawingTimeDuration.MultipliedBy(1.0f / challenges.Count),
                         },
                         Description = "Careful, if you aren't the odd one out and people think you are, you will lose points for being a terrible artist.",
                         SubPrompts = new SubPrompt[]
@@ -212,13 +214,15 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
 
             var assignments = groups.Zip(randomizedOrderChallenges);
 
+            Dictionary<User, double> usersToWeights = users.ToDictionary(keySelector: (user) => user, elementSelector: (user) => 4.0);
+
             foreach ((IGroup<User> groupedUsers, Prompt tracker) in assignments)
             {
                 tracker.UsersToDrawings = new ConcurrentDictionary<User,UserDrawing>(
                     groupedUsers.Members.ToDictionary<User,User,UserDrawing>(
                         keySelector:(user) => user,
                         elementSelector:(user) => null));
-                tracker.Imposter = tracker.UsersToDrawings.Keys.ElementAt(Rand.Next(tracker.UsersToDrawings.Keys.Count));
+                tracker.Imposter = MemberHelpers<User>.SingleSelect_DynamicWeightedRandom(usersToWeights, tracker.UsersToDrawings.Keys, .5);
             }
         }
     }

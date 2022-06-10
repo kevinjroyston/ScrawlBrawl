@@ -23,6 +23,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             // Users often aren't looking at their phone for minutes prior to starting. We just want them to have enough time after the game starts to get a manual response in.
             foreach (User user in this.Lobby.GetAllUsers())
             {
+                user.LastPingTime = DateTime.UtcNow;
                 user.LastActivityTime = DateTime.UtcNow;
             }
             ((WaitForTrigger_StateExit)this.Exit)?.Trigger();

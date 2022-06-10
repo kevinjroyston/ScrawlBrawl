@@ -2,6 +2,7 @@
 using Backend.GameInfrastructure.DataModels.Enums;
 using Backend.GameInfrastructure.DataModels.Users;
 using Backend.Games.Common.GameStates.Setup;
+using Common.Code.Extensions;
 using Common.DataModels.Enums;
 using Common.DataModels.Requests;
 using Common.DataModels.Responses;
@@ -17,6 +18,8 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
     {
         private Random Rand { get; } = new Random();
         private ConcurrentBag<string> Prompts { get; set; }
+
+        private TimeSpan? SetupDuration { get; set; }
         public SetupPrompts_Gs(
             Lobby lobby,
             ConcurrentBag<string> prompts,
@@ -30,6 +33,7 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
                 setupDuration: setupDuration)
         {
             this.Prompts = prompts;
+            this.SetupDuration = setupDuration;
         }
 
         public override UserPrompt CountingPromptGenerator(User user, int counter)
@@ -41,6 +45,7 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
                 {
                     CurrentProgress = counter + 1,
                     MaxProgress = NumExpectedPerUser,
+                    ExpectedTimePerPrompt = this.SetupDuration.MultipliedBy(1.0f / NumExpectedPerUser)
                 },
                 Description = "In the box below, come up with a prompt for other players to draw",
                 SubPrompts = new SubPrompt[]

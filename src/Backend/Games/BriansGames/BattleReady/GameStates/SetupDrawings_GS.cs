@@ -22,6 +22,8 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
         private Random Rand { get; } = new Random();
         private Dictionary<User, List<BodyPartType>> UsersToRandomizedBodyPartTypes { get; set; } = new Dictionary<User, List<BodyPartType>>();
         private ConcurrentBag<PeopleUserDrawing> Drawings { get; set; }
+        private TimeSpan? ExpectedTimePerPrompt { get; set; }
+
         public SetupDrawings_GS(
             Lobby lobby,
             ConcurrentBag<PeopleUserDrawing> drawings,
@@ -32,8 +34,9 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                 numExpectedPerUser: numExpectedPerUser,
                 unityTitle: "",
                 unityInstructions: "Complete as many drawings as possible before the time runs out",
-                setupDuration: setupDurration)
+                setupDuration: setupDurration * numExpectedPerUser)
         {
+            this.ExpectedTimePerPrompt = setupDurration;
             this.Drawings = drawings;
             
             foreach(User user in lobby.GetAllUsers())
@@ -57,6 +60,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                 {
                     CurrentProgress = counter + 1,    
                     MaxProgress = NumExpectedPerUser,
+                    ExpectedTimePerPrompt = this.ExpectedTimePerPrompt,
                 },
                 Description = "Draw the prompt below. Keep in mind you are only drawing part of the person!",
                 SubPrompts = new SubPrompt[]

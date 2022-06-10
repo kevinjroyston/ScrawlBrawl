@@ -91,6 +91,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                         {
                             CurrentProgress = 1,
                             MaxProgress = 1,
+                            ExpectedTimePerPrompt = DrawingTimer,
                         },
                         Description = "In the boxes below, enter a drawing title and "+(UseSingleColor?"the colors": "a description of each layer") + " that will be given to different players.",
                         Suggestion = new SuggestionMetadata { SuggestionKey = (this.UseSingleColor) ? "ChaoticColors-"+ LayersPerTeam : "ChaoticLayers-"+ LayersPerTeam },
@@ -182,7 +183,8 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                         PromptHeader = new PromptHeaderMetadata
                         {
                             CurrentProgress = lambdaSafeIndex + 1,
-                            MaxProgress = stateChain.Count(),
+                            MaxProgress = stateChain.Count,
+                            ExpectedTimePerPrompt = this.DrawingTimer.MultipliedBy(1.0f / stateChain.Count)
                         },
                         Description = "Keep in mind you are only drawing part of the picture!",
                         SubPrompts = new SubPrompt[]

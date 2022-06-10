@@ -57,4 +57,13 @@ export class ColorPickerComponent implements ControlValueAccessor, OnInit
   registerOnTouched(fn: any): void {
   }
 
+  getClasses(color: string){
+    if (this.pastColors && this.pastColors.length>0 && color === this.pastColors[0]){
+      return ['last-color', 'color-square']
+    }
+    else{
+      return ['color-square'];
+    }
+  }
+
 }

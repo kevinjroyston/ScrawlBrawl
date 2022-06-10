@@ -18,6 +18,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
     {
         private Random Rand { get; } = new Random();
         private ConcurrentBag<Prompt> Prompts { get; set; }
+        private TimeSpan? ExpectedTimePerPrompt { get; set; }
         public SetupPrompts_GS(
             Lobby lobby,
             ConcurrentBag<Prompt> prompts,
@@ -28,8 +29,9 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                 numExpectedPerUser: numExpectedPerUser,
                 unityTitle: "",
                 unityInstructions: "Complete as many prompts as possible before the time runs out",
-                setupDuration: setupDuration)
+                setupDuration: setupDuration * numExpectedPerUser)
         {
+            this.ExpectedTimePerPrompt = setupDuration;
             this.Prompts = prompts;
         }
 
@@ -42,6 +44,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                 {
                     CurrentProgress = counter + 1,
                     MaxProgress = NumExpectedPerUser,
+                    ExpectedTimePerPrompt = this.ExpectedTimePerPrompt,
                 },
                 Title = "Now lets make some prompts!",
                 Description = "Examples: Who would win in a fight, Who would make the best actor, Etc.",

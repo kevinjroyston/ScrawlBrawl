@@ -25,7 +25,7 @@
     </div>
     <div class="color-grid">
       <div class="color-row" *ngFor="let colorRow of rainbowColors">
-        <div class="color-square" *ngFor="let color of colorRow" [ngStyle]="{'backgroundColor': color}" (click)="pickColor(color)">
+        <div *ngFor="let color of colorRow" [ngStyle]="{'backgroundColor': color}" [ngClass]="getClasses(color)" (click)="pickColor(color)">
         </div>
       </div>
     </div>

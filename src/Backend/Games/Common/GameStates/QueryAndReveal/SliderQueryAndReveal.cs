@@ -20,6 +20,8 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
         public string QueryPromptTitle { get; set; } = "Answer these questions";
         public string QueryPromptDescription { get; set; }
 
+        private TimeSpan? QueryTime { get; set; }
+
         public SliderQueryAndReveal(
             Lobby lobby,
             List<Question> objectsToQuery,
@@ -27,6 +29,7 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
             TimeSpan? queryTime = null) : base(lobby, objectsToQuery, usersToQuery, queryTime)
         {
             QueryPromptGenerator ??= DefaultQueryPromptGenerator;
+            QueryTime = queryTime;
         }
         public override (int, int)? AnswerExtractor(UserSubForm subForm)
         {
@@ -55,6 +58,7 @@ namespace Backend.Games.Common.GameStates.QueryAndReveal
                 {
                     CurrentProgress = 1,
                     MaxProgress = 1,
+                    ExpectedTimePerPrompt = QueryTime
                 },
                 Description = this.QueryPromptDescription,
                 SubPrompts = questions.Select(question => new SubPrompt()

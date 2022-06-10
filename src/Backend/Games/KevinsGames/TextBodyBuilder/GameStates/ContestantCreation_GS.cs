@@ -28,6 +28,8 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
     {
         private RoundTracker RoundTracker { get; set; }
 
+        private TimeSpan? TotalChainDuration { get; }
+
         public ContestantCreation_GS(Lobby lobby, RoundTracker roundTracker, TimeSpan? creationDuration)
             : base(
                   lobby:lobby,
@@ -35,6 +37,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
         {
             this.RoundTracker = roundTracker;
             TimeSpan? multipliedCreationDuration = creationDuration.MultipliedBy(roundTracker.UsersToAssignedPrompts.Values.Max(list=>list?.Count??1));
+            this.TotalChainDuration = multipliedCreationDuration;
             
             MultiStateChain contestantsMultiStateChain = new MultiStateChain(MakePeopleUserStateChain, stateDuration: multipliedCreationDuration);
 
@@ -71,6 +74,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                             {
                                 MaxProgress = RoundTracker.UsersToAssignedPrompts[user].Count,
                                 CurrentProgress = lambdaSafeIndex + 1,
+                                ExpectedTimePerPrompt = this.TotalChainDuration.MultipliedBy(1.0f / RoundTracker.UsersToAssignedPrompts[user].Count)
                             },
                             Description = "Format is <span class='characterClass'>Character</span> <span class='actionClass'>Action</span> <span class='modifierClass'>Modifier</span>",
                             Suggestion = new SuggestionMetadata { SuggestionKey = $"TextBodyBuilder-Modifier" },

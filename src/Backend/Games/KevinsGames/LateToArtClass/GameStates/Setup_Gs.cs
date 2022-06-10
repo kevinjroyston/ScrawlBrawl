@@ -104,6 +104,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                         {
                             CurrentProgress = lambdaSafeIndex + 1,
                             MaxProgress = onTimeArtClasses.Count + lateArtClasses.Count,
+                            ExpectedTimePerPrompt = this.DrawingTimeDuration.MultipliedBy(1.0f / (onTimeArtClasses.Count + lateArtClasses.Count))
                         },
                         Description = "Careful, the late student might be copying off YOUR work. So make it unique! But make sure you still follow the prompt!",
                         SubPrompts = new SubPrompt[]
@@ -175,6 +176,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                         {
                             CurrentProgress = lambdaSafeIndex + 1,
                             MaxProgress = onTimeArtClasses.Count + lateArtClasses.Count,
+                            ExpectedTimePerPrompt = this.DrawingTimeDuration.MultipliedBy(1.0f / (onTimeArtClasses.Count + lateArtClasses.Count))
                         }
                     });
 
@@ -195,6 +197,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                         {
                             CurrentProgress = lambdaSafeIndex + 1,
                             MaxProgress = onTimeArtClasses.Count + lateArtClasses.Count,
+                            ExpectedTimePerPrompt = this.DrawingTimeDuration.MultipliedBy(1.0f / (onTimeArtClasses.Count + lateArtClasses.Count))
                         },
                         Description = "Better copy off of somebody else. But change it a little so you dont get caught!",
                         SubPrompts = new SubPrompt[]

@@ -17,6 +17,7 @@ using Common.DataModels.Responses.Gameplay;
 using Backend.Games.KevinsGames.TextBodyBuilder.DataModels;
 using Backend.Games.Common.DataModels;
 using static Backend.Games.KevinsGames.TextBodyBuilder.DataModels.TextPerson;
+using Common.Code.Extensions;
 
 namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
 {
@@ -27,7 +28,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
         public static IReadOnlyList<CAMType> UserGeneratedCamTypes { get; } = new List<CAMType>() { CAMType.Character, CAMType.Action };
         private ConcurrentBag<CAMUserText> CAMs { get; set; }
 
-
+        private TimeSpan? SetupDuration;
         public SetupCAMs_GS(
             Lobby lobby,
             ConcurrentBag<CAMUserText> cams,
@@ -41,6 +42,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                 setupDuration: setupDurration)
         {
             this.CAMs = cams;
+            this.SetupDuration = setupDurration;
             
             foreach(User user in lobby.GetAllUsers())
             {
@@ -82,6 +84,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                 {
                     MaxProgress = NumExpectedPerUser,
                     CurrentProgress = counter + 1,
+                    ExpectedTimePerPrompt = this.SetupDuration.MultipliedBy(1.0f / NumExpectedPerUser)
                 },
                 Suggestion = new SuggestionMetadata { SuggestionKey = $"TextBodyBuilder-{camType}" },
                 SubPrompts = new SubPrompt[]

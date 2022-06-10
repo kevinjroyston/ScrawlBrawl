@@ -117,6 +117,35 @@ namespace Common.Code.Helpers
             return output;
         }
 
+        /// <summary>
+        /// Selects from a subset of members based on their weights tracked over a period of time. Also updates the weight of the selected user for you.
+        /// </summary>
+        /// <param name="weights">weights of members</param>
+        /// <param name="choices">which members should be considered</param>
+        /// <param name="multiplierAfterSelected">what to multiply the selected member's weight by</param>
+        /// <returns>The selected member</returns>
+        public static M SingleSelect_DynamicWeightedRandom(Dictionary<M, double> weights, IEnumerable<M> choices, double multiplierAfterSelected)
+        {
+            var choicesList = choices.ToList();
+            var weightSubset = weights.Where((kvp) => choicesList.Contains(kvp.Key)).ToDictionary(kvp=>kvp.Key, kvp=>kvp.Value);
+            var totalWeight = weightSubset.Values.Sum();
+            var randValue = StaticRandom.NextDouble() * totalWeight;
+
+            M choice = weightSubset.First().Key;
+            int index = 0;
+
+            while (randValue > 0 && index < choicesList.Count)
+            {
+                choice = choicesList[index];
+                randValue -= weightSubset[choice];
+
+                index++;
+            }
+
+            weights[choice] *= multiplierAfterSelected;
+            return choice;
+        }
+
         /*
         /// <summary>
         /// Assigns a list of members to a set of nested groups (groups within groups).

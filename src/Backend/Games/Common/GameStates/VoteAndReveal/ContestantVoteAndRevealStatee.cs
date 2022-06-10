@@ -20,6 +20,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
         public string VotingPromptDescription { get; set; }
 
         private Func<T, string> ContestantName { get; }
+        private TimeSpan? VotingTime { get; }
 
         private UserPrompt DefaultVotingPromptGenerator(User user, List<T> choices)
         {
@@ -31,6 +32,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
                 {
                     CurrentProgress = 1,
                     MaxProgress = 1,
+                    ExpectedTimePerPrompt = VotingTime
                 },
                 Description = this.VotingPromptDescription,
                 SubPrompts = new SubPrompt[]
@@ -51,6 +53,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             List<User> votingUsers = null,
             TimeSpan? votingTime = null) : base(lobby, people, votingUsers, votingTime)
         {
+            VotingTime = votingTime;
             VotingPromptGenerator ??= DefaultVotingPromptGenerator;
             ContestantName = contestantName;
         }

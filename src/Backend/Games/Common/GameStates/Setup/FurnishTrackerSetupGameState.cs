@@ -31,6 +31,7 @@ namespace Backend.Games.Common.GameStates.Setup
         public abstract UserTimeoutAction CountingUserTimeoutHandler(User user, UserFormSubmission input, T current);
 
         private Dictionary<User, List<T>> TrackersToFurnish { get; }
+        private TimeSpan? SetupDuration { get; }
 
         public FurnishTrackerSetupGameState(
             Lobby lobby,
@@ -40,6 +41,7 @@ namespace Backend.Games.Common.GameStates.Setup
             TimeSpan? setupDuration = null)
             : base(lobby: lobby, exit: new WaitForUsers_StateExit(lobby))
         {
+            SetupDuration = setupDuration;
             TrackersToFurnish = challengeTrackersToFurnish;
             MultiStateChain setupChains = new MultiStateChain(
                 stateChainGenerator: (user) => new StateChain(
@@ -65,6 +67,7 @@ namespace Backend.Games.Common.GameStates.Setup
                                         {
                                             CurrentProgress = counter + 1,
                                             MaxProgress = TrackersToFurnish[user].Count,
+                                            ExpectedTimePerPrompt = this.SetupDuration.MultipliedBy(1.0f / TrackersToFurnish[user].Count)
                                         };
                                     }
                                     return prompt;
