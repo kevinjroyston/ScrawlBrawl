@@ -283,18 +283,25 @@ drawCircle(x, y): void {
 //    this.drawStar(x,y,this.lineWidth / 2,5,0.4)
     //return;
 
+    if (this.lineWidth==1) {
+      this.ctx.fillStyle = this.getColor();
+      this.ctx.fillRect(x,y,1,1);
+    }
+    else
+    {
 
-    this.ctx.beginPath();
-    var radius = this.lineWidth / 2.1; // Arc radius
-    var startAngle = 0; // Starting point on circle
-    var endAngle = Math.PI * 2; // End point on circle
+      this.ctx.beginPath();
+      var radius = this.lineWidth / 2.1; // Arc radius
+      var startAngle = 0; // Starting point on circle
+      var endAngle = Math.PI * 2; // End point on circle
 
-    this.ctx.moveTo(x, y);
-    this.ctx.strokeStyle = this.getColor();
-    this.ctx.lineWidth = 0;
-    this.ctx.arc(x, y, radius, startAngle, endAngle);
-    this.ctx.fillStyle = this.getColor();
-    this.ctx.fill();
+      this.ctx.moveTo(x, y);
+      this.ctx.strokeStyle = this.getColor();
+      this.ctx.lineWidth = 0;
+      this.ctx.arc(x, y, radius, startAngle, endAngle);
+      this.ctx.fillStyle = this.getColor();
+      this.ctx.fill();
+    }
     this.ctx.globalCompositeOperation = "source-over";
   }
 
