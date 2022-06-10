@@ -60,7 +60,6 @@ export class FetchDataComponent implements OnDestroy
 
     timerDisplay = '';
     timerRemaining = 0;
-    originalTimeRemaining =0;
     timerColor = 'green';
     galleryEditorVisible = false;
     galleryTypes = [...Galleries.galleryTypes]; /* so html page can see the reference.  ... is SPREAD command: https://www.samanthaming.com/tidbits/35-es6-way-to-clone-an-array/ */
@@ -167,7 +166,6 @@ export class FetchDataComponent implements OnDestroy
                 // Start a new autosubmit timer
                 if (prompt && prompt.autoSubmitAtTime) {
                     this.timerRemaining = prompt.autoSubmitAtTime.getTime() - prompt.currentServerTime.getTime();
-                    this.originalTimeRemaining = this.timerRemaining;
                     this.autoSubmitUserPromptTimer(this.timerRemaining);
                 } else {
                     this.clearAutoSubmitTimers(true);
