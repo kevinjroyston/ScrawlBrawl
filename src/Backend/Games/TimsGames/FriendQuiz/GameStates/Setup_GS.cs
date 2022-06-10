@@ -15,6 +15,7 @@ using Common.DataModels.Enums;
 using Backend.Games.Common.GameStates.Setup;
 using Backend.GameInfrastructure.DataModels.Enums;
 using Common.DataModels.Responses.Gameplay;
+using Common.Code.Extensions;
 
 namespace Backend.Games.TimsGames.FriendQuiz.GameStates
 {
@@ -22,6 +23,8 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
     {
         private Random Rand { get; } = new Random();
         private RoundTracker RoundTracker { get; set; }
+
+        private TimeSpan? SetupDuration;
 
         public Setup_GS(
             Lobby lobby,
@@ -35,6 +38,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                 unityInstructions: "Write your questions",
                 setupDuration: setupDuration)
         {
+            this.SetupDuration = setupDuration;
             this.RoundTracker = roundTracker;
         }
 
@@ -48,6 +52,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                 {
                     CurrentProgress = counter + 1,
                     MaxProgress = this.NumExpectedPerUser,
+                    ExpectedTimePerPrompt = this.SetupDuration.MultipliedBy(1.0f / NumExpectedPerUser)
                 },
                 Description = "Write a question and choose an answer type for it",
                 SubPrompts = new SubPrompt[]

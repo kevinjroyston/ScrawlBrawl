@@ -22,12 +22,15 @@ namespace Backend.Games.KevinsGames.LateToArtClass.DataModels
             { GameDuration.Normal, TimeSpan.FromSeconds(120)},
             { GameDuration.Extended, TimeSpan.FromSeconds(180)},
         };
+
+        // Game really falls apart if people don't get through all their drawings, so upping the timers even more.
         public static IReadOnlyDictionary<GameDuration, TimeSpan> DrawingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(100)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(130)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(180)},
+            { GameDuration.Short, TimeSpan.FromSeconds(120)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(150)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(240)},
         };
+
         public static IReadOnlyDictionary<GameDuration, TimeSpan> VotingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
             { GameDuration.Short, TimeSpan.FromSeconds(45)},

@@ -18,6 +18,7 @@ using Backend.GameInfrastructure;
 using CommonConstants = Common.DataModels.Constants;
 using System.Linq;
 using Common.DataModels.Responses.Gameplay;
+using Common.Code.Extensions;
 
 namespace Backend.Games.KevinsGames.Mimic.GameStates
 {
@@ -45,6 +46,7 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                     {
                         CurrentProgress = drawingNumber,
                         MaxProgress = numDrawingsPerUser,
+                        ExpectedTimePerPrompt = this.DrawingTimeDuration.MultipliedBy(1.0f / numDrawingsPerUser)
                     },
                     Description = "Draw anything you want",
                     SubPrompts = new SubPrompt[]
@@ -75,7 +77,7 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
             return stateChain;
         }
 
-
+        private TimeSpan? DrawingTimeDuration { get; }
         public Setup_GS(Lobby lobby, ConcurrentBag<UserDrawing> drawings, int numDrawingsPerUser, TimeSpan? drawingTimeDuration)
             : base(
                   lobby: lobby,
@@ -86,6 +88,7 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                 drawings: drawings,
                 drawingTimeDuration: drawingTimeDuration));
             this.Entrance.Transition(stateChain);
+            this.DrawingTimeDuration = drawingTimeDuration;
             stateChain.Transition(this.Exit);
             this.UnityView = new UnityView(this.Lobby)
             {

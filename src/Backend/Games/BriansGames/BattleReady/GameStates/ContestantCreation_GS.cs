@@ -27,6 +27,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
     public class ContestantCreation_GS : GameState
     {
         private RoundTracker RoundTracker { get; set; }
+        private TimeSpan? ExpectedTimePerPrompt { get; set; }
 
         public ContestantCreation_GS(Lobby lobby, RoundTracker roundTracker, TimeSpan? creationDuration)
             : base(
@@ -34,6 +35,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                   exit: new WaitForUsers_StateExit(lobby))
         {
             this.RoundTracker = roundTracker;
+            this.ExpectedTimePerPrompt = creationDuration;
             TimeSpan? multipliedCreationDuration = creationDuration.MultipliedBy(roundTracker.UsersToAssignedPrompts.Values.Max(list=>list?.Count??1));
             
             MultiStateChain contestantsMultiStateChain = new MultiStateChain(MakePeopleUserStateChain, stateDuration: multipliedCreationDuration);
@@ -71,6 +73,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                             {
                                 CurrentProgress = lambdaSafeIndex + 1,
                                 MaxProgress = RoundTracker.UsersToAssignedPrompts[user].Count,
+                                ExpectedTimePerPrompt = this.ExpectedTimePerPrompt,
                             },
                             SubPrompts = new SubPrompt[]
                             {

@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using Backend.GameInfrastructure;
 using Common.DataModels.Enums;
 using Common.DataModels.Responses.Gameplay;
+using Common.Code.Extensions;
 
 namespace Backend.Games.TimsGames.FriendQuiz.GameStates
 {
@@ -38,6 +39,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                             {
                                 CurrentProgress = lambdaSafeIndex + 1,
                                 MaxProgress = questions.Count,
+                                ExpectedTimePerPrompt = answerTimeDuration.MultipliedBy(1.0f / questions.Count)
                             },
                             Description = question.Text,
                             SubPrompts = new SubPrompt[]

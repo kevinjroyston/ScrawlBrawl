@@ -24,7 +24,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             PromptHeader = new PromptHeaderMetadata
             {
                 CurrentProgress = 1,
-                MaxProgress = 1,
+                MaxProgress = 1
             },
             SubPrompts = new SubPrompt[]
             {

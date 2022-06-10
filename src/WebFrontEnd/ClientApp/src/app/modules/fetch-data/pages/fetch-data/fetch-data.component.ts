@@ -60,6 +60,7 @@ export class FetchDataComponent implements OnDestroy
 
     timerDisplay = '';
     timerRemaining = 0;
+    originalTimeRemaining =0;
     timerColor = 'green';
     galleryEditorVisible = false;
     galleryTypes = [...Galleries.galleryTypes]; /* so html page can see the reference.  ... is SPREAD command: https://www.samanthaming.com/tidbits/35-es6-way-to-clone-an-array/ */
@@ -166,6 +167,7 @@ export class FetchDataComponent implements OnDestroy
                 // Start a new autosubmit timer
                 if (prompt && prompt.autoSubmitAtTime) {
                     this.timerRemaining = prompt.autoSubmitAtTime.getTime() - prompt.currentServerTime.getTime();
+                    this.originalTimeRemaining = this.timerRemaining;
                     this.autoSubmitUserPromptTimer(this.timerRemaining);
                 } else {
                     this.clearAutoSubmitTimers(true);
@@ -286,6 +288,33 @@ export class FetchDataComponent implements OnDestroy
                 if (this.timerRemaining < 10000) this.timerColor = 'var(--red-secondary)'
                 else if (this.timerRemaining < 30000) this.timerColor = 'var(--yellow-secondary)';
              }, 1000);
+    }
+
+    private determineTimerColor(){
+        var levelOfConcern = 0; // 0 green, 1 yellow, 2 red
+
+        // Set based on overall time left
+        if (this.timerRemaining < 15000) levelOfConcern = Math.max(levelOfConcern, 2); // Red
+        if (this.timerRemaining < 45000) levelOfConcern = Math.max(levelOfConcern, 1); // Yellow
+
+        // Set based on proportional time left
+        if (this.userPrompt.promptHeader.expectedTimePerPromptInSec > 0){
+            // Number of prompts left, NOT counting the current prompt
+            var remainingPrompts = (this.userPrompt.promptHeader.maxProgress - this.userPrompt.promptHeader.currentProgress);
+
+            var expectedPromptsFinishedInTimeRemaining = this.timerRemaining / 1000.0 / this.userPrompt.promptHeader.expectedTimePerPromptInSec;
+            var promptFinishDeficit = expectedPromptsFinishedInTimeRemaining - remainingPrompts;
+
+            // Assuming they were to submit right now, they would still be just under pacing
+            if (promptFinishDeficit <= 0) levelOfConcern = Math.max(levelOfConcern, 1) // Yellow
+
+            // Assuming they were to submit TWICE right now, they would still be just under pacing
+            if (promptFinishDeficit <= 1) levelOfConcern = Math.max(levelOfConcern, 2) // Red
+        }
+        
+        this.timerColor = 'var(--green-secondary)';
+        if (levelOfConcern == 2) this.timerColor = 'var(--red-secondary)'
+        else if (levelOfConcern == 1) this.timerColor = 'var(--yellow-secondary)';
     }
 
     private clearAutoSubmitTimers(ForceIt){

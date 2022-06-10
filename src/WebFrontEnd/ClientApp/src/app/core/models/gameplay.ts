@@ -79,6 +79,7 @@ namespace GameplayPrompts {
       maxProgress: number;
       currentProgress: number;
       promptLabel:string;
+      expectedTimePerPromptInSec:number;
     }
     export interface UserRecordType
     {

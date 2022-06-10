@@ -8,6 +8,9 @@ namespace Common.DataModels.Responses.Gameplay
     {
         public int MaxProgress { get; set; } = 0;
         public int CurrentProgress { get; set; } = 0;
+        public TimeSpan? ExpectedTimePerPrompt { private get; set; }
+
+        public int ExpectedTimePerPromptInSec => (int)(ExpectedTimePerPrompt?.TotalSeconds ?? -1.0);
         public string PromptLabel { get; set; } = "";
     }
 }
