@@ -8,6 +8,7 @@ import Galleries from '@core/models/gallerytypes';
 import { EventManager } from '@angular/platform-browser';
 import { GalleryService } from '@core/services/gallery.service';
 import PastColorsService from '../colorpicker/pastColors';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -51,7 +52,11 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     lastImageChange: string = "";
     showGallery: boolean = true;
 
-    constructor(private _colorPicker: MatBottomSheet, private _gallery: MatBottomSheet, private galleryService: GalleryService) {
+    constructor(private _colorPicker: MatBottomSheet, private _gallery: MatBottomSheet, private galleryService: GalleryService,
+        private router:Router) {
+            router.events.subscribe((val) =>{
+                this.storeWorkInProgress();
+            } )
     }
 
     private updateDrawingOptionsForDrawingType(typ){
