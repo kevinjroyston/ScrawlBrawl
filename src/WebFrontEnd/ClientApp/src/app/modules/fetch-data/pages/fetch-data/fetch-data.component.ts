@@ -282,7 +282,7 @@ export class FetchDataComponent implements OnDestroy
             return;
         }
         this.autoSubmitTimerId = setTimeout(() => this.onSubmit(this.userForm?.value, true), ms);
-        
+
         this.timerColor = 'var(--green-secondary)';
         this.determineTimerColor();
 
@@ -314,7 +314,7 @@ export class FetchDataComponent implements OnDestroy
             if (promptFinishDeficit <= 0) levelOfConcern = Math.max(levelOfConcern, 1) // Yellow
 
             // Assuming they were to submit TWICE right now, they would still be just under pacing
-            if (promptFinishDeficit <= 1) levelOfConcern = Math.max(levelOfConcern, 2) // Red
+            if (promptFinishDeficit <= -1) levelOfConcern = Math.max(levelOfConcern, 2) // Red
         }
         
         this.timerColor = 'var(--green-secondary)';
