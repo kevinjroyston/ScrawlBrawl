@@ -130,6 +130,7 @@ export class FetchDataComponent implements OnDestroy
         this.anythingTouchedSinceFetch = false;
         var thisId = this.userPrompt? this.userPrompt.id : "";
 
+        var requestStartTime = new Date().getTime();
         await this.api.request({ type: "Game", params: {promptId: thisId, db: (dirtyBit ? "True" : "False")}, path: "CurrentContent"}).subscribe({
             next: async data => {
                 var currentContent = data as GameplayPrompts.CurrentContent;
@@ -148,6 +149,7 @@ export class FetchDataComponent implements OnDestroy
                     return;
                 }
 
+                var requestEndTime = new Date().getTime();
                 var prompt = currentContent.userPrompt;
 
                 if (prompt) {
@@ -165,8 +167,9 @@ export class FetchDataComponent implements OnDestroy
 
                 // Start a new autosubmit timer
                 if (prompt && prompt.autoSubmitAtTime) {
-                    this.timerRemaining = prompt.autoSubmitAtTime.getTime() - prompt.currentServerTime.getTime();
-                    this.autoSubmitUserPromptTimer(this.timerRemaining);
+                    var requestLatency = Math.min(requestEndTime - requestStartTime, 6000); // Factor in up to 6 seconds of their latency
+                    this.timerRemaining = (prompt.autoSubmitAtTime.getTime() - prompt.currentServerTime.getTime()) - requestLatency; //Count half the latency on the return + another half to submit
+                    this.autoSubmitUserPromptTimer(this.timerRemaining); 
                 } else {
                     this.clearAutoSubmitTimers(true);
                 }
