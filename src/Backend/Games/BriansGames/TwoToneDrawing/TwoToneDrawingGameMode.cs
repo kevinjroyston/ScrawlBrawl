@@ -154,7 +154,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                 {
                     stateList.Add(GetVotingAndRevealState(challenge, votingTimer));
                 }
-                stateList.Add(new ScoreBoardGameState(lobby, "Final Scores"));
+                stateList.Add(new ScoreBoardGameState(lobby, "Final Top Scores"));
                 StateChain gamePlayChain = new StateChain(states: stateList);
                 gamePlayChain.Transition(this.Exit);
                 return gamePlayChain;

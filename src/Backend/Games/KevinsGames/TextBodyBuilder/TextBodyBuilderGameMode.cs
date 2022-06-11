@@ -246,7 +246,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                     {
                         GameState finalScoreBoard = new ScoreBoardGameState(
                         lobby: lobby,
-                        title: "Final Scores");
+                        title: "Final Top Scores");
                         displayPeople.Transition(finalScoreBoard);
                         finalScoreBoard.Transition(this.Exit);
                     }

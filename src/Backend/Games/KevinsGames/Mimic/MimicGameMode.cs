@@ -183,7 +183,7 @@ namespace Backend.Games.KevinsGames.Mimic
                             timeToShowScores = false;
                             return new ScoreBoardGameState(
                                 lobby: lobby,
-                                title: "Final Scores");
+                                title: "Final Top Scores");
                         }
                         else
                         {
