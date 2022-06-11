@@ -6,7 +6,7 @@
             <div class="drawb-top">
                 <div class="drawb-setting" *ngIf="showBrushSizeSelector">
                     <div id="size-controller">
-                        <input type="range" min="3" max="45" [value]="selectedBrushSize" [(ngModel)]="selectedBrushSize">
+                        <input type="range" min="1" max="45" [value]="selectedBrushSize" [(ngModel)]="selectedBrushSize">
                         <div id="preview-size-wrapper">
                             <div id="preview-size" [ngStyle]="{'height': selectedBrushSize * 1.3 + 'px', 'width': selectedBrushSize * 1.3 + 'px', 'backgroundColor': selectedColor}"></div>
                         </div>
@@ -52,7 +52,7 @@
             </div>
             <div class="drawb-tools-section">
                 <scrawlbrawl-iconbutton matTooltip="Undo" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" (click)="drawingDirective.onPerformUndo()">
-                    <ion-icon name="arrow-back-outline"></ion-icon>
+                    <ion-icon name="arrow-undo-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
                 <scrawlbrawl-iconbutton matTooltip="Clear" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" (click)="drawingDirective.clearDrawing()">
                     <ion-icon [style.color]="'var(--red-secondary)'" name="trash-outline"></ion-icon>
