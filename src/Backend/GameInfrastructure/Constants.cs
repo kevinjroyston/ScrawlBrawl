@@ -49,7 +49,7 @@ namespace Backend.GameInfrastructure
         /// <summary>
         /// The amount of buffer to leave between auto submit and the state actually timing out.
         /// </summary>
-        public static TimeSpan AutoSubmitBuffer { get; } = TimeSpan.FromSeconds(4.0);
+        public static TimeSpan AutoSubmitBuffer { get; } = TimeSpan.FromSeconds(2.0);
 
         public static class UIStrings
         {

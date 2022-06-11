@@ -15,7 +15,7 @@ namespace Backend.Games.Common.GameStates
     public class ScoreBoardGameState : GameState
     {
 
-        public ScoreBoardGameState(Lobby lobby, string title = "Scores:")
+        public ScoreBoardGameState(Lobby lobby, string title = "Top Scores:")
             : base(
                   lobby,
                   exit: new WaitForPartyLeader_StateExit(
@@ -56,7 +56,7 @@ namespace Backend.Games.Common.GameStates
         {
             return new UnityField<IReadOnlyList<UnityObject>>
             {
-                Value = this.Lobby.GetAllUsers().OrderByDescending(usr => usr.Score).Select(usr =>
+                Value = this.Lobby.GetAllUsers().OrderByDescending(usr => usr.Score).Take(10).Select(usr =>
                     new UnityImage
                     {
                         Title = new UnityField<string> { Value = usr.DisplayName },

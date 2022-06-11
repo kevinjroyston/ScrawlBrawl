@@ -72,7 +72,7 @@ namespace Galleries  {
 
         {
             drawingType:"GENERIC",
-            galleryDesc: "Images (Favorites of this type not currently used)",
+            galleryDesc: "Images",
             imageWidth: 300,
             imageHeight: 300,
             maxLocalFavorites: 4,

@@ -57,6 +57,7 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
                             ShortAnswer = true,
                         }
                     },
+                Suggestion = new SuggestionMetadata { SuggestionKey = "OverDrawn" },
                 SubmitButton = true
             };
         }

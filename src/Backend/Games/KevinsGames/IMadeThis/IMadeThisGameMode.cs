@@ -158,7 +158,7 @@ namespace Backend.Games.KevinsGames.IMadeThis
                 {
                     stateList.Add(new IMadeThisVoteAndReveal_Gs(Lobby, challengeTracker, votingTimer));
                 }
-                stateList.Add(new ScoreBoardGameState(lobby, "Final Scores"));
+                stateList.Add(new ScoreBoardGameState(lobby, "Final Top Scores"));
                 StateChain gamePlayChain = new StateChain(states: stateList);
                 gamePlayChain.Transition(this.Exit);
                 return gamePlayChain;

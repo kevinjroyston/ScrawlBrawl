@@ -168,8 +168,10 @@ export class FetchDataComponent implements OnDestroy
                 // Start a new autosubmit timer
                 if (prompt && prompt.autoSubmitAtTime) {
                     var requestLatency = Math.min(requestEndTime - requestStartTime, 6000); // Factor in up to 6 seconds of their latency
-                    this.timerRemaining = (prompt.autoSubmitAtTime.getTime() - prompt.currentServerTime.getTime()) - requestLatency; //Count half the latency on the return + another half to submit
-                    this.autoSubmitUserPromptTimer(this.timerRemaining); 
+                    this.timerRemaining = (prompt.autoSubmitAtTime.getTime() - prompt.currentServerTime.getTime()) - requestLatency - 1000; //Count half the latency on the return + another half to submit
+                    if (this.timerRemaining > 5000){
+                        this.autoSubmitUserPromptTimer(this.timerRemaining); 
+                    }
                 } else {
                     this.clearAutoSubmitTimers(true);
                 }
@@ -280,14 +282,16 @@ export class FetchDataComponent implements OnDestroy
             return;
         }
         this.autoSubmitTimerId = setTimeout(() => this.onSubmit(this.userForm?.value, true), ms);
+        
         this.timerColor = 'var(--green-secondary)';
+        this.determineTimerColor();
+
         this.timerDisplayIntervalId = setInterval(() => 
-             {this.timerRemaining-=1000;
+             {
+                this.timerRemaining-=1000;
                 if (this.timerRemaining <= 0) this.timerDisplay = 'Time\'s Up!'
                 else this.timerDisplay = new Date(this.timerRemaining).toISOString().substr(14, 5);
-
-                if (this.timerRemaining < 10000) this.timerColor = 'var(--red-secondary)'
-                else if (this.timerRemaining < 30000) this.timerColor = 'var(--yellow-secondary)';
+                this.determineTimerColor();
              }, 1000);
     }
 
