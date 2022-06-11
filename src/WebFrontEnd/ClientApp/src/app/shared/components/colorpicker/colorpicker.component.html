@@ -12,11 +12,11 @@
       Grayscale
     </div>
     <div class="color-row">
-      <div class="color-square" *ngFor="let color of grayScaleColors[0]" [ngStyle]="{'backgroundColor': color}" (click)="pickColor(color)">
+      <div [ngClass]="getClasses(color)" *ngFor="let color of grayScaleColors[0]" [ngStyle]="{'backgroundColor': color}" (click)="pickColor(color)">
       </div>
     </div>
     <div class="color-row">
-      <div class="color-square" *ngFor="let color of grayScaleColors[1]" [ngStyle]="{'backgroundColor': color}" (click)="pickColor(color)">
+      <div [ngClass]="getClasses(color)" *ngFor="let color of grayScaleColors[1]" [ngStyle]="{'backgroundColor': color}" (click)="pickColor(color)">
       </div>
     </div>
 
