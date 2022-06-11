@@ -303,7 +303,7 @@ export class FetchDataComponent implements OnDestroy
         if (this.timerRemaining < 45000) levelOfConcern = Math.max(levelOfConcern, 1); // Yellow
 
         // Set based on proportional time left
-        if (this.userPrompt.promptHeader.expectedTimePerPromptInSec > 0){
+        if (this.userPrompt?.promptHeader?.expectedTimePerPromptInSec > 0){
             // Number of prompts left, NOT counting the current prompt
             var remainingPrompts = (this.userPrompt.promptHeader.maxProgress - this.userPrompt.promptHeader.currentProgress);
 

@@ -3,8 +3,8 @@
 </div>
 <div *ngIf="userPrompt && userPrompt.submitButton" class="sticky-nav-wrapper">
     <div class="sticky-nav">
-        <div *ngIf="(timerDisplay!='') || (userPrompt.promptHeader.maxProgress > 0)" class="timerPanel" [ngStyle]="{'background-color': timerColor}">{{timerDisplay}}
-            <div *ngIf="userPrompt.promptHeader.maxProgress > 0" class="progressPanel">
+        <div *ngIf="(timerDisplay!='') || (userPrompt?.promptHeader?.maxProgress > 0)" class="timerPanel" [ngStyle]="{'background-color': timerColor}">{{timerDisplay}}
+            <div *ngIf="userPrompt?.promptHeader?.maxProgress > 0" class="progressPanel">
                 {{userPrompt.promptHeader.promptLabel}} {{userPrompt.promptHeader.currentProgress}} of {{userPrompt.promptHeader.maxProgress}}
             </div>
         </div>
