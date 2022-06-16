@@ -72,7 +72,7 @@
     transform: scale(1.1);
 }
 
-.drawb-setting-color{
+.drawb-setting-color {
     display: flex;
     padding: .5rem;
     border-bottom: var(--border);
@@ -84,8 +84,7 @@
     flex-direction: column;
     padding: .5rem;
     border-bottom: var(--border);
-
-    &:not(:last-of-type){
+    &:not(:last-of-type) {
         border-right: var(--border);
     }
 }
@@ -115,16 +114,13 @@
     flex-direction: column;
     border-bottom: var(--border);
     padding: .5rem;
-
-    & > scrawlbrawl-iconbutton {
+    &>scrawlbrawl-iconbutton {
         width: 40px;
         height: 40px;
     }
-
-    & > scrawlbrawl-iconbutton:not(:first-of-type){
+    &>scrawlbrawl-iconbutton:not(:first-of-type) {
         margin-top: 10px;
     }
-
     ion-icon {
         font-size: 22px;
     }
@@ -180,6 +176,26 @@ input[type=range] {
         border-radius: 4px;
         border: 2px solid var(--blue-primary);
     }
+    &::-moz-range-track {
+        height: 8px;
+        cursor: pointer;
+        animate: 0.2s;
+        box-shadow: 1px 1px 2px #A6A6A6;
+        background: var(--pastelblue);
+        border-radius: 4px;
+        border: 2px solid var(--blue-primary);
+    }
+    &::-moz-range-thumb {
+        box-shadow: 1px 1px 2px #A6A6A6;
+        border: 2px solid var(--blue-primary);
+        height: 30px;
+        width: 17px;
+        border-radius: 10px;
+        background: var(--pastelblue);
+        cursor: pointer;
+        -webkit-appearance: none;
+        margin-top: -13px;
+    }
     &::-webkit-slider-thumb {
         box-shadow: 1px 1px 2px #A6A6A6;
         border: 2px solid var(--blue-primary);
@@ -195,7 +211,6 @@ input[type=range] {
         background: var(--pastelred);
     }
 }
-
 
 ::ng-deep.mat-bottom-sheet-container {
     padding: 0 !important;
@@ -215,24 +230,19 @@ input[type=range] {
         padding: .5rem 1rem;
         width: 50%;
         flex-grow: 1;
-
-        &:nth-of-type(2){
+        &:nth-of-type(2) {
             display: none;
         }
     }
-
-    .drawb-tools-section{
+    .drawb-tools-section {
         padding: .25rem;
-
-        & > scrawlbrawl-iconbutton {
+        &>scrawlbrawl-iconbutton {
             width: 35px;
             height: 35px;
         }
-    
-        & > scrawlbrawl-iconbutton:not(:first-of-type){
+        &>scrawlbrawl-iconbutton:not(:first-of-type) {
             margin-top: 10px;
         }
-    
         ion-icon {
             font-size: 21px;
         }
