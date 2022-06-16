@@ -54,6 +54,9 @@
                 <scrawlbrawl-iconbutton matTooltip="Undo" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" (click)="drawingDirective.onPerformUndo()">
                     <ion-icon name="arrow-undo-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
+                <scrawlbrawl-iconbutton matTooltip="Redo" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" (click)="drawingDirective.onPerformRedo()">
+                    <ion-icon name="arrow-redo-outline"></ion-icon>
+                </scrawlbrawl-iconbutton>
                 <scrawlbrawl-iconbutton matTooltip="Clear" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" (click)="drawingDirective.clearDrawing()">
                     <ion-icon [style.color]="'var(--red-secondary)'" name="trash-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
