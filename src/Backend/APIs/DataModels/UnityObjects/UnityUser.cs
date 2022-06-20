@@ -34,7 +34,7 @@ namespace Backend.APIs.DataModels.UnityObjects
 
         [JsonProperty("g")]
         public UserStatus Status => User.Status;
-
+         
         private User User { get; set; }
 
         public UnityUser(User user)

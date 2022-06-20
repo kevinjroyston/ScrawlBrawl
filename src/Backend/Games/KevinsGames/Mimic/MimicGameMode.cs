@@ -46,7 +46,7 @@ namespace Backend.Games.KevinsGames.Mimic
                     {
                         Description = "Memorization difficulty",
                         ResponseType = ResponseType.Integer,
-                        DefaultValue = 3,
+                        DefaultValue = 1,
                         MinValue = 1,
                         MaxValue = 10,
                     },

@@ -86,7 +86,18 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             foreach (GameDuration duration in Enum.GetValues(typeof(GameDuration)))
             {
                 int numRounds = Math.Min(TwoToneDrawingConstants.MaxNumRounds[duration], numPlayers);
-                int numDrawingsPerPlayer = Math.Min(TwoToneDrawingConstants.DrawingsPerPlayer[duration], numRounds);
+                int numDrawingsPerPlayer = Math.Min(TwoToneDrawingConstants.DrawingsPerPlayer[duration], numRounds); 
+                
+                int maxPossibleTeamCount = 6; // Can go higher than this in extreme circumstances.
+                int numLayers = (int)gameModeOptions[(int)GameModeOptionsEnum.numLayers].ValueParsed;
+                if (numLayers * 2 > numPlayers)
+                {
+                    numLayers = numPlayers / 2;
+                }
+                int numTeamsLowerBound = Math.Max(2, 1 * numPlayers / (numRounds * numLayers)); // Lower bound.
+                int numTeamsUpperBound = Math.Min(maxPossibleTeamCount, numDrawingsPerPlayer * numPlayers / (numRounds * numLayers)); // Upper bound.
+                int numTeams = Math.Max(numTeamsLowerBound, numTeamsUpperBound); // Possible for lower bound to be higher than upper bound. that is okay.
+                numDrawingsPerPlayer = Math.Max(Math.Min(numDrawingsPerPlayer, (int)Math.Ceiling((numTeams * numRounds * numLayers * 1.0) / numPlayers)), 1);
 
                 TimeSpan estimate = TimeSpan.Zero;
                 TimeSpan setupTimer = TwoToneDrawingConstants.SetupTimer[duration];
@@ -110,7 +121,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
 
             int numPlayers = lobby.GetAllUsers().Count();
 
-            int maxPossibleTeamCount = 8; // Can go higher than this in extreme circumstances.
+            int maxPossibleTeamCount = 6; // Can go higher than this in extreme circumstances.
             UseSingleColor = (bool)gameModeOptions[(int)GameModeOptionsEnum.useSingleColor].ValueParsed;
             int numLayers = (int)gameModeOptions[(int)GameModeOptionsEnum.numLayers].ValueParsed;
             if (numLayers * 2 > numPlayers)
@@ -122,17 +133,15 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             int numTeamsLowerBound = Math.Max(2, 1 * numPlayers / (numRounds * numLayers)); // Lower bound.
             int numTeamsUpperBound = Math.Min(maxPossibleTeamCount, numDrawingsPerPlayer * numPlayers / (numRounds * numLayers)); // Upper bound.
             int numTeams = Math.Max(numTeamsLowerBound, numTeamsUpperBound); // Possible for lower bound to be higher than upper bound. that is okay.
-
-
-            //int drawingsPerPlayer = numRounds * numLayers * numTeams / numPlayers;
+            numDrawingsPerPlayer = Math.Max(Math.Min(numDrawingsPerPlayer, (int)Math.Ceiling((numTeams * numRounds * numLayers * 1.0) / numPlayers)), 1);
 
             TimeSpan ? setupTimer = null;
-            TimeSpan? drawingTimer = null;
+            TimeSpan? perDrawingTimer = null;
             TimeSpan? votingTimer = null;
             if (standardOptions.TimerEnabled)
             {
                 setupTimer = TwoToneDrawingConstants.SetupTimer[duration].MultipliedBy(UseSingleColor ? 1 : 1.5f);
-                drawingTimer = TwoToneDrawingConstants.PerDrawingTimer[duration].MultipliedBy(numDrawingsPerPlayer);
+                perDrawingTimer = TwoToneDrawingConstants.PerDrawingTimer[duration];
                 votingTimer = TwoToneDrawingConstants.VotingTimer[duration];
             }
 
@@ -144,7 +153,8 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                 numTeamsPerPrompt: numTeams,
                 numRounds: numRounds,
                 setupTimer: setupTimer,
-                drawingTimer: drawingTimer);
+                perDrawingTimer: perDrawingTimer,
+                numDrawingsPerPlayer: numDrawingsPerPlayer);
 
             StateChain GamePlayLoopGenerator()
             {
@@ -214,12 +224,17 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                         }
                     }
                 }
-                int mostVotes = choices.Max((drawingStack) => drawingStack.VotesCastForThisObject.Count);
-                foreach(UserDrawingStack<TeamUserDrawing> drawingStack in choices.Where((drawingStack)=>drawingStack.VotesCastForThisObject.Count == mostVotes))
+
+                // This is probably just equal to num players -1.
+                int totalOtherVotes = (choices.Sum((drawingStack) => drawingStack.VotesCastForThisObject.Count)) - 1;
+                // Points for voting with crowd.
+                foreach (UserDrawingStack<TeamUserDrawing> drawingStack in choices)
                 {
-                    foreach(User userWhoVoted in drawingStack.VotesCastForThisObject.Select(vote => vote.UserWhoVoted))
+                    // Gives a percentage of voting with crowd points. Linear with the percentage of other players who agreed with you.
+                    int scorePerPlayer = (int)(TwoToneDrawingConstants.PointsForVotingForWinningDrawing * ((drawingStack.VotesCastForThisObject.Count - 1) / 1.0 / totalOtherVotes));
+                    foreach (User userWhoVoted in drawingStack.VotesCastForThisObject.Select(vote => vote.UserWhoVoted))
                     {
-                        userWhoVoted.ScoreHolder.AddScore(TwoToneDrawingConstants.PointsForVotingForWinningDrawing, Score.Reason.VotedWithCrowd);
+                        userWhoVoted.ScoreHolder.AddScore(scorePerPlayer, Score.Reason.VotedWithCrowd);
                     }
                 }
             };
