@@ -23,11 +23,18 @@ public class ViewManager : MonoBehaviour
     private Guid lastGuid = Guid.Empty;
 
     private List<Action<GameModeId?>> gameModeListeners = new List<Action<GameModeId?>>();
+    private List<Action<IEnumerable<UnityUser>>> usersAnsweringPromptsListeners = new List<Action<IEnumerable<UnityUser>>>();
+    private IEnumerable<UnityUser> last_UsersAnsweringPrompts = new List<UnityUser>();
 
     public void AddConfigurationListener_GameMode(Action<GameModeId?> gameModeListener)
     {
         gameModeListeners.Add(gameModeListener);
         gameModeListener(ConfigMetaData?.GameMode);
+    }
+    public void AddUsersListener_UsersAnsweringPrompts(Action<IEnumerable<UnityUser>> usersAnsweringPrompts)
+    {
+        usersAnsweringPromptsListeners.Add(usersAnsweringPrompts);
+        usersAnsweringPrompts(last_UsersAnsweringPrompts);
     }
     public void OnLobbyClose()
     {
@@ -53,6 +60,17 @@ public class ViewManager : MonoBehaviour
             }
         }
         ConfigMetaData = newMetaData;
+    }
+    public void UpdateUsersAnsweringPrompts(IEnumerable<UnityUser> users)
+    {
+        foreach (Action<IEnumerable<UnityUser>> usersAnsweringPromptsListener in usersAnsweringPromptsListeners)
+        {
+            usersAnsweringPromptsListener(users);
+        }
+        last_UsersAnsweringPrompts = users;
+
+        // This may result in double pings in some scenarios
+        EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.UserSubmitted });
     }
     public void SwitchToView(TVScreenId? id, UnityView view)
     {

@@ -1,4 +1,5 @@
 ﻿using Common.DataModels.UnityObjects;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,13 @@ namespace Backend.APIs.DataModels.UnityObjects
 {
     public class UnityRPCRequestHolder
     {
+        [JsonProperty("a")]
         public UnityView UnityView { get; set; }
+        [JsonProperty("b")]
         public UnityImageList UnityImageList { get; set; }
+        [JsonProperty("c")]
         public ConfigurationMetadata ConfigurationMetadata { get; set; }
+        [JsonProperty("d")]
         public UnityUserStatuses UnityUserStatus { get; set; }
     }
 }

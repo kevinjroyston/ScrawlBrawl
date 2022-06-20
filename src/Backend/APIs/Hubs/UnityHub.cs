@@ -46,7 +46,7 @@ namespace Backend.APIs.Hubs
                 unityRPCHolder.UnityView = CommonUnityViews.GenerateInvalidVersionView();
                 
                 // SignalR's serialization is abysmal and client has no insight into the issue. So we serialization before.
-                Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(unityRPCHolder));
+                Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(unityRPCHolder, SerializerSettings));
                 return;
             }
 
@@ -68,7 +68,7 @@ namespace Backend.APIs.Hubs
 
 
                     // SignalR's serialization is abysmal and client has no insight into the issue. So we serialization before.
-                    Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(unityRPCHolder,Formatting.None,new JsonSerializerSettings {NullValueHandling=NullValueHandling.Ignore }));
+                    Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(unityRPCHolder,Formatting.None, SerializerSettings));
                 }
             }
             catch (Exception e)
@@ -76,6 +76,11 @@ namespace Backend.APIs.Hubs
                 Console.Error.WriteLine(e);
             }
         }
+
+        private static JsonSerializerSettings SerializerSettings = new JsonSerializerSettings()
+        {
+            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
+        };
         public void ConnectWebLobby(string lobbyAndVersion)
         {  // webviewer can only send in a single string, this has "lobbyid-clientversion"
             string[] webParams = lobbyAndVersion.Split("-");

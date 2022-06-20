@@ -1,4 +1,5 @@
 ﻿using Common.DataModels.Enums;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,6 +20,8 @@ namespace Common.DataModels.UnityObjects
         private bool Dirty { get; set; } = true;
 
         private GameModeId? _GameMode;
+
+        [JsonProperty("a")]
         public GameModeId? GameMode 
         { 
             get { return _GameMode; } 

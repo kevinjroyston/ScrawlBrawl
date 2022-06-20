@@ -98,7 +98,7 @@ namespace Backend.APIs.Hubs
                     {
                         unityRPCHolder.UnityUserStatus = lobby.GetUsersAnsweringPrompts();
 
-                        UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("UpdateState", JsonConvert.SerializeObject(unityRPCHolder, Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
+                        UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("UpdateState", JsonConvert.SerializeObject(unityRPCHolder, Formatting.None, SerializerSettings));
                     }
 
 
@@ -109,6 +109,11 @@ namespace Backend.APIs.Hubs
                 }
             }
         }
+
+        private static JsonSerializerSettings SerializerSettings = new JsonSerializerSettings()
+        {
+            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
+        };
 
         public Task StopAsync(CancellationToken cancellationToken)
         {

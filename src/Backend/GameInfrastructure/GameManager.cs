@@ -228,7 +228,7 @@ namespace Backend.GameInfrastructure
             }
 
             user.DisplayName = displayName;
-            user.SelfPortrait = new DrawingObject(selfPortrait);
+            user.SelfPortrait = new DrawingObject(selfPortrait, user.Id);
 
             if (!LobbyIdToLobby.ContainsKey(lobbyId))
             {

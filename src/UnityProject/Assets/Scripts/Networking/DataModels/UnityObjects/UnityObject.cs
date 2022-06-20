@@ -10,7 +10,8 @@ namespace Assets.Scripts.Networking.DataModels.UnityObjects
 {
     public enum UnityObjectType
     {
-        Image,
+        // DO NOT CHANGE THE ORDER HERE WITHOUT UPDATING CODE. Default matters during deserialization
+        Image = 0,
         Text,
         String,
         Slider,

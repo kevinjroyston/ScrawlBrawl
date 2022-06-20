@@ -26,7 +26,30 @@ namespace Assets.Scripts.Views
             {
                 ViewManager.Singleton.RegisterTVView(id, this);
             }
+            ViewManager.Singleton.AddUsersListener_UsersAnsweringPrompts(UpdateUsersAnsweringPrompts);
             gameObject.SetActive(false);   
+        }
+
+        /// <summary>
+        /// Need this function so that users answering prompts can be updated multiple times within the view.
+        /// - Goal is to avoid rebuilding the view every time
+        /// - Also to minimize bandwidth usage
+        /// </summary>
+        private void UpdateUsersAnsweringPrompts(IEnumerable<UnityUser> users){
+            foreach (Component handlerComponent in Handlers)
+            {
+                HandlerInterface handlerInterface = (HandlerInterface)handlerComponent;
+                if (handlerInterface.Scope != HandlerScope.View)
+                {
+                    continue;
+                }
+                if (handlerInterface.HandlerIds.Count == 1 && handlerInterface?.HandlerIds[0]?.HandlerType == HandlerType.UsersList)
+                {
+                    List<object> values = new List<object>();
+                    values.Add(new UsersListHolder(){ Users = users.ToList()});
+                    Helpers.SetActiveAndUpdate(handlerComponent, values);
+                }
+            }
         }
 
         private void Start()
@@ -103,10 +126,11 @@ namespace Assets.Scripts.Views
                     return new UsersListHolder
                         {
                             Users = UnityView.Users,
-                            IsRevealing = UnityView.IsRevealing
+                            IsRevealing = UnityView.IsRevealing,
+                            IsViewLoad = true
                         };
                 case HandlerType.UnityViewHandler:
-                    return this; // dont ask -_-. Lets dropzone handler grab us so that it can propogate us to object scoped handlers as inherited fields.
+                    return this; // don't ask -_-. Lets dropzone handler grab us so that it can propagate us to object scoped handlers as inherited fields.
                 default:
                     throw new ArgumentException($"Unknown handler id: '{handlerId.HandlerType}'");
             }
