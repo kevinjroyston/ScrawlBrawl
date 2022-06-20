@@ -344,7 +344,7 @@ namespace Backend.GameInfrastructure
 
         public UnityUserStatuses GetUsersAnsweringPrompts()
         {
-            return new UnityUserStatuses(GetAllUsers().Where(user => ((user.Status == UserStatus.AnsweringPrompts) && (user.Activity != UserActivity.Disconnected))).Select(user => user.SelfPortrait.Id).ToList());
+            return new UnityUserStatuses(GetAllUsers().Where(user => ((user.Status == UserStatus.AnsweringPrompts) && (user.Activity != UserActivity.Disconnected))).Select(user => user.Id).ToList());
         }
 
         public bool HasUnityUserStatusChanged()
@@ -355,12 +355,17 @@ namespace Backend.GameInfrastructure
 
             bool anyChanges = false;
 
-            foreach(var user in GetAllUsers())
+            foreach(var user in GetAllUsers().Where(user=>user.Activity!=UserActivity.Disconnected))
             {
                 var status  = user.Status;
                 if (!this.LastSentUserStatuses.ContainsKey(user) || status != this.LastSentUserStatuses[user])
                 {
-                    anyChanges = true;
+                    // Only consider it a change if we swapped to waiting. Any swaps to answering prompts get caught
+                    // due to the corresponding view updates anyways
+                    if (status == UserStatus.Waiting)
+                    {
+                        anyChanges = true;
+                    }
                 }
                 this.LastSentUserStatuses[user] = status;
             }

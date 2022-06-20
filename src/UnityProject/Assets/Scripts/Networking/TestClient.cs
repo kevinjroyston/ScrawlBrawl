@@ -46,6 +46,8 @@ public class TestClient : MonoBehaviour
     {
 #if DEBUG
         string path = "c:\\SBLogs\\SBlog.txt";
+        if (!Directory.Exists("c:\\SBLogs"))
+            return;
         //Write some text to the test.txt file
         StreamWriter writer = new StreamWriter(path, true);
         writer.WriteLine(LogInfo);
@@ -120,7 +122,7 @@ public class TestClient : MonoBehaviour
             {
                 case "UpdateState":
                     try {
-                        var newRPCData = JsonConvert.DeserializeObject<UnityRPCDataHolder>(e.Payload);
+                        var newRPCData = JsonConvert.DeserializeObject<UnityRPCDataHolder>(e.Payload, SerializerSettings);
                         if (newRPCData.UnityView != null) {
                             newRPCData.UnityView = ParseJObjects(newRPCData.UnityView);
                         }
@@ -178,7 +180,8 @@ public class TestClient : MonoBehaviour
                 foreach (object obj in view.UnityObjects.Value)
                 {
                     JObject jObject = (JObject)obj;
-                    switch (jObject["Type"].ToObject<UnityObjectType>())
+                    // Serialization will omit if it is default (i.e. Image)
+                    switch (jObject["Type"]?.ToObject<UnityObjectType>() ?? UnityObjectType.Image)
                     {
                         case UnityObjectType.Image:
                             unityObjects.Add(jObject.ToObject<UnityImage>());
@@ -373,15 +376,28 @@ public class TestClient : MonoBehaviour
                 }
                 if (RPCRequest.UnityImageList != null)
                 {
-                foreach(var item in RPCRequest.UnityImageList.ImgList)
-                {
-                    ImageRepository.AddBase64PngToRepository(item.Key, item.Value);
-                }
+                    foreach(var item in RPCRequest.UnityImageList.ImgList)
+                    {
+                        ImageRepository.AddBase64PngToRepository(item.Key, item.Value);
+                    }
                    /* process image list ViewManager.Singleton.UpdateConfigMetaData(RPCRequest.ConfigurationMetadata); */
                 }
                 if (RPCRequest.UnityView != null)
                 {
+                    // Maintain a lookup of the latest instance we have seen of a given user. Hack to minimize data sent for UnityUserStatuses
+                    foreach(UnityUser user in RPCRequest.UnityView.Users){
+                        UserLookup[user.Id] = user;
+                    }
                     ViewManager.Singleton.SwitchToView(RPCRequest.UnityView?.ScreenId ?? TVScreenId.Unknown, RPCRequest.UnityView);
+                }
+                if (RPCRequest.UnityUserStatus != null)
+                {
+                    List<UnityUser> usersAnsweringPrompts = new List<UnityUser>();
+                    foreach(Guid userAnsweringPrompt in RPCRequest.UnityUserStatus.UsersAnsweringPrompts){
+                        UserLookup[userAnsweringPrompt].Status = UserStatus.AnsweringPrompts;
+                        usersAnsweringPrompts.Add(UserLookup[userAnsweringPrompt]);
+                    }                    
+                    ViewManager.Singleton.UpdateUsersAnsweringPrompts(usersAnsweringPrompts);
                 }
             }
 
@@ -393,6 +409,12 @@ public class TestClient : MonoBehaviour
                 //StartCoroutine(DelayedConnectToHub());
             }
         } 
+
+        private static JsonSerializerSettings SerializerSettings = new JsonSerializerSettings()
+        {
+            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
+        };
+        private Dictionary<Guid, UnityUser> UserLookup = new Dictionary<Guid, UnityUser>();
 
         public void OnApplicationQuit()
         {

@@ -16,6 +16,7 @@ public class PlayerBarHandler : MonoBehaviour, HandlerInterface
     {
         List<UnityUser> users = usersHolder.Users;
         bool isRevealing = usersHolder.IsRevealing;
+        var childCount = gameObject.transform.childCount;
         ClearUsers();
         if (users == null || users.Count <= 0)
         {

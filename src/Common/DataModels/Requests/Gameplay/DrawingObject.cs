@@ -14,6 +14,12 @@ namespace Backend.GameInfrastructure.DataModels
         {
             DrawingStr = drawing;
         }
+
+        public DrawingObject (string drawing, Guid id)
+        {
+            DrawingStr = drawing;
+            Id = id;
+        }
         public void MarkSentToClient()
         {
             SentToClient = true;

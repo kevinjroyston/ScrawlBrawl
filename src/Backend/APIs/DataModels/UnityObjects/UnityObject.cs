@@ -7,7 +7,8 @@ namespace Backend.APIs.DataModels.UnityObjects
 {
     public enum UnityObjectType
     {
-        Image,
+        // DO NOT CHANGE THE ORDER HERE WITHOUT UPDATING CODE. Default matters during deserialization
+        Image = 0,
         Text,
         String,
         Slider,
@@ -16,8 +17,8 @@ namespace Backend.APIs.DataModels.UnityObjects
 
     public abstract class UnityObject : OptionsInterface<UnityObjectOptions>
     {
-        public IReadOnlyList<Guid> UsersWhoVotedFor { get; set; }
         public UnityObjectType Type { get; protected set; }
+        public IReadOnlyList<Guid> UsersWhoVotedFor { get; set; }
         public UnityField<string> Title { get; set; }
         public UnityField<string> Header { get; set; }
         public UnityField<string> Footer { get; set; }

@@ -91,6 +91,8 @@ public static class TypeEnums
     {
         public List<UnityUser> Users { get; set; }
         public bool IsRevealing { get; set; } = false;
+
+        public bool IsViewLoad { get; set; } = false;
     }
     public class SpriteHolder
     {
