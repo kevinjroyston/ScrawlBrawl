@@ -25,6 +25,7 @@ export class DrawingDirective {
   private defaultLineColor: string;
   element;
   private undoArray: string[] = [];
+  public redoArray: string[] = [];
   private userIsDrawing: boolean;
   private lastX: number;
   private lastY: number;
@@ -136,24 +137,39 @@ export class DrawingDirective {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
   }
 
+  replaceImageOnCanvas(imgStr){
+    var img = new Image();
+    var ctx = this.ctx;
+    img.onload = function () {
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
+    };
+    img.src = imgStr;
+
+  }
   onPerformUndo() {
     if (this.undoArray.length > 0) {
       if (this.undoArray.length > 1) {
+        this.redoArray.push(this.undoArray[this.undoArray.length - 1]);
         this.undoArray.pop();
       } // the first call to undo would have the value we just stored, we want to go one back
-      var img = new Image();
-      var ctx = this.ctx;
-      img.onload = function () {
-        console.log("Drawing undo to canvas");
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
-      };
-      console.log("Loading undo drawing " + this.undoArray.length);
+      console.log("Undo");
       let imgStr = this.undoArray[this.undoArray.length - 1];
-      img.src = imgStr;
+      this.replaceImageOnCanvas(imgStr);
       this.emitImageChange(imgStr);
     }
   }
+  onPerformRedo() {
+    if (this.redoArray.length > 0) {
+      console.log("Redo");
+      let imgStr = this.redoArray[this.redoArray.length - 1];
+      this.replaceImageOnCanvas(imgStr);
+      this.emitImageChange(imgStr);
+      this.redoArray.pop();
+      this.onImageChange(imgStr,false);
+    }
+  }
+  
   @HostListener("mousedown", ["$event"])
   @HostListener("touchstart", ["$event"])
   onmousedown(event) {
@@ -168,6 +184,8 @@ export class DrawingDirective {
       if (this.undoArray.length == 0) {
         this.onImageChange(null, false);
       } // initialize undo
+
+      this.redoArray.length = 0;
 
       [this.lastX, this.lastY] = this.getCoords(event);
 
