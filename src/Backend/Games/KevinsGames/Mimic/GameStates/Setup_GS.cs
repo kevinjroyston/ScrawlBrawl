@@ -74,11 +74,11 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                 userTimeoutHandler: (User user, UserFormSubmission input) =>
                 {
                     // Take the auto submit, but not hurried users.
-                    if (!string.IsNullOrEmpty(input.SubForms[0].Drawing))
+                    if (input.SubForms[0].DrawingObject != null)
                     {
                         drawings.Add(new UserDrawing
                         {
-                            Drawing = input.SubForms[0].Drawing,
+                            Drawing = input.SubForms[0].DrawingObject,
                             Owner = user,
                         });
                     }
