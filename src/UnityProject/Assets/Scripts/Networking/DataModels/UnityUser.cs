@@ -23,12 +23,12 @@ namespace Assets.Scripts.Networking.DataModels
     {
         public Guid Id { get; set; }
         public string DisplayName { get; set; }
-        public string SelfPortrait { get; set; }
+/*        public string SelfPortrait { get; set; } */
         public Sprite SelfPortraitSprite
         {
             get
             {
-                return InternalSelfPortraitSprite ?? (InternalSelfPortraitSprite = TextureUtilities.LoadTextureFromBase64(SelfPortrait));
+                return InternalSelfPortraitSprite ?? (InternalSelfPortraitSprite = TextureUtilities.LoadTextureFromBase64(Id.ToString()));
             }
         }
         private Sprite InternalSelfPortraitSprite = null;

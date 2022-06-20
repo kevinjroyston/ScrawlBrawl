@@ -9,6 +9,7 @@ using Backend.GameInfrastructure.Extensions;
 using Common.DataModels.Enums;
 using Backend.GameInfrastructure;
 using Backend.GameInfrastructure.DataModels.States.UserStates;
+using Backend.GameInfrastructure.DataModels;
 
 namespace Backend.Games.Common.GameStates
 {
@@ -60,7 +61,7 @@ namespace Backend.Games.Common.GameStates
                     new UnityImage
                     {
                         Title = new UnityField<string> { Value = usr.DisplayName },
-                        Base64Pngs = new List<string>
+                        DrawingObjects = new List<DrawingObject>
                         {
                             usr.SelfPortrait
                         },

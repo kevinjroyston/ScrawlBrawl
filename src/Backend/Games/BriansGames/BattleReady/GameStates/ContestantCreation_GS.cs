@@ -83,7 +83,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                                 {
                                     HeightInPx = ThreePartPeopleConstants.Heights[BodyPartType.Head],
                                     WidthInPx = ThreePartPeopleConstants.Widths[BodyPartType.Head],
-                                    ImageList = prompt.UsersToUserHands[user].HeadChoices.Select(userDrawing => userDrawing.Drawing).ToArray()
+                                    ImageList = prompt.UsersToUserHands[user].HeadChoices.Select(userDrawing => userDrawing.Drawing.DrawingStr).ToArray()
                                 }
                             },
                             new SubPrompt
@@ -92,7 +92,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                                 {
                                     HeightInPx = ThreePartPeopleConstants.Heights[BodyPartType.Body],
                                     WidthInPx = ThreePartPeopleConstants.Widths[BodyPartType.Body],
-                                    ImageList = prompt.UsersToUserHands[user].BodyChoices.Select(userDrawing => userDrawing.Drawing).ToArray()
+                                    ImageList = prompt.UsersToUserHands[user].BodyChoices.Select(userDrawing => userDrawing.Drawing.DrawingStr).ToArray()
                                 }
                             },
                             new SubPrompt
@@ -101,7 +101,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
                                 {
                                     HeightInPx = ThreePartPeopleConstants.Heights[BodyPartType.Legs],
                                     WidthInPx = ThreePartPeopleConstants.Widths[BodyPartType.Legs],
-                                    ImageList = prompt.UsersToUserHands[user].LegChoices.Select(userDrawing => userDrawing.Drawing).ToArray()
+                                    ImageList = prompt.UsersToUserHands[user].LegChoices.Select(userDrawing => userDrawing.Drawing.DrawingStr).ToArray()
                                 }
                             },
                             new SubPrompt

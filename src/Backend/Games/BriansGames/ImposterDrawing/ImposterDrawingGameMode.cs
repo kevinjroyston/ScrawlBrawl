@@ -149,7 +149,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing
                 {
                     Owner = owner,
                     ShouldHighlightReveal = noneIsCorrect,
-                    Drawing = Constants.Drawings.NoneUnityImage,
+                    Drawing = new DrawingObject(Constants.Drawings.NoneUnityImage),
                     UnityImageRevealOverrides = new UnityObjectOverrides
                     {
                         Title = "None of them",

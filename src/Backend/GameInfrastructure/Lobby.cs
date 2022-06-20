@@ -45,6 +45,13 @@ namespace Backend.GameInfrastructure
         public GameModeMetadataHolder SelectedGameMode { get; private set; }
         public ConfigurationMetadata ConfigMetaData { get; } = new ConfigurationMetadata();
 
+        public UnityImageList LobbyImageList { get; set; } = new UnityImageList();
+
+        private Dictionary<User,UserStatus> LastSentUserStatuses = new Dictionary<User, UserStatus> ();
+
+        private bool UserStatusDirty;
+
+
         #region GameStates
         private GameState CurrentGameState { get; set; }
         //private GameState EndOfGameRestart { get; set; }
@@ -232,7 +239,7 @@ namespace Backend.GameInfrastructure
 
                 // Add a listener so that every time a user's status changes, set the current game state's view to dirty.
                 // TODO: track this separately to avoid sending everything down the wire every time.
-                user.AddStatusListener(() => this.CurrentGameState.UnityViewDirty = true);
+                user.AddStatusListener(() => this.UserStatusDirty = true);
 
                 return true;
             }
@@ -335,6 +342,30 @@ namespace Backend.GameInfrastructure
             return this.UsersInLobby.Values.ToList().AsReadOnly();
         }
 
+        public UnityUserStatuses GetUsersAnsweringPrompts()
+        {
+            return new UnityUserStatuses(GetAllUsers().Where(user => ((user.Status == UserStatus.AnsweringPrompts) && (user.Activity != UserActivity.Disconnected))).Select(user => user.SelfPortrait.Id).ToList());
+        }
+
+        public bool HasUnityUserStatusChanged()
+        {
+            if (!this.UserStatusDirty) return false;
+
+            this.UserStatusDirty = false;
+
+            bool anyChanges = false;
+
+            foreach(var user in GetAllUsers())
+            {
+                var status  = user.Status;
+                if (!this.LastSentUserStatuses.ContainsKey(user) || status != this.LastSentUserStatuses[user])
+                {
+                    anyChanges = true;
+                }
+                this.LastSentUserStatuses[user] = status;
+            }
+            return anyChanges;
+        }
         public LobbyMetadataResponse GenerateLobbyMetadataResponseObject()
         {
             return new LobbyMetadataResponse()
@@ -437,6 +468,11 @@ namespace Backend.GameInfrastructure
         public void AddPerUserEntranceListener(Action<User> listener)
         {
             throw new NotImplementedException();
+        }
+
+        public void AddDrawingObjectToRepository(DrawingObject drawingObject)
+        {
+            LobbyImageList.ImgList[drawingObject.Id.ToString()] = drawingObject.DrawingStr;
         }
     }
 }

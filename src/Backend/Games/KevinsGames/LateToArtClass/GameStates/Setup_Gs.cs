@@ -125,7 +125,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                             user,
                             new UserDrawing()
                             {
-                                Drawing = input.SubForms[0].Drawing,
+                                Drawing = input.SubForms[0].DrawingObject,
                                 Owner = user,
                                 UnityImageRevealOverrides = new UnityObjectOverrides
                                 {
@@ -185,7 +185,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                 var dummyWaitingState = new PromptlessUserState(waitingForCopyStateExit);
                 dummyWaitingState.AddExitListener(() => {
                     // Select a random user to copy from, just before entering the actual state
-                    artClass.CopiedFrom = artClass.UsersToDrawings.Where(kvp => !string.IsNullOrWhiteSpace(kvp.Value?.Drawing)).OrderBy(_ => StaticRandom.Next()).First().Key;
+                    artClass.CopiedFrom = artClass.UsersToDrawings.Where(kvp => kvp.Value?.Drawing!=null).OrderBy(_ => StaticRandom.Next()).First().Key;
                 });
 
                 stateChain.Add(dummyWaitingState);
@@ -204,7 +204,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                          {
                             new SubPrompt
                             {
-                                Prompt = Invariant($"Your neighbors assignment:{CommonHelpers.HtmlImageWrapper(artClass.UsersToDrawings[artClass.CopiedFrom].Drawing)}"),
+                                Prompt = Invariant($"Your neighbors assignment:{CommonHelpers.HtmlImageWrapper(artClass.UsersToDrawings[artClass.CopiedFrom].Drawing.DrawingStr)}"),
                                 Drawing = new DrawingPromptMetadata(){
                                     GalleryOptions = null
                                 },
@@ -218,7 +218,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                             user,
                             new UserDrawing()
                             {
-                                Drawing = input.SubForms[0].Drawing,
+                                Drawing = input.SubForms[0].DrawingObject,
                                 Owner = user,
                                 ShouldHighlightReveal = true,
                                 UnityImageRevealOverrides = new UnityObjectOverrides

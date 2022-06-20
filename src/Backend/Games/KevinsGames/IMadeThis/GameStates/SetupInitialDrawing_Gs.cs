@@ -58,7 +58,7 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
         {
             current.InitialDrawing = new UserDrawing()
             {
-                Drawing = input.SubForms[0].Drawing,
+                Drawing = input.SubForms[0].DrawingObject,
                 Owner = user,
                 UnityImageVotingOverrides = new UnityObjectOverrides
                 {
@@ -76,11 +76,11 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
         public override UserTimeoutAction CountingUserTimeoutHandler(User user, UserFormSubmission input, ChallengeTracker current)
         {
             // Game state will have to filter empty ones of these ones out
-            if (!string.IsNullOrWhiteSpace(input?.SubForms?[0]?.Drawing))
+            if (input?.SubForms?[0]?.DrawingObject!=null)
             {
                 current.InitialDrawing = new UserDrawing()
                 {
-                    Drawing = input.SubForms[0].Drawing,
+                    Drawing = input.SubForms[0].DrawingObject,
                     Owner = user,
                     UnityImageVotingOverrides = new UnityObjectOverrides
                     {

@@ -14,7 +14,7 @@ namespace Backend.APIs.Hubs
     /// </summary>
     public class UnityHub : Hub
     {
-        private const string ServerVersion = "2.1.0";
+        private const string ServerVersion = "3.0.0";
 
 
         private GameManager GameManager { get; set; }
@@ -41,7 +41,12 @@ namespace Backend.APIs.Hubs
                 || !TryTruncateVersionString(clientVersion, out truncatedClientVersion)
                 || truncatedClientVersion < truncatedServerVersion)
             {
-                Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(CommonUnityViews.GenerateInvalidVersionView()));
+                UnityRPCRequestHolder unityRPCHolder = new UnityRPCRequestHolder();
+
+                unityRPCHolder.UnityView = CommonUnityViews.GenerateInvalidVersionView();
+                
+                // SignalR's serialization is abysmal and client has no insight into the issue. So we serialization before.
+                Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(unityRPCHolder));
                 return;
             }
 
@@ -53,12 +58,17 @@ namespace Backend.APIs.Hubs
                 {
                     LeaveAllGroups();
                     Groups.AddToGroupAsync(Context.ConnectionId, lobby.LobbyId);
+                    UnityRPCRequestHolder unityRPCHolder=new UnityRPCRequestHolder();
 
-                    UnityView view = lobby.GetActiveUnityView(returnNullIfNoChange: false);
+                    /* joining a lobby, send everything down */
+                    unityRPCHolder.UnityView = lobby.GetActiveUnityView(returnNullIfNoChange: false);
+                    unityRPCHolder.ConfigurationMetadata = lobby.ConfigMetaData;
+                    unityRPCHolder.UnityImageList = lobby.LobbyImageList;
+                    unityRPCHolder.UnityUserStatus = lobby.GetUsersAnsweringPrompts();
+
 
                     // SignalR's serialization is abysmal and client has no insight into the issue. So we serialization before.
-                    Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(view));
-                    Clients.Caller.SendAsync("ConfigureMetadata", JsonConvert.SerializeObject(lobby.ConfigMetaData));
+                    Clients.Caller.SendAsync("UpdateState", JsonConvert.SerializeObject(unityRPCHolder,Formatting.None,new JsonSerializerSettings {NullValueHandling=NullValueHandling.Ignore }));
                 }
             }
             catch (Exception e)

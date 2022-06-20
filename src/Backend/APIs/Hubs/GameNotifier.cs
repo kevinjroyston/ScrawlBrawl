@@ -7,6 +7,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace Backend.APIs.Hubs
 {
@@ -52,20 +53,55 @@ namespace Backend.APIs.Hubs
             {
                 try
                 {
-                    UnityView view = lobby.GetActiveUnityView(returnNullIfNoChange:true);
+                    UnityRPCRequestHolder unityRPCHolder = new UnityRPCRequestHolder();
 
-                    if (view != null)
-                    {
-                        // SignalR's serialization is abysmal and client has no insight into the issue. pull serialization out.
-                        UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("UpdateState", JsonConvert.SerializeObject(view));
-                    }
-
+                    unityRPCHolder.UnityView = lobby.GetActiveUnityView(returnNullIfNoChange: true);
                     bool needToRefreshMetadata = lobby.ConfigMetaData?.Refresh() ?? false;
-
-                    if (needToRefreshMetadata)
+                    unityRPCHolder.ConfigurationMetadata = (needToRefreshMetadata) ? lobby.ConfigMetaData:null;
+                    unityRPCHolder.UnityImageList = new UnityImageList();
+                    if (unityRPCHolder.UnityView?.UnityObjects?.Value != null)
                     {
-                        UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("ConfigureMetadata", lobby.ConfigMetaData);
+                        foreach(var unityObject in unityRPCHolder.UnityView.UnityObjects.Value)
+                        {
+                            var unityImage = unityObject as UnityImage;
+                            if (unityImage != null)
+                            {
+                                foreach (var drawingObject in unityImage.DrawingObjects.Where(drawing => !drawing.SentToClient))
+                                {
+                                    unityRPCHolder.UnityImageList.ImgList.Add(drawingObject.Id.ToString(),drawingObject.DrawingStr);
+                                    drawingObject.MarkSentToClient();
+                                    lobby.AddDrawingObjectToRepository(drawingObject);
+
+                                }
+                            }
+                        }
                     }
+                    if (unityRPCHolder.UnityView?.Users != null)
+                    {
+                        foreach (var unityUser in unityRPCHolder.UnityView.Users.Where(user=>!user.DrawingObject.SentToClient))
+                        {
+                            unityRPCHolder.UnityImageList.ImgList.Add(unityUser.DrawingObject.Id.ToString(), unityUser.DrawingObject.DrawingStr);
+                            unityUser.DrawingObject.MarkSentToClient();
+                            lobby.AddDrawingObjectToRepository(unityUser.DrawingObject);
+                        }
+                    }
+
+                    if (!unityRPCHolder.UnityImageList.ImgList.Any())
+                    {
+                        unityRPCHolder.UnityImageList = null;
+                    }
+
+                    bool unityUserStatusChanged = lobby.HasUnityUserStatusChanged();
+
+                    // SignalR's serialization is abysmal and client has no insight into the issue. pull serialization out.
+                    if (unityUserStatusChanged || (unityRPCHolder.UnityView != null) || (unityRPCHolder.ConfigurationMetadata != null) || (unityRPCHolder.UnityImageList != null))
+                    {
+                        unityRPCHolder.UnityUserStatus = lobby.GetUsersAnsweringPrompts();
+
+                        UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("UpdateState", JsonConvert.SerializeObject(unityRPCHolder, Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
+                    }
+
+
                 }
                 catch (Exception e)
                 {

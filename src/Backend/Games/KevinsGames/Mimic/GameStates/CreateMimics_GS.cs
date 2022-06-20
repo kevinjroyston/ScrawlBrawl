@@ -50,7 +50,7 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                 {
                     UserDrawing submission = new UserDrawing
                     {
-                        Drawing = input.SubForms[0].Drawing,
+                        Drawing = input.SubForms[0].DrawingObject,
                         Owner = user
                     };
                     roundTracker.UsersToUserDrawings.AddOrReplace(user, submission);

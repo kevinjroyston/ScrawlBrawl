@@ -1,4 +1,5 @@
-﻿using Common.DataModels.Responses;
+﻿using Backend.GameInfrastructure.DataModels;
+using Common.DataModels.Responses;
 using Common.DataModels.Validation;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,22 @@ namespace Common.DataModels.Requests
 
         [RegexSanitizer(Constants.RegexStrings.ImageDataUrl)]
         [LengthSanitizer(max:10000000)]
-        public string Drawing { get; set; }
+        public string Drawing { private get; set; }
+
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public DrawingObject DrawingObject { get
+            {
+                if ((_DrawingObject==null) && (!string.IsNullOrEmpty(Drawing)))
+                {
+                    _DrawingObject = new DrawingObject(Drawing);
+                }
+                return _DrawingObject;
+            }
+        }
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        private DrawingObject _DrawingObject { get; set; }
 
         public int? Selector { get; set; }
         public IReadOnlyList<int> Slider { get; set; }
