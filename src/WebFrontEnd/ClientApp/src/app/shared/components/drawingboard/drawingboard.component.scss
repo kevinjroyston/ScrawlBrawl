@@ -27,6 +27,7 @@
 .draw-canvas {
     width: 100%;
     height: auto;
+    border: 2px;
     background-size: 100% 100%;
     pointer-events: all;
     &:hover {
@@ -94,6 +95,11 @@
     font-size: 12.5px;
     font-weight: 400;
     margin-bottom: .5rem;
+}
+
+.draw-canvas {
+    border: 2px solid;
+    border-color: var(--border-dark);
 }
 
 .drawb-colors {

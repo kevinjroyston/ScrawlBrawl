@@ -65,7 +65,7 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                 {
                     drawings.Add(new UserDrawing
                     {
-                        Drawing = input.SubForms[0].Drawing,
+                        Drawing = input.SubForms[0].DrawingObject,
                         Owner = user,
                     });
                     return (true, String.Empty);

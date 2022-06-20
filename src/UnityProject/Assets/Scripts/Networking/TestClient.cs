@@ -14,6 +14,8 @@ using Newtonsoft.Json.Linq;
 using static UnityEngine.UI.GridLayoutGroup;
 using Assets.Scripts.Networking.DataModels.UnityObjects;
 using System.Collections.Specialized;
+using System.IO;
+using System.Collections.Concurrent;
 
 /// <summary>
 /// This class opens a connection to the server and listens for updates. From the main thread the secondary connection thread is
@@ -24,7 +26,7 @@ public class TestClient : MonoBehaviour
 {
     private SignalRLib srLib;
 
-    private const string ClientVersion = "2.1.0";
+    private const string ClientVersion = "3.0.0";
     private Task hubTask;
 
     private List<string> handlers = new List<string>() { "ConfigureMetadata", "UpdateState", "LobbyClose" };
@@ -33,15 +35,23 @@ public class TestClient : MonoBehaviour
     private bool Connected { get; set; } = false;
 
     // Hacky fix to send the update from the main thread.
+    private ConcurrentQueue<UnityRPCDataHolder> RPCRequestQueue { get; set; } = new ConcurrentQueue<UnityRPCDataHolder>();
     private bool Dirty { get; set; } = false;
     private bool LobbyClosed { get; set; } = false;
-    private UnityView CurrentView { get; set; }
-
-    private bool ConfigDirty { get; set; } = false;
-    private ConfigurationMetadata ConfigurationMeta { get; set; }
 
     private bool Restarting { get; set; } = false;
     public EnterLobbyId EnterLobbyId;
+
+    void DumpToLog(string LogInfo)
+    {
+#if DEBUG
+        string path = "c:\\SBLogs\\SBlog.txt";
+        //Write some text to the test.txt file
+        StreamWriter writer = new StreamWriter(path, true);
+        writer.WriteLine(LogInfo);
+        writer.Close();
+#endif
+    }
 
     /// <summary>
     /// Set up the connection and callbacks.
@@ -104,16 +114,17 @@ public class TestClient : MonoBehaviour
         srLib.HandlerInvoked += (object sender, HandlerEventArgs e) =>
         {
             Debug.Log("handler invoked");
-
+            DumpToLog(e.HandlerName);
+            DumpToLog(e.Payload);
             switch (e.HandlerName)
             {
-                case "ConfigureMetadata":
-                    ConfigurationMeta = JsonConvert.DeserializeObject<ConfigurationMetadata>(e.Payload);
-                    ConfigDirty = true;
-                    break;
                 case "UpdateState":
                     try {
-                        CurrentView = ParseJObjects(JsonConvert.DeserializeObject<UnityView>(e.Payload));
+                        var newRPCData = JsonConvert.DeserializeObject<UnityRPCDataHolder>(e.Payload);
+                        if (newRPCData.UnityView != null) {
+                            newRPCData.UnityView = ParseJObjects(newRPCData.UnityView);
+                        }
+                        RPCRequestQueue.Enqueue(newRPCData);
                     }
                     catch (Exception err)
                     {
@@ -201,8 +212,15 @@ public class TestClient : MonoBehaviour
                 srLib.SendToHub("ConnectWebLobby", LobbyId + "-" + ClientVersion);
             }
         }
+        public void RequestImageFromServer(string imageKey)
+        {
+            if (Connected)
+            {
+                srLib.SendToHub("ConnectImageRequest", imageKey);
+            }
+        }
 
-        public void Start()
+    public void Start()
         {
 #region Debug Unity View 
             /// This is paired with ViewManager.SetDebugCustomView() to allow testing of views without having to do anything on backend
@@ -341,27 +359,30 @@ public class TestClient : MonoBehaviour
         {
             // If the Dirty bit is set that means the networking thread got a response from the server. Since it is not possible
             // to make certain types of calls outside of the main thread we listen for it here and make the call here.
-            if (Dirty)
+            if (LobbyClosed)
             {
-                Debug.Log($"Server update");
-                Dirty = false;
-                if (LobbyClosed)
-                {
-                    LobbyClosed = false;
-                    ViewManager.Singleton.OnLobbyClose();
-
-                }
-                else
-                {
-                    ViewManager.Singleton.SwitchToView(CurrentView?.ScreenId ?? TVScreenId.Unknown, CurrentView);
-                }
+                LobbyClosed = false;
+                ViewManager.Singleton.OnLobbyClose();
             }
 
-            if (ConfigDirty)
+            if (!RPCRequestQueue.IsEmpty && RPCRequestQueue.TryDequeue(out var RPCRequest)) 
             {
-                Debug.Log($"Config Update");
-                ConfigDirty = false;
-                ViewManager.Singleton.UpdateConfigMetaData(ConfigurationMeta);
+                if (RPCRequest.ConfigurationMetadata != null)
+                {
+                    ViewManager.Singleton.UpdateConfigMetaData(RPCRequest.ConfigurationMetadata);
+                }
+                if (RPCRequest.UnityImageList != null)
+                {
+                foreach(var item in RPCRequest.UnityImageList.ImgList)
+                {
+                    ImageRepository.AddBase64PngToRepository(item.Key, item.Value);
+                }
+                   /* process image list ViewManager.Singleton.UpdateConfigMetaData(RPCRequest.ConfigurationMetadata); */
+                }
+                if (RPCRequest.UnityView != null)
+                {
+                    ViewManager.Singleton.SwitchToView(RPCRequest.UnityView?.ScreenId ?? TVScreenId.Unknown, RPCRequest.UnityView);
+                }
             }
 
             // If we aren't in the process of a delayed restart and the connection task failed. Begin a delayed restart.

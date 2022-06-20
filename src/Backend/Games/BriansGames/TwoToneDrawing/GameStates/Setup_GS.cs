@@ -209,7 +209,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                     },
                     formSubmitHandler: (User user, UserFormSubmission input) =>
                     {
-                        challenge.UserSubmittedDrawings[user].Drawing = input.SubForms[0].Drawing;
+                        challenge.UserSubmittedDrawings[user].Drawing = input.SubForms[0].DrawingObject;
                         challenge.UserSubmittedDrawings[user].Owner = user;
                         return (true, string.Empty);
                     })) ;

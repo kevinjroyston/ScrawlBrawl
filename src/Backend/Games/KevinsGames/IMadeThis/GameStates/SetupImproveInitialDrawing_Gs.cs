@@ -45,7 +45,7 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
                             Prompt = $"Prompt: '{current.SecondaryPrompt}'",
                             Drawing = new DrawingPromptMetadata(){
                                 GalleryOptions = null,
-                                CanvasBackground = current.InitialDrawing.Drawing,
+                                CanvasBackground = current.InitialDrawing.Drawing.DrawingStr,
                                 SaveWithBackground = true
                             },
                         },
@@ -68,7 +68,7 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
             }
             current.UsersToDrawings[user] = new UserDrawing()
             {
-                Drawing = input.SubForms[0].Drawing,
+                Drawing = input.SubForms[0].DrawingObject,
                 Owner = user,
                 UnityImageVotingOverrides = new UnityObjectOverrides
                 {
@@ -92,11 +92,11 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
                 artName = input.SubForms[1].ShortAnswer;
             }
 
-            if (!string.IsNullOrWhiteSpace(input?.SubForms?[0]?.Drawing))
+            if (input?.SubForms?[0]?.DrawingObject!=null)
             {
                 current.UsersToDrawings[user] = new UserDrawing()
                 {
-                    Drawing = input.SubForms[0].Drawing,
+                    Drawing = input.SubForms[0].DrawingObject,
                     Owner = user,
                     UnityImageVotingOverrides = new UnityObjectOverrides
                     {

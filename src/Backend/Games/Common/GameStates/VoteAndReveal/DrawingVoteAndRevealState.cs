@@ -33,7 +33,7 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
                     new SubPrompt()
                     {
 //                        Selector = new SelectorPromptMetadata(){ ImageList = choices.Select(userDrawing => userDrawing.Drawing).ToArray() },
-                        Answers = choices.Select(userDrawing => $"{CommonHelpers.HtmlSizelessImageWrapper(userDrawing.Drawing)}{userDrawing.UnityImageVotingOverrides.Title??string.Empty}").ToArray(),
+                        Answers = choices.Select(userDrawing => $"{CommonHelpers.HtmlSizelessImageWrapper(userDrawing.Drawing.DrawingStr)}{userDrawing.UnityImageVotingOverrides.Title??string.Empty}").ToArray(),
                     }
                 },
                 SubmitButton = true

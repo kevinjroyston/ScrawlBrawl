@@ -9,7 +9,7 @@ namespace Backend.APIs.Helpers.Validation
         public static bool Validate_Drawing(SubPrompt prompt, UserSubForm subForm)
         {
             bool promptedForDrawing = prompt.Drawing != null;
-            bool providedDrawing = !string.IsNullOrWhiteSpace(subForm.Drawing);
+            bool providedDrawing = !string.IsNullOrWhiteSpace(subForm.DrawingObject?.DrawingStr);
             return promptedForDrawing == providedDrawing;
         }
         public static bool Validate_ShortAnswer(SubPrompt prompt, UserSubForm subForm)

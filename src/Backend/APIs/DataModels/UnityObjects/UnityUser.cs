@@ -1,4 +1,5 @@
-﻿using Backend.GameInfrastructure.DataModels.Users;
+﻿using Backend.GameInfrastructure.DataModels;
+using Backend.GameInfrastructure.DataModels.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,11 @@ namespace Backend.APIs.DataModels.UnityObjects
     {
         public Guid Id => User.Id;
         public string DisplayName => User.DisplayName;
-        public string SelfPortrait => User.SelfPortrait;
+        public string SelfPortrait => User.SelfPortrait.Id.ToString();
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public DrawingObject DrawingObject => User.SelfPortrait;
+
         public int Score => User.Score;
         public int ScoreDeltaReveal => User.ScoreDeltaReveal;
         public int ScoreDeltaScoreboard => User.ScoreDeltaScoreboard;

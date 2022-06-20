@@ -170,7 +170,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                             user,
                             new UserDrawing()
                             {
-                                Drawing = input.SubForms[0].Drawing,
+                                Drawing = input.SubForms[0].DrawingObject,
                                 Owner = user,
                                 ShouldHighlightReveal = promptToDraw.Imposter == user,
                                 UnityImageRevealOverrides = new UnityObjectOverrides

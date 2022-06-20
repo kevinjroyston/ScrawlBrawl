@@ -100,7 +100,9 @@ namespace Backend.GameInfrastructure.DataModels.Users
         /// <summary>
         /// The self portrait of the user.
         /// </summary>
-        public string SelfPortrait { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public DrawingObject SelfPortrait { get; set; } /* do not serialize, unity finds this in the repo from the users id */
 
         // Legacy Score stubs. To be removed.
         public int Score => ScoreHolder.ScoreAggregates[Users.Score.Scope.Total];

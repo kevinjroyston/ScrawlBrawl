@@ -84,7 +84,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
         {
             this.Drawings.Add(new PeopleUserDrawing
             {
-                Drawing = input.SubForms[0].Drawing,
+                Drawing = input.SubForms[0].DrawingObject,
                 Owner = user,
                 Type = UsersToRandomizedBodyPartTypes[user][counter % 3]
             });
@@ -92,11 +92,11 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
         }
         public override UserTimeoutAction CountingUserTimeoutHandler(User user, UserFormSubmission input, int counter)
         {
-            if (input?.SubForms?[0]?.Drawing != null)
+            if (input?.SubForms?[0]?.DrawingObject != null)
             {
                 Drawings.Add(new PeopleUserDrawing
                 {
-                    Drawing = input.SubForms[0].Drawing,
+                    Drawing = input.SubForms[0].DrawingObject,
                     Owner = user,
                     Type = UsersToRandomizedBodyPartTypes[user][counter % 3]
                 });

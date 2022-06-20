@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Backend.Games.Common.GameStates.VoteAndReveal;
 using Backend.GameInfrastructure.DataModels.Users;
 using System.Linq;
+using Backend.GameInfrastructure.DataModels;
 
 namespace Backend.Games.Common.DataModels
 {
@@ -14,7 +15,7 @@ namespace Backend.Games.Common.DataModels
         {
             //empty
         }
-        public string Drawing { get; set; }
+        public DrawingObject Drawing { get; set; }
 
         public override UnityObject GetUnityObject(
             Color? backgroundColor = null,
@@ -27,7 +28,7 @@ namespace Backend.Games.Common.DataModels
             bool revealThisObject = false)
         {
             UnityImage baseImage = new UnityImage(base.GetUnityObject(backgroundColor, imageIdentifier, imageOwnerId, title, header, voteCount, usersWhoVotedFor, revealThisObject));
-            baseImage.Base64Pngs = new List<string>() { this.Drawing }.AsReadOnly();
+            baseImage.DrawingObjects = new List<DrawingObject>() { this.Drawing }.AsReadOnly();
             return baseImage;
         }
     }

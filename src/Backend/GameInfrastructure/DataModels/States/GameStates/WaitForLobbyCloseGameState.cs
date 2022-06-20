@@ -75,7 +75,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
                     new UnityImage(usr.Id)
                     {
                         Title = new UnityField<string> { Value = usr.DisplayName },
-                        Base64Pngs = new List<string>
+                        DrawingObjects = new List<DrawingObject>
                         {
                             usr.SelfPortrait
                         }

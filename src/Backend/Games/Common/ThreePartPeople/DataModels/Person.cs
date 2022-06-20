@@ -6,6 +6,7 @@ using System.Drawing;
 using Backend.GameInfrastructure.DataModels.Users;
 using Common.DataModels.Enums;
 using Backend.Games.Common.GameStates.VoteAndReveal;
+using Backend.GameInfrastructure.DataModels;
 
 namespace Backend.Games.Common.ThreePartPeople.DataModels
 {
@@ -31,7 +32,7 @@ namespace Backend.Games.Common.ThreePartPeople.DataModels
                 {
                     Owner = new User("dummy"),
                     Type = BodyPartType.Head,
-                    Drawing = ThreePartPeopleConstants.Backgrounds[BodyPartType.Head]
+                    Drawing = new DrawingObject(ThreePartPeopleConstants.Backgrounds[BodyPartType.Head])
                 }
             },
             {
@@ -39,7 +40,7 @@ namespace Backend.Games.Common.ThreePartPeople.DataModels
                 {
                     Owner = new User("dummy"),
                     Type = BodyPartType.Body,
-                    Drawing = ThreePartPeopleConstants.Backgrounds[BodyPartType.Body]
+                    Drawing = new DrawingObject(ThreePartPeopleConstants.Backgrounds[BodyPartType.Body])
                 }
             },
             {
@@ -47,7 +48,7 @@ namespace Backend.Games.Common.ThreePartPeople.DataModels
                 {
                     Owner = new User("dummy"),
                     Type = BodyPartType.Legs,
-                    Drawing = ThreePartPeopleConstants.Backgrounds[BodyPartType.Legs]
+                    Drawing = new DrawingObject(ThreePartPeopleConstants.Backgrounds[BodyPartType.Legs])
                 }
             }
         };
@@ -61,9 +62,13 @@ namespace Backend.Games.Common.ThreePartPeople.DataModels
         {
             public BodyPartType Type { get; set; }
         }
-        public IReadOnlyList<string> GetOrderedDrawings()
+        public IReadOnlyList<DrawingObject> GetOrderedDrawings()
         {
-            return new List<string> { BodyPartDrawings[BodyPartType.Head].Drawing, BodyPartDrawings[BodyPartType.Body].Drawing, BodyPartDrawings[BodyPartType.Legs].Drawing }.AsReadOnly();
+            return new List<DrawingObject> { 
+                BodyPartDrawings[BodyPartType.Head].Drawing, 
+                BodyPartDrawings[BodyPartType.Body].Drawing,
+                BodyPartDrawings[BodyPartType.Legs].Drawing 
+            }.AsReadOnly();
         }
         public override UnityObject GetUnityObject(
             Color? backgroundColor = null,
@@ -76,7 +81,7 @@ namespace Backend.Games.Common.ThreePartPeople.DataModels
             bool revealThisObject = false)
         {
             UnityImage baseImage = new UnityImage(base.GetUnityObject(backgroundColor, imageIdentifier, imageOwnerId, title, header, voteCount, usersWhoVotedFor, revealThisObject));
-            baseImage.Base64Pngs = GetOrderedDrawings();
+            baseImage.DrawingObjects = GetOrderedDrawings();
             baseImage.SpriteGridWidth = 1;
             baseImage.SpriteGridHeight = 3;
             return baseImage;

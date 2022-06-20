@@ -23,7 +23,7 @@ namespace Backend.Games.Common.DataModels.UserCreatedObjects.UserCreatedUnityObj
             bool revealThisObject = false)
         {
             UnityImage baseImage = new UnityImage(base.GetUnityObject(backgroundColor, imageIdentifier, imageOwnerId, title, header, voteCount, usersWhoVotedFor, revealThisObject));
-            baseImage.Base64Pngs = UserDrawings.Select(drawing=>drawing.Drawing).ToList().AsReadOnly();
+            baseImage.DrawingObjects = UserDrawings.Select(drawing=> drawing.Drawing).ToList().AsReadOnly();
             return baseImage;
         }
     }

@@ -17,6 +17,7 @@ using Common.DataModels.Enums;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Common.DataModels.Requests.LobbyManagement;
+using Backend.GameInfrastructure.DataModels;
 
 namespace Backend.GameInfrastructure
 {
@@ -227,13 +228,13 @@ namespace Backend.GameInfrastructure
             }
 
             user.DisplayName = displayName;
-            user.SelfPortrait = selfPortrait;
+            user.SelfPortrait = new DrawingObject(selfPortrait);
 
             if (!LobbyIdToLobby.ContainsKey(lobbyId))
             {
                 return (false, "Lobby not found.");
             }
-
+            
             if (!LobbyIdToLobby[lobbyId].TryAddUser(user, out string errorMsg))
             {
                 return (false, errorMsg);
