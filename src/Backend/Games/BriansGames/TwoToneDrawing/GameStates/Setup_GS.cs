@@ -32,8 +32,9 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
         private int LayersPerTeam { get; set; }
         private int TeamsPerPrompt { get; set; }
         private int NumRounds { get; set; }
+        private int NumDrawingsPerPlayer { get; set; }
         private TimeSpan? PromptTimer { get; set; }
-        private TimeSpan? DrawingTimer { get; set; }
+        private TimeSpan? PerDrawingTimer { get; set; }
 
         private UserState GetChallengesUserState()
         {
@@ -91,7 +92,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                         {
                             CurrentProgress = 1,
                             MaxProgress = 1,
-                            ExpectedTimePerPrompt = DrawingTimer,
+                            ExpectedTimePerPrompt = PromptTimer,
                         },
                         Description = "In the boxes below, enter a drawing title and "+(UseSingleColor?"the colors": "a description of each layer") + " that will be given to different players.",
                         Suggestion = new SuggestionMetadata { SuggestionKey = (this.UseSingleColor) ? "ChaoticColors-"+ LayersPerTeam : "ChaoticLayers-"+ LayersPerTeam },
@@ -184,7 +185,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                         {
                             CurrentProgress = lambdaSafeIndex + 1,
                             MaxProgress = stateChain.Count,
-                            ExpectedTimePerPrompt = this.DrawingTimer.MultipliedBy(1.0f / stateChain.Count)
+                            ExpectedTimePerPrompt = this.PerDrawingTimer
                         },
                         Description = "Keep in mind you are only drawing part of the picture!",
                         SubPrompts = new SubPrompt[]
@@ -219,14 +220,15 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
             return stateChain;
         }
 
-        public Setup_GS(Lobby lobby, ConcurrentDictionary<ChallengeTracker, object> challengeTrackers, bool useSingleColor, int numLayersPerTeam, int numTeamsPerPrompt, int numRounds, TimeSpan? setupTimer = null, TimeSpan? drawingTimer = null) : base(lobby)
+        public Setup_GS(Lobby lobby, ConcurrentDictionary<ChallengeTracker, object> challengeTrackers, bool useSingleColor, int numLayersPerTeam, int numTeamsPerPrompt, int numRounds, int numDrawingsPerPlayer, TimeSpan? setupTimer = null, TimeSpan? perDrawingTimer = null) : base(lobby)
         {
             this.SubChallenges = challengeTrackers;
             this.UseSingleColor = useSingleColor;
             this.LayersPerTeam = numLayersPerTeam;
             this.TeamsPerPrompt = numTeamsPerPrompt;
             this.PromptTimer = setupTimer;
-            this.DrawingTimer = drawingTimer;
+            this.PerDrawingTimer = perDrawingTimer;
+            this.NumDrawingsPerPlayer = numDrawingsPerPlayer;
             this.NumRounds = numRounds;
 
             // Cap the values at 2 teams using maximal colors (attempts to use all players).
@@ -239,7 +241,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
             getChallenges.AddExitListener(() => this.AssignPrompts());
             getChallenges.Transition(() =>
             {
-                var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby), stateDuration: drawingTimer);
+                var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby), stateDuration: perDrawingTimer.MultipliedBy(numDrawingsPerPlayer));
                 getDrawings.Transition(this.Exit);
                 return getDrawings;
             });
@@ -272,7 +274,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
             List<IGroup<User>> groups = MemberHelpers<User>.Assign(
                 randomizedOrderChallenges.Cast<IConstraints<User>>().ToList(),
                 users,
-                this.LayersPerTeam * this.TeamsPerPrompt);
+                this.NumDrawingsPerPlayer);
 
             var assignments = groups.Zip(randomizedOrderChallenges);
 

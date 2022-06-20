@@ -50,10 +50,11 @@ namespace Backend.GameInfrastructure.DataModels.Users
             {
                 if (String.IsNullOrWhiteSpace(LobbyId)) { return null; }
 
-                if ((String.IsNullOrWhiteSpace(CachedLobbyId)) || (LobbyId != CachedLobbyId))
+                if ((String.IsNullOrWhiteSpace(CachedLobbyId)) || (!LobbyId.Equals(CachedLobbyId,StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    CachedLobbyId = LobbyId;
+                    CachedLobbyId = null;
                     CachedLobby = GameManager.Singleton.GetLobby(LobbyId);
+                    CachedLobbyId = LobbyId;
                 }
                 return CachedLobby;
             }

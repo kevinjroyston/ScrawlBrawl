@@ -60,17 +60,17 @@ namespace Backend.Games.Common.DataModels
             };
 
         }
-        public UnityObject VotingUnityObjectGenerator(int numericId)
+        public UnityObject VotingUnityObjectGenerator(int? numericId)
         {
             return GetUnityObject(
-                imageIdentifier: numericId.ToString(),
+                imageIdentifier: numericId?.ToString(),
                 title: this.UnityImageVotingOverrides.Title,
                 header: this.UnityImageVotingOverrides.Header);
         }
-        public UnityObject RevealUnityObjectGenerator(int numericId)
+        public UnityObject RevealUnityObjectGenerator(int? numericId)
         {
             return GetUnityObject(
-                imageIdentifier: numericId.ToString(),
+                imageIdentifier: numericId?.ToString(),
                 title: this.UnityImageRevealOverrides.Title,
                 header: this.UnityImageRevealOverrides.Header,
                 imageOwnerId: this.Owner?.Id,

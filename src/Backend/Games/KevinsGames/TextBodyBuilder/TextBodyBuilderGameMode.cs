@@ -340,6 +340,19 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                 User userVotedFor = ((UserHand)voteInfo.ObjectsVotedFor[0]).Owner;
                 if (userVotedFor != user) userVotedFor.ScoreHolder.AddScore(TextBodyBuilderConstants.PointsForVote, Score.Reason.ReceivedVotes);
             }
+
+            // This is probably just equal to num players -1.
+            int totalOtherVotes = (choices.Sum((person) => person.VotesCastForThisObject.Count)) - 1;
+            // Points for voting with crowd.
+            foreach (TextPerson person in choices)
+            {
+                // Gives a percentage of voting with crowd points. Linear with the percentage of other players who agreed with you.
+                int scorePerPlayer = (int)(TextBodyBuilderConstants.MaxPointsForVotingWithCrowd * ((person.VotesCastForThisObject.Count - 1) / 1.0 / totalOtherVotes));
+                foreach (User userWhoVoted in person.VotesCastForThisObject.Select(vote => vote.UserWhoVoted))
+                {
+                    userWhoVoted.ScoreHolder.AddScore(scorePerPlayer, Score.Reason.VotedWithCrowd);
+                }
+            }
         }
     }
 }

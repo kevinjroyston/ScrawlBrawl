@@ -173,6 +173,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
 
         private (bool, string) InternalJoinLobby(JoinLobbyRequest request, string id, User user)
         {
+            request.LobbyId = request.LobbyId?.Trim() ?? String.Empty;
             if (!Sanitize.SanitizeString(request.DisplayName, minLength:1, maxLength:30, error: out string _))
             {
                 return (false, "DisplayName invalid.");
@@ -185,7 +186,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
 
             lock (user.LockObject)
             {
-                if (user.Lobby != null & user.LobbyId == request.LobbyId)
+                if (user.Lobby != null && user.LobbyId.Equals(request.LobbyId, StringComparison.InvariantCultureIgnoreCase))
                 {
                     // Another thread beat us to it. Return generic error.
                     return (false, "Try Again.");

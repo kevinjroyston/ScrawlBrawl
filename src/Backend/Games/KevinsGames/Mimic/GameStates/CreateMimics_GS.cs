@@ -51,7 +51,11 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                     UserDrawing submission = new UserDrawing
                     {
                         Drawing = input.SubForms[0].DrawingObject,
-                        Owner = user
+                        Owner = user,
+                        UnityImageRevealOverrides = new UnityObjectOverrides()
+                        {
+                            Title = user.DisplayName,
+                        }
                     };
                     roundTracker.UsersToUserDrawings.AddOrReplace(user, submission);
                     return (true, string.Empty);

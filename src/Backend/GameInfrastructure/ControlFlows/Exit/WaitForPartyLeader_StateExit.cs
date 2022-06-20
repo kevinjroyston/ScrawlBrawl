@@ -23,11 +23,29 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
                   usersToWaitFor: WaitForUsersType.All,
                   waitingPromptGenerator: waitingPromptGenerator)
         {
+            this.ActualPartyLeaderFormSubmitListener = partyLeaderFormSubmitListener;
             this.PartyLeaderUserState = new SimplePromptUserState(
                 userTimeoutHandler: (User user, UserFormSubmission input) => throw new Exception("Cant time out the party leader!"),
                 promptGenerator: partyLeaderPromptGenerator ?? SimplePromptUserState.YouHaveThePowerPrompt,
-                formSubmitHandler: partyLeaderFormSubmitListener);
+                formSubmitHandler: PartyLeaderFormSubmitWrapper);
             this.PartyLeaderUserState.Transition(new InletConnector(base.Inlet));
+        }
+
+        private DateTime PartyLeaderInletTime { get; set; }
+        private readonly TimeSpan PartyLeaderMinimumTime = TimeSpan.FromSeconds(3);
+        private Func<User,UserFormSubmission,(bool,string)> ActualPartyLeaderFormSubmitListener { get; }
+        private (bool,string) PartyLeaderFormSubmitWrapper(User user, UserFormSubmission submission)
+        {
+            var currentTime = DateTime.UtcNow;
+            var elapsed = currentTime.Subtract(this.PartyLeaderInletTime);
+
+            // Ensure a minimum time has elapsed before they hit continue
+            if (elapsed < this.PartyLeaderMinimumTime)
+            {
+                return (false, "Look at the shared viewer before you hit continue");
+            }
+
+            return this.ActualPartyLeaderFormSubmitListener?.Invoke(user, submission) ?? (true, String.Empty);
         }
 
         /// <summary>
@@ -40,6 +58,7 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
         {
             if (user.IsPartyLeader)
             {
+                PartyLeaderInletTime = DateTime.UtcNow;
                 this.PartyLeaderUserState.Inlet(user, stateResult, formSubmission);
             }
             else

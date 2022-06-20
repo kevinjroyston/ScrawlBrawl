@@ -19,6 +19,7 @@ using CommonConstants = Common.DataModels.Constants;
 using System.Linq;
 using Common.DataModels.Responses.Gameplay;
 using Common.Code.Extensions;
+using Backend.GameInfrastructure.DataModels.Enums;
 
 namespace Backend.Games.KevinsGames.Mimic.GameStates
 {
@@ -69,6 +70,19 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                         Owner = user,
                     });
                     return (true, String.Empty);
+                },
+                userTimeoutHandler: (User user, UserFormSubmission input) =>
+                {
+                    // Take the auto submit, but not hurried users.
+                    if (input.SubForms[0].DrawingObject != null)
+                    {
+                        drawings.Add(new UserDrawing
+                        {
+                            Drawing = input.SubForms[0].DrawingObject,
+                            Owner = user,
+                        });
+                    }
+                    return UserTimeoutAction.None;
                 },
                 exit: new WaitForUsers_StateExit(lobby: this.Lobby),
                 maxPromptDuration: drawingTimeDuration

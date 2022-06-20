@@ -23,12 +23,13 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
 {
     public class IMadeThisVoteAndReveal_Gs : DrawingVoteAndRevealState
     {
+        private ChallengeTracker Tracker { get; }
         private static List<UserDrawing> GetDrawingsFromTracker(ChallengeTracker tracker)
         {
             Random Rand = new Random();
 
             var randomizedSubset = tracker.UsersToDrawings.Where(kvp => kvp.Value?.Drawing != null).ToList().OrderBy(_ => Rand.Next()).ToList();
-            List<UserDrawing> drawings = new List<UserDrawing> { tracker.InitialDrawing };
+            List<UserDrawing> drawings = new List<UserDrawing> ();
             drawings.AddRange(randomizedSubset.Select(kvp => kvp.Value));
 
             return drawings;
@@ -47,6 +48,8 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
             };
             VoteCountManager = CountVotes(challengeTracker);
 
+            Tracker = challengeTracker;
+
         }
 
         private Action<List<UserDrawing>, IDictionary<User, VoteInfo>> CountVotes(ChallengeTracker ChallengeTracker)
@@ -62,15 +65,38 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
                     }
                 }
 
-                int mostVotes = choices.Max((drawing) => drawing.VotesCastForThisObject.Count);
-                foreach (UserDrawing drawing in choices.Where((drawing) => drawing.VotesCastForThisObject.Count == mostVotes))
+                // This is probably just equal to num players -1.
+                int totalOtherVotes = (choices.Sum((drawing) => drawing.VotesCastForThisObject.Count)) - 1;
+                // Points for voting with crowd.
+                foreach (UserDrawing drawing in choices)
                 {
+                    // Gives a percentage of voting with crowd points. Linear with the percentage of other players who agreed with you.
+                    int scorePerPlayer = (int)(IMadeThisConstants.PointsForVotingForWinningDrawing * ((drawing.VotesCastForThisObject.Count - 1) / 1.0 / totalOtherVotes));
                     foreach (User userWhoVoted in drawing.VotesCastForThisObject.Select(vote => vote.UserWhoVoted))
                     {
-                        userWhoVoted.ScoreHolder.AddScore(IMadeThisConstants.PointsForVotingForWinningDrawing, Score.Reason.VotedWithCrowd);
+                        userWhoVoted.ScoreHolder.AddScore(scorePerPlayer, Score.Reason.VotedWithCrowd);
                     }
                 }
             };
+        }
+
+        public override UnityView VotingUnityViewGenerator()
+        {
+            var baseView = base.VotingUnityViewGenerator();
+            var unityObjects = baseView.UnityObjects.Value.ToList();
+            // Prepend the initial drawing to the view ONLY, wont be voted on
+            unityObjects.Prepend(this.Tracker.InitialDrawing.VotingUnityObjectGenerator(null));
+            baseView.UnityObjects = new UnityField<IReadOnlyList<UnityObject>> { Value = unityObjects };
+            return baseView;
+        }
+        public override UnityView RevealUnityViewGenerator()
+        {
+            var baseView = base.RevealUnityViewGenerator();
+            var unityObjects = baseView.UnityObjects.Value.ToList();
+            // Prepend the initial drawing to the view ONLY, wont be voted on
+            unityObjects.Prepend(this.Tracker.InitialDrawing.RevealUnityObjectGenerator(null));
+            baseView.UnityObjects = new UnityField<IReadOnlyList<UnityObject>> { Value = unityObjects };
+            return baseView;
         }
     }
 }

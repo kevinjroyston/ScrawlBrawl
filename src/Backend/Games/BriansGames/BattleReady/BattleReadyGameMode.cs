@@ -232,7 +232,7 @@ namespace Backend.Games.BriansGames.BattleReady
                     countRounds++;
                     GameState displayPeople = new DisplayPeople_GS(
                         lobby: lobby,
-                        title: "Here are your winners",
+                        title: "This round's winning contestants",
                         peopleList: winnersPeople,
                         imageTitle: (person) => roundPrompts[winnersPeople.IndexOf(person)].Text,
                         imageHeader: (person) => person.Name

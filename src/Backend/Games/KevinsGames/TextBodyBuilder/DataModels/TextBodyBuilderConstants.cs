@@ -7,6 +7,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.DataModels
     public static class TextBodyBuilderConstants
     {
         public const int PointsForVote = 100;
+        public const int MaxPointsForVotingWithCrowd = 150;
         public const int PointsForPartUsed = 50;
         public const int NumCAMsInHand = 3;
 

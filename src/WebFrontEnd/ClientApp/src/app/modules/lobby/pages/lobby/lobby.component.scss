@@ -172,14 +172,18 @@ h3 {
 
 .showLobbyId {
     font-weight: bold;
-    font-size: 16pt;
     vertical-align: middle;
+    font-family: Poppins;
+    font-size: 2rem;
 }
 
 @media only screen and (max-width: 768px) {
     .showLobbyId {
         font-weight: bold;
-        font-size: 12pt;
+        vertical-align: middle;
+        font-family: Poppins;
+        font-size: 1rem;
+        overflow: visible;
     }
     .lobby-header-sections {
         flex-direction: column;

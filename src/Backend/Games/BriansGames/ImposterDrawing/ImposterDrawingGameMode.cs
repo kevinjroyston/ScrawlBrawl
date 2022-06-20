@@ -54,6 +54,10 @@ namespace Backend.Games.BriansGames.ImposterDrawing
 
                 numRounds = Math.Min(numRounds, numPlayers* numDrawingsPerUser / ImposterDrawingConstants.MinNumPlayersPerRound);
 
+                int playersPerPrompt = Math.Min(ImposterDrawingConstants.MaxNumPlayersPerRound, numPlayers - 1);
+                playersPerPrompt = Math.Min(playersPerPrompt, numPlayers * numDrawingsPerUser / numRounds + 1);
+                numDrawingsPerUser = Math.Max(Math.Min(numDrawingsPerUser, (int)Math.Ceiling((numRounds * playersPerPrompt * 1.0) / numPlayers)), 1);
+
                 TimeSpan estimate = TimeSpan.Zero;
                 TimeSpan writingTimer = ImposterDrawingConstants.WritingTimer[duration];
                 TimeSpan drawingTimer = ImposterDrawingConstants.DrawingTimer[duration];
@@ -84,12 +88,15 @@ namespace Backend.Games.BriansGames.ImposterDrawing
                 votingTimer = ImposterDrawingConstants.VotingTimer[duration];
             }
             List<Prompt> prompts = new List<Prompt>();
-            int numRounds = Math.Min(ImposterDrawingConstants.MaxNumRounds[duration], this.Lobby.GetAllUsers().Count);
+            int numPlayers = this.Lobby.GetAllUsers().Count;
+            int numRounds = Math.Min(ImposterDrawingConstants.MaxNumRounds[duration], numPlayers);
             int numDrawingsPerUser = Math.Min(ImposterDrawingConstants.MaxDrawingsPerPlayer[duration], numRounds - 1);
 
-            numRounds = Math.Min(numRounds, this.Lobby.GetAllUsers().Count * numDrawingsPerUser / ImposterDrawingConstants.MinNumPlayersPerRound);
-            int playersPerPrompt = Math.Min(ImposterDrawingConstants.MaxNumPlayersPerRound, this.Lobby.GetAllUsers().Count - 1);
-            playersPerPrompt = Math.Min(playersPerPrompt, this.Lobby.GetAllUsers().Count * numDrawingsPerUser / numRounds + 1);
+            numRounds = Math.Min(numRounds, numPlayers * numDrawingsPerUser / ImposterDrawingConstants.MinNumPlayersPerRound);
+            int playersPerPrompt = Math.Min(ImposterDrawingConstants.MaxNumPlayersPerRound, numPlayers - 1);
+            playersPerPrompt = Math.Min(playersPerPrompt, numPlayers * numDrawingsPerUser / numRounds + 1);
+            numDrawingsPerUser = Math.Max(Math.Min(numDrawingsPerUser, (int)Math.Ceiling((numRounds * playersPerPrompt * 1.0) / numPlayers)), 1);
+
             Setup = new Setup_GS(
                 lobby: lobby,
                 promptsToPopulate: prompts,

@@ -46,7 +46,7 @@ namespace Backend.APIs.Controllers.Other
                 return new BadRequestResult();
             }
 
-            if (!Regex.IsMatch(id, "^[0-9a-zA-Z]+$"))
+            if (!Regex.IsMatch(id, "^[0-9a-zA-Z]{1,110}$"))
             {
                 return new BadRequestResult();
             }
