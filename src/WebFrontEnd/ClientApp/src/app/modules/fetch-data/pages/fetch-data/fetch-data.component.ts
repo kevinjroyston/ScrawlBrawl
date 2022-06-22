@@ -453,6 +453,15 @@ export class FetchDataComponent implements OnDestroy
         this.anyKeyPressOrClick = true;
     }
 
+    @HostListener('window:focus', ['$event'])
+    unloadHandler(event: Event) {
+        if (!this.userPromptTimerId) {
+            this.fetchUserPrompt();
+
+        }
+        
+    }
+
     createSubForm(): FormGroup {
         return this.formBuilder.group({
             id: '',

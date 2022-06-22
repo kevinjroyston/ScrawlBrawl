@@ -69,17 +69,58 @@ export class DrawingDirective {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
   }
 
+  private lastColor = "";
+  private addedColors : string [] = [];
+  
+  addCurrentColorHelper(r,g,b,a){
+    let clr = '#'+r.toString(16).padStart(2, '0')
+                 +g.toString(16).padStart(2, '0')
+                 +b.toString(16).padStart(2, '0');
+    if ((clr == this.lastColor) || (this.addedColors.includes(clr))) return;
+    this.lastColor = clr;
+    if (this.colorPickerService.colorIsInPallette(clr)) {
+      console.log("adding color: "+clr);
+      this.addedColors.push(clr);
+      this.pastColorsService.addColor(clr);
+    }
+   
+ }
+
+ addCurrentColorsToHistory = function(){
+   console.log("addCurrentColorsToHistory");
+   let canvasWidth = this.ctx.canvas.width;
+   let canvasHeight = this.ctx.canvas.height;
+
+   let mem=document.createElement('canvas');
+   let mctx=mem.getContext('2d');
+   mem.width=canvasWidth;
+   mem.height=canvasHeight;
+   
+   // draw the bk to the mem canvas
+   mctx.drawImage(this.bkImg,0,0);
+   let colorData = mctx.getImageData(0, 0, canvasWidth, canvasHeight);
+   for (var i=0;i<(canvasWidth*canvasHeight*4);i=i+4){
+     this.addCurrentColorHelper(
+             colorData.data[i],
+             colorData.data[i + 1],
+             colorData.data[i + 2],
+             colorData.data[i + 3]);
+   }
+
+ }
+
   ngAfterViewInit() {
-    if (this.drawingOptions.saveWithBackground && (this.drawingOptions.canvasBackground.length > 0)) {
-      this.bkImg.src = this.drawingOptions.canvasBackground;
-      this.addCurrentColorsToHistory();
-      }
+    console.log("ngAViewInit");
     if (this.galleryRecentDrawing) {
       this.loadImageString(this.galleryRecentDrawing)
     } else if (this.drawingOptions.premadeDrawing) {
       this.loadImageString(this.drawingOptions.premadeDrawing);
     } else {
       this.onImageChange(null, false); /* so undo will work */
+    }
+    if (this.drawingOptions.saveWithBackground && (this.drawingOptions.canvasBackground.length > 0)) {
+        this.bkImg.onload = () => { this.addCurrentColorsToHistory(); }
+        this.bkImg.src = this.drawingOptions.canvasBackground;
     }
   }
 
@@ -141,43 +182,6 @@ export class DrawingDirective {
       this.userIsDrawing = false;
       this.onImageChange(null);
     }
-  }
-
-  private lastColor = "";
-  private addedColors : string [] = [];
-  
-  addCurrentColorHelper(r,g,b,a){
-     let clr = '#'+r.toString(16).padStart(2, '0')
-                  +g.toString(16).padStart(2, '0')
-                  +b.toString(16).padStart(2, '0');
-     if ((clr == this.lastColor) || (this.addedColors.includes(clr))) return;
-     this.lastColor = clr;
-     if (this.colorPickerService.colorIsInPallette(clr)) {
-       this.addedColors.push(clr);
-       this.pastColorsService.addColor(clr);
-     }
-    
-  }
-  addCurrentColorsToHistory(){
-    let canvasWidth = this.ctx.canvas.width;
-    let canvasHeight = this.ctx.canvas.height;
-
-    let mem=document.createElement('canvas');
-    let mctx=mem.getContext('2d');
-    mem.width=canvasWidth;
-    mem.height=canvasHeight;
-    
-    // draw the bk to the mem canvas
-    mctx.drawImage(this.bkImg,0,0);
-    let colorData = mctx.getImageData(0, 0, canvasWidth, canvasHeight);
-    for (var i=0;i<(canvasWidth*canvasHeight*4);i=i+4){
-      this.addCurrentColorHelper(
-              colorData.data[i],
-              colorData.data[i + 1],
-              colorData.data[i + 2],
-              colorData.data[i + 3]);
-    }
-
   }
 
   handleClearUndo() {
