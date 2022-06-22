@@ -2,7 +2,7 @@ import { Component, ViewEncapsulation, Input, AfterViewInit, ViewChild, ElementR
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {ColorPickerComponent} from '../colorpicker/colorpicker.component'
 import {GalleryTool} from '@shared/components/gallery/gallerytool/gallerytool.component';
-import {DrawingDirective,DrawingPromptMetadata,DrawingModes} from '@shared/components/drawingdirective.component';
+import {DrawingDirective,DrawingPromptMetadata,DrawingModes,DrawingUrgencies} from '@shared/components/drawingdirective.component';
 import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-sheet';
 import Galleries from '@core/models/gallerytypes';
 import { EventManager } from '@angular/platform-browser';
@@ -34,6 +34,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     @Input() showBrushSizeSelector: boolean = true;
     @Input() drawingOptions:DrawingPromptMetadata;
     @Input() userPromptId:string="";
+    @Input() drawingUrgency:DrawingUrgencies = DrawingUrgencies.None;
     @Input() set drawingType(value: string) { this.setDrawingType(value) }
              get drawingType(): string { return this._drawingType}
 
@@ -42,7 +43,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     @ViewChild(DrawingDirective) drawingDirective;
 
     drawingMode : DrawingModes = DrawingModes.Draw;
-
+    DrawingUrgencies = DrawingUrgencies; /* make the enum visible to the html template */
     drawingHeight;
     drawingWidth;
     onChange;

@@ -3,7 +3,7 @@
     <!-- Drawing Settings -->
     <div class="drawb-left">
         <div class="drawb-settings">
-            <div class="drawb-top">
+            <div class="drawb-top" [class.Urgency-Warning]="drawingUrgency==DrawingUrgencies.Warning" [class.Urgency-Alert]="drawingUrgency==DrawingUrgencies.Alert">
                 <div class="drawb-setting" *ngIf="showBrushSizeSelector">
                     <div id="size-controller">
                         <input type="range" min="2" max="40" [value]="selectedBrushSize" [(ngModel)]="selectedBrushSize">
@@ -37,7 +37,7 @@
         </div>
     </div>
 
-    <div class="drawb-right">
+    <div class="drawb-right" [class.Urgency-Warning]="drawingUrgency==DrawingUrgencies.Warning" [class.Urgency-Alert]="drawingUrgency==DrawingUrgencies.Alert">
         <div class="drawb-tools" *ngIf="showEraser">
             <div class="drawb-tools-section">
                 <scrawlbrawl-iconbutton matTooltip="Brush" matTooltipPosition="right" [mdTooltipClass]="{'tooltip': true}" (click)="drawingMode=drawingModes.Draw" [active]="drawingMode==drawingModes.Draw">

@@ -40,7 +40,7 @@ export class ColorPickerComponent implements ControlValueAccessor, OnInit
 
   ngOnInit() {}
 
-  pickColor(color: string) : void {
+   pickColor(color: string) : void {
     this.pastColorsService.addColor(color);
     this.data.handleColorChange(color);
     this.onChange(color);
