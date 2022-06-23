@@ -41,10 +41,6 @@ export class DrawingDirective {
   private colorPickerService;
   private pastColorsService;
 
-  canvasKey(evt){
-    
-  }
-
   constructor(element: ElementRef) {
     console.log("Instantiating canvas");
     this.element = element.nativeElement;
@@ -90,8 +86,8 @@ export class DrawingDirective {
    
  }
 
- addCurrentColorsToHistory = function(){
-   console.log("addCurrentColorsToHistory");
+ addBackgroundColorsToHistory(){
+   console.log("addBackgroundColorsToHistory");
    let canvasWidth = this.ctx.canvas.width;
    let canvasHeight = this.ctx.canvas.height;
 
@@ -123,7 +119,7 @@ export class DrawingDirective {
       this.onImageChange(null, false); /* so undo will work */
     }
     if (this.drawingOptions.saveWithBackground && (this.drawingOptions.canvasBackground.length > 0)) {
-        this.bkImg.onload = () => { this.addCurrentColorsToHistory(); }
+        this.bkImg.onload = () => { this.addBackgroundColorsToHistory(); }
         this.bkImg.src = this.drawingOptions.canvasBackground;
     }
   }

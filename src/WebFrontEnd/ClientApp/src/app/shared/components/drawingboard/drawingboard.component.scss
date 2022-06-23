@@ -156,6 +156,14 @@
     margin: 5px;
 }
 
+.Urgency-Alert {
+    background: var(--red-primary);
+}
+
+.Urgency-Warning {
+    background: var(--yellow-primary);
+}
+
 .radio-group {}
 
 input[type=color] {

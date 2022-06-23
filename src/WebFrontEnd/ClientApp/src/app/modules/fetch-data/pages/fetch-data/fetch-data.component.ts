@@ -14,7 +14,6 @@ import * as drawingUtils from "app/utils/drawingutils";
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { UserManager } from '@core/http/userManager';
 import { NotificationService } from '@core/services/notification.service';
-import { BreakpointObserver } from '@angular/cdk/layout';
 
 @Pipe({ name: 'safe' })
 export class Safe {
@@ -454,12 +453,10 @@ export class FetchDataComponent implements OnDestroy
     }
 
     @HostListener('window:focus', ['$event'])
-    unloadHandler(event: Event) {
+    focusHandler(event: Event) {
         if (!this.userPromptTimerId) {
             this.fetchUserPrompt();
-
         }
-        
     }
 
     createSubForm(): FormGroup {

@@ -9,8 +9,6 @@ import { EventManager } from '@angular/platform-browser';
 import { GalleryService } from '@core/services/gallery.service';
 import PastColorsService from '../colorpicker/pastColors';
 import { Router } from '@angular/router';
-import { ThrottlingEntity } from '@azure/msal-common';
-import { BreakpointObserver } from '@angular/cdk/layout';
 
 
 @Component({
