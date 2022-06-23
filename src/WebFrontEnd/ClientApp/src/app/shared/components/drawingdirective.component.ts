@@ -41,6 +41,10 @@ export class DrawingDirective {
   private colorPickerService;
   private pastColorsService;
 
+  canvasKey(evt){
+    
+  }
+
   constructor(element: ElementRef) {
     console.log("Instantiating canvas");
     this.element = element.nativeElement;
