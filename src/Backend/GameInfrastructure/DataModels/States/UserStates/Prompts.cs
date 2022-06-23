@@ -87,10 +87,8 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
 
                 if (leaderboardScope.HasValue)
                 {
-                    userScoreScope = userScoreScope ?? Score.Scope.Total;
-                    var userScoreList = lobby.GetUsersSortedByTopScores(3, leaderboardScope.Value);
-                    var leaderboardStrings = userScoreList.Select((User user) => $"{user.DisplayName}: {user.ScoreHolder.ScoreAggregates[userScoreScope.Value]}").ToList();
-                    subPrompts.Add(new SubPrompt { Prompt = Text.TopScores, StringList = leaderboardStrings.ToArray() });
+                    var userScoreList = lobby.GetUsersSortedByTopScores(3, leaderboardScope.Value); 
+                    subPrompts.Add(new SubPrompt { Prompt = Text.TopScores, StringList = userScoreList.Select((User user) => $"{user.DisplayName}: {user.ScoreHolder.ScoreAggregates[leaderboardScope.Value]}").ToArray() });
                 }
 
                 if (showPartyLeaderSkipButton) 
