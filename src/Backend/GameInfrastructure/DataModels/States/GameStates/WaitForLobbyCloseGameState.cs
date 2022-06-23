@@ -38,7 +38,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
         public static UserPrompt LobbyWaitingPromptGenerator(User user) => new UserPrompt()
         {
             UserPromptId = UserPromptId.Waiting,
-            Title = Prompts.Text.WaitingForGameToStart,
+            Title = (user.Identifier==user.Lobby.Owner.UserId) ? Prompts.Text.OwnerWaitingForGameToStart: Prompts.Text.WaitingForGameToStart,
             Description = $"Players in lobby {user.LobbyId}",
             DisplayUsers = UserListMetadataMode.AllUsers,
             SubPrompts = new SubPrompt[]
