@@ -37,20 +37,20 @@ namespace Backend.Games.KevinsGames.Mimic
             MinPlayers = MinPlayers,
             MaxPlayers = CommonGameConstants.MAX_PLAYERS,
             Attributes = new GameModeAttributes
-                {
-                    ProductionReady = true,
-                },
+            {
+                ProductionReady = true,
+            },
             Options = new List<GameModeOptionResponse>
+            {
+                new GameModeOptionResponse
                 {
-                    new GameModeOptionResponse
-                    {
-                        Description = "Memorization difficulty",
-                        ResponseType = ResponseType.Integer,
-                        DefaultValue = 1,
-                        MinValue = 1,
-                        MaxValue = 10,
-                    },
+                    Description = "Memorization difficulty",
+                    ResponseType = ResponseType.Integer,
+                    DefaultValue = 1,
+                    MinValue = 1,
+                    MaxValue = 10,
                 },
+            },
             GetGameDurationEstimates = GetGameDurationEstimates,
         };
         private static IReadOnlyDictionary<GameDuration, TimeSpan> GetGameDurationEstimates(int numPlayers, List<ConfigureLobbyRequest.GameModeOptionRequest> gameModeOptions)
@@ -105,7 +105,7 @@ namespace Backend.Games.KevinsGames.Mimic
             Setup.AddExitListener(() =>
             {
                 randomizedDrawings = this.Drawings
-                .OrderBy(_ => Rand.Next())
+                .OrderByDescending(drawing => drawing?.Drawing?.DrawingStr?.Length ?? 0)
                 .ToList()
                 .Take(numRounds) // Limit number of rounds based on game duration.
                 .ToList();

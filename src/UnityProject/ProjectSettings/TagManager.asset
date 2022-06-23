@@ -38,6 +38,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Sparkles
+    uniqueID: 114760941
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

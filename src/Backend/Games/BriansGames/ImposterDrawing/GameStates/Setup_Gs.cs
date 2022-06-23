@@ -34,18 +34,18 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
         private object PromptListLock = new object();
         private List<Prompt> PromptsToPopulate { get; }
         private TimeSpan? WritingTimeDuration { get; }
-        private TimeSpan? DrawingTimeDuration { get; }
+        private TimeSpan? PerDrawingTimeDuration { get; }
         private int NumRounds { get; }
         private int MaxPlayersPerPrompt { get; }
         private int NumDrawingsPerUser { get; }
-        public Setup_GS(Lobby lobby, List<Prompt> promptsToPopulate, TimeSpan? writingTimeDuration, TimeSpan? drawingTimeDuration, int numRounds, int maxPlayersPerPrompt, int numDrawingsPerUser)
+        public Setup_GS(Lobby lobby, List<Prompt> promptsToPopulate, TimeSpan? writingTimeDuration, TimeSpan? perDrawingTimeDuration, int numRounds, int maxPlayersPerPrompt, int numDrawingsPerUser)
         : base(
             lobby: lobby,
             exit: new WaitForUsers_StateExit(lobby))
         {
             this.PromptsToPopulate = promptsToPopulate;
             this.WritingTimeDuration = writingTimeDuration;
-            this.DrawingTimeDuration = drawingTimeDuration.MultipliedBy(numDrawingsPerUser); // TODO, this is incorrect in edge case where we have too many users and maxPlayersPerPrompt is exceeded.
+            this.PerDrawingTimeDuration = perDrawingTimeDuration; 
             this.NumRounds = numRounds;
             this.MaxPlayersPerPrompt = maxPlayersPerPrompt;
             this.NumDrawingsPerUser = numDrawingsPerUser;
@@ -61,8 +61,11 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                     {
                         return Prompts.DisplayWaitingText("Waiting for others to draw.")(user);
                     });
-                var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: waitForDrawings, stateDuration: DrawingTimeDuration);
+                var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: waitForDrawings, stateDuration: PerDrawingTimeDuration.MultipliedBy(this.NumDrawingsPerUser));
                 getDrawings.Transition(this.Exit);
+
+                // Need to set unity view dirty since the state timeout has changed technically
+                this.UnityViewDirty = true;
                 return getDrawings;
             });
 
@@ -149,7 +152,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                         {
                             CurrentProgress = lambdaSafeIndex + 1,
                             MaxProgress = challenges.Count,
-                            ExpectedTimePerPrompt = this.DrawingTimeDuration.MultipliedBy(1.0f / challenges.Count),
+                            ExpectedTimePerPrompt = this.PerDrawingTimeDuration,
                         },
                         Description = "Careful, if you aren't the odd one out and people think you are, you will lose points for being a terrible artist.",
                         SubPrompts = new SubPrompt[]

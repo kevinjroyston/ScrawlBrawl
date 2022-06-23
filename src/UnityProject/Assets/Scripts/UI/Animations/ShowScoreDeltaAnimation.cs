@@ -38,7 +38,8 @@ public class ShowScoreDeltaAnimation : AnimationBase
                 to: new Vector3(0, iconRadius + 0.2f, 0),
                 time: 0.2f)
             .setEaseOutBack()
-            .PlayAfter(iconScaleDown);
+            .PlayAfter(iconScaleDown)
+            .SetCallEventOnComplete(new GameEvent() { eventType = GameEvent.EventEnum.ReorderIcons }); ;
         LTDescr shakeText = LeanTweenHelper.Singleton.UIShake(
                 rectTransform: textTransform,
                 magnitude: 0.05f,

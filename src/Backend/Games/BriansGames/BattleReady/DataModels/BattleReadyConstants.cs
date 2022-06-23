@@ -7,6 +7,7 @@ namespace Backend.Games.BriansGames.BattleReady.DataModels
     public static class BattleReadyConstants
     {
         public const int PointsForVote = 100;
+        public const int PointsForVotingForWinningDrawing = 150;
         public const int PointsForPartUsed = 50;
         public const int NumDrawingsInHand = 3;
 

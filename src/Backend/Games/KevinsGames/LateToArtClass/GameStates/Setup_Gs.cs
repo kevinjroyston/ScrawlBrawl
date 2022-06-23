@@ -104,7 +104,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                         {
                             CurrentProgress = lambdaSafeIndex + 1,
                             MaxProgress = onTimeArtClasses.Count + lateArtClasses.Count,
-                            ExpectedTimePerPrompt = this.DrawingTimeDuration.MultipliedBy(1.0f / (onTimeArtClasses.Count + lateArtClasses.Count))
+                            ExpectedTimePerPrompt = this.PerDrawingTimeDuration
                         },
                         Description = "Careful, the late student might be copying off YOUR work. So make it unique! But make sure you still follow the prompt!",
                         SubPrompts = new SubPrompt[]
@@ -176,7 +176,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                         {
                             CurrentProgress = lambdaSafeIndex + 1,
                             MaxProgress = onTimeArtClasses.Count + lateArtClasses.Count,
-                            ExpectedTimePerPrompt = this.DrawingTimeDuration.MultipliedBy(1.0f / (onTimeArtClasses.Count + lateArtClasses.Count))
+                            ExpectedTimePerPrompt = this.PerDrawingTimeDuration
                         }
                     });
 
@@ -185,7 +185,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                 var dummyWaitingState = new PromptlessUserState(waitingForCopyStateExit);
                 dummyWaitingState.AddExitListener(() => {
                     // Select a random user to copy from, just before entering the actual state
-                    artClass.CopiedFrom = artClass.UsersToDrawings.Where(kvp => kvp.Value?.Drawing!=null).OrderBy(_ => StaticRandom.Next()).First().Key;
+                    artClass.CopiedFrom = artClass.UsersToDrawings.Where(kvp => kvp.Value?.Drawing!=null).OrderBy(_ => StaticRandom.Next()).FirstOrDefault().Key;
                 });
 
                 stateChain.Add(dummyWaitingState);
@@ -197,7 +197,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                         {
                             CurrentProgress = lambdaSafeIndex + 1,
                             MaxProgress = onTimeArtClasses.Count + lateArtClasses.Count,
-                            ExpectedTimePerPrompt = this.DrawingTimeDuration.MultipliedBy(1.0f / (onTimeArtClasses.Count + lateArtClasses.Count))
+                            ExpectedTimePerPrompt = this.PerDrawingTimeDuration
                         },
                         Description = "Better copy off of somebody else. But change it a little so you dont get caught!",
                         SubPrompts = new SubPrompt[]
@@ -239,7 +239,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
         }
         private List<ArtClass> ArtClassesToPopulate { get; }
         private TimeSpan? WritingTimeDuration { get; }
-        private TimeSpan? DrawingTimeDuration { get; }
+        private TimeSpan? PerDrawingTimeDuration { get; }
         private int NumRounds { get; }
         private int MaxPlayersPerPrompt { get; }
         private int NumDrawingsPerUser { get; }
@@ -250,7 +250,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
         {
             this.ArtClassesToPopulate = promptsToPopulate;
             this.WritingTimeDuration = writingTimeDuration;
-            this.DrawingTimeDuration = drawingTimeDuration.MultipliedBy(numDrawingsPerUser); // TODO, this is incorrect in edge case where we have too many users and maxPlayersPerPrompt is exceeded.
+            this.PerDrawingTimeDuration = drawingTimeDuration; // TODO, this is incorrect in edge case where we have too many users and maxPlayersPerPrompt is exceeded.
             this.NumRounds = numRounds;
             this.MaxPlayersPerPrompt = maxPlayersPerPrompt;
             this.NumDrawingsPerUser = numDrawingsPerUser;
@@ -266,7 +266,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                     {
                         return Prompts.DisplayWaitingText("Waiting for others to draw.")(user);
                     });
-                var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: waitForDrawings, stateDuration: DrawingTimeDuration);
+                var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: waitForDrawings, stateDuration: PerDrawingTimeDuration.MultipliedBy(NumDrawingsPerUser));
                 getDrawings.Transition(this.Exit);
                 return getDrawings;
             });

@@ -22,9 +22,9 @@ namespace Backend.GameInfrastructure.Extensions
                 user.ScoreHolder.ResetScoreBreakdownsOnly(scope);
             }
         }
-        public static List<User> GetUsersSortedByTopScores(this Lobby lobby, int maxUsers, Score.Scope scope=Score.Scope.Total, bool sortDescending=true)
+        public static List<User> GetUsersSortedByTopScores(this Lobby lobby, int maxUsers, Score.Scope scope = Score.Scope.Total, bool sortDescending = true)
         {
-            if (sortDescending) 
+            if (sortDescending)
             {
                 return lobby.GetAllUsers().OrderByDescending((user) => user.ScoreHolder.ScoreAggregates[scope]).Take(maxUsers).ToList();
             }
@@ -33,5 +33,12 @@ namespace Backend.GameInfrastructure.Extensions
                 return lobby.GetAllUsers().OrderBy((user) => user.ScoreHolder.ScoreAggregates[scope]).Take(maxUsers).ToList();
             }
         }
+
+        public static int GetUserScorePosition(this Lobby lobby, User user, Score.Scope scope = Score.Scope.Total)
+        {
+            var scores = lobby.GetAllUsers().OrderByDescending((user) => user.ScoreHolder.ScoreAggregates[scope]).ToList();
+            return scores.IndexOf(user) + 1;
+        }
+
     }
 }

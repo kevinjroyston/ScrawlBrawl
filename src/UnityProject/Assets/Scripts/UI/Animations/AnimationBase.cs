@@ -48,7 +48,7 @@ public abstract class AnimationBase: MonoBehaviour
     }
     public void EndAnimation(GameEvent gameEvent, float? endDurration = null)
     {
-        if (this.isActiveAndEnabled)
+        if (this != null && this.isActiveAndEnabled)
         {
             StartCoroutine(EndAnimateCoroutine(gameEvent, endDurration));
         }   

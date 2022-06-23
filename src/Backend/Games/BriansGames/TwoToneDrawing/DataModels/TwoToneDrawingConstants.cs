@@ -7,7 +7,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.DataModels
     public static class TwoToneDrawingConstants
     {
         public const int PointsPerVote = 100;
-        public const int PointsForVotingForWinningDrawing = 100;
+        public const int PointsForVotingForWinningDrawing = 150;
 
 
         // These timers are multiplied by 1.5f if they have to write text.
