@@ -25,6 +25,8 @@ public class GameEvent
         RevealImages,
         PlayDrumRoll,
         ShowDeltaScores,
+        ReorderIcons,
+        CelebrateScoreIcons,
     }
     public EventEnum eventType;
 

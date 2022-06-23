@@ -7,7 +7,7 @@ namespace Backend.Games.KevinsGames.IMadeThis.DataModels
     public static class IMadeThisConstants
     {
         public const int PointsPerVote = 100;
-        public const int PointsForVotingForWinningDrawing = 100;
+        public const int PointsForVotingForWinningDrawing = 150;
 
         public static IReadOnlyDictionary<GameDuration, TimeSpan> WritingTimer = new Dictionary<GameDuration, TimeSpan>()
         {

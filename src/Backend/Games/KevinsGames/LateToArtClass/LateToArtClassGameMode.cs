@@ -54,6 +54,9 @@ namespace Backend.Games.KevinsGames.LateToArtClass
                 int numDrawingsPerUser = Math.Min(LateToArtClassConstants.MaxDrawingsPerPlayer[duration], numRounds - 1);
 
                 numRounds = Math.Min(numRounds, numPlayers* numDrawingsPerUser / LateToArtClassConstants.MinNumPlayersPerRound);
+                int playersPerPrompt = Math.Min(LateToArtClassConstants.MaxNumPlayersPerRound, numPlayers);
+                playersPerPrompt = Math.Min(playersPerPrompt, (int)Math.Ceiling(numPlayers * numDrawingsPerUser * 1.0f / numRounds));
+                numDrawingsPerUser = Math.Min(numDrawingsPerUser, (int)Math.Ceiling(playersPerPrompt * numRounds * 1.0f / numPlayers));
 
                 TimeSpan estimate = TimeSpan.Zero;
                 TimeSpan writingTimer = LateToArtClassConstants.WritingTimer[duration];
@@ -89,8 +92,10 @@ namespace Backend.Games.KevinsGames.LateToArtClass
             int numDrawingsPerUser = Math.Min(LateToArtClassConstants.MaxDrawingsPerPlayer[duration], numRounds);
 
             numRounds = Math.Min(numRounds, this.Lobby.GetAllUsers().Count * numDrawingsPerUser / LateToArtClassConstants.MinNumPlayersPerRound);
-            int playersPerPrompt = Math.Min(LateToArtClassConstants.MaxNumPlayersPerRound, this.Lobby.GetAllUsers().Count);
-            playersPerPrompt = Math.Min(playersPerPrompt, this.Lobby.GetAllUsers().Count * numDrawingsPerUser / numRounds + 1);
+            int playersPerPrompt = Math.Min(LateToArtClassConstants.MaxNumPlayersPerRound, (this.Lobby.GetAllUsers().Count-1));
+            playersPerPrompt = Math.Min(playersPerPrompt, (int)Math.Ceiling(this.Lobby.GetAllUsers().Count * numDrawingsPerUser * 1.0f / numRounds));
+            numDrawingsPerUser = Math.Min(numDrawingsPerUser, (int)Math.Ceiling(playersPerPrompt * numRounds * 1.0f / this.Lobby.GetAllUsers().Count));
+
             Setup = new Setup_GS(
                 lobby: lobby,
                 promptsToPopulate: artClasses,

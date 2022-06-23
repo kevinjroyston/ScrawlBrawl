@@ -23,6 +23,18 @@ public class PlayerBarHandler : MonoBehaviour, HandlerInterface
             return;
         }
 
+        // If we are revealing, order users by their score
+        Dictionary <UnityUser, int> newOrders = new Dictionary<UnityUser, int>();
+        if (isRevealing){
+            users = users.OrderByDescending(user => user.Score - user.ScoreDeltaReveal).ToList();
+            var newOrdersList = users.OrderByDescending(user => user.Score).ToList();
+            int index = 0;
+            foreach(UnityUser user in newOrdersList){
+                index++;
+                newOrders[user] = index;
+            }
+        }
+
         int waitingCount = users.Where(user => user.Status == UserStatus.AnsweringPrompts).Count();
 
         for (int i = 0; i < users.Count; i++)
@@ -34,6 +46,7 @@ public class PlayerBarHandler : MonoBehaviour, HandlerInterface
                     showName: true,
                     scoreDelta: users[i].ScoreDeltaReveal,
                     order: i + 1,
+                    newOrder: newOrders[users[i]],
                     total: users.Count);
             }
             else
@@ -49,14 +62,14 @@ public class PlayerBarHandler : MonoBehaviour, HandlerInterface
     }
 
 
-    private void InstantiateRelevantUser(UnityUser user, bool showName = true, int scoreDelta = 0, int order = 1, int total = 1)
+    private void InstantiateRelevantUser(UnityUser user, bool showName = true, int scoreDelta = 0, int order = -1, int newOrder = -1, int total = 1)
     {
         GameObject playerIconPrefab = PrefabLookup.Singleton.Mapping[PrefabLookup.PrefabType.UserIcon];
         var relUser = Instantiate(playerIconPrefab, DropZone.transform);
         relUser.transform.localScale = new Vector3(1f, 1f, 1f);
         relUser.transform.localPosition = Vector3.zero;
 
-        relUser.GetComponent<RelevantUserPopulator>().Populate(user, showName, scoreDelta, order, total);
+        relUser.GetComponent<RelevantUserPopulator>().Populate(user, showName, scoreDelta, order, newOrder, total);
     }
 
     private void ClearUsers()

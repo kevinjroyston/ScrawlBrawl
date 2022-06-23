@@ -97,8 +97,8 @@ namespace Backend.APIs.Hubs
                     if (unityUserStatusChanged || (unityRPCHolder.UnityView != null) || (unityRPCHolder.ConfigurationMetadata != null) || (unityRPCHolder.UnityImageList != null))
                     {
                         unityRPCHolder.UnityUserStatus = lobby.GetUsersAnsweringPrompts();
-
-                        UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("UpdateState", JsonConvert.SerializeObject(unityRPCHolder, Formatting.None, SerializerSettings));
+                        var serializedRpcHolder = JsonConvert.SerializeObject(unityRPCHolder, Formatting.None, SerializerSettings);
+                        UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("UpdateState", serializedRpcHolder);
                     }
 
 

@@ -53,7 +53,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                 {
                     Description = "Limit each artist to one color",
                     ResponseType = ResponseType.Boolean,
-                    DefaultValue = true,
+                    DefaultValue = false,
                 },
                 new GameModeOptionResponse
                 {

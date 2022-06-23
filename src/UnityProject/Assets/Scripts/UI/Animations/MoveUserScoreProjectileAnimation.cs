@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.Timeline;
 using UnityEngine.UI;
 
-public class MoveUserIconAnimation : AnimationBase
+public class MoveUserScoreProjectileAnimation : AnimationBase
 {
     public Image ScoreProjectilePrefab;
     private int IconOrder;

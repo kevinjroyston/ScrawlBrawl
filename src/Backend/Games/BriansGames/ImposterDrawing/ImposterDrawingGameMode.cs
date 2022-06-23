@@ -101,7 +101,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing
                 lobby: lobby,
                 promptsToPopulate: prompts,
                 writingTimeDuration: writingTimer,
-                drawingTimeDuration: drawingTimer,
+                perDrawingTimeDuration: drawingTimer,
                 numDrawingsPerUser: numDrawingsPerUser,
                 numRounds: numRounds,
                 maxPlayersPerPrompt: playersPerPrompt);

@@ -327,6 +327,20 @@ namespace Backend.Games.BriansGames.BattleReady
                 User userVotedFor = ((UserHand)voteInfo.ObjectsVotedFor[0]).Owner;
                 if (userVotedFor != user) userVotedFor.ScoreHolder.AddScore(BattleReadyConstants.PointsForVote, Score.Reason.ReceivedVotes);
             }
+
+
+            // This is probably just equal to num players -1.
+            int totalOtherVotes = (choices.Sum((drawingStack) => drawingStack.VotesCastForThisObject.Count)) - 1;
+            // Points for voting with crowd.
+            foreach (Person contestant in choices)
+            {
+                // Gives a percentage of voting with crowd points. Linear with the percentage of other players who agreed with you.
+                int scorePerPlayer = (int)(BattleReadyConstants.PointsForVotingForWinningDrawing * ((contestant.VotesCastForThisObject.Count - 1) / 1.0 / totalOtherVotes));
+                foreach (User userWhoVoted in contestant.VotesCastForThisObject.Select(vote => vote.UserWhoVoted))
+                {
+                    userWhoVoted.ScoreHolder.AddScore(scorePerPlayer, Score.Reason.VotedWithCrowd);
+                }
+            }
         }
     }
 }
