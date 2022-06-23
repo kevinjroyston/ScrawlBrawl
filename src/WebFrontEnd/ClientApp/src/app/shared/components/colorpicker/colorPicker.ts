@@ -17,6 +17,22 @@ export default class ColorPickerService {
     generateRainbow = () : string[][] => {
         return ColorPickerConstants.COLORS
     }
+
+    public colorIsInPallette(clr) {
+        for (var i=0; i < ColorPickerConstants.COLORS.length; i++){
+          if (ColorPickerConstants.COLORS[i].includes(clr)) return true;
+        }
+        let bothGrayScales = this.generateGrayScale();
+        for (var i=0; i < bothGrayScales.length; i++){
+            if (bothGrayScales[i].includes(clr)) return true;
+          }
+  
+        return false;
+      }
+
+
+     
+    
 }
 
 

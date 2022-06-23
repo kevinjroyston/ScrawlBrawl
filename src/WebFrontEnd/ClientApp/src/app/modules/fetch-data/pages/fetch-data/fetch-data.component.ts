@@ -6,7 +6,7 @@ import { API } from '@core/http/api';
 import { Router } from '@angular/router';
 import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-sheet';
 import { ColorPickerComponent } from '@shared/components/colorpicker/colorpicker.component';
-import {DrawingPromptMetadata} from '@shared/components/drawingdirective.component';
+import {DrawingPromptMetadata, DrawingUrgencies} from '@shared/components/drawingdirective.component';
 import Galleries from '@core/models/gallerytypes';
 import { Suggestions } from '@core/http/suggestions';
 import { UnityViewer } from '@core/http/viewerInjectable';
@@ -52,14 +52,18 @@ export class FetchDataComponent implements OnDestroy
     public anythingTouchedSinceFetch = false;
     public anyKeyPressOrClick = false;
     public displayUsersMetadata: GameplayPrompts.UserListMetadata;
+    public drawingUrgency : DrawingUrgencies = DrawingUrgencies.None;
     private formBuilder: FormBuilder;
     private userPromptTimerId;
     private autoSubmitTimerId;
     private timerDisplayIntervalId;
 
+    private showingDrawingBoard = false;
 
     timerDisplay = '';
     timerRemaining = 0;
+    initialTimerRemaining = 0;
+    timerStartTime = 0;
     timerColor = 'green';
     galleryEditorVisible = false;
     galleryTypes = [...Galleries.galleryTypes]; /* so html page can see the reference.  ... is SPREAD command: https://www.samanthaming.com/tidbits/35-es6-way-to-clone-an-array/ */
@@ -168,7 +172,10 @@ export class FetchDataComponent implements OnDestroy
                 // Start a new autosubmit timer
                 if (prompt && prompt.autoSubmitAtTime) {
                     var requestLatency = Math.min(requestEndTime - requestStartTime, 6000); // Factor in up to 6 seconds of their latency
+
+                    this.timerStartTime = new Date().getTime();
                     this.timerRemaining = (prompt.autoSubmitAtTime.getTime() - prompt.currentServerTime.getTime()) - requestLatency - 1000; //Count half the latency on the return + another half to submit
+                    this.initialTimerRemaining = this.timerRemaining;
                     if (this.timerRemaining > 5000){
                         this.autoSubmitUserPromptTimer(this.timerRemaining); 
                     }
@@ -201,6 +208,16 @@ export class FetchDataComponent implements OnDestroy
                     this.refreshUserPromptTimer(this.userPrompt.refreshTimeInMs);
                 }
 
+                /* check to see if we have a drawingboard visible */
+                this.showingDrawingBoard = false;
+                for (let i = 0, s = 0; (i < this.userPrompt.subPrompts.length); i++) {
+                    if (this.userPrompt.subPrompts[i].drawing) {
+                        this.showingDrawingBoard = true;
+                        break;
+                    }
+                }
+        
+        
                 // Reset the form again because you are a bad coder
                 if (this.userForm) {
                     this.userForm.reset();
@@ -288,7 +305,8 @@ export class FetchDataComponent implements OnDestroy
 
         this.timerDisplayIntervalId = setInterval(() => 
              {
-                this.timerRemaining-=1000;
+                let now=new Date().getTime();
+                this.timerRemaining=this.initialTimerRemaining-(now-this.timerStartTime);
                 if (this.timerRemaining <= 0) this.timerDisplay = 'Time\'s Up!'
                 else this.timerDisplay = new Date(this.timerRemaining).toISOString().substr(14, 5);
                 this.determineTimerColor();
@@ -311,15 +329,33 @@ export class FetchDataComponent implements OnDestroy
             var promptFinishDeficit = expectedPromptsFinishedInTimeRemaining - remainingPrompts;
 
             // Assuming they were to submit right now, they would still be just under pacing
-            if (promptFinishDeficit <= 0) levelOfConcern = Math.max(levelOfConcern, 1) // Yellow
-
+            if (promptFinishDeficit <= -1) {
+                levelOfConcern = Math.max(levelOfConcern, 2); // Red
+                if (this.showingDrawingBoard && (this.drawingUrgency != DrawingUrgencies.Alert)) {
+                    this.notificationService.addMessage("You are well behind, draw, draw, draw!", null, {panelClass: ['error-snackbar']});
+                }
+            } else if (promptFinishDeficit <= 0) {
+                levelOfConcern = Math.max(levelOfConcern, 1); // Yellow
+                if (this.showingDrawingBoard && (this.drawingUrgency == DrawingUrgencies.None)) {
+                    this.notificationService.addMessage("You are a bit behind, pick up the pace", null, {panelClass: ['warning-snackbar']});
+                }
+            }
             // Assuming they were to submit TWICE right now, they would still be just under pacing
-            if (promptFinishDeficit <= -1) levelOfConcern = Math.max(levelOfConcern, 2) // Red
         }
         
-        this.timerColor = 'var(--green-secondary)';
-        if (levelOfConcern == 2) this.timerColor = 'var(--red-secondary)'
-        else if (levelOfConcern == 1) this.timerColor = 'var(--yellow-secondary)';
+        if (levelOfConcern == 2) { 
+            this.timerColor = 'var(--red-secondary)'; 
+            this.drawingUrgency = DrawingUrgencies.Alert;
+        }
+        else if (levelOfConcern == 1) { 
+            this.timerColor = 'var(--yellow-secondary)'; 
+            this.drawingUrgency = DrawingUrgencies.Warning;
+        }
+        else {
+            this.timerColor = 'var(--green-secondary)'; 
+            this.drawingUrgency = DrawingUrgencies.None;
+        }
+
     }
 
     private clearAutoSubmitTimers(ForceIt){
@@ -414,6 +450,13 @@ export class FetchDataComponent implements OnDestroy
         this.anythingEverTouched = true;
         this.anythingTouchedSinceFetch = true;
         this.anyKeyPressOrClick = true;
+    }
+
+    @HostListener('window:focus', ['$event'])
+    focusHandler(event: Event) {
+        if (!this.userPromptTimerId) {
+            this.fetchUserPrompt();
+        }
     }
 
     createSubForm(): FormGroup {

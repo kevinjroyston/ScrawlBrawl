@@ -224,12 +224,17 @@ ion-icon {
 /* Mat */
 
 .error-snackbar {
-    background: #f44336;
+    background: var(--red-primary);
     color: var(--white-primary);
 }
 
+.warning-snackbar {
+    background: var(--yellow-primary);
+    color: var(--black-primary);
+}
+
 .success-snackbar {
-    background: #4caf50;
+    background: var(--green-primary);
     color: var(--white-primary);
 }
 
@@ -318,7 +323,7 @@ ion-icon {
     background-color: white;
 }
 
-.sb-colorpicker-dialog{
+.sb-colorpicker-dialog {
     flex-wrap: wrap;
     width: 500px;
     height: 400px;

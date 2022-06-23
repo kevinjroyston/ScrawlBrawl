@@ -2,7 +2,7 @@ import { Component, ViewEncapsulation, Input, AfterViewInit, ViewChild, ElementR
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {ColorPickerComponent} from '../colorpicker/colorpicker.component'
 import {GalleryTool} from '@shared/components/gallery/gallerytool/gallerytool.component';
-import {DrawingDirective,DrawingPromptMetadata,DrawingModes} from '@shared/components/drawingdirective.component';
+import {DrawingDirective,DrawingPromptMetadata,DrawingModes,DrawingUrgencies} from '@shared/components/drawingdirective.component';
 import {MatBottomSheet, MatBottomSheetConfig} from '@angular/material/bottom-sheet';
 import Galleries from '@core/models/gallerytypes';
 import { EventManager } from '@angular/platform-browser';
@@ -34,6 +34,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     @Input() showBrushSizeSelector: boolean = true;
     @Input() drawingOptions:DrawingPromptMetadata;
     @Input() userPromptId:string="";
+    @Input() drawingUrgency:DrawingUrgencies = DrawingUrgencies.None;
     @Input() set drawingType(value: string) { this.setDrawingType(value) }
              get drawingType(): string { return this._drawingType}
 
@@ -42,11 +43,12 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     @ViewChild(DrawingDirective) drawingDirective;
 
     drawingMode : DrawingModes = DrawingModes.Draw;
-
+    DrawingUrgencies = DrawingUrgencies; /* make the enum visible to the html template */
     drawingHeight;
     drawingWidth;
     onChange;
     selectedColor: string;
+    previousColor: string="";
     selectedBrushSize: number = 10;
     drawingOptionsCollapse: boolean = false;
     lastImageChange: string = "";
@@ -57,6 +59,49 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
             router.events.subscribe((val) =>{
                 this.storeWorkInProgress();
             } )
+    }
+
+//    this.element.tabIndex = 1;
+
+    @HostListener('keyup',['$event'])
+    onKeyUp(event:KeyboardEvent){
+        switch (event.key) {
+
+        case 'X':
+        case 'x':
+                if (this.previousColor!="") this.handleColorChange(this.previousColor);
+                break;
+        case 'Z':
+        case 'z':
+                if (event.ctrlKey && !event.shiftKey) this.drawingDirective.onPerformUndo();
+                if (event.ctrlKey && event.shiftKey) this.drawingDirective.onPerformRedo();
+                break;
+        case 'Y':
+        case 'y':
+                if (event.ctrlKey) this.drawingDirective.onPerformRedo();
+                break;
+        case 'B':
+        case 'b':
+                this.drawingMode=DrawingModes.Draw;
+                break;
+        case 'E':
+        case 'e':
+                this.drawingMode=DrawingModes.Erase;
+                break;
+        case 'F':
+        case 'f':
+                this.drawingMode=DrawingModes.FloodFill;
+                break;
+        case '[':
+        case '{':
+                if (this.selectedBrushSize > 2) this.selectedBrushSize--;
+                break;
+        case ']':
+        case '}':
+                if (this.selectedBrushSize < 40) this.selectedBrushSize++;
+                break;
+        
+        }
     }
 
     private updateDrawingOptionsForDrawingType(typ){
@@ -124,6 +169,8 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
         if (!this.drawingOptions || !this.drawingOptions.colorList || this.drawingOptions.colorList.includes(tempColor)) {
             this.selectedColor = tempColor;
         }
+
+        this.previousColor = this.selectedColor;
     }
 
     ngOnDestroy() {
@@ -174,6 +221,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     }
 
     handleColorChange = (color: string) => {
+        this.previousColor = this.selectedColor;
         this.selectedColor = color;
         this.switchToDrawIfErase();
     }
