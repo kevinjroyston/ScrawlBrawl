@@ -13,6 +13,7 @@ interface GameModeDialogData {
   lobby: Lobby.LobbyMetadata
   error: string
   onGetLobby: () => void,
+  onLaunchPage: (launchURL: string) => void,
   durationEstimates: Map<Lobby.GameDuration,number>,
   launchURL: string
 }
@@ -27,6 +28,7 @@ export class CommonoptionsDialogComponent implements OnInit {
   error: string
   launchURL: string
   onGetLobby: () => void
+  onLaunchPage: (launchURL:string) => void
   errorSubscription: Subscription
   showTutorial: boolean = true;
   timerEnabled: boolean = true;
@@ -54,6 +56,7 @@ export class CommonoptionsDialogComponent implements OnInit {
     this.lobby = data.lobby;
     this.launchURL = data.launchURL;
     this.onGetLobby = data.onGetLobby;
+    this.onLaunchPage = data.onLaunchPage;
     this.durationEstimates = data.durationEstimates;
     this.estimatedDurationSliderParameters.ticksLabels=[
       this.durationEstimates["Short"] + "m",
@@ -86,16 +89,7 @@ export class CommonoptionsDialogComponent implements OnInit {
           this.closeDialog();
           window.scrollTo(0,0);
           if (this.launchURL && (this.launchURL!='')) {
-            var failed = !window.open(this.launchURL,'_blank', '')  
-            if(!window || window.closed || failed || typeof window.closed=='undefined') 
-            { 
-                //POPUP BLOCKED
-                this.notificationService.addMessage("ScrawlBrawl was blocked from opening a new window, please navigate to 'Join' in a second window to play.", null, {panelClass: ['error-snackbar'], duration: 60000});
-            }
-            else
-            {
-              this.notificationService.addMessage("Opened player instance in new tab.", null, {panelClass: ['success-snackbar'], duration: 5000});
-            }
+            this.onLaunchPage(this.launchURL);
           }
           this.onGetLobby();
         },
