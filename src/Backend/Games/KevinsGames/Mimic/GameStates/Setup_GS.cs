@@ -107,7 +107,7 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
             this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = TVScreenId.WaitForUserInputs,
-                Instructions = new UnityField<string> { Value = "Complete all the drawings on your devices." },
+                Title = new UnityField<string> { Value = "Complete all the drawings on your devices." },
             };
         }
 

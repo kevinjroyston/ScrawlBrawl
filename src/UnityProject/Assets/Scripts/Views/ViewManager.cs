@@ -38,7 +38,7 @@ public class ViewManager : MonoBehaviour
     }
     public void OnLobbyClose()
     {
-        SwitchToView(null, null);
+        SwitchToView(null, null, null);
         ConfigMetaData = null;
     }
 
@@ -72,19 +72,23 @@ public class ViewManager : MonoBehaviour
         // This may result in double pings in some scenarios
         EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.UserSubmitted });
     }
-    public void SwitchToView(TVScreenId? id, UnityView view)
+    public void SwitchToView(TVScreenId? id, UnityView view, List<UnityUser> usersAnsweringPrompts)
     {
         if (view != null && view.Id != lastGuid)
         {
             lastGuid = view.Id;
             EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.ExitingState });
             AnimationManagerScript.Singleton.SendAnimationWrapUp(0.6f);
-            StartCoroutine(TransitionSceneCoroutine(0.6f, id, view));
+            StartCoroutine(TransitionSceneCoroutine(0.6f, id, view, usersAnsweringPrompts));
         }
         else
         {
             ChangeView(id, view);
             EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.UserSubmitted });
+            if (usersAnsweringPrompts != null)
+            {
+                Singleton.UpdateUsersAnsweringPrompts(usersAnsweringPrompts);
+            }
         }
     }
 
@@ -101,7 +105,7 @@ public class ViewManager : MonoBehaviour
         ChangeView(id, view);
     }
 
-    IEnumerator TransitionSceneCoroutine(float delay, TVScreenId? id, UnityView view)
+    IEnumerator TransitionSceneCoroutine(float delay, TVScreenId? id, UnityView view, List<UnityUser> usersAnsweringPrompts)
     {
         yield return new WaitForSeconds(delay);
         AnimationManagerScript.Singleton.ResetAndStopAllAnimations();
@@ -110,6 +114,11 @@ public class ViewManager : MonoBehaviour
 
         ChangeView(id, view, true);
         EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.EnteredState });
+
+        if (usersAnsweringPrompts != null)
+        {
+            Singleton.UpdateUsersAnsweringPrompts(usersAnsweringPrompts);
+        }
     }
 
     public void ChangeView(TVScreenId? id, UnityView view, bool newScene = false)
