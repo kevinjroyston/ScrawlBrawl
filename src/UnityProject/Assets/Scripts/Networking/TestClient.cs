@@ -379,6 +379,16 @@ public class TestClient : MonoBehaviour
                 /* process image list ViewManager.Singleton.UpdateConfigMetaData(RPCRequest.ConfigurationMetadata); */
             }
 
+            // Just checking this to fill up the user lookup, broadcasting below
+            if (RPCRequest.UnityView != null)
+            {
+                // Maintain a lookup of the latest instance we have seen of a given user. Hack to minimize data sent for UnityUserStatuses
+                foreach (UnityUser user in RPCRequest.UnityView.Users)
+                {
+                    UserLookup[user.Id] = user;
+                }
+            }
+
             List<UnityUser> usersAnsweringPrompts = null;
             if (RPCRequest.UnityUserStatus != null)
             {
@@ -390,14 +400,11 @@ public class TestClient : MonoBehaviour
                 }
             }
 
+            // Update the view after the user statuses so that we can update them together
             if (RPCRequest.UnityView != null)
-            {
-                // Maintain a lookup of the latest instance we have seen of a given user. Hack to minimize data sent for UnityUserStatuses
-                foreach (UnityUser user in RPCRequest.UnityView.Users)
-                {
-                    UserLookup[user.Id] = user;
-                }
-                ViewManager.Singleton.SwitchToView(RPCRequest.UnityView?.ScreenId ?? TVScreenId.Unknown, RPCRequest.UnityView, usersAnsweringPrompts);
+            {         
+                // Don't show usersAnsweringPrompts on reveal, use normal users list per unity view.
+                ViewManager.Singleton.SwitchToView(RPCRequest.UnityView?.ScreenId ?? TVScreenId.Unknown, RPCRequest.UnityView, RPCRequest.UnityView.IsRevealing ? null : usersAnsweringPrompts);
             }
             else if (usersAnsweringPrompts != null)
             {

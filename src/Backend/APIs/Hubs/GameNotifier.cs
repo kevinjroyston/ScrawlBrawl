@@ -68,7 +68,7 @@ namespace Backend.APIs.Hubs
                             {
                                 foreach (var drawingObject in unityImage.DrawingObjects.Where(drawing => !drawing.SentToClient))
                                 {
-                                    unityRPCHolder.UnityImageList.ImgList.Add(drawingObject.Id.ToString(),drawingObject.DrawingStr);
+                                    unityRPCHolder.UnityImageList.ImgList[drawingObject.Id.ToString()] = drawingObject.DrawingStr;
                                     drawingObject.MarkSentToClient();
                                     lobby.AddDrawingObjectToRepository(drawingObject);
 
@@ -80,9 +80,18 @@ namespace Backend.APIs.Hubs
                     {
                         foreach (var unityUser in unityRPCHolder.UnityView.Users.Where(user=>!user.DrawingObject.SentToClient))
                         {
-                            unityRPCHolder.UnityImageList.ImgList.Add(unityUser.DrawingObject.Id.ToString(), unityUser.DrawingObject.DrawingStr);
+                            unityRPCHolder.UnityImageList.ImgList[unityUser.DrawingObject.Id.ToString()] = unityUser.DrawingObject.DrawingStr;
                             unityUser.DrawingObject.MarkSentToClient();
                             lobby.AddDrawingObjectToRepository(unityUser.DrawingObject);
+                        }
+                    }
+                    if (unityRPCHolder.UnityUserStatus != null)
+                    {
+                        foreach (var user in unityRPCHolder.UnityUserStatus.UsersAnsweringPrompts.Where(user => !user.SelfPortrait.SentToClient))
+                        {
+                            unityRPCHolder.UnityImageList.ImgList[user.SelfPortrait.Id.ToString()] = user.SelfPortrait.DrawingStr;
+                            user.SelfPortrait.MarkSentToClient();
+                            lobby.AddDrawingObjectToRepository(user.SelfPortrait);
                         }
                     }
 

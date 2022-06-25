@@ -254,6 +254,9 @@ namespace Backend.GameInfrastructure
 
                 Inlet(user, UserStateResult.Success, null);
 
+                // This won't mark the drawing as sent to client, but will ensure new clients DEFINTIELY get it
+                AddDrawingObjectToRepository(user.SelfPortrait);
+
                 // Have the gamestate refresh its' user list.
                 this.WaitForLobbyStart.Update();
                 this.UserStatusDirty = true;
@@ -357,7 +360,7 @@ namespace Backend.GameInfrastructure
 
         public UnityUserStatuses GetUsersAnsweringPrompts()
         {
-            return new UnityUserStatuses(GetAllUsers().Where(user => ((user.Status == UserStatus.AnsweringPrompts) && (user.Activity != UserActivity.Disconnected))).Select(user => user.Id).ToList());
+            return new UnityUserStatuses(GetAllUsers().Where(user => ((user.Status == UserStatus.AnsweringPrompts) && (user.Activity != UserActivity.Disconnected))).ToList());
         }
 
         public bool HasUnityUserStatusChanged()
@@ -449,6 +452,8 @@ namespace Backend.GameInfrastructure
                 game.Transition(() => {
                     this.TutorialStarted = false;
                     this.Game = null;
+                    this.ConfigMetaData.GameMode = null;
+
                     InitializeAllGameStates();
                     DropDisconnectedUsers();
 

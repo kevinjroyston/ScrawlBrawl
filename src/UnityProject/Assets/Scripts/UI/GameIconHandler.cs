@@ -30,9 +30,9 @@ public class GameIconHandler : MonoBehaviour
         {
             GamesToIcons.Add(GameSprites[i].game, GameSprites[i]);
         }
-        ViewManager.Singleton.AddConfigurationListener_GameMode(SetGame);
 
         SetGame(null);
+        ViewManager.Singleton.AddConfigurationListener_GameMode(SetGame);
     }
 
     public void SetGame(GameModeId? gameMode) 
