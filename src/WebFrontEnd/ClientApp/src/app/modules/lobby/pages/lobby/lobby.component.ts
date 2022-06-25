@@ -28,7 +28,9 @@ export class LobbyManagementComponent {
     public error: string;
     public inAGame: boolean = false;
 
-    private ownerIsPlayingGame = false;
+    public ownerIsPlayingGame = true; /* after a refresh default this to true until we decide to fetch user lobby to tell for sure */
+
+    private launchedWindow = null;
 
     @ViewChild(GameAssetDirective) gameAssetDirective;
 
@@ -119,6 +121,10 @@ export class LobbyManagementComponent {
         });
     }
 
+    onShowPlayTab() {
+        this.onLaunchURL(this.baseFrontEndUrl+"play");
+    }
+
     async onDeleteUser() {
         await this.api.request({ type: "User", path: "Delete" }).subscribe({
             next: async data => {
@@ -144,6 +150,35 @@ export class LobbyManagementComponent {
         return game === this.lobby.selectedGameMode;
     }
 
+    onLaunchURL(launchURL: string){
+
+        if(this.launchedWindow != null && !this.launchedWindow.closed){
+            try {            
+                if (this.launchedWindow.location.href.indexOf('play') >= 0) { /* we only ever launch to the play page right now */
+                    this.launchedWindow.focus();            
+                    console.log("refocused  player instance");
+                    return;
+                }
+            }
+          catch (error) {console.log("Launched window had navigated, reopening")}
+        }    
+
+        if(this.launchedWindow == null || this.launchedWindow.closed){
+          this.launchedWindow = window.open(launchURL,'_SBLaunch', '');
+          if(!this.launchedWindow || this.launchedWindow.closed || typeof this.launchedWindow.closed=='undefined') 
+            { 
+              //POPUP BLOCKED
+              this.notificationService.addMessage("ScrawlBrawl was blocked from opening a new window, please navigate to 'Play' in a second window to play.", null, {panelClass: ['error-snackbar'], duration: 60000});
+              console.log("POPUP WAS BLOCKED");
+            }
+          else
+            {
+            this.notificationService.addMessage("Opened player instance in new tab.", null, {panelClass: ['success-snackbar'], duration: 5000});
+            console.log("opened player instance");
+            }
+        }
+  
+    }
     onSelectGameMode(game: number) {
         this.lobby.selectedGameMode = game;        
         this.openGameSettingsDialog();
@@ -183,6 +218,7 @@ export class LobbyManagementComponent {
         dialogConfig.data = {
             lobby: this.lobby,
             onGetLobby: () => this.onGetLobby(),
+            onLaunchPage: (launchURL: string) => this.onLaunchURL(launchURL),
             durationEstimates: gameDurationEstimatesInMinutes,
             launchURL: this.ownerIsPlayingGame?this.baseFrontEndUrl+"play":"",
         }

@@ -28,6 +28,13 @@
             <span class="showLobbyId">Lobby Code: {{ lobby.lobbyId.toUpperCase() }}
         </span>
         </div>
+        <div *ngIf="ownerIsPlayingGame" class="sticky-nav" style="width:220px;padding-right:20px;">
+            <div style="width:200px;padding-top: 4px;">
+                <scrawlbutton color="green" (click)="onShowPlayTab()">
+                    Switch To Play Tab
+                </scrawlbutton>
+            </div>
+        </div>
         <div class="sticky-nav" style="width:150px;padding-right:20px;">
             <div style="width:120px;padding-top: 4px;">
                 <scrawlbutton color="red" (click)="onDeleteLobby()">
