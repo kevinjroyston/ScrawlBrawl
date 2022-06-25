@@ -168,7 +168,7 @@ export class LobbyManagementComponent {
           if(!this.launchedWindow || this.launchedWindow.closed || typeof this.launchedWindow.closed=='undefined') 
             { 
               //POPUP BLOCKED
-              this.notificationService.addMessage("ScrawlBrawl was blocked from opening a new window, please navigate to 'Join' in a second window to play.", null, {panelClass: ['error-snackbar'], duration: 60000});
+              this.notificationService.addMessage("ScrawlBrawl was blocked from opening a new window, please navigate to 'Play' in a second window to play.", null, {panelClass: ['error-snackbar'], duration: 60000});
               console.log("POPUP WAS BLOCKED");
             }
           else
