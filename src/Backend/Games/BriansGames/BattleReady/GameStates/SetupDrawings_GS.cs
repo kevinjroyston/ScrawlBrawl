@@ -32,8 +32,8 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
             : base(
                 lobby: lobby,
                 numExpectedPerUser: numExpectedPerUser,
-                unityTitle: "",
-                unityInstructions: "Complete as many drawings as possible before the time runs out",
+                unityTitle: "Complete the drawing prompts on your device!",
+                unityInstructions: "",
                 setupDuration: setupDurration * numExpectedPerUser)
         {
             this.ExpectedTimePerPrompt = setupDurration;

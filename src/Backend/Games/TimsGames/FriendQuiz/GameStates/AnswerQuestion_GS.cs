@@ -89,7 +89,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
             this.UnityView = new UnityView(lobby)
             {
                 ScreenId = TVScreenId.WaitForUserInputs,
-                Instructions = new UnityField<string> { Value = "Answer all the questions on your phones" },
+                Title = new UnityField<string> { Value = "Answer all the questions on your phones" },
             };
         }
     }

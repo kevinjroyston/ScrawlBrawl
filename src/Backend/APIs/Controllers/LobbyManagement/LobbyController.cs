@@ -355,7 +355,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
                     return StatusCode(404, "Lobby doesn't exist.");
                 }
 
-                if (user.OwnedLobby.IsGameInProgress())
+                if (user.OwnedLobby.IsGameOrTutorialInProgress())
                 {
                     return new AcceptedResult();
                 }
@@ -366,7 +366,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
                         return StatusCode(404, "Lobby no longer exists.");
                     }
 
-                    if (user.OwnedLobby.IsGameInProgress())
+                    if (user.OwnedLobby.IsGameOrTutorialInProgress())
                     {
                         return new AcceptedResult();
                     }

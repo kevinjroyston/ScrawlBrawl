@@ -35,7 +35,7 @@ namespace Backend.GameInfrastructure.DataModels
         private bool Entered = false;
         private object EnteredLock { get; } = new object();
 
-        private bool UsersHurried = false;
+        protected bool UsersHurried { get; private set; } = false;
 
         /// <summary>
         /// The total time to spend in the state.

@@ -121,7 +121,7 @@ namespace Backend.GameInfrastructure.DataModels.Users
         {
             get
             {
-                if ( DateTime.UtcNow.Subtract(this.LastPingTime) >= Constants.UserDisconnectTimer)
+                if (this.Deleted || DateTime.UtcNow.Subtract(this.LastPingTime) >= Constants.UserDisconnectTimer)
                 {
                     return UserActivity.Disconnected;
                 } 
@@ -137,11 +137,18 @@ namespace Backend.GameInfrastructure.DataModels.Users
                 return UserActivity.Active;
             }
         }
+
+        public bool Deleted { get; private set; }
+
         /// <summary>
-        /// Should add better access control around this but idc at this point.
-        /// Also this is super hacky in general. Don't set Deleted except for in gracefully leaving lobby.
+        /// This is pretty hacky and should probably only be called in graceful user deletes. 
+        /// Bad things will happen I think if this is called on inactive/disconnected users midgame since the user will effectively drop itself out of the state graph.
         /// </summary>
-        public bool Deleted { get; set; } = false;
+        public void MarkDeleted()
+        {
+            this.Deleted = true;
+        }
+
         private UserStatus InternalStatus;
 
         /// <summary>

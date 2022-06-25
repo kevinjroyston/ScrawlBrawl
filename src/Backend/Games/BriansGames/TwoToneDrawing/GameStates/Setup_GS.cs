@@ -243,13 +243,20 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
             {
                 var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby), stateDuration: perDrawingTimer.MultipliedBy(numDrawingsPerPlayer));
                 getDrawings.Transition(this.Exit);
+
+                getDrawings.AddEntranceListener(() =>
+                {
+                    // Need to set unity view dirty since the state timeout has changed technically
+                    this.UnityViewDirty = true;
+                });
+
                 return getDrawings;
             });
 
             this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = TVScreenId.WaitForUserInputs,
-                Instructions = new UnityField<string> { Value = "Complete all the prompts on your devices." },
+                Title = new UnityField<string> { Value = "Complete all the prompts on your devices." },
             };
         }
 

@@ -28,8 +28,8 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
             : base(
                 lobby: lobby,
                 numExpectedPerUser: numExpectedPerUser,
-                unityTitle: "",
-                unityInstructions: "Complete as many prompts as possible before the time runs out",
+                unityTitle: "Complete the prompts on your device",
+                unityInstructions: "",
                 setupDuration: setupDuration)
         {
             this.SetupDuration = setupDuration;

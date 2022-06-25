@@ -28,8 +28,8 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
             : base(
                 lobby: lobby,
                 numExpectedPerUser: numExpectedPerUser,
-                unityTitle: "",
-                unityInstructions: "Create some prompts for others to draw",
+                unityTitle: "Create some prompts for others to draw",
+                unityInstructions: "",
                 setupDuration: setupDuration)
         {
             this.Prompts = prompts;

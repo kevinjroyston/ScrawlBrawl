@@ -268,13 +268,18 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                     });
                 var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: waitForDrawings, stateDuration: PerDrawingTimeDuration.MultipliedBy(NumDrawingsPerUser));
                 getDrawings.Transition(this.Exit);
+                getDrawings.AddEntranceListener(() =>
+                {
+                    // Need to set unity view dirty since the state timeout has changed technically
+                    this.UnityViewDirty = true;
+                });
                 return getDrawings;
             });
 
             this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = TVScreenId.WaitForUserInputs,
-                Instructions = new UnityField<string> { Value = "Complete all the prompts on your devices." },
+                Title = new UnityField<string> { Value = "Complete all the prompts on your devices." },
             };
         }
 

@@ -4,7 +4,6 @@ using Backend.GameInfrastructure.DataModels.States.GameStates;
 using Backend.GameInfrastructure.DataModels.States.StateGroups;
 using Backend.GameInfrastructure.Extensions;
 using Backend.APIs.DataModels;
-using Backend.APIs.DataModels.Exceptions;
 using Common.DataModels.Requests;
 using Common.DataModels.Requests.LobbyManagement;
 using Common.DataModels.Responses;
@@ -51,6 +50,8 @@ namespace Backend.GameInfrastructure
 
         private bool UserStatusDirty;
 
+        private bool TutorialStarted = false;
+
 
         #region GameStates
         private GameState CurrentGameState { get; set; }
@@ -79,12 +80,17 @@ namespace Backend.GameInfrastructure
         public void DropDisconnectedUsers()
         {
             List<User> disconnected = GetAllUsers().Where(user => user.Activity == UserActivity.Disconnected).ToList();
-            if (disconnected.Count == 0)
+            DropUsers(disconnected);
+        }
+
+        public void DropUsers(List<User> users)
+        {
+            if (users.Count == 0)
             {
                 return;
             }
 
-            foreach(User user in disconnected)
+            foreach (User user in users)
             {
                 TryLeaveLobbyGracefully(user);
                 GameManager.UnregisterUser(user);
@@ -104,6 +110,10 @@ namespace Backend.GameInfrastructure
         {
             return this.Game != null;
         }
+        public bool IsGameOrTutorialInProgress()
+        {
+            return this.TutorialStarted || IsGameInProgress();
+        }
         public GameState GetCurrentGameState()
         {
             return this.CurrentGameState;
@@ -119,12 +129,12 @@ namespace Backend.GameInfrastructure
         {
             errorMsg = string.Empty;
             response = null;
-            if (IsGameInProgress())
+
+            if (IsGameOrTutorialInProgress())
             {
-                // TODO: this might need updating for replay logic.
                 errorMsg = "Game is already in progress. Try deleting lobby if this is unexpected.";
                 return false;
-            }
+            }            
 
             if (request?.GameMode == null || request.GameMode.Value < 0 || request.GameMode.Value >= GameModes.Count)
             {
@@ -154,18 +164,28 @@ namespace Backend.GameInfrastructure
                 }
             }
 
-            this.SelectedGameMode = GameModes[request.GameMode.Value];
-            int numUsers = this.GetAllUsers().Count;
-            response = new ConfigureLobbyResponse()
+            // This lock is to avoid danger when the game is being started while configure is being called.
+            lock (this.UserJoinLock)
             {
-                LobbyId = LobbyId,
-                PlayerCount = numUsers,
-                GameDurationEstimatesInMinutes = SelectedGameMode.GameModeMetadata.GetGameDurationEstimates(numUsers, request.Options).ToDictionary(kvp=>kvp.Key,kvp=>(int)kvp.Value.TotalMinutes),
-            };
+                if (IsGameOrTutorialInProgress())
+                {
+                    errorMsg = "Game is already in progress. Try deleting lobby if this is unexpected.";
+                    return false;
+                }
 
-            this.GameModeOptions = request.Options;
-            this.ConfigMetaData.GameMode = this.SelectedGameMode.GameModeMetadata.GameId;
-            return true;
+                this.SelectedGameMode = GameModes[request.GameMode.Value];
+                int numUsers = this.GetAllUsers().Count;
+                response = new ConfigureLobbyResponse()
+                {
+                    LobbyId = LobbyId,
+                    PlayerCount = numUsers,
+                    GameDurationEstimatesInMinutes = SelectedGameMode.GameModeMetadata.GetGameDurationEstimates(numUsers, request.Options).ToDictionary(kvp => kvp.Key, kvp => (int)kvp.Value.TotalMinutes),
+                };
+
+                this.GameModeOptions = request.Options;
+                this.ConfigMetaData.GameMode = this.SelectedGameMode.GameModeMetadata.GameId;
+                return true;
+            }
         }
 
         /// <summary>
@@ -234,11 +254,15 @@ namespace Backend.GameInfrastructure
 
                 Inlet(user, UserStateResult.Success, null);
 
+                // This won't mark the drawing as sent to client, but will ensure new clients DEFINTIELY get it
+                AddDrawingObjectToRepository(user.SelfPortrait);
+
                 // Have the gamestate refresh its' user list.
                 this.WaitForLobbyStart.Update();
+                this.UserStatusDirty = true;
 
-                // Add a listener so that every time a user's status changes, set the current game state's view to dirty.
-                // TODO: track this separately to avoid sending everything down the wire every time.
+                // Add a listener so that every time a user's status changes, set the user status list to dirty.
+                // Note: there will be another check to make sure it is actually dirty (since this gets double called often)
                 user.AddStatusListener(() => this.UserStatusDirty = true);
 
                 return true;
@@ -264,7 +288,7 @@ namespace Backend.GameInfrastructure
                                 FindNewPartyLeader();
                             }
                             // States will drop deleted users rather than keep hurrying them along.
-                            user.Deleted = true;
+                            user.MarkDeleted();
 
                             // Have the gamestate refresh its' user list.
                             this.WaitForLobbyStart.Update();
@@ -329,14 +353,6 @@ namespace Backend.GameInfrastructure
         /// <summary>
         /// Returns the list of users which are currently registered in the lobby.
         /// </summary>
-        public IReadOnlyList<User> GetUsers(UserActivity acitivity)
-        {
-            return this.UsersInLobby.Values.Where(user => user.Activity == acitivity).ToList().AsReadOnly();
-        }
-
-        /// <summary>
-        /// Returns the list of users which are currently registered in the lobby.
-        /// </summary>
         public IReadOnlyList<User> GetAllUsers()
         {
             return this.UsersInLobby.Values.ToList().AsReadOnly();
@@ -344,7 +360,7 @@ namespace Backend.GameInfrastructure
 
         public UnityUserStatuses GetUsersAnsweringPrompts()
         {
-            return new UnityUserStatuses(GetAllUsers().Where(user => ((user.Status == UserStatus.AnsweringPrompts) && (user.Activity != UserActivity.Disconnected))).Select(user => user.Id).ToList());
+            return new UnityUserStatuses(GetAllUsers().Where(user => ((user.Status == UserStatus.AnsweringPrompts) && (user.Activity != UserActivity.Disconnected))).ToList());
         }
 
         public bool HasUnityUserStatusChanged()
@@ -377,7 +393,7 @@ namespace Backend.GameInfrastructure
             {
                 LobbyId = this.LobbyId,
                 PlayerCount = this.GetAllUsers().Count(),
-                GameInProgress = this.IsGameInProgress(),
+                GameInProgress = this.IsGameOrTutorialInProgress(),
                 /*this.GameModeSettings = lobby.SelectedGameMode;
                 for (int i = 0; i < (this.GameModeSettings?.Options?.Count ?? 0); i++)
                 {
@@ -411,41 +427,42 @@ namespace Backend.GameInfrastructure
 
             this.StandardGameModeOptions = standardOptions;
             GameModeMetadataHolder gameModeMetadata = this.SelectedGameMode;
-            IGameMode game;
-            try
-            {
-                game = gameModeMetadata.GameModeInstantiator(this, this.GameModeOptions, this.StandardGameModeOptions);
-            }
-            catch (GameModeInstantiationException err)
-            {
-                errorMsg = err.Message;
-                return false;
-            }
 
-            this.Game = game;
+            // This covers locking down configure and start for the time between now and the actual instantiation of the game.
+            // This is currently fine to set, even if a tutorial isn't in use. Better thread safety anyways
+            this.TutorialStarted = true;
             
             if (this.StandardGameModeOptions?.ShowTutorial ?? true)
             {
                 // Transition from waiting => tutorial => game.
                 this.WaitForLobbyStart.Transition(this.TutorialGameState);
-                this.TutorialGameState.Transition(game);
+                this.TutorialGameState.Transition(InstantiateGame);
             }
             else
             {
                 // No tutorial, transition straight from waiting to game.
-                this.WaitForLobbyStart.Transition(game);
+                this.WaitForLobbyStart.Transition(InstantiateGame);
             }
 
-            // Set up game to transition smoothly to end of game restart.
-            // TODO: transition to a scoreboard first instead?
-            game.Transition(() => {
-                this.Game = null;
-                InitializeAllGameStates();
-                DropDisconnectedUsers();
+            IInlet InstantiateGame()
+            {
+                IGameMode game = gameModeMetadata.GameModeInstantiator(this, this.GameModeOptions, this.StandardGameModeOptions);
 
-                this.ResetScores();
-                return this.WaitForLobbyStart;
-            });
+                // Set up game to transition smoothly to end of game restart.
+                game.Transition(() => {
+                    this.TutorialStarted = false;
+                    this.Game = null;
+                    this.ConfigMetaData.GameMode = null;
+
+                    InitializeAllGameStates();
+                    DropDisconnectedUsers();
+
+                    this.ResetScores();
+                    return this.WaitForLobbyStart;
+                });
+                this.Game = game;
+                return game;
+            }
 
             // Send users to game or tutorial.
             this.WaitForLobbyStart.LobbyHasClosed();

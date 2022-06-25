@@ -6,7 +6,6 @@ using Backend.GameInfrastructure.Extensions;
 using Backend.Games.Common.GameStates;
 using Backend.Games.TimsGames.FriendQuiz.DataModels;
 using Backend.Games.TimsGames.FriendQuiz.GameStates;
-using Backend.APIs.DataModels.Exceptions;
 using Common.DataModels.Requests.LobbyManagement;
 using System;
 using System.Collections.Generic;

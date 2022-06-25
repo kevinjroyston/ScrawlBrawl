@@ -65,6 +65,14 @@ namespace Backend.APIs.Controllers
                         // Handles partial/null inputs.
                         user.UserState.HandleUserTimeout(user, formData);
                     }
+
+                    // For as long as the user has a submit button and is still timing out soon, keep handling timeout
+                    while (user.UserState.UserRequestingCurrentPrompt(user).SubmitButton
+                        && user.EarliestStateTimeout.HasValue
+                        && (user.EarliestStateTimeout.Value.Subtract(DateTime.UtcNow) < TimeSpan.FromSeconds(6)))
+                    {
+                        user.UserState.HandleUserTimeout(user, null);
+                    }
                 }
             }
             catch (Exception e)

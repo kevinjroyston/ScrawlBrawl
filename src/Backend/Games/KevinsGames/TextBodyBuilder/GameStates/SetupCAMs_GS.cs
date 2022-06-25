@@ -37,8 +37,8 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
             : base(
                 lobby: lobby,
                 numExpectedPerUser: numExpectedPerUser,
-                unityTitle: "",
-                unityInstructions: "Complete as many descriptors as possible before the time runs out",
+                unityTitle: "Create some descriptors (Characters/Actions/Modifiers)",
+                unityInstructions: "",
                 setupDuration: setupDurration)
         {
             this.CAMs = cams;

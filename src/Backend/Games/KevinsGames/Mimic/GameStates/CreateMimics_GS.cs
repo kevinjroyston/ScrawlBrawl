@@ -72,7 +72,7 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
             this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = TVScreenId.WaitForUserInputs,
-                Instructions = new UnityField<string> { Value = "Recreate that drawing to the best of your abilities" },
+                Title = new UnityField<string> { Value = "Recreate that drawing to the best of your abilities" },
             };
         }
     }

@@ -47,7 +47,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
             this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = TVScreenId.WaitForUserInputs,
-                Instructions = new UnityField<string> { Value = "Make your contestants on your devices." },
+                Title = new UnityField<string> { Value = "Make your contestants on your devices." },
             };
         }
 

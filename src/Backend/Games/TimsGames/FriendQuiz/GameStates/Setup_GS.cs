@@ -34,8 +34,8 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
             : base(
                 lobby: lobby,
                 numExpectedPerUser: numExpectedPerUser,
-                unityTitle: "Time To Write",
-                unityInstructions: "Write your questions",
+                unityTitle: "Time to write your questions!",
+                unityInstructions: "",
                 setupDuration: setupDuration)
         {
             this.SetupDuration = setupDuration;

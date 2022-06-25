@@ -25,8 +25,8 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
             : base(
                 lobby: lobby,
                 challengeTrackersToFurnish: challengeTrackersToFurnish,
-                unityTitle: "",
-                unityInstructions: "Improve the drawing to match the prompt",
+                unityTitle: "Improve the drawing to match the prompt",
+                unityInstructions: "",
                 setupDuration: setupDuration)
         {
         }
