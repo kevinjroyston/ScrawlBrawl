@@ -28,13 +28,6 @@
             <span class="showLobbyId">Lobby Code: {{ lobby.lobbyId.toUpperCase() }}
         </span>
         </div>
-        <div *ngIf="ownerIsPlayingGame" class="sticky-nav" style="width:220px;padding-right:20px;">
-            <div style="width:200px;padding-top: 4px;">
-                <scrawlbutton color="green" (click)="onShowPlayTab()">
-                    Switch To Play Tab
-                </scrawlbutton>
-            </div>
-        </div>
         <div class="sticky-nav" style="width:150px;padding-right:20px;">
             <div style="width:120px;padding-top: 4px;">
                 <scrawlbutton color="red" (click)="onDeleteLobby()">
@@ -64,6 +57,13 @@
                 <scrawlbrawl-iconbutton (click)="putViewerLinkOnClipboard()" matTooltip="Put Link to Viewer on Clipboard" [mdTooltipClass]="{'tooltip': true}">
                     <ion-icon [style.color]="'var(--red-secondary)'" name="clipboard-outline"></ion-icon>
                 </scrawlbrawl-iconbutton>
+                <div *ngIf="ownerIsPlayingGame" style="margin-left:auto;margin-right:0;width:220px;padding-right:20px;">
+                    <div style="width:200px;padding-top: 4px;">
+                        <scrawlbutton color="green" (click)="onShowPlayTab()">
+                            Switch To Play Tab
+                        </scrawlbutton>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
