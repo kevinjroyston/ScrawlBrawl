@@ -2592,11 +2592,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 733042830}
   timerAudioSource: {fileID: 733042831}
-  startDingClip: {fileID: 8300000, guid: 9970546d8e941794cb1f5e74ec356e6e, type: 3}
-  userSubmitClip: {fileID: 8300000, guid: 1946d49b04b0ff04a95e890a4ecfce01, type: 3}
-  wooshClip: {fileID: 8300000, guid: 047ddfe06eee62145afd681405336fd0, type: 3}
-  popClip: {fileID: 8300000, guid: 9970546d8e941794cb1f5e74ec356e6e, type: 3}
-  drumRollClip: {fileID: 8300000, guid: 12ed3417eaa3a314b8f01c828ac3783d, type: 3}
+  audioClips:
+  - clip: {fileID: 0}
+    triggerEvent:
+      eventType: 0
+      id: 
+    volume: 0
+  - clip: {fileID: 8300000, guid: 7793c400d0829af48a71f7419ddd5241, type: 3}
+    triggerEvent:
+      eventType: 20
+      id: 
+    volume: 0.2
+  - clip: {fileID: 8300000, guid: 9970546d8e941794cb1f5e74ec356e6e, type: 3}
+    triggerEvent:
+      eventType: 1
+      id: 
+    volume: 0.8
+  - clip: {fileID: 8300000, guid: 9970546d8e941794cb1f5e74ec356e6e, type: 3}
+    triggerEvent:
+      eventType: 11
+      id: 
+    volume: 0.8
+  - clip: {fileID: 8300000, guid: 1946d49b04b0ff04a95e890a4ecfce01, type: 3}
+    triggerEvent:
+      eventType: 4
+      id: 
+    volume: 0.4
+  - clip: {fileID: 8300000, guid: 12ed3417eaa3a314b8f01c828ac3783d, type: 3}
+    triggerEvent:
+      eventType: 15
+      id: 
+    volume: 0.4
+  - clip: {fileID: 8300000, guid: 12dffc4599eec4c4cb52f774d5dad684, type: 3}
+    triggerEvent:
+      eventType: 23
+      id: 
+    volume: 0.4
+  - clip: {fileID: 8300000, guid: 4cd79a06d7c334c47895432636ca0758, type: 3}
+    triggerEvent:
+      eventType: 22
+      id: 
+    volume: 0.4
+  - clip: {fileID: 8300000, guid: 0446ad09f90b7d041979da777ab50301, type: 3}
+    triggerEvent:
+      eventType: 21
+      id: 
+    volume: 0.4
 --- !u!1 &734999336
 GameObject:
   m_ObjectHideFlags: 0

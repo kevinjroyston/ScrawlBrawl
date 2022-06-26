@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class AudioController : MonoBehaviour
 {
+    [System.Serializable]
+    public class ClipInfo
+    {
+        public AudioClip clip;
+        public GameEvent triggerEvent;
+        public float volume;
+    }
     public AudioSource audioSource;
     public AudioSource timerAudioSource;
-    public AudioClip startDingClip;
-    public AudioClip userSubmitClip;
-    public AudioClip wooshClip;
-    public AudioClip popClip;
-    public AudioClip drumRollClip;
-    //public AudioClip endDingClip;
-    
+
+    public List<ClipInfo> audioClips;
+
 
     public static AudioController Singleton;
 
@@ -23,11 +26,6 @@ public class AudioController : MonoBehaviour
     public void Start()
     {
         EventSystem.Singleton.RegisterListener(
-            listener: PlayStartDing,
-            gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.EnteredState },
-            persistant: true,
-            oneShot: false);
-        EventSystem.Singleton.RegisterListener(
             listener: PlayTimer,
             gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.TenSecondsLeft },
             persistant: true,
@@ -37,42 +35,23 @@ public class AudioController : MonoBehaviour
             gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.ExitingState },
             persistant: true,
             oneShot: false);
-        EventSystem.Singleton.RegisterListener(
-            listener: PlayUserSubmit,
-            gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.UserSubmitted },
-            persistant: true,
-            oneShot: false);
-        EventSystem.Singleton.RegisterListener(
-            listener: PlayWoosh,
-            gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.VoteRevealBubbleMove },
-            persistant: true,
-            oneShot: false);
-        EventSystem.Singleton.RegisterListener(
-            listener: PlayPop,
-            gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.PlayPop },
-            persistant: true,
-            oneShot: false);
-        EventSystem.Singleton.RegisterListener(
-            listener: PlayDrumRoll,
-            gameEvent: new GameEvent() { eventType = GameEvent.EventEnum.PlayDrumRoll },
-            persistant: true,
-            oneShot: false);
-    }
 
-    public void PlayStartDing(GameEvent gameEvent = null)
-    {
-        if (audioSource!=null && startDingClip != null)
+        foreach (ClipInfo clipInfo in audioClips)
         {
-            audioSource.PlayOneShot(startDingClip);
-        }     
-    }
-    /*public void PlayEndDing()
-    {
-        if (audioSource != null && endDingClip != null)
-        {
-            audioSource.PlayOneShot(endDingClip);
+            EventSystem.Singleton.RegisterListener(
+                listener: (GameEvent gameEvent) =>
+                {
+                    if (audioSource != null && clipInfo.clip != null)
+                    {
+                        audioSource.PlayOneShot(clipInfo.clip, clipInfo.volume);
+                    }
+                },
+                gameEvent: clipInfo.triggerEvent,
+                persistant: true,
+                oneShot: false
+                );
         }
-    }*/
+    }
     public void PlayTimer(GameEvent gameEvent = null)
     {
         if (timerAudioSource != null)
@@ -87,33 +66,7 @@ public class AudioController : MonoBehaviour
             timerAudioSource.Stop();
         }
     }
-    public void PlayUserSubmit(GameEvent gameEvent = null)
-    {
-        if (audioSource != null && userSubmitClip != null)
-        {
-            audioSource.PlayOneShot(userSubmitClip);
-        }
-    }
-    public void PlayWoosh(GameEvent gameEvent = null)
-    {
-        if (audioSource != null && wooshClip != null)
-        {
-            audioSource.PlayOneShot(wooshClip, 0.2f);
-        }
-    }
-    public void PlayPop(GameEvent gameEvent = null)
-    {
-        if (audioSource != null && popClip != null)
-        {
-            audioSource.PlayOneShot(popClip);
-        }
-    }
-    public void PlayDrumRoll(GameEvent gameEvent = null)
-    {
-        if (audioSource != null && drumRollClip != null)
-        {
-            audioSource.PlayOneShot(drumRollClip, 0.4f);
-        }
-    }
+
+
 
 }

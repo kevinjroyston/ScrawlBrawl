@@ -44,3 +44,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: FrontSparkles
+    uniqueID: 2064379495
+    locked: 0
