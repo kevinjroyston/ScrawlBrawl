@@ -92,7 +92,6 @@ public class UnityObjectDropzoneHandler : MonoBehaviour, HandlerInterface
             DropZone.transform.GetChild(i).GetComponent<UnityObjectHandler>().HandleUnityObject(objects[i], unityViewHandler);
         }
 
-        
 
         if (objects.Any(unityObject => unityObject.Options.ShouldRevealThisObject()) ) // only shake the objects if one of them is going to be revealed
         {

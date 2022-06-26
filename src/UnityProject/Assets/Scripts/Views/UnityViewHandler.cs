@@ -18,6 +18,7 @@ namespace Assets.Scripts.Views
         private UnityView UnityView { get; set; }
 
         public List<TVScreenId> ScreenId;
+
         private List<Component> Handlers { get; set; } = new List<Component>();
 
         void Awake()
@@ -65,6 +66,10 @@ namespace Assets.Scripts.Views
             UnityView = view;
             UpdateHandlers();
             CallHandlers();
+            if (view.ScreenId == TVScreenId.Scoreboard && view.IsRevealing)
+            {
+                EventSystem.Singleton.PublishEvent(new GameEvent() { eventType = GameEvent.EventEnum.FinalScores });
+            }
         }
 
 

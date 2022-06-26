@@ -1,6 +1,7 @@
 ﻿ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LeanTweenHelper : MonoBehaviour
 {
@@ -14,6 +15,40 @@ public class LeanTweenHelper : MonoBehaviour
     {
         return (b - a) * t + a;
     }
+    #region ColorChange
+    /*public LTDescr ColorChange(Image image, Color to, float time)
+    {
+        LTDescr leanTweenValue = LeanTween.value(0, 1, time);
+        leanTweenValue.addOnStart(() =>
+        {
+            StartCoroutine(ColorChangeCoroutine(leanTweenValue, image, to, time));
+        });
+        return leanTweenValue;
+    }
+    IEnumerator ColorChangeCoroutine(LTDescr leanTweenValue, Image image, Color to, float time)
+    {
+       /* float elapsedTime = 0f;
+        float tweeningValue = 0;
+        leanTweenValue.setOnUpdate((float value) => tweeningValue = value);
+        Color originalColor =
+        Vector3 originalPosition = rectTransform.position;
+        bool isTweening = LeanTween.isTweening(leanTweenValue.id);
+        bool isFinished = leanTweenValue.isFinished;
+        while (LeanTween.isTweening(leanTweenValue.id) && rectTransform != null && elapsedTime < time + leanTweenValue.delay + 2)
+        {
+            elapsedTime += Time.deltaTime;
+            rectTransform.position = UnBoundedLerp(
+                originalPosition,
+                to,
+                tweeningValue);
+            yield return null;
+        }
+        if (rectTransform != null)
+        {
+            rectTransform.position = to;
+        }
+    }*/
+    #endregion
     #region UIMove
     public LTDescr UIMove(RectTransform rectTransform, Vector3 to, float time)
     {

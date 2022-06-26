@@ -27,6 +27,11 @@ public class GameEvent
         ShowDeltaScores,
         ReorderIcons,
         CelebrateScoreIcons,
+        FinalScores,
+        PlayBrassHit,
+        PlayCelebrateF,
+        PlayCelebrateG,
+        PlayCelebrateA,
     }
     public EventEnum eventType;
 
