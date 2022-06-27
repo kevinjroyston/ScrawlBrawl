@@ -1,9 +1,9 @@
 <br>
-<div class="lobby-wait-header">During the game you will need to look at both this device, and the game viewer
+<div class="lobby-wait-header" *ngif="!waitingForGameStartParameters.IsHost">During the game you will need to look at both this device, and the game viewer
     <br>Make sure you can see the game viewer (your host should screen share it with you).
 </div>
 
-<div class="desktopContent">
+<div class="desktopContent" *ngif="!waitingForGameStartParameters.IsHost">
     Alternatively, if you would like to launch the viewer yourself, <span class="textLink" (click)="launchViewer()">click here.</span>
 </div>
 

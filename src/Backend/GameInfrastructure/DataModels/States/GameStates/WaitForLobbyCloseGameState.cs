@@ -42,12 +42,15 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             Description = $"Players in lobby {user.LobbyId}",
             DisplayUsers = UserListMetadataMode.AllUsers,
             SubPrompts = new SubPrompt[]
+                {
+                    new SubPrompt
                     {
-                        new SubPrompt
-                            {
-                            WaitingForGameStart = new WaitingForGameStartMetadata { },
-                            },
-                    }
+                        WaitingForGameStart = new WaitingForGameStartMetadata
+                        {
+                            IsHost = user.Identifier == user.Lobby.Owner.UserId
+                        },
+                    },
+                }
         };
         public WaitForLobbyCloseGameState(Lobby lobby)
             : base(

@@ -92,6 +92,7 @@ namespace GameplayPrompts {
     }
     export interface WaitingForGameStartMetadata
     {
+      isHost: boolean;
     }
 
 }

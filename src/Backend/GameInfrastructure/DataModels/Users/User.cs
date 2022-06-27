@@ -69,6 +69,8 @@ namespace Backend.GameInfrastructure.DataModels.Users
         public void SetLobbyJoinTime()
         {
             LobbyJoinTime = DateTime.UtcNow;
+            LastPingTime = DateTime.UtcNow;
+            LastActivityTime = DateTime.UtcNow;
         }
 
         public void AddStatusListener(Action listener)
