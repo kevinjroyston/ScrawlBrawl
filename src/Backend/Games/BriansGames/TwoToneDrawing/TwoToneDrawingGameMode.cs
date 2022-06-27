@@ -160,11 +160,20 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             {
                 List<ChallengeTracker> challenges = SubChallenges.Keys.OrderBy(_ => Rand.Next()).ToList();
                 List<State> stateList = new List<State>();
+                int currentRound = 0;
                 foreach (ChallengeTracker challenge in challenges)
                 {
-                    stateList.Add(GetVotingAndRevealState(challenge, votingTimer));
+                    currentRound++;
+                    stateList.Add(GetVotingAndRevealState(
+                        challenge,
+                        votingTimer,
+                        new UnityRoundDetails
+                        {
+                            CurrentRound = currentRound,
+                            TotalRounds = challenges.Count
+                        }));
                 }
-                stateList.Add(new ScoreBoardGameState(lobby, "Final Top Scores"));
+                stateList.Add(new ScoreBoardGameState(lobby));
                 StateChain gamePlayChain = new StateChain(states: stateList);
                 gamePlayChain.Transition(this.Exit);
                 return gamePlayChain;
@@ -174,7 +183,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             this.Entrance.Transition(Setup);
         }
 
-        private State GetVotingAndRevealState(ChallengeTracker challenge, TimeSpan? votingTime)
+        private State GetVotingAndRevealState(ChallengeTracker challenge, TimeSpan? votingTime, UnityRoundDetails roundDetails)
         {
             AssignUsersToChallenge(challenge);
             List<string> randomizedTeamIds = challenge.TeamIdToDrawingMapping.Keys.OrderBy(_ => Rand.Next()).ToList();
@@ -188,6 +197,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             return new StackedDrawingVoteAndRevealState<TeamUserDrawing>(
                 lobby: this.Lobby,
                 stackedDrawings: stackedDrawings,
+                roundDetails: roundDetails,
                 votingTime: votingTime)
                 {
                     VotingViewOverrides = new UnityViewOverrides

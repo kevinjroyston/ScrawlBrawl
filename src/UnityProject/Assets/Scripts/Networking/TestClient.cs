@@ -225,7 +225,11 @@ public class TestClient : MonoBehaviour
 
     public void Start()
     {
-#region Debug Unity View 
+#if !UNITY_EDITOR && UNITY_WEBGL
+        WebGLInput.captureAllKeyboardInput = false;
+#endif
+
+        #region Debug Unity View 
         /// This is paired with ViewManager.SetDebugCustomView() to allow testing of views without having to do anything on backend
         /// To use uncomment out this code, modify the UnityView being passed in and COMMENT OUT THE UPDATE LOOP
         /// When you are done please revert back the comments
@@ -355,7 +359,7 @@ public class TestClient : MonoBehaviour
             });
 
                 */
-#endregion
+        #endregion
     }
 
     public void Update()

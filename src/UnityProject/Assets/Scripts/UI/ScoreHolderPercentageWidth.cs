@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class ScoreHolderPercentageWidth : MonoBehaviour
 {
     public float percentOfParentWidth;
+    public float minWidth;
     private LayoutElement layoutElement;
     private bool isDirty = false;
     private Vector2 lastParentSize;
@@ -30,19 +31,22 @@ public class ScoreHolderPercentageWidth : MonoBehaviour
         if (!isDirty) return;
         isDirty = false;
 
+        float desiredWidth = parentSize.x * percentOfParentWidth;
+        desiredWidth = Mathf.Min(parentSize.x, Mathf.Max(desiredWidth, minWidth));
+
+        float neededHeight = desiredWidth / aspectRatio;
         float neededWidth = parentSize.y * aspectRatio;
-        float neededHeight = parentSize.x * percentOfParentWidth / aspectRatio;
 
         // Is height the limiting factor?
-        if (neededWidth <= parentSize.x * percentOfParentWidth)
+        if (neededWidth <= desiredWidth)
         {
             // Scale to match parent's height
             SetSizes(neededWidth, parentSize.y);
         }
         else
         {
-            // Scale to match parent's width
-            SetSizes(parentSize.x * percentOfParentWidth, neededHeight);
+            // Scale to match parent's width, respecting our max
+            SetSizes(desiredWidth, neededHeight);
         }
     }
 

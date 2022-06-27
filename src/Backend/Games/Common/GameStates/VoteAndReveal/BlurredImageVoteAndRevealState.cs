@@ -41,8 +41,9 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             List<UserDrawing> drawings,
             double blurRevealDelay,
             double blurRevealLength,
+            UnityRoundDetails roundDetails,
             List<User> votingUsers = null,
-            TimeSpan? votingTime = null) : base(lobby, drawings, votingUsers, votingTime)
+            TimeSpan? votingTime = null) : base(lobby, drawings, roundDetails, votingUsers, votingTime)
         {
             this.BlurRevealDelay = blurRevealDelay;
             this.BlurRevealLength = blurRevealLength;

@@ -12,11 +12,13 @@ using static TypeEnums;
 
 using static UnityEngine.UI.GridLayoutGroup;
 using Assets.Scripts.Networking.DataModels.Enums;
+using TMPro;
+
 public class VoteCountHandler : MonoBehaviour, HandlerInterface
 {
     public HandlerScope Scope => HandlerScope.UnityObject;
     public RectTransform VoteCountHolder;
-    public Text TextComponent; 
+    public TextMeshProUGUI TextComponent; 
 
     public bool Dummy=false;
     

@@ -154,11 +154,21 @@ namespace Backend.Games.KevinsGames.IMadeThis
             StateChain CreateGamePlayLoop()
             {
                 List<State> stateList = new List<State>();
+                int currentRound = 0;
                 foreach (ChallengeTracker challengeTracker in challengeTrackers)
                 {
-                    stateList.Add(new IMadeThisVoteAndReveal_Gs(Lobby, challengeTracker, votingTimer));
+                    currentRound++;
+                    stateList.Add(new IMadeThisVoteAndReveal_Gs(
+                        Lobby,
+                        challengeTracker,
+                        votingTimer,
+                        new UnityRoundDetails
+                        {
+                            CurrentRound = currentRound,
+                            TotalRounds = challengeTrackers.Count
+                        }));
                 }
-                stateList.Add(new ScoreBoardGameState(lobby, "Final Top Scores"));
+                stateList.Add(new ScoreBoardGameState(lobby));
                 StateChain gamePlayChain = new StateChain(states: stateList);
                 gamePlayChain.Transition(this.Exit);
                 return gamePlayChain;

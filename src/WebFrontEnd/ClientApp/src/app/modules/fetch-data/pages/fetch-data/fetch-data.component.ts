@@ -317,8 +317,8 @@ export class FetchDataComponent implements OnDestroy
         var levelOfConcern = 0; // 0 green, 1 yellow, 2 red
 
         // Set based on overall time left
-        if (this.timerRemaining < 15000) levelOfConcern = Math.max(levelOfConcern, 2); // Red
-        if (this.timerRemaining < 45000) levelOfConcern = Math.max(levelOfConcern, 1); // Yellow
+        if (this.timerRemaining < 10000) levelOfConcern = Math.max(levelOfConcern, 2); // Red
+        if (this.timerRemaining < 30000) levelOfConcern = Math.max(levelOfConcern, 1); // Yellow
 
         // Set based on proportional time left
         if (this.userPrompt?.promptHeader?.expectedTimePerPromptInSec > 0){

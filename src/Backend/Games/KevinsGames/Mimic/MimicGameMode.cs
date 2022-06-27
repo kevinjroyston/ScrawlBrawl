@@ -102,6 +102,8 @@ namespace Backend.Games.KevinsGames.Mimic
                 numDrawingsPerUser: numStartingDrawingsPerUser,
                 drawingTimeDuration: drawingTimer);
             List<UserDrawing> randomizedDrawings = new List<UserDrawing>();
+            int actualNumRounds = 0;
+            int roundCounter = 1;
             Setup.AddExitListener(() =>
             {
                 randomizedDrawings = this.Drawings
@@ -109,6 +111,8 @@ namespace Backend.Games.KevinsGames.Mimic
                 .ToList()
                 .Take(numRounds) // Limit number of rounds based on game duration.
                 .ToList();
+
+                actualNumRounds = randomizedDrawings.Count;
             });     
             StateChain CreateGamePlayLoop()
             {
@@ -166,7 +170,14 @@ namespace Backend.Games.KevinsGames.Mimic
                                 }
                                 else if (counter < maxDrawingsBeforeVote * 2)
                                 {
-                                    return GetVotingAndRevealState(roundTrackers[counter - maxDrawingsBeforeVote], votingTimer);
+                                    return GetVotingAndRevealState(
+                                        roundTrackers[counter - maxDrawingsBeforeVote],
+                                        votingTimer,
+                                        new UnityRoundDetails
+                                        {
+                                            CurrentRound = roundCounter++,
+                                            TotalRounds = actualNumRounds
+                                        });
                                 }
                                 else
                                 {
@@ -182,8 +193,7 @@ namespace Backend.Games.KevinsGames.Mimic
                         {
                             timeToShowScores = false;
                             return new ScoreBoardGameState(
-                                lobby: lobby,
-                                title: "Final Top Scores");
+                                lobby: lobby);
                         }
                         else
                         {
@@ -199,7 +209,7 @@ namespace Backend.Games.KevinsGames.Mimic
             this.Entrance.Transition(Setup);
             Setup.Transition(CreateGamePlayLoop);
         }
-        private State GetVotingAndRevealState(RoundTracker roundTracker, TimeSpan? votingTime)
+        private State GetVotingAndRevealState(RoundTracker roundTracker, TimeSpan? votingTime, UnityRoundDetails roundDetails)
         {
             List<UserDrawing> drawings = roundTracker.UsersToDisplay.Select(user => roundTracker.UsersToUserDrawings[user]).ToList();
             int indexOfOriginal = roundTracker.UsersToDisplay.IndexOf(roundTracker.originalDrawer);
@@ -210,7 +220,8 @@ namespace Backend.Games.KevinsGames.Mimic
                 drawings: drawings,
                 blurRevealDelay: MimicConstants.BlurDelay,
                 blurRevealLength: MimicConstants.BlurLength,
-                votingTime: votingTime)
+                votingTime: votingTime,
+                roundDetails: roundDetails)
             {
                 VotingViewOverrides = new UnityViewOverrides
                 {

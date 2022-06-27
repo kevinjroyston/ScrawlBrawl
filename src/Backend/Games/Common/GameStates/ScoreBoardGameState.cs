@@ -15,8 +15,9 @@ namespace Backend.Games.Common.GameStates
 {
     public class ScoreBoardGameState : GameState
     {
+        private bool IsRevealing = true;
 
-        public ScoreBoardGameState(Lobby lobby, string title = "Top Scores:")
+        public ScoreBoardGameState(Lobby lobby, string title = null, bool revealing = true)
             : base(
                   lobby,
                   exit: new WaitForPartyLeader_StateExit(
@@ -38,11 +39,13 @@ namespace Backend.Games.Common.GameStates
                         )))
         {
             this.Entrance.Transition(this.Exit);
-
+            this.IsRevealing = revealing;
+            title ??= revealing ? "Final Top Scores" : "Top Scores";
             this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = TVScreenId.Scoreboard,
                 Title = new UnityField<string> { Value = title },
+                IsRevealing = revealing,
                 // Calculate score objects on state entrance.
                 UnityObjects = null
             };
@@ -57,7 +60,7 @@ namespace Backend.Games.Common.GameStates
         {
             return new UnityField<IReadOnlyList<UnityObject>>
             {
-                Value = this.Lobby.GetAllUsers().OrderByDescending(usr => usr.Score).Take(10).Select(usr =>
+                Value = this.Lobby.GetAllUsers().OrderByDescending(usr => usr.Score).Take(this.IsRevealing ? 5 : 10).Select(usr =>
                     new UnityImage
                     {
                         Title = new UnityField<string> { Value = usr.DisplayName },

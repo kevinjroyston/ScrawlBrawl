@@ -186,7 +186,7 @@ namespace Backend.Games.TimsGames.FriendQuiz
                         });
                     }
                 }
-                chain.Add(new ScoreBoardGameState(lobby, "Final Top Scores"));
+                chain.Add(new ScoreBoardGameState(lobby));
                 return new StateChain(chain);
             }
         }

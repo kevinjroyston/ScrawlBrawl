@@ -34,6 +34,11 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             this.Entrance.Transition(readyUp);
             this.AddEntranceListener(() =>
             {
+                // Timer stops itself when there is nothing to do, restart it when somebody joins
+                if (_timer == null)
+                {
+                    _timer = new Timer(CheckProgress, null, TimeSpan.Zero, CheckUsersPeriod);
+                }
                 // Because this view may be instantiated before the game actually starts, users list may be outdated
                 this.UnityView.Users = Lobby.GetAllUsers().Select(user => new UnityUser(user)).ToList().AsReadOnly();
             });

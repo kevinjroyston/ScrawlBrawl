@@ -6,5 +6,6 @@ namespace Common.DataModels.Responses
 {
     public class WaitingForGameStartMetadata
     {
+        public bool IsHost = false;
     }
 }

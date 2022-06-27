@@ -108,11 +108,21 @@ namespace Backend.Games.BriansGames.ImposterDrawing
             StateChain CreateGamePlayLoop()
             {
                 List<State> stateList = new List<State>();
+
+                int currentRound = 0;
                 foreach (Prompt prompt in prompts)
                 {
-                    stateList.Add(GetVotingAndRevealState(prompt, votingTimer));
+                    currentRound++;
+                    stateList.Add(GetVotingAndRevealState(
+                        prompt,
+                        votingTimer,
+                        new UnityRoundDetails
+                        {
+                            CurrentRound = currentRound,
+                            TotalRounds = prompts.Count
+                        }));
                 }
-                stateList.Add(new ScoreBoardGameState(lobby, "Final Top Scores"));
+                stateList.Add(new ScoreBoardGameState(lobby));
                 StateChain gamePlayChain = new StateChain(states: stateList);
                 gamePlayChain.Transition(this.Exit);
                 return gamePlayChain;
@@ -121,7 +131,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing
             Setup.Transition(CreateGamePlayLoop);
         }
 
-        private State GetVotingAndRevealState(Prompt prompt, TimeSpan? votingTime)
+        private State GetVotingAndRevealState(Prompt prompt, TimeSpan? votingTime, UnityRoundDetails roundDetails)
         {
             int indexOfImposter = 0;
 
@@ -168,7 +178,8 @@ namespace Backend.Games.BriansGames.ImposterDrawing
             return new DrawingVoteAndRevealState(
                 lobby: this.Lobby,
                 drawings: drawings,
-                votingTime: votingTime)
+                votingTime: votingTime,
+                roundDetails: roundDetails)
             {
                 VotingPromptTitle = (user)=>"Find the Imposter!",
                 VotingPromptDescription = (User user)=>$"{((prompt.Owner == user)?($"You created this prompt. Real:'{prompt.RealPrompt}', Imposter:'{prompt.FakePrompt}'"):(!prompt.UsersToDrawings.ContainsKey(user) ? "You didn't draw anything for this prompt" : $"Your prompt was: '{(prompt.Imposter==user?prompt.FakePrompt:prompt.RealPrompt)}'"))}",

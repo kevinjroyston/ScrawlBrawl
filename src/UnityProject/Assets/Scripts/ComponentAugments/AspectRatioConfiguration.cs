@@ -55,23 +55,32 @@ public class AspectRatioConfiguration : MonoBehaviour, ScopeLoadedListener, Cust
         float primaryAxisFlexibleDimensions = 0f;
         foreach (LayoutElementHolder holder in LayoutElementHolders)
         {
-            primaryAxisFlexibleDimensions += GetFlexibleDimensionOrDefault(holder.layoutElement, axis);
+            if (holder.layoutElement.isActiveAndEnabled)
+            {
+                primaryAxisFlexibleDimensions += GetFlexibleDimensionOrDefault(holder.layoutElement, axis);
+            }
         }
 
         foreach (CustomAspectRatioHolder holder in CustomAspectRatioHolders)
         {
-            primaryAxisFlexibleDimensions += GetFlexibleDimensionOrDefault(holder.layoutElement, axis);
+            if (holder.layoutElement.isActiveAndEnabled)
+            {
+                primaryAxisFlexibleDimensions += GetFlexibleDimensionOrDefault(holder.layoutElement, axis);
+            }
         }
 
         float? maxAltDimension = null;
 
         foreach (CustomAspectRatioHolder holder in CustomAspectRatioHolders)
         {
-            float conversionFactor = GetFlexibleDimensionOrDefault(holder.layoutElement, axis) / primaryAxisFlexibleDimensions;
-            float holderAltDimension = axis == Axis.Vertical ? (holder.aspectRatio ?? 1f) * conversionFactor : conversionFactor / (holder.aspectRatio ?? 1f);
-            if (maxAltDimension == null || holderAltDimension > maxAltDimension)
+            if (holder.layoutElement.isActiveAndEnabled)
             {
-                maxAltDimension = holderAltDimension;
+                float conversionFactor = GetFlexibleDimensionOrDefault(holder.layoutElement, axis) / primaryAxisFlexibleDimensions;
+                float holderAltDimension = axis == Axis.Vertical ? (holder.aspectRatio ?? 1f) * conversionFactor : conversionFactor / (holder.aspectRatio ?? 1f);
+                if (maxAltDimension == null || holderAltDimension > maxAltDimension)
+                {
+                    maxAltDimension = holderAltDimension;
+                }
             }
         }
         if (maxAltDimension == null)

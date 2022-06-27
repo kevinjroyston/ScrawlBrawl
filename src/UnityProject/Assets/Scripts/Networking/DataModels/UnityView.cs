@@ -40,5 +40,8 @@ namespace Assets.Scripts.Networking.DataModels
 
         [JsonProperty("j")]
         public Dictionary<UnityViewOptions, object> Options { get; set; }
+
+        [JsonProperty("k")]
+        public UnityRoundDetails RoundDetails { get; set; }
     }
 }
