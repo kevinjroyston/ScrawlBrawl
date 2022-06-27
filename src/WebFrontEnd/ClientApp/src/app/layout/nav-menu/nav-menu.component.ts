@@ -60,6 +60,16 @@ export class NavMenuComponent {
 
   redirectLink = (route: string) => {
     this.isExpanded = false;
+
+    if ((route.toLowerCase() == 'lobby') && (window.name=='_SBPlay')) {
+        window.open('/'+route,'_SBHost','');
+        return
+    }
+    if (((route.toLowerCase() == 'play')||(route.toLowerCase() == 'join')) && (window.name=='_SBHost')) {
+        window.open('/'+route,'_SBPlay','');
+        return
+    }
+
     this.router.navigate(['/' + route])
   }
 }
