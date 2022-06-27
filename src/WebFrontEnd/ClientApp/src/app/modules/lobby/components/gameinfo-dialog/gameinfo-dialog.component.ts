@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { GameModeList } from '@core/http/gamemodelist';
+import GameplayPrompts from '@core/models/gameplay' 
 import GameModes from '@core/models/gamemodes'
 
 interface GameInfoDialogData {
@@ -16,6 +17,8 @@ interface GameInfoDialogData {
 export class GameInfoDialogComponent implements OnInit {
   selectedGameModeId: string;
   proceedToGameSettings: () => void
+  public showInstructions: boolean = false;
+  defTutorialMetadata: GameplayPrompts.TutorialMetadata = { hideClasses:['Tut-Title','Tut-Chaotic-Colors','Tut-Chaotic-TwoPlayer']}
 
   constructor(
     private dialogRef: MatDialogRef<GameInfoDialogComponent>,

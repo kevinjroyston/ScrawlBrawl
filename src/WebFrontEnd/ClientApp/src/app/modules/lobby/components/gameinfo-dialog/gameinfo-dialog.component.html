@@ -3,7 +3,12 @@
 </h2>
 
 <mat-dialog-content>
-    <div gameAsset [gameAssetClass]="'lobby-descriptions'" [gameAssetID]='selectedGameModeId'></div>
+    <div gameAsset [gameAssetClass]="'lobby-descriptions'" [gameAssetID]='selectedGameModeId' style="padding-bottom:10px"></div>
+    <div *ngIf="!showInstructions" style="width:180px;padding-top: 4px;">
+        <scrawlbutton (onClick)="showInstructions=true">Show Instructions</scrawlbutton>
+    </div>
+    <app-tutorial *ngIf="showInstructions" class="TutorialHolder" [tutorialMetadata]="defTutorialMetadata" [gameModeIdString]="selectedGameModeId"></app-tutorial>
+
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
