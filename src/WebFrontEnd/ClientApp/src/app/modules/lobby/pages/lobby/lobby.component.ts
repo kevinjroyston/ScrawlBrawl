@@ -39,7 +39,10 @@ export class LobbyManagementComponent {
     @Inject(NotificationService) private notificationService: NotificationService)
     {
 /*        this.getGames().then(() => this.onGetLobby()) */
-        this.onGetLobby()
+        if (window.name=='') {
+            window.name='_SBHost';
+        }
+      this.onGetLobby()
     }
 
     async onGetLobby() {
@@ -152,6 +155,7 @@ export class LobbyManagementComponent {
 
     onLaunchURL(launchURL: string){
 
+
         if(this.launchedWindow != null && !this.launchedWindow.closed){
             try {            
                 if (this.launchedWindow.location.href.indexOf('play') >= 0) { /* we only ever launch to the play page right now */
@@ -163,8 +167,7 @@ export class LobbyManagementComponent {
           catch (error) {console.log("Launched window had navigated, reopening")}
         }    
 
-        if(this.launchedWindow == null || this.launchedWindow.closed){
-          this.launchedWindow = window.open(launchURL,'_SBLaunch', '');
+        this.launchedWindow = window.open(launchURL,'_SBPlay', '');
           if(!this.launchedWindow || this.launchedWindow.closed || typeof this.launchedWindow.closed=='undefined') 
             { 
               //POPUP BLOCKED
@@ -176,7 +179,6 @@ export class LobbyManagementComponent {
             this.notificationService.addMessage("Opened player instance in new tab.", null, {panelClass: ['success-snackbar'], duration: 5000});
             console.log("opened player instance");
             }
-        }
   
     }
     onSelectGameMode(game: number) {
