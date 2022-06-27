@@ -136,9 +136,11 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                 modifiers = CAMs.ToList().FindAll((cam) => cam.Type == CAMType.Modifier);
             });
             int numPromptsPerUserPerRound = 0; // Set during below exit listener.
+            int actualNumRounds = 0;
             setupPrompt.AddExitListener(() =>
             {
                 battlePrompts = MemberHelpers<Prompt>.Select_Ordered(Prompts.OrderBy(prompt=>prompt.CreationTime).ToList(), numPromptsPerRound * numRounds);
+                actualNumRounds = battlePrompts.Count;
                 numRounds = (battlePrompts.Count - 1) / numPromptsPerRound + 1;
                 numPromptsPerRound = (int)Math.Ceiling(1.0 * battlePrompts.Count / numRounds);
 
@@ -157,7 +159,6 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
             List<GameState> scoreboardGameStates = new List<GameState>();
 
             int countRounds = 0;
-
             #region GameState Generators
             GameState CreateContestantCreationGamestate()
             {
@@ -204,6 +205,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                 toReturn.Transition(CreateVotingGameStates(prompts));
                 return toReturn;
             }
+            int roundCounter = 1;
             Func<StateChain> CreateVotingGameStates(List<Prompt> roundPrompts)
             {
                 return () =>
@@ -215,7 +217,14 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                             {
                                 Prompt roundPrompt = roundPrompts[counter];
 
-                                return GetVotingAndRevealState(roundPrompt, votingTimer);         
+                                return GetVotingAndRevealState(
+                                    roundPrompt,
+                                    votingTimer,
+                                    new UnityRoundDetails
+                                    { 
+                                        CurrentRound = roundCounter++,
+                                        TotalRounds = actualNumRounds
+                                    });         
                             }
                             else
                             {
@@ -245,15 +254,15 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                     if (battlePrompts.Count <= 0)
                     {
                         GameState finalScoreBoard = new ScoreBoardGameState(
-                        lobby: lobby,
-                        title: "Final Top Scores");
+                            lobby: lobby);
                         displayPeople.Transition(finalScoreBoard);
                         finalScoreBoard.Transition(this.Exit);
                     }
                     else
                     {
                         GameState scoreBoard = new ScoreBoardGameState(
-                            lobby: lobby);
+                            lobby: lobby,
+                            revealing: false);
                         displayPeople.Transition(scoreBoard);
                         scoreBoard.Transition(CreateContestantCreationGamestate);
                     }
@@ -267,7 +276,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
             setupPrompt.Transition(CreateContestantCreationGamestate);
            
         }
-        private State GetVotingAndRevealState(Prompt prompt, TimeSpan? votingTime)
+        private State GetVotingAndRevealState(Prompt prompt, TimeSpan? votingTime, UnityRoundDetails roundDetails)
         {
             List<User> randomizedUsersToDisplay = prompt.UsersToUserHands.Keys.OrderBy(_ => Rand.Next()).ToList();
             List<TextPerson> peopleToVoteOn = randomizedUsersToDisplay.Select(user => (TextPerson)prompt.UsersToUserHands[user]).ToList();
@@ -286,9 +295,10 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
 
             var voteAndReveal = new ContestantVoteAndRevealState<TextPerson>(
                 lobby: this.Lobby,
-                contestantName: (person)=>person.ToHtmlColoredString(),
+                contestantName: (person) => person.ToHtmlColoredString(),
                 people: peopleToVoteOn,
-                votingTime: votingTime)
+                votingTime: votingTime,
+                roundDetails: roundDetails)
             {
                 VotingPromptTitle = Invariant($"Pick the best submission for<div class='votePrompt'>{prompt.Text}</div>"),
                 VotingViewOverrides = new UnityViewOverrides

@@ -136,6 +136,8 @@ namespace Assets.Scripts.Views
                         };
                 case HandlerType.UnityViewHandler:
                     return this; // don't ask -_-. Lets dropzone handler grab us so that it can propagate us to object scoped handlers as inherited fields.
+                case HandlerType.RoundDetails:
+                    return UnityView.RoundDetails;
                 default:
                     throw new ArgumentException($"Unknown handler id: '{handlerId.HandlerType}'");
             }

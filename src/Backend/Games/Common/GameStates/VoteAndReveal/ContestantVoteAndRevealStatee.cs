@@ -50,8 +50,9 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
             Lobby lobby,
             List<T> people,
             Func<T, string> contestantName,
+            UnityRoundDetails roundDetails,
             List<User> votingUsers = null,
-            TimeSpan? votingTime = null) : base(lobby, people, votingUsers, votingTime)
+            TimeSpan? votingTime = null) : base(lobby, people, roundDetails, votingUsers, votingTime)
         {
             VotingTime = votingTime;
             VotingPromptGenerator ??= DefaultVotingPromptGenerator;

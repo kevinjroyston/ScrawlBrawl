@@ -60,6 +60,9 @@ namespace Backend.APIs.DataModels.UnityObjects
         [JsonProperty("j")]
         public Dictionary<UnityViewOptions, object> Options { get; set; } = new Dictionary<UnityViewOptions, object>();
 
+        [JsonProperty("k")]
+        public UnityRoundDetails RoundDetails { get; set; }
+
         public UnityView(Lobby lobby)
         {
             this.Lobby = lobby;

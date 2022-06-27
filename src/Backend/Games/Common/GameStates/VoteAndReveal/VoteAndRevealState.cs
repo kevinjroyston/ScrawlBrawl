@@ -25,10 +25,13 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
         public UnityViewOverrides? VotingViewOverrides { get; set; } = new UnityViewOverrides { Title = Constants.UIStrings.VotingUnityTitle };
         public UnityViewOverrides? RevealViewOverrides { get; set; }
 
-        public VoteAndRevealState(Lobby lobby, List<T> objectsToVoteOn, List<User> votingUsers = null, TimeSpan? votingTime = null) 
+        private UnityRoundDetails RoundDetails { get; }
+
+        public VoteAndRevealState(Lobby lobby, List<T> objectsToVoteOn, UnityRoundDetails roundDetails, List<User> votingUsers = null, TimeSpan? votingTime = null) 
         {
             this.Lobby = lobby;
             this.Objects = objectsToVoteOn?.Where(obj=> obj != null).ToList() ?? new List<T>();
+            this.RoundDetails = roundDetails;
 
             if (this.Objects.Count == 0)
             {
@@ -110,7 +113,8 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
                 Instructions = new UnityField<string> { Value = this.RevealViewOverrides?.Instructions },
                 UnityObjects = new UnityField<IReadOnlyList<UnityObject>> { Value = unityObjects },
                 IsRevealing= true,
-                Options = RevealViewOverrides.Options ?? new Dictionary<UnityViewOptions, object>()
+                Options = RevealViewOverrides.Options ?? new Dictionary<UnityViewOptions, object>(),
+                RoundDetails = this.RoundDetails
             };
         }
     }

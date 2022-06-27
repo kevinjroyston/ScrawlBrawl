@@ -44,9 +44,10 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
 
         public StackedDrawingVoteAndRevealState(
             Lobby lobby,
-            List<UserDrawingStack<T>> stackedDrawings,
+            List<UserDrawingStack<T>> stackedDrawings, 
+            UnityRoundDetails roundDetails,
             List<User> votingUsers = null,
-            TimeSpan? votingTime = null) : base(lobby, stackedDrawings, votingUsers, votingTime)
+            TimeSpan? votingTime = null) : base(lobby, stackedDrawings, roundDetails, votingUsers, votingTime)
         {
             VotingPromptGenerator ??= DefaultVotingPromptGenerator;
         }

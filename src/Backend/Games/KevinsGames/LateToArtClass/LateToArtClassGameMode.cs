@@ -108,11 +108,21 @@ namespace Backend.Games.KevinsGames.LateToArtClass
             {
                 List<State> stateList = new List<State>();
                 List<ArtClass> artClassesList = artClasses.ToList();
+                int currentRound = 0;
                 foreach (ArtClass artClass in artClassesList)
                 {
-                    stateList.Add(GetVotingAndRevealState(artClass, votingTimer));
+                    currentRound++;
+                    stateList.Add(GetVotingAndRevealState(
+                        artClass,
+                        votingTimer,
+                        new UnityRoundDetails
+                        {
+                            CurrentRound = currentRound,
+                            TotalRounds = artClassesList.Count
+                        }));
                 }
-                stateList.Add(new ScoreBoardGameState(lobby, "Final Top Scores"));
+
+                stateList.Add(new ScoreBoardGameState(lobby));
                 StateChain gamePlayChain = new StateChain(states: stateList);
                 gamePlayChain.Transition(this.Exit);
                 return gamePlayChain;
@@ -121,7 +131,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass
             Setup.Transition(CreateGamePlayLoop);
         }
 
-        private State GetVotingAndRevealState(ArtClass artClass, TimeSpan? votingTime)
+        private State GetVotingAndRevealState(ArtClass artClass, TimeSpan? votingTime, UnityRoundDetails roundDetails)
         {
             int indexOfImposter = 0;
 
@@ -169,7 +179,8 @@ namespace Backend.Games.KevinsGames.LateToArtClass
             return new DrawingVoteAndRevealState(
                 lobby: this.Lobby,
                 drawings: drawings,
-                votingTime: votingTime)
+                votingTime: votingTime,
+                roundDetails: roundDetails)
             {
                 VotingPromptTitle = (user)=> $"Assignment: '{artClass.ArtAssignment}'",
                 VotingPromptDescription = (User user)=>$"Who was late to class? {(artClass.LateStudent == user ? "Hint: it was you, your vote does not count towards score here." : string.Empty)}",

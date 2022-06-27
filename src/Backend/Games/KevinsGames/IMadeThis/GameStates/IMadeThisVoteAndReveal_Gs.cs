@@ -34,7 +34,7 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
 
             return drawings;
         }
-        public IMadeThisVoteAndReveal_Gs(Lobby lobby, ChallengeTracker challengeTracker, TimeSpan? votingTime) : base (lobby: lobby, drawings: GetDrawingsFromTracker(challengeTracker), votingTime: votingTime)
+        public IMadeThisVoteAndReveal_Gs(Lobby lobby, ChallengeTracker challengeTracker, TimeSpan? votingTime, UnityRoundDetails roundDetails) : base (lobby: lobby, roundDetails:roundDetails, drawings: GetDrawingsFromTracker(challengeTracker), votingTime: votingTime)
         {
             VotingPromptTitle = (user) => $"Who made the best adjustments?";
             VotingPromptDescription = (User user) => $"The prompt: '{challengeTracker.SecondaryPrompt}'";

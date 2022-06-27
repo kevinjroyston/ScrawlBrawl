@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, Input, DebugElement } from '@angular/core';
+import { Component, OnInit, ElementRef, Input, DebugElement, HostListener } from '@angular/core';
 import { UnityViewer } from '@core/http/viewerInjectable';
 import { Inject } from '@angular/core';
 import { ResizableModule , ResizeEvent } from 'angular-resizable-element';
@@ -22,9 +22,8 @@ export class UnityComponent implements OnInit {
 
   constructor(@Inject(UnityViewer) private theViewer: UnityViewer,  element: ElementRef) {
     this.unityViewer = theViewer;
-    this.element = element.nativeElement;
+    this.element = element.nativeElement;  
   }
-
 
   ngOnInit(): void {
 

@@ -136,9 +136,11 @@ namespace Backend.Games.BriansGames.BattleReady
                 legsDrawings = Drawings.ToList().FindAll((drawing) => drawing.Type == BodyPartType.Legs);
             });
             int numPromptsPerUserPerRound = 0; // Set during below exit listener.
+            int actualTotalNumberOfRounds = 0;
             setupPrompt.AddExitListener(() =>
             {
                 battlePrompts = MemberHelpers<Prompt>.Select_Ordered(Prompts.OrderBy(prompt=>prompt.CreationTime).ToList(), numPromptsPerRound * numRounds);
+                actualTotalNumberOfRounds = battlePrompts.Count;
                 numRounds = (battlePrompts.Count - 1) / numPromptsPerRound + 1;
                 numPromptsPerRound = (int)Math.Ceiling(1.0 * battlePrompts.Count / numRounds);
 
@@ -200,6 +202,7 @@ namespace Backend.Games.BriansGames.BattleReady
                 toReturn.Transition(CreateVotingGameStates(prompts));
                 return toReturn;
             }
+            int currentRoundCount = 1;
             Func<StateChain> CreateVotingGameStates(List<Prompt> roundPrompts)
             {
                 return () =>
@@ -211,7 +214,14 @@ namespace Backend.Games.BriansGames.BattleReady
                             {
                                 Prompt roundPrompt = roundPrompts[counter];
 
-                                return GetVotingAndRevealState(roundPrompt, votingTimer);         
+                                return GetVotingAndRevealState(
+                                    roundPrompt,
+                                    votingTimer,
+                                    new UnityRoundDetails
+                                    {
+                                        CurrentRound = currentRoundCount++,
+                                        TotalRounds = actualTotalNumberOfRounds
+                                    });         
                             }
                             else
                             {
@@ -241,15 +251,15 @@ namespace Backend.Games.BriansGames.BattleReady
                     if (battlePrompts.Count <= 0)
                     {
                         GameState finalScoreBoard = new ScoreBoardGameState(
-                        lobby: lobby,
-                        title: "Final Top Scores");
+                        lobby: lobby);
                         displayPeople.Transition(finalScoreBoard);
                         finalScoreBoard.Transition(this.Exit);
                     }
                     else
                     {
                         GameState scoreBoard = new ScoreBoardGameState(
-                            lobby: lobby);
+                            lobby: lobby,
+                            revealing: false);
                         displayPeople.Transition(scoreBoard);
                         scoreBoard.Transition(CreateContestantCreationGamestate);
                     }
@@ -263,7 +273,7 @@ namespace Backend.Games.BriansGames.BattleReady
             setupPrompt.Transition(CreateContestantCreationGamestate);
            
         }
-        private State GetVotingAndRevealState(Prompt prompt, TimeSpan? votingTime)
+        private State GetVotingAndRevealState(Prompt prompt, TimeSpan? votingTime, UnityRoundDetails roundDetails)
         {
             List<User> randomizedUsersToDisplay = prompt.UsersToUserHands.Keys.OrderBy(_ => Rand.Next()).ToList();
             List<Person> peopleToVoteOn = randomizedUsersToDisplay.Select(user => (Person)prompt.UsersToUserHands[user]).ToList();
@@ -286,7 +296,8 @@ namespace Backend.Games.BriansGames.BattleReady
                 lobby: this.Lobby,
                 contestantName: (person) => person.Name,
                 people: peopleToVoteOn,
-                votingTime: votingTime)
+                votingTime: votingTime,
+                roundDetails: roundDetails)
             {
                 VotingViewOverrides = new UnityViewOverrides
                 {

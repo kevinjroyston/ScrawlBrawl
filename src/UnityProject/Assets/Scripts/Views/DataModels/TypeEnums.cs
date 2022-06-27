@@ -26,6 +26,7 @@ public static class TypeEnums
         Color,
         SliderData,
         UnityViewHandler, // Sigh hacky fix to let object scope scripts inherit view handler ids. Long story.
+        RoundDetails,
     }
 
     public class HandlerId
