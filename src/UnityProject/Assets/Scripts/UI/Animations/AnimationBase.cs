@@ -20,7 +20,7 @@ public abstract class AnimationBase: MonoBehaviour
     public bool persistant = false;
     public bool oneShot = true;
     List<LTDescr> animations = new List<LTDescr>();
-    private bool started = false;
+    protected bool started = false;
     public virtual void Awake()
     {
         rect = this.GetComponent<RectTransform>();
