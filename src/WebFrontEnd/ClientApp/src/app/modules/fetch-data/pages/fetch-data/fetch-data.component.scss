@@ -232,7 +232,7 @@ input[type="text"] {
     font-size: 30px;
     text-align: center;
     padding: 3px;
-    width: 110px;
+    width: 100px;
 }
 
 .progressPanel {
@@ -262,6 +262,9 @@ input[type="text"] {
 }
 
 @media only screen and (max-width: 768px) {
+    .sticky-nav {
+        padding-left: 2%;
+    }
     .fetch-data {
         padding: 0 1rem;
         margin-top: 0.5rem;

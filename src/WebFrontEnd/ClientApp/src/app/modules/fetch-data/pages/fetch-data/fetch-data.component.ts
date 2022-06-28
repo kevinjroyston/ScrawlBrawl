@@ -64,7 +64,7 @@ export class FetchDataComponent implements OnDestroy
     timerRemaining = 0;
     initialTimerRemaining = 0;
     timerStartTime = 0;
-    timerColor = 'green';
+    timerColor = 'var(--green-secondary)';
     galleryEditorVisible = false;
     galleryTypes = [...Galleries.galleryTypes]; /* so html page can see the reference.  ... is SPREAD command: https://www.samanthaming.com/tidbits/35-es6-way-to-clone-an-array/ */
     currentDrawingType = this.galleryTypes[0].drawingType;
@@ -210,10 +210,12 @@ export class FetchDataComponent implements OnDestroy
 
                 /* check to see if we have a drawingboard visible */
                 this.showingDrawingBoard = false;
-                for (let i = 0, s = 0; (i < this.userPrompt.subPrompts.length); i++) {
-                    if (this.userPrompt.subPrompts[i].drawing) {
-                        this.showingDrawingBoard = true;
-                        break;
+                if (this.userPrompt && this.userPrompt.subPrompts) {
+                    for (let i = 0, s = 0; (i < this.userPrompt.subPrompts.length); i++) {
+                        if (this.userPrompt.subPrompts[i].drawing) {
+                            this.showingDrawingBoard = true;
+                            break;
+                        }
                     }
                 }
         
@@ -300,7 +302,6 @@ export class FetchDataComponent implements OnDestroy
         }
         this.autoSubmitTimerId = setTimeout(() => this.onSubmit(this.userForm?.value, true), ms);
 
-        this.timerColor = 'var(--green-secondary)';
         this.determineTimerColor();
 
         this.timerDisplayIntervalId = setInterval(() => 
@@ -359,6 +360,7 @@ export class FetchDataComponent implements OnDestroy
     }
 
     private clearAutoSubmitTimers(ForceIt){
+        this.timerColor = 'var(--green-secondary)';
         if (this.autoSubmitTimerId) {
             clearTimeout(this.autoSubmitTimerId);
             this.autoSubmitTimerId = null;
@@ -454,7 +456,7 @@ export class FetchDataComponent implements OnDestroy
 
     @HostListener('window:focus', ['$event'])
     focusHandler(event: Event) {
-        if (!this.userPromptTimerId) {
+        if (!this.userPromptTimerId || !this.userPrompt || this.userPrompt.refreshTimeInMs > 120000) {
             this.fetchUserPrompt();
         }
     }
