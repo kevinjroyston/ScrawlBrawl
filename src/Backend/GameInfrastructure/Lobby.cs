@@ -92,8 +92,14 @@ namespace Backend.GameInfrastructure
 
             foreach (User user in users)
             {
-                TryLeaveLobbyGracefully(user);
+                // don't let this user be found ever again.
                 GameManager.UnregisterUser(user);
+
+                // Leave the user object alone as it may be important to the lobby that it is untouched.
+                TryLeaveLobbyGracefully(user);
+
+                // Set the last ping time to old enough that the user is considered disconnected.
+                user.LastPingTime = DateTime.UtcNow.Subtract(Constants.UserDisconnectTimer);
             }
         }
 
@@ -297,6 +303,7 @@ namespace Backend.GameInfrastructure
                             {
                                 FindNewPartyLeader();
                             }
+
                             // States will drop deleted users rather than keep hurrying them along.
                             user.MarkDeleted();
 

@@ -148,6 +148,7 @@ namespace Backend.GameInfrastructure.DataModels.Users
         /// </summary>
         public void MarkDeleted()
         {
+            // Don't call this unless the game is NOT in progress
             this.Deleted = true;
         }
 

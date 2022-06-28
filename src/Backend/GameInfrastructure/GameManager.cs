@@ -82,7 +82,15 @@ namespace Backend.GameInfrastructure
             {
                 if (Users.ContainsKey(identifier))
                 {
-                    return Users[identifier];
+                    var outUser = Users[identifier];
+                    if (!outUser.Deleted)
+                    {
+                        return outUser;
+                    }
+                    else
+                    {
+                        Users.TryRemove(identifier, out User removed);
+                    }
                 }
 
                 User user = new User(identifier);
@@ -200,7 +208,11 @@ namespace Backend.GameInfrastructure
             {
                 return;
             }
-            Users.TryRemove(userIdentifier, out User _);
+            int i = 0;
+            while (!Users.TryRemove(userIdentifier, out User _) && i < 3)
+            {
+                i++;
+            }
         }
 
         public (bool, string) RegisterUser(User user, JoinLobbyRequest request)

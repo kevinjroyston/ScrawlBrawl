@@ -4816,8 +4816,8 @@ RectTransform:
   - {fileID: 734999337}
   - {fileID: 1177880470}
   - {fileID: 1182172995}
-  - {fileID: 1999920790}
   - {fileID: 1413586144}
+  - {fileID: 1999920790}
   m_Father: {fileID: 966889629}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5102,7 +5102,7 @@ RectTransform:
   m_Children:
   - {fileID: 212657569}
   m_Father: {fileID: 1298294760}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -7172,7 +7172,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1298294760}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: -0.05, y: -0.05}
   m_AnchorMax: {x: 1.05, y: 1.05}
@@ -7197,8 +7197,7 @@ MonoBehaviour:
   endEvent:
     eventType: 0
     id: 
-  startDelay: 0
-  endDuration: 0
+  startDelay: 0.01
   registerOnEnable: 1
   persistant: 1
   oneShot: 0
@@ -7439,13 +7438,13 @@ MonoBehaviour:
     m_BestFit: 1
     m_MinSize: 0
     m_MaxSize: 300
-    m_Alignment: 2
+    m_Alignment: 5
     m_AlignByGeometry: 1
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Leader - '
+  m_Text: 'Leader: '
 --- !u!222 &2139544789
 CanvasRenderer:
   m_ObjectHideFlags: 0
