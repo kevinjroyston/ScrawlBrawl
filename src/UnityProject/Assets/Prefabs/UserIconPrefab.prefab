@@ -296,8 +296,7 @@ MonoBehaviour:
   endEvent:
     eventType: 2
     id: 
-  startDelay: 1.5
-  endDuration: 0
+  startDelay: 0
   registerOnEnable: 0
   persistant: 0
   oneShot: 1
@@ -322,7 +321,6 @@ MonoBehaviour:
     eventType: 2
     id: 
   startDelay: 1
-  endDuration: 0
   registerOnEnable: 0
   persistant: 0
   oneShot: 0
@@ -360,8 +358,7 @@ MonoBehaviour:
   endEvent:
     eventType: 0
     id: 
-  startDelay: 1
-  endDuration: 0
+  startDelay: 0.01
   registerOnEnable: 1
   persistant: 0
   oneShot: 1

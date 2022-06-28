@@ -38,27 +38,34 @@ public class ShowScoreDeltaAnimation : AnimationBase
                 to: new Vector3(0, iconRadius + 0.2f, 0),
                 time: 0.2f)
             .setEaseOutBack()
-            .PlayAfter(iconScaleDown)
-            .SetCallEventOnComplete(new GameEvent() { eventType = GameEvent.EventEnum.ReorderIcons });
+            .PlayAfter(iconScaleDown);
         LTDescr shakeText = LeanTweenHelper.Singleton.UIShake(
                 rectTransform: textTransform,
                 magnitude: 0.05f,
                 rateOfChange: 0.001f,
                 frequency: 0.7f,
-                time: 3f)
-            .PlayAfter(moveTextUp);
+                time: 1.5f)
+            .PlayAfter(moveTextUp)
+            .SetCallEventOnComplete(new GameEvent() { eventType = GameEvent.EventEnum.ReorderIcons });
+        LTDescr shakeText2 = LeanTweenHelper.Singleton.UIShake(
+                rectTransform: textTransform,
+                magnitude: 0.05f,
+                rateOfChange: 0.001f,
+                frequency: 0.7f,
+                time: 1.5f)
+            .PlayAfter(shakeText);
         LTDescr scaleTextDown = LeanTween.scale(
                 rectTrans: textTransform,
                 to: Vector3.zero,
                 time: 0.2f)
             .setEaseInBack()
-            .PlayAfter(shakeText);
+            .PlayAfter(shakeText2);
         LTDescr moveTextDown = LeanTweenHelper.Singleton.UIMoveRelative(
                 rectTransform: textTransform,
                 to: new Vector3(0, -2, 0),
                 time: 0.2f)
             .setEaseInBack()
-            .PlayAfter(shakeText);
+            .PlayAfter(shakeText2);
 
         return new List<LTDescr>()
         {

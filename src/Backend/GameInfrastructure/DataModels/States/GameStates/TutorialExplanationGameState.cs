@@ -25,7 +25,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
         public TutorialExplanationGameState(Lobby lobby)
             : base(
                   lobby: lobby,
-                  exit: new WaitForUsers_StateExit(lobby: lobby, usersToWaitFor: WaitForUsersType.NotDeleted, waitingPromptGenerator: WaitingPromptGenerator(lobby))
+                  exit: new WaitForUsers_StateExit(lobby: lobby, usersToWaitFor: WaitForUsersType.NotDisconnected, waitingPromptGenerator: WaitingPromptGenerator(lobby))
                   )
         {
             Arg.NotNull(lobby, nameof(lobby));
@@ -34,13 +34,30 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             this.Entrance.Transition(readyUp);
             this.AddEntranceListener(() =>
             {
+                // Because this view may be instantiated before the game actually starts, users list may be outdated
+                this.UnityView.Users = Lobby.GetAllUsers().Select(user => new UnityUser(user)).ToList().AsReadOnly();
+                this.UnityViewDirty = true;
+            });
+            this.AddPerUserEntranceListener((User user) =>
+            {
                 // Timer stops itself when there is nothing to do, restart it when somebody joins
                 if (_timer == null)
                 {
-                    _timer = new Timer(CheckProgress, null, TimeSpan.Zero, CheckUsersPeriod);
+                    lock (TimerLock)
+                    {
+                        if (_timer == null)
+                        {
+                            _timer = new Timer(CheckProgress, null, TimeSpan.Zero, CheckUsersPeriod);
+                        }
+                    }
                 }
-                // Because this view may be instantiated before the game actually starts, users list may be outdated
-                this.UnityView.Users = Lobby.GetAllUsers().Select(user => new UnityUser(user)).ToList().AsReadOnly();
+
+                if (!this.UnityView.Users.Any(unityUser=>unityUser.Id == user.Id))
+                {
+                    // Late join users mean this should be refreshed!
+                    this.UnityView.Users = Lobby.GetAllUsers().Select(user => new UnityUser(user)).ToList().AsReadOnly();
+                    this.UnityViewDirty = true;
+                }
             });
             readyUp.Transition(this.Exit);
 
@@ -51,6 +68,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
                 Instructions = new UnityField<string> { Value = "Press 'READY!' once you have read the instructions on your device!" },
             };
         }
+        private object TimerLock = new object();
 
         private void CheckProgress(object _)
         {
@@ -92,13 +110,11 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
                 _timer = new Timer(DeleteWaitingUsers, null, LastCallTimer + TimeSpan.FromSeconds(3), TimeSpan.FromMilliseconds(-1));
 
                 // Warn players about the new timer and threat of kick
-                this.UnityView = new UnityView(this.Lobby)
-                {
-                    ScreenId = TVScreenId.WaitForUserInputs,
-                    Title = new UnityField<string> { Value = "Warning!" },
-                    Instructions = new UnityField<string> { Value = "The users below will be kicked if they do not hit READY!" },
-                    StateEndTime = DateTime.UtcNow + LastCallTimer,
-                };
+                // Use the same view so that the client doesnt fade animate
+                this.UnityView.Title = new UnityField<string> { Value = "Warning!" };
+                this.UnityView.Instructions = new UnityField<string> { Value = "The users below will be kicked if they do not hit READY!" };
+                this.UnityView.StateEndTime = DateTime.UtcNow + LastCallTimer;
+                this.UnityViewDirty = true;
             }
         }
 

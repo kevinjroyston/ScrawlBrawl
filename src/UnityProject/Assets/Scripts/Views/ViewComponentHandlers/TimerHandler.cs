@@ -13,6 +13,7 @@ public class TimerHandler : MonoBehaviour, HandlerInterface
 
     private double timeRemainingInSeconds = -1;
     private bool startedTimerSound = false;
+    private DateTime? EndTime = null;
 
     public List<HandlerId> HandlerIds => HandlerType.Timer.ToHandlerIdList();
     public HandlerScope Scope => HandlerScope.View;
@@ -24,7 +25,9 @@ public class TimerHandler : MonoBehaviour, HandlerInterface
         if (currentTime != null && endTime != null)
         {
             var timeRemaining =((DateTime) endTime).Subtract((DateTime) currentTime).TotalSeconds;
-            if(timeRemaining>0)
+
+            this.EndTime = DateTime.UtcNow.AddSeconds(timeRemaining);
+            if (timeRemaining>0)
             {
                 gameObject.SetActive(true);
                 timeRemainingInSeconds = timeRemaining;
@@ -40,7 +43,7 @@ public class TimerHandler : MonoBehaviour, HandlerInterface
 
     public void Update()
     {
-        timeRemainingInSeconds -= Time.deltaTime;
+        timeRemainingInSeconds = this.EndTime?.Subtract(DateTime.UtcNow).TotalSeconds ?? -1;
         if (timeRemainingInSeconds > 10 && startedTimerSound)
         {
             startedTimerSound = false;

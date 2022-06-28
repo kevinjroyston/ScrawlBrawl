@@ -17,7 +17,6 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
     {
         All,
         NotDisconnected,
-        NotDeleted,
     }
 
     public class WaitForUsers_StateExit : WaitForTrigger_StateExit, IDisposable
@@ -155,10 +154,8 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
                 // TODO: no need to call this multiple times if not looking at active users.
                 case WaitForUsersType.All:
                     return new HashSet<User>(this.Lobby.GetAllUsers());
-                case WaitForUsersType.NotDeleted:
-                    return new HashSet<User>(this.Lobby.GetAllUsers().Where(user=>!user.Deleted));
                 case WaitForUsersType.NotDisconnected:
-                    return new HashSet<User>(this.Lobby.GetAllUsers().Where(user=>user.Activity!=UserActivity.Disconnected));
+                    return new HashSet<User>(this.Lobby.GetAllUsers().Where(user => !user.Deleted).Where(user=>user.Activity!=UserActivity.Disconnected));
                 default:
                     throw new Exception(Invariant($"Something went wrong. Unknown WaitForUsersType '{type}'"));
             }
