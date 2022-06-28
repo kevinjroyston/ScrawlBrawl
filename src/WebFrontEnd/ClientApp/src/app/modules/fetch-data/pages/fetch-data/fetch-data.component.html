@@ -12,15 +12,15 @@
             {{ userPrompt.error }}
         </div>
     </div>
-    <div class="sticky-nav">
+    <div *ngIf="userPrompt.suggestion" class="sticky-nav">
         <div style="width:80px;padding-top: 4px;">
-            <scrawlbutton *ngIf="userPrompt.suggestion" color="blue" (click)="suggestValues()">
+            <scrawlbutton color="blue" (click)="suggestValues()">
                 Suggest
             </scrawlbutton>
         </div>
     </div>
-    <div class="sticky-nav">
-        <div style="width:110px;padding-top: 4px;">
+    <div class="sticky-nav" style="align-items:right;">
+        <div style="align-items:right; width:110px;padding-top: 4px;">
             <scrawlbutton *ngIf="userPrompt.submitButton" color="green" (click)="onSubmit(userForm.value)">
                 {{userPrompt.submitButtonText}}
             </scrawlbutton>
@@ -69,7 +69,8 @@
 
                     <slider *ngIf="subPrompt.slider" class="SliderHolder" [sliderParameters]="subPrompt.slider" formControlName="slider"></slider>
                     <input type="color" *ngIf="subPrompt.colorPicker" formControlName="color" class="color-input" (click)='openColorPicker($event, j)' [value]="subPrompt.color" [ngStyle]="{'background-color': subPrompt.color}">
-                    <!--input           *ngIf="subPrompt.colorPicker" formControlName="color" [(colorPicker)]="subPrompt.color" [style.background]="subPrompt.color" [readonly]="true" [cpPosition]="'bottom'" [ngModel]="subPrompt.color" [cpOutputFormat]="'rgba'" [cpAlphaChannel]="'disabled'" -->
+                    <!--input           *ngIf="subPrompt.colorPicker" formControlName="color" [(colorPicker)]="subPrompt.color" [style.background]="subPrompt.color" [readonly]="true" [cpPosition]="'bottom'" [ngModel]="subPrompt.color
+       " [cpOutputFormat]="'rgba'" [cpAlphaChannel]="'disabled'" -->
 
                     <input type="text" class="text-input" formControlName="shortAnswer" *ngIf="subPrompt.shortAnswer">
 
