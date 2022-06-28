@@ -28,7 +28,7 @@ public class ImageRepository : MonoBehaviour
         tex.LoadImage(pictureBytes);
 
         Sprite sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 1f, 0, SpriteMeshType.FullRect);
-        imageRepo.Add(imageId, sprite);
+        imageRepo[imageId] = sprite;
     }
 
     public static bool FindImageFromKey(string key, out Sprite sprite)

@@ -249,6 +249,16 @@ namespace Backend.GameInfrastructure
                     user.IsPartyLeader = true;
                 }
 
+                if (this.Owner.UserId == user.Identifier)
+                {
+                    // If the user joining is the owner, demote all other players and grant the owner the leader status.
+                    foreach (User demoteUser in this.UsersInLobby.Values)
+                    {
+                        demoteUser.IsPartyLeader = false;
+                    }
+                    user.IsPartyLeader = true;
+                }
+
                 user.SetLobbyJoinTime();
                 user.LobbyId = LobbyId;
 

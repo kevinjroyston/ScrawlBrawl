@@ -19,6 +19,7 @@ using Backend.GameInfrastructure;
 using Common.Code.Extensions;
 using Common.DataModels.Enums;
 using Backend.APIs.DataModels.UnityObjects;
+using MiscUtil;
 
 namespace Backend.Games.KevinsGames.Mimic
 {
@@ -110,6 +111,7 @@ namespace Backend.Games.KevinsGames.Mimic
                 .OrderByDescending(drawing => drawing?.Drawing?.DrawingStr?.Length ?? 0)
                 .ToList()
                 .Take(numRounds) // Limit number of rounds based on game duration.
+                .OrderBy(_=> StaticRandom.Next()) // Re order objects now that we took just the longest ones
                 .ToList();
 
                 actualNumRounds = randomizedDrawings.Count;

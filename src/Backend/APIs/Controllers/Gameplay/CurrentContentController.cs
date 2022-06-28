@@ -107,7 +107,8 @@ namespace Backend.APIs.Controllers
             return new UserListMetadata
             {
                 UserCount = relevantUsers.Count,
-                UserRecords = relevantUsers.Take(10).Select(user =>
+                // Take all 10, otherwise take 9 and leave a line for client to say +N more
+                UserRecords = relevantUsers.Take(relevantUsers.Count == 10 ? 10 : 9).Select(user =>
                       new UserRecordType
                       {
                           PlayerName = user.DisplayName

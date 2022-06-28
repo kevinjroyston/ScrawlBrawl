@@ -15,6 +15,7 @@ using Backend.GameInfrastructure;
 using Common.Code.Extensions;
 using CommonConstants=Common.DataModels.Constants;
 using Common.DataModels.Responses.Gameplay;
+using Backend.GameInfrastructure.DataModels.Enums;
 
 namespace Backend.Games.KevinsGames.Mimic.GameStates
 {
@@ -59,6 +60,24 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                     };
                     roundTracker.UsersToUserDrawings.AddOrReplace(user, submission);
                     return (true, string.Empty);
+                },
+                userTimeoutHandler: (User user, UserFormSubmission input) =>
+                {
+                    // Take the auto submit, but not hurried users.
+                    if (input.SubForms[0].DrawingObject != null)
+                    {
+                        UserDrawing submission = new UserDrawing
+                        {
+                            Drawing = input.SubForms[0].DrawingObject,
+                            Owner = user,
+                            UnityImageRevealOverrides = new UnityObjectOverrides()
+                            {
+                                Title = user.DisplayName,
+                            }
+                        };
+                        roundTracker.UsersToUserDrawings.AddOrReplace(user, submission);
+                    }
+                    return UserTimeoutAction.None;
                 },
                 exit: new WaitForUsers_StateExit(
                     lobby: this.Lobby,

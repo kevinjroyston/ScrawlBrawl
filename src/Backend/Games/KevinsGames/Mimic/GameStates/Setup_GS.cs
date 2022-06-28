@@ -68,6 +68,10 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                     {
                         Drawing = input.SubForms[0].DrawingObject,
                         Owner = user,
+                        UnityImageRevealOverrides = new UnityObjectOverrides()
+                        {
+                            Title = user.DisplayName,
+                        }
                     });
                     return (true, String.Empty);
                 },
@@ -80,6 +84,10 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                         {
                             Drawing = input.SubForms[0].DrawingObject,
                             Owner = user,
+                            UnityImageRevealOverrides = new UnityObjectOverrides()
+                            {
+                                Title = user.DisplayName,
+                            }
                         });
                     }
                     return UserTimeoutAction.None;
