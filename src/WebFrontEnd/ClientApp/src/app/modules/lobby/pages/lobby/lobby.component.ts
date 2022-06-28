@@ -39,10 +39,8 @@ export class LobbyManagementComponent {
     @Inject(NotificationService) private notificationService: NotificationService)
     {
 /*        this.getGames().then(() => this.onGetLobby()) */
-        if (window.name=='') {
-            window.name='_SBHost';
-        }
-      this.onGetLobby()
+        window.name='_SBHost';
+        this.onGetLobby()
     }
 
     async onGetLobby() {
