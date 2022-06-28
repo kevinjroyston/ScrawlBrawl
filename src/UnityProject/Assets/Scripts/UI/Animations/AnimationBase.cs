@@ -13,7 +13,6 @@ public abstract class AnimationBase: MonoBehaviour
     public GameEvent endEvent = new GameEvent() { eventType = GameEvent.EventEnum.None, id = null };
 
     public float startDelay = 0f;
-    public float endDuration = 0f;
     protected RectTransform rect;
     public bool registerOnEnable = true;
     private bool missedRegistration = false;

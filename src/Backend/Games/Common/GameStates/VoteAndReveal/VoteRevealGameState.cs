@@ -26,12 +26,14 @@ namespace Backend.Games.Common.GameStates.VoteAndReveal
                         promptTitle: promptTitle,
                         userPromptId: UserPromptId.PartyLeader_SkipReveal,
                         userScoreBreakdownScope: Score.Scope.Reveal,
+                        userScoreScope: Score.Scope.Total,
                         showPartyLeaderSkipButton: true),
 
                     waitingPromptGenerator: Prompts.ShowScoreBreakdowns(
                         lobby: lobby,
                         promptTitle: promptTitle,
-                        userScoreBreakdownScope: Score.Scope.Reveal)))
+                        userScoreBreakdownScope: Score.Scope.Reveal,
+                        userScoreScope: Score.Scope.Total)))
         {
             this.Entrance.Transition(this.Exit);
             this.UnityView = voteRevealUnityView;

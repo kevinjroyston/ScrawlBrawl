@@ -50,9 +50,6 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
                 Title = new UnityField<string> { Value = "Learning time!" },
                 Instructions = new UnityField<string> { Value = "Press 'READY!' once you have read the instructions on your device!" },
             };
-
-
-            _timer = new Timer(CheckProgress, null, TimeSpan.Zero,CheckUsersPeriod);
         }
 
         private void CheckProgress(object _)

@@ -41,6 +41,10 @@ namespace Backend.APIs.Controllers
             {
                 user.LastSubmitTime = DateTime.UtcNow;
                 user.LastSubmitType = SubmitType.Manual;
+
+                // A submit is considered ping & activity as well.
+                user.LastPingTime = DateTime.UtcNow;
+                user.LastActivityTime = DateTime.UtcNow;
             }
 
             if (user?.UserState == null || newUser)

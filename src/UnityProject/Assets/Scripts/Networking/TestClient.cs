@@ -399,8 +399,15 @@ public class TestClient : MonoBehaviour
                 usersAnsweringPrompts = new List<UnityUser>();
                 foreach (Guid userAnsweringPrompt in RPCRequest.UnityUserStatus.UsersAnsweringPrompts)
                 {
-                    UserLookup[userAnsweringPrompt].Status = UserStatus.AnsweringPrompts;
-                    usersAnsweringPrompts.Add(UserLookup[userAnsweringPrompt]);
+                    if (UserLookup.ContainsKey(userAnsweringPrompt))
+                    {
+                        UserLookup[userAnsweringPrompt].Status = UserStatus.AnsweringPrompts;
+                        usersAnsweringPrompts.Add(UserLookup[userAnsweringPrompt]);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"User status guid not found in local user lookup, ignoring user '{userAnsweringPrompt}'");
+                    }
                 }
             }
 
