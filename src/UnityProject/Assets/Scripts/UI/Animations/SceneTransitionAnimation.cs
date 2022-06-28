@@ -14,13 +14,15 @@ public class SceneTransitionAnimation : AnimationBase
                 rectTrans: rect,
                 to: Color.clear,
                 time: 0.4f)
-            .PlayAfter(fadeOut, 0.5f);
+            .PlayAfter(fadeOut, 0.5f)
+            .addOnComplete(() => this.started = false);
         return new List<LTDescr>()
         {
             fadeOut,
             fadeIn
         };
     }
+
 
     /*public override List<LTDescr> EndAnimate(GameEvent gameEvent, List<LTDescr> animations, float? endDurration)
     {
