@@ -27,6 +27,9 @@ export class NavMenuComponent {
   isLobbyPage = false;
   isPastHero = false;
 
+  public launchedPlayWindow = null;
+  public launchedHostWindow = null;
+
   constructor(private router: Router, public activatedRoute: ActivatedRoute, public location: Location, public NavMenuService : NavMenuService, private ThemeService: ThemeService ){
     this.checkRoute(location.prepareExternalUrl(location.path()));
     router.events.subscribe((val) => { 
@@ -58,16 +61,38 @@ export class NavMenuComponent {
     this.ThemeService.toggleTheme();
   }
 
+  tryToFocusWindow(win, lookFor){
+    /* note, this rarely works because a window.open causes a full page load on the other tab
+        causing that tab to forget any window handles it had stored */
+    if(win != null && !win.closed){
+      try {            
+          if (win.location.href.indexOf(lookFor) >= 0) { /* we only ever launch to the play or lobby page right now */
+              win.focus();            
+              console.log("refocused "+lookFor);
+              return true;
+          }
+      }
+    catch (error) {console.log("Launched window had navigated, reopening")}
+    return false;
+  }    
+
+  }
   redirectLink = (route: string) => {
     this.isExpanded = false;
 
+    /* if window.name is set, we are in a lobby */
     if ((route.toLowerCase() == 'lobby') && (window.name=='_SBPlay')) {
-        window.open('/'+route,'_SBHost','');
-        return
+      if (!this.tryToFocusWindow(this.launchedHostWindow, 'lobby')){
+          this.launchedHostWindow = window.open('/'+route,'_SBHost','');
+      }
+      return
     }
+
     if (((route.toLowerCase() == 'play')||(route.toLowerCase() == 'join')) && (window.name=='_SBHost')) {
-        window.open('/'+route,'_SBPlay','');
-        return
+      if (!this.tryToFocusWindow(this.launchedPlayWindow, 'play')){
+        this.launchedPlayWindow = window.open('/'+route,'_SBPlay','');
+      }
+      return
     }
 
     this.router.navigate(['/' + route])
