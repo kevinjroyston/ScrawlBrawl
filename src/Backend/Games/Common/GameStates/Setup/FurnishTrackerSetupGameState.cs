@@ -60,6 +60,7 @@ namespace Backend.Games.Common.GameStates.Setup
                                     {
                                         prompt.PromptHeader.CurrentProgress = counter + 1;
                                         prompt.PromptHeader.MaxProgress = TrackersToFurnish[user].Count;
+                                        prompt.PromptHeader.ExpectedTimePerPrompt = this.SetupDuration.MultipliedBy(1.0f / TrackersToFurnish[user].Count);
                                     }
                                     else
                                     {
