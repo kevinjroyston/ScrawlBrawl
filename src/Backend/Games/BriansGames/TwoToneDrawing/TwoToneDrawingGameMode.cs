@@ -97,7 +97,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
                 int numTeamsLowerBound = Math.Max(2, 1 * numPlayers / (numRounds * numLayers)); // Lower bound.
                 int numTeamsUpperBound = Math.Min(maxPossibleTeamCount, numDrawingsPerPlayer * numPlayers / (numRounds * numLayers)); // Upper bound.
                 int numTeams = Math.Max(numTeamsLowerBound, numTeamsUpperBound); // Possible for lower bound to be higher than upper bound. that is okay.
-                numDrawingsPerPlayer = Math.Max(Math.Min(numDrawingsPerPlayer, (int)Math.Ceiling((numTeams * numRounds * numLayers * 1.0) / numPlayers)), 1);
+                numDrawingsPerPlayer = (int)Math.Ceiling((numTeams * numRounds * numLayers * 1.0) / numPlayers);
 
                 TimeSpan estimate = TimeSpan.Zero;
                 TimeSpan setupTimer = TwoToneDrawingConstants.SetupTimer[duration];
@@ -133,7 +133,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             int numTeamsLowerBound = Math.Max(2, 1 * numPlayers / (numRounds * numLayers)); // Lower bound.
             int numTeamsUpperBound = Math.Min(maxPossibleTeamCount, numDrawingsPerPlayer * numPlayers / (numRounds * numLayers)); // Upper bound.
             int numTeams = Math.Max(numTeamsLowerBound, numTeamsUpperBound); // Possible for lower bound to be higher than upper bound. that is okay.
-            numDrawingsPerPlayer = Math.Max(Math.Min(numDrawingsPerPlayer, (int)Math.Ceiling((numTeams * numRounds * numLayers * 1.0) / numPlayers)), 1);
+            numDrawingsPerPlayer = (int)Math.Ceiling((numTeams * numRounds * numLayers * 1.0) / numPlayers);
 
             TimeSpan ? setupTimer = null;
             TimeSpan? perDrawingTimer = null;
