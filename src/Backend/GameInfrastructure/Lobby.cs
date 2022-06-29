@@ -297,22 +297,19 @@ namespace Backend.GameInfrastructure
                 {
                     if (!this.IsGameInProgress())
                     {
-                        int breakout = 0;
-                        while (!this.UsersInLobby.TryRemove(user.Id, out User _) && breakout < 3)
+                        if(this.UsersInLobby.TryRemove(user.Id, out User _))
                         {
-                            breakout++;
+                            if (user.IsPartyLeader)
+                            {
+                                FindNewPartyLeader();
+                            }
+
+                            // States will drop deleted users rather than keep hurrying them along.
+                            user.MarkDeleted();
+
+                            // Have the gamestate refresh its' user list.
+                            this.WaitForLobbyStart.Update();
                         }
-
-                        if (user.IsPartyLeader)
-                        {
-                            FindNewPartyLeader();
-                        }
-
-                        // States will drop deleted users rather than keep hurrying them along.
-                        user.MarkDeleted();
-
-                        // Have the gamestate refresh its' user list.
-                        this.WaitForLobbyStart.Update();
                     }
                 }
             }
