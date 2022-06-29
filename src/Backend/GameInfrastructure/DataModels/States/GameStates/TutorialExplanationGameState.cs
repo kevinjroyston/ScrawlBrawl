@@ -136,6 +136,9 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
         }
         private void CleanNonReadiedUsers()
         {
+            // This will often get called twice (once by timer and once by state exit).
+            // Currently drop users can be called twice without issue 
+
             List<User> allUsers = this.Lobby.GetAllUsers().Where(user => !user.Deleted).ToList();
             List<User> usersWaiting = ((WaitForUsers_StateExit)this.Exit).GetUsersWaiting().ToList();
             List<User> usersToDelete = allUsers.Except(usersWaiting).ToList();
