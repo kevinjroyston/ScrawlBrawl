@@ -107,11 +107,6 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
             }
         }
 
-        public IEnumerable<User> GetUsersWaiting()
-        {
-            return this.UsersWaiting;
-        }
-
         /// <summary>
         /// A nudge gets called every 10 seconds if it is considered active
         /// </summary>
