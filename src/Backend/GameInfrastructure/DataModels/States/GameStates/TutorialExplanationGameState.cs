@@ -61,6 +61,11 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             });
             readyUp.Transition(this.Exit);
 
+            this.AddExitListener(() =>
+            {
+                CleanNonReadiedUsers();
+            });
+
             this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = TVScreenId.WaitForUserInputs,
@@ -127,6 +132,10 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             {
                 return;
             }
+            CleanNonReadiedUsers();
+        }
+        private void CleanNonReadiedUsers()
+        {
             List<User> allUsers = this.Lobby.GetAllUsers().Where(user => !user.Deleted).ToList();
             List<User> usersWaiting = ((WaitForUsers_StateExit)this.Exit).GetUsersWaiting().ToList();
             List<User> usersToDelete = allUsers.Except(usersWaiting).ToList();
