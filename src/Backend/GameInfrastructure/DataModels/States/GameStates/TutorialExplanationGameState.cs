@@ -13,6 +13,8 @@ using Backend.GameInfrastructure.DataModels.States.UserStates;
 using Common.DataModels.Responses.Gameplay;
 using System;
 using System.Threading;
+using System.Collections.Concurrent;
+using Common.DataModels.Requests;
 
 namespace Backend.GameInfrastructure.DataModels.States.GameStates
 {
@@ -22,6 +24,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
         private TimeSpan CheckUsersPeriod { get; } = TimeSpan.FromSeconds(5);
         private float AcceptableUserSubmissionThreshold { get; } = .30f; // Starts a timer when the users we are waiting for is 30% the size of the users who hit ready.
         private Timer _timer { get; set; }
+        private ConcurrentBag<User> ReadiedUp { get; } = new ConcurrentBag<User>();
         public TutorialExplanationGameState(Lobby lobby)
             : base(
                   lobby: lobby,
@@ -30,7 +33,18 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
         {
             Arg.NotNull(lobby, nameof(lobby));
 
-            UserState readyUp = new SimplePromptUserState(promptGenerator: this.ReadyUpPrompt);
+            UserState readyUp = new SimplePromptUserState(
+                promptGenerator: this.ReadyUpPrompt,
+                formSubmitHandler: (User user, UserFormSubmission submission) =>
+                {
+                    ReadiedUp.Add(user); 
+                    return (true, String.Empty);
+                },
+                userTimeoutHandler:(User user, UserFormSubmission submission) =>
+                {
+                    // Ignore timeouts, they are likely just hurried users (that did not hit ready)
+                    return Enums.UserTimeoutAction.None;
+                });
             this.Entrance.Transition(readyUp);
             this.AddEntranceListener(() =>
             {
@@ -90,7 +104,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             }
 
             // These users will not be deleted
-            List<User> usersWaiting = ((WaitForUsers_StateExit)this.Exit).GetUsersWaiting().ToList();
+            List<User> usersWaiting = this.ReadiedUp.ToList();
             List<User> allConnectedUsers = this.Lobby.GetAllUsers().Where(user => !user.Deleted && (user.Activity != UserActivity.Disconnected)).ToList();
             List<User> remainingUsersToWaitFor = allConnectedUsers.Except(usersWaiting).ToList();
             if (!remainingUsersToWaitFor.Any())
@@ -140,7 +154,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             // Currently drop users can be called twice without issue 
 
             List<User> allUsers = this.Lobby.GetAllUsers().Where(user => !user.Deleted).ToList();
-            List<User> usersWaiting = ((WaitForUsers_StateExit)this.Exit).GetUsersWaiting().ToList();
+            List<User> usersWaiting = this.ReadiedUp.ToList();
             List<User> usersToDelete = allUsers.Except(usersWaiting).ToList();
 
             // TODO: this has a pitfall if somebody joins at the wrong time, will deal with it someday.
