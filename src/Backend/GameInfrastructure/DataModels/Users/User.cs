@@ -127,7 +127,7 @@ namespace Backend.GameInfrastructure.DataModels.Users
                 {
                     return UserActivity.Disconnected;
                 } 
-                else if ((this.LastSubmitType != SubmitType.Manual || (this.Lobby.StandardGameModeOptions?.TimerEnabled == false)) && DateTime.UtcNow.Subtract(this.LastActivityTime) >= Constants.UserInactivityTimer)
+                else if ((this.LastSubmitType != SubmitType.Manual || (this.Lobby?.StandardGameModeOptions?.TimerEnabled == false)) && DateTime.UtcNow.Subtract(this.LastActivityTime) >= Constants.UserInactivityTimer)
                 {
                     // I dont think there is any logic currently affecting Inactive users compared to Active.
 

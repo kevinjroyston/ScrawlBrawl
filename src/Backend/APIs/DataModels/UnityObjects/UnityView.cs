@@ -50,7 +50,7 @@ namespace Backend.APIs.DataModels.UnityObjects
         [JsonProperty("h")]
         public DateTime? StateEndTime
         {
-            get => OverrideStateEndTime ?? this.Lobby?.GetAllUsers().Where(user => user.Activity != UserActivity.Disconnected).Select(user => user.EarliestStateTimeout).Append(this.Lobby.GetCurrentGameState().ApproximateStateEndTime).Min();
+            get => OverrideStateEndTime ?? this.Lobby?.GetAllUsers().Where(user => user.Activity != UserActivity.Disconnected && !user.Deleted).Select(user => user.EarliestStateTimeout).Append(this.Lobby.GetCurrentGameState().ApproximateStateEndTime).Min();
             set => OverrideStateEndTime = value;
         }
 

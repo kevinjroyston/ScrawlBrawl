@@ -297,7 +297,7 @@ namespace Backend.GameInfrastructure
                 {
                     if (!this.IsGameInProgress())
                     {
-                        if (this.UsersInLobby.TryRemove(user.Id, out User _))
+                        if(this.UsersInLobby.TryRemove(user.Id, out User _))
                         {
                             if (user.IsPartyLeader)
                             {
@@ -463,6 +463,10 @@ namespace Backend.GameInfrastructure
 
             IInlet InstantiateGame()
             {
+                if (!gameModeMetadata.GameModeMetadata.IsSupportedPlayerCount(this.GetAllUsers().Count))
+                {
+                    throw new Exception("Not enough players exception. This can happen if folks leave during tutorial");
+                }
                 IGameMode game = gameModeMetadata.GameModeInstantiator(this, this.GameModeOptions, this.StandardGameModeOptions);
 
                 // Set up game to transition smoothly to end of game restart.
