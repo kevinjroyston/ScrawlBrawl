@@ -1,4 +1,7 @@
 # ScrawlBrawl
+
+Play now at www.scrawlbrawl.tv 
+
 A game built for everyone by anyone. Put your wordsmithing and drawing skills to the test with one of many game modes, perfect for small gatherings and huge events alike.
 
 Still a work in progress. Reach out to us if you are interested in contributing!
