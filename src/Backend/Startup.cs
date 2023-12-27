@@ -36,7 +36,7 @@ namespace Backend
 #if DEBUG
             IdentityModelEventSource.ShowPII = true;
 #endif
-
+/*
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                  .AddMicrosoftWebApi(options =>
                  { 
@@ -52,7 +52,7 @@ namespace Backend
                 options.AddPolicy("LobbyManagement",
                     policy => policy.Requirements.Add(new ScopesRequirement("LobbyManagement")));
             });
-
+*/
             // The following line enables Application Insights telemetry collection.
             services.AddApplicationInsightsTelemetry();
             services.AddSingleton(typeof(GameManager));
