@@ -9,20 +9,27 @@
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "paths": {
-      "@shared/*": ["app/shared/*"],
-      "@core/*": ["app/core/*"],
-      "@layout/*":["app/layout/*"],
+      "@shared/*": [
+        "app/shared/*"
+      ],
+      "@core/*": [
+        "app/core/*"
+      ],
+      "@layout/*": [
+        "app/layout/*"
+      ],
       "@modules/*": [
         "app/modules/*"
-      ],
+      ]
     },
-    "target": "es2015",
+    "target": "ES2022",
     "typeRoots": [
       "node_modules/@types"
     ],
     "lib": [
       "es2017",
       "dom"
-    ]
+    ],
+    "useDefineForClassFields": false
   }
 }

@@ -1,11 +1,8 @@
 
 import { HttpClient, HttpHeaders, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, Subject, Subscriber } from 'rxjs';
-import { AuthError, InteractionRequiredAuthError } from 'msal';
-import { MsalService, MsalBroadcastService } from '@azure/msal-angular';
 import { environment } from 'environments/environment';
 import { Inject, Injectable } from '@angular/core';
-import { tokenRequest } from 'app/app-config';
 
 
 //TODO: Change all "any" types to concrete, importable data types.
@@ -45,7 +42,6 @@ export class API {
     constructor(
         @Inject(HttpClient) private http: HttpClient,
         @Inject('userId')userId: string,
-        @Inject(MsalService) private authService: MsalService,
         @Inject('BASE_API_URL') private baseUrl: string)
     {
         this.userId = userId;
@@ -121,41 +117,7 @@ export class API {
                     subscriber.next(x);
                 },
                 error: (err: unknown) => {
-                    // If there is an interaction required error,
-                    // call one of the interactive methods and then make the request again.
-                    if ((err as AuthError).errorCode !== undefined && InteractionRequiredAuthError.isInteractionRequiredError((err as AuthError).errorCode)) {
-                        this.authService.acquireTokenPopup(
-                            this.getScopesForEndpoint(url)
-                        ).subscribe({
-                            next: () => {
-                                this.http.get(url, options).subscribe({
-                                    next: (x) => subscriber.next(x),
-                                    error: (err) => subscriber.error(err),
-                                    complete: () => subscriber.complete()
-                                });
-                            },
-                            error: (err) =>  subscriber.error(err)
-                        });
-                    }
-                    else if ((err as HttpErrorResponse).status !== undefined && [401, 403].includes((err as HttpErrorResponse).status))
-                    {
-                        this.authService.acquireTokenPopup(
-                            this.getScopesForEndpoint(url)
-                        ).subscribe({
-                            next: () => {
-                                this.http.get(url, options).subscribe({
-                                    next: (x) => subscriber.next(x),
-                                    error: (err) => subscriber.error(err),
-                                    complete: () => subscriber.complete()
-                                });
-                            },
-                            error: (err) =>  subscriber.error(err)
-                        });
-                    }
-                    else
-                    {
                         subscriber.error(err);
-                    }
                 },
                 complete: () => {
                     subscriber.complete();
@@ -175,32 +137,14 @@ export class API {
         };
         options.params["id"]=this.userId;
 
-        // I do not like this sam I am.
         var observable = new Observable(subscriber => {
             this.http.post(url, r.body, options).subscribe(
                 {
                     next: (x) => {
                         subscriber.next(x);
                     },
-                    error: (err: AuthError) => {
-                        // If there is an interaction required error,
-                        // call one of the interactive methods and then make the request again.
-                        if (InteractionRequiredAuthError.isInteractionRequiredError(err.errorCode)) {
-                            this.authService.acquireTokenPopup(
-                                this.getScopesForEndpoint(url)
-                            ).subscribe({
-                                next: () => {
-                                    this.http.get(url, options).subscribe({
-                                        next: (x) => subscriber.next(x),
-                                        error: (err) => subscriber.error(err),
-                                        complete: () => subscriber.complete()
-                                    });
-                                },
-                                error: (err) =>  subscriber.error(err)
-                            });
-                        } else {
-                            subscriber.error(err);
-                        }
+                    error: (err: unknown) => {
+                        subscriber.error(err);
                     },
                     complete: () => {
                         subscriber.complete();
@@ -212,8 +156,5 @@ export class API {
 
     getAPIPath = (r: APIRequest): string => {
         return `${this.baseUrl}api/v1/${r.type}/${r.path}`;
-    }
-    getScopesForEndpoint(url): any {
-        return tokenRequest;
     }
 }

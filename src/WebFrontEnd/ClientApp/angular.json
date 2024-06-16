@@ -103,34 +103,34 @@
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
-                        "browserTarget": "RoystonGame:build",
-                        "proxyConfig": "proxy.conf.json",
+                      "proxyConfig": "proxy.conf.json",
                         "ssl": false,
                         "sslKey": "ssl/server.key",
-                        "sslCert": "ssl/server.crt"
+                        "sslCert": "ssl/server.crt",
+                        "buildTarget": "RoystonGame:build"
                     },
                     "configurations": {
                         "production": {
                             "ssl": true,
-                            "browserTarget": "RoystonGame:build:production",
-                            "proxyConfig": ""
+                            "proxyConfig": "",
+                            "buildTarget": "RoystonGame:build:production"
                         },
                         "staging": {
                             "ssl": true,
-                            "browserTarget": "RoystonGame:build:staging",
-                            "proxyConfig": ""
+                            "proxyConfig": "",
+                            "buildTarget": "RoystonGame:build:staging"
                         },
                         "substaging": {
                             "ssl": false,
-                            "browserTarget": "RoystonGame:build:substaging",
-                            "proxyConfig": "src/proxy-substaging.conf.json"
+                            "proxyConfig": "src/proxy-substaging.conf.json",
+                            "buildTarget": "RoystonGame:build:substaging"
                         }
                     }
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "RoystonGame:build"
+                      "buildTarget": "RoystonGame:build"
                     }
                 },
                 "test": {
@@ -168,7 +168,8 @@
                         "main": "src/main.ts",
                         "tsConfig": "src/tsconfig.server.json",
                         "sourceMap": true,
-                        "optimization": false
+                        "optimization": false,
+                        "buildOptimizer": false
                     },
                     "configurations": {
                         "dev": {
@@ -176,14 +177,16 @@
                             "namedChunks": false,
                             "optimization": true,
                             "outputHashing": "all",
-                            "sourceMap": false
+                            "sourceMap": false,
+                            "buildOptimizer": true
                         },
                         "production": {
                             "optimization": true,
                             "outputHashing": "all",
                             "sourceMap": false,
                             "namedChunks": false,
-                            "extractLicenses": true
+                            "extractLicenses": true,
+                            "buildOptimizer": true
                         }
                     },
                     "defaultConfiguration": ""
@@ -191,9 +194,10 @@
             }
         }
     },
-    "defaultProject": "RoystonGame",
     "cli": {
         "analytics": false,
-        "defaultCollection": "@angular-eslint/schematics"
+        "schematicCollections": [
+          "@angular-eslint/schematics"
+        ]
     }
 }

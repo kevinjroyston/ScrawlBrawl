@@ -1,11 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { environment } from '../environments/environment';
-import {
-    MsalGuard,
-} from '@azure/msal-angular';
-
-const guards: any[] = environment.enableMsal ? [MsalGuard] : [];
 
 const routes: Routes = [
     { 
@@ -40,7 +35,6 @@ const routes: Routes = [
     },
     {
         path: 'lobby',
-        canActivate: guards,
         loadChildren: () => import('./modules/lobby/lobby.module').then(m => m.LobbyModule)
     },
     {
@@ -51,7 +45,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
+  imports: [RouterModule.forRoot(routes, {})],
   exports: [RouterModule],
   //Put guard in here?
   providers: []
