@@ -1,6 +1,6 @@
 import {Subscription, Subject} from 'rxjs'
 import {Injectable, OnDestroy} from '@angular/core'
-import {MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig, MatLegacySnackBarRef as MatSnackBarRef, LegacySimpleSnackBar as SimpleSnackBar} from '@angular/material/legacy-snack-bar';
+import {MatSnackBar, MatSnackBarConfig, MatSnackBarRef, SimpleSnackBar} from '@angular/material/snack-bar';
 
 export class SnackBarMessage {
     message: string

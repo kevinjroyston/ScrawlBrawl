@@ -1,5 +1,5 @@
 import { Component, Input, Inject, OnInit } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
+import { MatDialog,  MatDialogConfig } from '@angular/material/dialog';
 import {GameInfoDialogComponent} from '../../../../lobby/components/gameinfo-dialog/gameinfo-dialog.component';
 import { GameModeList } from '@core/http/gamemodelist';
 import GameModes from '@core/models/gamemodes'
