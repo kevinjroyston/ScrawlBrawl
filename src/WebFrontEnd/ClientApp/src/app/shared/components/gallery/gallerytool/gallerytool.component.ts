@@ -2,7 +2,7 @@ import { Component, Inject, ViewEncapsulation, Input, AfterViewInit, ViewChild, 
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {DrawingDirective,DrawingPromptMetadata} from '@shared/components/drawingdirective.component';
 import {GalleryPanel} from '@shared/components/gallery/gallerypanel/gallerypanel.component';
-import {MatTabsModule} from '@angular/material/tabs';
+import {MatLegacyTabsModule as MatTabsModule} from '@angular/material/legacy-tabs';
 import {MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom-sheet';
 import { environment } from '../../../../../environments/environment';
 import Galleries from '@core/models/gallerytypes';

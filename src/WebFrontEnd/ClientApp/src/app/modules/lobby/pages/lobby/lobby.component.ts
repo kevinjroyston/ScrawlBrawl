@@ -2,7 +2,7 @@ import { Component, Inject, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs'
 import { API } from '@core/http/api';
 import { GameAssetDirective } from '@shared/components/gameassetdirective.component';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
 import {GamemodeDialogComponent} from '../../components/gamemode-dialog/gamemode-dialog.component';
 import {GameInfoDialogComponent} from '../../components/gameinfo-dialog/gameinfo-dialog.component';
 import {LobbyInstructionsDialogComponent} from '../../components/lobbyinstructions-dialog/lobbyinstructions-dialog.component';

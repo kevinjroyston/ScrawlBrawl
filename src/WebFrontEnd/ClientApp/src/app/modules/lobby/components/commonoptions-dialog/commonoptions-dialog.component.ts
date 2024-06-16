@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import {Subscription} from 'rxjs'
 import { API } from '@core/http/api';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import Lobby from '@core/models/lobby';
 import GameModes from '@core/models/gamemodes';
 import { ErrorService } from '@modules/lobby/services/error.service';
