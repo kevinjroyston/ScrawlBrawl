@@ -77,7 +77,7 @@ export class GalleryPanel implements ControlValueAccessor, AfterViewInit {
     onclick(img) {
             if (!img.src) { return } 
             this.drawingDirective.loadImageString(img.src);
-            this.closeSheet.next(img.src);  // plr - next now wants a string so passing img.src, not sure   if this is correct
+            this.closeSheet.next('');  // plr - next now wants a string so passing in a blank string    
             event.preventDefault;
     }
 
