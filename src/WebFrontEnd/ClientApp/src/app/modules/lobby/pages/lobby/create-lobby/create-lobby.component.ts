@@ -34,7 +34,7 @@ export class CreateLobbyComponent implements OnInit {
   onCreateAndJoinLobbySubmit = async () => {
     if (!this.showPrompts) { this.showPrompts = true; return false}
     let requestBody = this.form.value;
-    requestBody.LobbyId = "temp";    
+//    requestBody.LobbyId = "temp";    
     localStorage.storeLocalStorage("Join","DisplayName",this.form.controls.DisplayName.value);    
     this.onCreateAndJoinLobby.emit(requestBody);
   }

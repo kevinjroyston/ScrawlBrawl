@@ -29,5 +29,5 @@ import { ResizableModule } from 'angular-resizable-element';
         MatTabsModule,
         BrowserAnimationsModule,
         AppRoutingModule,
-        ResizableModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
+        ResizableModule], providers: [provideHttpClient(withInterceptorsFromDi()),FooterService, NavMenuService] })
 export class AppModule { }
