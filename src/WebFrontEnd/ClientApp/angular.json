@@ -191,9 +191,10 @@
             }
         }
     },
-    "defaultProject": "RoystonGame",
     "cli": {
         "analytics": false,
-        "defaultCollection": "@angular-eslint/schematics"
+        "schematicCollections": [
+          "@angular-eslint/schematics"
+        ]
     }
 }
