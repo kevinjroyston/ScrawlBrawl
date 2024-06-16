@@ -103,34 +103,34 @@
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
-                        "browserTarget": "RoystonGame:build",
-                        "proxyConfig": "proxy.conf.json",
+                      "proxyConfig": "proxy.conf.json",
                         "ssl": false,
                         "sslKey": "ssl/server.key",
-                        "sslCert": "ssl/server.crt"
+                        "sslCert": "ssl/server.crt",
+                        "buildTarget": "RoystonGame:build"
                     },
                     "configurations": {
                         "production": {
                             "ssl": true,
-                            "browserTarget": "RoystonGame:build:production",
-                            "proxyConfig": ""
+                            "proxyConfig": "",
+                            "buildTarget": "RoystonGame:build:production"
                         },
                         "staging": {
                             "ssl": true,
-                            "browserTarget": "RoystonGame:build:staging",
-                            "proxyConfig": ""
+                            "proxyConfig": "",
+                            "buildTarget": "RoystonGame:build:staging"
                         },
                         "substaging": {
                             "ssl": false,
-                            "browserTarget": "RoystonGame:build:substaging",
-                            "proxyConfig": "src/proxy-substaging.conf.json"
+                            "proxyConfig": "src/proxy-substaging.conf.json",
+                            "buildTarget": "RoystonGame:build:substaging"
                         }
                     }
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "RoystonGame:build"
+                      "buildTarget": "RoystonGame:build"
                     }
                 },
                 "test": {
