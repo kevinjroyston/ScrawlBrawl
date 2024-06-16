@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, Provider, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MSALInstanceFactory, MSALGuardConfigFactory, MSALInterceptorConfigFactory } from './app-config';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { IPublicClientApplication, PublicClientApplication, InteractionType, BrowserCacheLocation } from '@azure/msal-browser';
 import { MsalGuard, MsalInterceptor, MsalBroadcastService, MsalInterceptorConfiguration, MsalModule, MsalService, MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 
@@ -34,25 +34,18 @@ export const providers: Provider[] = (<Provider[]>[
 ] : [])
 
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    NavMenuComponent,
-    FooterComponent
-  ],
-  imports: [
-    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
-    CoreModule,
-    SharedModule,
-    MatTabsModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    HttpClientModule,
-    MsalModule,
-    ResizableModule
-  ],
-  providers: providers.concat([FooterService, NavMenuService]),
-  bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        NavMenuComponent,
+        FooterComponent
+    ],
+    bootstrap: [AppComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA], imports: [BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+        CoreModule,
+        SharedModule,
+        MatTabsModule,
+        BrowserAnimationsModule,
+        AppRoutingModule,
+        MsalModule,
+        ResizableModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule { }

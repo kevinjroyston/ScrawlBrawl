@@ -1,5 +1,5 @@
 import { environment } from '../environments/environment';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'; 
+import { HTTP_INTERCEPTORS } from '@angular/common/http'; 
 import { IPublicClientApplication, PublicClientApplication, InteractionType, BrowserCacheLocation } from '@azure/msal-browser'; 
 import { MsalGuard, MsalInterceptor, MsalBroadcastService, MsalInterceptorConfiguration, MsalModule, MsalService, MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 // Copied with minor modifications from: https://github.com/Azure-Samples/active-directory-b2c-javascript-angular-spa/blob/master/src/app/app-config.ts
