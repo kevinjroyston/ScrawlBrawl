@@ -7,7 +7,6 @@ using Backend.Games.BriansGames.ImposterDrawing.DataModels;
 using Common.DataModels.Requests;
 using Common.DataModels.Responses;
 using Backend.APIs.DataModels.UnityObjects;
-using Common.Code.WordLists;
 using System;
 using System.Collections.Generic;
 using static System.FormattableString;

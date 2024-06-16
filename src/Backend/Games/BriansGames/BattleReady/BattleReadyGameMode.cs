@@ -25,7 +25,6 @@ using Common.DataModels.Interfaces;
 using Backend.APIs.DataModels.UnityObjects;
 using static Backend.Games.BriansGames.BattleReady.DataModels.Prompt;
 using Common.Code.Extensions;
-using MiscUtil;
 
 namespace Backend.Games.BriansGames.BattleReady
 {

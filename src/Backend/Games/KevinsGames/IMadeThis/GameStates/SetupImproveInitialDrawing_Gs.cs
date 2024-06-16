@@ -85,7 +85,7 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
 
         public override UserTimeoutAction CountingUserTimeoutHandler(User user, UserFormSubmission input, ChallengeTracker current)
         {
-            string artName = "unnamed";
+            string artName = "N/A";
             if (!string.IsNullOrWhiteSpace(input?.SubForms?[1]?.ShortAnswer)
                 && input.SubForms[1].ShortAnswer.ToLower() != "original")
             {

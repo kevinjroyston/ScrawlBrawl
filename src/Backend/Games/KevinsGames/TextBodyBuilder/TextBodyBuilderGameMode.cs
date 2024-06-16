@@ -24,7 +24,6 @@ using Common.Code.Extensions;
 using static Backend.Games.KevinsGames.TextBodyBuilder.DataModels.TextPerson;
 using static System.FormattableString;
 using Backend.APIs.DataModels.Enums;
-using MiscUtil;
 using Backend.Games.Common;
 
 namespace Backend.Games.KevinsGames.TextBodyBuilder.Game

@@ -6,7 +6,6 @@ using Backend.Games.BriansGames.TwoToneDrawing.DataModels;
 using Common.DataModels.Requests;
 using Common.DataModels.Responses;
 using Backend.APIs.DataModels.UnityObjects;
-using Common.Code.WordLists;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -45,7 +44,6 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
                     {
                         new SubPrompt
                         {
-//                            Prompt = Invariant($"The drawing prompt. Suggestions: '{string.Join("', '",RandomLineFromFile.GetRandomLines(FileNames.Nouns, 5))}'"),
                             Prompt = "Drawing Title (describe the drawing)",
                             ShortAnswer = true,
                         },

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -12,12 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataModels\Common.DataModels.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="WordLists\nouns.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

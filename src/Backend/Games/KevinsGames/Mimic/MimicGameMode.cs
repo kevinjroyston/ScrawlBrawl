@@ -19,7 +19,6 @@ using Backend.GameInfrastructure;
 using Common.Code.Extensions;
 using Common.DataModels.Enums;
 using Backend.APIs.DataModels.UnityObjects;
-using MiscUtil;
 
 namespace Backend.Games.KevinsGames.Mimic
 {
