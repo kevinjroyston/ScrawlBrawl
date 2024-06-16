@@ -25,7 +25,6 @@ using Common.DataModels.Interfaces;
 using Backend.APIs.DataModels.UnityObjects;
 using static Backend.Games.BriansGames.BattleReady.DataModels.Prompt;
 using Common.Code.Extensions;
-using MiscUtil;
 
 namespace Backend.Games.BriansGames.BattleReady
 {
@@ -76,10 +75,10 @@ namespace Backend.Games.BriansGames.BattleReady
                 TimeSpan creationTimer = BattleReadyConstants.PerCreationTimer[duration];
                 TimeSpan votingTimer = BattleReadyConstants.VotingTimer[duration];
 
-                estimate += setupDrawingTimer.MultipliedBy(expectedDrawingsPerUser);
-                estimate += setupPromptTimer.MultipliedBy(expectedPromptsPerUser);
-                estimate += creationTimer.MultipliedBy(numPromptsPerUserPerRound * numRounds);
-                estimate += votingTimer.MultipliedBy(numPromptsPerRound * numRounds);
+                estimate += setupDrawingTimer.Multiply(expectedDrawingsPerUser);
+                estimate += setupPromptTimer.Multiply(expectedPromptsPerUser);
+                estimate += creationTimer.Multiply(numPromptsPerUserPerRound * numRounds);
+                estimate += votingTimer.Multiply(numPromptsPerRound * numRounds);
                 estimates[duration] = estimate;
             }
 
@@ -181,9 +180,9 @@ namespace Backend.Games.BriansGames.BattleReady
                         prompt.UsersToUserHands.TryAdd(user, new Prompt.UserHand
                         {
                             // Users who submit more drawings technically have higher chances of being seen. (Used to use Select_DynamicWeightedRandom which kept author counts fair, but could skew some drawings to being seen more as a result)
-                            HeadChoices = headDrawings.OrderBy((val) => StaticRandom.Next()).ToList().Take(BattleReadyConstants.NumDrawingsInHand).ToList(),
-                            BodyChoices = bodyDrawings.OrderBy((val) => StaticRandom.Next()).ToList().Take(BattleReadyConstants.NumDrawingsInHand).ToList(),
-                            LegChoices = legsDrawings.OrderBy((val) => StaticRandom.Next()).ToList().Take(BattleReadyConstants.NumDrawingsInHand).ToList(),
+                            HeadChoices = headDrawings.OrderBy((val) => Random.Shared.Next()).ToList().Take(BattleReadyConstants.NumDrawingsInHand).ToList(),
+                            BodyChoices = bodyDrawings.OrderBy((val) => Random.Shared.Next()).ToList().Take(BattleReadyConstants.NumDrawingsInHand).ToList(),
+                            LegChoices = legsDrawings.OrderBy((val) => Random.Shared.Next()).ToList().Take(BattleReadyConstants.NumDrawingsInHand).ToList(),
                             Owner = user
                         });
 

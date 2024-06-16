@@ -46,7 +46,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                 {
                     MaxProgress = NumExpectedPerUser,
                     CurrentProgress = counter + 1,
-                    ExpectedTimePerPrompt = this.SetupDuration.MultipliedBy(1.0f / NumExpectedPerUser)
+                    ExpectedTimePerPrompt = this.SetupDuration?.Multiply(1.0f / NumExpectedPerUser)
                 },
                 Description = "Examples: 'Who would win in a fight?', 'A true problem solver', 'Jack of all trades', Etc.",
                 Suggestion = new SuggestionMetadata { SuggestionKey = "TextBodyBuilder-Prompt" },

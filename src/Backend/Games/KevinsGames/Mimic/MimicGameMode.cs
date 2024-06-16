@@ -19,7 +19,6 @@ using Backend.GameInfrastructure;
 using Common.Code.Extensions;
 using Common.DataModels.Enums;
 using Backend.APIs.DataModels.UnityObjects;
-using MiscUtil;
 
 namespace Backend.Games.KevinsGames.Mimic
 {
@@ -68,10 +67,10 @@ namespace Backend.Games.KevinsGames.Mimic
                 TimeSpan estimate = TimeSpan.Zero;
                 TimeSpan votingTimer = MimicConstants.VotingTimer[duration];
                 TimeSpan drawingTimer = MimicConstants.DrawingTimer[duration];
-                TimeSpan extendedDrawingTimer = drawingTimer.MultipliedBy(MimicConstants.MimicTimerMultiplier);
+                TimeSpan extendedDrawingTimer = drawingTimer.Multiply(MimicConstants.MimicTimerMultiplier);
 
-                estimate += (MimicConstants.MemorizeTimerLength.Add(extendedDrawingTimer).Add(votingTimer)).MultipliedBy(numRounds);
-                estimate += drawingTimer.MultipliedBy(numStartingDrawingsPerUser);
+                estimate += (MimicConstants.MemorizeTimerLength.Add(extendedDrawingTimer).Add(votingTimer)).Multiply(numRounds);
+                estimate += drawingTimer.Multiply(numStartingDrawingsPerUser);
 
                 estimates[duration] = estimate;
             }
@@ -91,7 +90,7 @@ namespace Backend.Games.KevinsGames.Mimic
                 drawingTimer = MimicConstants.DrawingTimer[duration];
                 votingTimer = MimicConstants.VotingTimer[duration];
             }
-            TimeSpan? extendedDrawingTimer = drawingTimer.MultipliedBy(MimicConstants.MimicTimerMultiplier);
+            TimeSpan? extendedDrawingTimer = drawingTimer?.Multiply(MimicConstants.MimicTimerMultiplier);
             int numPlayers = lobby.GetAllUsers().Count();
             int numRounds = Math.Min(MimicConstants.MaxRounds[duration], numPlayers);
 
@@ -111,7 +110,7 @@ namespace Backend.Games.KevinsGames.Mimic
                 .OrderByDescending(drawing => drawing?.Drawing?.DrawingStr?.Length ?? 0)
                 .ToList()
                 .Take(numRounds) // Limit number of rounds based on game duration.
-                .OrderBy(_=> StaticRandom.Next()) // Re order objects now that we took just the longest ones
+                .OrderBy(_=> Random.Shared.Next()) // Re order objects now that we took just the longest ones
                 .ToList();
 
                 actualNumRounds = randomizedDrawings.Count;

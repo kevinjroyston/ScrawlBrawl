@@ -101,11 +101,11 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
 
                 TimeSpan estimate = TimeSpan.Zero;
                 TimeSpan setupTimer = TwoToneDrawingConstants.SetupTimer[duration];
-                TimeSpan drawingTimer = TwoToneDrawingConstants.PerDrawingTimer[duration].MultipliedBy(numDrawingsPerPlayer);
+                TimeSpan drawingTimer = TwoToneDrawingConstants.PerDrawingTimer[duration].Multiply(numDrawingsPerPlayer);
                 TimeSpan votingTimer = TwoToneDrawingConstants.VotingTimer[duration];
 
-                estimate += votingTimer.MultipliedBy(numRounds);
-                estimate += setupTimer.MultipliedBy(useSingleColor ? 1 : 1.5f);
+                estimate += votingTimer.Multiply(numRounds);
+                estimate += setupTimer.Multiply(useSingleColor ? 1 : 1.5f);
                 estimate += drawingTimer;
 
                 estimates[duration] = estimate;
@@ -140,7 +140,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing
             TimeSpan? votingTimer = null;
             if (standardOptions.TimerEnabled)
             {
-                setupTimer = TwoToneDrawingConstants.SetupTimer[duration].MultipliedBy(UseSingleColor ? 1 : 1.5f);
+                setupTimer = TwoToneDrawingConstants.SetupTimer[duration].Multiply(UseSingleColor ? 1 : 1.5f);
                 perDrawingTimer = TwoToneDrawingConstants.PerDrawingTimer[duration];
                 votingTimer = TwoToneDrawingConstants.VotingTimer[duration];
             }

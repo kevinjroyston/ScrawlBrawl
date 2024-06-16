@@ -64,8 +64,8 @@ namespace Backend.Games.KevinsGames.LateToArtClass
                 TimeSpan votingTimer = LateToArtClassConstants.VotingTimer[duration];
 
                 estimate += writingTimer;
-                estimate += drawingTimer.MultipliedBy(numDrawingsPerUser);
-                estimate += votingTimer.MultipliedBy(numRounds);
+                estimate += drawingTimer.Multiply(numDrawingsPerUser);
+                estimate += votingTimer.Multiply(numRounds);
                 estimates[duration] = estimate;
             }
 

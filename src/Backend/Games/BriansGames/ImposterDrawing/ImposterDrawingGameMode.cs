@@ -64,8 +64,8 @@ namespace Backend.Games.BriansGames.ImposterDrawing
                 TimeSpan votingTimer = ImposterDrawingConstants.VotingTimer[duration];
 
                 estimate += writingTimer;
-                estimate += drawingTimer.MultipliedBy(numDrawingsPerUser);
-                estimate += votingTimer.MultipliedBy(numRounds);
+                estimate += drawingTimer.Multiply(numDrawingsPerUser);
+                estimate += votingTimer.Multiply(numRounds);
                 estimates[duration] = estimate;
             }
 

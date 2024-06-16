@@ -36,7 +36,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                   exit: new WaitForUsers_StateExit(lobby))
         {
             this.RoundTracker = roundTracker;
-            TimeSpan? multipliedCreationDuration = creationDuration.MultipliedBy(roundTracker.UsersToAssignedPrompts.Values.Max(list=>list?.Count??1));
+            TimeSpan? multipliedCreationDuration = creationDuration?.Multiply(roundTracker.UsersToAssignedPrompts.Values.Max(list=>list?.Count??1));
             this.TotalChainDuration = multipliedCreationDuration;
             
             MultiStateChain contestantsMultiStateChain = new MultiStateChain(MakePeopleUserStateChain, stateDuration: multipliedCreationDuration);
@@ -74,7 +74,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                             {
                                 MaxProgress = RoundTracker.UsersToAssignedPrompts[user].Count,
                                 CurrentProgress = lambdaSafeIndex + 1,
-                                ExpectedTimePerPrompt = this.TotalChainDuration.MultipliedBy(1.0f / RoundTracker.UsersToAssignedPrompts[user].Count)
+                                ExpectedTimePerPrompt = this.TotalChainDuration?.Multiply(1.0f / RoundTracker.UsersToAssignedPrompts[user].Count)
                             },
                             Description = "Format is <span class='characterClass'>Character</span> <span class='actionClass'>Action</span> <span class='modifierClass'>Modifier</span>",
                             Suggestion = new SuggestionMetadata { SuggestionKey = $"TextBodyBuilder-Modifier" },

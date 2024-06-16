@@ -7,7 +7,6 @@ using Backend.Games.KevinsGames.LateToArtClass.DataModels;
 using Common.DataModels.Requests;
 using Common.DataModels.Responses;
 using Backend.APIs.DataModels.UnityObjects;
-using Common.Code.WordLists;
 using System;
 using System.Collections.Generic;
 using static System.FormattableString;
@@ -24,7 +23,6 @@ using Backend.GameInfrastructure.DataModels.Enums;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using Common.DataModels.Responses.Gameplay;
-using MiscUtil;
 using Backend.Games.Common;
 
 namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
@@ -185,7 +183,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                 var dummyWaitingState = new PromptlessUserState(waitingForCopyStateExit);
                 dummyWaitingState.AddExitListener(() => {
                     // Select a random user to copy from, just before entering the actual state
-                    artClass.CopiedFrom = artClass.UsersToDrawings.Where(kvp => kvp.Value?.Drawing!=null).OrderBy(_ => StaticRandom.Next()).FirstOrDefault().Key;
+                    artClass.CopiedFrom = artClass.UsersToDrawings.Where(kvp => kvp.Value?.Drawing!=null).OrderBy(_ => Random.Shared.Next()).FirstOrDefault().Key;
                 });
 
                 stateChain.Add(dummyWaitingState);
@@ -266,7 +264,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                     {
                         return Prompts.DisplayWaitingText("Waiting for others to draw.")(user);
                     });
-                var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: waitForDrawings, stateDuration: PerDrawingTimeDuration.MultipliedBy(NumDrawingsPerUser));
+                var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: waitForDrawings, stateDuration: PerDrawingTimeDuration?.Multiply(NumDrawingsPerUser));
                 getDrawings.Transition(this.Exit);
                 getDrawings.AddEntranceListener(() =>
                 {

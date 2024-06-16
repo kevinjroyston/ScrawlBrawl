@@ -52,7 +52,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                 {
                     CurrentProgress = counter + 1,
                     MaxProgress = this.NumExpectedPerUser,
-                    ExpectedTimePerPrompt = this.SetupDuration.MultipliedBy(1.0f / NumExpectedPerUser)
+                    ExpectedTimePerPrompt = this.SetupDuration?.Multiply(1.0f / NumExpectedPerUser)
                 },
                 Description = "Write a question and choose an answer type for it",
                 SubPrompts = new SubPrompt[]

@@ -29,7 +29,7 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
                 challengeTrackersToFurnish: challengeTrackersToFurnish,
                 unityTitle: "Draw the prompt before the time runs out",
                 unityInstructions: "",
-                setupDuration: perSetupDuration?.MultipliedBy(challengeTrackersToFurnish.Max(kvp=>kvp.Value.Count)))
+                setupDuration: perSetupDuration?.Multiply(challengeTrackersToFurnish.Max(kvp=>kvp.Value.Count)))
         {
         }
 

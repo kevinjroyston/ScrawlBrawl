@@ -1,5 +1,4 @@
-﻿using MiscUtil;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -37,7 +36,7 @@ namespace Common.Code.Extensions
         public static T GetWeightedRandomKey<T>(this Dictionary<T, double> weightedKeys)
         {
             double totalWeights = weightedKeys.Values.Sum();
-            double selectedWeight = StaticRandom.NextDouble() * totalWeights;
+            double selectedWeight = Random.Shared.NextDouble() * totalWeights;
             T source = weightedKeys.Keys.FirstOrDefault();
             foreach ((T tempSource, double tempWeight) in weightedKeys)
             {

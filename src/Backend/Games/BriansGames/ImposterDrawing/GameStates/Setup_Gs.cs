@@ -7,7 +7,6 @@ using Backend.Games.BriansGames.ImposterDrawing.DataModels;
 using Common.DataModels.Requests;
 using Common.DataModels.Responses;
 using Backend.APIs.DataModels.UnityObjects;
-using Common.Code.WordLists;
 using System;
 using System.Collections.Generic;
 using static System.FormattableString;
@@ -61,7 +60,7 @@ namespace Backend.Games.BriansGames.ImposterDrawing.GameStates
                     {
                         return Prompts.DisplayWaitingText("Waiting for others to draw.")(user);
                     });
-                var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: waitForDrawings, stateDuration: PerDrawingTimeDuration.MultipliedBy(this.NumDrawingsPerUser));
+                var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: waitForDrawings, stateDuration: PerDrawingTimeDuration?.Multiply(this.NumDrawingsPerUser));
                 getDrawings.Transition(this.Exit);
                 getDrawings.AddEntranceListener(() =>
                  {

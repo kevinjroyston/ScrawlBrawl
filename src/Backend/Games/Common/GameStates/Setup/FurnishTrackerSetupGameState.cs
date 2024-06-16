@@ -60,7 +60,7 @@ namespace Backend.Games.Common.GameStates.Setup
                                     {
                                         prompt.PromptHeader.CurrentProgress = counter + 1;
                                         prompt.PromptHeader.MaxProgress = TrackersToFurnish[user].Count;
-                                        prompt.PromptHeader.ExpectedTimePerPrompt = this.SetupDuration.MultipliedBy(1.0f / TrackersToFurnish[user].Count);
+                                        prompt.PromptHeader.ExpectedTimePerPrompt = this.SetupDuration?.Multiply(1.0f / TrackersToFurnish[user].Count);
                                     }
                                     else
                                     {
@@ -68,7 +68,7 @@ namespace Backend.Games.Common.GameStates.Setup
                                         {
                                             CurrentProgress = counter + 1,
                                             MaxProgress = TrackersToFurnish[user].Count,
-                                            ExpectedTimePerPrompt = this.SetupDuration.MultipliedBy(1.0f / TrackersToFurnish[user].Count)
+                                            ExpectedTimePerPrompt = this.SetupDuration?.Multiply(1.0f / TrackersToFurnish[user].Count)
                                         };
                                     }
                                     return prompt;
