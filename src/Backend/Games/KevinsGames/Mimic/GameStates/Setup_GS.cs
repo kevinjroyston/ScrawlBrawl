@@ -47,7 +47,7 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
                     {
                         CurrentProgress = drawingNumber,
                         MaxProgress = numDrawingsPerUser,
-                        ExpectedTimePerPrompt = this.DrawingTimeDuration.MultipliedBy(1.0f / numDrawingsPerUser)
+                        ExpectedTimePerPrompt = this.DrawingTimeDuration?.Multiply(1.0f / numDrawingsPerUser)
                     },
                     Description = "Draw anything you want",
                     SubPrompts = new SubPrompt[]

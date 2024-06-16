@@ -39,7 +39,7 @@ namespace Common.Code.Helpers
                 .ToDictionary(
                     group => group.Key,
                     group => new Queue<M>(group));
-            List<Queue<M>> orderedSources = sourceToMemberMap.Values.OrderBy((Queue<M> val) => StaticRandom.Next()).ToList();
+            List<Queue<M>> orderedSources = sourceToMemberMap.Values.OrderBy((Queue<M> val) => Random.Shared.Next()).ToList();
             int currentSource = 0;
             while (output.Count < count)
             {
@@ -84,7 +84,7 @@ namespace Common.Code.Helpers
                 .GroupBy((member) => member.Source)
                 .ToDictionary(
                     group => group.Key,
-                    group => new Queue<M>(group.OrderBy((M val) => StaticRandom.Next()).ToList()));
+                    group => new Queue<M>(group.OrderBy((M val) => Random.Shared.Next()).ToList()));
 
             // Instantiate all source weights to 1.0.
             Dictionary<Guid, double> sourceToDynamicWeight = sourceToMemberMap.ToDictionary(kvp => kvp.Key, kvp => 1.0);
@@ -128,7 +128,7 @@ namespace Common.Code.Helpers
             var choicesList = choices.ToList();
             var weightSubset = weights.Where((kvp) => choicesList.Contains(kvp.Key)).ToDictionary(kvp=>kvp.Key, kvp=>kvp.Value);
             var totalWeight = weightSubset.Values.Sum();
-            var randValue = StaticRandom.NextDouble() * totalWeight;
+            var randValue = Random.Shared.NextDouble() * totalWeight;
 
             M choice = weightSubset.First().Key;
             int index = 0;
@@ -228,7 +228,7 @@ namespace Common.Code.Helpers
 
             // Try assigning randomly without violating any constraints!
             int currentAssignmentIndex = -1;
-            foreach (M member in duplicatedMembers.OrderBy(_=>StaticRandom.Next()).ToList())
+            foreach (M member in duplicatedMembers.OrderBy(_=> Random.Shared.Next()).ToList())
             {
                 bool assigned = false;
 
@@ -279,11 +279,11 @@ namespace Common.Code.Helpers
                 }
 
                 Operations operation = GetWeightedOperation(i, operatorWeightings, skipOperations);
-                int group1Index = StaticRandom.Next(assignments.Count);
+                int group1Index = Random.Shared.Next(assignments.Count);
                 var group1 = assignments[group1Index];
                 M member1;
 
-                int group2Index = StaticRandom.Next(assignments.Count);
+                int group2Index = Random.Shared.Next(assignments.Count);
                 var group2 = assignments[group2Index];
                 M member2;
 
@@ -302,11 +302,11 @@ namespace Common.Code.Helpers
                             continue;
                         }
 
-                        int item1Index = StaticRandom.Next(group1.Item2.Count);
+                        int item1Index = Random.Shared.Next(group1.Item2.Count);
                         member1 = group1.Item2.ElementAt(item1Index);
                         group1.Item2.RemoveAt(item1Index);
 
-                        int item2Index = StaticRandom.Next(group2.Item2.Count);
+                        int item2Index = Random.Shared.Next(group2.Item2.Count);
                         member2 = group2.Item2.ElementAt(item2Index);
                         group2.Item2.RemoveAt(item2Index);
 
@@ -356,7 +356,7 @@ namespace Common.Code.Helpers
                             continue;
                         }
 
-                        item1Index = StaticRandom.Next(group1.Item2.Count);
+                        item1Index = Random.Shared.Next(group1.Item2.Count);
                         member1 = group1.Item2.ElementAt(item1Index);
                         group1.Item2.RemoveAt(item1Index);
 
@@ -420,7 +420,7 @@ namespace Common.Code.Helpers
                             continue;
                         }
 
-                        int itemIndex = StaticRandom.Next(group1.Item2.Count);
+                        int itemIndex = Random.Shared.Next(group1.Item2.Count);
                         member1 = group1.Item2.ElementAt(itemIndex);
                         group1.Item2.RemoveAt(itemIndex);
 
@@ -482,7 +482,7 @@ namespace Common.Code.Helpers
         {
             return false;
             // Seems to work fine even with just only ever accepting improvements, but I will keep temp for now.
-            return MathF.Min(.95f, MathF.Exp(violations * -1.0f / TempSchedule(step))) >= StaticRandom.NextDouble();
+            return MathF.Min(.95f, MathF.Exp(violations * -1.0f / TempSchedule(step))) >= Random.Shared.NextDouble();
         }
 
         private static float TempSchedule(int step)
@@ -496,7 +496,7 @@ namespace Common.Code.Helpers
         {
             List<(Operations, double)> weights = weightProviders.Where(kvp=> !skipOperations.Contains(kvp.Key)).Select(kvp => (kvp.Key, kvp.Value(step))).ToList();
             double totalWeight = weights.Sum(kvp => kvp.Item2);
-            double selectedWeight = StaticRandom.NextDouble() * totalWeight;
+            double selectedWeight = Random.Shared.NextDouble() * totalWeight;
 
             foreach((Operations operation, double weight) in weights)
             {

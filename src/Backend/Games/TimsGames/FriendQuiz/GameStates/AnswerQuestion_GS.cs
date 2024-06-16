@@ -39,7 +39,7 @@ namespace Backend.Games.TimsGames.FriendQuiz.GameStates
                             {
                                 CurrentProgress = lambdaSafeIndex + 1,
                                 MaxProgress = questions.Count,
-                                ExpectedTimePerPrompt = answerTimeDuration.MultipliedBy(1.0f / questions.Count)
+                                ExpectedTimePerPrompt = answerTimeDuration?.Multiply(1.0f / questions.Count)
                             },
                             Description = question.Text,
                             SubPrompts = new SubPrompt[]

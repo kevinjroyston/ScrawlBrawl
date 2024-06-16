@@ -45,7 +45,7 @@ namespace Backend.Games.KevinsGames.IMadeThis.GameStates
                 {
                     CurrentProgress = counter + 1,
                     MaxProgress = NumExpectedPerUser,
-                    ExpectedTimePerPrompt = this.SetupDuration.MultipliedBy(1.0f / NumExpectedPerUser)
+                    ExpectedTimePerPrompt = this.SetupDuration?.Multiply(1.0f / NumExpectedPerUser)
                 },
                 Description = "In the box below, come up with a prompt for other players to draw",
                 SubPrompts = new SubPrompt[]

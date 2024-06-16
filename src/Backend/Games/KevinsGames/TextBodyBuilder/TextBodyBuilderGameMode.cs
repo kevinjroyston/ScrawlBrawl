@@ -75,10 +75,10 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                 TimeSpan creationTimer = TextBodyBuilderConstants.PerCreationTimer[duration];
                 TimeSpan votingTimer = TextBodyBuilderConstants.VotingTimer[duration];
 
-                estimate += setupDrawingTimer.MultipliedBy(expectedCAMsPerUser);
-                estimate += setupPromptTimer.MultipliedBy(expectedPromptsPerUser);
-                estimate += creationTimer.MultipliedBy(numPromptsPerUserPerRound * numRounds);
-                estimate += votingTimer.MultipliedBy(numPromptsPerRound * numRounds);
+                estimate += setupDrawingTimer.Multiply(expectedCAMsPerUser);
+                estimate += setupPromptTimer.Multiply(expectedPromptsPerUser);
+                estimate += creationTimer.Multiply(numPromptsPerUserPerRound * numRounds);
+                estimate += votingTimer.Multiply(numPromptsPerRound * numRounds);
                 estimates[duration] = estimate;
             }
 
@@ -183,8 +183,8 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                         prompt.UsersToUserHands.TryAdd(user, new Prompt.UserHand
                         {
                             // Users who submit more CAMs technically have higher chances of being seen. (Used to use Select_DynamicWeightedRandom which kept author counts fair, but could skew some CAMs to being seen more as a result)
-                            CharacterChoices = characters.OrderBy((val) => StaticRandom.Next()).Take(TextBodyBuilderConstants.NumCAMsInHand).ToList(),
-                            ActionChoices = actions.OrderBy((val) => StaticRandom.Next()).Take(TextBodyBuilderConstants.NumCAMsInHand).ToList(),
+                            CharacterChoices = characters.OrderBy((val) => Random.Shared.Next()).Take(TextBodyBuilderConstants.NumCAMsInHand).ToList(),
+                            ActionChoices = actions.OrderBy((val) => Random.Shared.Next()).Take(TextBodyBuilderConstants.NumCAMsInHand).ToList(),
                             //ModifierChoices = MemberHelpers<CAMUserText>.Select_DynamicWeightedRandom(modifiers, TextBodyBuilderConstants.NumCAMsInHand),
                             Owner = user
                         });

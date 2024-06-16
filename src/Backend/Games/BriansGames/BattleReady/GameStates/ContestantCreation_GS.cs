@@ -36,7 +36,7 @@ namespace Backend.Games.BriansGames.BattleReady.GameStates
         {
             this.RoundTracker = roundTracker;
             this.ExpectedTimePerPrompt = creationDuration;
-            TimeSpan? multipliedCreationDuration = creationDuration.MultipliedBy(roundTracker.UsersToAssignedPrompts.Values.Max(list=>list?.Count??1));
+            TimeSpan? multipliedCreationDuration = creationDuration?.Multiply(roundTracker.UsersToAssignedPrompts.Values.Max(list=>list?.Count??1));
             
             MultiStateChain contestantsMultiStateChain = new MultiStateChain(MakePeopleUserStateChain, stateDuration: multipliedCreationDuration);
 

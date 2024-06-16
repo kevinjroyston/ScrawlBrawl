@@ -239,7 +239,7 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.GameStates
             getChallenges.AddExitListener(() => this.AssignPrompts());
             getChallenges.Transition(() =>
             {
-                var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby), stateDuration: perDrawingTimer.MultipliedBy(numDrawingsPerPlayer));
+                var getDrawings = new MultiStateChain(GetDrawingsUserStateChain, exit: new WaitForUsers_StateExit(this.Lobby), stateDuration: perDrawingTimer?.Multiply(numDrawingsPerPlayer));
                 getDrawings.Transition(this.Exit);
 
                 getDrawings.AddEntranceListener(() =>

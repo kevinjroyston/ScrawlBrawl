@@ -64,9 +64,9 @@ namespace Backend.Games.KevinsGames.IMadeThis
                 TimeSpan drawingTimer = IMadeThisConstants.DrawingTimer[duration];
                 TimeSpan votingTimer = IMadeThisConstants.VotingTimer[duration];
 
-                estimate += writingTimer.MultipliedBy(NumPromptsPerUser);
-                estimate += drawingTimer.MultipliedBy(numDrawingsPerUser);
-                estimate += votingTimer.MultipliedBy(numRounds);
+                estimate += writingTimer.Multiply(NumPromptsPerUser);
+                estimate += drawingTimer.Multiply(numDrawingsPerUser);
+                estimate += votingTimer.Multiply(numRounds);
                 estimates[duration] = estimate;
             }
 
@@ -87,7 +87,7 @@ namespace Backend.Games.KevinsGames.IMadeThis
             GameDuration duration = standardOptions.GameDuration;
             if (standardOptions.TimerEnabled)
             {
-                writingTimer = IMadeThisConstants.WritingTimer[duration].MultipliedBy(NumPromptsPerUser);
+                writingTimer = IMadeThisConstants.WritingTimer[duration].Multiply(NumPromptsPerUser);
                 drawingTimer = IMadeThisConstants.DrawingTimer[duration];
                 votingTimer = IMadeThisConstants.VotingTimer[duration];
             }
@@ -145,7 +145,7 @@ namespace Backend.Games.KevinsGames.IMadeThis
                 var state = new SetupImproveInitialDrawing_Gs(
                     lobby,
                     AssignSecondaryDrawings(challengeTrackers, playersPerPrompt:playersPerPrompt, numDrawingsPerPlayer: numDrawingsPerUser, secondaryPrompts: prompts),
-                    drawingTimer.MultipliedBy(numDrawingsPerUser));
+                    drawingTimer?.Multiply(numDrawingsPerUser));
 
                 state.Transition(CreateGamePlayLoop);
                 return state;

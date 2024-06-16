@@ -1,5 +1,4 @@
-﻿using MiscUtil;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +10,7 @@ namespace Common.Code.Helpers
         public static T GetWeightedRandom<T>(IDictionary<T, int> valueToWeight)
         {
             int totalWeight = valueToWeight.Values.Sum();
-            int random = StaticRandom.Next(0, totalWeight);
+            int random = Random.Shared.Next(0, totalWeight);
             foreach (T value in valueToWeight.Keys)
             {
                 if (random <= valueToWeight[value])

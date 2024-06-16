@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29503.13
@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backend", "Backend\Backend.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackendTests", "BackendTests\BackendTests.csproj", "{39FD3A4B-FF68-44D0-8B4B-BA2DC7BC26DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.DataModels", "Common\DataModels\Common.DataModels.csproj", "{6F6C50AD-BB9D-4438-AECE-CA194A5D99CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.DataModels", "Common\DataModels\Common.DataModels.csproj", "{6F6C50AD-BB9D-4438-AECE-CA194A5D99CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Code", "Common\Code\Common.Code.csproj", "{AF06B997-3AC8-4811-9771-EBAD0F4067DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Code", "Common\Code\Common.Code.csproj", "{AF06B997-3AC8-4811-9771-EBAD0F4067DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

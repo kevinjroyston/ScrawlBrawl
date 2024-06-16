@@ -84,7 +84,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
                 {
                     MaxProgress = NumExpectedPerUser,
                     CurrentProgress = counter + 1,
-                    ExpectedTimePerPrompt = this.SetupDuration.MultipliedBy(1.0f / NumExpectedPerUser)
+                    ExpectedTimePerPrompt = this.SetupDuration?.Multiply(1.0f / NumExpectedPerUser)
                 },
                 Suggestion = new SuggestionMetadata { SuggestionKey = $"TextBodyBuilder-{camType}" },
                 SubPrompts = new SubPrompt[]
