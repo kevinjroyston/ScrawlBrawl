@@ -27,8 +27,6 @@
     "@angular/platform-browser-dynamic": "18.0.3",
     "@angular/platform-server": "18.0.3",
     "@angular/router": "18.0.3",
-    "@azure/msal-angular": "latest",
-    "@azure/msal-browser": "latest",
     "@ng-bootstrap/ng-bootstrap": "latest",
     "@popperjs/core": "latest",
     "angular-resizable-element": "latest",
@@ -36,7 +34,6 @@
     "core-js": "latest",
     "jquery": "latest",
     "lodash.throttle": "latest",
-    "msal": "latest",
     "ngx-color-picker": "latest",
     "ngx-ui-switch": "latest",
     "npm": "latest",
@@ -45,7 +42,7 @@
     "zone.js": "~0.14.7"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^18.0.4",
+    "@angular-devkit/build-angular": "^15.0.0",
     "@angular/cli": "^18.0.4",
     "@angular/compiler-cli": "18.0.3",
     "@angular/language-service": "18.0.3",
@@ -65,7 +62,7 @@
   },
   "optionalDependencies": {
     "node-sass": "latest",
-    "protractor": "latest",
+    "protractor": "^3.3.0",
     "ts-node": "latest"
   }
 }
