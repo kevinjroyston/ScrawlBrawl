@@ -46,7 +46,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
             MaxPlayers = CommonGameConstants.MAX_PLAYERS,
             Attributes = new GameModeAttributes
             {
-                ProductionReady = false,
+                ProductionReady = true,
             },
             Options = new List<GameModeOptionResponse>
             {

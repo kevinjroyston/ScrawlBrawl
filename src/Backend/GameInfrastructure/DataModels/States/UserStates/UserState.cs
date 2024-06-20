@@ -109,20 +109,22 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
         /// <summary>
         /// Applies a function to all users who have entered this state, and users who enter this state in the future.
         /// FYI - Calling StateCompletedCallback twice for a user will have no impact on the second call :) .
+        /// 
+        /// NOTE: THIS CANNOT BE CALLED WHILE HOLDING ANY LOCKS
         /// </summary>
         /// <remarks>Technically doesn't have to be a callback, but that is my only intention thus far.</remarks>
         /// <param name="specialCallback">The callback to apply.</param>
         private void ApplySpecialCallbackToAllUsersInState(Action<User> specialCallback)
         {
+            // TODO: add support for multiple special callbacks.
+            Debug.Assert(this.SpecialCallbackAppliedToAllUsersInState == null, "Shouldn't be applying more than 1 special callback.");
             if ( this.SpecialCallbackAppliedToAllUsersInState == null)
             {
-                // To avoid deadlock, make sure users arent being hurried while we do this.
-                lock (this.HurryLock)
+                // To avoid deadlock, grab the MultiUserLock. We CANNOT hold any other locks while we wait for this lock.
+                lock (this.MultiUserLock)
                 {
                     if (this.SpecialCallbackAppliedToAllUsersInState == null)
                     {
-                        // TODO: add support for multiple special callbacks.
-                        Debug.Assert(this.SpecialCallbackAppliedToAllUsersInState == null, "Shouldn't be applying more than 1 special callback.");
                         this.SpecialCallbackAppliedToAllUsersInState = specialCallback;
 
                         foreach (User user in this.UsersEnteredAndExitedState.Keys.ToList())
@@ -241,6 +243,13 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
                 userPrompt.Prompt.RefreshTimeInMs = userPrompt.RefreshTimeInMs;
             }
 
+            if (user.ExpediteNextFetch)
+            {
+                user.ExpediteNextFetch = false;
+                // Cap the refresh time to 1 second if we need to expedite the next fetch.
+                userPrompt.Prompt.RefreshTimeInMs = Math.Min(userPrompt.Prompt.RefreshTimeInMs, 1000);
+            }
+
             // If user hasn't submitted in a while, stop requesting content.
             if (DateTime.UtcNow.Subtract(user.LastSubmitTime) > Constants.UserSubmitInactivityTimer)
             {
@@ -254,6 +263,8 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
 
         /// <summary>
         /// Game doesn't care about your feelings, please transition all users to the next state.
+        /// 
+        /// NOTE: THIS CANNOT BE CALLED WHILE HOLDING ANY LOCKS
         /// </summary>
         public void ForceChangeOfUserStates(UserStateResult userStateResult)
         {

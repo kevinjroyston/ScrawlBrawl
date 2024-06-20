@@ -10,7 +10,7 @@ namespace Backend.Games.Common.DataModels.UserCreatedObjects.UserCreatedUnityObj
 {
     public class UserDrawingStack<T>:UserCreatedUnityObject, IVotable where T:UserDrawing
     {
-        public List<T> UserDrawings { get; set; }
+        public List<T> UserDrawings { get; set; } = new List<T>();
 
         public override UnityObject GetUnityObject(
             Color? backgroundColor = null,
@@ -23,7 +23,7 @@ namespace Backend.Games.Common.DataModels.UserCreatedObjects.UserCreatedUnityObj
             bool revealThisObject = false)
         {
             UnityImage baseImage = new UnityImage(base.GetUnityObject(backgroundColor, imageIdentifier, imageOwnerId, title, header, voteCount, usersWhoVotedFor, revealThisObject));
-            baseImage.DrawingObjects = UserDrawings.Select(drawing=> drawing.Drawing).ToList().AsReadOnly();
+            baseImage.DrawingObjects = UserDrawings.Select(drawing=> drawing?.Drawing).ToList().AsReadOnly();
             return baseImage;
         }
     }

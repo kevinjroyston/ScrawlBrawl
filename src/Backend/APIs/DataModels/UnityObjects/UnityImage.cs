@@ -8,11 +8,11 @@ namespace Backend.APIs.DataModels.UnityObjects
 {
     public class UnityImage : UnityObject
     {
-        public IReadOnlyList<string> Base64Pngs => DrawingObjects.Select(drawing => drawing.Id.ToString()).ToList();
+        public IReadOnlyList<string> Base64Pngs => DrawingObjects.Select(drawing => drawing?.Id.ToString() ?? string.Empty).ToList();
 
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public IReadOnlyList<DrawingObject> DrawingObjects {get; set;}
+        public IReadOnlyList<DrawingObject> DrawingObjects {get; set;} = new List<DrawingObject>();
         public int? SpriteGridWidth { get; set; }
         public int? SpriteGridHeight { get; set; }
 

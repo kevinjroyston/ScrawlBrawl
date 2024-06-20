@@ -10,6 +10,7 @@ using static System.FormattableString;
 using Backend.GameInfrastructure.DataModels.States.UserStates;
 using System.Threading;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Backend.GameInfrastructure.ControlFlows.Exit
 {
@@ -22,6 +23,7 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
     public class WaitForUsers_StateExit : WaitForTrigger_StateExit, IDisposable
     {
         private Lobby Lobby { get; }
+
         private bool Hurried { get; set; } = false;
         private bool Triggered { get; set; } = false;
         private object TriggeredLock { get; } = new object();
@@ -80,29 +82,46 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
             }
 
             // Will recalculate active users on each submission. Hurrying them if needed.
-            Nudge(null);
+            UserContextNudge(user);
 
             // Proceed to next state once we have all users.
+            CheckTriggerCondition(user);
+        }
+
+        /// <summary>
+        /// Checks whether the trigger should occur, and triggers it if so.
+        /// If this is scoped to a user, the user will have their next fetch expedited, workaround due to locking shenanigans.
+        /// </summary>
+        /// <param name="user"></param>
+        private void CheckTriggerCondition(User user)
+        {
             if (!this.Triggered && this.GetUsers(WaitForUsersType.All).IsSubsetOf(this.UsersWaiting))
             {
-                bool triggeringThread = false;
                 lock (this.TriggeredLock)
                 {
                     if (!this.Triggered && this.GetUsers(WaitForUsersType.All).IsSubsetOf(this.UsersWaiting))
                     {
                         this.Triggered = true;
-                        triggeringThread = true;
-                    }
-                }
+                        // Clean up the timer before leaving the state.
+                        _timer?.Change(Timeout.Infinite, Timeout.Infinite);
+                        _timer?.Dispose();
 
-                // Cannot call this from within a lock, can only be called by one thread. Other threads will just go into
-                // waiting mode :)
-                if (triggeringThread)
-                {
-                    // Clean up the timer before leaving the state.
-                    _timer?.Change(Timeout.Infinite, Timeout.Infinite);
-                    _timer?.Dispose();
-                    this.Trigger();
+
+                        // The state is going to potentially change right after we release the user lock. Easiest fix is to just tell the user to call again sooner than they normally would
+                        if (user != null)
+                        {
+                            // We are in possession of a user lock, so we need to trigger this from a separate thread.
+                            // TODO: Would probably benefit if the lock waiting was async via semaphores. Using RunAsync here
+                            Task.Run(() => this.Trigger());
+
+                            user.ExpediteNextFetch = true;
+                        }
+                        else
+                        {
+                            // We are not in possession of a user lock, so we can trigger this directly.
+                            this.Trigger();
+                        }
+                    }
                 }
             }
         }
@@ -117,7 +136,34 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
                 && !this.Hurried
                 && this.GetUsers(WaitForUsersType.NotDisconnected).IsSubsetOf(this.UsersWaiting))
             {
-                bool triggeringThread = false;
+                lock (this.TriggeredLock)
+                {
+                    // UsersToWaitForType cannot change.
+                    if (this.UsersToWaitForType == WaitForUsersType.NotDisconnected
+                        && !this.Hurried
+                        && this.GetUsers(WaitForUsersType.NotDisconnected).IsSubsetOf(this.UsersWaiting))
+                    {
+                        // This context is from within a timer and therefore should not have any locks at all. Safe to call Hurry Users straight here.
+                        this.ParentState.HurryUsers();
+                        this.Hurried = true;
+
+                        // We need to check whether the state is ready to trigger.
+                        CheckTriggerCondition(null);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// A nudge being executed from within a user lock.
+        /// </summary>
+        private void UserContextNudge(User user)
+        {
+            // Hurry users once all active have submitted. IFF that is the selected mode
+            if (this.UsersToWaitForType == WaitForUsersType.NotDisconnected
+                && !this.Hurried
+                && this.GetUsers(WaitForUsersType.NotDisconnected).IsSubsetOf(this.UsersWaiting))
+            {
                 lock (this.TriggeredLock)
                 {
                     // UsersToWaitForType cannot change.
@@ -126,17 +172,18 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
                         && this.GetUsers(WaitForUsersType.NotDisconnected).IsSubsetOf(this.UsersWaiting))
                     {
                         this.Hurried = true;
-                        triggeringThread = true;
-                    }
-                }
 
-                // We CANNOT perform any user locks from within ANY other locks.
-                // Other web requests must be able to complete so that they can give up their user locks!!!
-                if (triggeringThread)
-                {
-                    // We don't need this to happen within a lock. Either the user gets hurried or
-                    // their form submit makes it in in time, the user lock will prevent any damage in weird scenarios here.
-                    this.ParentState.HurryUsers();
+                        // Hurry Users cannot be called while we have a user's lock. So we need to call it from a separate thread.
+                        Task.Run(() => {
+                            this.ParentState.HurryUsers();
+
+                            // We need to check whether the state is ready to trigger.
+                            CheckTriggerCondition(null);
+                        });
+
+                        // Expedite next read, since we likely just invalidated whatever we were otherwise going to return. But waiting for the response to update here is not safe.
+                        user.ExpediteNextFetch = true;
+                    }
                 }
             }
         }

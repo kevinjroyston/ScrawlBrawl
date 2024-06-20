@@ -32,12 +32,15 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
 
         /// <summary>
         /// Move all waiting users to the PostTrigger state.
+        /// 
+        /// NOTE: THIS CANNOT BE CALLED WHILE HOLDING ANY LOCKS
+        /// 
+        /// TODO: this should probably be made async, using semaphores for locking.
         /// </summary>
         public virtual void Trigger()
         {
             // Be very weary of deadlock. Don't block any threads, just only trigger once without any blocking
             // Best not to add locking here, up to the caller to make sure it only gets called once.
-
 
             // Set the Waiting state outlet at last possible moment in case this.Outlet has been changed.
             this.WaitingState.SetOutlet(this.InternalOutlet);

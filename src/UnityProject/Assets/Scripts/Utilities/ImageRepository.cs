@@ -10,12 +10,6 @@ using Assets.Scripts.Networking.DataModels.UnityObjects;
 
 public class ImageRepository : MonoBehaviour
 {
-    public static ImageRepository Singleton;
-    public ImageRepository()
-    {
-        Singleton = this;
-    }
-
     private static Dictionary<string, Sprite> imageRepo = new Dictionary<string, Sprite>();
 
     public static void AddBase64PngToRepository(string imageId, string rawPng)
@@ -42,5 +36,4 @@ public class ImageRepository : MonoBehaviour
         AddBase64PngToRepository(id, rawPng);
         return id;
     }
-
 }
