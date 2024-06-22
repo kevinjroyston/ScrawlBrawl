@@ -87,6 +87,10 @@ export class UnityViewer{
       this.renderer.setStyle(loadingBar,'display','none');
       
       this.gameInstance = unityInstance;
+      unityInstance.Module.canvas.addEventListener('wheel', function(event) {
+        event.preventDefault();
+        window.scrollBy(0, event.deltaY);
+      }, { passive: false });
 
       
       unityInstance.SendMessage("JavascriptConnector", "ConnectToLobby", this.lobbyId);
