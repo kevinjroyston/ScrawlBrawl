@@ -66,19 +66,18 @@ namespace Backend.APIs.Hubs
                             var unityImage = unityObject as UnityImage;
                             if (unityImage != null)
                             {
-                                foreach (var drawingObject in unityImage.DrawingObjects.Where(drawing => !drawing.SentToClient))
+                                foreach (var drawingObject in unityImage.DrawingObjects.Where(drawing => drawing!=null && !drawing.SentToClient))
                                 {
                                     unityRPCHolder.UnityImageList.ImgList[drawingObject.Id.ToString()] = drawingObject.DrawingStr;
                                     drawingObject.MarkSentToClient();
                                     lobby.AddDrawingObjectToRepository(drawingObject);
-
                                 }
                             }
                         }
                     }
                     if (unityRPCHolder.UnityView?.Users != null)
                     {
-                        foreach (var unityUser in unityRPCHolder.UnityView.Users.Where(user=>!user.DrawingObject.SentToClient))
+                        foreach (var unityUser in unityRPCHolder.UnityView.Users.Where(user=> user?.DrawingObject!=null && !user.DrawingObject.SentToClient))
                         {
                             unityRPCHolder.UnityImageList.ImgList[unityUser.DrawingObject.Id.ToString()] = unityUser.DrawingObject.DrawingStr;
                             unityUser.DrawingObject.MarkSentToClient();
@@ -87,7 +86,7 @@ namespace Backend.APIs.Hubs
                     }
                     if (unityRPCHolder.UnityUserStatus != null)
                     {
-                        foreach (var user in unityRPCHolder.UnityUserStatus.UsersAnsweringPrompts.Where(user => !user.SelfPortrait.SentToClient))
+                        foreach (var user in unityRPCHolder.UnityUserStatus.UsersAnsweringPrompts.Where(user => user?.SelfPortrait != null && !user.SelfPortrait.SentToClient))
                         {
                             unityRPCHolder.UnityImageList.ImgList[user.SelfPortrait.Id.ToString()] = user.SelfPortrait.DrawingStr;
                             user.SelfPortrait.MarkSentToClient();

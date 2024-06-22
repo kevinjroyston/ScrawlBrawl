@@ -32,12 +32,12 @@ namespace Backend.Games.KevinsGames.LateToArtClass.DataModels
         /// <summary>
         /// Sigh... Use this lock to make sure the HaveArtToCopyOffOfCallback is called ONLY ONCE!!!. BUT DO NOT CALL IT FROM WITHIN A LOCK!!!! -_-
         /// </summary>
-        public object ArtClassLock { get; set; } = new object();
+        public object ArtClassNotificationLock { get; set; } = new object();
 
         /// <summary>
-        /// Sigh... Use this to track who is responsible for calling the HaveArtToCopyOffOfCallback. DO NOT CALL IT FROM WITHIN A LOCK!!!! -_-
+        /// Indicates the callback has been called already (or will be soon).
         /// </summary>
-        public User ArtClassLockWinner { get; set; }
+        public bool ArtClassNotificationSent { get; set; } = false;
 
         /// <summary>
         /// This is used to coordinate the hopefully rare occurance where the late student arrives and there is nobody ready to copy off of.

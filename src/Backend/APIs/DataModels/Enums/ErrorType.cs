@@ -7,5 +7,6 @@
         HurryUser,
         GetContent,
         UnityClient,
+        Trigger,
     }
 }

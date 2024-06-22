@@ -55,10 +55,19 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
             public const string ShowScores = "Check Out The Scores";
             public const string YourPoints = "Your Points This Round";
             public const string NoPointsThisRound = "No points scored this round";
-            public const string YourScore = "Your Total Score";
-            public const string TopScores = "Top Total Scores";
             public const string LookAtTheScreen = "Look at the screen!";
-            
+            public static IReadOnlyDictionary<Score.Scope, string> UserScoreTitles = new Dictionary<Score.Scope, string>
+            {
+                { Score.Scope.Total, "Your Total Score" },
+                { Score.Scope.Reveal, "Your Round Score" },
+                { Score.Scope.Scoreboard, "Your Total Score" },
+            };
+            public static IReadOnlyDictionary<Score.Scope, string> TopScoreTitles = new Dictionary<Score.Scope, string>
+            {
+                { Score.Scope.Total, "Top Total Score" },
+                { Score.Scope.Reveal, "Top Round Score" },
+                { Score.Scope.Scoreboard, "Top Total Score" },
+            };
         }
 
         public static Func<User, UserPrompt> ShowScoreBreakdowns(
@@ -83,13 +92,13 @@ namespace Backend.GameInfrastructure.DataModels.States.UserStates
                 if (userScoreScope.HasValue)
                 {
                     var position = lobby.GetUserScorePosition(user, userScoreScope.Value);
-                    subPrompts.Add(new SubPrompt { StringList = new string[] { Text.YourScore + ": " + user.ScoreHolder.ScoreAggregates[userScoreScope.Value].ToString() + $" ({StringHelpers.AddOrdinal(position)} place)" } });
+                    subPrompts.Add(new SubPrompt { StringList = new string[] { Text.UserScoreTitles[userScoreScope.Value] + ": " + user.ScoreHolder.ScoreAggregates[userScoreScope.Value].ToString() + $" ({StringHelpers.AddOrdinal(position)} place)" } });
                 }
 
                 if (leaderboardScope.HasValue)
                 {
                     var userScoreList = lobby.GetUsersSortedByTopScores(3, leaderboardScope.Value); 
-                    subPrompts.Add(new SubPrompt { Prompt = Text.TopScores, StringList = userScoreList.Select((User user) => $"{user.DisplayName}: {user.ScoreHolder.ScoreAggregates[leaderboardScope.Value]}").ToArray() });
+                    subPrompts.Add(new SubPrompt { Prompt = Text.TopScoreTitles[leaderboardScope.Value], StringList = userScoreList.Select((User user) => $"{user.DisplayName}: {user.ScoreHolder.ScoreAggregates[leaderboardScope.Value]}").ToArray() });
                 }
 
                 if (showPartyLeaderSkipButton) 

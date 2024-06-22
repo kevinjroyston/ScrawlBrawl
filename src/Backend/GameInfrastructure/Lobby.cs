@@ -124,11 +124,6 @@ namespace Backend.GameInfrastructure
         {
             return this.CurrentGameState;
         }
-
-        public void CloseLobbyWithError(Exception error = null)
-        {
-            GameManager.ReportGameError(type: ErrorType.GetContent, lobbyId: LobbyId, error: error);
-        }
         private IReadOnlyList<GameModeMetadataHolder> GameModes => this.InMemoryConfiguration.GameModes;
 
         public bool ConfigureLobby(ConfigureLobbyRequest request, out string errorMsg, out ConfigureLobbyResponse response)

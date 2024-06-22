@@ -69,9 +69,8 @@ namespace Backend.APIs.Controllers.LobbyManagement
 #if !DEBUG
  //   [Authorize(Policy = "LobbyManagement")]
 #endif
-        public IActionResult CreateAndJoinLobby([FromBody] JoinLobbyRequest request, [FromQuery(Name = "Id")] string id)
+        public IActionResult CreateAndJoinLobby([FromBody] CreateAndJoinLobbyRequest request, [FromQuery(Name = "Id")] string id)
         {
-//            request.LobbyId = "temp"; // make LobbyId optional to the modelstate.
             if (!ModelState.IsValid)
             {
                 return new BadRequestResult();
@@ -100,21 +99,26 @@ namespace Backend.APIs.Controllers.LobbyManagement
                     {
                         return StatusCode(500, createResult);
                     }
-                    request.LobbyId = createResult;
+                    string createdLobbyId = createResult;
+                    var joinLobbyRequest = new JoinLobbyRequest()
+                    {
+                        DisplayName = request.DisplayName,
+                        LobbyId = createdLobbyId,
+                        SelfPortrait = request.SelfPortrait
+                    };
 
                     (bool, string) joinLobbyResponse;
                     try {
-                        joinLobbyResponse = InternalJoinLobby(request, id, user);
+                        joinLobbyResponse = InternalJoinLobby(joinLobbyRequest, id, user);
                     }
                     catch
                     {
                         joinLobbyResponse = (false,"Internal Error");
                     }
 
-
                     if (!joinLobbyResponse.Item1)
                     {  // we created a lobby, but it wouldn't let us join, so delete the lobby
-                        GameManager.DeleteLobby(request.LobbyId); 
+                        GameManager.DeleteLobby(createdLobbyId); 
                         authUser.OwnedLobby = null;
                         return StatusCode(400, joinLobbyResponse.Item2);
                     }

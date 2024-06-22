@@ -240,6 +240,14 @@ namespace Backend.GameInfrastructure.DataModels.Users
         [System.Text.Json.Serialization.JsonIgnore]
         public SubmitType LastSubmitType { get; set; } = SubmitType.None;
 
+        /// <summary>
+        /// Expedite next fetch. This is set to true when we know that the response we sent
+        /// to the user will likely be out of date shortly after we sent it.
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public bool ExpediteNextFetch { get; set; } = false;
+
         public User (string userId)
         {
             Identifier = userId;

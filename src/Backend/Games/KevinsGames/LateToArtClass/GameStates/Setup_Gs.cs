@@ -24,6 +24,7 @@ using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using Common.DataModels.Responses.Gameplay;
 using Backend.Games.Common;
+using System.Threading.Tasks;
 
 namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
 {
@@ -131,24 +132,21 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
                                 }
                             });
 
-                        // Locking dance to notify the late student user state that it can proceed. Must be called once, not within a lock.
-                        if (artClass.ArtClassLockWinner == null)
+                        // Locking dance to notify the late student user state that it can proceed. Can only be called once!
+                        if (!artClass.ArtClassNotificationSent)
                         {
-                            lock (artClass.ArtClassLock)
+                            lock (artClass.ArtClassNotificationLock)
                             {
-                                if (artClass.ArtClassLockWinner == null)
+                                if (!artClass.ArtClassNotificationSent)
                                 {
-                                    artClass.ArtClassLockWinner = user;
+                                    artClass.ArtClassNotificationSent = true;
+
+                                    // Tell the late student's waiting state that it no longer needs to wait. 
+                                    // Should be fine to call before the student gets there.
+                                    // Spin off another thread to call it since we currently hold a random user's lock
+                                    Task.Run(() => artClass.HaveArtToCopyOffOfCallback());
                                 }
                             }
-                        }
-
-                        if (artClass.ArtClassLockWinner == user)
-                        {
-                            // Tell the late student's waiting state that it no longer needs to wait. 
-                            // Should be fine to call before the student gets there.
-                            // DO NOT CALL MORE THAN ONCE, DO NOT CALL FROM WITHIN A LOCK.
-                            artClass.HaveArtToCopyOffOfCallback();
                         }
 
                         return (true, string.Empty);
@@ -167,6 +165,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
 
                 // This will only get seen if nobody triggers this exit by submitting a drawing
                 var waitingForCopyStateExit = new WaitForTrigger_StateExit(
+                    this.Lobby,
                     (User user) => new UserPrompt()
                     {
                         Title = "You were late to class, but there is nobody to copy off of yet! Please hold, sorry!",

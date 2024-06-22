@@ -55,7 +55,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
         public WaitForLobbyCloseGameState(Lobby lobby)
             : base(
                   lobby: lobby,
-                  exit: new WaitForTrigger_StateExit( LobbyWaitingPromptGenerator )
+                  exit: new WaitForTrigger_StateExit(lobby, LobbyWaitingPromptGenerator )
                   )
         {
             Arg.NotNull(lobby, nameof(lobby));
@@ -69,7 +69,6 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
                 UnityObjects = GetUserPortraitUnityImages()
             };
         }
-
         private UnityField<IReadOnlyList<UnityObject>> GetUserPortraitUnityImages()
         {
             return new UnityField<IReadOnlyList<UnityObject>>

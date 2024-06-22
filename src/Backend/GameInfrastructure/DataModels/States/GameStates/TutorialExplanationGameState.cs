@@ -20,9 +20,14 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
 {
     public class TutorialExplanationGameState : GameState
     {
-        private TimeSpan LastCallTimer { get; } = TimeSpan.FromSeconds(30);
+        private TimeSpan LastCallTimer { get; } = TimeSpan.FromSeconds(45);
+
+        // Even if there aren't many users, we want to give folks actually reading a chance to read (sometimes 70% ready up really fast if they have played before)
+        private TimeSpan MinimumTimeBeforeLastCallStarts { get; } = TimeSpan.FromSeconds(20);
+        private DateTime? LastCallStartsMin { get; set; } = null;
+        private DateTime? LastCallTimeout { get; set; } = null;
         private TimeSpan CheckUsersPeriod { get; } = TimeSpan.FromSeconds(5);
-        private float AcceptableUserSubmissionThreshold { get; } = .30f; // Starts a timer when the users we are waiting for is 30% the size of the users who hit ready.
+        private float AcceptableUserSubmissionThreshold { get; } = .3f; // Starts a timer when the users we are waiting for is 30% the size of the users who hit ready.
         private Timer _timer { get; set; }
         private ConcurrentBag<User> ReadiedUp { get; } = new ConcurrentBag<User>();
         public TutorialExplanationGameState(Lobby lobby)
@@ -51,6 +56,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
                 // Because this view may be instantiated before the game actually starts, users list may be outdated
                 this.UnityView.Users = Lobby.GetAllUsers().Select(user => new UnityUser(user)).ToList().AsReadOnly();
                 this.UnityViewDirty = true;
+                this.LastCallStartsMin = DateTime.UtcNow + MinimumTimeBeforeLastCallStarts;
             });
             this.AddPerUserEntranceListener((User user) =>
             {
@@ -63,6 +69,18 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
                         {
                             _timer = new Timer(CheckProgress, null, TimeSpan.Zero, CheckUsersPeriod);
                         }
+                    }
+                }
+
+                // Check if there isn't much time left. As a grace mechanic, we treat these users as if they hit ready.
+                if (LastCallTimeout != null)
+                {
+                    // If the timeout is within the next 45 seconds, but has not yet elapsed. auto-ready up the user.
+                    if(LastCallTimeout - TimeSpan.FromSeconds(45) <= DateTime.UtcNow  && DateTime.UtcNow < LastCallTimeout - TimeSpan.FromMilliseconds(100))
+                    {
+                        // Might be possible for this user to get readied twice, should be ok.
+                        ReadiedUp.Add(user);
+                        HurryUser(user);
                     }
                 }
 
@@ -94,7 +112,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             // Every 5 seconds, we check to see if a bulk of the users have submitted
             // If they have, we start a new timer after which we will kick any remaining users. Which will then let the state exit do its job
 
-            // If the users have been hurried, or there are NO users who aren't deleted, that have entered but NOT exited this state.
+            // If the users have been hurried or the game is in progress, this timer is outdated and should self destruct.
             if (this.UsersHurried || Lobby.IsGameInProgress())
             {
                 // Indicates there is no need for this timer anymore
@@ -103,30 +121,19 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
                 return;
             }
 
-            // These users will not be deleted
-            List<User> usersWaiting = this.ReadiedUp.ToList();
             List<User> allConnectedUsers = this.Lobby.GetAllUsers().Where(user => !user.Deleted && (user.Activity != UserActivity.Disconnected)).ToList();
+            List<User> usersWaiting = this.ReadiedUp.ToList();
             List<User> remainingUsersToWaitFor = allConnectedUsers.Except(usersWaiting).ToList();
-            if (!remainingUsersToWaitFor.Any())
-            {
-                // Indicates there is no need for this timer anymore
-                _timer?.Change(Timeout.Infinite, Timeout.Infinite);
-                _timer?.Dispose();
 
-                // If we are here it means there are no active users left to wait for, so get a list of any users that haven't hit READY, and delete them.
-                List<User> allUsers = this.Lobby.GetAllUsers().Where(user => !user.Deleted).ToList();
-                List<User> usersToDelete = allUsers.Except(usersWaiting).ToList();
-
-                // These are users the state exit WILL be waiting for, so this is safe in that regard.
-                this.Lobby.DropUsers(usersToDelete);
-                return;
-            }
-            else if (remainingUsersToWaitFor.Count <= 2 || remainingUsersToWaitFor.Count <= usersWaiting.Count * AcceptableUserSubmissionThreshold)
+            bool fewUsersRemain = remainingUsersToWaitFor.Count <= 2 || remainingUsersToWaitFor.Count <= usersWaiting.Count * AcceptableUserSubmissionThreshold;
+            bool minimumTimeElapsed = LastCallStartsMin != null && DateTime.UtcNow > LastCallStartsMin;
+            if (minimumTimeElapsed && fewUsersRemain)
             {
                 _timer?.Change(Timeout.Infinite, Timeout.Infinite);
                 _timer?.Dispose();
 
                 _timer = new Timer(DeleteWaitingUsers, null, LastCallTimer + TimeSpan.FromSeconds(3), TimeSpan.FromMilliseconds(-1));
+                LastCallTimeout = DateTime.UtcNow + LastCallTimer + TimeSpan.FromSeconds(3); 
 
                 // Warn players about the new timer and threat of kick
                 // Use the same view so that the client doesnt fade animate
@@ -157,7 +164,6 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             List<User> usersWaiting = this.ReadiedUp.ToList();
             List<User> usersToDelete = allUsers.Except(usersWaiting).ToList();
 
-            // TODO: this has a pitfall if somebody joins at the wrong time, will deal with it someday.
             this.Lobby.DropUsers(usersToDelete);
         }
 

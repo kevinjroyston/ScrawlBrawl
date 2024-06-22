@@ -25,9 +25,9 @@ namespace Backend.Games.BriansGames.TwoToneDrawing.DataModels
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> VotingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(45)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(60)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(90)},
+            { GameDuration.Short, TimeSpan.FromSeconds(40)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(50)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(60)},
         };
 
         public static IReadOnlyDictionary<GameDuration, int> MaxNumRounds = new Dictionary<GameDuration, int>()

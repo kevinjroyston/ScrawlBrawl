@@ -12,7 +12,6 @@ namespace Backend.Games.Common.ThreePartPeople.DataModels
 {
     public class Person : UserCreatedUnityObject
     {
-
         public string Name { get; set; } = "N/A";
 
         // TODO: Create DrawingPerson and have both Text and Drawing inherit from this base.

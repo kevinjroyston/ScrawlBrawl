@@ -145,13 +145,8 @@ namespace Backend.GameInfrastructure.DataModels
 
             if (this.UsersHurried)
             {
-                lock (this.HurryLock)
-                {
-                    if (this.UsersHurried)
-                    {
-                        this.HurryUser(user);
-                    }
-                }
+                // It is okay to hurry a user we have the lock for. Just don't grab any other locks in the process.
+                this.HurryUser(user);
             }
 
             this.Entrance.Inlet(user, stateResult, formSubmission);
@@ -167,7 +162,13 @@ namespace Backend.GameInfrastructure.DataModels
             PerUserEntranceListeners.Add(listener);
         }
 
-        protected object HurryLock { get; } = new object();
+        /// <summary>
+        /// This lock is used when an action requires locking across multiple users. If you are going to wait on this lock, you MUST NOT
+        /// have a lock on a user already. This is to prevent deadlock.
+        /// 
+        /// By waiting on this lock, multi-user actions can queue up without impacting each other.
+        /// </summary>
+        protected object MultiUserLock { get; } = new object();
 
         /// <summary>
         /// Put all users currently (and in the future) in this state into "hurried" mode. Which means they will automatically call
@@ -175,33 +176,48 @@ namespace Backend.GameInfrastructure.DataModels
         /// </summary>
         public void HurryUsers()
         {
-            if (!this.UsersHurried)
+            try
             {
-                lock (this.HurryLock)
-                {
-                    if (!this.UsersHurried)
+                if (!this.UsersHurried)
+                { 
+                    // Any time we are planning on grabbing the locks of other users, we need to be weary of deadlock. Two threads trying to do this
+                    // at the same time will cause deadlock. They need to wait on this lock while not holding ANY user locks.
+                    lock (this.MultiUserLock)
                     {
-                        // For any users currently within this state, hurry them up.
-                        foreach (User user in this.UsersEnteredAndExitedState.Keys)
+                        if (!this.UsersHurried)
                         {
-                            HurryUser(user);
+                            // For any users currently within this state, hurry them up.
+                            foreach (User user in this.UsersEnteredAndExitedState.Keys)
+                            {
+                                HurryUser(user);
+                            }
+                            this.UsersHurried = true;
                         }
-                        this.UsersHurried = true;
                     }
                 }
             }
+            catch (Exception e)
+            {
+                // Let GameManager know so it can determine whether or not to abandon the lobby.
+                // Hacky way to get lobby id.
+                GameManager.Singleton.ReportGameError(ErrorType.HurryUser, this.UsersEnteredAndExitedState?.Keys.FirstOrDefault()?.LobbyId, null, e);
+
+                throw;
+            }
         }
 
-        private void HurryUser(User user)
+        public void HurryUser(User user)
         {
             try
             {
                 // Locks are re-entrant meaning the same thread can lock the same object twice without deadlock.
+                // Since we are only acting on a single user, we do not need the MultiUserLock here.
                 lock (user.LockObject)
                 {
-                    // Another thread moved this user before we got to them.
+                    // Unclear how this can happen. But if it does, warn and skip.
                     if (!this.UsersEnteredAndExitedState.ContainsKey(user))
                     {
+                        Debug.Fail($"Attempted to hurry a user that does not belong to this state. UserID:{user.Id}");
                         return;
                     }
 
@@ -220,7 +236,6 @@ namespace Backend.GameInfrastructure.DataModels
             }
             catch (Exception e)
             {
-
                 // Let GameManager know so it can determine whether or not to abandon the lobby.
                 GameManager.Singleton.ReportGameError(ErrorType.HurryUser, user?.LobbyId, user, e);
 
@@ -241,11 +256,13 @@ namespace Backend.GameInfrastructure.DataModels
 
             try
             {
+                // This MUST NOT be called if we hold a user's lock.
                 this.HurryUsers();
 
                 // Hacky: If the attached StateExit is specifically a "WaitForStateTimeoutDuration_StateExit", invoke it here.
                 if (this.Exit is WaitForStateTimeoutDuration_StateExit exit)
                 {
+                    // This MUST NOT be called if we hold a user's lock.
                     exit.Trigger();
                 }
             }

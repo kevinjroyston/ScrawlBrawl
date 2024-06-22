@@ -13,19 +13,19 @@ namespace Backend.Games.KevinsGames.IMadeThis.DataModels
         {
             { GameDuration.Short, TimeSpan.FromSeconds(90)},
             { GameDuration.Normal, TimeSpan.FromSeconds(110)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(160)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(150)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> DrawingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
             { GameDuration.Short, TimeSpan.FromSeconds(100)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(130)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(180)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(140)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(160)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> VotingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(45)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(60)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(90)},
+            { GameDuration.Short, TimeSpan.FromSeconds(40)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(50)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(60)},
         };
 
         // Number of rounds (a round is one original drawing and new prompt for it, with many players submitting)
