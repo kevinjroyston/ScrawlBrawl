@@ -165,6 +165,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass.GameStates
 
                 // This will only get seen if nobody triggers this exit by submitting a drawing
                 var waitingForCopyStateExit = new WaitForTrigger_StateExit(
+                    this.Lobby,
                     (User user) => new UserPrompt()
                     {
                         Title = "You were late to class, but there is nobody to copy off of yet! Please hold, sorry!",

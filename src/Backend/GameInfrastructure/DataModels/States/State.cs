@@ -176,22 +176,33 @@ namespace Backend.GameInfrastructure.DataModels
         /// </summary>
         public void HurryUsers()
         {
-            if (!this.UsersHurried)
+            try
             {
-                // Any time we are planning on grabbing the locks of other users, we need to be weary of deadlock. Two threads trying to do this
-                // at the same time will cause deadlock. They need to wait on this lock while not holding ANY user locks.
-                lock (this.MultiUserLock)
-                {
-                    if (!this.UsersHurried)
+                if (!this.UsersHurried)
+                { 
+                    // Any time we are planning on grabbing the locks of other users, we need to be weary of deadlock. Two threads trying to do this
+                    // at the same time will cause deadlock. They need to wait on this lock while not holding ANY user locks.
+                    lock (this.MultiUserLock)
                     {
-                        // For any users currently within this state, hurry them up.
-                        foreach (User user in this.UsersEnteredAndExitedState.Keys)
+                        if (!this.UsersHurried)
                         {
-                            HurryUser(user);
+                            // For any users currently within this state, hurry them up.
+                            foreach (User user in this.UsersEnteredAndExitedState.Keys)
+                            {
+                                HurryUser(user);
+                            }
+                            this.UsersHurried = true;
                         }
-                        this.UsersHurried = true;
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                // Let GameManager know so it can determine whether or not to abandon the lobby.
+                // Hacky way to get lobby id.
+                GameManager.Singleton.ReportGameError(ErrorType.HurryUser, this.UsersEnteredAndExitedState?.Keys.FirstOrDefault()?.LobbyId, null, e);
+
+                throw;
             }
         }
 

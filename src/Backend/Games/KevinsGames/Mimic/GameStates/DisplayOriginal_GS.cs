@@ -16,7 +16,7 @@ namespace Backend.Games.KevinsGames.Mimic.GameStates
         public DisplayOriginal_GS(Lobby lobby, TimeSpan? displayTimeDuration, UserDrawing displayDrawing)
             : base(lobby,
                   stateTimeoutDuration: displayTimeDuration,
-                  exit: new WaitForStateTimeoutDuration_StateExit(waitingPromptGenerator:Prompts.DisplayText(Prompts.Text.LookAtTheScreen)))
+                  exit: new WaitForStateTimeoutDuration_StateExit(lobby, waitingPromptGenerator:Prompts.DisplayText(Prompts.Text.LookAtTheScreen)))
         {
             this.UnityView = new UnityView(this.Lobby)
             {

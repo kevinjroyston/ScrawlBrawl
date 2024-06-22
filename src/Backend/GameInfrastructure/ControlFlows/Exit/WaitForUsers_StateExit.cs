@@ -22,14 +22,13 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
 
     public class WaitForUsers_StateExit : WaitForTrigger_StateExit, IDisposable
     {
-        private Lobby Lobby { get; }
-
         private bool Hurried { get; set; } = false;
         private bool Triggered { get; set; } = false;
         private object TriggeredLock { get; } = new object();
         private ConcurrentBag<User> UsersWaiting { get; } = new ConcurrentBag<User>();
         private WaitForUsersType UsersToWaitForType { get; }
 
+        // TODO - rename this "NudgeTimer" and TriggeredLock above should be more generic.
         private Timer _timer { get; set; }
 
         /// <summary>
@@ -40,9 +39,8 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
         public WaitForUsers_StateExit(
             Lobby lobby,
             WaitForUsersType usersToWaitFor = WaitForUsersType.NotDisconnected)
-               : base(Prompts.DisplayWaitingText())
+               : base(lobby, Prompts.DisplayWaitingText())
         {
-            this.Lobby = lobby;
             this.UsersToWaitForType = usersToWaitFor;
         }
 
@@ -51,9 +49,8 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
             Func<User, UserPrompt> waitingPromptGenerator,
             WaitForUsersType usersToWaitFor = WaitForUsersType.NotDisconnected
             )
-            : base(waitingPromptGenerator)
+            : base(lobby,waitingPromptGenerator)
         {
-            this.Lobby = lobby;
             this.UsersToWaitForType = usersToWaitFor;
         }
 

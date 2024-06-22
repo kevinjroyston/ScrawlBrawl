@@ -31,9 +31,9 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.DataModels
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> VotingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(45)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(60)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(80)},
+            { GameDuration.Short, TimeSpan.FromSeconds(40)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(50)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(60)},
         };
 
         // Number of rounds (round = create contestants & vote)

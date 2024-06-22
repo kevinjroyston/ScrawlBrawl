@@ -17,6 +17,12 @@ namespace Backend.GameInfrastructure.DataModels.Users
 
         private ConcurrentDictionary<Scope, ConcurrentDictionary<Reason, int>> _ScoreBreakdowns { get; set; } = new ConcurrentDictionary<Scope, ConcurrentDictionary<Reason, int>>();
 
+        /// <summary>
+        /// Trying to explain what these mean after the fact:
+        /// - Reveal: Points earned since the last time we revealed scores.
+        /// - Total: Total points earned so far
+        /// - Scoreboard: Legacy?? Im not sure what this is for.
+        /// </summary>
         public enum Scope
         {
             Reveal,

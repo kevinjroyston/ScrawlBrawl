@@ -26,9 +26,9 @@ namespace Backend.Games.KevinsGames.Mimic.DataModels
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> VotingTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(45)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(60)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(90)},
+            { GameDuration.Short, TimeSpan.FromSeconds(40)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(50)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(60)},
         };
 
         // If you have more than this many players on this mode you WILL see impact.

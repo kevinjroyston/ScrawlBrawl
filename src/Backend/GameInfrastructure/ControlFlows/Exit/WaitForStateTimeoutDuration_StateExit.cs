@@ -12,8 +12,9 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
         /// </summary>
         /// <param name="waitingPromptGenerator">The waiting state to use while waiting for the trigger. The outlet of this state will be overwritten</param>
         public WaitForStateTimeoutDuration_StateExit(
+            Lobby lobby,
             Func<User, UserPrompt> waitingPromptGenerator = null)
-            : base(waitingPromptGenerator)
+            : base(lobby, waitingPromptGenerator)
         {
             // See State.cs for implementation ¯\_(ツ)_/¯ lol.
         }

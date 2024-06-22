@@ -20,7 +20,11 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
 {
     public class TutorialExplanationGameState : GameState
     {
-        private TimeSpan LastCallTimer { get; } = TimeSpan.FromSeconds(40);
+        private TimeSpan LastCallTimer { get; } = TimeSpan.FromSeconds(45);
+
+        // Even if there aren't many users, we want to give folks actually reading a chance to read (sometimes 70% ready up really fast if they have played before)
+        private TimeSpan MinimumTimeBeforeLastCallStarts { get; } = TimeSpan.FromSeconds(20);
+        private DateTime? LastCallStartsMin { get; set; } = null;
         private DateTime? LastCallTimeout { get; set; } = null;
         private TimeSpan CheckUsersPeriod { get; } = TimeSpan.FromSeconds(5);
         private float AcceptableUserSubmissionThreshold { get; } = .3f; // Starts a timer when the users we are waiting for is 30% the size of the users who hit ready.
@@ -52,6 +56,7 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
                 // Because this view may be instantiated before the game actually starts, users list may be outdated
                 this.UnityView.Users = Lobby.GetAllUsers().Select(user => new UnityUser(user)).ToList().AsReadOnly();
                 this.UnityViewDirty = true;
+                this.LastCallStartsMin = DateTime.UtcNow + MinimumTimeBeforeLastCallStarts;
             });
             this.AddPerUserEntranceListener((User user) =>
             {
@@ -119,15 +124,10 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
             List<User> allConnectedUsers = this.Lobby.GetAllUsers().Where(user => !user.Deleted && (user.Activity != UserActivity.Disconnected)).ToList();
             List<User> usersWaiting = this.ReadiedUp.ToList();
             List<User> remainingUsersToWaitFor = allConnectedUsers.Except(usersWaiting).ToList();
-            if (!remainingUsersToWaitFor.Any())
-            {
-                // Indicates there is no need for this timer anymore
-                _timer?.Change(Timeout.Infinite, Timeout.Infinite);
-                _timer?.Dispose();
-                CleanNonReadiedUsers();
-                return;
-            }
-            else if (remainingUsersToWaitFor.Count <= 2 || remainingUsersToWaitFor.Count <= usersWaiting.Count * AcceptableUserSubmissionThreshold)
+
+            bool fewUsersRemain = remainingUsersToWaitFor.Count <= 2 || remainingUsersToWaitFor.Count <= usersWaiting.Count * AcceptableUserSubmissionThreshold;
+            bool minimumTimeElapsed = LastCallStartsMin != null && DateTime.UtcNow > LastCallStartsMin;
+            if (minimumTimeElapsed && fewUsersRemain)
             {
                 _timer?.Change(Timeout.Infinite, Timeout.Infinite);
                 _timer?.Dispose();
