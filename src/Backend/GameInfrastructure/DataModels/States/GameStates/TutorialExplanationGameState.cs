@@ -75,8 +75,8 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
                 // Check if there isn't much time left. As a grace mechanic, we treat these users as if they hit ready.
                 if (LastCallTimeout != null)
                 {
-                    // If the timeout is within the next 30 seconds, but has not yet elapsed. auto-ready up the user.
-                    if(LastCallTimeout - TimeSpan.FromSeconds(30) <= DateTime.UtcNow  && DateTime.UtcNow < LastCallTimeout - TimeSpan.FromMilliseconds(100))
+                    // If the timeout is within the next 45 seconds, but has not yet elapsed. auto-ready up the user.
+                    if(LastCallTimeout - TimeSpan.FromSeconds(45) <= DateTime.UtcNow  && DateTime.UtcNow < LastCallTimeout - TimeSpan.FromMilliseconds(100))
                     {
                         // Might be possible for this user to get readied twice, should be ok.
                         ReadiedUp.Add(user);
