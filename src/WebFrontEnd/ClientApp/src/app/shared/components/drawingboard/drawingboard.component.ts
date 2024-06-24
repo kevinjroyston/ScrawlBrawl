@@ -9,7 +9,7 @@ import { EventManager } from '@angular/platform-browser';
 import { GalleryService } from '@core/services/gallery.service';
 import PastColorsService from '../colorpicker/pastColors';
 import { Router } from '@angular/router';
-
+import { ThemeService } from '@core/services/theme.service' 
 
 @Component({
     selector: 'drawingboard',
@@ -55,7 +55,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     showGallery: boolean = true;
 
     constructor(private _colorPicker: MatBottomSheet, private _gallery: MatBottomSheet, private galleryService: GalleryService,
-        private router:Router) {
+        private router:Router, private ThemeService: ThemeService ) {
             router.events.subscribe((val) =>{
                 this.storeWorkInProgress();
             } )
@@ -223,6 +223,19 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     handleColorChange = (color: string) => {
         this.previousColor = this.selectedColor;
         this.selectedColor = color;
+
+        document.body.classList.remove('theme-visible-drawing');
+
+        if (this.ThemeService.isDarkMode()) {
+            if (color=='rgb(63.75, 63.75, 63.75)') {
+                document.body.classList.add('theme-visible-drawing');
+            }
+        } else
+        {
+            if (color=="rgb(255, 255, 255)" ) {
+                document.body.classList.add('theme-visible-drawing');
+            }
+        }
         this.switchToDrawIfErase();
     }
 

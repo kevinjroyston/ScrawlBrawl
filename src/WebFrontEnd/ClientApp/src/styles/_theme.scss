@@ -21,3 +21,7 @@
         #{$name}: nth($color, 2);
     }
 }
+
+.theme-visible-drawing {
+#{--card-background}: rgb(223, 223, 233)
+}
