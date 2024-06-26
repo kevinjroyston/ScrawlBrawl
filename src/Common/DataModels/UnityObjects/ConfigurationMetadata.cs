@@ -17,6 +17,7 @@ namespace Common.DataModels.UnityObjects
 
             return modified;
         }
+
         private bool Dirty { get; set; } = true;
 
         private GameModeId? _GameMode;

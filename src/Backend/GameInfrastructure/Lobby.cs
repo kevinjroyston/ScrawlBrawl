@@ -343,7 +343,9 @@ namespace Backend.GameInfrastructure
                 else if (this.CurrentGameState?.UnityViewDirty ?? false)
                 {
                     this.CurrentGameState.UnityViewDirty = false;
-                    return currentView;
+
+                    // Try grabbing the current view AFTER setting the dirty flag to false.
+                    return this.CurrentGameState?.GetActiveUnityView() ?? currentView;
                 }
             }
 

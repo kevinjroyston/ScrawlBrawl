@@ -63,6 +63,15 @@ public class ViewManager : MonoBehaviour
     }
     public void UpdateUsersAnsweringPrompts(IEnumerable<UnityUser> users)
     {
+        // This field and this field only we check if there are any changes before notifying listeners.
+        // Other fields do this check server side, but this one is trickier since they change all the time, so a dirty bit server side doesnt work.
+        // The reason for this suppression is to avoid errant "pop" sound effects when not needed.
+        if (last_UsersAnsweringPrompts.SequenceEqual(users))
+        {
+            // No-op
+            return;
+        }
+
         foreach (Action<IEnumerable<UnityUser>> usersAnsweringPromptsListener in usersAnsweringPromptsListeners)
         {
             usersAnsweringPromptsListener(users);

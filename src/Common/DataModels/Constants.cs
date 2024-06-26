@@ -30,6 +30,7 @@ namespace Common.DataModels
 
         public static class RegexStrings
         {
+            // DONT YOU DARE FORGET YOUR ANCHORS >:(
             public const string UserId = "^([0-9A-Za-z]){50}$";
             public const string Guid = "^([0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12})$";
             public const string ImageDataUrl = "^data:image/png;base64,[a-zA-Z0-9+/]+=*$";
