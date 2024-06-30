@@ -192,7 +192,7 @@ namespace Backend.Games.KevinsGames.LateToArtClass
                 RevealViewOverrides = new UnityViewOverrides
                 {
                     Title = Invariant($"Assignment: '{artClass.ArtAssignment}'"),
-                    Instructions = Invariant($"<color=green>{artClass.LateStudent.DisplayName}</color> was late to class! They copied off of <color=blue>{artClass.CopiedFrom.DisplayName}</color>"),
+                    Instructions = Invariant($"<color=green><hideDuringDrumroll>{artClass.LateStudent.DisplayName}</hideDuringDrumroll></color> was late to class! They copied off of <color=blue><hideDuringDrumroll>{artClass.CopiedFrom.DisplayName}</hideDuringDrumroll></color>"),
                 },
                 VoteCountManager = CountVotes(artClass)
             };

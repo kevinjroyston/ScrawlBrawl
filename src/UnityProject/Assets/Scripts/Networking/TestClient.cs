@@ -17,6 +17,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Collections.Concurrent;
 
+
 /// <summary>
 /// This class opens a connection to the server and listens for updates. From the main thread the secondary connection thread is
 /// monitored and restarted as needed. Any updates from the secondary thread will get merged back to the main thread in the update
@@ -24,12 +25,11 @@ using System.Collections.Concurrent;
 /// </summary>
 public class TestClient : MonoBehaviour
 {
-    private SignalRLib srLib;
+    private SignalR signalR;
 
-    private const string ClientVersion = "3.0.0";
+    private const string ClientVersion = "4.0.0";
     private Task hubTask;
 
-    private List<string> handlers = new List<string>() { "ConfigureMetadata", "UpdateState", "LobbyClose" };
     private string signalRHubURL = "";
 
     private bool Connected { get; set; } = false;
@@ -82,8 +82,10 @@ public class TestClient : MonoBehaviour
         }
 #endif
 
-        Debug.Log("URL:"+Application.absoluteURL);
-        srLib = new SignalRLib(signalRHubURL, handlers, true);
+        Debug.Log("URL:"+Application.absoluteURL + "  Chosen api:"+signalRHubURL);
+        // Initialize SignalR
+        signalR = new SignalR();
+        signalR.Init(signalRHubURL);
 
         Application.runInBackground = true;
         QualitySettings.vSyncCount = 0;  // VSync must be disabled
@@ -94,7 +96,7 @@ public class TestClient : MonoBehaviour
         Application.targetFrameRate = 60;
 #endif
 
-        srLib.ConnectionStarted += (object sender, ConnectionEventArgs e) =>
+        signalR.ConnectionStarted += (object sender, ConnectionEventArgs e) =>
         {
             Debug.Log(e.ConnectionId);
             Connected = true;  // just a flag we are using to know we connected, does not ensure we have not been disconnected
@@ -113,38 +115,59 @@ public class TestClient : MonoBehaviour
 */
         };
 
-        srLib.HandlerInvoked += (object sender, HandlerEventArgs e) =>
+
+
+        // Handler callback
+        /*signalR.On("ConfigureMetadata", (string payload) =>
         {
-            Debug.Log("handler invoked");
-            DumpToLog(e.HandlerName);
-            DumpToLog(e.Payload);
-            switch (e.HandlerName)
+            Debug.Log("ConfigureMetadata invoked");
+            DumpToLog("ConfigureMetadata");
+            DumpToLog(payload);
+
+
+        });*/  // This still needed?
+        signalR.On("UpdateState", (string payload) =>
+        {
+            Debug.Log("UpdateState invoked");
+            DumpToLog("UpdateState");
+            DumpToLog(payload);
+
+            try
             {
-                case "UpdateState":
-                    try {
-                        var newRPCData = JsonConvert.DeserializeObject<UnityRPCDataHolder>(e.Payload, SerializerSettings);
-                        if (newRPCData.UnityView != null) {
-                            newRPCData.UnityView = ParseJObjects(newRPCData.UnityView);
-                        }
-                        RPCRequestQueue.Enqueue(newRPCData);
-                    }
-                    catch (Exception err)
-                    {
-                        Debug.Log(err.ToString());
-                        Debug.Log(e.Payload);
-                    }
-                    Dirty = true;
-                    break;
-                case "LobbyClose":
-                    LobbyClosed = true;
-                    Dirty = true;
-                    break;
-                default:
-                    Debug.Log($"Handler: '{e.HandlerName}' not defined");
-                    break;
+                var newRPCData = JsonConvert.DeserializeObject<UnityRPCDataHolder>(payload, SerializerSettings);
+                if (newRPCData.UnityView != null)
+                {
+                    newRPCData.UnityView = ParseJObjects(newRPCData.UnityView);
+                }
+                RPCRequestQueue.Enqueue(newRPCData);
             }
+            catch (Exception err)
+            {
+                Debug.Log(err.ToString());
+                Debug.Log(payload);
+            }
+            Dirty = true;
+
+        });
+        signalR.On("LobbyClose", (string payload) =>
+        {
+            Debug.Log("LobbyClose invoked");
+            DumpToLog("LobbyClose");
+            DumpToLog(payload);
+
+            LobbyClosed = true;
+            Dirty = true;
+        });
+
+        signalR.ConnectionClosed += (object sender, ConnectionEventArgs e) =>
+        {
+            // Log the disconnected ID
+            Debug.Log($"Disconnected: {e.ConnectionId}");
+            LobbyClosed = true;
+            Dirty = true;
         };
 
+        signalR.Connect();
         // plr ConnectToHub();
     }
 
@@ -212,14 +235,14 @@ public class TestClient : MonoBehaviour
         LobbyId = lobby;
         if (Connected)
         {
-            srLib.SendToHub("ConnectWebLobby", LobbyId + "-" + ClientVersion);
+            signalR.Invoke("ConnectWebLobby", LobbyId + "-" + ClientVersion);
         }
     }
     public void RequestImageFromServer(string imageKey)
     {
         if (Connected)
         {
-            srLib.SendToHub("ConnectImageRequest", imageKey);
+            signalR.Invoke("ConnectImageRequest", imageKey);
         }
     }
 

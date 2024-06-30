@@ -20,7 +20,7 @@ namespace Assets.Scripts.Networking.DataModels
         Waiting,
     }
 
-    public class UnityUser
+    public class UnityUser : IEquatable<UnityUser>
     {
         
         [JsonProperty("a")]
@@ -54,5 +54,15 @@ namespace Assets.Scripts.Networking.DataModels
         [JsonProperty("g")]
         public UserStatus Status { get; set; }
 
+        public bool Equals(UnityUser other)
+        {
+            return Id == other.Id
+                && DisplayName == other.DisplayName
+                && Score == other.Score
+                && ScoreDeltaReveal == other.ScoreDeltaReveal
+                && ScoreDeltaScoreboard == other.ScoreDeltaScoreboard
+                && Activity == other.Activity
+                && Status == other.Status;                      
+        }
     }
 }

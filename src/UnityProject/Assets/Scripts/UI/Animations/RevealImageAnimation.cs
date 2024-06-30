@@ -5,9 +5,12 @@ using UnityEngine.UI;
 
 public class RevealImageAnimation : AnimationBase
 {
-    public Color backgroundRevealColor = Color.green;
+    // TODO - this should really be a list of Image / Color pairs. Maybe with other animation settings as well (looping/shimmer/etc) if relevant
+    public Color imageBackgroundRevealColor = Color.green;
+    public Color cardBackgroundRevealColor = Color.green;
     public Color textRevealColor = Color.green;
-    public Image Background;
+    public Image ImageBackground;
+    public Image CardBackground;
     public Text Title;
 
     public override List<LTDescr> Animate(GameEvent gameEvent)
@@ -26,11 +29,19 @@ public class RevealImageAnimation : AnimationBase
             .SetCallEventOnComplete(new GameEvent() { eventType = GameEvent.EventEnum.ShowDeltaScores});
         animations.Add(scaleUp);
         animations.Add(scaleDown);
-        if (Background != null)
+        if (ImageBackground != null)
         {
             LTDescr backgroundChange = LeanTween.color(
-                rectTrans: Background.rectTransform,
-                to: backgroundRevealColor,
+                rectTrans: ImageBackground.rectTransform,
+                to: imageBackgroundRevealColor,
+                time: 0.1f);
+            animations.Add(backgroundChange);
+        }
+        if (CardBackground != null)
+        {
+            LTDescr backgroundChange = LeanTween.color(
+                rectTrans: CardBackground.rectTransform,
+                to: cardBackgroundRevealColor,
                 time: 0.1f);
             animations.Add(backgroundChange);
         }

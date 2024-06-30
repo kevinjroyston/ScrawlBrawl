@@ -190,8 +190,8 @@ namespace Backend.Games.BriansGames.ImposterDrawing
                 },
                 RevealViewOverrides = new UnityViewOverrides
                 {
-                    Title = Invariant($"<color=green>{prompt.Imposter.DisplayName}</color> was the imposter!"),
-                    Instructions = Invariant($"Real: '{prompt.RealPrompt}', Imposter: <color=green>'{prompt.FakePrompt}'</color>"),
+                    Title = Invariant($"<color=green><hideDuringDrumroll>{prompt.Imposter.DisplayName}</hideDuringDrumroll></color> was the imposter!"),
+                    Instructions = Invariant($"Real: '{prompt.RealPrompt}', Imposter: <color=green>'<hideDuringDrumroll>{prompt.FakePrompt}</hideDuringDrumroll>'</color>"),
                 },
                 VoteCountManager = CountVotes(prompt)
             };
