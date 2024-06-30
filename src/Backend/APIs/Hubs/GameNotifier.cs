@@ -101,10 +101,16 @@ namespace Backend.APIs.Hubs
 
                     bool unityUserStatusChanged = lobby.HasUnityUserStatusChanged();
 
-                    // SignalR's serialization is abysmal and client has no insight into the issue. pull serialization out.
-                    if (unityUserStatusChanged || (unityRPCHolder.UnityView != null) || (unityRPCHolder.ConfigurationMetadata != null) || (unityRPCHolder.UnityImageList != null))
+                    // If there is a non-metadata change, update user statuses.
+                    if (unityUserStatusChanged || (unityRPCHolder.UnityView != null) || (unityRPCHolder.UnityImageList != null))
                     {
                         unityRPCHolder.UnityUserStatus = lobby.GetUsersAnsweringPrompts();
+                    }
+
+                    // If there are any changes, send them out.
+                    if (unityUserStatusChanged || (unityRPCHolder.UnityView != null) || (unityRPCHolder.ConfigurationMetadata != null) || (unityRPCHolder.UnityImageList != null))
+                    {
+                        // SignalR's serialization is abysmal and client has no insight into the issue. pull serialization out.
                         var serializedRpcHolder = JsonConvert.SerializeObject(unityRPCHolder, Formatting.None, SerializerSettings);
                         UnityHubNotifier.Clients.Group(lobby.LobbyId).SendAsync("UpdateState", serializedRpcHolder);
                     }
