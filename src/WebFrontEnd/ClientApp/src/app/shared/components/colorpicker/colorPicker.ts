@@ -3,7 +3,7 @@ export default class ColorPickerService {
     generateGrayScale = () : string[][] => {
         let grayScale = []
     
-        let num_shades=9;
+        let num_shades=8;
         for (let square = num_shades-1; square >=0; square -= 1) {
             let squareValue = 255.0/(num_shades-1) * square;
             grayScale.push(`rgb(${squareValue}, ${squareValue}, ${squareValue})`)
@@ -74,7 +74,7 @@ export default class ColorPickerService {
  *  for your convenience.
  */
 
- let gray_scale2 =["#d6dbdf","#aeb6bf","#85929e","#5d6d7e","#34495e","#2e4053","#283747","#212f3c","#1b2631"];
+ let gray_scale2 =["#d6dbdf","#aeb6bf","#85929e","#5d6d7e","#34495e","#2e4053","#2A3747","#212f3c"];
 
  let turquoise =["#d1f2eb","#a3e4d7","#76d7c4","#48c9b0","#1abc9c","#17a589","#148f77","#117864","#0e6251"];
  //let green_sea =["#d0ece7","#a2d9ce","#73c6b6","#45b39d","#16a085","#138d75","#117a65","#0e6655","#0b5345"];
