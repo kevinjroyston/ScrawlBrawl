@@ -63,5 +63,8 @@
   "optionalDependencies": {
     "node-sass": "^9.0.0",
     "ts-node": "latest"
+  },
+  "engines": {
+    "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
   }
 }
