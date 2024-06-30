@@ -263,7 +263,7 @@ input[type=range] {
     }
 }
 
-@media only screen and (max-width: 500px) {
+@media only screen {
      ::ng-deep.mat-bottom-sheet-container {
         width: 100vw !important;
     }
