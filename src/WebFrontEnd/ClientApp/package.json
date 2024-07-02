@@ -53,11 +53,7 @@
     "eslint-plugin-angular": "^4.1.0",
     "jasmine-core": "latest",
     "jasmine-spec-reporter": "latest",
-    "karma": "6.4.3",
-    "karma-chrome-launcher": "latest",
     "karma-coverage-istanbul-reporter": "latest",
-    "karma-jasmine": "latest",
-    "karma-jasmine-html-reporter": "latest",
     "typescript": "5.4.5"
   },
   "engines": {
