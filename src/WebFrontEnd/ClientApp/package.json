@@ -49,7 +49,7 @@
     "@types/jasmine": "latest",
     "@types/jasminewd2": "latest",
     "@types/node": "latest",
-    "eslint": "^8.10.0",
+    "eslint": "^9.6.0",
     "eslint-plugin-angular": "^4.1.0",
     "jasmine-core": "latest",
     "jasmine-spec-reporter": "latest",
