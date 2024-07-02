@@ -89,7 +89,19 @@ export class UnityViewer{
       this.gameInstance = unityInstance;
       unityInstance.Module.canvas.addEventListener('wheel', function(event) {
         event.preventDefault();
-        window.scrollBy(0, event.deltaY);
+
+          // Determine scroll direction
+          const direction = event.deltaY > 0 ? 1 : -1;
+          
+          // Calculate scroll distance
+          // Adjust the multiplier (3 in this case) to fine-tune the scroll speed
+          const scrollDistance = Math.abs(event.deltaY) * 3;
+          
+          // Smooth scroll
+          window.scrollBy({
+            top: direction * scrollDistance,
+            behavior: 'smooth'
+          });
       }, { passive: false });
 
       
