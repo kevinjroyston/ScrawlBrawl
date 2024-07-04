@@ -253,7 +253,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
         bottomConfig.data = {
             handleColorChange: (color: string) => this.handleColorChange(color),
         }
-        bottomConfig.panelClass ='sb-colorpicker-dialog';
+        bottomConfig.panelClass = ['sb-colorpicker-dialog', 'mat-bottom-sheet-container'];
         this._colorPicker.open(ColorPickerComponent, bottomConfig)
     }
 

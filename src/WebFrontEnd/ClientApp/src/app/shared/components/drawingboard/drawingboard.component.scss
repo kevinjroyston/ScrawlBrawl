@@ -226,7 +226,7 @@ input[type=range] {
     }
 }
 
-::ng-deep.mat-bottom-sheet-container {
+::ng-deep.mat-mdc-bottom-sheet-container {
     padding: 0 !important;
     min-width: 0 !important;
     border-top-left-radius: 5px !important;
@@ -263,8 +263,8 @@ input[type=range] {
     }
 }
 
-@media only screen {
-     ::ng-deep.mat-bottom-sheet-container {
+@media only screen and (max-width: 500px) {
+     ::ng-deep.mat-mdc-bottom-sheet-container {
         width: 100vw !important;
     }
 }

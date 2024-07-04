@@ -238,23 +238,25 @@ ion-icon {
     color: var(--white-primary);
 }
 
-.mat-progress-spinner circle,
-.mat-spinner circle {
+.mat-mdc-progress-spinner circle,
+.mat-mdc-spinner circle {
     stroke: var(--text-color);
 }
 
-.mat-tab-label {
+.mat-mdc-tab-label {
     min-width: 0!important;
 }
 
-.mat-tooltip {
+.mat-mdc-tooltip {
     padding-top: 4px;
     padding-bottom: 4px;
     font-size: 12px;
     background: rgba(40, 40, 40, .9);
 }
 
-.mat-dialog-container {
+.mat-mdc-dialog-container,
+.mat-mdc-dialog-surface,
+.mat-mdc-dialog-container .mat-mdc-dialog-content {
     background: var(--card-background) !important;
     color: var(--text-color) !important;
 }
