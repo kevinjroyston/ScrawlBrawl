@@ -72,7 +72,7 @@
                     <!--input           *ngIf="subPrompt.colorPicker" formControlName="color" [(colorPicker)]="subPrompt.color" [style.background]="subPrompt.color" [readonly]="true" [cpPosition]="'bottom'" [ngModel]="subPrompt.color
        " [cpOutputFormat]="'rgba'" [cpAlphaChannel]="'disabled'" -->
 
-                    <input type="text" class="text-input" formControlName="shortAnswer" *ngIf="subPrompt.shortAnswer">
+                    <input type="text" class="text-input" formControlName="shortAnswer" *ngIf="subPrompt.shortAnswer" autocomplete="off">
 
                     <drawingboard *ngIf="subPrompt.drawing" [userPromptId]="userPrompt.id" [drawingOptions]="subPrompt.drawing" [drawingUrgency]="drawingUrgency" formControlName="drawing"></drawingboard>
                 </div>
@@ -88,7 +88,7 @@
         <div class="button-row" *ngIf="userPrompt.submitButton">
             <div style="width:80px;padding-top:22px; padding-right:130px" *ngIf="userPrompt.suggestion">
                 <scrawlbutton color="blue" (click)="suggestValues()">
-                    Suggest
+                    Ideas
                 </scrawlbutton>
             </div>
             <div style="width:180px; padding-top:22px">

@@ -24,7 +24,7 @@
             <div *ngIf="showColorSelector && drawingOptions.colorList && drawingOptions.colorList.length > 1">
                 <mat-radio-group class="color-picker-group" [(ngModel)]="selectedColor" (change)="switchToDrawIfErase()">
                     <div class="color-picker-dot" *ngFor="let colorChoice of drawingOptions.colorList; let i = index" [ngStyle]="{'background-color': colorChoice}">
-                        <mat-radio-button [value]="colorChoice" [checked]="i==0"></mat-radio-button>
+                        <mat-radio-button [className]="'color-picker-rb'" [value]="colorChoice" [checked]="i==0"></mat-radio-button>
                     </div>
                 </mat-radio-group>
             </div>
