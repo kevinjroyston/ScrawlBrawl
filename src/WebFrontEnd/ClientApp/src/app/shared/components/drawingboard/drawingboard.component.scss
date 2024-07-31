@@ -142,8 +142,14 @@
     flex-direction: row;
     padding-top: 1em;
 }
+.color-picker-rb {
+    background: none !important;
+    padding-top: 0px !important; 
+    padding-left: 5px !important;
 
-.color-picker-dot:first-child {
+}
+.color-picker-dot:first-child{
+   
     margin-left: 0;
 }
 
@@ -226,6 +232,7 @@ input[type=range] {
     }
 }
 
+::ng-deep.mat-bottom-sheet-container,
 ::ng-deep.mat-mdc-bottom-sheet-container {
     padding: 0 !important;
     min-width: 0 !important;
@@ -263,8 +270,11 @@ input[type=range] {
     }
 }
 
-@media only screen and (max-width: 500px) {
-     ::ng-deep.mat-mdc-bottom-sheet-container {
+@media only screen {
+    ::ng-deep.mat-bottom-sheet-container,
+        ::ng-deep.mat-mdc-bottom-sheet-container {
         width: 100vw !important;
+        max-width:500px;
     }
+
 }
