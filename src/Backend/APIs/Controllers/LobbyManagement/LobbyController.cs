@@ -128,7 +128,7 @@ namespace Backend.APIs.Controllers.LobbyManagement
 
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("Create")]
 #if !DEBUG
  //   [Authorize(Policy = "LobbyManagement")]
@@ -149,7 +149,9 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 {
                     return StatusCode(500, result);
                 }
-                return Ok(result);
+                // Browser expects the response body to be parsable as a JSON object, so do not return the lobbyId as a string.
+                // Front end will call GetLobby to get the lobbyId.  If you want to return it here, put it in a JSON object.
+                return new OkResult();  
             }
         }
 

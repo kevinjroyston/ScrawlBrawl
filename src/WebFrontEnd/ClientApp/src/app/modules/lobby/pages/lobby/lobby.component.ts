@@ -100,10 +100,9 @@ export class LobbyManagementComponent {
     }
 
     onCreateLobby = async () => {
+        this.ownerIsPlayingGame = false;
         await this.api.request({ type: "Lobby", path: "Create"}).subscribe({
             next: async (result) => {
-                this.ownerIsPlayingGame = false;
-                this.lobby = result as Lobby.LobbyMetadata;
                 await this.onGetLobby()
             },
             error: async (error) => { this.error = error.error; await this.onGetLobby(); }
@@ -111,11 +110,10 @@ export class LobbyManagementComponent {
     }
 
     onCreateAndJoinLobby = async (joinLobbyRequest) => {
+        this.ownerIsPlayingGame = true;
         var bodyString = JSON.stringify(joinLobbyRequest);
         await this.api.request({ type: "Lobby", path: "CreateAndJoin", body: bodyString}).subscribe({
             next: async (result) => {
-                this.ownerIsPlayingGame = true;
-                this.lobby = result as Lobby.LobbyMetadata;
                 await this.onGetLobby()
             },
             error: async (error) => { this.error = error.error; await this.onGetLobby(); }
