@@ -68,9 +68,9 @@ export class API {
                 switch (r.path) {
                     case "Get":
                     case "Delete":
+                    case "Create":
                     case "Games": obs = this.Get(r);
                         break;
-                    case "Create":
                     case "CreateAndJoin":
                     case "Configure":
                     case "Start":
