@@ -120,6 +120,7 @@ namespace Backend.GameInfrastructure.DataModels
 
         public void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
+            // This blocks all users until state entrance listeners can
             if (!this.Entered)
             {
                 lock (this.EnteredLock)
@@ -135,18 +136,24 @@ namespace Backend.GameInfrastructure.DataModels
                 }
             }
 
-            lock (user)
+            // This is a bit of a weird one. The user hasn't technically entered the state yet, but we need this tracking in order to hurry them.
+            this.UsersEnteredAndExitedState[user] = (false, false);
+
+            // Presumably we already have the user lock, but just in case.
+            lock (user.LockObject)
             {
+                // I tried moving this to the entrance's exit listener, but it was causing issues with the state stack.
+                // So instead I added support for (false, false) above...
                 foreach (var listener in this.PerUserEntranceListeners)
                 {
                     listener?.Invoke(user);
                 }
-            }
 
-            if (this.UsersHurried)
-            {
-                // It is okay to hurry a user we have the lock for. Just don't grab any other locks in the process.
-                this.HurryUser(user);
+                if (this.UsersHurried)
+                {
+                    // It is okay to hurry a user we have the lock for. Just don't grab any other locks in the process.
+                    this.HurryUser(user);
+                }
             }
 
             this.Entrance.Inlet(user, stateResult, formSubmission);
@@ -222,13 +229,17 @@ namespace Backend.GameInfrastructure.DataModels
                     }
 
                     (bool entered, bool exited) = this.UsersEnteredAndExitedState[user];
-                    if (entered && !exited)
+
+                    // We don't really care if they haven't "officially" entered this state yet, so long as they haven't exited it yet and the state is aware of their existence!
+                    // This is honestly a bit of a hack, but it was too difficult to get the state stack to work without adding this pseudo-state.
+                    if (!exited)
                     {
                         // Set user to hurry mode first!
                         user.StatesTellingMeToHurry.Add(this);
                         // Kick the user into motion so they can hurry through the states.
                         if (user.Status == UserStatus.AnsweringPrompts)
                         {
+                            // Important to note here that we are not calling HandleUserTimeout directly. We are calling it through the user's current state.
                             user.UserState.HandleUserTimeout(user, UserFormSubmission.WithNulls(user.UserState.UserRequestingCurrentPrompt(user)));
                         }
                     }

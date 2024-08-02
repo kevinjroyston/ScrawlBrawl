@@ -20,12 +20,11 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
 {
     public class TutorialExplanationGameState : GameState
     {
-        private TimeSpan LastCallTimer { get; } = TimeSpan.FromSeconds(45);
+        private TimeSpan LastCallTimer { get; } = TimeSpan.FromSeconds(40);
 
         // Even if there aren't many users, we want to give folks actually reading a chance to read (sometimes 70% ready up really fast if they have played before)
-        private TimeSpan MinimumTimeBeforeLastCallStarts { get; } = TimeSpan.FromSeconds(20);
+        private TimeSpan MinimumTimeBeforeLastCallStarts { get; } = TimeSpan.FromSeconds(10);
         private DateTime? LastCallStartsMin { get; set; } = null;
-        private DateTime? LastCallTimeout { get; set; } = null;
         private TimeSpan CheckUsersPeriod { get; } = TimeSpan.FromSeconds(5);
         private float AcceptableUserSubmissionThreshold { get; } = .3f; // Starts a timer when the users we are waiting for is 30% the size of the users who hit ready.
         private Timer _timer { get; set; }
@@ -72,16 +71,12 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
                     }
                 }
 
-                // Check if there isn't much time left. As a grace mechanic, we treat these users as if they hit ready.
-                if (LastCallTimeout != null)
+                // Check if this is a late join, as a grace mechanic we treat these users as if they hit ready.
+                if(DateTime.UtcNow >= LastCallStartsMin)
                 {
-                    // If the timeout is within the next 45 seconds, but has not yet elapsed. auto-ready up the user.
-                    if(LastCallTimeout - TimeSpan.FromSeconds(45) <= DateTime.UtcNow  && DateTime.UtcNow < LastCallTimeout - TimeSpan.FromMilliseconds(100))
-                    {
-                        // Might be possible for this user to get readied twice, should be ok.
-                        ReadiedUp.Add(user);
-                        HurryUser(user);
-                    }
+                    // Might be possible for this user to get readied twice, should be ok.
+                    ReadiedUp.Add(user);
+                    HurryUser(user);
                 }
 
                 if (!this.UnityView.Users.Any(unityUser=>unityUser.Id == user.Id))
@@ -133,7 +128,6 @@ namespace Backend.GameInfrastructure.DataModels.States.GameStates
                 _timer?.Dispose();
 
                 _timer = new Timer(DeleteWaitingUsers, null, LastCallTimer + TimeSpan.FromSeconds(3), TimeSpan.FromMilliseconds(-1));
-                LastCallTimeout = DateTime.UtcNow + LastCallTimer + TimeSpan.FromSeconds(3); 
 
                 // Warn players about the new timer and threat of kick
                 // Use the same view so that the client doesnt fade animate
