@@ -144,7 +144,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 120.5
+  m_fontSize: 95.05
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -550,7 +550,7 @@ MonoBehaviour:
   silverBackgroundColor: {r: 1, g: 1, b: 1, a: 0.78431374}
   bronzeColor: {r: 0.9150943, g: 0.7177975, b: 0.47193536, a: 1}
   bronzeBackgroundColor: {r: 1, g: 1, b: 1, a: 0.78431374}
-  holderImage: {fileID: 0}
+  holderImage: {fileID: 1039914493459826245}
   backgroundImage: {fileID: 4689843705774137828}
 --- !u!1 &1260170741602024387
 GameObject:
