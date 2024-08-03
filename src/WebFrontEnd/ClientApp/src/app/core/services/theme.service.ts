@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { StorageService } from './storage.service'
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -12,7 +13,12 @@ export class ThemeService {
     private readonly LIGHT_THEME_KEY = 'light';
     private readonly DARK_THEME_CLASS = 'theme-dark';
 
+    private themeSubject: BehaviorSubject<boolean>;
+    public theme$: Observable<boolean>;
+
     constructor(private storage: StorageService){
+        this.themeSubject = new BehaviorSubject<boolean>(this.isDarkMode());
+        this.theme$ = this.themeSubject.asObservable();
     }
 
     public setThemeInit = () => {
@@ -36,6 +42,7 @@ export class ThemeService {
         } else {
             this.setDarkMode();
         }
+        this.themeSubject.next(this.darkMode);
     }
 
     private setDarkMode = () => {

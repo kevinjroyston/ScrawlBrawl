@@ -10,6 +10,8 @@ import { GalleryService } from '@core/services/gallery.service';
 import PastColorsService from '../colorpicker/pastColors';
 import { Router } from '@angular/router';
 import { ThemeService } from '@core/services/theme.service' 
+import * as drawingUtils from "app/utils/drawingutils";
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'drawingboard',
@@ -53,6 +55,7 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
     drawingOptionsCollapse: boolean = false;
     lastImageChange: string = "";
     showGallery: boolean = true;
+    private themeSubscription: Subscription;
 
     constructor(private _colorPicker: MatBottomSheet, private _gallery: MatBottomSheet, private galleryService: GalleryService,
         private router:Router, private ThemeService: ThemeService ) {
@@ -171,10 +174,21 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
         }
 
         this.previousColor = this.selectedColor;
+        this.themeSubscription = this.ThemeService.theme$.subscribe(
+            isDark => {
+              setTimeout(() => this.handleColorChange(this.selectedColor), 500);
+              console.log('Theme changed. Dark mode:', isDark);
+            }
+          );    
+      
     }
 
     ngOnDestroy() {
         this.storeMostRecentDrawing(true);
+        if (this.themeSubscription) {
+            this.themeSubscription.unsubscribe();
+        }
+        
     }
 
     ngAfterViewInit(){
@@ -225,17 +239,10 @@ export class DrawingBoard implements ControlValueAccessor, AfterViewInit {
         this.selectedColor = color;
 
         document.body.classList.remove('theme-visible-drawing');
-
-        if (this.ThemeService.isDarkMode()) {
-            if (color=='rgb(63.75, 63.75, 63.75)') {
-                document.body.classList.add('theme-visible-drawing');
-            }
-        } else
-        {
-            if (color=="rgb(255, 255, 255)" ) {
-                document.body.classList.add('theme-visible-drawing');
-            }
+        if (drawingUtils.isColorCloseToClassBackground(color,'drawb-settings',25)) {
+            document.body.classList.add('theme-visible-drawing');
         }
+                
         this.switchToDrawIfErase();
     }
 

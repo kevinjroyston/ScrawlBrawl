@@ -188,3 +188,76 @@ let checkPixel,
         }
     }
 }    
+
+
+export function isColorCloseToClassBackground(colorString: string, classIdentifier: string, threshold: number = 10): boolean {
+  const cssColor = getBackgroundColorValue(classIdentifier);
+  const rgb1 = parseColor(colorString);
+  const rgb2 = parseColor(cssColor);
+  
+  if (!rgb1 || !rgb2) return false;
+
+  const distance = Math.sqrt(
+    Math.pow(rgb1.r - rgb2.r, 2) +
+    Math.pow(rgb1.g - rgb2.g, 2) +
+    Math.pow(rgb1.b - rgb2.b, 2)
+  );
+
+  return distance <= threshold;
+}
+
+function getBackgroundColorValue(className: string): string {
+  if (typeof window === 'undefined' || !window.getComputedStyle) {
+    console.warn('getComputedStyle is not available');
+    return '';
+  }
+
+  const element = document.querySelector(`.${className}`);
+
+  if (!element) {
+    console.warn(`No element found with class ${className}`);
+    return '';
+  }
+
+  const computedStyle = getComputedStyle(element);
+
+  const backgroundColor = computedStyle.backgroundColor;
+
+  if (!backgroundColor) {
+    console.warn(`No background-color found for element with class ${className}`);
+    return '';
+  }
+
+  return backgroundColor;
+}
+
+
+function parseColor(color: string): { r: number, g: number, b: number } | null {
+  if (color.startsWith('#')) {
+    return hexToRgb(color);
+  }
+  if (color.startsWith('rgb')) {
+    return parseRgbString(color);
+  }
+  return null;
+}
+
+function hexToRgb(hex: string): { r: number, g: number, b: number } | null {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
+}
+
+function parseRgbString(colorString: string): { r: number, g: number, b: number } | null {
+  const match = colorString.match(/rgb\((\d+\.?\d*),\s*(\d+\.?\d*),\s*(\d+\.?\d*)\)/);
+  if (!match) return null;
+
+  return {
+    r: Math.round(parseFloat(match[1])),
+    g: Math.round(parseFloat(match[2])),
+    b: Math.round(parseFloat(match[3]))
+  };
+}
