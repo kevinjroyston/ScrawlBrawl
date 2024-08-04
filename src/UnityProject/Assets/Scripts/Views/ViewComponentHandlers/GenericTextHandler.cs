@@ -28,15 +28,40 @@ public class GenericTextHandler : MonoBehaviour, HandlerInterface
     /// </summary>
     private Regex tagRegex = new Regex(@"<(?<tag>hideDuringDrumroll)=*(?<value>[^>]*)>(?<body>[^<]*)<\/\1>");
 
+    bool startHasBeenCalled = false;
     public void Start()
     {
-        // Set not to persist. Should get cleaned up when the view is destroyed. Might as well OneShot it too.
-        EventSystem.Singleton.RegisterListener(
-            listener: (gameEvent) => UpdateTextField(PostRevealText),
-            gameEvent: new GameEvent { eventType = GameEvent.EventEnum.RevealImages }, // Bit janky, technically this event is not guaranteed to occur if no images are marked for reveal.
-            oneShot: true
-        );
+        startHasBeenCalled = true;
+        RegisterListener();
     }
+
+    // Need to register the listener on every enable, because we have to remove it on every disable. But the enable happens during awake, so referencing singletons is a no go. Hence the ugly logic
+    public void OnEnable()
+    {
+        if (!startHasBeenCalled)
+        {
+            // Rather than do any initialization here, we just wait for start to be called. Singletons will not have been set up until after Awake() phase finishes (OnEnable is part of that phase initially)
+            return;
+        }
+
+        // The first register listener call cannot happen until start is called. But SUBSEQUENT calls to enable should register the listener.
+        RegisterListener();
+    }
+    private void RegisterListener()
+    {
+        EventSystem.Singleton.RegisterListener(
+            listener: ListenerCallback,
+            gameEvent: new GameEvent { eventType = GameEvent.EventEnum.RevealImages }, // Bit janky, technically this event is not guaranteed to occur if no images are marked for reveal.
+            persistant: true,
+            oneShot: false);
+    }
+    public void OnDisable()
+    {
+        // Could not find a way to avoid calling this listener while disabled. So instead we remove and re-add it as the object disables/enables
+        EventSystem.Singleton.RemoveListener(ListenerCallback);
+    }
+
+    private void ListenerCallback(GameEvent gameEvent) => UpdateTextField(PostRevealText);
 
     public void UpdateValue(UnityField<string> field)
     {

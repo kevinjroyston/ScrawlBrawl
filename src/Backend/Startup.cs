@@ -35,26 +35,28 @@ namespace Backend
         {
 #if DEBUG
             IdentityModelEventSource.ShowPII = true;
-#endif
-/*
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                 .AddMicrosoftWebApi(options =>
-                 { 
-                     Configuration.Bind("AzureAdB2C", options);
-
-                     options.TokenValidationParameters.NameClaimType = "name";
-                 },
-                options => { Configuration.Bind("AzureAdB2C", options); });
-
-            services.AddAuthorization(options =>
-            {
-                // Create policy to check for the scope 'read'
-                options.AddPolicy("LobbyManagement",
-                    policy => policy.Requirements.Add(new ScopesRequirement("LobbyManagement")));
-            });
-*/
+#else
+            // Only enable telemetry gathering in higher environments.
             // The following line enables Application Insights telemetry collection.
             services.AddApplicationInsightsTelemetry();
+#endif
+            /*
+                        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                             .AddMicrosoftWebApi(options =>
+                             { 
+                                 Configuration.Bind("AzureAdB2C", options);
+
+                                 options.TokenValidationParameters.NameClaimType = "name";
+                             },
+                            options => { Configuration.Bind("AzureAdB2C", options); });
+
+                        services.AddAuthorization(options =>
+                        {
+                            // Create policy to check for the scope 'read'
+                            options.AddPolicy("LobbyManagement",
+                                policy => policy.Requirements.Add(new ScopesRequirement("LobbyManagement")));
+                        });
+            */
             services.AddSingleton(typeof(GameManager));
             services.AddSingleton(typeof(InMemoryConfiguration));
 

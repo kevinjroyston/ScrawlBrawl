@@ -11,7 +11,15 @@ public class EventSystem : MonoBehaviour
         public GameEvent.EventEnum EventEnum { get; set; }
         public string Id { get; set; }
         public Action<GameEvent> Listener { get; set; }
+
+        /// <summary>
+        /// Indicates whether or not we should clear this listener when we transition between scenes.
+        /// </summary>
         public bool Persists { get; set; }
+
+        /// <summary>
+        /// This listener will be removed after it is triggered once.
+        /// </summary>
         public bool OneShot { get; set; }
     }
     List<EventListenerPair> eventListenerPairs = new List<EventListenerPair>();
@@ -32,7 +40,7 @@ public class EventSystem : MonoBehaviour
             Id = gameEvent.id,
             Listener = listener,
             Persists = persistant,
-            OneShot = !persistant && oneShot,
+            OneShot = !persistant && oneShot
         };
         eventListenerPairs.Add(pair);
 
@@ -64,7 +72,8 @@ public class EventSystem : MonoBehaviour
     }
     private void CheckPairAndTriggerListener(GameEvent gameEvent, EventListenerPair listenerPair)
     {
-        if ((listenerPair.EventEnum == gameEvent.eventType || listenerPair.EventEnum == GameEvent.EventEnum.None) && (listenerPair.Id == gameEvent.id || string.IsNullOrWhiteSpace(listenerPair.Id)))
+        if ((listenerPair.EventEnum == gameEvent.eventType || listenerPair.EventEnum == GameEvent.EventEnum.None)
+            && (listenerPair.Id == gameEvent.id || string.IsNullOrWhiteSpace(listenerPair.Id)))
         {
             listenerPair.Listener?.Invoke(gameEvent);
             if (listenerPair.OneShot)

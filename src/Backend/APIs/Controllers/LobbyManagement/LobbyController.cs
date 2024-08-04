@@ -190,6 +190,9 @@ namespace Backend.APIs.Controllers.LobbyManagement
                 return (false, "LobbyId invalid.");
             }
 
+            // Replace any o's with 0s since the valid characters are 0-9a-f
+            request.LobbyId = request.LobbyId.Replace('o', '0');
+
             lock (user.LockObject)
             {
                 if (user.Lobby != null && user.LobbyId.Equals(request.LobbyId, StringComparison.InvariantCultureIgnoreCase))

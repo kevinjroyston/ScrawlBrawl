@@ -17,7 +17,7 @@ public class WatchComponentToAddPadding : MonoBehaviour
     {
         if (TrackingObject.activeInHierarchy)
         {
-            MyLayoutGroup.padding.left = (int)(TrackingObject.GetComponent<RectTransform>().rect.width * .5f) + 5;
+            MyLayoutGroup.padding.left = (int)(TrackingObject.GetComponent<RectTransform>().rect.width * .5f);
         }
         else
         {            

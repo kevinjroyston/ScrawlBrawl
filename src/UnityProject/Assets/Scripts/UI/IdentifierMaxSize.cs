@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 public class IdentifierMaxSize : MonoBehaviour
@@ -15,26 +17,47 @@ public class IdentifierMaxSize : MonoBehaviour
 
     public void OnGUI()
     {
-        if (myRect == null){
-            
+        if (myRect == null){            
             myRect = gameObject.GetComponent<RectTransform>();
         }
 
         bool changedEither = false;
-        if (myRect.rect.height > MaxHeight){
-           myRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, MaxHeight);
-           changedEither = true;
- 
+        Vector2 actualSize = GetActualSize(myRect); 
+        if (actualSize.y > MaxHeight && (myRect.sizeDelta.y != MaxHeight - actualSize.y))
+        {
+            myRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, MaxHeight);
+            changedEither = true;
+        }else if (actualSize.y < MaxHeight && myRect.sizeDelta.y != 0)
+        {
+            myRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, actualSize.y);
         }
 
-        if (myRect.rect.width > MaxWidth){
+        if (actualSize.x > MaxWidth && (myRect.sizeDelta.x != MaxWidth - actualSize.x)){
            myRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, MaxWidth);
            changedEither = true;
         }
-
-        if(changedEither){
-           myRect.ForceUpdateRectTransforms();
-
+        else if (actualSize.x < MaxWidth && myRect.sizeDelta.x != 0)
+        {
+            myRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, actualSize.x);
         }
+
+        if (changedEither)
+        {
+           myRect.ForceUpdateRectTransforms();
+        }
+    }
+
+
+    private Vector2 GetActualSize(RectTransform rt)
+    {
+        Vector2 parentSize = rt.parent != null ? (rt.parent as RectTransform).rect.size : Vector2.zero;
+        
+        // There would be no delta sizing if it werent for this script. So the "true" size is just our anchors compared to parent sizing
+        Vector2 actualSize = new Vector2(
+            (rt.anchorMax.x - rt.anchorMin.x) * parentSize.x,
+            (rt.anchorMax.y - rt.anchorMin.y) * parentSize.y
+        );
+
+        return actualSize;
     }
 }

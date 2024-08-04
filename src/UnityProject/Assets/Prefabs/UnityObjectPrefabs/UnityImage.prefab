@@ -116,7 +116,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: -1000
+  m_text: '0
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5750a95fe66ff2b4cb8f371b88a437d8, type: 2}
   m_sharedMaterial: {fileID: -7365038000139644181, guid: 5750a95fe66ff2b4cb8f371b88a437d8,
@@ -144,7 +146,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 120.5
+  m_fontSize: 246.6
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -550,7 +552,7 @@ MonoBehaviour:
   silverBackgroundColor: {r: 1, g: 1, b: 1, a: 0.78431374}
   bronzeColor: {r: 0.9150943, g: 0.7177975, b: 0.47193536, a: 1}
   bronzeBackgroundColor: {r: 1, g: 1, b: 1, a: 0.78431374}
-  holderImage: {fileID: 0}
+  holderImage: {fileID: 1039914493459826245}
   backgroundImage: {fileID: 4689843705774137828}
 --- !u!1 &1260170741602024387
 GameObject:
@@ -990,6 +992,7 @@ RectTransform:
   m_Children:
   - {fileID: 5646404664496023474}
   - {fileID: 1760463587792855409}
+  - {fileID: 6282804153548387887}
   m_Father: {fileID: 958200141029690272}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1678,7 +1681,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 5, y: -5.000061}
+  m_AnchoredPosition: {x: 5, y: -5.000046}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8687245334232129266
@@ -2130,7 +2133,6 @@ RectTransform:
   - {fileID: 6227695463930107676}
   - {fileID: 84662153317574098}
   - {fileID: 7244336795898691169}
-  - {fileID: 6282804153548387887}
   m_Father: {fileID: 5646404664496023474}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2460,10 +2462,10 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6365295324147029773}
-  m_Father: {fileID: 1228626165942506974}
+  m_Father: {fileID: 8161376606224987676}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: -0.15, y: 0.85}
-  m_AnchorMax: {x: 0.15, y: 1.15}
+  m_AnchorMin: {x: -0.1, y: 0.8}
+  m_AnchorMax: {x: 0.2, y: 1.1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2652,7 +2654,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5895502f4f3772b4ca8e60e8bded4754, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  percentOfParentWidth: 0.55
+  desiredPercentOfParentWidth: 0.55
+  maxPercentOfParentWidth: 0.7
   minWidth: 100
   aspectRatio: 2
 --- !u!1 &7486317171801654656

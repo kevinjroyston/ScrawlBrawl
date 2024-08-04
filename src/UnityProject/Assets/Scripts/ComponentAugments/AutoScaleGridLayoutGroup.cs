@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.ComponentAugments;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,7 +12,6 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
     /// Width / Height
     /// </summary>
     public float aspectRatio = 1.0f;
-    private float adjustedAspectRatio = 1.0f;
 
     public bool imageHandlerDrivenAspectRatio = true;
     public int pretendThereIsAlwaysAtLeastThisManyDrawings = 0;
@@ -28,7 +28,7 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
         gridLayoutGroup = GetComponent<GridLayoutGroup>();
         rect = GetComponentInParent<RectTransform>();
 
-        gridLayoutGroup.cellSize = new Vector2(rect.rect.height, adjustedAspectRatio * rect.rect.height);
+        gridLayoutGroup.cellSize = new Vector2(rect.rect.height, aspectRatio * rect.rect.height);
 
 
         OnRectTransformDimensionsChange();
@@ -41,20 +41,12 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
             OnRectTransformDimensionsChange();
         }
     }
-    public void RegisterAspectRatioListener(AspectRatioConfiguration aspectRatioConfiguration)
+    public void RegisterAspectRatioListener(CustomAspectRatio aspectRatioConfiguration)
     {
         aspectRatioConfiguration.RegisterAspectRatioListener(
                     (float aspectRatio) =>
                     {
                         this.aspectRatio = aspectRatio;
-                        if (gridLayoutGroup.startAxis == GridLayoutGroup.Axis.Horizontal
-                            && transform.childCount > 5
-                            && this.aspectRatio > 6){
-                                // This is so hacky but idc anymore. 2 column text goes here.
-                            this.adjustedAspectRatio = aspectRatio * .5f;
-                        }else{
-                            this.adjustedAspectRatio = aspectRatio;
-                        }
                         this.OnRectTransformDimensionsChange();
                     });
     }
@@ -75,27 +67,29 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
 
         if (rect?.rect != null && rect.rect.height > 0 && rect.rect.width > 0)
         {
-            int cellCount = transform.childCount;
-        
-            if (gridLayoutGroup.startAxis == GridLayoutGroup.Axis.Horizontal
-                && cellCount > 5
-                && this.aspectRatio > 6){
-                    // This is so hacky but idc anymore. 2 column text goes here.
-                this.adjustedAspectRatio = aspectRatio * .5f;
-            }
+            int cellCount = transform.childCount;        
 
             if (gridLayoutGroup.startAxis == GridLayoutGroup.Axis.Horizontal){
                 Debug.Log("In Horizontal path");
                 var newHeight = CalculateHeight(cellCount);
                 oldCellCount = cellCount;
-                gridLayoutGroup.cellSize = new Vector2((newHeight - top - bottom) * adjustedAspectRatio + left + right - gridLayoutGroup.spacing.x, newHeight - gridLayoutGroup.spacing.y);
+
+                gridLayoutGroup.cellSize = new Vector2((newHeight - top - bottom) * aspectRatio + left + right - gridLayoutGroup.spacing.x, newHeight - gridLayoutGroup.spacing.y);
             }else{
+
+                // SORRY future author. I hacked this together. Vertical == text. Horizontal == images. I'm sorry.  For text here we just try to go for the max width, and theres a max of 8 supported
+                // Couldn't get the aspect ratio model to work / make sense for text. we really should split out these views or something better.
                 Debug.Log("In Vertical path");
-                var newWidth = CalculateWidth(cellCount);
+                var numCols = cellCount > 4 ? 2 : 1;
+                var newWidth = (rect.rect.width - gridLayoutGroup.padding.horizontal - gridLayoutGroup.spacing.x * (numCols - 1)) / numCols;
+
+                var numRows = Mathf.CeilToInt(cellCount * 1.0f / numCols);
+                numRows = Mathf.Max(numRows, 3);  // I don't like the look of 2 rows, so scale to 3 always.
+                var newHeight = (rect.rect.height - gridLayoutGroup.padding.vertical - gridLayoutGroup.spacing.y * (numRows - 1)) / numRows;
                 oldCellCount = cellCount;
 
-                // I dont think i need the left/right/top/bottom shenanigans for vertical because they are text. Pretty hacky in general to have it in the first place for images.
-                gridLayoutGroup.cellSize = new Vector2(newWidth - gridLayoutGroup.spacing.x, (newWidth) / adjustedAspectRatio - gridLayoutGroup.spacing.y);
+                gridLayoutGroup.constraintCount = numRows;
+                gridLayoutGroup.cellSize = new Vector2(newWidth, newHeight);
             }
         }
     }
@@ -103,7 +97,6 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
     private void AspectRatioListener(float innerAspectRatio, float outerAspectRatio)
     {
         aspectRatio = outerAspectRatio;
-        adjustedAspectRatio = aspectRatio;
         OnRectTransformDimensionsChange();
     }
 
@@ -138,7 +131,7 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
         numRows = (numRows == 0 ? 1 : numRows);
         numCols = Mathf.Min(numCols, cellCount);
         return Mathf.Min((rect.rect.height - gridLayoutGroup.padding.vertical - gridLayoutGroup.spacing.y * (numRows-1)) / (float)numRows,
-            (rect.rect.width - gridLayoutGroup.padding.horizontal - (gridLayoutGroup.spacing.x) * (numCols-1)) / adjustedAspectRatio /(float)numCols);
+            (rect.rect.width - gridLayoutGroup.padding.horizontal - (gridLayoutGroup.spacing.x) * (numCols-1)) / aspectRatio / (float)numCols);
     }
 
     /// <summary>
@@ -167,7 +160,7 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
         int numCols = ColumnsPerRowCount(rowCount);
         numCols = (numCols == 0 ? 1 : numCols);
         numRows = Mathf.Min(numRows, cellCount);
-        return Mathf.Min((rect.rect.height - gridLayoutGroup.padding.vertical - gridLayoutGroup.spacing.y * (numRows-1)) / (float)numRows * adjustedAspectRatio,
+        return Mathf.Min((rect.rect.height - gridLayoutGroup.padding.vertical - gridLayoutGroup.spacing.y * (numRows-1)) / (float)numRows * aspectRatio,
             (rect.rect.width - gridLayoutGroup.padding.horizontal - (gridLayoutGroup.spacing.x) * (numCols-1)) /(float)numCols);
     }
 
@@ -183,7 +176,7 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
         {
             float effectiveWidth = rect.rect.width - columnCount * (gridLayoutGroup.padding.horizontal + left + right);
             float effectiveHeight = rect.rect.height - returnVal * (gridLayoutGroup.padding.vertical + top + bottom);
-            returnVal = columnCount * adjustedAspectRatio * effectiveHeight / effectiveWidth;
+            returnVal = columnCount * aspectRatio * effectiveHeight / effectiveWidth;
         }
         return Mathf.FloorToInt(returnVal);
     }
@@ -201,7 +194,7 @@ public class AutoScaleGridLayoutGroup : UnityEngine.EventSystems.UIBehaviour
         {
             float effectiveWidth = rect.rect.width - returnVal * (gridLayoutGroup.padding.horizontal + left + right);
             float effectiveHeight = rect.rect.height - rowCount * (gridLayoutGroup.padding.vertical + top + bottom);
-            returnVal = rowCount / (adjustedAspectRatio * effectiveHeight / effectiveWidth);
+            returnVal = rowCount / (aspectRatio * effectiveHeight / effectiveWidth);
         }
         return Mathf.FloorToInt(returnVal);
     }

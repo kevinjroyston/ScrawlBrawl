@@ -37,7 +37,7 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.GameStates
             : base(
                 lobby: lobby,
                 numExpectedPerUser: numExpectedPerUser,
-                unityTitle: "Create some descriptors (Characters/Actions/Modifiers)",
+                unityTitle: "Create some descriptors (Characters/Actions)",
                 unityInstructions: "",
                 setupDuration: setupDurration)
         {

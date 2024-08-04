@@ -13,6 +13,7 @@ using Assets.Scripts.Views.DataModels;
 using Assets.Scripts.Networking.DataModels.Enums;
 using Assets.Scripts.Extensions;
 using Assets.Scripts.Networking.DataModels.UnityObjects;
+using Assets.Scripts.ComponentAugments;
 
 public class UnityObjectDropzoneHandler : MonoBehaviour, HandlerInterface
 {
@@ -82,7 +83,7 @@ public class UnityObjectDropzoneHandler : MonoBehaviour, HandlerInterface
             GameObject unityObject = Instantiate(UnityObjectTypeToPrefabStaticMap.Singleton.Mapping[objects[i].Type], DropZone.transform);
             if (i == 0)
             {
-                DropZone.GetComponent<AutoScaleGridLayoutGroup>().RegisterAspectRatioListener(unityObject.GetComponent<AspectRatioConfiguration>());
+                DropZone.GetComponent<AutoScaleGridLayoutGroup>().RegisterAspectRatioListener(unityObject.GetComponent<CustomAspectRatio>());
             }
         }
 
