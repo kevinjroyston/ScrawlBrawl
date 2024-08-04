@@ -61,7 +61,7 @@ namespace Backend.GameInfrastructure.ControlFlows.Exit
                 }
             }
 
-            lock (user)
+            lock (user.LockObject)
             {
                 foreach (Action<User> listener in PerUserListeners)
                 {

@@ -120,7 +120,7 @@ namespace Backend.GameInfrastructure.DataModels
 
         public void Inlet(User user, UserStateResult stateResult, UserFormSubmission formSubmission)
         {
-            // This blocks all users until state entrance listeners can
+            // This blocks all incoming users until state entrance listeners can be called
             if (!this.Entered)
             {
                 lock (this.EnteredLock)
@@ -427,7 +427,7 @@ namespace Backend.GameInfrastructure.DataModels
                 }
             }
 
-            lock (user)
+            lock (user.LockObject)
             {
                 foreach (var listener in this.PerUserStateEndingListeners)
                 {

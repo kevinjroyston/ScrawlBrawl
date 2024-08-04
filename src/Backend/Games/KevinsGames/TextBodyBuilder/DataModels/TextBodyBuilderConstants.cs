@@ -10,7 +10,6 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.DataModels
         public const int MaxPointsForVotingWithCrowd = 150;
         public const int PointsForPartUsed = 50;
         public const int NumCAMsInHand = 3;
-        public const int MaxNumPlayersPerSubRound = 6; // UI technically works till 8, its just a lot to read.
 
         public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerCAMTimer = new Dictionary<GameDuration, TimeSpan>()
         {
