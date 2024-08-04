@@ -7317,7 +7317,7 @@ MonoBehaviour:
   endEvent:
     eventType: 0
     id: 
-  startDelay: 0.01
+  startDelay: 0.03
   registerOnEnable: 1
   persistant: 1
   oneShot: 0

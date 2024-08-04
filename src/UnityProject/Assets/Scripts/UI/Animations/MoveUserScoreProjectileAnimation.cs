@@ -30,22 +30,44 @@ public class MoveUserScoreProjectileAnimation : AnimationBase
         float markerDiameter = Mathf.Min(markerDiameterVector.x, markerDiameterVector.y);
 
         markerRect.localScale = Vector3.zero;
-        #region calculating tangent
-        float r = targetDiameter / 2 * 1.1f;
-        float x = rect.position.x;
-        float y = rect.position.y + 1;
+        float x1 = rect.position.x;
+        float y1 = rect.position.y;
 
-        //Todo fix tangent calculation
-        float tangentY = (2 * r * r * y + Mathf.Sqrt(4 * r * r * r * r * y * y  - 4 * (x * x + y * y) * (r * r * r * r - x * x * r * r))) / (2 * (x * x + y * y));
-        float tangentX = Mathf.Sqrt(r * r - tangentY * tangentY);
+        float cx = targetScoreRect.position.x;
+        float cy = targetScoreRect.position.y;
+        float cr = targetDiameter * 1.1f;  // This is the target's diameter not radius, its bigger than you think!
+
+        float dx = x1 - cx;
+        float dy = y1 - cy;
+
+        float dist = Mathf.Sqrt(dx * dx + dy * dy);
+
+        float tx, ty;
+        if (dist <= cr) // If the point is inside the circle, the math differs. For simplicity, lets just move directly away from the center until we hit the edge.
+        {
+            Vector2 direction = new Vector2(dx, dy).normalized * cr;
+
+            tx = cx + direction.x;
+            ty = cy + direction.y;
+        }
+        else
+        {
+            float angle = Mathf.Acos(cr / dist);
+            float base_angle = Mathf.Atan2(dy, dx);
+            float tangent_angle = base_angle + angle;
+
+            tx = cx + cr * Mathf.Cos(tangent_angle);
+            ty = cy + cr * Mathf.Sin(tangent_angle);
+        }
+        
 
         Vector3 targetTangent = new Vector3(
-            x: tangentX + targetScoreRect.position.x,
-            y: tangentY + targetScoreRect.position.y,
+            x: tx,
+            y: ty,
             z: targetScoreRect.position.z);
-        #endregion
 
-        float speed = Vector2.Distance(markerRect.position, targetTangent) / 0.5f;
+        // Round up speed
+        float speed = Mathf.Max(Vector2.Distance(markerRect.position, targetTangent), cr) / 0.5f;
 
         #region tweens
         LTDescr iconScaleDown = LeanTween.scale(
@@ -85,7 +107,7 @@ public class MoveUserScoreProjectileAnimation : AnimationBase
         LTDescr markerOrbit = LeanTweenHelper.Singleton.DynamicOrbitAroundPoint(
                 rectTransform: markerRect,
                 center: targetScoreRect.position,
-                radiusValueTween: LeanTween.value(targetDiameter * 1.1f, targetDiameter * 0.6f, 2).PlayAfter(markerMoveToTarget),
+                radiusValueTween: LeanTween.value(cr, targetDiameter * 0.6f, 2).PlayAfter(markerMoveToTarget),
                 radians: speed * (IconCountTotal * OrderOffset + 0.5f) * targetDiameter * 1.1f,
                 time: (IconCountTotal * OrderOffset + 0.5f) * targetDiameter * 1.1f)
             .PlayAfter(markerMoveToTarget);

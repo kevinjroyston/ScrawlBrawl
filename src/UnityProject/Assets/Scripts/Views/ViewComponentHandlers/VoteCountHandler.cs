@@ -49,6 +49,15 @@ public class VoteCountHandler : MonoBehaviour, HandlerInterface
             return;
         }
 
+        // Hack because the UI takes a second to settle in. Which messes up the animations. Should really fix this in a better way... Might be due to the scale in? unsure
+        StartCoroutine(Coroutine(voteCount, usersWhoVotedFor));
+
+    }
+
+    IEnumerator Coroutine(UnityField<int?> voteCount, List<Guid> usersWhoVotedFor)
+    {
+        yield return new WaitForSeconds(.6f); // Have to wait for quite a while (yikes)
+
         int voteCountInt = voteCount?.Value ?? 0;
 
         if (usersWhoVotedFor != null)
@@ -69,7 +78,6 @@ public class VoteCountHandler : MonoBehaviour, HandlerInterface
         {
             TextComponent.text = voteCountInt.ToString();
         }
-
     }
 
     public void UpdateValue(List<object> objects)
