@@ -112,8 +112,7 @@ section {
 }
 
 .hero-image {
-    max-width: 1100px; 
-    width: 100%;
+    width: 1100px; 
     height: auto;
 }
 
@@ -147,8 +146,7 @@ section {
     }
 
     .hero-image {
-        max-width: 900px;
-        width: 100%;
+        width: 900px;
     }
 }
 
@@ -171,15 +169,13 @@ section {
     }
 
     .hero-image {
-        max-width: 600px;
-        width: 100%;
+        width: 600px;
     }
 }
 
 @media only screen and (max-width: 468px) {
     .hero-image {
-        max-width: 350px;
-        width: 100%;
+        width: 350px;
         margin-top: 3rem;
     }
 
