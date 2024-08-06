@@ -108,7 +108,10 @@ namespace Assets.Scripts.Views
             switch (handlerId.HandlerType)
             {
                 case HandlerType.ViewOptions:
-                    return UnityView.Options ?? new Dictionary<UnityViewOptions, object>();
+                    return UnityView.Options ?? new Dictionary<UnityViewOptions, object>()
+                    {
+                        { UnityViewOptions.PrimaryAxis , 0},  // Default to horizontal axis. Otherwise the setting WONT get cleared out between views
+                    };
                 case HandlerType.UnityObjectList:
                     return UnityView.UnityObjects;
                 case HandlerType.Strings:

@@ -40,7 +40,7 @@ namespace Backend.Games.Common.GameStates
         {
             this.Entrance.Transition(this.Exit);
             this.IsRevealing = revealing;
-            title ??= revealing ? "Final Top Scores" : "Top Scores";
+            title ??= revealing ? "Final Scores" : "Current Scores";
             this.UnityView = new UnityView(this.Lobby)
             {
                 ScreenId = TVScreenId.Scoreboard,
