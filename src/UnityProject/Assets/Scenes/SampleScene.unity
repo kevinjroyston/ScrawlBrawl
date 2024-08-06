@@ -2477,7 +2477,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 24fe6e392c5d51b47ba828c137c30db0, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.706
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -2620,32 +2620,32 @@ MonoBehaviour:
     triggerEvent:
       eventType: 15
       id: 
-    volume: 0.4
+    volume: 0.35
   - clip: {fileID: 8300000, guid: 12dffc4599eec4c4cb52f774d5dad684, type: 3}
     triggerEvent:
       eventType: 23
       id: 
-    volume: 0.4
+    volume: 0.22
   - clip: {fileID: 8300000, guid: 4cd79a06d7c334c47895432636ca0758, type: 3}
     triggerEvent:
       eventType: 22
       id: 
-    volume: 0.4
+    volume: 0.2
   - clip: {fileID: 8300000, guid: 0446ad09f90b7d041979da777ab50301, type: 3}
     triggerEvent:
       eventType: 21
       id: 
-    volume: 0.4
+    volume: 0.15
   - clip: {fileID: 8300000, guid: 047ddfe06eee62145afd681405336fd0, type: 3}
     triggerEvent:
       eventType: 7
       id: 
-    volume: 0.4
+    volume: 0.3
   - clip: {fileID: 8300000, guid: 047ddfe06eee62145afd681405336fd0, type: 3}
     triggerEvent:
       eventType: 17
       id: 
-    volume: 0.4
+    volume: 0.27
   ClipCooldownInMSec: 10
 --- !u!1 &734999336
 GameObject:

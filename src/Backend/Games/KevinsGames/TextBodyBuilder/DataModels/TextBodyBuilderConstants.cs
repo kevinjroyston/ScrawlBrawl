@@ -13,20 +13,20 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.DataModels
 
         public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerCAMTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(60)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(70)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(80)},
+            { GameDuration.Short, TimeSpan.FromSeconds(30)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(35)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(35)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> SetupPerPromptTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(80)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(100)},
-            { GameDuration.Extended, TimeSpan.FromSeconds(120)},
+            { GameDuration.Short, TimeSpan.FromSeconds(65)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(75)},
+            { GameDuration.Extended, TimeSpan.FromSeconds(85)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> PerCreationTimer = new Dictionary<GameDuration, TimeSpan>()
         {
-            { GameDuration.Short, TimeSpan.FromSeconds(60)},
-            { GameDuration.Normal, TimeSpan.FromSeconds(70)},
+            { GameDuration.Short, TimeSpan.FromSeconds(70)},
+            { GameDuration.Normal, TimeSpan.FromSeconds(80)},
             { GameDuration.Extended, TimeSpan.FromSeconds(90)},
         };
         public static IReadOnlyDictionary<GameDuration, TimeSpan> VotingTimer = new Dictionary<GameDuration, TimeSpan>()
@@ -54,9 +54,9 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.DataModels
 
         public static IReadOnlyDictionary<GameDuration, int> NumCAMsPerPlayer = new Dictionary<GameDuration, int>()
         {
-            { GameDuration.Short, 4},
-            { GameDuration.Normal, 5},
-            { GameDuration.Extended, 6},
+            { GameDuration.Short, 6},
+            { GameDuration.Normal, 7},
+            { GameDuration.Extended, 8},
         };
     }
 }

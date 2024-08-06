@@ -67,7 +67,8 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                 int expectedPromptsPerUser = (int)Math.Ceiling(1.0 * numPromptsPerRound * numRounds / numPlayers);
                 int expectedCAMsPerUser = Math.Max((minCAMsRequired / numPlayers + 1) * 2, TextBodyBuilderConstants.NumCAMsPerPlayer[duration]);
 
-                int numPromptsPerUserPerRound = Math.Max(1, (int)Math.Ceiling(numPromptsPerRound * 1.5 / numPlayers));
+                int maxNumUsersPerPrompt = Math.Clamp((int)Math.Ceiling(1.0 * numPlayers * 2.5 / numPromptsPerRound), 2, 4); // Attempt to restrict num users per prompt to 2-4. Particularly 3 or 4 is ideal
+                int numPromptsPerUserPerRound = Math.Max(1, (int)Math.Ceiling(maxNumUsersPerPrompt * 1.0 * numPromptsPerRound / numPlayers));
 
                 TimeSpan estimate = TimeSpan.Zero;
                 TimeSpan setupDrawingTimer = TextBodyBuilderConstants.SetupPerCAMTimer[duration];
@@ -143,8 +144,9 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                 numRounds = (battlePrompts.Count - 1) / numPromptsPerRound + 1;
                 numPromptsPerRound = (int)Math.Ceiling(1.0 * battlePrompts.Count / numRounds);
 
-                numPromptsPerUserPerRound = Math.Max(1, (int)Math.Ceiling(numPromptsPerRound * 1.5 / numPlayers));
-                int maxNumUsersPerPrompt = Math.Max(2,Math.Min(4,(int)Math.Ceiling(1.0*numPlayers * numPromptsPerUserPerRound / numPromptsPerRound)));
+                int maxNumUsersPerPrompt = Math.Clamp((int)Math.Ceiling(1.0 * numPlayers * 2.5 / numPromptsPerRound),2,4); // Attempt to restrict num users per prompt to 2-4. Particularly 3 or 4 is ideal
+                numPromptsPerUserPerRound = Math.Max(1, (int)Math.Ceiling(maxNumUsersPerPrompt * 1.0 * numPromptsPerRound / numPlayers));
+                maxNumUsersPerPrompt = Math.Clamp((int)Math.Floor(numPlayers * 1.0 * numPromptsPerUserPerRound / numPromptsPerRound), 2, 8); // 8 is the literal max the UI can show. Move to these higher numbers ONLY if 1 prompt per user still isnt enough.
 
                 foreach (Prompt prompt in battlePrompts)
                 {
@@ -244,10 +246,10 @@ namespace Backend.Games.KevinsGames.TextBodyBuilder.Game
                     countRounds++;
                     GameState displayPeople = new DisplayContestants_GS<TextPerson>(
                         lobby: lobby,
-                        title: "Here are your winners",
+                        title: "Summary",
                         peopleList: winnersPeople,
-                        imageTitle: (person) => roundPrompts[winnersPeople.IndexOf(person)].Text,
-                        imageHeader: (person) => person.ToUnityRichTextString()
+                        imageTitle: (person) => person.ToUnityRichTextString(),
+                        imageHeader: (person) => roundPrompts[winnersPeople.IndexOf(person)].Text
                         );
 
                     if (battlePrompts.Count <= 0)
