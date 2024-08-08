@@ -74,7 +74,7 @@
                             }],
                             "optimization": true,
                             "outputHashing": "all",
-                            "sourceMap": false,
+                            "sourceMap": true,
                             "namedChunks": false,
                             "extractLicenses": true,
                             "vendorChunk": false,
@@ -91,7 +91,7 @@
                             }],
                             "optimization": true,
                             "outputHashing": "all",
-                            "sourceMap": false,
+                            "sourceMap": true,
                             "namedChunks": false,
                             "extractLicenses": true,
                             "vendorChunk": false,
@@ -175,10 +175,10 @@
                         "dev": {
                             "extractLicenses": true,
                             "namedChunks": false,
-                            "optimization": true,
+                            "optimization": false,
                             "outputHashing": "all",
-                            "sourceMap": false,
-                            "buildOptimizer": true
+                            "sourceMap": true,
+                            "buildOptimizer": false
                         },
                         "production": {
                             "optimization": true,

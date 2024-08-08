@@ -1,5 +1,5 @@
 export const environment = {
-    production: true,
+    production: false,
     overrideUrlsWithBrowserHost: false,
     backendApiUrl: "https://api.test.scrawlbrawl.tv/",
     frontendUrl: "https://test.scrawlbrawl.tv/",

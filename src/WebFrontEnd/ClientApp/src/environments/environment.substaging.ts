@@ -1,5 +1,5 @@
 export const environment = {
-    production: true,
+    production: false,
     overrideUrlsWithBrowserHost: true,
     backendApiUrl: null,
     frontendUrl: null,
