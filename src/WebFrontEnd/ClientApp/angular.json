@@ -177,7 +177,7 @@
                             "namedChunks": false,
                             "optimization": true,
                             "outputHashing": "all",
-                            "sourceMap": false,
+                            "sourceMap": true,
                             "buildOptimizer": true
                         },
                         "production": {
