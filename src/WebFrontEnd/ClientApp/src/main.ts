@@ -63,7 +63,7 @@ const providers = [
 ];
 
 if (environment.production) {
-  //enableProdMode();
+  enableProdMode();
 }
 
 platformBrowserDynamic(providers).bootstrapModule(AppModule)
